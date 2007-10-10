@@ -100,7 +100,6 @@
     proto._ = null;
 
     YAHOO.lang.extend(Class, Y.Object, proto);
-    YAHOO.lang.augment(Class, Y.EffectProvider);
     //YAHOO.lang.augmentObject(Class, Y.Object); // add static members
     Y.Element = Class;
 })();
