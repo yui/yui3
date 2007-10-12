@@ -4,7 +4,7 @@
 
     // constructor
     var Class = function Element(node, attributes) {
-        YAHOO.log('constructor called', 'info', 'Element');
+        YAHOO.log('constructor called', 'life', 'Element');
         attributes = attributes || {};
             attributes.node = Y.Dom.get(node) ||
                     document.createElement(Class.DEFAULT_TAG_NAME);
@@ -48,13 +48,13 @@
     // public 
     var proto = {
         init: function(attributes) {
-            YAHOO.log('init called', 'info', 'Element');
+            YAHOO.log('init called', 'life', 'Element');
             _instances[this.get('id')] = this;
         },
     
         // returning false from before event prevents default
         destructor: function() {
-            YAHOO.log('Element destructor called', 'info', 'Element');
+            YAHOO.log('Element destructor called', 'life', 'Element');
             var children = this._.node[YUI.CHILDREN] || this._.node[YUI.CHILD_NODES];
             var id;
             while (children.length) {

@@ -24,6 +24,14 @@
     height:100px;
     overflow:hidden;
 }
+
+.yui-log .life {
+    background:#cc00cc;
+}
+
+.yui-log .attr {
+    background:#00cc00;
+}
 </style>
 </head>
 <body class="yui-skin-sam">
@@ -43,8 +51,23 @@
 
         logger.hideSource('LogReader');
     });
+    
+    var CustomRenderer = function(widget) {
+        CustomRenderer.superclass.constructor.call(this, widget);
+    }
+    
+    YAHOO.lang.extend(CustomRenderer, YW.WidgetRenderer);
+    
+    CustomRenderer.prototype.render = function() {
+        YAHOO.log("renderer", "life", "CustomRenderer");
+    }
+
+    CustomRenderer.prototype.attachListeners = function() {
+        YAHOO.log("attachListeners", "life", "CustomRenderer");
+    }
 
     var myObj = new YW.Widget('foo');
+    myObj.setRenderer(CustomRenderer);
     myObj.render();
     myObj.destroy();
 

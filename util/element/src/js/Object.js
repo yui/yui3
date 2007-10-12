@@ -5,7 +5,7 @@
 
     // constructor
     var Class = function Object(attributes) {
-        YAHOO.log('constructor called', 'info', 'Object');
+        YAHOO.log('constructor called', 'life', 'Object');
         Class.prototype.init.apply(this, arguments);
     };
 
@@ -19,7 +19,7 @@
     // public 
     var proto = {
         init: function(attributes) {
-            YAHOO.log('init called', 'info', 'Object');
+            YAHOO.log('init called', 'life', 'Object');
             var constructor = this.constructor,
                 retVal = this.fireEvent(YUI.BeforeInit);
 
@@ -34,7 +34,7 @@
             }
 
             while (constructor = classes.shift()) { // initialize from top down
-                YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'info', 'Object');
+                YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
                 this.setAttributeConfigs(constructor.CONFIG, attributes, true); // init Attributes
 
                 if (constructor !== Class) {
@@ -42,11 +42,11 @@
                 }
             }
             this.fireEvent(YUI.Init, attributes);
-            //YAHOO.log('created: ' + this, 'info', 'Object');
+            //YAHOO.log('created: ' + this, 'life', 'Object');
         },
 
         destructor: function() {
-            YAHOO.log('destructor called', 'info', 'Object');
+            YAHOO.log('destructor called', 'life', 'Object');
             this._configs.destroyed = true;
             // delete _instances[this.get('id')];
             // TODO: remove fields and null out?
