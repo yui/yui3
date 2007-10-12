@@ -124,14 +124,23 @@
             var constructor = this.constructor;
             if (constructor == Object.prototype.constructor) {
                 // Hasn't been through YAHOO.util.extend;
-                this[method].apply(this, args);
+                if (args && args.length > 0) {
+                    this[method].apply(this, args);
+                } else {
+                    this[method].apply(this);
+                }
             } else {
                 // Really required?
 
                 // Don't see too much use for attachListener chaining. More often, 
                 // it's over-ridden completely.
                 while (constructor && constructor.prototype && constructor.prototype[method]) {
-                    constructor.prototype[method].apply(this, args);
+                    if (args && args.length > 0) {
+                        constructor.prototype[method].apply(this, args);
+                    } else {
+                        constructor.prototype[method].apply(this);
+                    }
+                    
                     constructor = constructor.superclass ? constructor.superclass.constructor : null;
                 }
             }
