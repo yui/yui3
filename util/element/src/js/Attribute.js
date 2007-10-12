@@ -164,11 +164,17 @@ YAHOO.util.Attribute.prototype = {
     configure: function(map, init) {
         map = map || {};
         this._written = false; // reset writeOnce
+        var silent = !!init; // silent set if initializing
+
         //this._initialConfig = this._initialConfig || {};
         for (var key in map) {
             if ( key && YAHOO.lang.hasOwnProperty(map, key) ) {
-                if (key == 'value' && !map.readOnly) {
-                    this.setValue(map.value);
+                if (key == 'value') {
+                    if (map.readOnly && init) { // initialize readOnly with direct set
+                        this.value = map[key];
+                    } else {
+                        this.setValue(map.value, silent);
+                    }
                 } else {
                     this[key] = map[key];
                 }
