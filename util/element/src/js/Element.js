@@ -43,7 +43,7 @@
     };
 
     // private
-    _instances = {};
+    var _instances = {};
 
     // public 
     var proto = {
@@ -54,7 +54,7 @@
     
         // returning false from before event prevents default
         destructor: function() {
-            YAHOO.log('Element destructor called');
+            YAHOO.log('Element destructor called', 'info', 'Element');
             var children = this._.node[YUI.CHILDREN] || this._.node[YUI.CHILD_NODES];
             var id;
             while (children.length) {
@@ -102,4 +102,5 @@
     YAHOO.lang.extend(Class, Y.Object, proto);
     //YAHOO.lang.augmentObject(Class, Y.Object); // add static members
     Y.Element = Class;
+
 })();

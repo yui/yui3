@@ -5,6 +5,8 @@ YAHOO.lang.CONST = {
     Click:               'click',
     Destroy:             'destroy',
     Init:                'init',
+    BeforeRender:        'beforeRender',
+    Render:              'render',
 
     // Other strings
     CHILDREN:            'children',

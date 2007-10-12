@@ -48,7 +48,7 @@
         destructor: function() {
             YAHOO.log('destructor called', 'info', 'Object');
             this._configs.destroyed = true;
-            delete _instances[this.get('id')];
+            // delete _instances[this.get('id')];
             // TODO: remove fields and null out?
         },
 
@@ -59,7 +59,6 @@
             if (retVal === false) { // returning false from beforeEvent cancels TODO: use preventDefault/stopPropagation instead?
                 return false;
             }
-
             while (constructor && constructor.prototype) { // call destructors from bottom up
                 constructor.prototype.destructor.apply(this, arguments);
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
@@ -76,4 +75,5 @@
     Class.prototype = proto;
     YAHOO.lang.augmentProto(Class, Y.AttributeProvider);
     YAHOO.util.Object = Class;
+
 })();

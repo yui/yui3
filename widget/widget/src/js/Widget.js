@@ -1,17 +1,23 @@
 (function() {
+
     var Y = YAHOO.util,
         YUI = YAHOO.lang.CONST;
 
     // constructor
-    var Class = function Widget(node, attributes) {
+    function Widget(node, attributes) {
         YAHOO.log('constructor called', 'info', 'Widget');
+
         attributes = attributes || {};
         attributes.node = new Y.Element(node);
 
-        Class.superclass.constructor.call(this, attributes);
-    };
+        // Default CONFIG value not currently working, 
+        // so setting this here temporarily
+        attributes.renderer = WidgetRenderer;
 
-    Class.CONFIG = {
+        Widget.superclass.constructor.call(this, attributes);
+    }
+
+    Widget.CONFIG = {
         'node': {
             set: function(node) {
                 // TODO: require Y.Element? re-initialize?
@@ -19,45 +25,45 @@
             validator: function(el) {
                 return true;//!!el.tagName || el.get;
             }
+        },
+
+        'renderer' : {
+            set: function(renderer) {
+                // TODO: attribute or .property?
+                return (YAHOO.lang.isFunction(renderer)) ? new renderer(this) : renderer;
+            }
+            // TODO: Not working currently
+            // value: WidgetRenderer
         }
     };
 
-    Class.getByNodeId = function(id) {
+    var _instances = {};
+
+    Widget.getByNodeId = function(id) {
         return _instances[id]; 
     };
-    
-    var _instances = {};
 
     // public 
     var proto = {
+
         init: function(attributes) {
             YAHOO.log('init called', 'info', 'Widget');
             _instances[attributes.node.get(YUI.ID)] = this;
         },
 
+        /* @final */
         render: function() {
-            var constructor = this.constructor,
-                retVal = this.fireEvent(YUI.BeforeRender);
-
-            if (retVal === false) { // returning false from beforeEvent cancels TODO: use preventDefault/stopPropagation instead?
-                return false;
-            }
-
-            while (constructor && constructor.prototype) { // call destructors from bottom up
-                constructor.prototype.renderer.apply(this, arguments);
-                constructor = constructor.superclass ? constructor.superclass.constructor : null;
-            }
-
-            this.fireEvent(YUI.Render);
-        },
-
-        renderer: function() {
-
+            return this.get('renderer').doRender();
         },
 
         destructor: function() {
             YAHOO.log('destructor called', 'info', 'Widget');
-            this.get('node').destroy();
+
+            var node = this.get('node');
+            var id = node.id;
+
+            node.destroy();
+            delete _instances[id];
         },
 
         toString: function() {
@@ -65,8 +71,59 @@
         }
     };
 
-    YAHOO.lang.extend(Class, Y.Object, proto);
-    //YAHOO.lang.augmentObject(Class, Y.Object); // add static members
-    YAHOO.widget.Widget = Class;
+    YAHOO.lang.extend(Widget, Y.Object, proto);
+    //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
+
+    // WidgetRenderer constructor
+    function WidgetRenderer(widget) {
+        this.widget = widget;
+    }
+
+    // Should it extend Object/EventProvider or just leech off of Widget?
+    WidgetRenderer.prototype = {
+
+        widget : null,
+
+        /* @protected - wouldn't expect Widget users to call it directly */
+        render : function() {
+            // widget.node.appendChild, widget.node.element.innerHTML code
+            YAHOO.log('render', 'info', 'WidgetRenderer');
+        },
+
+        /* @protected */
+        attachListeners : function() {
+            // YAHOO.util.Event.on(domElem, "click") code
+            YAHOO.log('attachListeners', 'info', 'WidgetRenderer');
+        },
+
+        /* @private - entry point for Widget. Not overrideable */
+        doRender: function() {
+
+            var retValue = this.widget.fireEvent(YUI.BeforeRender);
+            if (retValue === false) {
+                return false;
+            }
+
+            var constructor = this.constructor;
+            if (constructor == Object.prototype.constructor) {
+                this.render();
+            } else {
+                // Really required?
+
+                // Don't see too much use for render chaining. More often, 
+                // it's over-ridden completely.
+                while (constructor && constructor.prototype && constructor.prototype.render) {
+                    constructor.prototype.render.apply(this, arguments);
+                    constructor = constructor.superclass ? constructor.superclass.constructor : null;
+                }
+            }
+
+            this.widget.fireEvent(YUI.Render);
+            this.attachListeners();
+        }
+    };
+
+    YAHOO.widget.Widget = Widget;
+    YAHOO.widget.WidgetRenderer = WidgetRenderer;
 
 })();
