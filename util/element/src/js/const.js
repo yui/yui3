@@ -20,3 +20,8 @@ YAHOO.lang.CONST = {
     TAG_NAME:            'tagName',
     WIDTH:               'width'
 };
+
+YAHOO.lang.CONST.CSS = {
+    PREFIX: "yui-st-",
+    VISIBLE: this.PREFIX + "visible"
+};

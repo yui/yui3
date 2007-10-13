@@ -6,7 +6,7 @@
     // constructor
     var Class = function Object(attributes) {
         YAHOO.log('constructor called', 'life', 'Object');
-        Class.prototype.init.apply(this, arguments);
+        this.init(attributes);
     };
 
     Class.CONFIG = {
@@ -18,6 +18,8 @@
 
     // public 
     var proto = {
+
+        /* @final*/
         init: function(attributes) {
             YAHOO.log('init called', 'life', 'Object');
             var constructor = this.constructor,
@@ -37,8 +39,8 @@
                 YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
                 this.setAttributeConfigs(constructor.CONFIG, attributes, true); // init Attributes
 
-                if (constructor !== Class) {
-                    constructor.prototype.init.apply(this, arguments);
+                if (constructor !== Class && constructor.prototype.initializer) {
+                    constructor.prototype.initializer.apply(this, arguments);
                 }
             }
             this.fireEvent(YUI.Init, attributes);
@@ -59,7 +61,7 @@
             if (retVal === false) { // returning false from beforeEvent cancels TODO: use preventDefault/stopPropagation instead?
                 return false;
             }
-            while (constructor && constructor.prototype) { // call destructors from bottom up
+            while (constructor && constructor.prototype && constructor.prototype.destructor) { // call destructors from bottom up
                 constructor.prototype.destructor.apply(this, arguments);
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
             }

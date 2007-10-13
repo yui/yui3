@@ -47,8 +47,8 @@
 
     // public 
     var proto = {
-        init: function(attributes) {
-            YAHOO.log('init called', 'life', 'Element');
+        initializer: function(attributes) {
+            YAHOO.log('initializer called', 'life', 'Element');
             _instances[this.get('id')] = this;
         },
     

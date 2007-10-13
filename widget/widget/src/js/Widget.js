@@ -10,10 +10,6 @@
         attributes = attributes || {};
         attributes.node = new Y.Element(node);
 
-        // Default CONFIG value not currently working, 
-        // so setting this here temporarily
-        attributes.renderer = WidgetRenderer;
-
         Widget.superclass.constructor.call(this, attributes);
     }
 
@@ -27,13 +23,16 @@
             }
         },
 
-        'renderer' : {
-            set: function(renderer) {
-                // TODO: attribute or .property?
-                return (YAHOO.lang.isFunction(renderer)) ? new renderer(this) : renderer;
+        'visible' : {
+            set: function(bVisible) {
+                var elem = this.get('node');
+                if (bVisible) {
+                    Y.Dom.addClass(elem.get('node'), YUI.CSS.VISIBLE);
+                } else {
+                    Y.Dom.removeClass(elem.get('node'), YUI.CSS.VISIBLE);
+                }
             }
-            // TODO: Not working currently
-            // value: WidgetRenderer
+            //value: true
         }
     };
 
@@ -46,17 +45,12 @@
     // public 
     var proto = {
 
-        init: function(attributes) {
-            YAHOO.log('init called', 'life', 'Widget');
+        initializer : function(attributes) {
+            YAHOO.log('initializer called', 'life', 'Widget');
             _instances[attributes.node.get(YUI.ID)] = this;
         },
 
-        /* @final */
-        render: function() {
-            return this.get('renderer')._render();
-        },
-
-        destructor: function() {
+        destructor : function() {
             YAHOO.log('destructor called', 'life', 'Widget');
 
             var node = this.get('node');
@@ -66,13 +60,64 @@
             delete _instances[id];
         },
 
-        setRenderer: function(renderClass) {
-            this.set('renderer', renderClass);
+        /* @final */
+        render : function() {
+            if (!this.__renderer) {
+                this.__setDefaultRenderer();
+            }
+            var retValue = this.fireEvent(YUI.BeforeRender);
+            if (retValue === false) {
+                return false;
+            }
+            this.__renderer._render();
+            this.fireEvent(YUI.Render);
+        },
+
+        setRenderer : function(renderer) {
+            if (YAHOO.lang.isFunction(renderer)) {
+                renderer = new renderer(this);
+            }
+            renderer._widget = this;
+            this.__renderer = renderer;
+        },
+
+        setNode : function(node) {
+            this.set('node', node);
+        },
+
+        hide : function() {
+            this.set('visible', false);
+        },
+
+        show : function() {
+            this.set('visible', true);
+        },
+
+        enable : function() {
+        },
+
+        disable : function() {
+        },
+
+        focus : function() {
+        },
+
+        blur : function() {
         },
 
         toString: function() {
             return 'Widget: ' + this.get('node').get('id');
+        },
+
+        // TODO: Move to .__.
+        __renderer : null,
+
+        // TODO: Move to .__. - Means it has to be invoked using call/apply
+        __setDefaultRenderer : function() {
+            var renderClass = this.constructor.renderClass || Widget.renderClass;
+            this.__renderer = new renderClass(this);
         }
+
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
@@ -86,66 +131,21 @@
     // Should it extend Object/EventProvider or just leech off of Widget?
     WidgetRenderer.prototype = {
 
-        widget : null,
+        // TODO: Move to ._.
+        /* @protected */
+        _widget : null,
 
-        /* @abstract, @protected - wouldn't expect Widget users to call it directly */
-        render : function() {
-            // widget.node.appendChild, widget.node.element.innerHTML code
-            YAHOO.log('render', 'life', 'WidgetRenderer');
-        },
-        
-        /* @abstract, @protected */
-        attachListeners : function() {
-            // YAHOO.util.Event.on(domElem, "click") code
-            YAHOO.log('attachListeners', 'life', 'WidgetRenderer');
-        },
-
-        /* @private */
-        _attachListeners : function() {
-            this._invoke("attachListeners");
-        },
-
-        /* @private - entry point for Widget. Not overrideable */
+        /** 
+         * @protected - entry point for Widget 
+         * @abstract
+         */
+        // TODO: Move to ._. - Means it has to be invoked using call/apply
         _render: function() {
-
-            var retValue = this.widget.fireEvent(YUI.BeforeRender);
-            if (retValue === false) {
-                return false;
-            }
-            this._invoke("render");
-            this._attachListeners();
-
-            this.widget.fireEvent(YUI.Render);
-        },
-
-        /* @private */
-        // TODO: Move to Object with up/down boolean
-        _invoke: function(method, args) {
-            var constructor = this.constructor;
-            if (constructor == Object.prototype.constructor) {
-                // Hasn't been through YAHOO.util.extend;
-                if (args && args.length > 0) {
-                    this[method].apply(this, args);
-                } else {
-                    this[method].apply(this);
-                }
-            } else {
-                // Really required?
-
-                // Don't see too much use for attachListener chaining. More often, 
-                // it's over-ridden completely.
-                while (constructor && constructor.prototype && constructor.prototype[method]) {
-                    if (args && args.length > 0) {
-                        constructor.prototype[method].apply(this, args);
-                    } else {
-                        constructor.prototype[method].apply(this);
-                    }
-                    
-                    constructor = constructor.superclass ? constructor.superclass.constructor : null;
-                }
-            }
+            YAHOO.log('render', 'life', 'WidgetRenderer');
         }
     };
+
+    Widget.renderClass = WidgetRenderer;
 
     YAHOO.widget.Widget = Widget;
     YAHOO.widget.WidgetRenderer = WidgetRenderer;
