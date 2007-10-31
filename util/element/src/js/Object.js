@@ -12,16 +12,22 @@
     Class.CONFIG = {
         destroyed: {
             readOnly: true,
-            value: false
+            value: true,
+            foo: 'foo'
         }
     };
 
     // public 
     var proto = {
+        _: null, // protected container
+        __: null, // private container
 
         /* @final*/
         init: function(attributes) {
             YAHOO.log('init called', 'life', 'Object');
+            this._ = {}; // init protected
+            this.__ = {}; // init private
+
             var constructor = this.constructor,
                 retVal = this.fireEvent(YUI.BeforeInit);
 
@@ -38,24 +44,17 @@
             while (constructor = classes.shift()) { // initialize from top down
                 YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
                 this.setAttributeConfigs(constructor.CONFIG, attributes, true); // init Attributes
-
-                if (constructor !== Class && constructor.prototype.initializer) {
+                if (constructor !== Class && constructor.prototype.initializer) { // this Class has no initializer
                     constructor.prototype.initializer.apply(this, arguments);
                 }
+
             }
             this.fireEvent(YUI.Init, attributes);
             //YAHOO.log('created: ' + this, 'life', 'Object');
         },
 
-        destructor: function() {
-            YAHOO.log('destructor called', 'life', 'Object');
-            this._configs.destroyed = true;
-            // delete _instances[this.get('id')];
-            // TODO: remove fields and null out?
-        },
-
         destroy: function() {
-            var constructor = this.constructor,
+            var constructor = this.constructor.superclass,
                 retVal = this.fireEvent(YUI.BeforeDestroy);
 
             if (retVal === false) { // returning false from beforeEvent cancels TODO: use preventDefault/stopPropagation instead?
@@ -65,6 +64,9 @@
                 constructor.prototype.destructor.apply(this, arguments);
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
             }
+
+            YAHOO.log('destructor called', 'life', 'Object');
+            this._configs.destroyed.value.destroyed = true;
 
             this.fireEvent(YUI.Destroy);
         },

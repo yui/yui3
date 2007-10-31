@@ -3,21 +3,31 @@
         YUI = YAHOO.lang.CONST;
 
     // constructor
-    var Class = function Element(node, attributes) {
+    var Element = function Element(node, attributes) {
         YAHOO.log('constructor called', 'life', 'Element');
         attributes = attributes || {};
-            attributes.node = Y.Dom.get(node) ||
-                    document.createElement(Class.DEFAULT_TAG_NAME);
+
+        attributes.node = Y.Dom.get(node) ||
+                document.createElement(Element.DEFAULT_TAG_NAME);
 
         attributes.id = Y.Dom.generateId(attributes.node);
+        if (_instances[attributes.id]) {
+            throw('Element error: element already exists');
+        }
 
-        this._ = { node: attributes.node };
-        Class.superclass.constructor.call(this, attributes);
+        Element.superclass.constructor.call(this, attributes);
+        this._.node = attributes.node;
     };
 
-    Class.DEFAULT_TAG_NAME = YUI.DIV;
+    Element.get = function(node) { // TODO: what about config? reconfigure existing Element? No config?
+        node = Y.Dom.get(node);
+        var id = node.id;
+        return _instances[id] || new Element(id);
+    };
 
-    Class.CONFIG = {
+    Element.DEFAULT_TAG_NAME = YUI.DIV;
+
+    Element.CONFIG = {
         'node': {
             set: function(node) {
                 this._.node = node;
@@ -35,11 +45,37 @@
                 _instances[id] = this;
                 this._.node.id = id;
             }
+        },
+        'visible' : {
+            set: function(val) {
+                if (val) {
+                    Y.Dom.removeClass(this._.node, YUI.CSS.HIDDEN);
+                } else {
+                    Y.Dom.addClass(this._.node, YUI.CSS.HIDDEN);
+                }
+            },
+            value: true
+        },
+        'disabled' : {
+            set: function(val) {
+                if (val) {
+                    Y.Dom.addClass(this.get('node'), YUI.CSS.DISABLED);
+                } else {
+                    Y.Dom.removeClass(this.get('node'), YUI.CSS.DISABLED);
+                }
+            },
+            value: false
+        },
+        'focused' : {
+            set: function(val) {
+                if (val) {
+                    //this.get('node').focus();
+                } else {
+                    //this.get('node').blur();
+                }
+            },
+            value: false
         }
-    };
-
-    Class.getById = function(id) {
-        return _instances[id];
     };
 
     // private
@@ -49,6 +85,10 @@
     var proto = {
         initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Element');
+            for (var namespace in Element.BEHAVIORS) {
+                this[namespace] = new Element.BEHAVIORS[namespace].behavior(this._.node);
+            }
+
             _instances[this.get('id')] = this;
         },
     
@@ -67,6 +107,21 @@
                     }
                 }
             }
+        },
+
+        addBehavior: function(namespace, behavior, config) {
+            if (this[namespace]) {
+                throw('behavior namespace' + namespace + ' already in use');
+            }
+            this[namespace] = new behavior(config);
+        },
+
+        removeBehavior: function(namespace) {
+            delete this[namespace];
+        },
+
+        hasBehavior: function(namespace) {
+            return namespace in this;
         },
 
         set: function(prop, val) {
@@ -88,7 +143,15 @@
                     return this._.node[prop];
                 }
             }
-            Y.AttributeProvider.prototype.get.apply(this, arguments);
+            return Y.AttributeProvider.prototype.get.apply(this, arguments);
+        },
+
+        setStyle: function(prop, val) {
+            Y.Dom.setStyle(this._.node, prop, val);
+        },
+
+        getStyle: function(prop, val) {
+            Y.Dom.getStyle(this._.node, prop);
         },
 
         toString: function() {
@@ -96,11 +159,10 @@
         }
     };
 
-    // protected
-    proto._ = null;
+    YAHOO.lang.extend(Element, Y.Object, proto);
+    Y.Element = Element;
+    //YAHOO.lang.augmentObject(Element, Y.Object); // add static members
 
-    YAHOO.lang.extend(Class, Y.Object, proto);
-    //YAHOO.lang.augmentObject(Class, Y.Object); // add static members
-    Y.Element = Class;
+
 
 })();

@@ -15,24 +15,36 @@
 
     Widget.CONFIG = {
         'node': {
-            set: function(node) {
+            set : function(node) {
+                this.__.node = (node.get) ? node : Y.Element.get(node); // TODO: more robust Element test
+                return this.__.node;
                 // TODO: require Y.Element? re-initialize?
             },
-            validator: function(el) {
+            validator : function(el) {
                 return true;//!!el.tagName || el.get;
             }
         },
-
         'visible' : {
-            set: function(bVisible) {
-                var elem = this.get('node');
-                if (bVisible) {
-                    Y.Dom.addClass(elem.get('node'), YUI.CSS.VISIBLE);
-                } else {
-                    Y.Dom.removeClass(elem.get('node'), YUI.CSS.VISIBLE);
-                }
-            }
-            //value: true
+            set: function() {
+                this._setNodeAttribute('visible', val);
+            },
+            get: function() {
+                this.__.node.get('visible', val);
+            },
+            readOnly: true,
+            value: true
+        },
+        'disabled' : {
+            set: function(val) {
+                this._setNodeAttribute('disabled', val);
+            },
+            value: false
+        },
+        'focused' : {
+            set: function(val) {
+                this._setNodeAttribute('focused', val);
+            },
+            value: false
         }
     };
 
@@ -44,10 +56,13 @@
 
     // public 
     var proto = {
-
         initializer : function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
-            _instances[attributes.node.get(YUI.ID)] = this;
+            _instances[this.__.node.get(YUI.ID)] = this;
+        },
+
+        renderer : function() {
+            YAHOO.log('destructor called', 'life', 'Widget');
         },
 
         destructor : function() {
@@ -62,92 +77,49 @@
 
         /* @final */
         render : function() {
-            if (!this.__renderer) {
-                this.__setDefaultRenderer();
-            }
             var retValue = this.fireEvent(YUI.BeforeRender);
             if (retValue === false) {
                 return false;
             }
-            this.__renderer._render();
+            this.renderer();
             this.fireEvent(YUI.Render);
         },
 
-        setRenderer : function(renderer) {
-            if (YAHOO.lang.isFunction(renderer)) {
-                renderer = new renderer(this);
-            }
-            renderer._widget = this;
-            this.__renderer = renderer;
-        },
-
-        setNode : function(node) {
-            this.set('node', node);
-        },
-
         hide : function() {
-            this.set('visible', false);
+            this.get('node').set('visible', false);
         },
 
         show : function() {
-            this.set('visible', true);
+            this.get('node').set('visible', true);
         },
 
         enable : function() {
+            this.get('node').set('enabled', true);
         },
 
         disable : function() {
+            this.get('node').set('disabled', false);
         },
 
         focus : function() {
+            this.get('node').set('focused', true);
         },
 
         blur : function() {
+            this.get('node').set('focused', false);
         },
 
-        toString: function() {
+        toString : function() {
             return 'Widget: ' + this.get('node').get('id');
         },
 
-        // TODO: Move to .__.
-        __renderer : null,
-
-        // TODO: Move to .__. - Means it has to be invoked using call/apply
-        __setDefaultRenderer : function() {
-            var renderClass = this.constructor.renderClass || Widget.renderClass;
-            this.__renderer = new renderClass(this);
+        _setNodeAttribute : function(attr, val) {
+            this.__.node.set(attr, val);
         }
-
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
     //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
-
-    // WidgetRenderer constructor
-    function WidgetRenderer(widget) {
-        this.widget = widget;
-    }
-
-    // Should it extend Object/EventProvider or just leech off of Widget?
-    WidgetRenderer.prototype = {
-
-        // TODO: Move to ._.
-        /* @protected */
-        _widget : null,
-
-        /** 
-         * @protected - entry point for Widget 
-         * @abstract
-         */
-        // TODO: Move to ._. - Means it has to be invoked using call/apply
-        _render: function() {
-            YAHOO.log('render', 'life', 'WidgetRenderer');
-        }
-    };
-
-    Widget.renderClass = WidgetRenderer;
-
     YAHOO.widget.Widget = Widget;
-    YAHOO.widget.WidgetRenderer = WidgetRenderer;
 
 })();

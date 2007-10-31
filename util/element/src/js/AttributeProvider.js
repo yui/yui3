@@ -191,12 +191,12 @@
             for (var attr in configs) {
                 if ( YAHOO.lang.hasOwnProperty(configs, attr) ) {
                     config = configs[attr];
-                    config.value = attributes[attr] || configs.value; // initialize value to user or default
+                    config.value = (attributes[attr] !== undefined) ? attributes[attr] : config.value; // initialize value to user or default
                     this.setAttributeConfig(attr, configs[attr], init);
                 }
             }
 
-            return; // NOTE: temp return
+            //return; // NOTE: temp return
 
             // TODO: set all configs before setting any values?  Requires change to Attribute.configure
 

@@ -124,6 +124,7 @@ YAHOO.util.Attribute.prototype = {
             return false; // write not allowed
         }
         
+        // TODO: move below set retVal
         if (this.validator && !this.validator.call(owner, value) ) {
             YAHOO.log( 'setValue ' + name + ', ' + value +
                     ' validation failed', 'error', 'Attribute');
