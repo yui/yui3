@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Element with Animated Behavior</title>
+
+<link rel="stylesheet" type="text/css" href="/Users/msweeney/dev/yahoo/presentation/2.x/build/logger/assets/skins/sam/logger.css">
+<link rel="stylesheet" type="text/css" href="/Users/msweeney/dev/yahoo/presentation/3.x/util/element/src/css/element-core.css">
+
+<script type="text/javascript" src="../../../2.x/build/yahoo/yahoo.js"></script>
+<script type="text/javascript" src="../../../2.x/build/dom/dom.js"></script>
+<script type="text/javascript" src="../../../2.x/build/event/event.js"></script>
+<script type="text/javascript" src="../../../2.x/build/animation/animation.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/const.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/Attribute.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/AttributeProvider.js"></script>
+<script type="text/javascript" src="../..//util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/Element.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/Animated.js"></script>
+<script type="text/javascript" src="../../../2.x/build/logger/logger.js"></script>
+
+<style>
+#foo {
+    background:#ccc;
+    height:200px;
+    overflow:hidden;
+}
+
+</style>
+</head>
+<body class="yui-skin-sam">
+
+    <h1>Element with Animated Behavior</h1>
+    <div id="foo">foo</div>
+
+<script type="text/javascript">
+(function() {
+    var Y = YAHOO.util;
+    var YW = YAHOO.widget;
+
+    var myObj = Y.Element.get('foo');
+    myObj.addBehavior('fx', Y.Animated, { node: myObj.get('node') });
+
+    document.onclick = function() {
+        if (myObj.get('visible')) {
+            myObj.fx.fadeOut({
+                onComplete: function() {
+                    myObj.set('visible', false);        
+                }
+            });
+        } else {
+            myObj.set('visible', true);        
+            myObj.fx.fadeIn();
+        }
+    };
+})();
+
+
+</script>
+</body>
+</html>
