@@ -48,10 +48,13 @@
     </div>
     <div>
     Overlay1:
+        <button id="render">Render</button>
         <button id="show">Show</button>
         <button id="hide">Hide</button>
         <button id="btt">Bring to Top</button>
         <button id="move">Move (200,200)</button>
+        <button id="erase">Erase</button>
+        <button id="destroy">Destroy</button>
     </div>
     <script type="text/javascript">
     (function() {
@@ -70,14 +73,15 @@
         var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
         var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
 
-        myObj1.render();
         myObj2.render();
 
+        Y.Event.on("render", "click", myObj1.render, myObj1, true);
         Y.Event.on("show", "click", myObj1.show, myObj1, true);
         Y.Event.on("hide", "click", myObj1.hide, myObj1, true);
         Y.Event.on("btt", "click", myObj1.bringToTop, myObj1, true);
         Y.Event.on("move", "click", function(){myObj1.moveTo(200,200)});
-
+        Y.Event.on("destroy", "click", myObj1.destroy, myObj1, true);
+        Y.Event.on("erase", "click", myObj1.erase, myObj1, true);
     })();
     </script>
 </body>

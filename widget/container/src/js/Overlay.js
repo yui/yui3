@@ -77,10 +77,11 @@
 
         eraser : function() {
             this.__.node.get('node').innerHTML = "";
+            this.__.node.removeClass(Overlay.CLASSES.ROOT);
         },
 
         renderer : function() {
-            // TODO: move up in heirarchy? Have Widget classes mark all nodes
+            // TODO: move up in heirarchy? Have Widget class mark all nodes
             this.__.node.addClass(Overlay.CLASSES.ROOT);
         },
 
@@ -137,8 +138,8 @@
                     // TODO: Should "from", be able to stop "to"?
                     if (oTop.fireEvent(E.BEFORE_MOVED_FROM_TOP) !== false && this.fireEvent(E.BEFORE_MOVED_TO_TOP) !== false) {
                         this.set('zindex', oTop.get('zindex') + 1);
-                        oTop.fire(E.MOVED_FROM_TOP);
-                        this.fire(E.MOVED_TO_TOP);
+                        oTop.fireEvent(E.MOVED_FROM_TOP);
+                        this.fireEvent(E.MOVED_TO_TOP);
                     }
                 }
             }
