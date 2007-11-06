@@ -70,6 +70,7 @@
     var proto = {
         initializer : function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
+            this.initPlugins();
             _instances[this.__.node.get(YUI.ID)] = this;
         },
 
@@ -149,6 +150,7 @@
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
     //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
+    YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
     YAHOO.widget.Widget = Widget;
 
 })();

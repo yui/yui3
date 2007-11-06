@@ -5,14 +5,16 @@
 
 <link rel="stylesheet" type="text/css" href="../../util/element/src/css/element-core.css">
 
-<script type="text/javascript" src="../../../2.x/build/yahoo/yahoo.js"></script>
-<script type="text/javascript" src="../../../2.x/build/dom/dom.js"></script>
-<script type="text/javascript" src="../../../2.x/build/event/event.js"></script>
-<script type="text/javascript" src="../../../2.x/build/animation/animation.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/event/event-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"></script>
+
 <script type="text/javascript" src="../../util/element/src/js/const.js"></script>
 <script type="text/javascript" src="../../util/element/src/js/Attribute.js"></script>
 <script type="text/javascript" src="../../util/element/src/js/AttributeProvider.js"></script>
-<script type="text/javascript" src="../..//util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../../util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../../util/plugin/src/js/PluginHost.js"></script>
 <script type="text/javascript" src="../../util/element/src/js/Element.js"></script>
 <script type="text/javascript" src="../../util/element/src/js/Animated.js"></script>
 <script type="text/javascript" src="../../util/element/src/js/AnimAdaptor.js"></script>
@@ -37,7 +39,7 @@
     var YW = YAHOO.widget;
 
     var myObj = Y.Element.get('foo');
-    myObj.addBehavior('fx', Y.AnimAdaptor, myObj);
+    myObj.applyAdaptor(Y.AnimAdaptor, myObj);
 
     document.onclick = function() {
         myObj.set('visible', !myObj.get('visible'));

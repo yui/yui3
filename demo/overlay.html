@@ -8,6 +8,7 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dom/dom-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/event/event-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/logger/logger-min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="../widget/container/src/css/overlay.css">
@@ -15,9 +16,13 @@
 <script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
 <script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
 <script type="text/javascript" src="../util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../util/plugin/src/js/PluginHost.js"></script>
 <script type="text/javascript" src="../util/element/src/js/Element.js"></script>
 <script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
 <script type="text/javascript" src="../widget/container/src/js/Overlay.js"></script>
+
+<script type="text/javascript" src="../util/element/src/js/Animated.js"></script>
+<script type="text/javascript" src="../util/element/src/js/AnimAdaptor.js"></script>
 
 <style>
 #o1 {
@@ -81,8 +86,10 @@
 
         var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:50, y:50});
         var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:100, y:100});
-
         myObj2.render();
+        
+//        myObj1.addPlugin("anim", Y.Animated, {node:Y.Element.get('o1')});
+        myObj1.applyAdaptor(Y.AnimAdaptor, myObj1.get('node'));
 
         Y.Event.on("render", "click", myObj1.render, myObj1, true);
         Y.Event.on("show", "click", myObj1.show, myObj1, true);

@@ -3,7 +3,6 @@
         - should this also add Animated behavior?
 */
 
-
 (function() {
     var AnimAdaptor = function(element) {
         this.constructor.superclass.constructor.call(this, {element: element});

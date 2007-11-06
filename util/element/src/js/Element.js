@@ -85,13 +85,12 @@
     var proto = {
         initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Element');
-            for (var namespace in Element.BEHAVIORS) {
-                this[namespace] = new Element.BEHAVIORS[namespace].behavior(this._.node);
-            }
+
+            this.initPlugins();
 
             _instances[this.get('id')] = this;
         },
-    
+
         // returning false from before event prevents default
         destructor: function() {
             YAHOO.log('Element destructor called', 'life', 'Element');
@@ -107,21 +106,6 @@
                     }
                 }
             }
-        },
-
-        addBehavior: function(namespace, behavior, config) {
-            if (this[namespace]) {
-                throw('behavior namespace' + namespace + ' already in use');
-            }
-            this[namespace] = new behavior(config);
-        },
-
-        removeBehavior: function(namespace) {
-            delete this[namespace];
-        },
-
-        hasBehavior: function(namespace) {
-            return namespace in this;
         },
 
         set: function(prop, val) {
@@ -153,7 +137,7 @@
         getStyle: function(prop, val) {
             Y.Dom.getStyle(this._.node, prop);
         },
-        
+
         addClass : function(class) {
             Y.Dom.addClass(this._.node, class);
         },
@@ -168,6 +152,8 @@
     };
 
     YAHOO.lang.extend(Element, Y.Object, proto);
+    YAHOO.lang.augmentProto(Element, YAHOO.plugin.PluginHost);
+
     Y.Element = Element;
     //YAHOO.lang.augmentObject(Element, Y.Object); // add static members
 
