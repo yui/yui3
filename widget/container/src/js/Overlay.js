@@ -72,16 +72,19 @@
         },
 
         destructor : function() {
+            YAHOO.log('destructor called ' + this.toString(), 'life', this.constructor.NAME);
             delete _instances[this.__.node.get('id')];
         },
 
         eraser : function() {
+            YAHOO.log('eraser called ' + this.toString(), 'life', this.constructor.NAME);
             this.__.node.get('node').innerHTML = "";
             this.__.node.removeClass(Overlay.CLASSES.ROOT);
         },
 
         renderer : function() {
             // TODO: move up in heirarchy? Have Widget class mark all nodes
+            YAHOO.log('renderer called ' + this.toString(), 'life', this.constructor.NAME);
             this.__.node.addClass(Overlay.CLASSES.ROOT);
         },
 
