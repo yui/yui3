@@ -27,7 +27,14 @@
 
 #o2 {
     border:1px solid #000;
-    background:#eee;
+    background:#ddd;
+}
+
+#box {
+    position:relative;
+    height:300px;
+    border:1px solid #ccc;
+    background-color:#ffffcc;
 }
 
 .yui-log .life {
@@ -40,11 +47,13 @@
 </style>
 </head>
 <body class="yui-skin-sam">
-    <div id="o1">
-        <em>Overlay 1</em>
-    </div>
-    <div id="o2">
-        <em>Overlay 2</em>
+    <div id="box">
+        <div id="o1">
+            <em>Overlay 1</em>
+        </div>
+        <div id="o2">
+            <em>Overlay 2</em>
+        </div>
     </div>
     <div>
     Overlay1:
@@ -52,7 +61,7 @@
         <button id="show">Show</button>
         <button id="hide">Hide</button>
         <button id="btt">Bring to Top</button>
-        <button id="move">Move (200,200)</button>
+        <button id="move">Move (150,150)</button>
         <button id="erase">Erase</button>
         <button id="destroy">Destroy</button>
     </div>
@@ -70,8 +79,8 @@
             logger.hideSource('LogReader');
         });
 
-        var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
-        var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
+        var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:50, y:50});
+        var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:100, y:100});
 
         myObj2.render();
 
@@ -79,7 +88,7 @@
         Y.Event.on("show", "click", myObj1.show, myObj1, true);
         Y.Event.on("hide", "click", myObj1.hide, myObj1, true);
         Y.Event.on("btt", "click", myObj1.bringToTop, myObj1, true);
-        Y.Event.on("move", "click", function(){myObj1.moveTo(200,200)});
+        Y.Event.on("move", "click", function(){myObj1.moveTo(150,150)});
         Y.Event.on("destroy", "click", myObj1.destroy, myObj1, true);
         Y.Event.on("erase", "click", myObj1.erase, myObj1, true);
     })();
