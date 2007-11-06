@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Object Class</title>
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css">
+
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/event/event-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/logger/logger-min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../widget/container/src/css/overlay.css">
+<script type="text/javascript" src="../util/element/src/js/const.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
+<script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Element.js"></script>
+<script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
+<script type="text/javascript" src="../widget/container/src/js/Overlay.js"></script>
+
+<style>
+#o1 {
+    border:1px solid #000;
+    background:#ccc;
+}
+
+#o2 {
+    border:1px solid #000;
+    background:#eee;
+}
+
+.yui-log .life {
+    background:#cc00cc;
+}
+
+.yui-log .attr {
+    background:#00cc00;
+}
+</style>
+</head>
+<body class="yui-skin-sam">
+    <div id="o1">
+        <em>Overlay 1</em>
+    </div>
+    <div id="o2">
+        <em>Overlay 2</em>
+    </div>
+    <div>
+    Overlay1:
+        <button id="show">Show</button>
+        <button id="hide">Hide</button>
+        <button id="btt">Bring to Top</button>
+        <button id="move">Move (200,200)</button>
+    </div>
+    <script type="text/javascript">
+    (function() {
+        var Y = YAHOO.util;
+        var YW = YAHOO.widget;
+    
+        Y.Event.onDOMReady(function() {
+            var logger = new YW.LogReader(null, {
+                fontSize: '100%',
+                height: Y.Dom.getViewportHeight() * 0.8 + 'px'
+            });
+
+            logger.hideSource('LogReader');
+        });
+
+        var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
+        var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
+
+        myObj1.render();
+        myObj2.render();
+
+        Y.Event.on("show", "click", myObj1.show, myObj1, true);
+        Y.Event.on("hide", "click", myObj1.hide, myObj1, true);
+        Y.Event.on("btt", "click", myObj1.bringToTop, myObj1, true);
+        Y.Event.on("move", "click", function(){myObj1.moveTo(200,200)});
+
+    })();
+    </script>
+</body>
+</html>

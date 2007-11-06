@@ -49,9 +49,9 @@
         'visible' : {
             set: function(val) {
                 if (val) {
-                    Y.Dom.removeClass(this._.node, YUI.CSS.HIDDEN);
+                    Y.Dom.removeClass(this._.node, YUI.CLASSES.HIDDEN);
                 } else {
-                    Y.Dom.addClass(this._.node, YUI.CSS.HIDDEN);
+                    Y.Dom.addClass(this._.node, YUI.CLASSES.HIDDEN);
                 }
             },
             value: true
@@ -59,9 +59,9 @@
         'disabled' : {
             set: function(val) {
                 if (val) {
-                    Y.Dom.addClass(this.get('node'), YUI.CSS.DISABLED);
+                    Y.Dom.addClass(this.get('node'), YUI.CLASSES.DISABLED);
                 } else {
-                    Y.Dom.removeClass(this.get('node'), YUI.CSS.DISABLED);
+                    Y.Dom.removeClass(this.get('node'), YUI.CLASSES.DISABLED);
                 }
             },
             value: false
@@ -152,6 +152,14 @@
 
         getStyle: function(prop, val) {
             Y.Dom.getStyle(this._.node, prop);
+        },
+        
+        addClass : function(class) {
+            Y.Dom.addClass(this._.node, class);
+        },
+
+        removeClass : function(class) {
+            Y.Dom.removeClass(this._.node, class);
         },
 
         toString: function() {

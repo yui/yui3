@@ -51,36 +51,11 @@
         logger.hideSource('LogReader');
     });
 
-    var CustomRenderer = function(widget) {
-        CustomRenderer.superclass.constructor.call(this, widget);
-    }
-
-    YAHOO.lang.extend(CustomRenderer, YW.WidgetRenderer);
-    CustomRenderer.prototype._render = function() {
-        YAHOO.log("renderer", "life", "CustomRenderer");
-    }
-
     var myObj = new YW.Widget('foo');
-    myObj.setRenderer(CustomRenderer);
     myObj.render();
     myObj.show();
     myObj.hide();
     myObj.destroy();
-
-    //console.log(YW.Widget.getByNodeId('foo'));
-    //console.log(myObj);
-    //console.log(Y.Object.getById('bar'));
-    /*
-    myObj.on('idChange', function(e) {
-        YAHOO.log('id changed from: ' + e.prevValue + ' to: ' + e.newValue); 
-    });
-
-    var node = document.createElement('div');
-    myObj.get('node').set('node', node);
-
-    //console.log(Y.Element.getByNodeId(node.id));
-    */
-
 })();
 
 

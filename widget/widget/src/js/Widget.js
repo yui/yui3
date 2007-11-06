@@ -13,6 +13,8 @@
         Widget.superclass.constructor.call(this, attributes);
     }
 
+    Widget.NAME = "Widget";
+
     Widget.CONFIG = {
         'node': {
             set : function(node) {
@@ -45,6 +47,16 @@
                 this._setNodeAttribute('focused', val);
             },
             value: false
+        },
+        'width' : {
+            set : function(val) {
+                this.get('node').setStyle('width', val);
+            }
+        },
+        'height' : {
+            set : function(val) {
+                this.get('node').setStyle('height', val);
+            }
         }
     };
 
@@ -62,7 +74,11 @@
         },
 
         renderer : function() {
-            YAHOO.log('destructor called', 'life', 'Widget');
+            YAHOO.log('renderer called', 'life', 'Widget');
+        },
+
+        eraser : function() {
+            YAHOO.log('eraser called', 'life', 'Widget');
         },
 
         destructor : function() {
@@ -72,6 +88,8 @@
             var id = node.id;
 
             node.destroy();
+            // this.erase()?
+
             delete _instances[id];
         },
 
@@ -82,7 +100,18 @@
                 return false;
             }
             this.renderer();
+            this._.rendered = true;
             this.fireEvent(YUI.Render);
+        },
+
+        erase : function() {
+            var retValue = this.fireEvent(YUI.BeforeErase);
+            if (retValue === false) {
+                return false;
+            }
+            this.eraser();
+            this._.rendered = false;
+            this.fireEvent(YUI.Erase);
         },
 
         hide : function() {
@@ -110,12 +139,12 @@
         },
 
         toString : function() {
-            return 'Widget: ' + this.get('node').get('id');
+            return this.constructor.NAME + this.get('node').get('id');
         },
 
         _setNodeAttribute : function(attr, val) {
             this.__.node.set(attr, val);
-        }
+        },
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
