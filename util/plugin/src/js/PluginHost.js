@@ -36,6 +36,9 @@
         },
 
         applyAdaptor: function(adaptorClass, config) {
+            if (this.hasAdaptor(adaptorClass)) {
+                throw ('adaptor already applied'); // TODO: Get name?
+            }
             this.__.adaptors.push(adaptorClass);
             new adaptorClass(config);
         },
