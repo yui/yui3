@@ -75,11 +75,11 @@
         },
 
         renderer : function() {
-            YAHOO.log('renderer called', 'life', 'Widget');
+            YAHOO.log('abstract renderer called', 'life', 'Widget');
         },
 
         eraser : function() {
-            YAHOO.log('eraser called', 'life', 'Widget');
+            YAHOO.log('abstract eraser called', 'life', 'Widget');
         },
 
         destructor : function() {
@@ -89,7 +89,6 @@
             var id = node.id;
 
             node.destroy();
-            // this.erase()?
 
             delete _instances[id];
         },
@@ -100,17 +99,34 @@
             if (retValue === false) {
                 return false;
             }
-            this.renderer();
+            this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
+            //TODO: Better way to ID renderer class, and the fact that it hasn't been instantiated already
+            if (!this.__.instantiatedRenderer && this.renderer.prototype.render) {
+                this.renderer = new this.renderer(this);
+                this.__.instantiatedRenderer = true;
+            }
+
+            if (this.renderer.render) {
+                this.renderer.render();
+            } else {
+                this.renderer();
+            }
             this._.rendered = true;
             this.fireEvent(YUI.Render);
         },
 
+        /* @final */
         erase : function() {
             var retValue = this.fireEvent(YUI.BeforeErase);
             if (retValue === false) {
                 return false;
             }
-            this.eraser();
+            this.__.node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
+            if (this.renderer.render) {
+                this.renderer.erase();
+	        } else {
+                this.eraser();
+            }
             this._.rendered = false;
             this.fireEvent(YUI.Erase);
         },
@@ -145,7 +161,7 @@
 
         _setNodeAttribute : function(attr, val) {
             this.__.node.set(attr, val);
-        },
+        }
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);

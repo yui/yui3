@@ -1,0 +1,28 @@
+div.yui-module {
+    position:static;
+    background-color:#eee;
+    border:1px solid black;
+    padding:2px;
+}
+
+.yui-module.yui-hidden {
+    display:none;
+}
+
+.yui-module .hd {
+    background-color:#fff;
+    border:1px solid red;
+    margin:2px;
+}
+
+.yui-module .bd {
+    background-color:#fff;
+    border:1px solid blue;
+    margin:2px;
+}
+
+.yui-module .ft {
+    background-color:#fff;
+    border:1px solid green;
+    margin:2px;
+}

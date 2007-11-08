@@ -54,7 +54,7 @@
         },
 
         destroy: function() {
-            var constructor = this.constructor.superclass,
+            var constructor = this.constructor,
                 retVal = this.fireEvent(YUI.BeforeDestroy);
 
             if (retVal === false) { // returning false from beforeEvent cancels TODO: use preventDefault/stopPropagation instead?
