@@ -12,7 +12,7 @@
     Class.CONFIG = {
         destroyed: {
             readOnly: true,
-            value: true,
+            value: false,
             foo: 'foo'
         }
     };
