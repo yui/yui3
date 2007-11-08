@@ -1,0 +1,81 @@
+.yui-module .content {
+background:#E1E2E1;
+border:solid #000;
+border-width:0 2px;
+}
+
+.yui-module .skin i,
+.yui-module .skin b {
+background:url(../img/round_sprite.png) no-repeat;
+_background:url(../img/round_sprite_ie6.png) no-repeat;
+display:block;
+font:0/0 arial;
+height:12px;
+width:12px;
+_position:relative;
+}
+
+.yui-module .skin {
+background-color:#e1e2e1;
+border-top:2px solid #000;
+display:block;
+margin:0 12px 0 12px;
+zoom:1;
+}
+
+.yui-module b.skin {
+border:solid #000;
+border-width:0 0 2px;
+}
+
+.yui-module .skin i {
+margin-left:-12px;
+}
+
+
+.yui-module i.skin i {
+margin-top:-2px;
+}
+
+.yui-module .skin b { 
+background-position:-22px top;
+margin:-12px 0 0 100%;
+margin-right:-12px;
+}
+
+.yui-module b.skin i {
+background-position:left bottom;
+}
+
+.yui-module b.skin b {
+background-position:-22px bottom;
+margin-bottom:-2px;
+}
+
+.skin .hd {
+position:relative;
+top:-10px;
+}
+
+.skin .content, 
+.skin i.skin, 
+.skin b.skin {
+background-color:#ff7400;
+border-color:#ff7400;
+}
+
+.skin i.skin i {
+background-position:-70px top;
+}
+
+.skin i.skin b {
+background-position:-92px top;
+}
+
+.skin b.skin i {
+background-position:-70px bottom;
+}
+
+.skin b.skin b {
+background-position:-92px bottom;
+}
