@@ -95,6 +95,9 @@
 
         /* @final */
         render : function() {
+            if (this.get('destroyed')) {
+                throw('render failed; widget has been destroyed');
+            }
             var retValue = this.fireEvent(YUI.BeforeRender);
             if (retValue === false) {
                 return false;
