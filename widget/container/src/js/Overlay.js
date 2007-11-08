@@ -89,14 +89,14 @@
         },
 
         moveTo : function(x,y) {
-            if (this.fireEvent(Overlay.EVENTS.BEFORE_MOVE, this.get('x'), this.get('y')) !== false) {
+            if (this.fireEvent(Overlay.EVENTS.BEFORE_MOVE, [this.get('x'), this.get('y')]) !== false) {
                 if (YAHOO.lang.isNumber(x)) {
                     this.set('x', x);
                 }
                 if (YAHOO.lang.isNumber(y)) {
                     this.set('y', y);
                 }
-                this.fireEvent(Overlay.EVENTS.MOVE, this.get('x'), this.get('y'));
+                this.fireEvent(Overlay.EVENTS.MOVE, [this.get('x'), this.get('y')]);
             }
         },
 
