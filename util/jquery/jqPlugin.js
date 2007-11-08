@@ -10,6 +10,12 @@
             this.listenBefore(this.get('parent').get('node'), 'visible', this.onBeforeVisibleChange, this, true);
             this.listen(this.get('parent'), 'beforeMove', this.onBeforeMove, this, true);
 
+            this.addOverride(this.get('parent'), 'blur', function() {
+                alert('blur override');
+            });
+            this.addOverride(this.get('parent'), 'focus', function() {
+                alert('focus override');
+            });
         },
         destructor: function() {
             this.removeDrag();

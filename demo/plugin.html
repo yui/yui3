@@ -95,6 +95,8 @@
         <button id="drag2">Draggable</button>
         <button id="show2" disabled>Show</button>
         <button id="hide2">Hide</button>
+        <button id="focus2">Focus</button>
+        <button id="blur2">Blur</button>
         <button id="btt2">Bring to Top</button>
         <button id="move2">Move (300,300)</button>
         <button id="jq2">Add jQuery</button>
@@ -113,8 +115,20 @@
             logger.hideSource('LogReader');
         });
 
-        var myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
-        var myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
+        myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
+        myObj1.blur = function() {
+            alert('Default Blur');
+        };
+        myObj1.focus = function() {
+            alert('Default Focus');
+        };
+        myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
+        myObj2.blur = function() {
+            alert('Default Blur');
+        };
+        myObj2.focus = function() {
+            alert('Default Focus');
+        };
         myObj1.on('render', function() {
             Y.Dom.get('hide1').disabled = false;
             Y.Dom.get('btt1').disabled = false;
@@ -184,11 +198,15 @@
             myObj2.show();
             Y.Dom.get('show2').disabled = true;
             Y.Dom.get('hide2').disabled = false;
+            Y.Dom.get('blur2').disabled = false;
+            Y.Dom.get('focus2').disabled = false;
         }, myObj2, true);
         Y.Event.on("hide2", "click", function() {
             myObj2.hide();
             Y.Dom.get('show2').disabled = false;
             Y.Dom.get('hide2').disabled = true;
+            Y.Dom.get('blur2').disabled = true;
+            Y.Dom.get('focus2').disabled = true;
         }, myObj2, true);
         Y.Event.on("btt2", "click", myObj2.bringToTop, myObj2, true);
         Y.Event.on("move2", "click", function(){myObj2.moveTo(300,300)});
@@ -201,6 +219,12 @@
                 myObj2.removePlugin('jqplugin', jqPlugin);
             }
         });
+        Y.Event.on("focus2", "click", function() {
+            this.focus();
+        }, myObj2, true);
+        Y.Event.on("blur2", "click", function() {
+            this.blur();
+        }, myObj2, true);
     })();
     </script>
 </body>
