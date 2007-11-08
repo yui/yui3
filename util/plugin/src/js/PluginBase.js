@@ -81,9 +81,7 @@
         },
         addOverride: function(obj, method, fn) {
             if (YAHOO.lang.isFunction(obj[method]) && YAHOO.lang.isFunction(fn)) {
-                console.log('Method ' + method + ' found and callback valid..');
                 this._overrides[this._overrides.length] = { method: method, obj: obj, fn: obj[method] };
-                console.log(this._overrides);
                 obj[method] = fn;
             } else {
                 YAHOO.log('Method (' + method + ') does not belong to object', 'error', 'PluginBase');
