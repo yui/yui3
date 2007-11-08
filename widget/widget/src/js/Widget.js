@@ -99,7 +99,7 @@
                 throw('render failed; widget has been destroyed');
             }
             var retValue = this.fireEvent(YUI.BeforeRender);
-            if (retValue === false) {
+            if (retValue === false || this._.rendered) {
                 return false;
             }
             this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
