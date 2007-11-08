@@ -32,6 +32,11 @@
             if (this.hasPlugin(namespace)) {
                 throw('plugin namespace' + namespace + ' already in use');
             }
+            if (!YAHOO.lang.isObject(config)) {
+                config = {};
+            }
+            config.parent = this;
+            
             this[namespace] = new pluginClass(config);
         },
 
@@ -40,6 +45,10 @@
                 throw ('adaptor already applied'); // TODO: Get name?
             }
             this.__.adaptors.push(adaptorClass);
+            if (!YAHOO.lang.isObject(config)) {
+                config = {};
+            }
+            config.parent = this;
             new adaptorClass(config);
         },
 
