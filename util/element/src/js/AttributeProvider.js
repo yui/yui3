@@ -189,11 +189,17 @@
             attributes = attributes || {};
             var config;
             for (var attr in configs) {
-                if ( YAHOO.lang.hasOwnProperty(configs, attr) ) {
-                    config = configs[attr];
+                var attrObj = configs[attr];
+                var clone = {};
+                for (i in attrObj) { // copy to break ref
+                    clone[i] = attrObj[i]; 
+                }       
+                
+                //if ( YAHOO.lang.hasOwnProperty(configs, attr) ) {
+                    config = clone;
                     config.value = (attributes[attr] !== undefined) ? attributes[attr] : config.value; // initialize value to user or default
-                    this.setAttributeConfig(attr, configs[attr], init);
-                }
+                    this.setAttributeConfig(attr, clone, init);
+               // }
             }
 
             //return; // NOTE: temp return
