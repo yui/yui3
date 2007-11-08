@@ -24,7 +24,7 @@
     Module.CLASSES = {
         ROOT : YUI.PREFIX + Module.NAME.toLowerCase(),
         HD : "hd",
-        BD : "hd",
+        BD : "bd",
         FT : "ft"
     };
 
@@ -91,7 +91,7 @@
                 this.footer = ft;
                 this.fireEvent(ME.FT_CHANGE);
             }
-        },
+        }
     };
 
     YAHOO.lang.extend(Module, YAHOO.widget.Widget, proto);
@@ -127,24 +127,28 @@
         },
 
         renderHeader : function() {
+            this.headerEl = Y.Dom.getElementsByClassName(Module.CLASSES.HD, 'div', this.node)[0];
             if (!this.headerEl) {
                this.createHeader();
+               this._addContent(this.headerEl, this.module.header);
             }
-            this._addContent(this.headerEl, this.module.header);
         },
 
         renderBody : function() {
+            this.bodyEl = Y.Dom.getElementsByClassName(Module.CLASSES.BD, 'div', this.node)[0];
             if (!this.bodyEl) {
                this.createBody();
+               this._addContent(this.bodyEl, this.module.body);
             }
-            this._addContent(this.bodyEl, this.module.body);
         },
 
         renderFooter : function() {
+            this.footerEl = Y.Dom.getElementsByClassName(Module.CLASSES.FT, 'div', this.node)[0];
             if (!this.footerEl) {
+                
                this.createFooter();
+               this._addContent(this.footerEl, this.module.footer);
             }
-            this._addContent(this.footerEl, this.module.footer);
         },
 
         erase : function() {
