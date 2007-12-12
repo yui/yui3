@@ -68,18 +68,14 @@
 
     // public 
     var proto = {
+
+        viewClass : WidgetView,
+        controllerClass : WidgetController,
+
         initializer : function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
             this.initPlugins();
             _instances[this.__.node.get(YUI.ID)] = this;
-        },
-
-        renderer : function() {
-            YAHOO.log('abstract renderer called', 'life', 'Widget');
-        },
-
-        eraser : function() {
-            YAHOO.log('abstract eraser called', 'life', 'Widget');
         },
 
         destructor : function() {
@@ -98,22 +94,24 @@
             if (this.get('destroyed')) {
                 throw('render failed; widget has been destroyed');
             }
+
             var retValue = this.fireEvent(YUI.BeforeRender);
             if (retValue === false || this._.rendered) {
                 return false;
             }
-            this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
-            //TODO: Better way to ID renderer class, and the fact that it hasn't been instantiated already
-            if (!this.__.instantiatedRenderer && this.renderer.prototype.render) {
-                this.renderer = new this.renderer(this);
-                this.__.instantiatedRenderer = true;
-            }
 
-            if (this.renderer.render) {
-                this.renderer.render();
-            } else {
-                this.renderer();
+            this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
+
+            if (!this._.mvcInst) {
+                this.view = new this.viewClass(this);
+
+                if (!YAHOO.lang.isFunction(this.view.render)) {
+                    throw new TypeError("View needs to implement a render() method");
+                }
+                this._.mvcInst = true;
             }
+            this.view.render();
+
             this._.rendered = true;
             this.fireEvent(YUI.Render);
         },
@@ -125,10 +123,8 @@
                 return false;
             }
             this.__.node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
-            if (this.renderer.render) {
-                this.renderer.erase();
-	        } else {
-                this.eraser();
+            if (this.view.erase) {
+                this.view.erase();
             }
             this._.rendered = false;
             this.fireEvent(YUI.Erase);
@@ -168,8 +164,48 @@
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
+
     //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
+
     YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
+
+    function WidgetView(widget) {
+        this.widget = widget;
+        var c = new this.widget.controllerClass(this.widget, this);
+    }
+
+    WidgetView.prototype = {
+        render : function() {
+            /* Abstract, Implement me for intial render */
+        },
+
+        update : function() {
+            /* Abstract, Implement me to refresh the root nodes you just added */
+        },
+
+        super : function() {
+            this.constructor.superclass.constructor.apply(this, arguments);
+        }
+    };
+
+    function WidgetController(widget, view) {
+        this.widget = widget;
+        this.view = view;
+        this.widget.subscribe("render", this.apply, this, true);
+    }
+
+    WidgetController.prototype = {
+        apply : function() {
+            /* Abstract, Implement me to apply listeners */
+        },
+
+        super : function() {
+            this.constructor.superclass.constructor.apply(this, arguments);
+        }
+    };
+
     YAHOO.widget.Widget = Widget;
+    YAHOO.widget.WidgetView = WidgetView;
+    YAHOO.widget.WidgetController = WidgetController;
 
 })();
