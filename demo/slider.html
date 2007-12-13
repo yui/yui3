@@ -8,10 +8,10 @@
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/yahoo/yahoo-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dom/dom-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/event/event-min.js"></script>
-        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script>
+<!--        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script> -->
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/logger/logger-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dragdrop/dragdrop-min.js"></script>
-        
+
         <script type="text/javascript" src="../util/element/src/js/const.js"></script>
         <script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
         <script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
@@ -26,45 +26,114 @@
             body {
                 background-color:#ccc;
             }
+
             .yui-slider {
                 position:relative;
-            }
-            
-            .yui-sliderthumb {
-                position:absolute;
-            }
-            
-            #sliderbg {
-                width:422px;
+
                 border-width:1px;
                 border-color:#999 #eee #eee #999;
                 border-style:solid;
                 background-color:#aaa;
-                height:20px;
-                top:50px;
-                left:50px;
+                
+                margin:10px;
             }
+            
+            .yui-sliderthumb {
+                position:absolute;
 
-            #sliderthumb {
-                width:20px;
                 border-width:1px;
                 border-color:#eee #999 #999 #eee;
                 border-style:solid;
                 background-color:#ddd;
-                height:18px;
+            }
+
+            #h {
+                position:absolute;
+                top:50px; left:50px;
+                text-align:center;
+            }
+
+            #v {
+                position:absolute;
+                top:150px; left:50px;
+                text-align:center;
+            }
+
+            #r {
+                position:absolute;
+                top:150px; left:150px;
+                text-align:center;
+            }
+
+            .val {
+                background-color:#fff;
+                border:1px solid black;
+                padding:2px;
+            }
+
+            #hbg {
+                width:422px; height:22px;
+            }
+
+            #hthumb {
+                width:20px; height:20px;
+            }
+            
+            #vbg {
+                width:22px; height:422px;
+            }
+
+            #vthumb {
+                width:20px; height:20px;
+            }
+
+            #rbg {
+                width:222px; height:222px;
+            }
+
+            #rthumb {
+                width:20px; height:20px;
             }
         </style>
         <script type="text/javascript">
-            var slider;
+            var hSlider;
+            var vSlider;
+            var rSlider;
+
             YAHOO.util.Event.onDOMReady(function() {
-                slider = YAHOO.widget.Slider.getHorizSlider("sliderbg", "sliderthumb", 0, 400, 20);
-                slider.render();
+                
+                hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 0);
+                hSlider.render();
+
+                vSlider = YAHOO.widget.Slider.getVertSlider("vbg", "vthumb", 0, 400, 0);
+                vSlider.render();
+
+
+                rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 0);
+                rSlider.render();
             });
         </script>
     </head>
     <body class="yui-skin-sam">
-        <div id="sliderbg" tabindex="-1">
-           <div id="sliderthumb"><img src="sliderthumbimg" /></div>
+        <div id="h">
+            <span id="hv" class="val">Value</span>
+            <div id="hbg" tabindex="-1">
+               <div id="hthumb"></div>
+            </div>
+        </div>
+        
+        <div id="v">
+            <span id="vv" class="val">Value</span>
+            <div id="vbg" tabindex="-1">
+               <div id="vthumb"></div>
+            </div>
+        </div>
+
+        <div id="r">
+            <span id="rv" class="val">Value</span>
+            <div id="rbg" tabindex="-1">
+               <div id="rthumb"></div>
+            </div>
         </div>
     </body>
 </html>
