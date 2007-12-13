@@ -199,7 +199,7 @@
     Lang.extend(SliderThumb, YAHOO.widget.Widget, widgetProto);
 
     function SliderThumbView(widget) {
-        this.super(widget);
+        this.constructor.superclass.constructor.apply(this, arguments);
     }
 
     var viewProto = {
@@ -494,7 +494,7 @@
     Lang.extend(SliderThumbView, YAHOO.widget.WidgetView, viewProto);
 
     function SliderThumbController(widget, view) {
-        this.super(widget, view);
+        this.constructor.superclass.constructor.apply(this, arguments);
     }
 
     var controllerProto = {

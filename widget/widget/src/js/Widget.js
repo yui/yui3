@@ -181,10 +181,6 @@
 
         update : function() {
             /* Abstract, Implement me to refresh the root nodes you just added */
-        },
-
-        super : function() {
-            this.constructor.superclass.constructor.apply(this, arguments);
         }
     };
 
@@ -197,10 +193,6 @@
     WidgetController.prototype = {
         apply : function() {
             /* Abstract, Implement me to apply listeners */
-        },
-
-        super : function() {
-            this.constructor.superclass.constructor.apply(this, arguments);
         }
     };
 

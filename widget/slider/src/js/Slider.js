@@ -297,7 +297,7 @@
     };
 
     function SliderView(widget) {
-        this.super(widget);
+        this.constructor.superclass.constructor.apply(this, arguments);
         this.thumb = widget.getThumb();
     }
 
@@ -364,7 +364,7 @@
     Lang.extend(SliderView, YAHOO.widget.WidgetView, viewProto);
 
     function SliderController(widget, view) {
-        this.super(widget, view);
+        this.constructor.superclass.constructor.apply(this, arguments);
         this.thumb = this.widget.getThumb();
     }
 
