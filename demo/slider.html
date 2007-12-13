@@ -8,7 +8,7 @@
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/yahoo/yahoo-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dom/dom-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/event/event-min.js"></script>
-        <!-- <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script> -->
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/logger/logger-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dragdrop/dragdrop-min.js"></script>
 
@@ -47,53 +47,31 @@
                 background-color:#ddd;
             }
 
-            #h {
+            .slidercontainer {
                 position:absolute;
-                top:50px; left:50px;
                 text-align:center;
             }
-
-            #v {
-                position:absolute;
-                top:150px; left:50px;
-                text-align:center;
-            }
-
-            #r {
-                position:absolute;
-                top:150px; left:150px;
-                text-align:center;
-            }
-
+            
             .val {
+                font-family:sans-serif;
                 background-color:#fff;
                 border:1px solid black;
                 padding:2px;
             }
 
-            #hbg {
-                width:422px; height:22px;
-            }
-
-            #hthumb {
-                width:20px; height:20px;
-            }
+            #h { top:50px; left:50px; }
+            #v { top:150px; left:50px; }
+            #r { top:150px; left:150px; }
             
-            #vbg {
-                width:22px; height:422px;
-            }
+            #hbg { width:422px; height:22px;}
+            #hthumb { width:20px; height:20px;}
+            
+            #vbg { width:22px; height:422px; }
+            #vthumb { width:20px; height:20px; }
 
-            #vthumb {
-                width:20px; height:20px;
-            }
+            #rbg { width:222px; height:222px; }
+            #rthumb { width:20px; height:20px; }
 
-            #rbg {
-                width:222px; height:222px;
-            }
-
-            #rthumb {
-                width:20px; height:20px;
-            }
         </style>
         <script type="text/javascript">
             var hSlider;
@@ -102,60 +80,52 @@
 
             YAHOO.util.Event.onDOMReady(function() {
 
+                function handle(val, div) {
+                    YAHOO.util.Dom.get(div).innerHTML = this.getValue();                    
+                }
+
                 hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 20);
+                hSlider.set("animate", false);
+                hSlider.subscribe("render", handle, "hv");
+                hSlider.subscribe("change", handle, "hv");
+
                 hSlider.render();
 
-                hSlider.subscribe("change", function() {
-                    YAHOO.util.Dom.get("hv").innerHTML = this.getValue();
-                });
-
                 vSlider = YAHOO.widget.Slider.getVertSlider("vbg", "vthumb", 0, 400, 0);
+
+                vSlider.subscribe("render", handle, "vv");
+                vSlider.subscribe("change", handle, "vv");
+
                 vSlider.render();
 
-                vSlider.subscribe("change", function() {
-                    YAHOO.util.Dom.get("vv").innerHTML = this.getValue();
-                });
+                rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 10);
+                rSlider.set("animate", false);
+                rSlider.set("keyIncrement", 10);
 
-                rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 20);
+                rSlider.subscribe("render", handle, "rv");
+                rSlider.subscribe("change", handle, "rv");
+
                 rSlider.render();
-                
-                rSlider.subscribe("change", function() {
-                    YAHOO.util.Dom.get("rv").innerHTML = this.getValue();
-                });
-
-/*
-                YAHOO.util.Event.on("hv", "click", function(){
-                    this.innerHTML = hSlider.getValue();
-                });
-
-                YAHOO.util.Event.on("vv", "click", function(){
-                    this.innerHTML = vSlider.getValue();
-                });
-
-                YAHOO.util.Event.on("rv", "click", function(){
-                    this.innerHTML = rSlider.getValue();
-                });
-*/
             });
         </script>
     </head>
     <body class="yui-skin-sam">
-        <div id="h">
-            <span id="hv" class="val">Value</span>
+        <div id="h" class="slidercontainer">
+            <span id="hv" class="val"></span>
             <div id="hbg" tabindex="-1">
                <div id="hthumb"></div>
             </div>
         </div>
         
-        <div id="v">
-            <span id="vv" class="val">Value</span>
+        <div id="v" class="slidercontainer">
+            <span id="vv" class="val"></span>
             <div id="vbg" tabindex="-1">
                <div id="vthumb"></div>
             </div>
         </div>
 
-        <div id="r">
-            <span id="rv" class="val">Value</span>
+        <div id="r" class="slidercontainer">
+            <span id="rv" class="val"></span>
             <div id="rbg" tabindex="-1">
                <div id="rthumb"></div>
             </div>

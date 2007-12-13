@@ -67,16 +67,10 @@
 
         initializer : function(attributes) {
             if (this.get("group")) {
-                this.initProperties();
                 this.initThumb();
             } else {
                 throw "Required Attributes missing";
             }
-        },
-
-        initProperties : function() {
-            this.valueChangeSource = 0;
-            this._silent = false;
         },
 
         initThumb: function() {
@@ -170,10 +164,7 @@
             }
         },
 
-        setValue: function(val, skipAnim, force, silent) {
-//            this._silent = silent;
-            this.valueChangeSource = Slider.SOURCE_SET_VALUE;
-
+        setValue: function(val, force, silent) {
             if ( this.isLocked() && !force ) {
                 return false;
             }
@@ -190,17 +181,15 @@
             }
         },
 
-        setRegionValue: function(valX, valY, skipAnim, force, silent) {
-//            this._silent = silent;
-            this.valueChangeSource = Slider.SOURCE_SET_VALUE;
-
+        setRegionValue: function(valX, valY, force, silent) {
             if (this.isLocked() && !force) {
                 return false;
             }
+
             if ( isNaN(valX) && isNaN(valY)) {
                 return false;
             }
-            
+
             if (valX || valX === 0) {
                 this.getThumb().set("x", valX, silent);
             }
@@ -211,20 +200,15 @@
 
         _slideStart: function() {
             if (!this._sliding) {
-                if (!this._silent) {
-                    this.fireEvent("slideStart");
-                }
+                this.fireEvent("slideStart");
                 this._sliding = true;
             }
         },
 
         _slideEnd: function() {
             if (this._sliding && this.moveComplete) {
-                if (!this._silent) {
-                    this.fireEvent("slideEnd");
-                }
+                this.fireEvent("slideEnd");
                 this._sliding = false;
-                this._silent = false;
                 this.moveComplete = false;
             }
         },
@@ -250,18 +234,14 @@
                     var newY = t.getYValue();
 
                     if (newX != this.previousX || newY != this.previousY) {
-                        if (!this._silent) {
-                            this.fireEvent("change", { x: newX, y: newY });
-                        }
+                        this.fireEvent("change", { x: newX, y: newY });
                     }
                     this.previousX = newX;
                     this.previousY = newY;
                 } else {
                     var newVal = t.getValue();
                     if (newVal != this.previousVal) {
-                        if (!this._silent) {
-                            this.fireEvent("change", newVal);
-                        }
+                        this.fireEvent("change", newVal);
                     }
                     this.previousVal = newVal;
                 }
@@ -270,8 +250,6 @@
         },
 
         focus: function() {
-            this.valueChangeSource = Slider.SOURCE_UI_EVENT;
-
             // Discuss
             this.view.focus();
 
@@ -285,9 +263,6 @@
     };
 
     Lang.extend(Slider, YAHOO.widget.Widget, widgetProto);
-
-    Slider.SOURCE_UI_EVENT = 1;
-    Slider.SOURCE_SET_VALUE = 2;
 
     Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
         var thumb = new YAHOO.widget.SliderThumb(thumbId, { 
@@ -448,9 +423,9 @@
         onEndMove: function() {
             var val = this.thumb.view.getValue();
             if (this.thumb._isRegion) {
-                this.widget.setRegionValue(val[0], val[1], false, false, true);
+                this.widget.setRegionValue(val[0], val[1], false, true);
             } else {
-                this.widget.setValue(val, false, false, true);
+                this.widget.setValue(val, false, true);
             }
         },
 
