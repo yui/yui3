@@ -171,7 +171,7 @@
         },
 
         setValue: function(val, skipAnim, force, silent) {
-            this._silent = silent;
+//            this._silent = silent;
             this.valueChangeSource = Slider.SOURCE_SET_VALUE;
 
             if ( this.isLocked() && !force ) {
@@ -191,7 +191,7 @@
         },
 
         setRegionValue: function(valX, valY, skipAnim, force, silent) {
-            this._silent = silent;
+//            this._silent = silent;
             this.valueChangeSource = Slider.SOURCE_SET_VALUE;
 
             if (this.isLocked() && !force) {
@@ -234,7 +234,6 @@
             this.moveComplete = true;
 
             this.fireEvent("endMove");
-
             this.fireEvents();
         },
 

@@ -105,12 +105,25 @@
                 hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 20);
                 hSlider.render();
 
+                hSlider.subscribe("change", function() {
+                    YAHOO.util.Dom.get("hv").innerHTML = this.getValue();
+                });
+
                 vSlider = YAHOO.widget.Slider.getVertSlider("vbg", "vthumb", 0, 400, 0);
                 vSlider.render();
+
+                vSlider.subscribe("change", function() {
+                    YAHOO.util.Dom.get("vv").innerHTML = this.getValue();
+                });
 
                 rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 20);
                 rSlider.render();
                 
+                rSlider.subscribe("change", function() {
+                    YAHOO.util.Dom.get("rv").innerHTML = this.getValue();
+                });
+
+/*
                 YAHOO.util.Event.on("hv", "click", function(){
                     this.innerHTML = hSlider.getValue();
                 });
@@ -122,6 +135,7 @@
                 YAHOO.util.Event.on("rv", "click", function(){
                     this.innerHTML = rSlider.getValue();
                 });
+*/
             });
         </script>
     </head>
