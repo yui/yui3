@@ -8,7 +8,7 @@
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/yahoo/yahoo-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dom/dom-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/event/event-min.js"></script>
-<!--        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script> -->
+        <!-- <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/animation/animation-min.js"></script> -->
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/logger/logger-min.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.0/build/dragdrop/dragdrop-min.js"></script>
 
@@ -101,16 +101,27 @@
             var rSlider;
 
             YAHOO.util.Event.onDOMReady(function() {
-                
-                hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 0);
+
+                hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 20);
                 hSlider.render();
 
                 vSlider = YAHOO.widget.Slider.getVertSlider("vbg", "vthumb", 0, 400, 0);
                 vSlider.render();
 
-
-                rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 0);
+                rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 20);
                 rSlider.render();
+                
+                YAHOO.util.Event.on("hv", "click", function(){
+                    this.innerHTML = hSlider.getValue();
+                });
+
+                YAHOO.util.Event.on("vv", "click", function(){
+                    this.innerHTML = vSlider.getValue();
+                });
+
+                YAHOO.util.Event.on("rv", "click", function(){
+                    this.innerHTML = rSlider.getValue();
+                });
             });
         </script>
     </head>

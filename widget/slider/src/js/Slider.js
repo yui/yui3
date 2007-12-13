@@ -232,6 +232,9 @@
         endMove: function () {
             this.unlock();
             this.moveComplete = true;
+
+            this.fireEvent("endMove");
+
             this.fireEvents();
         },
 
@@ -241,8 +244,6 @@
             if (!thumbEvent) {
                 this.view.cachePosition();
             }
-
-            this.fireEvent("endMove");
 
             if (!this.isLocked()) {
                 if (t._isRegion) {
@@ -271,6 +272,8 @@
 
         focus: function() {
             this.valueChangeSource = Slider.SOURCE_UI_EVENT;
+
+            // Discuss
             this.view.focus();
 
             if (this.isLocked()) {
@@ -280,7 +283,6 @@
                 return true;
             }
         }
-       
     };
 
     Lang.extend(Slider, YAHOO.widget.Widget, widgetProto);
@@ -464,7 +466,7 @@
                 var y = YAHOO.util.Event.getPageY(e);
                 this.widget.focus();
 
-                // Set Thumb XY instead of moveThumb forcing view update? Perf?
+                // Set Thumb XY forcing view update instead of moveThumb? Perf?
                 this.thumb.view.moveThumb(x, y);
             }
         },

@@ -175,31 +175,6 @@
             return this.get("maxY") - this.get("minY");
         },
 
-        getXRatio: function(x) {
-            if (Lang.isUndefined(x)) {
-                x = this.getXValue();                
-            }
-
-            var r = this.getXRange();
-            if (r === 0) {
-                return 0;
-            } else {
-                return x/r;
-            }
-        },
-
-        getYRatio: function(y) {
-            if (Lang.isUndefined(y)) {
-                y = this.getYValue();                
-            }
-            var r = this.getYRange();
-            if (r === 0) {
-                return 0;
-            } else {
-                return y/r;
-            }
-        },
-
         getTickPause : function() {
             var ticks = this.get("tickSize");
             if (ticks > 0) {
@@ -266,10 +241,6 @@
             this._dd.scroll = false;
         },
 
-        getParentRegion : function() {
-            return Dom.getRegion(this.getParentId());
-        },
-
         getOffsetFromParent: function(parentPos) {
 
             var thumbEl = this.getThumbEl();
@@ -278,7 +249,7 @@
             if (!this.deltaOffset) {
 
                 var thumbPos = Dom.getXY(thumbEl);
-                var parentPos = parentPos || Dom.getXY(this.getParentId());
+                var parentPos = parentPos || Dom.getXY(this.getParentEl());
 
                 offset = [ (thumbPos[0] - parentPos[0]), (thumbPos[1] - parentPos[1]) ];
 
@@ -319,14 +290,6 @@
         },
 
         getYValue : function() {
-            /*
-            var y = this.getYOffset();
-
-            var range = Dom.get(this.getParentId()).offsetHeight - this.getThumbEl().offsetHeight;
-            var valRange = this.widget.getYRange();
-            var val = (y * valRange)/range; 
-            return val;
-            */
             var offset = this.getYOffset();
             var val = Math.round(offset/this.getYScale());
             return val;
@@ -343,7 +306,7 @@
         getXScale : function() {
             var range = this.widget.getXRange();
             if (range > 0) {
-                var uirange = Dom.get(this.getParentId()).offsetWidth - this.getThumbEl().offsetWidth;
+                var uirange = this.getParentEl().offsetWidth - this.getThumbEl().offsetWidth;
                 return Math.round(uirange/range);
             } else {
                 return 0;
@@ -353,7 +316,7 @@
         getYScale : function() {
             var range = this.widget.getYRange();
             if (range > 0) {
-                var uirange = Dom.get(this.getParentId()).offsetHeight - this.getThumbEl().offsetHeight;
+                var uirange = this.getParentEl().offsetHeight - this.getThumbEl().offsetHeight;
                 return Math.round(uirange/range);
             } else {
                 return 0;
@@ -374,23 +337,14 @@
             var diff = this.widget.getXValue() - this.widget.get("minX");
             var offset = diff * this.getXScale() + this.centerPoint.x;
 
-            var parentOffsetX = Dom.getXY(this.getParentId())[0];
+            var parentOffsetX = Dom.getXY(this.getParentEl())[0];
             return parentOffsetX + offset;
         },
 
         getOffsetForY : function(y) {
-            /*
-            var ratio = this.widget.getYRatio(y);
-            var size = Dom.get(this.getParentId()).offsetHeight - this.getThumbEl().offsetHeight;
-            var offset = Math.round(ratio*size) + this.centerPoint.y;
-            
-            var parentOffsetY = Dom.getXY(this.getParentId())[1];
-            return parentOffsetY + offset;
-            */
-
             var diff = this.widget.getYValue() - this.widget.get("minY");
             var offset = diff * this.getYScale() + this.centerPoint.x;
-            var parentOffsetY = Dom.getXY(this.getParentId())[1];
+            var parentOffsetY = Dom.getXY(this.getParentEl())[1];
             return parentOffsetY + offset;
         },
 
@@ -529,8 +483,8 @@
             return this.widget.get('node').get('node');
         },
 
-        getParentId : function() {
-            return this.widget.get('group');
+        getParentEl : function() {
+            return this.widget.parent.get('node').get('node');
         },
 
         centerPoint : null,
