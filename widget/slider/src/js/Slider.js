@@ -413,14 +413,6 @@
             this.widget.subscribe("lockedChange", this.onLockChange, this, true);
         },
 
-        onLockChange: function() {
-            if (this.get("locked")) {
-                this.view._dd.lock();
-            } else {
-                this.view._dd.unlock();
-            }
-        },
-
         sync: function() {
             var val = this.thumb.view.getValue();
             if (this.thumb._isRegion) {
@@ -474,6 +466,14 @@
         onThumbMouseUp: function(e) {
             if (!this.widget.isLocked() && !this.widget.moveComplete) {
                 this.widget.endMove();
+            }
+        },
+
+        onLockChange: function() {
+            if (this.get("locked")) {
+                this.view._dd.lock();
+            } else {
+                this.view._dd.unlock();
             }
         },
 
