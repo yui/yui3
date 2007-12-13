@@ -234,16 +234,17 @@
                     var newY = t.getYValue();
 
                     if (newX != this.previousX || newY != this.previousY) {
-                        this.fireEvent("change", { x: newX, y: newY });
+                      this.fireEvent("change", { x: newX, y: newY });
                     }
+
                     this.previousX = newX;
                     this.previousY = newY;
                 } else {
                     var newVal = t.getValue();
-                    if (newVal != this.previousVal) {
+                      if (newVal != this.previousVal) {
                         this.fireEvent("change", newVal);
-                    }
-                    this.previousVal = newVal;
+                      }
+                      this.previousVal = newVal;
                 }
                 this._slideEnd();
             }
@@ -395,7 +396,7 @@
             sDD.onDrag = function(e) {c.onBackgroundDrag(e);};
             sDD.onMouseDown = function(e) {c.onBackgroundMouseDown(e);};
 
-            this.widget.subscribe("endMove", this.onEndMove, this, true);            
+            this.widget.subscribe("endMove", this.sync, this, true);            
         },
 
         applyThumbDragDropListeners : function() {
@@ -420,7 +421,7 @@
             }
         },
 
-        onEndMove: function() {
+        sync: function() {
             var val = this.thumb.view.getValue();
             if (this.thumb._isRegion) {
                 this.widget.setRegionValue(val[0], val[1], false, true);
@@ -439,8 +440,6 @@
                 var x = YAHOO.util.Event.getPageX(e);
                 var y = YAHOO.util.Event.getPageY(e);
                 this.widget.focus();
-
-                // Set Thumb XY forcing view update instead of moveThumb? Perf?
                 this.thumb.view.moveThumb(x, y);
             }
         },
@@ -449,9 +448,7 @@
             if (!this.widget.isLocked()) {
                 var x = YAHOO.util.Event.getPageX(e);
                 var y = YAHOO.util.Event.getPageY(e);
-
-                // Set Thumb XY instead of moveThumb forcing view update? Perf?
-                this.thumb.view.moveThumb(x, y, true, true);
+                this.thumb.view.moveThumb(x, y);
             }
         },
 
@@ -470,7 +467,8 @@
         },
 
         onThumbDrag : function(e) {
-            this.widget.fireEvents(true); 
+            this.sync();
+            this.widget.fireEvents(true);
         },
 
         onThumbMouseUp: function(e) {
