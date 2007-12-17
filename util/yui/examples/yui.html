@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script src="../../build/yui/yui-debug.js" type="text/javascript"></script>
+<style type="text/css"> #linkContainer { position: relative; padding: 10px; border: 1px solid #333333; height: 300px; width: 150px; } </style>
+<script type="text/javascript">
+
+////////////////////////////////////////////////////////////////////////////
+
+(function() {
+
+    var Mod = function(YAHOO) {
+        YAHOO.example.B = function() {
+            this.b = "b";
+        };
+        console.log('plugging B ' + YAHOO.index);
+        YAHOO.extend(YAHOO.example.B, YAHOO.example.A);
+    };
+
+    YUI.add("b", "example", Mod, "3.0.0");
+
+})();
+
+////////////////////////////////////////////////////////////////////////////
+
+(function() {
+
+    var Mod = function(YAHOO) {
+
+        YAHOO.example.A = function() {
+            this.a = "a"; this.b = "a"; this.c = "a"; 
+            // merge the prototype // wonder if this technique would speed inheritance since it // would eliminate lookups in the prototype chain.
+            //YUI.augment(this, A.prototype);
+        };
+
+        YAHOO.example.A.prototype = {
+            d: function() { return "foo"; },
+            toString: function() { return [this.a, this.b, this.c, this.d].join(', '); }
+        };
+
+        console.log('plugging A ' + YAHOO.index);
+    };
+
+    YUI.add("a", "example", Mod, "3.0.0");
+
+})();
+
+////////////////////////////////////////////////////////////////////////////
+
+(function() {
+
+    var Mod = function(YAHOO) {
+
+        YAHOO.example.C = function() {
+            this.a = "c"; this.b = "c"; this.c = "c";
+        };
+
+        console.log('plugging C ' + YAHOO.index);
+    };
+
+    YUI.add("c", "example", Mod, "3.0.0");
+
+})();
+
+
+////////////////////////////////////////////////////////////////////////////
+
+(function() {
+
+    // YUI.use('b', 'a'); // order matters in stating deps unless add informs about deps
+    YUI.use('a', 'b');
+
+    var y1 = YUI().use('a', 'c');
+
+    var b = new YUI.example.B();
+
+    // shouldn't work
+    // var c = new YUI.example.C();
+
+    // shouldn't work
+    // var b = new y1.example.B();
+
+    var a1 = new YUI.example.A();
+    a1.b = "a1 change";
+
+    var a2 = new y1.example.A();
+    a2.c = "a2 change";
+
+    // add a new version of A, change a prototype function
+    (function() {
+
+        var Mod = function(YAHOO) {
+
+            YAHOO.example.A = function() {
+                this.a = "a"; this.b = "a"; this.c = "a"; 
+                // merge the prototype // wonder if this technique would speed inheritance since it // would eliminate lookups in the prototype chain.
+                //YUI.augment(this, A.prototype);
+            };
+
+            YAHOO.example.A.prototype = {
+                d: function() { return "bar"; },
+                toString: function() { return [this.a, this.b, this.c, this.d].join(', '); }
+            };
+
+            console.log('plugging A ' + YAHOO.index);
+        };
+
+        YUI.add("a", "example", Mod, "3.0.0");
+
+    })();
+
+    var y2 = YUI().use('a');
+
+    var a3 = new y2.example.A();
+
+    console.log('Prototype protected? ' + a2.d() + ", " + a3.d() + " - " + (a2.d() != a3.d()));
+
+    y2.example.A.prototype.d = function() {
+        return "changed_d";
+    };
+
+    console.log('Prototype protected? ' + a2.d() + ", " + a3.d() + " - " + (a2.d() != a3.d()));
+
+
+})();
+
+</script>
+<body>
+
+<input id="addButton" type="button" value="Add link" />
+
+</body>
+
+</html>
+
