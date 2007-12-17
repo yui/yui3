@@ -8,7 +8,7 @@
         YAHOO.log('constructor called', 'life', 'Widget');
 
         attributes = attributes || {};
-        attributes.node = new Y.Element(node);
+        attributes.node = new Y.Element({ node: Y.Dom.get(node) });
 
         Widget.superclass.constructor.call(this, attributes);
     }
@@ -74,7 +74,7 @@
 
         initializer : function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
-            this.initPlugins();
+            //this.initPlugins();
             _instances[this.__.node.get(YUI.ID)] = this;
         },
 
@@ -167,7 +167,7 @@
 
     //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
 
-    YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
+    //YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
 
     function WidgetView(widget) {
         this.widget = widget;
@@ -181,6 +181,10 @@
 
         update : function() {
             /* Abstract, Implement me to refresh the root nodes you just added */
+        },
+
+        superApply : function() {
+            this.constructor.superclass.constructor.apply(this, arguments);
         }
     };
 
@@ -193,6 +197,10 @@
     WidgetController.prototype = {
         apply : function() {
             /* Abstract, Implement me to apply listeners */
+        },
+
+        superApply : function() {
+            this.constructor.superclass.constructor.apply(this, arguments);
         }
     };
 

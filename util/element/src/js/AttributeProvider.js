@@ -39,7 +39,7 @@
                 return undefined;
             }
             
-            return config.value;
+            return config.getValue();
         },
         
         /**

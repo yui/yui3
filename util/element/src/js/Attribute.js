@@ -75,9 +75,9 @@ YAHOO.util.Attribute.prototype = {
     set: null,
     
     /**
-     * The method to use when setting the attribute's value.
+     * The method to use when getting the attribute's value.
      * The method recieves the new value as the only argument.
-     * @property getter
+     * @property get
      * @type Function
      */
     get: null,
@@ -96,7 +96,7 @@ YAHOO.util.Attribute.prototype = {
      * @return {any} The current value of the attribute.
      */
     getValue: function() {
-        return this.getter ? this.getter.apply(this, arguments) : this.value;
+        return this.get ? this.get.apply(this.owner, arguments) : this.value;
     },
     
     /**
@@ -124,13 +124,6 @@ YAHOO.util.Attribute.prototype = {
             return false; // write not allowed
         }
         
-        // TODO: move below set retVal
-        if (this.validator && !this.validator.call(owner, value) ) {
-            YAHOO.log( 'setValue ' + name + ', ' + value +
-                    ' validation failed', 'error', 'Attribute');
-            return false; // invalid value
-        }
-
         if (!silent) {
             beforeRetVal = owner.fireBeforeChangeEvent(event);
             if (beforeRetVal === false) { // TODO: event.preventDefault
@@ -144,6 +137,12 @@ YAHOO.util.Attribute.prototype = {
             retVal = this.set.call(owner, value);
         }
         
+        if (this.validator && !this.validator.call(owner, value) ) {
+            YAHOO.log( 'setValue ' + name + ', ' + value +
+                    ' validation failed', 'error', 'Attribute');
+            return false; // invalid value
+        }
+
         this.value = (retVal === undefined) ? value : retVal;
         this._written = true;
         
