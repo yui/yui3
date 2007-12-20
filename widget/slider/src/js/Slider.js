@@ -1,8 +1,18 @@
 (function() {
 
-    var Event = YAHOO.util.Event,
-        Dom = YAHOO.util.Dom,
-        Lang = YAHOO.lang;
+    var Y = YAHOO,
+        U = Y.util,
+        E = U.Event,
+        D = U.Dom,
+        L = Y.lang,
+        W = Y.widget;
+
+/*
+    var isStr = L.isString,
+        isObj = L.isObject,
+        isNum = L.isNumber,
+        isBool = L.isBoolean;
+*/
 
     function Slider(node, attributes) {
         this.constructor.superclass.constructor.apply(this, arguments);
@@ -12,10 +22,10 @@
 
     Slider.CONFIG = {
         group : {
-            validator : Lang.isString
+//            validator : isStr
         },
         thumb : {
-            validator : Lang.isObject
+//            validator : isObj
         },
         type : {
             value : "horiz",
@@ -23,54 +33,58 @@
                 return (val == "horiz" || val == "vert" || val == "region");
             }
         },
-        backgroundEnabled : {
-            value:true, 
-            validator : Lang.isBoolean
+        bgEnabled : {
+            value:true,
+//            validator : isBool
         },
-        enableKeys : {
+        keysEnabled : {
             value:true, 
-            validator : Lang.isBoolean
+//            validator : isBool
         },
         keyIncrement : {
             value:20,
-            validator : Lang.isNumber
+//            validator : isNum
         },
         tickPause : {
             value:40,
-            validator : Lang.isNumber
+//            validator : isNum
         },
         animationDuration : {
             value:0.2,
-            validator : Lang.isNumber
+//            validator : isNum
         },
         animate : {
-            value: !Lang.isUndefined(YAHOO.util.Anim),
-            validator : Lang.isBoolean
+            value: !L.isUndefined(U.Anim),
+//            validator : isBool
         },
         locked : {
             value: false,
             set: function(val) {
+                var t = this.getThumb();
                 if (val) {
-                    this.getThumb().lock();
+                    t.lock();
                 } else {
-                    this.getThumb().unlock();
+                    t.unlock();
                 }
-            },
-            validator : Lang.isBoolean
+            }
+//            validator : isBool
         }
     };
 
-    var widgetProto = {
+    L.extend(Slider, W.Widget, {
 
         viewClass : SliderView,
         controllerClass : SliderController,
 
-        initializer : function(attributes) {
+        initializer : function(attr) {
             if (this.get("group")) {
                 this.initThumb();
-            } else {
+            } 
+/*          
+            else {
                 throw "Required Attributes missing";
             }
+*/
         },
 
         initThumb: function() {
@@ -108,59 +122,27 @@
             return this.getThumb().getYValue();
         },
 
-        decrementXValue : function() {
-            var newX = this.getXValue() - this.get("keyIncrement");
-            if (this.getThumb()._isHoriz) {
-                this.setValue(newX);
-            } else if (this.getThumb()._isRegion) {
-                this.setRegionValue(newX, null);
-            }
-        },
-
-        decrementYValue : function() {
-            var newY = this.getYValue() - this.get("keyIncrement");
-            if (this.getThumb()._isVert) {
-                this.setValue(newY);
-            } else if (this.getThumb()._isRegion) {
-                this.setRegionValue(null, newY);
-            }
-        },
-
-        incrementXValue : function() {
-            var newX = this.getXValue() + this.get("keyIncrement");
-            if (this.getThumb()._isHoriz) {
-                this.setValue(newX);
-            } else if (this.getThumb()._isRegion) {
-                this.setRegionValue(newX, null);
-            }
-        },
-
-        incrementYValue : function() {
-            var newY = this.getYValue() + this.get("keyIncrement");
-            if (this.getThumb()._isVert) {
-                this.setValue(newY);
-            } else if (this.getThumb()._isRegion) {
-                this.setRegionValue(null, newY);
-            }
-        },
-
-        setValueToMin : function() {        
-            if (this.getThumb()._isHoriz) {
-                this.setValue(this.getThumb().get("minX"));
-            } else if (this.getThumb()._isVert) {
-                this.setValue(this.getThumb().get("minY"));
-            } else {
-                this.setRegionValue(this.getThumb().get("minX"), this.getThumb().get("minY"));
-            }
+        setValueToMin : function() {
+            this._setValToLimit(false);
         },
 
         setValueToMax : function() {
-            if (this.getThumb()._isHoriz) {
-                this.setValue(this.getThumb().get("maxX"));
-            } else if (this.getThumb()._isVert) {
-                this.setValue(this.getThumb().get("maxY"));
+            this._setValToLimit(true);
+        },
+
+        _setValToLimit : function(minOrMax) {
+            var str = (minOrMax) ? "max" : "min",
+                t = this.getThumb(),
+                s = W.SliderThumb,
+                x = s.X,
+                y = s.Y;
+
+            if (t._isHoriz) {
+                this.setValue(t.get(str + x));
+            } else if (t._isVert) {
+                this.setValue(t.get(str + y));
             } else {
-                this.setRegionValue(this.getThumb().get("maxX"), this.getThumb().get("maxY"));
+                this.setRegionValue(t.get(str + x), t.get(str + y));
             }
         },
 
@@ -171,13 +153,13 @@
             if ( isNaN(val) ) {
                 return false;
             }
-
-            if (this.getThumb()._isRegion) {
+            var t = this.getThumb();
+            if (t._isRegion) {
                 return false;
-            } else if (this.getThumb()._isHoriz) {
-                this.getThumb().set("x", val, silent);
-            } else if (this.getThumb()._isVert) {
-                this.getThumb().set("y", val, silent);
+            } else if (t._isHoriz) {
+                t.set("x", val, silent);
+            } else if (t._isVert) {
+                t.set("y", val, silent);
             }
         },
 
@@ -190,11 +172,12 @@
                 return false;
             }
 
+            var t = this.getThumb();
             if (valX || valX === 0) {
-                this.getThumb().set("x", valX, silent);
+                t.set("x", valX, silent);
             }
             if (valY || valY === 0) {
-                this.getThumb().set("y", valY, silent);
+                t.set("y", valY, silent);
             }
         },
 
@@ -210,6 +193,30 @@
                 this.fireEvent("slideEnd");
                 this._sliding = false;
                 this.moveComplete = false;
+            }
+        },
+
+        stepYValue : function(dir) {
+            var i = this.get("keyIncrement") * dir,
+                t = this.getThumb();
+
+            var newY = this.getYValue() + i; 
+            if (t._isVert) {
+                this.setValue(newY);
+            } else if (t._isRegion) {
+                this.setRegionValue(null, newY);
+            }
+        },
+
+        stepXValue : function(dir) {
+            var i = this.get("keyIncrement") * dir,
+                t = this.getThumb();
+
+            var newX = this.getXValue() + i;
+            if (t._isHoriz) {
+                this.setValue(newX);
+            } else if (t._isRegion) {
+                this.setRegionValue(newX, null);
             }
         },
 
@@ -261,14 +268,15 @@
                 return true;
             }
         }
-    };
+    });
 
-    Lang.extend(Slider, YAHOO.widget.Widget, widgetProto);
+    Slider.INC = 1;
+    Slider.DEC = -1;
 
     Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
-        var thumb = new YAHOO.widget.SliderThumb(thumbId, { 
-                group: sliderId, 
-                minX: minX, 
+        var thumb = new W.SliderThumb(thumbId, { 
+                group: sliderId,
+                minX: minX,
                 maxX: maxX,
                 tickSize: iTickSize
         });
@@ -276,47 +284,47 @@
     };
 
     Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
-        var thumb = new YAHOO.widget.SliderThumb(thumbId, { 
-                group: sliderId,  
-                minY: minY, 
-                maxY: maxY, 
-                tickSize: iTickSize 
+        var thumb = new W.SliderThumb(thumbId, { 
+                group: sliderId,
+                minY: minY,
+                maxY: maxY,
+                tickSize: iTickSize
         });
         return new Slider(sliderId, { group: sliderId, thumb : thumb, type: "vert" });
     };
 
     Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
-        var thumb = new YAHOO.widget.SliderThumb(thumbId, { 
+        var thumb = new W.SliderThumb(thumbId, { 
                 group: sliderId, 
-                minX: minX, 
-                maxX: maxX, 
-                minY: minY, 
-                maxY: maxY, 
+                minX: minX,
+                maxX: maxX,
+                minY: minY,
+                maxY: maxY,
                 tickSize: iTickSize
         });
         return new Slider(sliderId, { group: sliderId, thumb : thumb, type: "region" });
     };
 
     function SliderView(widget) {
-        this.constructor.superclass.constructor.apply(this, arguments);
+        this.superApply(widget);
         this.thumb = widget.getThumb();
     }
 
-    var viewProto = {
+    L.extend(SliderView, W.WidgetView, {
 
         render : function() {
-            this.baselinePos = this.getBaselinePosition();
+            this.baselinePos = D.getXY(this.getBackgroundEl());
             this.thumb.render();
             this.thumbView = this.thumb.view;
-            this.initDragDrop();
+            this.initDD();
         },
 
         update : function() {
             this.thumbView.update();
         },
 
-        initDragDrop : function() {
-            this._dd = new YAHOO.util.DragDrop(
+        initDD : function() {
+            this._dd = new U.DragDrop(
                 this.widget.get("node").get("id"), 
                 this.widget.get("group"), 
                 true);
@@ -335,12 +343,8 @@
             this.verifyOffset();
         },
 
-        getBaselinePosition : function() {
-            return YAHOO.util.Dom.getXY(this.getBackgroundEl());
-        },
-
         verifyOffset: function(checkPos) {
-            var newPos = YAHOO.util.Dom.getXY(this.getBackgroundEl());
+            var newPos = D.getXY(this.getBackgroundEl());
             if (newPos) {
                 if (newPos[0] != this.baselinePos[0] || newPos[1] != this.baselinePos[1]) {
                     this.thumbView._dd.resetConstraints();
@@ -360,48 +364,47 @@
         },
 
         _dd : null
-    };
-
-    Lang.extend(SliderView, YAHOO.widget.WidgetView, viewProto);
+    });
 
     function SliderController(widget, view) {
-        this.constructor.superclass.constructor.apply(this, arguments);
+        this.superApply(widget, view);
         this.thumb = this.widget.getThumb();
     }
 
-    var controllerProto = {
+    L.extend(SliderController, W.WidgetController, {
 
         apply : function() {
+
             // Events Fired in the UI, Update Model
-            this.applyKeyListeners();
-            this.applyDragDropListeners();
-            this.applyThumbDragDropListeners();
-            this.applyModelUpdateListeners();
+            this.addKeyListeners();
+            this.addDDListeners();
+            this.addThumbDDListeners();
 
             // Events Fired in the Model, Update/Refresh View
-            this.applyViewUpdateListeners();
+            this.addViewListeners();
         },
 
-        applyKeyListeners: function() {
-            Event.on(this.view.getBackgroundEl(), "keydown",  this.handleKeyDown,  this, true);
-            Event.on(this.view.getBackgroundEl(), "keypress", this.handleKeyPress, this, true);
+        addKeyListeners: function() {
+            var bg = this.view.getBackgroundEl();
+            E.on(bg, "keydown",  this.onKeyDown,  this, true);
+            E.on(bg, "keypress", this.onKeyPress, this, true);
+        },
+        
+        addDDListeners : function() {
+            var c = this,
+                sDD = this.view._dd;
+
+            sDD.onMouseUp = function(e) {c.onBGMouseUp(e);};
+            sDD.b4MouseDown = function(e) {c.beforeBGMouseDown(e);};
+            sDD.onDrag = function(e) {c.onBGDrag(e);};
+            sDD.onMouseDown = function(e) {c.onBGMouseDown(e);};
+
+            this.widget.on("endMove", this.sync, this, true);            
         },
 
-        applyDragDropListeners : function() {
-            var c = this;
-            var sDD = this.view._dd;
-
-            sDD.onMouseUp = function(e) {c.onBackgroundMouseUp(e);};
-            sDD.b4MouseDown = function(e) {c.onBeforeBackgroundMouseDown(e);};
-            sDD.onDrag = function(e) {c.onBackgroundDrag(e);};
-            sDD.onMouseDown = function(e) {c.onBackgroundMouseDown(e);};
-
-            this.widget.subscribe("endMove", this.sync, this, true);            
-        },
-
-        applyThumbDragDropListeners : function() {
-            var c = this;
-            var tDD = this.thumb.view._dd;
+        addThumbDDListeners : function() {
+            var c = this,
+                tDD = this.thumb.view._dd;
 
             tDD.onMouseDown = function(e) {c.onThumbMouseDown(e);};
             tDD.startDrag = function(e) {c.onThumbStartDrag(e);};
@@ -409,44 +412,50 @@
             tDD.onMouseUp = function(e) {c.onThumbMouseUp(e);};
         },
 
-        applyViewUpdateListeners : function() {
-            this.widget.subscribe("lockedChange", this.onLockChange, this, true);
+        addViewListeners : function() {
+            this.widget.on("lockedChange", this.onLockChange, this, true);
         },
 
         sync: function() {
-            var val = this.thumb.view.getValue();
+            var val = this.thumb.view.getValue(),
+                w = this.widget;
             if (this.thumb._isRegion) {
-                this.widget.setRegionValue(val[0], val[1], false, true);
+                w.setRegionValue(val[0], val[1], false, true);
             } else {
-                this.widget.setValue(val, false, true);
+                w.setValue(val, false, true);
             }
         },
 
-        onBeforeBackgroundMouseDown: function(e) {
-            this.thumb.view._dd.autoOffset();
-            this.thumb.view._dd.resetConstraints();
+        beforeBGMouseDown: function(e) {
+            var dd = this.thumb.view._dd;
+            dd.autoOffset();
+            dd.resetConstraints();
         },
 
-        onBackgroundMouseDown: function(e) {
-            if (!this.widget.isLocked() && this.widget.get("backgroundEnabled")) {
-                var x = YAHOO.util.Event.getPageX(e);
-                var y = YAHOO.util.Event.getPageY(e);
-                this.widget.focus();
-                this.thumb.view.moveThumb(x, y);
+        onBGMouseDown: function(e) {
+            var w = this.widget;
+            if (!w.isLocked() && w.get("bgEnabled")) {
+                w.focus();
+                this._moveThumb(e);
             }
         },
 
-        onBackgroundDrag: function(e) {
+        _moveThumb : function(e) {
+            var x = E.getPageX(e);
+            var y = E.getPageY(e);
+            this.thumb.view.moveThumb(x, y);
+        },
+
+        onBGDrag: function(e) {
             if (!this.widget.isLocked()) {
-                var x = YAHOO.util.Event.getPageX(e);
-                var y = YAHOO.util.Event.getPageY(e);
-                this.thumb.view.moveThumb(x, y);
+                this._moveThumb(e);
             }
         },
 
-        onBackgroundMouseUp: function(e) {
-            if (!this.widget.isLocked() && !this.widget.moveComplete) {
-                this.widget.endMove();
+        onBGMouseUp: function(e) {
+            var w = this.widget;
+            if (!w.isLocked() && !w.moveComplete) {
+                w.endMove();
             }
         },
 
@@ -464,29 +473,31 @@
         },
 
         onThumbMouseUp: function(e) {
-            if (!this.widget.isLocked() && !this.widget.moveComplete) {
-                this.widget.endMove();
+            var w = this.widget;
+            if (!w.isLocked() && !w.moveComplete) {
+                w.endMove();
             }
         },
 
         onLockChange: function() {
+            var dd = this.view._dd;
             if (this.get("locked")) {
-                this.view._dd.lock();
+                dd.lock();
             } else {
-                this.view._dd.unlock();
+                dd.unlock();
             }
         },
 
-        handleKeyPress: function(e) {
-            if (this.widget.get("enableKeys")) {
-                switch (Event.getCharCode(e)) {
+        onKeyPress: function(e) {
+            if (this.widget.get("keysEnabled")) {
+                switch (E.getCharCode(e)) {
                     case 0x25: // left
                     case 0x26: // up
                     case 0x27: // right
                     case 0x28: // down
                     case 0x24: // home
                     case 0x23: // end
-                        Event.preventDefault(e);
+                        E.preventDefault(e);
                         break;
                     default:
                 }
@@ -494,42 +505,43 @@
     
         },
 
-        handleKeyDown: function(e) {
-            if (this.widget.get("enableKeys")) {
-                var changeValue = true;
-                switch (Event.getCharCode(e)) {
+        onKeyDown: function(e) {
+            var w = this.widget,
+                s = Slider;
+            
+            if (w.get("keysEnabled")) {
+                var changed = true;
+                switch (E.getCharCode(e)) {
                     case 0x25:  // left 
-                        this.widget.decrementXValue();
+                        w.stepXValue(s.DEC);
                         break;
                     case 0x26:  // up
-                        this.widget.decrementYValue();
+                        w.stepYValue(s.DEC);
                         break;
                     case 0x27:  // right
-                        this.widget.incrementXValue();
+                        w.stepXValue(s.INC);
                         break;
                     case 0x28:  // down
-                        this.widget.incrementYValue();
+                        w.stepYValue(s.INC);
                         break;
                     case 0x24:  // home
-                        this.widget.setValueToMin();
+                        w.setValueToMin();
                         break;
                     case 0x23:  // end
-                        this.widget.setValueToMax();
+                        w.setValueToMax();
                         break;
                     default:
-                        changeValue = false;
+                        changed = false;
                 }
-                if (changeValue) {
-                    Event.stopEvent(e);
+                if (changed) {
+                    E.stopEvent(e);
                 }
             }
         }
-    };
+    });
 
-    Lang.extend(SliderController, YAHOO.widget.WidgetController, controllerProto);
-    
-    YAHOO.widget.Slider = Slider;
-    YAHOO.widget.SliderView = SliderView;
-    YAHOO.widget.SliderController = SliderController;
+    W.Slider = Slider;
+    W.SliderView = SliderView;
+    W.SliderController = SliderController;
 
 })();

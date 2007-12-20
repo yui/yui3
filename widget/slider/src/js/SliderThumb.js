@@ -1,113 +1,87 @@
 (function() {
 
-    var Event = YAHOO.util.Event,
-        Dom = YAHOO.util.Dom,
-        Lang = YAHOO.lang;
-
-    function SliderThumb(node, attributes) {
+    var Y = YAHOO,
+        U = Y.util,
+        D = U.Dom,
+        L = Y.lang,
+        W = Y.widget;
+/*
+    var isNum = L.isNumber,
+        isStr = L.isString;
+*/
+    function SliderThumb(node, attr) {
         this.constructor.superclass.constructor.apply(this, arguments);
     };
 
     SliderThumb.NAME = "SliderThumb";
 
+    SliderThumb.X = "X";
+    SliderThumb.Y = "Y";
+
     SliderThumb.CONFIG = {
         'group' : {
-            validator : Lang.isString
+           // validator : isStr
         },
 
         'minX' : {
-            validator : Lang.isNumber,
+           // validator : isNum,
             value : 0
         },
 
         'maxX' : {
-            validator : Lang.isNumber,
+          //  validator : isNum,
             value : 0
         },
 
         'minY' : {
-            validator : Lang.isNumber,
+          //  validator : isNum,
             value : 0
         },
 
         'maxY' : {
-            validator : Lang.isNumber,
+          //  validator : isNum,
             value : 0
         },
 
         'tickSize' : {
-            validator : function(val) {
-                return (Lang.isNumber(val) && val >= 0);
-            },
+          //  validator : function(val) {
+          //      return (isNum(val) && val >= 0);
+          //  },
             value : 0
         },
 
         'x' : {
             set : function(val) {
-                var min = this.get("minX");
-                var max = this.get("maxX");
-
-                if(val < min) {
-                    return min;
-                } else if (val > max){
-                    return max;
-                } else {
-                    return val;
-                }
+                return this.constrain(val, SliderThumb.X);
             },
-            validator : function(val) {
-                if (Lang.isNumber(val)) {
-                    if (this.get("tickSize") > 0) {
-                        return (val % this.get("tickSize") === 0);
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            },
+         //   validator : isNum,
             value : 0
         },
 
         'y' : {
             set : function(val) {
-                var min = this.get("minY");
-                var max = this.get("maxY");
-
-                if(val < min) {
-                    return min;
-                } else if (val > max){
-                    return max;
-                } else {
-                    return val;
-                }
+                return this.constrain(val, SliderThumb.Y);
             },
-            validator : function(val) {
-                if (Lang.isNumber(val)) {
-                    if (this.get("tickSize") > 0) {
-                        return (val % this.get("tickSize") === 0);
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            },
+          //  validator : isNum,
             value : 0
         }
     };
 
-    var widgetProto = {
+    L.extend(SliderThumb, W.Widget, {
 
         viewClass : SliderThumbView,
         controllerClass : SliderThumbController,
 
         initializer: function (attributes) {
-            if (Lang.isUndefined(this.get("group"))) {
+/*
+            if (L.isUndefined(this.get("group"))) {
                 throw "Required Attributes Missing";
             }
-            this.initProperties();
+*/
+            this.initProps();
         },
 
-        initProperties : function() {
+        initProps : function() {
             var xR = this.getXRange();
             var yR = this.getYRange();
 
@@ -120,19 +94,30 @@
             }
         },
 
-/*
-        initDragDrop : function() {
-            this._dd = new YAHOO.util.DD(
-                this.get("node").get("id"),
-                this.get("group")
-            );
+        constrain : function(val, axis) {
+            var min = this.get("min" + axis);
+            var max = this.get("max" + axis);
+            var tSize = this.get("tickSize");
 
-            // Set dd state
-            this._dd.isTarget = false;
-            this._dd.maintainOffset = true;
-            this._dd.scroll = false;
+            if(val < min) {
+                val = min;
+            } else if (val > max){
+                val = max;
+            } else {
+                if (tSize > 0) {
+                    var diff = val % tSize;
+                    if (diff > 0) {
+                        if (diff < Math.round(tSize/2)) {
+                            val = val - diff;
+                        } else {
+                            val = val + (tSize - diff);
+                        }
+                    }
+                }
+            }
+            return val;
         },
-*/
+
         clearTicks: function () {
             this.set("tickSize", 0);
         },
@@ -166,7 +151,7 @@
         getYValue: function () {
             return this.get("y");
         },
-        
+
         getXRange :  function() {
             return this.get("maxX") - this.get("minX");
         },
@@ -193,23 +178,21 @@
 
         _isHoriz: false,
         _isVert: false,
-        _isRegion: false,
-    };
-
-    Lang.extend(SliderThumb, YAHOO.widget.Widget, widgetProto);
+        _isRegion: false
+    });
 
     function SliderThumbView(widget) {
-        this.constructor.superclass.constructor.apply(this, arguments);
+        this.superApply(widget);
     }
 
-    var viewProto = {
+    L.extend(SliderThumbView, W.WidgetView, {
 
         _dd : null,
 
         render : function() {
             // this.update();
-            this.centerPoint = this.findCenterPoint();
-            this.initDragDrop();
+            this.centerPoint = this.findCenter();
+            this.initDD();
         },
 
         update : function() {
@@ -218,27 +201,21 @@
             this.setYOffset();
         },
 
-        initDragDrop : function() {
+        initDD : function() {
 
-            this._dd = new YAHOO.util.DD(
-                this.getThumbEl().id,
-                this.widget.get("group")
-            );
+            var w = this.widget,
+                xs = this.getXScale(),
+                ys = this.getYScale();
 
-            this._dd.setXConstraint(
-                this.widget.get("minX")*this.getXScale(),
-                this.widget.get("maxX")*this.getXScale(),
-                this.widget.get("tickSize")*this.getXScale());
+            var dd = new U.DD( this.getThumbEl().id, w.get("group"));
 
-            this._dd.setYConstraint(
-                this.widget.get("minY")*this.getYScale(),
-                this.widget.get("maxY")*this.getYScale(),
-                this.widget.get("tickSize")*this.getYScale());
+            dd.setXConstraint( w.get("minX") * xs, w.get("maxX") * xs, w.get("tickSize") * xs);
+            dd.setYConstraint( w.get("minY") * ys, w.get("maxY") * ys, w.get("tickSize") * ys);
+            dd.isTarget = false;
+            dd.maintainOffset = true;
+            dd.scroll = false;
 
-            // Set dd state
-            this._dd.isTarget = false;
-            this._dd.maintainOffset = true;
-            this._dd.scroll = false;
+            this._dd = dd;
         },
 
         getOffsetFromParent: function(parentPos) {
@@ -248,13 +225,13 @@
 
             if (!this.deltaOffset) {
 
-                var thumbPos = Dom.getXY(thumbEl);
-                var parentPos = parentPos || Dom.getXY(this.getParentEl());
+                var thumbPos = D.getXY(thumbEl);
+                var parentPos = parentPos || D.getXY(this.getParentEl());
 
                 offset = [ (thumbPos[0] - parentPos[0]), (thumbPos[1] - parentPos[1]) ];
 
-                var l = parseInt( Dom.getStyle(thumbEl, "left"), 10 );
-                var t = parseInt( Dom.getStyle(thumbEl, "top" ), 10 );
+                var l = parseInt( D.getStyle(thumbEl, "left"), 10 );
+                var t = parseInt( D.getStyle(thumbEl, "top" ), 10 );
 
                 var deltaX = l - offset[0];
                 var deltaY = t - offset[1];
@@ -263,8 +240,8 @@
                     this.deltaOffset = [deltaX, deltaY];
                 }
             } else {
-                var left = parseInt( Dom.getStyle(thumbEl, "left"), 10 );
-                var top  = parseInt( Dom.getStyle(thumbEl, "top" ), 10 );
+                var left = parseInt( D.getStyle(thumbEl, "left"), 10 );
+                var top  = parseInt( D.getStyle(thumbEl, "top" ), 10 );
     
                 offset  = [left + this.deltaOffset[0], top + this.deltaOffset[1]];
             }
@@ -284,15 +261,11 @@
 
         // Get Data from the DOM for this VIEW
         getXValue : function() {
-            var offset = this.getXOffset();
-            var val = Math.round(offset/this.getXScale());
-            return val;
+            return Math.round(this.getOffsetFromParent()[0]/this.getXScale());
         },
 
         getYValue : function() {
-            var offset = this.getYOffset();
-            var val = Math.round(offset/this.getYScale());
-            return val;
+            return Math.round(this.getOffsetFromParent()[1]/this.getYScale());
         },
 
         setXOffset : function() {
@@ -323,36 +296,26 @@
             }
         },
 
-        getXOffset : function() {
-            var offset = this.getOffsetFromParent();
-            return offset[0];
-        },
-
-        getYOffset : function() {
-            var offset = this.getOffsetFromParent();
-            return offset[1];
-        },
-
         getOffsetForX : function(x) {
             var diff = this.widget.getXValue() - this.widget.get("minX");
             var offset = diff * this.getXScale() + this.centerPoint.x;
 
-            var parentOffsetX = Dom.getXY(this.getParentEl())[0];
+            var parentOffsetX = D.getXY(this.getParentEl())[0];
             return parentOffsetX + offset;
         },
 
         getOffsetForY : function(y) {
             var diff = this.widget.getYValue() - this.widget.get("minY");
-            var offset = diff * this.getYScale() + this.centerPoint.x;
-            var parentOffsetY = Dom.getXY(this.getParentEl())[1];
+            var offset = diff * this.getYScale() + this.centerPoint.y;
+            var parentOffsetY = D.getXY(this.getParentEl())[1];
             return parentOffsetY + offset;
         },
 
-        findCenterPoint : function() {
-            var thumbEl = this.getThumbEl();
+        findCenter : function() {
+            var t = this.getThumbEl();
             return {
-                x: parseInt(thumbEl.offsetWidth/2, 10),
-                y: parseInt(thumbEl.offsetHeight/2, 10) 
+                x: parseInt(t.offsetWidth/2, 10),
+                y: parseInt(t.offsetHeight/2, 10) 
             }
         },
 
@@ -361,7 +324,7 @@
             var thumb = this.widget;
             var thumbView = this;
 
-            var curCoord = Dom.getXY(this.getThumbEl());
+            var curCoord = D.getXY(this.getThumbEl());
             if (!x && x !== 0) {
                 x = curCoord[0];
             }
@@ -370,7 +333,8 @@
                 y = curCoord[1];
             }
 
-            this._dd.setDelta(this.centerPoint.x, this.centerPoint.y);
+            var cp = this.centerPoint;
+            this._dd.setDelta(cp.x, cp.y);
 
             var _p = this._dd.getTargetCoord(x, y);
             var p = [_p.x, _p.y];
@@ -387,11 +351,11 @@
 
                 thumb.lock();
 
-                var oAnim = new YAHOO.util.Motion( 
+                var oAnim = new U.Motion( 
                         thumb.get("node").get("id"), 
                         { points: { to: p } }, 
                         thumb.get("animationDuration"), 
-                        YAHOO.util.Easing.easeOut );
+                        U.Easing.easeOut );
 
                 oAnim.onComplete.subscribe(function() { 
                     thumb.endMove(); 
@@ -489,34 +453,35 @@
 
         centerPoint : null,
         curCoord : null
-    };
-
-    Lang.extend(SliderThumbView, YAHOO.widget.WidgetView, viewProto);
+    });
 
     function SliderThumbController(widget, view) {
-        this.constructor.superclass.constructor.apply(this, arguments);
+        this.superApply(widget, view);
     }
 
-    var controllerProto = {
+    L.extend(SliderThumbController, W.WidgetController, {
 
         apply : function() {
             // Events Fired in the Model, Update/Refresh View            
-            this.applyViewUpdateListeners();
+            this.addViewListeners();
         },
 
-        applyViewUpdateListeners : function() {
-            this.widget.subscribe("xChange", this.view.setXOffset, this.view, true);
-            this.widget.subscribe("yChange", this.view.setYOffset, this.view, true);
+        addViewListeners : function() {
+            var w = this.widget;
+            var v = this.view;
+            w.on("xChange", v.setXOffset, v, true);
+            w.on("yChange", v.setYOffset, v, true);
 
-            this.widget.subscribe("tickSize", this.onTickSizeChange, this, true);
-            this.widget.subscribe("lockedChange", this.onLockChange, this, true);
+            w.on("tickSize", this.onTickSizeChange, this, true);
+            w.on("lockedChange", this.onLockChange, this, true);
         },
 
         onLockChange: function() {
+            var dd = this.view._dd;
             if (this.get("locked")) {
-                this.view._dd.lock();
+                dd.lock();
             } else {
-                this.view._dd.unlock();
+                dd.unlock();
             }
         },
 
@@ -525,12 +490,10 @@
                 this.view._dd.clearTicks();
             }
         }
-    };
+    });
 
-    Lang.extend(SliderThumbController, YAHOO.widget.WidgetController, controllerProto);
-
-    YAHOO.widget.SliderThumb = SliderThumb;
-    YAHOO.widget.SliderThumbView = SliderThumbView;
-    YAHOO.widget.SliderThumbController = SliderThumbController;
+    W.SliderThumb = SliderThumb;
+    W.SliderThumbView = SliderThumbView;
+    W.SliderThumbController = SliderThumbController;
 
 })();

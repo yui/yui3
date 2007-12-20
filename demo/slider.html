@@ -78,7 +78,7 @@
             var vSlider;
             var rSlider;
 
-            YAHOO.util.Event.onDOMReady(function() {
+            YAHOO.util.Event.on(window, "load", function() {
 
                 function handle(val, div) {
                     YAHOO.util.Dom.get(div).innerHTML = this.getValue();                    
