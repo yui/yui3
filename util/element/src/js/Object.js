@@ -42,7 +42,7 @@
             }
 
             while (constructor = classes.shift()) { // initialize from top down
-                YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
+                // YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
                 this.setAttributeConfigs(constructor.CONFIG, attributes, true); // init Attributes
                 if (constructor !== Class && constructor.prototype.initializer) { // this Class has no initializer
                     constructor.prototype.initializer.apply(this, arguments);

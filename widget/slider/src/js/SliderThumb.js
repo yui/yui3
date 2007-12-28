@@ -5,10 +5,7 @@
         D = U.Dom,
         L = Y.lang,
         W = Y.widget;
-/*
-    var isNum = L.isNumber,
-        isStr = L.isString;
-*/
+
     function SliderThumb(node, attr) {
         this.constructor.superclass.constructor.apply(this, arguments);
     }
@@ -19,34 +16,28 @@
     SliderThumb.Y = "Y";
 
     SliderThumb.CONFIG = {
-        'group' : {
-           // validator : isStr
-        },
+        'group' : {},
 
         'minX' : {
-           // validator : isNum,
             value : 0
         },
 
         'maxX' : {
-          //  validator : isNum,
             value : 0
         },
 
         'minY' : {
-          //  validator : isNum,
             value : 0
         },
 
         'maxY' : {
-          //  validator : isNum,
             value : 0
         },
 
         'tickSize' : {
-          //  validator : function(val) {
-          //      return (isNum(val) && val >= 0);
-          //  },
+            validator : function(val) {
+                return (L.isNumber(val) && val >= 0);
+            },
             value : 0
         },
 
@@ -54,7 +45,6 @@
             set : function(val) {
                 return this.constrain(val, SliderThumb.X);
             },
-         //   validator : isNum,
             value : 0
         },
 
@@ -62,19 +52,17 @@
             set : function(val) {
                 return this.constrain(val, SliderThumb.Y);
             },
-          //  validator : isNum,
             value : 0
+        },
+
+        'locked' : {
+            value : false
         }
     };
 
     L.extend(SliderThumb, W.Widget, {
 
         initializer: function (attributes) {
-/*
-            if (L.isUndefined(this.get("group"))) {
-                throw "Required Attributes Missing";
-            }
-*/
             this.initProps();
         },
 
@@ -124,7 +112,7 @@
         },
 
         unlock : function() {
-            this.set("locked", false);            
+            this.set("locked", false);
         },
 
         isLocked : function() {
@@ -163,7 +151,7 @@
                 var range = (this._isHoriz) ? this.getXRange() : this.getYRange();
                 var nTicks = Math.round(range/ticks);
                 if (nTicks > 0) {
-                    return Math.round(360 / nTicks);
+                    return Math.round(360/nTicks);
                 }
             }
             return 0;
@@ -175,32 +163,17 @@
 
         _isHoriz: false,
         _isVert: false,
-        _isRegion: false
-    });
-
-    function SliderThumbView(widget) {
-        this.superApply(widget);
-    }
-
-    L.extend(SliderThumbView, W.WidgetView, {
-
+        _isRegion: false,
         _dd : null,
 
-        render : function() {
-            // this.update();
+        renderer : function() {
             this.centerPoint = this.findCenter();
             this.initDD();
-        },
-
-        update : function() {
-            // Set XY Position, based on X, Y values
-            this.setXOffset();
-            this.setYOffset();
+            this.apply();
         },
 
         initDD : function() {
-
-            var w = this.widget,
+            var w = this,
                 xs = this.getXScale(),
                 ys = this.getYScale();
 
@@ -211,7 +184,6 @@
             dd.isTarget = false;
             dd.maintainOffset = true;
             dd.scroll = false;
-
             this._dd = dd;
         },
 
@@ -221,7 +193,6 @@
             var offset;
 
             if (!this.deltaOffset) {
-
                 var thumbPos = D.getXY(thumbEl);
                 parentPos = parentPos || D.getXY(this.getParentEl());
 
@@ -229,7 +200,6 @@
 
                 var l = parseInt( D.getStyle(thumbEl, "left"), 10 );
                 var t = parseInt( D.getStyle(thumbEl, "top" ), 10 );
-
                 var deltaX = l - offset[0];
                 var deltaY = t - offset[1];
 
@@ -239,29 +209,27 @@
             } else {
                 var left = parseInt( D.getStyle(thumbEl, "left"), 10 );
                 var top  = parseInt( D.getStyle(thumbEl, "top" ), 10 );
-    
                 offset  = [left + this.deltaOffset[0], top + this.deltaOffset[1]];
             }
-
             return offset;
         },
 
-        getValue : function() {
-            if (this.widget._isHoriz) {
-                return this.getXValue();
-            } else if (this.widget._isVert) {
-                return this.getYValue();
+        getUIValue : function() {
+            if (this._isHoriz) {
+                return this.getUIXValue();
+            } else if (this._isVert) {
+                return this.getUIYValue();
             } else {
-                return [this.getXValue(), this.getYValue()];
+                return [this.getUIXValue(), this.getUIYValue()];
             }
         },
 
         // Get Data from the DOM for this VIEW
-        getXValue : function() {
+        getUIXValue : function() {
             return Math.round(this.getOffsetFromParent()[0]/this.getXScale());
         },
 
-        getYValue : function() {
+        getUIYValue : function() {
             return Math.round(this.getOffsetFromParent()[1]/this.getYScale());
         },
 
@@ -272,9 +240,9 @@
         setYOffset : function() {
             this.moveThumb(null, this.getOffsetForY(), false, false);
         },
-        
+
         getXScale : function() {
-            var range = this.widget.getXRange();
+            var range = this.getXRange();
             if (range > 0) {
                 var uirange = this.getParentEl().offsetWidth - this.getThumbEl().offsetWidth;
                 return Math.round(uirange/range);
@@ -284,7 +252,7 @@
         },
 
         getYScale : function() {
-            var range = this.widget.getYRange();
+            var range = this.getYRange();
             if (range > 0) {
                 var uirange = this.getParentEl().offsetHeight - this.getThumbEl().offsetHeight;
                 return Math.round(uirange/range);
@@ -294,7 +262,7 @@
         },
 
         getOffsetForX : function(x) {
-            var diff = this.widget.getXValue() - this.widget.get("minX");
+            var diff = this.getXValue() - this.get("minX");
             var offset = diff * this.getXScale() + this.centerPoint.x;
 
             var parentOffsetX = D.getXY(this.getParentEl())[0];
@@ -302,7 +270,7 @@
         },
 
         getOffsetForY : function(y) {
-            var diff = this.widget.getYValue() - this.widget.get("minY");
+            var diff = this.getYValue() - this.get("minY");
             var offset = diff * this.getYScale() + this.centerPoint.y;
             var parentOffsetY = D.getXY(this.getParentEl())[1];
             return parentOffsetY + offset;
@@ -317,10 +285,6 @@
         },
 
         moveThumb: function(x, y, skipAnim, midMove) {
-
-            var thumb = this.widget;
-            var thumbView = this;
-
             var curCoord = D.getXY(this.getThumbEl());
             if (!x && x !== 0) {
                 x = curCoord[0];
@@ -335,23 +299,24 @@
 
             var _p = this._dd.getTargetCoord(x, y);
             var p = [_p.x, _p.y];
+            var thumb = this;
 
-            var animate = thumb.parent.get("animate");
-            if (animate && thumb.get("tickSize") > 0 && !skipAnim) {
-                thumb.lock();
+            var animate = this.parent.get("animate");
+            if (animate && this.get("tickSize") > 0 && !skipAnim) {
+                this.lock();
 
-                // cache the current thumb pos
+                // cache the current this pos
                 this.curCoord = curCoord;
-                setTimeout( function() { thumbView.moveOneTick(p); }, thumb.parent.get("tickPause"));
+                setTimeout( function() { thumb.moveOneTick(p); }, this.parent.get("tickPause"));
 
             } else if (animate && !skipAnim) {
 
-                thumb.lock();
+                this.lock();
 
                 var oAnim = new U.Motion( 
-                        thumb.get("node").get("id"), 
+                        this.get("node").get("id"), 
                         { points: { to: p } }, 
-                        thumb.get("animationDuration"), 
+                        this.get("animationDuration"), 
                         U.Easing.easeOut );
 
                 oAnim.onComplete.subscribe(function() { 
@@ -362,21 +327,19 @@
             } else {
                 this._dd.setDragElPos(x, y);
                 if (!midMove) {
-                    thumb.endMove();
+                    this.endMove();
                 }
             }
         },
 
         moveOneTick: function(finalCoord) {
-
-            var thumb = this.widget;
             var nextCoord = null;
 
-            if (thumb._isRegion) {
+            if (this._isRegion) {
                 nextCoord = this._getNextX(this.curCoord, finalCoord);
                 var tmpX = (nextCoord) ? nextCoord[0] : this.curCoord[0];
                 nextCoord = this._getNextY([tmpX, this.curCoord[1]], finalCoord);
-            } else if (thumb._isHoriz) {
+            } else if (this._isHoriz) {
                 nextCoord = this._getNextX(this.curCoord, finalCoord);
             } else {
                 nextCoord = this._getNextY(this.curCoord, finalCoord);
@@ -390,27 +353,26 @@
                 // check if we are in the final position, if not make a recursive call
                 if (!(nextCoord[0] == finalCoord[0] && nextCoord[1] == finalCoord[1])) {
                     var self = this;
-                    setTimeout(function() { self.moveOneTick(finalCoord); },  thumb.parent.get("tickPause"));
+                    setTimeout(function() { self.moveOneTick(finalCoord); },  this.parent.get("tickPause"));
                 } else {
-                    thumb.endMove();
+                    this.endMove();
                 }
             } else {
-                thumb.endMove();
+                this.endMove();
             }
         },
 
         _getNextX: function(curCoord, finalCoord) {
-            var thumb = this.widget;
             var thresh;
             var tmp = [];
 
             var nextCoord = null;
             if (curCoord[0] > finalCoord[0]) {
-                thresh = thumb.get("tickSize") - this.centerPoint.x;
+                thresh = this.get("tickSize") - this.centerPoint.x;
                 tmp = this._dd.getTargetCoord( curCoord[0] - thresh, curCoord[1] );
                 nextCoord = [tmp.x, tmp.y];
             } else if (curCoord[0] < finalCoord[0]) {
-                thresh = thumb.get("tickSize") + this.centerPoint.x;
+                thresh = this.get("tickSize") + this.centerPoint.x;
                 tmp = this._dd.getTargetCoord( curCoord[0] + thresh, curCoord[1] );
                 nextCoord = [tmp.x, tmp.y];
             } else {
@@ -421,17 +383,16 @@
         },
 
         _getNextY: function(curCoord, finalCoord) {
-            var thumb = this.widget;
             var thresh;
             var tmp = [];
             var nextCoord = null;
 
             if (curCoord[1] > finalCoord[1]) {
-                thresh = thumb.get("tickSize") - this.centerPoint.y;
+                thresh = this.get("tickSize") - this.centerPoint.y;
                 tmp = this._dd.getTargetCoord( curCoord[0], curCoord[1] - thresh );
                 nextCoord = [tmp.x, tmp.y];
             } else if (curCoord[1] < finalCoord[1]) {
-                thresh = thumb.get("tickSize") + this.centerPoint.y;
+                thresh = this.get("tickSize") + this.centerPoint.y;
                 tmp = this._dd.getTargetCoord( curCoord[0], curCoord[1] + thresh );
                 nextCoord = [tmp.x, tmp.y];
             } else {
@@ -441,59 +402,44 @@
         },
 
         getThumbEl : function() {
-            return this.widget.get('node').get('node');
+            return this.get('node').get('node');
         },
 
         getParentEl : function() {
-            return this.widget.parent.get('node').get('node');
+            return this.parent.get('node').get('node');
         },
 
         centerPoint : null,
-        curCoord : null
-    });
-
-    function SliderThumbController(widget, view) {
-        this.superApply(widget, view);
-    }
-
-    L.extend(SliderThumbController, W.WidgetController, {
+        curCoord : null,
 
         apply : function() {
-            // Events Fired in the Model, Update/Refresh View            
+            // Events Fired in the Model, Update/Refresh View
             this.addViewListeners();
         },
 
         addViewListeners : function() {
-            var w = this.widget;
-            var v = this.view;
-            w.on("xChange", v.setXOffset, v, true);
-            w.on("yChange", v.setYOffset, v, true);
+            this.on("xChange", this.setXOffset, this, true);
+            this.on("yChange", this.setYOffset, this, true);
 
-            w.on("tickSize", this.onTickSizeChange, this, true);
-            w.on("lockedChange", this.onLockChange, this, true);
+            this.on("tickSize", this.onTickSizeChange, this, true);
+            this.on("lockedChange", this.onLockChange, this, true);
         },
 
-        onLockChange: function() {
-            var dd = this.view._dd;
+        onTickSizeChange : function() {
+            if (this.get("tickSize") === 0) {
+                this._dd.clearTicks();
+            }
+        },
+
+        onLockChange : function() {
+            var dd = this._dd;
             if (this.get("locked")) {
                 dd.lock();
             } else {
                 dd.unlock();
             }
-        },
-
-        onTickSizeChange : function() {
-            if (this.get("tickSize") === 0) {
-                this.view._dd.clearTicks();
-            }
         }
     });
 
-    SliderThumb.prototype.viewClass = SliderThumbView;
-    SliderThumb.prototype.controllerClass = SliderThumbController;
-
     W.SliderThumb = SliderThumb;
-    W.SliderThumbView = SliderThumbView;
-    W.SliderThumbController = SliderThumbController;
-
 })();

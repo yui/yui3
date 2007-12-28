@@ -69,9 +69,6 @@
     // public 
     var proto = {
 
-        viewClass : WidgetView,
-        controllerClass : WidgetController,
-
         initializer : function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
             //this.initPlugins();
@@ -101,17 +98,7 @@
             }
 
             this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
-
-            if (!this._.mvcInst) {
-                this.view = new this.viewClass(this);
-
-                if (!YAHOO.lang.isFunction(this.view.render)) {
-                    throw new TypeError("View needs to implement a render() method");
-                }
-                this._.mvcInst = true;
-            }
-            this.view.render();
-
+            this.renderer();
             this._.rendered = true;
             this.fireEvent(YUI.Render);
         },
@@ -168,44 +155,5 @@
     //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
 
     //YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
-
-    function WidgetView(widget) {
-        this.widget = widget;
-        var c = new this.widget.controllerClass(this.widget, this);
-    }
-
-    WidgetView.prototype = {
-        render : function() {
-            /* Abstract, Implement me for intial render */
-        },
-
-        update : function() {
-            /* Abstract, Implement me to refresh the root nodes you just added */
-        },
-
-        superApply : function() {
-            this.constructor.superclass.constructor.apply(this, arguments);
-        }
-    };
-
-    function WidgetController(widget, view) {
-        this.widget = widget;
-        this.view = view;
-        this.widget.subscribe("render", this.apply, this, true);
-    }
-
-    WidgetController.prototype = {
-        apply : function() {
-            /* Abstract, Implement me to apply listeners */
-        },
-
-        superApply : function() {
-            this.constructor.superclass.constructor.apply(this, arguments);
-        }
-    };
-
     YAHOO.widget.Widget = Widget;
-    YAHOO.widget.WidgetView = WidgetView;
-    YAHOO.widget.WidgetController = WidgetController;
-
 })();
