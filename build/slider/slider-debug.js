@@ -522,25 +522,7 @@
             value: !L.isUndefined(U.Anim)
         },
         locked : {
-            set: function(val) {
-                var dd = this._dd;
-                var t = this.getThumb();
-                if (val) {
-                    if (dd) { dd.lock(); }
-                    t.lock();
-                } else {
-                    if (dd) { dd.unlock(); }
-                    t.unlock();
-                }
-            },
-            get: function() {
-                if (this._dd) {
-                    return this._dd.locked;
-                } else {
-                    // What?
-                    return false;
-                }
-            }
+            value: false
         }
     };
 
@@ -790,7 +772,7 @@
             this.addThumbDDListeners();
 
             // Events Fired in the Model, Update/Refresh View
-            // this.addViewListeners();
+            this.addViewListeners();
         },
 
         addKeyListeners: function() {
