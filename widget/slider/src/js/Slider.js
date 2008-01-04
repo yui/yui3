@@ -274,10 +274,6 @@
             this.apply();
         },
 
-        update : function() {
-            this.getThumb().update();
-        },
-
         initDD : function() {
             this._dd = new U.DragDrop(
                 this.get("node").get("id"), 

@@ -59,7 +59,7 @@
             value : false
         }
     };
-
+    
     L.extend(SliderThumb, W.Widget, {
 
         initializer: function (attributes) {
@@ -173,17 +173,22 @@
         },
 
         initDD : function() {
+
             var w = this,
                 xs = this.getXScale(),
                 ys = this.getYScale();
 
             var dd = new U.DD( this.getThumbEl().id, w.get("group"));
 
-            dd.setXConstraint( w.get("minX") * xs, w.get("maxX") * xs, w.get("tickSize") * xs);
-            dd.setYConstraint( w.get("minY") * ys, w.get("maxY") * ys, w.get("tickSize") * ys);
             dd.isTarget = false;
             dd.maintainOffset = true;
             dd.scroll = false;
+
+            dd.setXConstraint( w.get("minX") * xs, w.get("maxX") * xs, w.get("tickSize") * xs);
+            dd.setYConstraint( w.get("minY") * ys, w.get("maxY") * ys, w.get("tickSize") * ys);
+
+            dd.resetConstraints();
+
             this._dd = dd;
         },
 
@@ -295,6 +300,7 @@
             }
 
             var cp = this.centerPoint;
+
             this._dd.setDelta(cp.x, cp.y);
 
             var _p = this._dd.getTargetCoord(x, y);
@@ -420,6 +426,8 @@
         addViewListeners : function() {
             this.on("xChange", this.setXOffset, this, true);
             this.on("yChange", this.setYOffset, this, true);
+
+            this.on("render", function() { this.setYOffset();this.setXOffset(); }, this, true);
 
             this.on("tickSize", this.onTickSizeChange, this, true);
             this.on("lockedChange", this.onLockChange, this, true);
@@ -718,10 +726,6 @@
             this.getThumb().render();
             this.initDD();
             this.apply();
-        },
-
-        update : function() {
-            this.getThumb().update();
         },
 
         initDD : function() {
