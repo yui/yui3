@@ -70,11 +70,11 @@
             return namespace in this;
         },
 
-        hasAdaptor : function(class) {
+        hasAdaptor : function(adaptorClass) {
             // TODO: optimize with Array methods if available.
             bApplied = false;
             for (var i = 0; i < this.__.adaptors.length; ++i) {
-                if (this.__.adaptors[i] === class) {
+                if (this.__.adaptors[i] === adaptorClass) {
                     bApplied = true;
                     break;
                 }

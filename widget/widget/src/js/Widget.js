@@ -50,12 +50,16 @@
         },
         'width' : {
             set : function(val) {
-                this.get('node').setStyle('width', val);
+                if (val || val === 0) {
+                    this.get('node').setStyle('width', val);
+                }
             }
         },
         'height' : {
             set : function(val) {
-                this.get('node').setStyle('height', val);
+                if (val || val === 0) {
+                    this.get('node').setStyle('height', val);
+                }
             }
         }
     };
