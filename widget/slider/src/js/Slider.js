@@ -269,7 +269,10 @@
 
         renderer : function() {
             this.baselinePos = D.getXY(this.getBackgroundEl());
+
+            // TODO: Formal parent child?            
             this.getThumb().render();
+
             this.initDD();
             this.apply();
         },
@@ -279,7 +282,8 @@
                 this.get("node").get("id"), 
                 this.get("group"), 
                 true);
-
+                
+            this._dd.setInitPosition();
             this._dd.isTarget = false;
         },
 

@@ -184,10 +184,10 @@
             dd.maintainOffset = true;
             dd.scroll = false;
 
+            dd.setInitPosition();
+
             dd.setXConstraint( w.get("minX") * xs, w.get("maxX") * xs, w.get("tickSize") * xs);
             dd.setYConstraint( w.get("minY") * ys, w.get("maxY") * ys, w.get("tickSize") * ys);
-
-            dd.resetConstraints();
 
             this._dd = dd;
         },
