@@ -4,64 +4,45 @@
         YUI = YAHOO.lang.CONST;
 
     // constructor
-    function Widget(node, attributes) {
+    function Widget(attributes) {
         YAHOO.log('constructor called', 'life', 'Widget');
-
-        attributes = attributes || {};
-        attributes.node = new Y.Element({ node: Y.Dom.get(node) });
-
         Widget.superclass.constructor.call(this, attributes);
     }
 
     Widget.NAME = "Widget";
 
     Widget.CONFIG = {
-        'node': {
-            set : function(node) {
-                this.__.node = (node.get) ? node : Y.Element.get(node); // TODO: more robust Element test
-                return this.__.node;
-                // TODO: require Y.Element? re-initialize?
-            },
-            validator : function(el) {
-                return true;//!!el.tagName || el.get;
+        'node': { // TODO: is there a better name?  revert to 'root'? 
+            set: function(node) {
+                this._node = Y.Dom.get(node);
+                Y.Dom.generateId(node); // use existing or generate new ID
+                return this._node;
             }
         },
-        'visible' : {
-            set: function() {
-                this._setNodeAttribute('visible', val);
+        'visible': {
+            set: function(val) {
+                if (val) { 
+                    Y.Dom.removeClass(this._node, YUI.CLASSES.HIDDEN); 
+                } else {
+                    Y.Dom.addClass(this._node, YUI.CLASSES.HIDDEN); 
+                }
             },
-            get: function() {
-                this.__.node.get('visible', val);
-            },
-            readOnly: true,
             value: true
         },
-        'disabled' : {
+        'disabled': {
             set: function(val) {
-                this._setNodeAttribute('disabled', val);
+                if (val) {
+                    Y.Dom.addClass(this._root, YUI.CLASSES.DISABLED);
+                } else {
+                    Y.Dom.removeClass(this._root, YUI.CLASSES.DISABLED);
+                }
             },
             value: false
-        },
-        'focused' : {
-            set: function(val) {
-                this._setNodeAttribute('focused', val);
-            },
-            value: false
-        },
-        'width' : {
-            set : function(val) {
-                if (val || val === 0) {
-                    this.get('node').setStyle('width', val);
-                }
-            }
-        },
-        'height' : {
-            set : function(val) {
-                if (val || val === 0) {
-                    this.get('node').setStyle('height', val);
-                }
-            }
         }
+    };
+
+    Widget.PLUGINS = {
+        'mouse': YAHOO.plugins.Mouse
     };
 
     var _instances = {};
@@ -72,92 +53,94 @@
 
     // public 
     var proto = {
-
-        initializer : function(attributes) {
+        initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
-            //this.initPlugins();
-            _instances[this.__.node.get(YUI.ID)] = this;
+            this.initPlugins();
+            _instances[this.getNodeAttr('id')] = this; // TODO: can we assume node has id ?
         },
 
-        destructor : function() {
+        initPlugins: function(plugins) {
+            this._plugins = {};
+            var Klass;
+            for (var plugin in plugins) { // user defined
+                    this._plugins[plugin] = new plugins[plugin](this);
+            }
+
+            for (var plugin in Widget.PLUGINS) { // default
+                this._plugins[plugin] = this._plugins[plugin] || new Widget.PLUGINS[plugin](this);
+            }
+        },
+
+        renderer: function() {
+
+        },
+
+        destructor: function() {
             YAHOO.log('destructor called', 'life', 'Widget');
-
-            var node = this.get('node');
-            var id = node.id;
-
-            node.destroy();
-
-            delete _instances[id];
+            delete _instances[this.getNodeAttr('id')];
         },
 
         /* @final */
-        render : function() {
+        render: function() {
             if (this.get('destroyed')) {
                 throw('render failed; widget has been destroyed');
             }
 
             var retValue = this.fireEvent(YUI.BeforeRender);
-            if (retValue === false || this._.rendered) {
+            if (retValue === false || this._rendered) {
                 return false;
             }
 
-            this.__.node.addClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
+            Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
             this.renderer();
-            this._.rendered = true;
+            this._rendered = true;
             this.fireEvent(YUI.Render);
         },
 
         /* @final */
-        erase : function() {
+        erase: function() {
             var retValue = this.fireEvent(YUI.BeforeErase);
             if (retValue === false) {
                 return false;
             }
-            this.__.node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
+            this._node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
             if (this.view.erase) {
                 this.view.erase();
             }
-            this._.rendered = false;
+            this._rendered = false;
             this.fireEvent(YUI.Erase);
         },
 
-        hide : function() {
-            this.get('node').set('visible', false);
+        hide: function() {
+            this.set('visible', false);
         },
 
-        show : function() {
-            this.get('node').set('visible', true);
+        show: function() {
+            this.set('visible', true);
         },
 
-        enable : function() {
-            this.get('node').set('enabled', true);
+        enable: function() {
+            this.set('enabled', true);
         },
 
-        disable : function() {
-            this.get('node').set('disabled', false);
+        disable: function() {
+            this.set('disabled', false);
         },
 
-        focus : function() {
-            this.get('node').set('focused', true);
+        getNodeAttr: function(attr) {
+            return this._node[attr];
         },
 
-        blur : function() {
-            this.get('node').set('focused', false);
+        setNodeAttr: function(attr, val) {
+            this._node[attr] = val;
         },
 
-        toString : function() {
+        toString: function() {
             return this.constructor.NAME + this.get('node').get('id');
-        },
-
-        _setNodeAttribute : function(attr, val) {
-            this.__.node.set(attr, val);
         }
     };
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
-
-    //YAHOO.lang.augmentObject(Widget, Y.Object); // add static members
-
-    //YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
+    YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
     YAHOO.widget.Widget = Widget;
 })();
