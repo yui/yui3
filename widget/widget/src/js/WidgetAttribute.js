@@ -1,10 +1,18 @@
 (function() {
-    var WidgetAttribute = function() {
+    var WidgetAttribute = function(name, config) {
         WidgetAttribute.superclass.constructor.apply(this, arguments);
+        if (this.postRender) {
+            this.owner.on('render', this.handleRender, this, true);
+        }
     };
 
     var proto = {
         postRender: false,
+
+        handleRender: function() {
+            this.setValue(this._value);
+            delete this._value;
+        },
 
         setValue: function(val) {
             if (this.postRender && !this.owner._rendered) {
