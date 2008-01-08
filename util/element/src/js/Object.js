@@ -4,12 +4,12 @@
         YUI = lang.CONST;
 
     // constructor
-    var Class = function Object(attributes) {
-        YAHOO.log('constructor called', 'life', 'Object');
+    var Obj = function Obj(attributes) {
+        YAHOO.log('constructor called', 'life', 'Obj');
         this.init(attributes);
     };
 
-    Class.CONFIG = {
+    Obj.CONFIG = {
         destroyed: {
             readOnly: true,
             value: false,
@@ -19,15 +19,9 @@
 
     // public 
     var proto = {
-        _: null, // protected container
-        __: null, // private container
-
         /* @final*/
         init: function(attributes) {
-            YAHOO.log('init called', 'life', 'Object');
-            this._ = {}; // init protected
-            this.__ = {}; // init private
-
+            YAHOO.log('init called', 'life', 'Obj');
             var constructor = this.constructor,
                 retVal = this.fireEvent(YUI.BeforeInit);
 
@@ -42,15 +36,21 @@
             }
 
             while (constructor = classes.shift()) { // initialize from top down
-                // YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
-                this.setAttributeConfigs(constructor.CONFIG, attributes, true); // init Attributes
-                if (constructor !== Class && constructor.prototype.initializer) { // this Class has no initializer
+                 //YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
+                for (var attr in attributes) {
+                    if (constructor.CONFIG[attr]) {
+                        constructor.CONFIG[attr].value = attributes[attr]; // TODO: don't modify orig obj
+                    }
+                }
+
+                this.setAttributeConfigs(constructor.CONFIG, true); // init Attributes
+                if (constructor !== Obj && constructor.prototype.initializer) { // Obj Class has no initializer
                     constructor.prototype.initializer.apply(this, arguments);
                 }
 
             }
             this.fireEvent(YUI.Init, attributes);
-            //YAHOO.log('created: ' + this, 'life', 'Object');
+            //YAHOO.log('created: ' + this, 'life', 'Obj');
         },
 
         destroy: function() {
@@ -65,19 +65,19 @@
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
             }
 
-            YAHOO.log('destructor called', 'life', 'Object');
+            YAHOO.log('destructor called', 'life', 'Obj');
             this._configs.destroyed.value.destroyed = true;
 
             this.fireEvent(YUI.Destroy);
         },
 
         toString: function() {
-            return 'Object: ' + this.get('id');
+            return 'Obj: ' + this;
         }
     };
 
-    Class.prototype = proto;
-    YAHOO.lang.augmentProto(Class, Y.AttributeProvider);
-    YAHOO.util.Object = Class;
+    Obj.prototype = proto;
+    YAHOO.lang.augmentProto(Obj, Y.AttributeProvider);
+    YAHOO.util.Object = Obj;
 
 })();
