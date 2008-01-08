@@ -9,52 +9,11 @@
         Widget.superclass.constructor.call(this, attributes);
     }
 
-    Widget.NAME = "Widget";
-
-    Widget.CONFIG = {
-        'node': { // TODO: is there a better name?  revert to 'root'? 
-            set: function(node) {
-                this._node = Y.Dom.get(node);
-                Y.Dom.generateId(node); // use existing or generate new ID
-                return this._node;
-            }
-        },
-        'visible': {
-            set: function(val) {
-                if (val) { 
-                    Y.Dom.removeClass(this._node, YUI.CLASSES.HIDDEN); 
-                } else {
-                    Y.Dom.addClass(this._node, YUI.CLASSES.HIDDEN); 
-                }
-            },
-            value: true
-        },
-        'disabled': {
-            set: function(val) {
-                if (val) {
-                    Y.Dom.addClass(this._root, YUI.CLASSES.DISABLED);
-                } else {
-                    Y.Dom.removeClass(this._root, YUI.CLASSES.DISABLED);
-                }
-            },
-            value: false
-        }
-    };
-
-    Widget.PLUGINS = {
-        'mouse': YAHOO.plugins.Mouse
-    };
-
-    var _instances = {};
-
-    Widget.getByNodeId = function(id) {
-        return _instances[id]; 
-    };
-
     // public 
     var proto = {
         initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
+
             this.initPlugins();
             _instances[this.getNodeAttr('id')] = this; // TODO: can we assume node has id ?
         },
@@ -72,7 +31,6 @@
         },
 
         renderer: function() {
-
         },
 
         destructor: function() {
@@ -91,10 +49,23 @@
                 return false;
             }
 
+            this._initRootNode();
+            this.initPostRenderAttributes();
+
             Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
             this.renderer();
             this._rendered = true;
             this.fireEvent(YUI.Render);
+        },
+
+        initPostRenderAttributes: function() {
+            var val;
+            for (var attr in this._configs) {
+                val = this._configs[attr]._value;
+                if (val !== undefined) {
+                    this._configs[attr].setValue(val); 
+                }
+            }
         },
 
         /* @final */
@@ -104,11 +75,16 @@
                 return false;
             }
             this._node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
-            if (this.view.erase) {
-                this.view.erase();
-            }
             this._rendered = false;
             this.fireEvent(YUI.Erase);
+        },
+
+        _initRootNode: function() {
+            var node = this.get('node');
+
+            if (!node) {
+                this.set('node', this.get('id')); // get from Dom by ID if no default node provided
+            }
         },
 
         hide: function() {
@@ -128,17 +104,85 @@
         },
 
         getNodeAttr: function(attr) {
-            return this._node[attr];
+            if (this.get('node')) {
+                return this.get('node')[attr];
+            }
+            return undefined;
         },
 
         setNodeAttr: function(attr, val) {
-            this._node[attr] = val;
+            if (this.get('node')) {
+                this._node[attr] = val;
+            }
+        },
+
+        _setId: function(val) {
+            this.setNodeAttr('id', val);
+        },
+
+        _setNode: function(val) {
+            this._node = Y.Dom.get(val);
+            Y.Dom.generateId(val); // use existing or generate new ID
+            return this._node;
+        },
+
+        _setVisible: function(val) {
+            if (val) { 
+                Y.Dom.removeClass(this._node, YUI.CLASSES.HIDDEN); 
+            } else {
+                Y.Dom.addClass(this._node, YUI.CLASSES.HIDDEN); 
+            }
+
+        },
+
+        _setDisabled: function(val) {
+            if (val) {
+                Y.Dom.addClass(this._root, YUI.CLASSES.DISABLED);
+            } else {
+                Y.Dom.removeClass(this._root, YUI.CLASSES.DISABLED);
+            }
+
+        },
+
+        // override AttributeProvider method
+        createAttribute: function(map) {
+            return new YAHOO.widget.WidgetAttribute(map, this);
         },
 
         toString: function() {
             return this.constructor.NAME + this.get('node').get('id');
         }
     };
+
+    Widget.NAME = "Widget";
+
+    var _instances = {};
+
+    Widget.getById = function(id) {
+        return _instances[id]; 
+    };
+
+    Widget.CONFIG = {
+        'node': { // TODO: is there a better name?  revert to 'root'? 
+            set: proto._setNode
+        },
+        'id': {
+            set: proto._setId
+        },
+        'visible': {
+            set: proto._setVisible,
+            value: true
+        },
+        'disabled': {
+            set: proto._setDisabled,
+            value: false
+        }
+    };
+
+    Widget.PLUGINS = {
+        'mouse': YAHOO.plugins.Mouse
+    };
+
 
     YAHOO.lang.extend(Widget, Y.Object, proto);
     YAHOO.lang.augmentProto(Widget, YAHOO.plugin.PluginHost);
