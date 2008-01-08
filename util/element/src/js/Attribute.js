@@ -28,14 +28,14 @@ YAHOO.util.Attribute.prototype = {
      * @property value
      * @type String
      */
-    value: null,
+    value: undefined,
     
     /**
      * The owner of the attribute.
      * @property owner
      * @type YAHOO.util.AttributeProvider
      */
-    owner: null,
+    owner: undefined,
     
     /**
      * Whether or not the attribute is read only.
@@ -57,7 +57,7 @@ YAHOO.util.Attribute.prototype = {
      * @property _initialConfig
      * @type Object
      */
-    _initialConfig: null,
+    _initialConfig: undefined,
     
     /**
      * Whether or not the attribute's value has been set.
@@ -73,7 +73,7 @@ YAHOO.util.Attribute.prototype = {
      * @property set
      * @type Function
      */
-    set: null,
+    set: undefined,
     
     /**
      * The method to use when getting the attribute's value.
@@ -81,7 +81,7 @@ YAHOO.util.Attribute.prototype = {
      * @property get
      * @type Function
      */
-    get: null,
+    get: undefined,
 
     /**
      * The validator to use when setting the attribute's value.
@@ -89,7 +89,7 @@ YAHOO.util.Attribute.prototype = {
      * @type Function
      * @return Boolean
      */
-    validator: null,
+    validator: undefined,
     
     /**
      * Retrieves the current value of the attribute.
