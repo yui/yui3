@@ -1,119 +1,104 @@
 (function() {
 var Y = YAHOO.util;
 
-var TabView = function(widget) {
-    this.superApply(widget);
-};
-
-TabViewProto = {
-    render: function() {
-        var panel = this.widget.get('panel');
-        panel.set('visible', this.widget.get('active')); // show content if active
-    }
-};
-
-YAHOO.lang.extend(TabView, YAHOO.widget.WidgetView, TabViewProto);
-
-var TabController = function(widget, view) {
-        this.superApply(widget, view);
-};
-
-TabControllerProto = {
-    apply: function() {
-        var node = this.widget.get('node');
-        var panel = this.widget.get('panel');
-
-        // DOM
-        Y.Event.on(node.get('node'), 'click', this.showPanel, this, true);
-
-        // Model
-        this.widget.on('contentVisibleChange', function(evt) {
-            this.widget.get('panel').set('visible', evt.newValue);
-        }, this, true);
-
-        this.widget.on('activeChange', function(evt) {
-            var visible = evt.newValue;
-            if (visible) {
-                this.get('node').addClass('yui-active');
-            } else {
-                this.get('node').removeClass('yui-active');
-            }
-            this.get('panel').set('visible', visible);
-        }, this.widget, true);
-    },
-
-    hidePanel: function() {
-        this.widget.get('panel').set('visible', false);
-    },
-
-    showPanel: function() {
-        this.widget.get('panel').set('visible', true);
-    },
-
-    togglePanel: function() {
-        var visible = this.widget.get('contentVisible');
-
-        if (visible) {
-            this.hidePanel();
-        } else {
-            this.showPanel();
-        }
-    }
-};
-
-YAHOO.lang.extend(TabController, YAHOO.widget.WidgetController, TabControllerProto);
-
-var Tab = function(node, attributes) {
+var Tab = function(widget) {
     this.constructor.superclass.constructor.apply(this, arguments);
 };
 
+Tab.ACTIVATION_EVENT = 'click';
+
+var proto  = {
+    initializer: function() {
+    },
+
+    renderer: function() {
+        var button = this.get('button');
+        var panel = this.get('panel');
+
+        button.set('deactivationEvent', null); // cancel Button default
+        panel.set('visible', this.get('active'));
+
+        button.on('activeChange', this._onActiveChange, this, true);
+
+        button.render();
+        panel.render();
+    },
+
+    _onActiveChange: function(evt) {
+        this.set('active', evt.newValue, true);
+    },
+
+    _setButton: function(val) {
+        if (YAHOO.lang.isString(val)) {
+            return new YAHOO.widget.Button({ id: val });
+        }
+    },
+
+    _setPanel: function(val) {
+        if (YAHOO.lang.isString(val)) {
+            return new YAHOO.widget.Panel({ id: val });
+        }
+    },
+
+    _setLabel: function(val) {
+        this.get('button').set('text', val);
+    },
+
+    _setContent: function(val) {
+        this.get('panel').set('content', val);
+    },
+
+    _setActive: function(val) {
+        var button = this.get('button');
+        var panel = this.get('panel');
+        
+        if (button.get('active') !== val) {
+            button.set('active', val, true); // silent to avoid inf loop with change handler
+        }
+
+        if (panel.get('visible') !== val) {
+            panel.set('visible', val);
+        }
+    },
+
+    _setActivationEvent: function(val) {
+        button.set('activationEvent', this.get('activationEvent'));
+    },
+
+};
+
+YAHOO.lang.extend(Tab, YAHOO.widget.Widget, proto);
 
 Tab.NAME = "Tab";
 
 Tab.CONFIG = {
-    label: {
-        validator: YAHOO.lang.isString,
-        value: ''
-    },
-
-    content: {
-        validator: YAHOO.lang.isString,
-        value: ''
+    button: {
+        set: proto._setButton
     },
 
     panel: {
-        set: function(panel) {
-            if (panel) {
-                return Y.Element.get(Y.Dom.get(panel));
-            }
-        }
+        set: proto._setPanel
     },
 
-    contentVisible: {
-        validator: YAHOO.lang.isBoolean,
-        value: false 
+    label: {
+        set: proto._setLabel,
+        validator: YAHOO.lang.isString,
+    },
+
+    content: {
+        set: proto._setContent,
+        validator: YAHOO.lang.isString,
     },
 
     active: {
-        validator: YAHOO.lang.isBoolean,
-        value: false
+        set: proto._setActive
+    },
+
+    activationEvent: function() {
+        set: proto._setActivationEvent
+        value: 'click'
     }
 };
 
-
-TabProto = {
-    viewClass: TabView,
-    controllerClass: TabController,
-
-    initializer: function(attributes) {
-    },
-};
-
-YAHOO.lang.extend(Tab, YAHOO.widget.Widget, TabProto);
-
-
 YAHOO.widget.Tab = Tab;
-YAHOO.widget.TabView = TabView;
-YAHOO.widget.TabController = TabController;
-
 })();
