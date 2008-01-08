@@ -30,7 +30,7 @@
          * @method get
          * @param {String} key The attribute whose value will be returned.
          */
-        get: function(key){
+        get: function(key) {
             this._configs = this._configs || {};
             var config = this._configs[key];
             
@@ -50,7 +50,7 @@
          * @param {Boolean} silent Whether or not to suppress change events
          * @return {Boolean} Whether or not the value was set.
          */
-        set: function(key, value, silent){
+        set: function(key, value, silent) {
             this._configs = this._configs || {};
             var config = this._configs[key];
             if (!config) {
@@ -67,7 +67,7 @@
          * @method getAttributeKeys
          * @return {Array} An array of attribute names.
          */
-        getAttributeKeys: function(){
+        getAttributeKeys: function() {
             this._configs = this._configs;
             var keys = [];
             var config;
@@ -88,7 +88,7 @@
          * @param {Object} map  A key-value map of attributes
          * @param {Boolean} silent Whether or not to suppress change events
          */
-        setAttributes: function(map, silent){
+        setAttributes: function(map, silent) {
             for (var key in map) {
                 if ( Lang.hasOwnProperty(map, key) ) {
                     this.set(key, map[key], silent);
@@ -103,7 +103,7 @@
          * @param {Boolean} silent Whether or not to suppress change events
          * @return {Boolean} Whether or not the value was set
          */
-        resetValue: function(key, silent){
+        resetValue: function(key, silent) {
             this._configs = this._configs || {};
             if (this._configs[key]) {
                 this.set(key, this._configs[key]._initialConfig.value, silent);
@@ -115,22 +115,13 @@
         /**
          * Sets the attribute's value to its current value.
          * @method refresh
-         * @param {String | Array} key The attribute(s) to refresh
          * @param {Boolean} silent Whether or not to suppress change events
          */
-        refresh: function(key, silent){
-            this._configs = this._configs;
+        refresh: function(silent) {
+            var keys = this.getAttributeKeys();
             
-            key = ( ( Lang.isString(key) ) ? [key] : key ) || 
-                    this.getAttributeKeys();
-            
-            for (var i = 0, len = key.length; i < len; ++i) { 
-                if ( // only set if there is a value and not null
-                    this._configs[key[i]] && 
-                    ! Lang.isUndefined(this._configs[key[i]].value) &&
-                    ! Lang.isNull(this._configs[key[i]].value) ) {
-                    this._configs[key[i]].refresh(silent);
-                }
+            for (var i = 0, len = keys.length; i < len; ++i) { 
+                this._configs[keys[i]].refresh(silent);
             }
         },
     
@@ -163,19 +154,12 @@
          * @param {Object} map A key-value map of attribute properties
          * @param {Boolean} init Whether or not this should become the intial config.
          */
-        setAttributeConfig: function(key, map, init) {
-            if (key.name) { // key is map
-                map = key;
-                key = map.name;
-            }
+        setAttributeConfig: function(attr, map, init) {
             this._configs = this._configs || {};
-            map = map || {};
-            map.name = map.name || key;
-
-            if (!this._configs[key]) {
-                this._configs[key] = this.createAttribute(map);
+            if (!this._configs[attr]) {
+                this._configs[attr] = this.createAttribute(attr, map);
             } else {
-                this._configs[key].configure(map, init);
+                this._configs[attr].configure(map, init);
             }
         },
         
@@ -183,43 +167,12 @@
          * Sets or updates an array of Attribute instance's properties. 
          * @method setAttributeConfigs
          * @param {Array} configs An array of Attribute configs
-         * @param {Object} attributes Intial attribute values
+         * @param {Boolean} init Whether or not this should become the intial config.
          */
-        setAttributeConfigs: function(configs, attributes, init) {
-            attributes = attributes || {};
-            var config;
+        setAttributeConfigs: function(configs, init) {
             for (var attr in configs) {
-                var attrObj = configs[attr];
-                var clone = {};
-                for (i in attrObj) { // copy to break ref
-                    clone[i] = attrObj[i]; 
-                }       
-                
-                //if ( YAHOO.lang.hasOwnProperty(configs, attr) ) {
-                    config = clone;
-                    config.value = (attributes[attr] !== undefined) ? attributes[attr] : config.value; // initialize value to user or default
-                    this.setAttributeConfig(attr, clone, init);
-               // }
-            }
-
-            //return; // NOTE: temp return
-
-            // TODO: set all configs before setting any values?  Requires change to Attribute.configure
-
-            // set initial or default values
-            // do on a 2nd pass to ensure dependencies are in place
-            for (var attr in configs) { 
                 if ( YAHOO.lang.hasOwnProperty(configs, attr) ) {
-                    config = configs[attr];
-                    if (attributes[attr] !== undefined) { // set user defined
-                        this.set(attr, attributes[attr]); // TODO: store default if present?
-                    } else if (config.value !== undefined) { // treat value from CONFIG as default
-                        if (config.readOnly && init) { // set readOnly attrs directly
-                            this._configs[attr].value = config.value;
-                        } else {
-                            this.set(attr, config.value, true); // silent set for defaults
-                        }
-                    } 
+                    this.setAttributeConfig(attr, configs[attr], init);
                 }
             }
         },
@@ -234,7 +187,7 @@
          * @param {String} key The attribute's name.
          * @private
          */
-        resetAttributeConfig: function(key){
+        resetAttributeConfig: function(key) {
             this._configs = this._configs || {};
             this._configs[key].resetConfig();
         },
@@ -283,8 +236,8 @@
             return this.fireEvent(e.type, e);
         },
 
-        createAttribute: function(map) {
-            return new YAHOO.util.Attribute(map, this);
+        createAttribute: function(name, map) {
+            return new YAHOO.util.Attribute(name, map, this);
         }
     };
     

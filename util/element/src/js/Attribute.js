@@ -7,7 +7,8 @@
  * @param {YAHOO.util.AttributeProvider} The owner of the Attribute instance.
  */
 
-YAHOO.util.Attribute = function(map, owner) {
+YAHOO.util.Attribute = function(name, map, owner) {
+    this.name = name;
     if (owner) { 
         this.owner = owner;
         this.configure(map, true);
