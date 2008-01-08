@@ -13,6 +13,7 @@
 
 <script type="text/javascript" src="../util/element/src/js/const.js"></script>
 <script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
+<script type="text/javascript" src="../widget/widget/src/js/WidgetAttribute.js"></script>
 <script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
 <script type="text/javascript" src="../util/element/src/js/Object.js"></script>
 <script type="text/javascript" src="../widget/plugins/Mouse.js"></script>
@@ -55,9 +56,10 @@
         logger.hideSource('LogReader');
     });
 
-    var widget = new YW.Widget({ node: 'foo' });
+    var widget = new YW.Widget({ id: 'foo' });
     widget.render();
 
+    console.log(widget.get('id'));
     widget.on('click', function() {
         console.log('click');
     });
