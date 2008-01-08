@@ -51,7 +51,6 @@
 
             this._initRootNode();
 
-            Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
             this.renderer();
             this._rendered = true;
             this.fireEvent(YUI.Render);
@@ -69,11 +68,12 @@
         },
 
         _initRootNode: function() {
-            var node = this.get('node');
+            var node = this._node;
 
             if (!node) {
                 this.set('node', this.get('id')); // get from Dom by ID if no default node provided
             }
+            Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
         },
 
         hide: function() {
@@ -93,14 +93,14 @@
         },
 
         getNodeAttr: function(attr) {
-            if (this.get('node')) {
-                return this.get('node')[attr];
+            if (this._node) {
+                return this._node[attr];
             }
             return undefined;
         },
 
         setNodeAttr: function(attr, val) {
-            if (this.get('node')) {
+            if (this._node) {
                 this._node[attr] = val;
             }
         },
