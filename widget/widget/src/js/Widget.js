@@ -50,22 +50,11 @@
             }
 
             this._initRootNode();
-            this.initPostRenderAttributes();
 
             Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
             this.renderer();
             this._rendered = true;
             this.fireEvent(YUI.Render);
-        },
-
-        initPostRenderAttributes: function() {
-            var val;
-            for (var attr in this._configs) {
-                val = this._configs[attr]._value;
-                if (val !== undefined) {
-                    this._configs[attr].setValue(val); 
-                }
-            }
         },
 
         /* @final */
@@ -145,8 +134,8 @@
         },
 
         // override AttributeProvider method
-        createAttribute: function(map) {
-            return new YAHOO.widget.WidgetAttribute(map, this);
+        createAttribute: function(name, map) {
+            return new YAHOO.widget.WidgetAttribute(name, map, this);
         },
 
         toString: function() {
@@ -163,16 +152,20 @@
     };
 
     Widget.CONFIG = {
-        'node': { // TODO: is there a better name?  revert to 'root'? 
-            set: proto._setNode
-        },
         'id': {
             set: proto._setId
         },
+
+        'node': { // TODO: is there a better name?  revert to 'root'? 
+            set: proto._setNode
+        },
+
         'visible': {
             set: proto._setVisible,
+            postRender: true,
             value: true
         },
+
         'disabled': {
             set: proto._setDisabled,
             value: false
