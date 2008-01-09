@@ -1,0 +1,7 @@
+.yui-hidden {
+    visibility: hidden;
+}
+
+.yui-disabled {
+    background:#dcdcdc;
+}
