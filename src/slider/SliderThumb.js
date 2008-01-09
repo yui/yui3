@@ -1,5 +1,7 @@
 (function() {
 
+//    var SliderModule = function(YAHOO) {
+
     var Y = YAHOO,
         U = Y.util,
         D = U.Dom,
@@ -75,6 +77,7 @@
 
             var min = this.get("min" + axis);
             var max = this.get("max" + axis);
+
             var tSize = this.get("tickSize");
 
             if(val < min) {
@@ -437,4 +440,9 @@
     SliderThumb.Y = "Y";
 
     W.SliderThumb = SliderThumb;
+    
+//    };
+//
+//    YUI.add("slider", "widget", SliderModule, "3.0.0");
+    
 })();

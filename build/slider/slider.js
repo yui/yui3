@@ -1,5 +1,7 @@
 (function() {
 
+//    var SliderModule = function(YAHOO) {
+
     var Y = YAHOO,
         U = Y.util,
         D = U.Dom,
@@ -75,6 +77,7 @@
 
             var min = this.get("min" + axis);
             var max = this.get("max" + axis);
+
             var tSize = this.get("tickSize");
 
             if(val < min) {
@@ -437,9 +440,16 @@
     SliderThumb.Y = "Y";
 
     W.SliderThumb = SliderThumb;
+    
+//    };
+//
+//    YUI.add("slider", "widget", SliderModule, "3.0.0");
+    
 })();
 
 (function() {
+
+//    var SliderModule = function(YAHOO) {
 
     var Y = YAHOO,
         U = Y.util,
@@ -450,6 +460,7 @@
         W = Y.widget;
 
     function Slider(attributes) {
+        // Convenience method/property added by L.extend?
         this.constructor.superclass.constructor.apply(this, arguments);
     }
 
@@ -459,10 +470,17 @@
     // Widget API - Event Strings
     Slider.E = {
         SlideStart : "slideStart",
-        SlideEnd : "sliderEnd",
+        SlideEnd : "slideEnd",
         EndMove: "endMove",
         Change: C.Change
     };
+
+    // Slider Specific Constants
+    Slider.INC = 1;
+    Slider.DEC = -1;
+    Slider.REGION = "region";
+    Slider.HORIZ = "horiz";
+    Slider.VERT = "vert";
 
     // Widget API
     Slider.CONFIG = {
@@ -470,18 +488,18 @@
         thumb : {},
         type : {
             set : function(val) {
-                // Setup obj props
-                if (val == "region") {
+                // Setup convenience props
+                if (val == Slider.REGION) {
                     this._isRegion = true;
-                } else if (val == "horiz") {
+                } else if (val == Slider.HORIZ) {
                     this._isHoriz = true;
                 } else {
                     this._isVert = true;
                 }
             },
-            value : "horiz",
+            value : Slider.HORIZ,
             validator : function(val) {
-                return (val == "horiz" || val == "vert" || val == "region");
+                return (val == Slider.HORIZ || val == Slider.VERT || val == Slider.REGION);
             }
         },
         bgEnabled : {
@@ -511,9 +529,7 @@
 
         // Widget API
         initializer : function(attributes) {
-            if (this.get("group")) {
-                this.initThumb();
-            }
+            this.initThumb();
         },
 
         // Widget API
@@ -547,17 +563,9 @@
         isLocked : function() {
             return this.get("locked");
         },
-        
+
         getValue: function () { 
             return this.getThumb().getValue();
-        },
-
-        getXValue: function () { 
-            return this.getThumb().getXValue();
-        },
-
-        getYValue: function () {
-            return this.getThumb().getYValue();
         },
 
         setValueToMin : function() {
@@ -604,7 +612,7 @@
         stepYValue : function(dir) {
             var i = this.get("keyIncrement") * dir;
 
-            var newY = this.getYValue() + i; 
+            var newY = this.getThumb().getYValue() + i; 
             if (this._isVert) {
                 this.setValue(newY);
             } else if (this._isRegion) {
@@ -615,51 +623,12 @@
         stepXValue : function(dir) {
             var i = this.get("keyIncrement") * dir;
 
-            var newX = this.getXValue() + i;
+            var newX = this.getThumb().getXValue() + i;
             if (this._isHoriz) {
                 this.setValue(newX);
             } else if (this._isRegion) {
                 this.setRegionValue(newX, null);
             }
-        },
-
-        _setValToLimit : function(minOrMax) {
-            var str = (minOrMax) ? "max" : "min",
-                t = this.getThumb(),
-                s = W.SliderThumb,
-                x = s.X,
-                y = s.Y;
-
-            if (this._isRegion) {
-                this.setRegionValue(t.get(str + x), t.get(str + y));
-            } else if (this._isVert) {
-                this.setValue(t.get(str + y));
-            } else {
-                this.setValue(t.get(str + x));
-            }
-        },
-
-        _slideStart: function() {
-            if (!this._sliding) {
-                this.fireEvent(Slider.E.SlideStart);
-                this._sliding = true;
-            }
-        },
-
-        _slideEnd: function() {
-            if (this._sliding && this.moveComplete) {
-                this.fireEvent(Slider.E.SlideEnd);
-                this._sliding = false;
-                this.moveComplete = false;
-            }
-        },
-
-        _endMove: function () {
-            this.unlock();
-            this.moveComplete = true;
-
-            this.fireEvent(Slider.E.EndMove);
-            this.fireEvents();
         },
 
         fireEvents: function (thumbEvent) {
@@ -891,6 +860,45 @@
                 this.setValue(val, false, true);
             }
         },
+        
+        _setValToLimit : function(minOrMax) {
+            var str = (minOrMax) ? "max" : "min",
+                t = this.getThumb(),
+                s = W.SliderThumb,
+                x = s.X,
+                y = s.Y;
+
+            if (this._isRegion) {
+                this.setRegionValue(t.get(str + x), t.get(str + y));
+            } else if (this._isVert) {
+                this.setValue(t.get(str + y));
+            } else {
+                this.setValue(t.get(str + x));
+            }
+        },
+
+        _slideStart: function() {
+            if (!this._sliding) {
+                this.fireEvent(Slider.E.SlideStart);
+                this._sliding = true;
+            }
+        },
+
+        _slideEnd: function() {
+            if (this._sliding && this.moveComplete) {
+                this.fireEvent(Slider.E.SlideEnd);
+                this._sliding = false;
+                this.moveComplete = false;
+            }
+        },
+
+        _endMove: function () {
+            this.unlock();
+            this.moveComplete = true;
+
+            this.fireEvent(Slider.E.EndMove);
+            this.fireEvents();
+        },
 
         _moveThumb : function(e) {
             var x = E.getPageX(e);
@@ -900,10 +908,6 @@
 
         _dd : null
     });
-
-    // Widget Specific Constants
-    Slider.INC = 1;
-    Slider.DEC = -1;
 
     // Widget Specific Static Methods    
     Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
@@ -916,7 +920,7 @@
                 maxY: 0,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "horiz" });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.HORIZ });
     };
 
     Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
@@ -929,7 +933,7 @@
                 maxX: 0,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "vert" });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.VERT });
     };
 
     Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
@@ -942,10 +946,14 @@
                 maxY: maxY,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "region" });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.REGION });
     };
 
     W.Slider = Slider;
+
+//    };
+//
+//    YUI.add("slider", "widget", SliderModule, "3.0.0");
 
 })();
 
