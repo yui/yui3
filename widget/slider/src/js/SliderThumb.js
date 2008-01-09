@@ -15,7 +15,7 @@
     SliderThumb.NAME = "SliderThumb";
 
     SliderThumb.CONFIG = {
-        'group' : null,
+        'group' : {},
 
         'minX' : {
             value : 0
@@ -42,14 +42,14 @@
 
         'x' : {
             set : function(val) {
-                return this.constrain(val, SliderThumb.X);
+                return this._constrain(val, SliderThumb.X);
             },
             value : 0
         },
 
         'y' : {
             set : function(val) {
-                return this.constrain(val, SliderThumb.Y);
+                return this._constrain(val, SliderThumb.Y);
             },
             value : 0
         },
@@ -62,23 +62,16 @@
     L.extend(SliderThumb, W.Widget, {
 
         initializer: function (attributes) {
-            this.initProps();
         },
 
-        initProps : function() {
-            var xR = this.getXRange();
-            var yR = this.getYRange();
+        renderer : function() {
+            this.centerPoint = this.findCenter();
 
-            if (xR !== 0 && yR !== 0) {
-                this._isRegion = true;
-            } else if (xR !== 0) {
-                this._isHoriz = true;
-            } else {
-                this._isVert = true;
-            }
+            this.initDD();
+            this.apply();
         },
 
-        constrain : function(val, axis) {
+        _constrain : function(val, axis) {
 
             var min = this.get("min" + axis);
             var max = this.get("max" + axis);
@@ -116,13 +109,15 @@
         },
 
         getValue: function () {
-            if (this._isHoriz) {
-                return this.getXValue();
-            } else if (this._isVert){
-                return this.getYValue();
+            var p = this.parent, v;
+            if (p._isRegion) {
+                v = [this.getXValue(), this.getYValue()];
+            } else if (p._isVert){
+                v = this.getYValue();
             } else {
-                return [this.getXValue(), this.getYValue()];
+                v = this.getXValue();
             }
+            return v;
         },
 
         getXValue: function () {
@@ -144,7 +139,7 @@
         getTickPause : function() {
             var ticks = this.get("tickSize");
             if (ticks > 0) {
-                var range = (this._isHoriz) ? this.getXRange() : this.getYRange();
+                var range = (this.parent._isHoriz) ? this.getXRange() : this.getYRange();
                 var nTicks = Math.round(range/ticks);
                 if (nTicks > 0) {
                     return Math.round(360/nTicks);
@@ -155,12 +150,6 @@
 
         endMove : function() {
             this.parent.endMove();
-        },
-
-        renderer : function() {
-            this.centerPoint = this.findCenter();
-            this.initDD();
-            this.apply();
         },
 
         initDD : function() {
@@ -211,16 +200,17 @@
         },
 
         getUIValue : function() {
-            if (this._isHoriz) {
-                return this.getUIXValue();
-            } else if (this._isVert) {
-                return this.getUIYValue();
+            var p = this.parent, v;
+            if (p._isHoriz) {
+                v = this.getUIXValue();
+            } else if (p._isVert) {
+                v = this.getUIYValue();
             } else {
-                return [this.getUIXValue(), this.getUIYValue()];
+                v = [this.getUIXValue(), this.getUIYValue()];
             }
+            return v;
         },
 
-        // Get Data from the DOM for this VIEW
         getUIXValue : function() {
             return Math.round(this.getOffsetFromParent()[0]/this.getXScale());
         },
@@ -331,16 +321,16 @@
         },
 
         moveOneTick: function(finalCoord) {
-            var nextCoord = null;
+            var nextCoord, p = this.parent;
 
-            if (this._isRegion) {
+            if (p._isRegion) {
                 nextCoord = this._getNextX(this.curCoord, finalCoord);
                 var tmpX = (nextCoord) ? nextCoord[0] : this.curCoord[0];
                 nextCoord = this._getNextY([tmpX, this.curCoord[1]], finalCoord);
-            } else if (this._isHoriz) {
-                nextCoord = this._getNextX(this.curCoord, finalCoord);
-            } else {
+            } else if (p._isVert) {
                 nextCoord = this._getNextY(this.curCoord, finalCoord);
+            } else {
+                nextCoord = this._getNextX(this.curCoord, finalCoord);
             }
 
             if (nextCoord) {
@@ -406,9 +396,8 @@
         getParentEl : function() {
             return this.parent._node;
         },
-
+        
         apply : function() {
-            // Events Fired in the Model, Update/Refresh View
             this.addViewListeners();
         },
 
@@ -440,9 +429,6 @@
         centerPoint : null,
         curCoord : null,
 
-        _isHoriz: false,
-        _isVert: false,
-        _isRegion: false,
         _dd : null
     });
 

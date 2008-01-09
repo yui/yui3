@@ -15,7 +15,7 @@
     SliderThumb.NAME = "SliderThumb";
 
     SliderThumb.CONFIG = {
-        'group' : null,
+        'group' : {},
 
         'minX' : {
             value : 0
@@ -42,14 +42,14 @@
 
         'x' : {
             set : function(val) {
-                return this.constrain(val, SliderThumb.X);
+                return this._constrain(val, SliderThumb.X);
             },
             value : 0
         },
 
         'y' : {
             set : function(val) {
-                return this.constrain(val, SliderThumb.Y);
+                return this._constrain(val, SliderThumb.Y);
             },
             value : 0
         },
@@ -62,23 +62,16 @@
     L.extend(SliderThumb, W.Widget, {
 
         initializer: function (attributes) {
-            this.initProps();
         },
 
-        initProps : function() {
-            var xR = this.getXRange();
-            var yR = this.getYRange();
+        renderer : function() {
+            this.centerPoint = this.findCenter();
 
-            if (xR !== 0 && yR !== 0) {
-                this._isRegion = true;
-            } else if (xR !== 0) {
-                this._isHoriz = true;
-            } else {
-                this._isVert = true;
-            }
+            this.initDD();
+            this.apply();
         },
 
-        constrain : function(val, axis) {
+        _constrain : function(val, axis) {
 
             var min = this.get("min" + axis);
             var max = this.get("max" + axis);
@@ -116,13 +109,15 @@
         },
 
         getValue: function () {
-            if (this._isHoriz) {
-                return this.getXValue();
-            } else if (this._isVert){
-                return this.getYValue();
+            var p = this.parent, v;
+            if (p._isRegion) {
+                v = [this.getXValue(), this.getYValue()];
+            } else if (p._isVert){
+                v = this.getYValue();
             } else {
-                return [this.getXValue(), this.getYValue()];
+                v = this.getXValue();
             }
+            return v;
         },
 
         getXValue: function () {
@@ -144,7 +139,7 @@
         getTickPause : function() {
             var ticks = this.get("tickSize");
             if (ticks > 0) {
-                var range = (this._isHoriz) ? this.getXRange() : this.getYRange();
+                var range = (this.parent._isHoriz) ? this.getXRange() : this.getYRange();
                 var nTicks = Math.round(range/ticks);
                 if (nTicks > 0) {
                     return Math.round(360/nTicks);
@@ -155,12 +150,6 @@
 
         endMove : function() {
             this.parent.endMove();
-        },
-
-        renderer : function() {
-            this.centerPoint = this.findCenter();
-            this.initDD();
-            this.apply();
         },
 
         initDD : function() {
@@ -211,16 +200,17 @@
         },
 
         getUIValue : function() {
-            if (this._isHoriz) {
-                return this.getUIXValue();
-            } else if (this._isVert) {
-                return this.getUIYValue();
+            var p = this.parent, v;
+            if (p._isHoriz) {
+                v = this.getUIXValue();
+            } else if (p._isVert) {
+                v = this.getUIYValue();
             } else {
-                return [this.getUIXValue(), this.getUIYValue()];
+                v = [this.getUIXValue(), this.getUIYValue()];
             }
+            return v;
         },
 
-        // Get Data from the DOM for this VIEW
         getUIXValue : function() {
             return Math.round(this.getOffsetFromParent()[0]/this.getXScale());
         },
@@ -331,16 +321,16 @@
         },
 
         moveOneTick: function(finalCoord) {
-            var nextCoord = null;
+            var nextCoord, p = this.parent;
 
-            if (this._isRegion) {
+            if (p._isRegion) {
                 nextCoord = this._getNextX(this.curCoord, finalCoord);
                 var tmpX = (nextCoord) ? nextCoord[0] : this.curCoord[0];
                 nextCoord = this._getNextY([tmpX, this.curCoord[1]], finalCoord);
-            } else if (this._isHoriz) {
-                nextCoord = this._getNextX(this.curCoord, finalCoord);
-            } else {
+            } else if (p._isVert) {
                 nextCoord = this._getNextY(this.curCoord, finalCoord);
+            } else {
+                nextCoord = this._getNextX(this.curCoord, finalCoord);
             }
 
             if (nextCoord) {
@@ -406,9 +396,8 @@
         getParentEl : function() {
             return this.parent._node;
         },
-
+        
         apply : function() {
-            // Events Fired in the Model, Update/Refresh View
             this.addViewListeners();
         },
 
@@ -440,9 +429,6 @@
         centerPoint : null,
         curCoord : null,
 
-        _isHoriz: false,
-        _isVert: false,
-        _isRegion: false,
         _dd : null
     });
 
@@ -460,54 +446,39 @@
         E = U.Event,
         D = U.Dom,
         L = Y.lang,
+        C = L.CONST,
         W = Y.widget;
 
     function Slider(attributes) {
         this.constructor.superclass.constructor.apply(this, arguments);
     }
-    
+
     // Widget API
     Slider.NAME = "Slider";
 
-    Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
-        var thumb = new W.SliderThumb({
-                node: thumbId,  
-                group: sliderId,
-                minX: minX,
-                maxX: maxX,
-                tickSize: iTickSize
-        });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "horiz" });
+    // Widget API - Event Strings
+    Slider.E = {
+        SlideStart : "slideStart",
+        SlideEnd : "sliderEnd",
+        EndMove: "endMove",
+        Change: C.Change
     };
 
-    Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb({ 
-                node: thumbId,  
-                group: sliderId,
-                minY: minY,
-                maxY: maxY,
-                tickSize: iTickSize
-        });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "vert" });
-    };
-
-    Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb({  
-                node : thumbId,
-                group: sliderId, 
-                minX: minX,
-                maxX: maxX,
-                minY: minY,
-                maxY: maxY,
-                tickSize: iTickSize
-        });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "region" });
-    };
-
+    // Widget API
     Slider.CONFIG = {
         group : {},
         thumb : {},
         type : {
+            set : function(val) {
+                // Setup convenience obj props
+                if (val == "region") {
+                    this._isRegion = true;
+                } else if (val == "horiz") {
+                    this._isHoriz = true;
+                } else {
+                    this._isVert = true;
+                }
+            },
             value : "horiz",
             validator : function(val) {
                 return (val == "horiz" || val == "vert" || val == "region");
@@ -539,12 +510,12 @@
     L.extend(Slider, W.Widget, {
 
         // Widget API
-        initializer : function(attr) {
+        initializer : function(attributes) {
             if (this.get("group")) {
                 this.initThumb();
             }
         },
-        
+
         // Widget API
         renderer : function() {
             this.baselinePos = D.getXY(this.getBackgroundEl());
@@ -554,7 +525,7 @@
             this.initDD();
             this.apply();
         },
-
+        
         initThumb: function() {
             var t =  this.getThumb();
             t.parent = this;
@@ -576,7 +547,7 @@
         isLocked : function() {
             return this.get("locked");
         },
-
+        
         getValue: function () { 
             return this.getThumb().getValue();
         },
@@ -585,7 +556,7 @@
             return this.getThumb().getXValue();
         },
 
-        getYValue: function () { 
+        getYValue: function () {
             return this.getThumb().getYValue();
         },
 
@@ -597,22 +568,6 @@
             this._setValToLimit(true);
         },
 
-        _setValToLimit : function(minOrMax) {
-            var str = (minOrMax) ? "max" : "min",
-                t = this.getThumb(),
-                s = W.SliderThumb,
-                x = s.X,
-                y = s.Y;
-
-            if (t._isHoriz) {
-                this.setValue(t.get(str + x));
-            } else if (t._isVert) {
-                this.setValue(t.get(str + y));
-            } else {
-                this.setRegionValue(t.get(str + x), t.get(str + y));
-            }
-        },
-
         setValue: function(val, force, silent) {
             if ( this.isLocked() && !force ) {
                 return false;
@@ -621,11 +576,11 @@
                 return false;
             }
             var t = this.getThumb();
-            if (t._isRegion) {
+            if (this._isRegion) {
                 return false;
-            } else if (t._isHoriz) {
+            } else if (this._isHoriz) {
                 t.set("x", val, silent);
-            } else if (t._isVert) {
+            } else if (this._isVert) {
                 t.set("y", val, silent);
             }
         },
@@ -634,11 +589,9 @@
             if (this.isLocked() && !force) {
                 return false;
             }
-
             if ( isNaN(valX) && isNaN(valY)) {
                 return false;
             }
-
             var t = this.getThumb();
             if (valX || valX === 0) {
                 t.set("x", valX, silent);
@@ -648,42 +601,56 @@
             }
         },
 
+        stepYValue : function(dir) {
+            var i = this.get("keyIncrement") * dir;
+
+            var newY = this.getYValue() + i; 
+            if (this._isVert) {
+                this.setValue(newY);
+            } else if (this._isRegion) {
+                this.setRegionValue(null, newY);
+            }
+        },
+
+        stepXValue : function(dir) {
+            var i = this.get("keyIncrement") * dir;
+
+            var newX = this.getXValue() + i;
+            if (this._isHoriz) {
+                this.setValue(newX);
+            } else if (this._isRegion) {
+                this.setRegionValue(newX, null);
+            }
+        },
+
+        _setValToLimit : function(minOrMax) {
+            var str = (minOrMax) ? "max" : "min",
+                t = this.getThumb(),
+                s = W.SliderThumb,
+                x = s.X,
+                y = s.Y;
+
+            if (this._isRegion) {
+                this.setRegionValue(t.get(str + x), t.get(str + y));
+            } else if (this._isVert) {
+                this.setValue(t.get(str + y));
+            } else {
+                this.setValue(t.get(str + x));
+            }
+        },
+
         _slideStart: function() {
             if (!this._sliding) {
-                this.fireEvent("slideStart");
+                this.fireEvent(Slider.E.SlideStart);
                 this._sliding = true;
             }
         },
 
         _slideEnd: function() {
             if (this._sliding && this.moveComplete) {
-                this.fireEvent("slideEnd");
+                this.fireEvent(Slider.E.SlideEnd);
                 this._sliding = false;
                 this.moveComplete = false;
-            }
-        },
-
-        stepYValue : function(dir) {
-            var i = this.get("keyIncrement") * dir,
-                t = this.getThumb();
-
-            var newY = this.getYValue() + i; 
-            if (t._isVert) {
-                this.setValue(newY);
-            } else if (t._isRegion) {
-                this.setRegionValue(null, newY);
-            }
-        },
-
-        stepXValue : function(dir) {
-            var i = this.get("keyIncrement") * dir,
-                t = this.getThumb();
-
-            var newX = this.getXValue() + i;
-            if (t._isHoriz) {
-                this.setValue(newX);
-            } else if (t._isRegion) {
-                this.setRegionValue(newX, null);
             }
         },
 
@@ -691,7 +658,7 @@
             this.unlock();
             this.moveComplete = true;
 
-            this.fireEvent("endMove");
+            this.fireEvent(Slider.E.EndMove);
             this.fireEvents();
         },
 
@@ -703,12 +670,12 @@
             }
 
             if (!this.isLocked()) {
-                if (t._isRegion) {
+                if (this._isRegion) {
                     var newX = t.getXValue();
                     var newY = t.getYValue();
 
                     if (newX != this.previousX || newY != this.previousY) {
-                      this.fireEvent("change", { x: newX, y: newY });
+                      this.fireEvent(Slider.E.Change, { x: newX, y: newY });
                     }
 
                     this.previousX = newX;
@@ -716,7 +683,7 @@
                 } else {
                     var newVal = t.getValue();
                       if (newVal != this.previousVal) {
-                        this.fireEvent("change", newVal);
+                        this.fireEvent(Slider.E.Change, newVal);
                       }
                       this.previousVal = newVal;
                 }
@@ -776,7 +743,6 @@
         },
 
         apply : function() {
-
             // Events Fired in the UI, Update Model
             this.addKeyListeners();
             this.addDDListeners();
@@ -793,25 +759,24 @@
         },
 
         addDDListeners : function() {
-            var c = this,
+            var self = this,
                 sDD = this._dd;
 
-            sDD.onMouseUp = function(e) {c.onBGMouseUp(e);};
-            sDD.b4MouseDown = function(e) {c.beforeBGMouseDown(e);};
-            sDD.onDrag = function(e) {c.onBGDrag(e);};
-            sDD.onMouseDown = function(e) {c.onBGMouseDown(e);};
+            sDD.b4MouseDown = function(e) {self.beforeBGMouseDown(e);};
+            sDD.onDrag = function(e) {self.onBGDrag(e);};
+            sDD.onMouseDown = function(e) {self.onBGMouseDown(e);};
 
-            this.on("endMove", this.sync, this, true);
+            this.on(Slider.E.EndMove, this.sync, this, true);
         },
 
         addThumbDDListeners : function() {
-            var c = this,
+            var self = this,
                 tDD = this.getThumb()._dd;
 
-            tDD.onMouseDown = function(e) {c.onThumbMouseDown(e);};
-            tDD.startDrag = function(e) {c.onThumbStartDrag(e);};
-            tDD.onDrag = function(e) {c.onThumbDrag(e);};
-            tDD.onMouseUp = function(e) {c.onThumbMouseUp(e);};
+            tDD.onMouseDown = function(e) {self.onThumbMouseDown(e);};
+            tDD.startDrag = function(e) {self.onThumbStartDrag(e);};
+            tDD.onDrag = function(e) {self.onThumbDrag(e);};
+            tDD.onMouseUp = function(e) {self.onThumbMouseUp(e);};
         },
 
         addViewListeners : function() {
@@ -830,15 +795,6 @@
             }
         },
 
-        sync : function() {
-            var val = this.getThumb().getUIValue();
-            if (this.getThumb()._isRegion) {
-                this.setRegionValue(val[0], val[1], false, true);
-            } else {
-                this.setValue(val, false, true);
-            }
-        },
-
         beforeBGMouseDown: function(e) {
             var dd = this.getThumb()._dd;
             dd.autoOffset();
@@ -852,21 +808,9 @@
             }
         },
 
-        _moveThumb : function(e) {
-            var x = E.getPageX(e);
-            var y = E.getPageY(e);
-            this.getThumb().moveThumb(x, y);
-        },
-
         onBGDrag: function(e) {
             if (!this.isLocked()) {
                 this._moveThumb(e);
-            }
-        },
-
-        onBGMouseUp: function(e) {
-            if (!this.isLocked() && !this.moveComplete) {
-               // this.endMove();
             }
         },
 
@@ -939,12 +883,67 @@
             }
         },
 
+        sync : function() {
+            var val = this.getThumb().getUIValue();
+            if (this._isRegion) {
+                this.setRegionValue(val[0], val[1], false, true);
+            } else {
+                this.setValue(val, false, true);
+            }
+        },
+
+        _moveThumb : function(e) {
+            var x = E.getPageX(e);
+            var y = E.getPageY(e);
+            this.getThumb().moveThumb(x, y);
+        },
+
         _dd : null
     });
 
     // Widget Specific Constants
     Slider.INC = 1;
     Slider.DEC = -1;
+
+    // Widget Specific Static Methods    
+    Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
+        var thumb = new W.SliderThumb({
+                node: thumbId,  
+                group: sliderId,
+                minX: minX,
+                maxX: maxX,
+                minY: 0,
+                maxY: 0,
+                tickSize: iTickSize
+        });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "horiz" });
+    };
+
+    Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
+        var thumb = new W.SliderThumb({ 
+                node: thumbId,  
+                group: sliderId,
+                minY: minY,
+                maxY: maxY,
+                minX: 0,
+                maxX: 0,
+                tickSize: iTickSize
+        });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "vert" });
+    };
+
+    Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
+        var thumb = new W.SliderThumb({  
+                node : thumbId,
+                group: sliderId, 
+                minX: minX,
+                maxX: maxX,
+                minY: minY,
+                maxY: maxY,
+                tickSize: iTickSize
+        });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "region" });
+    };
 
     W.Slider = Slider;
 

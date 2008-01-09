@@ -1,17 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>Slider MVC</title>
+        <title>Slider Demo</title>
 
-        <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.4.0/build/logger/assets/skins/sam/logger.css">
+        <link rel="stylesheet" type="text/css" href="../util/element/src/css/element-core.css">
 
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/yahoo/yahoo.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/dom/dom.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/event/event.js"></script>
-        
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/animation/animation.js"></script>
-        
-        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/logger/logger.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/dragdrop/dragdrop.js"></script>
 
         <script type="text/javascript" src="../util/element/src/js/const.js"></script>
@@ -98,14 +95,15 @@
                     YAHOO.util.Dom.get(div).innerHTML = this.getValue();                    
                 }
 
-                hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 0);
+                hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 20);
                 hSlider.set("animate", false);
 
                 hSlider.subscribe("render", handle, "hv");
                 hSlider.subscribe("change", handle, "hv");
 
-                hSlider.render();
                 hSlider.setValue(40);
+
+                hSlider.render();
 
                 //----
 

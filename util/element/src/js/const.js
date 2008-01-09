@@ -10,6 +10,7 @@
         Render:              'render',
         BeforeErase:         'beforeErase',
         Erase:               'erase',
+        Change:              'change',
     
         // Other strings
         CHILDREN:            'children',
