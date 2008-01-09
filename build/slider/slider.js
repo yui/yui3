@@ -6,17 +6,16 @@
         L = Y.lang,
         W = Y.widget;
 
-    function SliderThumb(node, attr) {
+    // Widget API
+    function SliderThumb(attrtibutes) {
         this.constructor.superclass.constructor.apply(this, arguments);
     }
 
+    // Widget API
     SliderThumb.NAME = "SliderThumb";
 
-    SliderThumb.X = "X";
-    SliderThumb.Y = "Y";
-
     SliderThumb.CONFIG = {
-        'group' : {},
+        'group' : null,
 
         'minX' : {
             value : 0
@@ -59,7 +58,7 @@
             value : false
         }
     };
-    
+
     L.extend(SliderThumb, W.Widget, {
 
         initializer: function (attributes) {
@@ -80,6 +79,7 @@
         },
 
         constrain : function(val, axis) {
+
             var min = this.get("min" + axis);
             var max = this.get("max" + axis);
             var tSize = this.get("tickSize");
@@ -101,10 +101,6 @@
                 }
             }
             return val;
-        },
-
-        clearTicks: function () {
-            this.set("tickSize", 0);
         },
 
         lock : function() {
@@ -160,11 +156,6 @@
         endMove : function() {
             this.parent.endMove();
         },
-
-        _isHoriz: false,
-        _isVert: false,
-        _isRegion: false,
-        _dd : null,
 
         renderer : function() {
             this.centerPoint = this.findCenter();
@@ -291,15 +282,16 @@
 
         moveThumb: function(x, y, skipAnim, midMove) {
             var curCoord = D.getXY(this.getThumbEl());
+            var cp = this.centerPoint;
+
+            
             if (!x && x !== 0) {
-                x = curCoord[0];
+                x = curCoord[0] + cp.x;
             }
 
             if (!y && y !== 0) {
-                y = curCoord[1];
+                y = curCoord[1] + cp.y;
             }
-
-            var cp = this.centerPoint;
 
             this._dd.setDelta(cp.x, cp.y);
 
@@ -320,13 +312,13 @@
                 this.lock();
 
                 var oAnim = new U.Motion( 
-                        this.get("node").get("id"), 
+                        this.getThumbEl().id, 
                         { points: { to: p } }, 
                         this.get("animationDuration"), 
                         U.Easing.easeOut );
 
                 oAnim.onComplete.subscribe(function() { 
-                    thumb.endMove(); 
+                    thumb.endMove();
                 });
                 oAnim.animate();
 
@@ -408,15 +400,12 @@
         },
 
         getThumbEl : function() {
-            return this.get('node').get('node');
+            return this._node;
         },
 
         getParentEl : function() {
-            return this.parent.get('node').get('node');
+            return this.parent._node;
         },
-
-        centerPoint : null,
-        curCoord : null,
 
         apply : function() {
             // Events Fired in the Model, Update/Refresh View
@@ -446,8 +435,20 @@
             } else {
                 dd.unlock();
             }
-        }
+        },
+
+        centerPoint : null,
+        curCoord : null,
+
+        _isHoriz: false,
+        _isVert: false,
+        _isRegion: false,
+        _dd : null
     });
+
+    // Widget Static Constants
+    SliderThumb.X = "X";
+    SliderThumb.Y = "Y";
 
     W.SliderThumb = SliderThumb;
 })();
@@ -461,35 +462,38 @@
         L = Y.lang,
         W = Y.widget;
 
-    function Slider(node, attributes) {
+    function Slider(attributes) {
         this.constructor.superclass.constructor.apply(this, arguments);
     }
-
-    Slider.INC = 1;
-    Slider.DEC = -1;
+    
+    // Widget API
+    Slider.NAME = "Slider";
 
     Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
-        var thumb = new W.SliderThumb(thumbId, { 
+        var thumb = new W.SliderThumb({
+                node: thumbId,  
                 group: sliderId,
                 minX: minX,
                 maxX: maxX,
                 tickSize: iTickSize
         });
-        return new Slider(sliderId, { group: sliderId, thumb : thumb, type: "horiz"});
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "horiz" });
     };
 
     Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb(thumbId, { 
+        var thumb = new W.SliderThumb({ 
+                node: thumbId,  
                 group: sliderId,
                 minY: minY,
                 maxY: maxY,
                 tickSize: iTickSize
         });
-        return new Slider(sliderId, { group: sliderId, thumb : thumb, type: "vert" });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "vert" });
     };
 
     Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb(thumbId, { 
+        var thumb = new W.SliderThumb({  
+                node : thumbId,
                 group: sliderId, 
                 minX: minX,
                 maxX: maxX,
@@ -497,13 +501,11 @@
                 maxY: maxY,
                 tickSize: iTickSize
         });
-        return new Slider(sliderId, { group: sliderId, thumb : thumb, type: "region" });
+        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: "region" });
     };
 
-    Slider.NAME = "Slider";
-
     Slider.CONFIG = {
-        group : { },
+        group : {},
         thumb : {},
         type : {
             value : "horiz",
@@ -536,10 +538,21 @@
 
     L.extend(Slider, W.Widget, {
 
+        // Widget API
         initializer : function(attr) {
             if (this.get("group")) {
                 this.initThumb();
             }
+        },
+        
+        // Widget API
+        renderer : function() {
+            this.baselinePos = D.getXY(this.getBackgroundEl());
+
+            this.getThumb().render();
+
+            this.initDD();
+            this.apply();
         },
 
         initThumb: function() {
@@ -721,22 +734,12 @@
             }
         },
 
-        renderer : function() {
-            this.baselinePos = D.getXY(this.getBackgroundEl());
-
-            // TODO: Formal parent child?            
-            this.getThumb().render();
-
-            this.initDD();
-            this.apply();
-        },
-
         initDD : function() {
             this._dd = new U.DragDrop(
-                this.get("node").get("id"), 
+                this.getBackgroundEl().id, 
                 this.get("group"), 
                 true);
-                
+
             this._dd.setInitPosition();
             this._dd.isTarget = false;
         },
@@ -769,7 +772,7 @@
         },
 
         getBackgroundEl : function() {
-            return this.get("node").get("node");
+            return this._node;
         },
 
         apply : function() {
@@ -938,6 +941,10 @@
 
         _dd : null
     });
+
+    // Widget Specific Constants
+    Slider.INC = 1;
+    Slider.DEC = -1;
 
     W.Slider = Slider;
 
