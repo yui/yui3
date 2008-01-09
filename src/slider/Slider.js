@@ -1,7 +1,6 @@
 (function() {
 
     // var SliderModule = function(YAHOO) {
-
     var Y = YAHOO,
         U = Y.util,
         E = U.Event,
@@ -18,20 +17,13 @@
     // Widget API - Used for class name, event prefix, toString etc.
     Slider.NAME = "Slider";
 
-    // Widget API - Event Strings
+    // Widget API - Event Strings : TODO
     Slider.E = {
         SlideStart : "slideStart",
         SlideEnd : "slideEnd",
         EndMove: "endMove",
         Change: C.Change
     };
-
-    // Widget API - UI Strings
-    /*
-    Slider.S = {
-        // NOTHING
-    };
-    */
 
     // Slider Specific Constants
     Slider.INC = 1;
@@ -46,7 +38,6 @@
         thumb : {},
         type : {
             set : function(val) {
-                // Setup convenience props
                 if (val == Slider.REGION) {
                     this._isRegion = true;
                 } else if (val == Slider.HORIZ) {
@@ -97,7 +88,7 @@
             this.getThumb().render();
 
             this.initDD();
-            this.apply();
+            this.initUI();
         },
 
         initThumb: function() {
@@ -188,7 +179,7 @@
                 this.setRegionValue(newX, null);
             }
         },
-        
+
         sync : function() {
             var val = this.getThumb().getUIValue();
             if (this._isRegion) {
@@ -222,7 +213,7 @@
             this._dd.isTarget = false;
         },
 
-        apply : function() {
+        initUI : function() {
             // Events Fired in the UI, Update Model
             this.addKeyListeners();
             this.addDDListeners();
@@ -470,7 +461,7 @@
     // Widget Specific Static Methods    
     Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
         var thumb = new W.SliderThumb({
-                node: thumbId,  
+                id: thumbId,  
                 group: sliderId,
                 minX: minX,
                 maxX: maxX,
@@ -478,12 +469,12 @@
                 maxY: 0,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.HORIZ });
+        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.HORIZ });
     };
 
     Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
         var thumb = new W.SliderThumb({ 
-                node: thumbId,  
+                id: thumbId,  
                 group: sliderId,
                 minY: minY,
                 maxY: maxY,
@@ -491,12 +482,12 @@
                 maxX: 0,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.VERT });
+        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.VERT });
     };
 
     Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
         var thumb = new W.SliderThumb({  
-                node : thumbId,
+                id : thumbId,
                 group: sliderId, 
                 minX: minX,
                 maxX: maxX,
@@ -504,7 +495,7 @@
                 maxY: maxY,
                 tickSize: iTickSize
         });
-        return new Slider({ node: sliderId, group: sliderId, thumb : thumb, type: Slider.REGION });
+        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.REGION });
     };
 
     W.Slider = Slider;

@@ -60,6 +60,10 @@
         }
     };
 
+    // Widget Static Constants
+    SliderThumb.X = "X";
+    SliderThumb.Y = "Y";
+
     L.extend(SliderThumb, W.Widget, {
 
         // Widget API
@@ -71,7 +75,7 @@
             this._centerPoint = this.findCenter();
 
             this.initDD();
-            this.apply();
+            this.initUI();
         },
 
         lock : function() {
@@ -244,7 +248,7 @@
             return this.parent._node;
         },
 
-        apply : function() {
+        initUI : function() {
             this.addViewListeners();
         },
 
@@ -431,10 +435,6 @@
 
         _dd : null
     });
-
-    // Widget Static Constants
-    SliderThumb.X = "X";
-    SliderThumb.Y = "Y";
 
     W.SliderThumb = SliderThumb;
 
