@@ -29,7 +29,7 @@
         thumb : {},
         type : {
             set : function(val) {
-                // Setup convenience obj props
+                // Setup obj props
                 if (val == "region") {
                     this._isRegion = true;
                 } else if (val == "horiz") {
@@ -213,7 +213,7 @@
             }
         },
 
-        endMove: function () {
+        _endMove: function () {
             this.unlock();
             this.moveComplete = true;
 
@@ -388,7 +388,7 @@
 
         onThumbMouseUp: function(e) {
             if (!this.isLocked() && !this.moveComplete) {
-                this.endMove();
+                this._endMove();
             }
         },
 

@@ -148,10 +148,6 @@
             return 0;
         },
 
-        endMove : function() {
-            this.parent.endMove();
-        },
-
         initDD : function() {
 
             var w = this,
@@ -308,14 +304,14 @@
                         U.Easing.easeOut );
 
                 oAnim.onComplete.subscribe(function() { 
-                    thumb.endMove();
+                    thumb._endMove();
                 });
                 oAnim.animate();
 
             } else {
                 this._dd.setDragElPos(x, y);
                 if (!midMove) {
-                    this.endMove();
+                    this._endMove();
                 }
             }
         },
@@ -343,11 +339,15 @@
                     var self = this;
                     setTimeout(function() { self.moveOneTick(finalCoord); },  this.parent.get("tickPause"));
                 } else {
-                    this.endMove();
+                    this._endMove();
                 }
             } else {
-                this.endMove();
+                this._endMove();
             }
+        },
+        
+        _endMove : function() {
+            this.parent._endMove();
         },
 
         _getNextX: function(curCoord, finalCoord) {
