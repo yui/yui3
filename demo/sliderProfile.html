@@ -3,31 +3,31 @@
     <head>
         <title>Slider MVC</title>
 
+
+        <link rel="stylesheet" type="text/css" href="../util/element/src/css/element-core.css">
+
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/yahoo/yahoo.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/dom/dom.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/event/event.js"></script>
-
-        <!--
-        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/animation/animation.js"></script> 
-        -->
-
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/animation/animation.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/dragdrop/dragdrop.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/profiler/profiler-beta.js"></script>        
 
         <script type="text/javascript" src="../util/element/src/js/const.js"></script>
         <script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
+        <script type="text/javascript" src="../widget/widget/src/js/WidgetAttribute.js"></script>        
         <script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
         <script type="text/javascript" src="../util/element/src/js/Object.js"></script>
         <script type="text/javascript" src="../util/plugin/src/js/PluginHost.js"></script>
         <script type="text/javascript" src="../util/element/src/js/Element.js"></script>
+        <script type="text/javascript" src="../widget/plugins/Mouse.js"></script>        
         <script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
+        <script type="text/javascript" src="../build/slider/slider-min.js"></script>
 
         <!--
         <script type="text/javascript" src="../widget/slider/src/js/SliderThumb.js"></script>
         <script type="text/javascript" src="../widget/slider/src/js/Slider.js"></script>
         -->
-
-        <script type="text/javascript" src="../build/slider/slider-min.js"></script>
 
         <style type="text/css">
             body {
@@ -57,7 +57,10 @@
                 border-color:#eee #999 #999 #eee;
                 border-style:solid;
                 background-color:#ddd;
-                
+
+                top:0px;
+                left:0px;
+
                 width:20px; 
                 height:20px;
             }
