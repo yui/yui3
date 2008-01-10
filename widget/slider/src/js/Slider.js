@@ -1,16 +1,15 @@
 (function() {
 
     // var SliderModule = function(YAHOO) {
+    
     var Y = YAHOO,
         U = Y.util,
         E = U.Event,
         D = U.Dom,
         L = Y.lang,
-        C = L.CONST,
         W = Y.widget;
 
     function Slider(attributes) {
-        // Convenience method/property added by L.extend? Short strings for c, s?
         this.constructor.superclass.constructor.apply(this, arguments);
     }
 
@@ -22,7 +21,7 @@
         SlideStart : "slideStart",
         SlideEnd : "slideEnd",
         EndMove: "endMove",
-        Change: C.Change
+        Change: "change"
     };
 
     // Slider Specific Constants
@@ -502,6 +501,6 @@
 
 //    };
 //
-//    YUI.add("slider", "widget", SliderModule, "3.0.0");
+//    YUI.add("slider", "widget", SliderModule , "3.0.0");
 
 })();

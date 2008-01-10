@@ -256,7 +256,10 @@
             this.on("xChange", this.setXOffset, this, true);
             this.on("yChange", this.setYOffset, this, true);
 
-            this.on("render", function() { this.setYOffset();this.setXOffset(); }, this, true);
+            this.on("render", function() { 
+                this.setYOffset();
+                this.setXOffset(); 
+            }, this, true);
 
             this.on("tickSize", this._onTickSizeChange, this, true);
             this.on("lockedChange", this._onLockChange, this, true);
