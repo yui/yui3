@@ -14,6 +14,7 @@
         initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
 
+            this._initRootNode();
             this.initPlugins();
             _instances[this.getNodeAttr('id')] = this; // TODO: can we assume node has id ?
         },
@@ -49,22 +50,9 @@
                 return false;
             }
 
-            this._initRootNode();
-
             this.renderer();
             this._rendered = true;
             this.fireEvent(YUI.Render);
-        },
-
-        /* @final */
-        erase: function() {
-            var retValue = this.fireEvent(YUI.BeforeErase);
-            if (retValue === false) {
-                return false;
-            }
-            this._node.removeClass(YUI.PREFIX + this.constructor.NAME.toLowerCase());
-            this._rendered = false;
-            this.fireEvent(YUI.Erase);
         },
 
         _initRootNode: function() {
