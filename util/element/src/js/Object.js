@@ -9,6 +9,8 @@
         this.init(attributes);
     };
 
+    Obj.NAME = 'Object';
+
     Obj.CONFIG = {
         destroyed: {
             readOnly: true,
@@ -35,15 +37,19 @@
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
             }
 
+            var config;
             while (constructor = classes.shift()) { // initialize from top down
+                config = YAHOO.lang.merge(constructor.CONFIG);
                  //YAHOO.log('configuring' + lang.dump(constructor.CONFIG), 'attr', 'Object');
+                
                 for (var attr in attributes) {
-                    if (constructor.CONFIG[attr]) {
-                        constructor.CONFIG[attr].value = attributes[attr]; // TODO: don't modify orig obj
+                    if (config[attr]) { // must be configured
+                        config[attr] = YAHOO.lang.merge(config[attr]); // copy obj
+                        config[attr].value = attributes[attr];
                     }
                 }
 
-                this.setAttributeConfigs(constructor.CONFIG, true); // init Attributes
+                this.setAttributeConfigs(config, true); // init Attributes
                 if (constructor !== Obj && constructor.prototype.initializer) { // Obj Class has no initializer
                     constructor.prototype.initializer.apply(this, arguments);
                 }
