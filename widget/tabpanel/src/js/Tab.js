@@ -5,27 +5,24 @@ var Tab = function(widget) {
     this.constructor.superclass.constructor.apply(this, arguments);
 };
 
-Tab.ACTIVATION_EVENT = 'click';
-
 var proto  = {
     initializer: function() {
-    },
-
-    renderer: function() {
         var button = this.get('button');
         var panel = this.get('panel');
 
+        button.on('activeChange', this._onActiveChange, this, true); // TODO: convert to Event delegation
         button.set('deactivationEvent', null); // cancel Button default
         panel.set('visible', this.get('active'));
 
-        button.on('activeChange', this._onActiveChange, this, true);
+    },
 
-        button.render();
-        panel.render();
+    renderer: function() {
+        this.get('button').render();
+        this.get('panel').render();
     },
 
     _onActiveChange: function(evt) {
-        this.set('active', evt.newValue, true);
+        this.set('active', evt.newValue);
     },
 
     _setButton: function(val) {
@@ -53,7 +50,7 @@ var proto  = {
         var panel = this.get('panel');
         
         if (button.get('active') !== val) {
-            button.set('active', val, true); // silent to avoid inf loop with change handler
+            button.set('active', val);
         }
 
         if (panel.get('visible') !== val) {
@@ -71,6 +68,7 @@ YAHOO.lang.extend(Tab, YAHOO.widget.Widget, proto);
 
 Tab.NAME = "Tab";
 
+// Discuss: need naming convention for View related methods?
 Tab.CONFIG = {
     button: {
         set: proto._setButton
@@ -97,7 +95,8 @@ Tab.CONFIG = {
     activationEvent: function() {
         set: proto._setActivationEvent
         value: 'click'
-    }
+    },
+    foo: null
 };
 
 YAHOO.widget.Tab = Tab;

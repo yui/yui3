@@ -12,19 +12,44 @@
             YAHOO.log('initializer called', 'life', 'Panel');
         },
 
+        renderer: function() {
+            this.initUI();
+            this.syncUI();
+        },
+
+        initUI: function() {
+            this.on('contentChange', this._onContentChange);
+
+            if (this.get('content') === undefined) { // set from node if not user provided
+                this.set('content', this._getDefaultContent());
+            }
+        },
+
+        syncUI: function() {
+            this._uiSetContent(this.get('content'));
+        },
+
         destructor: function() {
             YAHOO.log('destructor called', 'life', 'Panel');
+        },
+
+        _getDefaultContent: function() {
+            return this.getNodeAttr('innerHTML');
+        },
+
+        _onContentChange: function(evt) {
+            this._uiSetContent(evt.newValue);
+        },
+
+        _uiSetContent: function(val) {
+            this.setNodeAttr('innerHTML', val);
         }
     };
 
     Panel.NAME = "Panel";
 
     Panel.CONFIG = {
-        'content': {
-            set: function(val) {
-                this._node.innerHTML = val;
-            }
-        }
+        'content': {}
     };
 
     YAHOO.lang.extend(Panel, YAHOO.widget.Widget, proto);
