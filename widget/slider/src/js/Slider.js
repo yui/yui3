@@ -1,7 +1,7 @@
 (function() {
 
     // var SliderModule = function(YAHOO) {
-    
+
     var Y = YAHOO,
         U = Y.util,
         E = U.Event,
@@ -15,14 +15,6 @@
 
     // Widget API - Used for class name, event prefix, toString etc.
     Slider.NAME = "Slider";
-
-    // Widget API - Event Strings : TODO
-    Slider.E = {
-        SlideStart : "slideStart",
-        SlideEnd : "slideEnd",
-        EndMove: "endMove",
-        Change: "change"
-    };
 
     // Slider Specific Constants
     Slider.INC = 1;
@@ -93,7 +85,6 @@
         initThumb: function() {
             var t =  this.getThumb();
             t.parent = this;
-            this.set("tickPause", t.getTickPause());
         },
 
         getThumb: function() {
@@ -179,7 +170,7 @@
             }
         },
 
-        sync : function() {
+        syncValue : function() {
             var val = this.getThumb().getUIValue();
             if (this._isRegion) {
                 this.setRegionValue(val[0], val[1], false, true);
@@ -219,7 +210,7 @@
             this.addThumbDDListeners();
 
             // Events Fired in the Model, Update/Refresh View
-            this.addViewListeners();
+            this.addUIListeners();
         },
 
         addKeyListeners: function() {
@@ -236,7 +227,7 @@
             sDD.onDrag = function(e) {self._onBGDrag(e);};
             sDD.onMouseDown = function(e) {self._onBGMouseDown(e);};
 
-            this.on(Slider.E.EndMove, this.sync, this, true);
+            this.on(Slider.E.EndMove, this.syncValue, this, true);
         },
 
         addThumbDDListeners : function() {
@@ -249,8 +240,12 @@
             tDD.onMouseUp = function(e) {self._onThumbMouseUp(e);};
         },
 
-        addViewListeners : function() {
+        addUIListeners : function() {
             this.on("lockedChange", this._onLockChange, this, true);
+        },
+
+        syncUI : function() {
+            this._onLockChange();
         },
 
         _onLockChange : function() {
@@ -293,7 +288,7 @@
         },
 
         _onThumbDrag : function(e) {
-            this.sync();
+            this.syncValue();
             this._fireEvents(true);
         },
 
@@ -495,6 +490,14 @@
                 tickSize: iTickSize
         });
         return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.REGION });
+    };
+
+    // Widget API - Event Strings : TODO
+    Slider.E = {
+        SlideStart : "slideStart",
+        SlideEnd : "slideEnd",
+        EndMove: "endMove",
+        Change: "change"
     };
 
     W.Slider = Slider;
