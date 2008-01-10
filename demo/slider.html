@@ -5,7 +5,7 @@
 
         <link rel="stylesheet" type="text/css" href="../util/element/src/css/element-core.css">
 
-        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/yahoo/yahoo.js"></script>
+        <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/yahoo/yahoo.js"></script>        
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/dom/dom.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/event/event.js"></script>
         <script type="text/javascript" src="http://yui.yahooapis.com/2.4.1/build/animation/animation.js"></script>
@@ -18,7 +18,7 @@
         <script type="text/javascript" src="../util/element/src/js/Object.js"></script>
         <script type="text/javascript" src="../util/plugin/src/js/PluginHost.js"></script>
         <script type="text/javascript" src="../util/element/src/js/Element.js"></script>
-        
+
         <script type="text/javascript" src="../widget/plugins/Mouse.js"></script>        
         <script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
 
@@ -47,10 +47,8 @@
 
             .yui-sliderthumb {
                 position:absolute;
-
                 top:0px;
                 left:0px;
-
                 border-width:1px;
                 border-color:#eee #999 #999 #eee;
                 border-style:solid;
@@ -96,7 +94,6 @@
                 }
 
                 hSlider = YAHOO.widget.Slider.getHorizSlider("hbg", "hthumb", 0, 200, 20);
-                hSlider.set("animate", false);
 
                 hSlider.subscribe("render", handle, "hv");
                 hSlider.subscribe("change", handle, "hv");
@@ -111,7 +108,7 @@
                 vSlider.subscribe("render", handle, "vv");
                 vSlider.subscribe("change", handle, "vv");
                 vSlider.render();
-                
+
                 //----
 
                 rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 10);
