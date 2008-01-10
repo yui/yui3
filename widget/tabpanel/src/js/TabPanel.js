@@ -48,17 +48,8 @@ var proto = {
         return -1; // not found
     },
 
-    item: function(index) {
+    getTab: function(index) {
         return this.get('tabs')[index];
-    },
-
-    namedItem: function(id) {
-        var tabs = this.get('tabs');
-        for (var i = 0, len = tabs.length; i < len; ++i) {
-            if (tabs[i].get('id') === id) {
-                return tabs[i];
-            }
-        } 
     },
 
     _onActiveChange: function(evt) {
@@ -72,7 +63,6 @@ var proto = {
         }
 
         if (current) {
-console.log(current);
             current.set('active', false);
         }
         if (val.get('active') === false) { // avoid inf loop
@@ -97,7 +87,6 @@ TabPanel.CONFIG = {
         set: proto._setActiveTab
     }
 };
-
 
 YAHOO.lang.extend(TabPanel, YAHOO.widget.Widget, proto);
 

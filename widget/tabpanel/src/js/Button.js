@@ -83,7 +83,7 @@
 
     Button.CONFIG = {
         'active': {
-            value: false,
+            value: false
         },
 
         'text': {},

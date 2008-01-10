@@ -59,8 +59,8 @@ var proto  = {
     },
 
     _setActivationEvent: function(val) {
-        button.set('activationEvent', this.get('activationEvent'));
-    },
+        this.get('button').set('activationEvent', this.get('activationEvent'));
+    }
 
 };
 
@@ -80,21 +80,20 @@ Tab.CONFIG = {
 
     label: {
         set: proto._setLabel,
-        validator: YAHOO.lang.isString,
+        validator: YAHOO.lang.isString
     },
 
     content: {
         set: proto._setContent,
-        validator: YAHOO.lang.isString,
+        validator: YAHOO.lang.isString
     },
 
     active: {
         set: proto._setActive
     },
 
-    activationEvent: function() {
+    activationEvent: {
         set: proto._setActivationEvent
-        value: 'click'
     },
     foo: null
 };
