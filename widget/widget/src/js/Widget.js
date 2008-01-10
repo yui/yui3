@@ -13,11 +13,16 @@
     var proto = {
         initializer: function(attributes) {
             YAHOO.log('initializer called', 'life', 'Widget');
-
-            this._initRootNode();
+            if (!attributes.id || _instances[attributes.id]) {
+                throw new Error('unique id is required');
+            }
+            _instances[attributes.id] = this;
             this.initPlugins();
-            _instances[this.getNodeAttr('id')] = this; // TODO: can we assume node has id ?
         },
+
+        initUI: function() {},
+
+        syncUI: function() {},
 
         initPlugins: function(plugins) {
             this._plugins = {};
@@ -31,12 +36,11 @@
             }
         },
 
-        renderer: function() {
-        },
+        renderer: function() {},
 
         destructor: function() {
             YAHOO.log('destructor called', 'life', 'Widget');
-            delete _instances[this.getNodeAttr('id')];
+            delete _instances[this.get('id')];
         },
 
         /* @final */
@@ -50,34 +54,35 @@
                 return false;
             }
 
+            this._initUI();
+            this._syncUI();
             this.renderer();
             this._rendered = true;
             this.fireEvent(YUI.Render);
-        },
-
-        _initRootNode: function() {
-            var node = this._node;
-
-            if (!node) {
-                this.set('node', this.get('id')); // get from Dom by ID if no default node provided
-            }
-            Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
+            return this;
         },
 
         hide: function() {
             this.set('visible', false);
+            return this;
         },
 
         show: function() {
             this.set('visible', true);
+            return this;
         },
 
         enable: function() {
-            this.set('enabled', true);
+            return this.set('enabled', true);
         },
 
         disable: function() {
-            this.set('disabled', false);
+            return this.set('disabled', false);
+        },
+
+        set: function() { // extend to chain set calls
+            YAHOO.util.AttributeProvider.prototype.set.apply(this, arguments);
+            return this;
         },
 
         getNodeAttr: function(attr) {
@@ -91,20 +96,26 @@
             if (this._node) {
                 this._node[attr] = val;
             }
+            return this;
         },
 
-        _setId: function(val) {
-            this.setNodeAttr('id', val);
+        toString: function() {
+            return this.constructor.NAME + this.get('node').get('id');
         },
 
-        _setNode: function(val) {
-            this._node = Y.Dom.get(val);
-            Y.Dom.generateId(val); // use existing or generate new ID
-            return this._node;
+        _initUI: function() {
+            this._initRootNode();
+            this.on('visibleChange', this._onVisibleChange);
+            this.on('disabledChange', this._onDisabledChange);
         },
 
-        _setVisible: function(val) {
-            if (val) { 
+        _syncUI: function() {
+            this._uiSetVisible(this.get('visible'));
+            this._uiSetDisabled(this.get('disabled'));
+        },
+
+        _uiSetVisible: function(val) {
+            if (val === true) { 
                 Y.Dom.removeClass(this._node, YUI.CLASSES.HIDDEN); 
             } else {
                 Y.Dom.addClass(this._node, YUI.CLASSES.HIDDEN); 
@@ -112,23 +123,28 @@
 
         },
 
-        _setDisabled: function(val) {
-            if (val) {
+        _uiSetDisabled: function(val) {
+            if (val === true) {
                 Y.Dom.addClass(this._root, YUI.CLASSES.DISABLED);
             } else {
                 Y.Dom.removeClass(this._root, YUI.CLASSES.DISABLED);
             }
 
         },
-
-        // override AttributeProvider method
-        createAttribute: function(name, map) {
-            return new YAHOO.widget.WidgetAttribute(name, map, this);
+        _initRootNode: function() {
+            this._node = Y.Dom.get(this.get('id'));
+            this.set('node', this._node);
+            Y.Dom.addClass(this._node, YUI.PREFIX + this.constructor.NAME.toLowerCase());
         },
 
-        toString: function() {
-            return this.constructor.NAME + this.get('node').get('id');
+        _onVisibleChange: function(evt) {
+            this._uiSetVisible(evt.newValue);
+        },
+
+        _onDisabledChange: function(evt) {
+            this._uiSetDisabled(evt.newValue);
         }
+
     };
 
     Widget.NAME = "Widget";
@@ -140,22 +156,15 @@
     };
 
     Widget.CONFIG = {
-        'id': {
-            set: proto._setId
-        },
+        'id': {},
 
-        'node': { // TODO: is there a better name?  revert to 'root'? 
-            set: proto._setNode
-        },
+        'node': {},
 
         'visible': {
-            set: proto._setVisible,
-            postRender: true,
             value: true
         },
 
         'disabled': {
-            set: proto._setDisabled,
             value: false
         }
     };
