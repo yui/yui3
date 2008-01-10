@@ -241,14 +241,14 @@
         },
 
         addUIListeners : function() {
-            this.on("lockedChange", this._onLockChange, this, true);
+            this.on("lockedChange", this._uiSetLock, this, true);
         },
 
         syncUI : function() {
-            this._onLockChange();
+            this._uiSetLock();
         },
 
-        _onLockChange : function() {
+        _uiSetLock : function() {
             var dd = this._dd;
             var t = this.getThumb();
             if (this.get("locked")) {

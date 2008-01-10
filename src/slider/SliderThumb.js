@@ -243,17 +243,17 @@
         addUIListeners : function() {
             this.on("xChange", this.setXOffset, this, true);
             this.on("yChange", this.setYOffset, this, true);
-            this.on("tickSize", this._onTickSizeChange, this, true);
-            this.on("lockedChange", this._onLockChange, this, true);
+            this.on("tickSize", this._uiSetTickSize, this, true);
+            this.on("lockedChange", this._uiSetLock, this, true);
 
             this.on("render", this.syncUI, this, true);
         },
 
         syncUI : function() {
-            this._onTickSizeChange();
-            this._onLockChange();
+            this._uiSetTickSize();
+            this._uiSetLock();
             this.setYOffset();
-            this.setXOffset(); 
+            this.setXOffset();
         },
 
         findCenter : function() {
@@ -409,13 +409,13 @@
             return val;
         },
 
-        _onTickSizeChange : function() {
+        _uiSetTickSize : function() {
             if (this.get("tickSize") === 0) {
                 this._dd.clearTicks();
             }
         },
 
-        _onLockChange : function() {
+        _uiSetLock : function() {
             var dd = this._dd;
             if (this.get("locked")) {
                 dd.lock();
