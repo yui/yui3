@@ -126,5 +126,5 @@
 
     // Register the module with the global YUI object
     YUI.add("ua", null , M, "3.0.0");
-    YUI.use("ua");
+
 })();

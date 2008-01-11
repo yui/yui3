@@ -10,36 +10,48 @@
 
 (function() {
 
-    var Mod = function(YAHOO) {
-        YAHOO.example.B = function() {
+    var Mod = function(Y) {
+        Y.example.B = function() {
+            this.Super();
             this.b = "b";
+            Y.log("'B' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
-        console.log('plugging B ' + YAHOO.index);
-        YAHOO.extend(YAHOO.example.B, YAHOO.example.A);
+        console.log('plugging B ' + Y.index);
+        Y.extend(Y.example.B, Y.example.A, {
+            test: function() {
+                this.Super('test', 'differentparams');
+                Y.log("'B' test called: " + Array.prototype.splice.call(arguments, 0));
+            }
+        });
     };
 
     YUI.add("b", "example", Mod, "3.0.0");
 
 })();
 
+
 ////////////////////////////////////////////////////////////////////////////
 
 (function() {
 
-    var Mod = function(YAHOO) {
+    var Mod = function(Y) {
 
-        YAHOO.example.A = function() {
+        Y.example.A = function() {
             this.a = "a"; this.b = "a"; this.c = "a"; 
             // merge the prototype // wonder if this technique would speed inheritance since it // would eliminate lookups in the prototype chain.
             //YUI.augment(this, A.prototype);
+            Y.log("'A' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
 
-        YAHOO.example.A.prototype = {
+        Y.example.A.prototype = {
             d: function() { return "foo"; },
-            toString: function() { return [this.a, this.b, this.c, this.d].join(', '); }
+            toString: function() { return [this.a, this.b, this.c, this.d].join(', '); },
+            test: function() {
+                Y.log("'A' test called: " + Array.prototype.splice.call(arguments, 0));
+            }
         };
 
-        console.log('plugging A ' + YAHOO.index);
+        console.log('plugging A ' + Y.index);
     };
 
     YUI.add("a", "example", Mod, "3.0.0");
@@ -50,13 +62,15 @@
 
 (function() {
 
-    var Mod = function(YAHOO) {
+    var Mod = function(Y) {
 
-        YAHOO.example.C = function() {
+        Y.example.C = function() {
+            this.Super();
             this.a = "c"; this.b = "c"; this.c = "c";
+            Y.log("'C' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
 
-        console.log('plugging C ' + YAHOO.index);
+        console.log('plugging C ' + Y.index);
     };
 
     YUI.add("c", "example", Mod, "3.0.0");
@@ -73,7 +87,10 @@
 
     var y1 = YUI().use('a', 'c');
 
-    var b = new YUI.example.B();
+    var b = new YUI.example.B(1, 2);
+
+    b.test(1, '2');
+    
 
     // shouldn't work
     // var c = new YUI.example.C();
@@ -90,20 +107,21 @@
     // add a new version of A, change a prototype function
     (function() {
 
-        var Mod = function(YAHOO) {
+        var Mod = function(Y) {
 
-            YAHOO.example.A = function() {
+            Y.example.A = function() {
                 this.a = "a"; this.b = "a"; this.c = "a"; 
+                Y.log("'New A' constructor called");
                 // merge the prototype // wonder if this technique would speed inheritance since it // would eliminate lookups in the prototype chain.
                 //YUI.augment(this, A.prototype);
             };
 
-            YAHOO.example.A.prototype = {
+            Y.example.A.prototype = {
                 d: function() { return "bar"; },
                 toString: function() { return [this.a, this.b, this.c, this.d].join(', '); }
             };
 
-            console.log('plugging A ' + YAHOO.index);
+            console.log('plugging A ' + Y.index);
         };
 
         YUI.add("a", "example", Mod, "3.0.0");

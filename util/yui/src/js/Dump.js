@@ -74,7 +74,6 @@
 
     // Register the module with the global YUI object
     YUI.add("dump", null , M, "3.0.0");
-    YUI.use("dump"); // core YUI
 
 })();
 

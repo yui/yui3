@@ -129,7 +129,8 @@
                         o.constructor.prototype[prop] !== o[prop];
             },
 
-            _IEEnumFix: Y._IEEnumFix,
+            _iefix: Y._iefix,
+            _extended: Y._extended,
             augmentObject: Y.augmentObject,
             extend: Y.extend,
             augmentObject: Y.augmentObject,
@@ -154,63 +155,6 @@
 
             merge: Y.merge,
 
-        // YAHOO.lang.later(timeToWait, instance(context), method/fn, data, interval?);
-        // YAHOO.lang.later(10, instance, method, data, true);
-        //
-        // requires o (can be null) even if method is just a function
-        // requires data (can be null) if using an interval
-        //
-        // YAHOO.lang.later(10, null, someFunction, null, true);
-        //
-        // It would be better if the API just had what was required:
-        //
-        // YAHOO.lang.later(10, functionOrCustomClosure, true);
-        //
-        // context object, callback function, and data object are all over
-        // the place in the API.  later, addListener(onAvail, etc, etc), Get, yuiloader
-        // connection, and anything that uses these functions and get the data from
-        // the implementer (KeyListener).
-        //
-        // It would be better to get this out of API.  Prototype's bind gets rid of
-        // the context obj -- that would help, but really all three of these things are
-        // in most of the places we need it.
-        //
-        // Overloading the function argument to accept either a regular function or
-        // a special closure might help
-        //
-        // var s=YAHOO.context(instance, method, data);
-        // YAHOO.lang.later(10, s, true);
-        //
-        // In this case, fn gets all of the arguments that it was called with plus the
-        // 'data' as the last parameter.  This is pretty interesting, but is potentially
-        // a problem when calling methods that have optional arguments. 'data' _is_ an
-        // optional parameter, so it could be up to the user when to use the data object
-        context: function(o, fn, data) {
-            var m=fn, d=data;
-            return function() {
-                var a=arguments, b=[];
-                for (var i=0; i<a.length; i=i+1) {
-                    b.push(a[i]);
-                }
-                if (d) {
-                    b.push(d);
-                }
-                m.apply(o, b);
-            };
-        },
-
-        // without the data object, it can be used generically.  We could still overload
-        // the function argument to accept
-        //
-        // var s=YAHOO.context(instance, method);
-        // YAHOO.lang.later(10, s, null, true); // leaves the null 'data' param in the API
-        context: function(o, fn) {
-            var m=fn;
-            return function() {
-                m.apply(o, arguments);
-            };
-        },
-
             /**
              * A convenience method for detecting a legitimate non-null value.
              * Returns false for null/undefined/NaN, true for other values, 
@@ -231,7 +175,6 @@
 
     // Register the module with the global YUI object
     YUI.add("lang", null , M, "3.0.0");
-    YUI.use("lang"); // core YUI
 
 })();
 

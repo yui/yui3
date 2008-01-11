@@ -62,7 +62,6 @@
 
     // Register the module with the global YUI object
     YUI.add("later", null , M, "3.0.0");
-    YUI.use("later"); // core YUI
 
 })();
 

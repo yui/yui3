@@ -104,7 +104,6 @@
 
     // Register the module with the global YUI object
     YUI.add("substitute", null , M, "3.0.0");
-    YUI.use("substitute"); // core YUI
 
 })();
 

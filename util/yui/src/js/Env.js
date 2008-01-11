@@ -25,6 +25,7 @@
              * @type Function[]
              */
             listeners: []
+
         };
 
         /**
@@ -55,8 +56,6 @@
 
     // Register the module with the global YUI object
     YUI.add("env", null , M, "3.0.0");
-    YUI.use("env"); // core 
-
 
     /*
      * Initializes the global by creating the default namespaces and applying

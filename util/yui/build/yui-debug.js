@@ -165,24 +165,56 @@ if (typeof YUI === 'undefined' || !YUI) {
     };
 }
 
-YUI.info = YUI.info || {
-    modules: {},
-    count: 0
-};
 
 YUI.prototype = {
-    version: '3.0.0',
+    core: ["ua", "lang", "dump", "substitute", "later"],
+    version: '3.0.0', // @todo probably doesn't go here
 
     /**
      * Initialize this YUI instance
      * @param o config options
      */
-    init: function(o) {
-        // debug
-        this.index = ++YUI.info.count;
+    init: function(o, global) {
+
+        this.env = {
+            // @todo expand the new module metadata
+            mods: {},
+            _yuicount: 0,
+
+            // @todo remove/convert the old reg stuff
+            modules: [],
+            listeners: [],
+            getVersion: function(name) {
+                return this.env.modules[name] || null;
+            }
+        };
+
+        // @todo rename listener, YAHOO_config, and verify that it is still needed
+        if ("undefined" !== typeof YAHOO_config) {
+            var l=YAHOO_config.listener,ls=this.env.listeners,unique=true,i;
+            if (l) {
+                // if YAHOO is loaded multiple times we need to check to see if
+                // this is a new config object.  If it is, add the new component
+                // load listener to the stack
+                for (i=0;i<ls.length;i=i+1) {
+                    if (ls[i]==l) {
+                        unique=false;
+                        break;
+                    }
+                }
+                if (unique) {
+                    ls.push(l);
+                }
+            }
+        }
+
+        this._yuiidx = YUI.env._yuicount++;
+        this._uididx = 0;
+        this.id = this.uid('YUI');
         this.namespace("util", "widget", "example");
-        this.use("env", "ua", "lang", "dump", "substitute", "later");
-        this.log(this.index + ') init ');
+        // This fails the first time for the global
+        this.use.apply(this, this.core);
+        this.log(this._yuiidx + ') init ');
     },
 
     /**
@@ -200,13 +232,18 @@ YUI.prototype = {
         this.log('Adding a new component' + name);
 
         // @todo expand this to include version mapping
+        
+        // @todo allow requires/supersedes
 
-        YUI.info.modules[name] = {
+        // @todo may want to restore the build stamp
+        
+        YUI.env.mods[name] = {
             name: name, 
             namespace: namespace, 
             fn: fn,
             version: version
         };
+
         return this; // chain support
     },
 
@@ -216,7 +253,7 @@ YUI.prototype = {
      * @return {YUI} the YUI instance
      */
     use: function() {
-        var a=arguments, mods=YUI.info.modules;
+        var a=arguments, mods=YUI.env.mods;
 
         // YUI().use('*');
         // shortcut should use the loader to assure proper order
@@ -240,7 +277,9 @@ YUI.prototype = {
             // YUI().use('lang+*'); // use lang and all known plugins
 
             var m = mods[a[i]];
+
             this.log('using ' + a[i]);
+
             if (m) {
 
                 if (m.namespace) {
@@ -248,8 +287,11 @@ YUI.prototype = {
                 }
 
                 m.fn(this);
+            } else {
+                this.log('module not found: ' + a[i]);
             }
         }
+
         return this; // chain support var yui = YUI().use('dragdrop');
     },
 
@@ -301,10 +343,30 @@ YUI.prototype = {
      * @return {YUI}      YUI instance
      */
     log: function(msg, cat, src) {
+
+        // @todo take out automatic console logging, but provide
+        // a way to enable console logging without the logger
+        // component.
+
         var l=(this.widget && this.widget.Logger) || console;
         if(l && l.log) {
             l.log(msg, cat || "", src || "");
         } 
+
+        return this;
+    },
+
+    fail: function(msg, e, eType) {
+        YAHOO.log(msg, "error");
+
+        // @todo provide a configuration option that determines if YUI 
+        // generated errors throws a javascript error.  Some errors
+        // should always generate a js error.  If an error type
+        // is provided, that error is thrown regardless of the 
+        // configuration.
+        if (true) {
+            e = e || new Error(msg);
+        }
 
         return this;
     },
@@ -369,61 +431,28 @@ YUI.prototype = {
      * IE will not enumerate native functions in a derived object even if the
      * function was overridden.  This is a workaround for specific functions 
      * we care about on the Object prototype. 
-     * @property _IEEnumFix
+     * @property _iefix
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
+     * @param w a whitelist object (the keys are the valid items to reference)
      * @static
      * @private
      */
-    _IEEnumFix: function(r, s) {
-        if (this.env && this.env.ua.ie) {
-            var add=["toString", "valueOf"], i;
-            for (i=0;i<add.length;i=i+1) {
-                var fname=add[i],f=s[fname];
-                if (this.lang.isFunction(f) && f!=Object.prototype[fname]) {
-                    r[fname]=f;
+    _iefix: function(r, s, w) {
+        var env = this.env, ua = env && env.ua, l=this.lang, op=Object.prototype;
+        if (ua && ua.ie) {
+            var a=["toString", "valueOf"], i;
+            for (i=0; i<a.length; i=i+1) {
+                var n=a[i],f=s[n];
+                if (l.isFunction(f) && f != op[n]) {
+                    if (!w || (n in w)) {
+                        r[n]=f;
+                    }
                 }
             }
         }
     },
        
-    /**
-     * Utility to set up the prototype, constructor and superclass properties to
-     * support an inheritance strategy that can chain constructors and methods.
-     * Static members will not be inherited.
-     *
-     * @method extend
-     * @static
-     * @param {Function} subc   the object to modify
-     * @param {Function} superc the object to inherit
-     * @param {Object} overrides  additional properties/methods to add to the
-     *                              subclass prototype.  These will override the
-     *                              matching items obtained from the superclass 
-     *                              if present.
-     */
-    extend: function(subc, superc, overrides) {
-        if (!superc||!subc) {
-            throw new Error("extend failed, verify that " +
-                            "all dependencies are included.");
-        }
-        var F = function() {};
-        F.prototype=superc.prototype;
-        subc.prototype=new F();
-        subc.prototype.constructor=subc;
-        subc.superclass=superc.prototype;
-        if (superc.prototype.constructor == Object.prototype.constructor) {
-            superc.prototype.constructor=superc;
-        }
-    
-        if (overrides) {
-            for (var i in overrides) {
-                subc.prototype[i]=overrides[i];
-            }
-
-            this._IEEnumFix(subc.prototype, overrides);
-        }
-    },
-   
     /**
      * Applies all properties in the supplier to the receiver if the
      * receiver does not have these properties yet.  Optionally, one or 
@@ -446,6 +475,30 @@ YUI.prototype = {
      *        be applied and will overwrite an existing property in
      *        the receiver
      */
+    //augmentObject: function(r, s) {
+        //var a = Array.prototype.slice.call(arguments, 2);
+        //return this.augment(r, s, 2, a, (a.length));
+    //},
+ 
+    /**
+     * Same as YAHOO.lang.augmentObject, except it only applies prototype properties
+     * @see YAHOO.lang.augmentObject
+     * @method augmentProto
+     * @static
+     * @param {Function} r  the object to receive the augmentation
+     * @param {Function} s  the object that supplies the properties to augment
+     * @param {String*|boolean}  arguments zero or more properties methods 
+     *        to augment the receiver with.  If none specified, everything 
+     *        in the supplier will be used unless it would overwrite an existing 
+     *        property in the receiver.  if true is specified as the third 
+     *        parameter, all properties will be applied and will overwrite an 
+     *        existing property in the receiver
+     */
+    //augmentProto: function(r, s) {
+        //var a = Array.prototype.slice.call(arguments, 2);
+        //return this.augment(r, s, 1, a, (a.length));
+    //},
+
     augmentObject: function(r, s) {
         if (!s||!r) {
             throw new Error("augment failed, verify dependencies.");
@@ -462,24 +515,10 @@ YUI.prototype = {
                 }
             }
             
-            this._IEEnumFix(r, s);
+            this._iefix(r, s);
         }
     },
  
-    /**
-     * Same as YAHOO.lang.augmentObject, except it only applies prototype properties
-     * @see YAHOO.lang.augmentObject
-     * @method augmentProto
-     * @static
-     * @param {Function} r  the object to receive the augmentation
-     * @param {Function} s  the object that supplies the properties to augment
-     * @param {String*|boolean}  arguments zero or more properties methods 
-     *        to augment the receiver with.  If none specified, everything 
-     *        in the supplier will be used unless it would overwrite an existing 
-     *        property in the receiver.  if true is specified as the third 
-     *        parameter, all properties will be applied and will overwrite an 
-     *        existing property in the receiver
-     */
     augmentProto: function(r, s) {
         if (!s||!r) {
             throw new Error("Augment failed, verify dependencies.");
@@ -489,18 +528,227 @@ YUI.prototype = {
         for (var i=2;i<arguments.length;i=i+1) {
             a.push(arguments[i]);
         }
-        this.augmentObject.apply(this, a);
+        YAHOO.lang.augmentObject.apply(this, a);
     },
 
-    augment: function() {
-        this.augmentProto.apply(this, arguments);
+    /**
+     * Applies the supplier's properties to the receiver.  By default
+     * all prototype and static propertes on the supplier are applied
+     * to the corresponding spot on the receiver.  By default all
+     * properties are applied, and a property that is already on the
+     * reciever will not be overwritten.  The default behavior can
+     * be modified by supplying the appropriate parameters.
+     * @method augment
+     * @static
+     * @param {Function} r  the object to receive the augmentation
+     * @param {Function} s  the object that supplies the properties to augment
+     * @param {int} mode what should be copies, and to where
+     *        default(0): prototype to prototype and static to static
+     *        1: prototype to prototype
+     *        2: static to static
+     *        3: prototype to static
+     *        4: static to prototype
+     * @param wl {string[]} a whitelist.  If supplied, only properties in 
+     * this list will be applied to the receiver.
+     * @param ov {boolean} if true, properties already on the receiver
+     * will be overwritten if found on the supplier.
+     * @return {YUI} the YUI instance
+     */
+    augment: function(r, s, mode, wl, ov) {
+
+        if (!s||!r) {
+            throw new Error("augment failed, verify dependencies.");
+        }
+
+        var w = null, o=ov, ief = this._iefix, i;
+
+        // convert the white list array to a hash
+        if (wl) {
+            w = {};
+            for (i=0; i<wl.len; i=i+1) {
+                w[i] = true;
+            }
+        }
+
+        var f = function(r, s) {
+            for (var i in s) { 
+                if (o || !r[i]) {
+                    if (!w || (i in w)) {
+                        r[i] = s[i];
+                    }
+                }
+            }
+
+            ief(r, s, w);
+        }
+
+        var rp = r.prototype, sp = s.prototype;
+
+        switch (mode) {
+            case 1: // proto to proto
+                f(rp, sp);
+                break;
+            case 2: // static to static
+                f(r, s);
+                break;
+            case 3: // proto to static
+                f(r, sp);
+                break;
+            case 4: // static to proto
+                f(rp, s);
+                break;
+            default: // both proto to proto and static to static
+                f(rp, sp);
+                f(r, s);
+        }
+
+        return this;
+    },
+
+    _extended: {
+        /**
+         * Execute a superclass method or constructor
+         * @method Super
+         * @param m {string} method name to execute.  If not provided, the 
+         * constructor is executed. 
+         * @param {String*} arguments 1-n arguments to apply.  If not supplied,
+         * the callers arguments are applied
+         *
+         * Super();
+         *
+         * Super(null, arg1, arg2);
+         *
+         * Super('methodname');
+         *
+         * Super('methodname', arg1, arg2);
+         *
+         */
+        Super: function(m) {
+            var args = arguments,
+                a = (args.length > 1) ?
+                        Array.prototype.slice.call(args, 1) :
+                        args.callee.caller.arguments,
+                s = this.constructor.superclass;
+
+            if (m) {
+                if (m in s) {
+                    s[m].apply(this, a);
+                } else {
+                    YAHOO.fail(m + " super method not found");
+                }
+            } else {
+                s.constructor.apply(this, a);
+            }
+        }
+    },
+
+    /**
+     * Utility to set up the prototype, constructor and superclass properties to
+     * support an inheritance strategy that can chain constructors and methods.
+     * Static members will not be inherited.
+     *
+     * @method extend
+     * @static
+     * @param {Function} r   the object to modify
+     * @param {Function} s the object to inherit
+     * @param {Object} overrides  additional properties/methods to add to the
+     *                              subclass prototype.  These will override the
+     *                              matching items obtained from the superclass 
+     *                              if present.
+     */
+    extend: function(r, s, overrides) {
+        if (!s||!r) {
+            throw new Error("extend failed, verify dependencies");
+        }
+        var F = function() {}, sp = s.prototype;
+        F.prototype=s.prototype;
+        r.prototype=new F();
+        r.prototype.constructor=r;
+        r.superclass=sp;
+
+        // If the superclass doesn't have a standard constructor,
+        // define one so that Super() works
+        if (sp.constructor == Object.prototype.constructor) {
+            sp.constructor=s;
+        }
+    
+        if (overrides) {
+            for (var i in overrides) {
+                r.prototype[i]=overrides[i];
+            }
+
+            this._iefix(r.prototype, overrides);
+        }
+
+        // Copy static properties too
+        this.augment(r, s, 2);
+
+        // Add superclass convienience functions
+        this.augment(r, this._extended, 4);
+
+        return this;
+    },
+   
+
+    // generate an id that is unique among all YUI instances
+    uid: function(pre) {
+        var p = (pre) || 'yui-uid';
+        return p +'-' + this._yuiidx + '-' + this._uididx++;
+    },
+
+    // objects that will use the event system require a unique 
+    // identifier.  An id will be generated and applied if one
+    // isn't found
+    stamp: function(o) {
+        if (!o) {
+            return o;
+        }
+
+        var id = (this.lang.isString(o)) ? o : o.id;
+
+        if (!id) {
+            id = this.uid();
+            o.id = id;
+        }
+
+        return id;
     }
     
 };
 
 // Give the YUI global the same properties an instance would have.
 // This means YUI works the same way YAHOO works today.
-YUI.prototype.augmentObject(YUI, YUI.prototype);
+//YUI.prototype.augmentObject(YUI, YUI.prototype);
+YUI.prototype.augment(YUI, YUI, 3);
+YUI.init();
+
+// Compatibility layer for 2.x
+(function() {
+    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
+
+    window.YAHOO = YUI;
+
+    if (o) {
+        //YUI.augmentObject(YUI, o);
+        YUI.augment(YUI, o, 2);
+    }
+
+    // Protect against 2.x messing up the new augment
+
+    var ex = YUI.prototype._extended;
+    ex.prototype = {};
+    YUI.augment(ex, ex, 4);
+
+    YUI.register("yahoo", YUI, {version: "@VERSION@", build: "@BUILD@"});
+
+})();
+
+// Usage:
+//
+// var Y = YUI().use('tabview'); // if yuiloader is embedded
+// var Y = YUI().use('yahoo', 'dom', 'event', 'element', 'tabview'); // if not
+// var Y = YUI().use('*'); // a catch-all would require yuiloader to deal with order
+
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -540,110 +788,33 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 // 
 // })();
 
-// Compatibility layer for 2.x
-(function() {
-    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
-
-    window.YAHOO = YUI;
-
-    if (o) {
-        YUI.augmentObject(YUI, o);
-    }
-
-})();
-
-// Usage:
-//
-// var Y = YUI().use('tabview'); // if yuiloader is embedded
-// var Y = YUI().use('yahoo', 'dom', 'event', 'element', 'tabview'); // if not
-// var Y = YUI().use('*'); // a catch-all would require yuiloader to deal with order
-
-
 (function() {
 
     var M = function(Y) {
 
-        /**
-         * YAHOO.env is used to keep track of what is known about the YUI library and
-         * the browsing environment
-         * @class YAHOO.env
-         * @static
-         */
-        Y.env = Y.env || {
-
-            /**
-             * Keeps the version info for all YUI modules that have reported themselves
-             * @property modules
-             * @type Object[]
-             */
-            modules: [],
-            
-            /**
-             * List of functions that should be executed every time a YUI module
-             * reports itself.
-             * @property listeners
-             * @type Function[]
-             */
-            listeners: []
+        // obj utils
+        Y.obj = {
         };
 
-        /**
-         * Returns the version data for the specified module:
-         *      <dl>
-         *      <dt>name:</dt>      <dd>The name of the module</dd>
-         *      <dt>version:</dt>   <dd>The version in use</dd>
-         *      <dt>build:</dt>     <dd>The build number in use</dd>
-         *      <dt>versions:</dt>  <dd>All versions that were registered</dd>
-         *      <dt>builds:</dt>    <dd>All builds that were registered.</dd>
-         *      <dt>mainClass:</dt> <dd>An object that was was stamped with the
-         *                 current version and build. If 
-         *                 mainClass.VERSION != version or mainClass.BUILD != build,
-         *                 multiple versions of pieces of the library have been
-         *                 loaded, potentially causing issues.</dd>
-         *       </dl>
-         *
-         * @method getVersion
-         * @static
-         * @param {String}  name the name of the module (event, slider, etc)
-         * @return {Object} The version info
-         */
-        Y.env.getVersion = function(name) {
-            return Y.env.modules[name] || null;
+        Y.obj.Extended = function() {
+
         };
+
+        Y.obj.Extended.prototype = {
+
+            /*
+            Super: {
+                exec: function() {
+                },
+            }
+            */
+
+        };
+
 
     };
 
-    // Register the module with the global YUI object
-    YUI.add("env", null , M, "3.0.0");
-    YUI.use("env"); // core 
-
-
-    /*
-     * Initializes the global by creating the default namespaces and applying
-     * any new configuration information that is detected.  This is the setup
-     * for env.
-     * @method init
-     * @static
-     * @private
-     */
-    YUI.namespace("util", "widget", "example");
-    if ("undefined" !== typeof YAHOO_config) {
-        var l=YAHOO_config.listener,ls=YUI.env.listeners,unique=true,i;
-        if (l) {
-            // if YAHOO is loaded multiple times we need to check to see if
-            // this is a new config object.  If it is, add the new component
-            // load listener to the stack
-            for (i=0;i<ls.length;i=i+1) {
-                if (ls[i]==l) {
-                    unique=false;
-                    break;
-                }
-            }
-            if (unique) {
-                ls.push(l);
-            }
-        }
-    }
+    YUI.add("obj", null, M, "3.0.0");
 
 })();
 
@@ -775,7 +946,7 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
     // Register the module with the global YUI object
     YUI.add("ua", null , M, "3.0.0");
-    YUI.use("ua");
+
 })();
 
 (function() {
@@ -908,7 +1079,8 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
                         o.constructor.prototype[prop] !== o[prop];
             },
 
-            _IEEnumFix: Y._IEEnumFix,
+            _iefix: Y._iefix,
+            _extended: Y._extended,
             augmentObject: Y.augmentObject,
             extend: Y.extend,
             augmentObject: Y.augmentObject,
@@ -933,63 +1105,6 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
             merge: Y.merge,
 
-        // YAHOO.lang.later(timeToWait, instance(context), method/fn, data, interval?);
-        // YAHOO.lang.later(10, instance, method, data, true);
-        //
-        // requires o (can be null) even if method is just a function
-        // requires data (can be null) if using an interval
-        //
-        // YAHOO.lang.later(10, null, someFunction, null, true);
-        //
-        // It would be better if the API just had what was required:
-        //
-        // YAHOO.lang.later(10, functionOrCustomClosure, true);
-        //
-        // context object, callback function, and data object are all over
-        // the place in the API.  later, addListener(onAvail, etc, etc), Get, yuiloader
-        // connection, and anything that uses these functions and get the data from
-        // the implementer (KeyListener).
-        //
-        // It would be better to get this out of API.  Prototype's bind gets rid of
-        // the context obj -- that would help, but really all three of these things are
-        // in most of the places we need it.
-        //
-        // Overloading the function argument to accept either a regular function or
-        // a special closure might help
-        //
-        // var s=YAHOO.context(instance, method, data);
-        // YAHOO.lang.later(10, s, true);
-        //
-        // In this case, fn gets all of the arguments that it was called with plus the
-        // 'data' as the last parameter.  This is pretty interesting, but is potentially
-        // a problem when calling methods that have optional arguments. 'data' _is_ an
-        // optional parameter, so it could be up to the user when to use the data object
-        context: function(o, fn, data) {
-            var m=fn, d=data;
-            return function() {
-                var a=arguments, b=[];
-                for (var i=0; i<a.length; i=i+1) {
-                    b.push(a[i]);
-                }
-                if (d) {
-                    b.push(d);
-                }
-                m.apply(o, b);
-            };
-        },
-
-        // without the data object, it can be used generically.  We could still overload
-        // the function argument to accept
-        //
-        // var s=YAHOO.context(instance, method);
-        // YAHOO.lang.later(10, s, null, true); // leaves the null 'data' param in the API
-        context: function(o, fn) {
-            var m=fn;
-            return function() {
-                m.apply(o, arguments);
-            };
-        },
-
             /**
              * A convenience method for detecting a legitimate non-null value.
              * Returns false for null/undefined/NaN, true for other values, 
@@ -1010,7 +1125,6 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
     // Register the module with the global YUI object
     YUI.add("lang", null , M, "3.0.0");
-    YUI.use("lang"); // core YUI
 
 })();
 
@@ -1090,7 +1204,6 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
     // Register the module with the global YUI object
     YUI.add("dump", null , M, "3.0.0");
-    YUI.use("dump"); // core YUI
 
 })();
 
@@ -1200,7 +1313,6 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
     // Register the module with the global YUI object
     YUI.add("substitute", null , M, "3.0.0");
-    YUI.use("substitute"); // core YUI
 
 })();
 
@@ -1268,8 +1380,8 @@ YUI.prototype.augmentObject(YUI, YUI.prototype);
 
     // Register the module with the global YUI object
     YUI.add("later", null , M, "3.0.0");
-    YUI.use("later"); // core YUI
 
 })();
 
+YUI.use.apply(YUI, YUI.core);
 YAHOO.register("yui", YUI, {version: "@VERSION@", build: "@BUILD@"});
