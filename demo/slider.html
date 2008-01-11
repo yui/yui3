@@ -111,7 +111,6 @@
 
                 vSlider = YAHOO.widget.Slider.getVertSlider("vbg", "vthumb", 0, 400, 0);
                 vSlider.addPlugin(YAHOO.plugin.AnimatedSlider, {
-                    tickPause: 100,
                     duration: 0.2,
                     name: "foo"
                 });
@@ -126,7 +125,10 @@
                 //----
 
                 rSlider = YAHOO.widget.Slider.getRegionSlider("rbg", "rthumb", 0, 200, 0, 200, 10);
-                rSlider.set("animate", false);
+                
+                // Has no animated plugin, so won't be animated by default
+                // rSlider.set("animate", false);
+
                 rSlider.set("keyIncrement", 10);
                 
                 rSlider.subscribe("render", handle, "rv");
