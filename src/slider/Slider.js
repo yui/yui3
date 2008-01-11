@@ -51,15 +51,6 @@
         keyIncrement : {
             value:20
         },
-        tickPause : {
-            value:40
-        },
-        animationDuration : {
-            value:0.2
-        },
-        animate : {
-            value: !L.isUndefined(U.Anim)
-        },
         locked : {
             value: false
         }
@@ -122,6 +113,7 @@
             if ( isNaN(val) ) {
                 return false;
             }
+
             var t = this.getThumb();
             if (this._isRegion) {
                 return false;
@@ -139,6 +131,7 @@
             if ( isNaN(valX) && isNaN(valY)) {
                 return false;
             }
+
             var t = this.getThumb();
             if (valX || valX === 0) {
                 t.set("x", valX, silent);
@@ -167,15 +160,6 @@
                 this.setValue(newX);
             } else if (this._isRegion) {
                 this.setRegionValue(newX, null);
-            }
-        },
-
-        syncValue : function() {
-            var val = this.getThumb().getUIValue();
-            if (this._isRegion) {
-                this.setRegionValue(val[0], val[1], false, true);
-            } else {
-                this.setValue(val, false, true);
             }
         },
 
@@ -246,6 +230,15 @@
 
         syncUI : function() {
             this._uiSetLock();
+        },
+
+        syncValue : function() {
+            var val = this.getThumb().getUIValue();
+            if (this._isRegion) {
+                this.setRegionValue(val[0], val[1], false, true);
+            } else {
+                this.setValue(val, false, true);
+            }
         },
 
         _uiSetLock : function() {

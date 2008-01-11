@@ -1,42 +1,33 @@
 (function() {
-    var PluginBase = function() {
-        PluginBase.superclass.constructor.call(this, arguments);
+    var PluginBase = function(config) {
+        PluginBase.superclass.constructor.apply(this, arguments);
     };
-    
+
     PluginBase.CONFIG = {
-        'parent': {
-            get: function() {
-                return this.__.parent;
-            }
-        },
-        'node': {
-            get: function() {
-                return this.__.node;
-            }
-        },
+        'owner': {},
+        'node': {},
         'name': {
-            get: function() {
-                return this.name;
-            }
+            value:'abstractplugin'
         }
     };
 
     var proto = {
-        name: 'plugin',
+
         _listeners: null,
         _overrides: null,
+
         initializer : function(config) {
-            config = config[0];
+            /* ?? 
             var node = null;
-            if (config.parent.get && config.parent.get('node')) {
-                node = config.parent.get('node');
+
+            if (config.owner.get && config.owner.get('node')) {
+                node = config.owner.get('node');
             }
-            if (config.parent.get && config.parent.get('node') && config.parent.get('node') && config.parent.get('node').get('node')) {
-                node = config.parent.get('node').get('node');
-            }
-            this.set('parent', config.parent, true);
+
+            this.set('owner', config.owner, true);
             this.set('node', node, true);
             this.set('name', this.name, true);
+            */
 
             this._listeners = [];
             this._overrides = [];
@@ -103,7 +94,6 @@
             return this.name;
         }
     };
-
 
     YAHOO.lang.extend(PluginBase, YAHOO.util.Object, proto);
     YAHOO.namespace('plugin');

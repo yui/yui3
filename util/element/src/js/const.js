@@ -1,17 +1,14 @@
 (function() {
     YAHOO.lang.CONST = {
         // Events - first-cap only for easy distinction
-        BeforeDestory:       'beforeDestroy',
+        BeforeDestroy:       'beforeDestroy',
         BeforeInit:          'beforeInit',
         Click:               'click',
         Destroy:             'destroy',
         Init:                'init',
         BeforeRender:        'beforeRender',
         Render:              'render',
-        BeforeErase:         'beforeErase',
-        Erase:               'erase',
-        Change:              'change',
-    
+
         // Other strings
         CHILDREN:            'children',
         CHILD_NODES:         'childNodes',

@@ -68,6 +68,7 @@
 
         // Widget API
         initializer: function (attributes) {
+            // Can Remove. Left in for Ref Impl. readability
         },
 
         // Widget API
@@ -117,6 +118,8 @@
         getYRange : function() {
             return this.get("maxY") - this.get("minY");
         },
+
+        // UI Methods
 
         initDD : function() {
 
@@ -276,111 +279,20 @@
             }
             this._dd.setDelta(cp.x, cp.y);
 
-            var _p = this._dd.getTargetCoord(x, y);
-            var p = [_p.x, _p.y];
-            var self = this;
-
-            var animate = this.parent.get("animate") && !L.isUndefined(U.Anim);
-            if (animate) {
-                if (this.get("tickSize") > 0) {
-                this.lock();
-
-                // cache the current this pos
-                this._curCoord = curCoord;
-                setTimeout( function() { self._moveOneTick(p); }, this.parent.get("tickPause"));
-
-                } else {
-                    this.lock();
-    
-                    var oAnim = new U.Motion( 
-                            this.getThumbEl().id, 
-                            { points: { to: p } }, 
-                            this.get("animationDuration"), 
-                            U.Easing.easeOut );
-    
-                    oAnim.onComplete.subscribe(function() { 
-                        self._endMove();
-                    });
-                    oAnim.animate();
-                }
-            } else {
-                this._dd.setDragElPos(x, y);
-                this._endMove();
+            if (this.fireEvent("beforeMove", [x, y, curCoord]) !== false) {
+                this.move(x, y);
+                this.fireEvent("move");
             }
         },
 
+        move : function(x, y) {
+            this._dd.setDragElPos(x, y);
+            this._endMove();
+        },
+
+        // TODO: Setup as move listener
         _endMove : function() {
             this.parent._endMove();
-        },
-
-        _moveOneTick: function(finalCoord) {
-            var nextCoord, p = this.parent;
-
-            if (p._isRegion) {
-                nextCoord = this._getNextX(this._curCoord, finalCoord);
-                var tmpX = (nextCoord) ? nextCoord[0] : this._curCoord[0];
-                nextCoord = this._getNextY([tmpX, this._curCoord[1]], finalCoord);
-            } else if (p._isVert) {
-                nextCoord = this._getNextY(this._curCoord, finalCoord);
-            } else {
-                nextCoord = this._getNextX(this._curCoord, finalCoord);
-            }
-
-            if (nextCoord) {
-                // cache the position
-                this._curCoord = nextCoord;
-                this._dd.alignElWithMouse(this.getThumbEl(), nextCoord[0], nextCoord[1]);
-
-                // check if we are in the final position, if not make a recursive call
-                if (!(nextCoord[0] == finalCoord[0] && nextCoord[1] == finalCoord[1])) {
-                    var self = this;
-                    setTimeout(function() { self._moveOneTick(finalCoord); },  this.parent.get("tickPause"));
-                } else {
-                    this._endMove();
-                }
-            } else {
-                this._endMove();
-            }
-        },
-
-        _getNextX: function(curCoord, finalCoord) {
-            var thresh, 
-                tmp = [];
-
-            var nextCoord = null;
-            if (curCoord[0] > finalCoord[0]) {
-                thresh = 2*this.get("tickSize") - this._centerPoint.x;
-                tmp = this._dd.getTargetCoord( curCoord[0] - thresh, curCoord[1] );
-                nextCoord = [tmp.x, tmp.y];
-            } else if (curCoord[0] < finalCoord[0]) {
-                thresh = this.get("tickSize") + this._centerPoint.x;
-                tmp = this._dd.getTargetCoord( curCoord[0] + thresh, curCoord[1] );
-                nextCoord = [tmp.x, tmp.y];
-            } else {
-                // equal, do nothing
-            }
-
-            return nextCoord;
-        },
-
-        _getNextY: function(curCoord, finalCoord) {
-            var thresh;
-            var tmp = [];
-            var nextCoord = null;
-
-            if (curCoord[1] > finalCoord[1]) {
-                // Hack - not sure why i need to do this for prior ticks
-                thresh = 2*this.get("tickSize") - this._centerPoint.y;
-                tmp = this._dd.getTargetCoord( curCoord[0], curCoord[1] - thresh );
-                nextCoord = [tmp.x, tmp.y];
-            } else if (curCoord[1] < finalCoord[1]) {
-                thresh = this.get("tickSize") + this._centerPoint.y;
-                tmp = this._dd.getTargetCoord( curCoord[0], curCoord[1] + thresh );
-                nextCoord = [tmp.x, tmp.y];
-            } else {
-                // equal, do nothing
-            }
-            return nextCoord;
         },
 
         _constrain : function(val, axis) {
@@ -425,8 +337,6 @@
         },
 
         _centerPoint : null,
-        _curCoord : null,
-
         _dd : null
     });
 
@@ -486,15 +396,6 @@
         },
         keyIncrement : {
             value:20
-        },
-        tickPause : {
-            value:40
-        },
-        animationDuration : {
-            value:0.2
-        },
-        animate : {
-            value: !L.isUndefined(U.Anim)
         },
         locked : {
             value: false
@@ -558,6 +459,7 @@
             if ( isNaN(val) ) {
                 return false;
             }
+
             var t = this.getThumb();
             if (this._isRegion) {
                 return false;
@@ -575,6 +477,7 @@
             if ( isNaN(valX) && isNaN(valY)) {
                 return false;
             }
+
             var t = this.getThumb();
             if (valX || valX === 0) {
                 t.set("x", valX, silent);
@@ -603,15 +506,6 @@
                 this.setValue(newX);
             } else if (this._isRegion) {
                 this.setRegionValue(newX, null);
-            }
-        },
-
-        syncValue : function() {
-            var val = this.getThumb().getUIValue();
-            if (this._isRegion) {
-                this.setRegionValue(val[0], val[1], false, true);
-            } else {
-                this.setValue(val, false, true);
             }
         },
 
@@ -682,6 +576,15 @@
 
         syncUI : function() {
             this._uiSetLock();
+        },
+
+        syncValue : function() {
+            var val = this.getThumb().getUIValue();
+            if (this._isRegion) {
+                this.setRegionValue(val[0], val[1], false, true);
+            } else {
+                this.setValue(val, false, true);
+            }
         },
 
         _uiSetLock : function() {

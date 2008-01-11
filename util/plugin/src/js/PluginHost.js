@@ -6,50 +6,19 @@
 
     PluginHost.prototype = {
 
-        initPlugins : function() {
-            this.__.adaptors = [];
+        addPlugin: function(pluginClass, config) {
+            config = config || {};
+            config.owner = this;
 
-            /*
-            for (var namespace in this.constructor.PLUGINS) {
-                var pluginClass = this.constructor.PLUGINS[namespace];
-                // TODO: How to apply config. Pass required params. Flush out by demo
-                this[namespace] = new pluginClass();
-            }
-
-            for (var adaptorClass in this.constructor.ADAPTORS) {
-                if (this.hasAdaptor(adaptorClass) === false) {
-                    this.__.adaptorClass.push(adaptorClass);
-                    // TODO: How to apply config. Flush out by demo
-                    new adaptorClass(); 
-                } else {
-                    throw('adaptor class already applied');
-                }
-            }
-            */
-        },
-
-        addPlugin: function(namespace, pluginClass, config) {
-            if (this.hasPlugin(namespace)) {
-                throw('plugin namespace' + namespace + ' already in use');
-            }
-            if (!YAHOO.lang.isObject(config)) {
-                config = {};
-            }
-            config.parent = this;
+            // TODO - Default namespace: check without instantiation
+            var plugin = new pluginClass(config);
+            var name = plugin.get("name");
             
-            this[namespace] = new pluginClass(config);
-        },
+            if (this.hasPlugin(name)) {
+                throw('plugin namespace' + name + ' already in use');
+            }
 
-        applyAdaptor: function(adaptorClass, config) {
-            if (this.hasAdaptor(adaptorClass)) {
-                throw ('adaptor already applied'); // TODO: Get name?
-            }
-            this.__.adaptors.push(adaptorClass);
-            if (!YAHOO.lang.isObject(config)) {
-                config = {};
-            }
-            config.parent = this;
-            new adaptorClass(config);
+            this[name] = plugin;
         },
 
         removePlugin : function(namespace, pluginClass) {
@@ -59,27 +28,8 @@
             }
         },
 
-        /*
-        removeAdaptor : function(adaptor) {
-            // TODO: If there's no namespace, does removing 
-            // and adaptor mean anything? Are adaptors apply-only?
-        }
-        */
-
-        hasPlugin: function(namespace/*, class? */) {
+        hasPlugin: function(namespace/*, pluginClass? */) {
             return namespace in this;
-        },
-
-        hasAdaptor : function(adaptorClass) {
-            // TODO: optimize with Array methods if available.
-            bApplied = false;
-            for (var i = 0; i < this.__.adaptors.length; ++i) {
-                if (this.__.adaptors[i] === adaptorClass) {
-                    bApplied = true;
-                    break;
-                }
-            }
-            return bApplied;
         }
     };
 
