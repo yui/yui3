@@ -1,152 +1,3 @@
-/**
- * The YAHOO object is the single global object used by YUI Library.  It
- * contains utility function for setting up namespaces, inheritance, and
- * logging.  YAHOO.util, YAHOO.widget, and YAHOO.example are namespaces
- * created automatically for and used by the library.
- *
- * YUI/YAHOO global object and module definition proposal for 3.0
- * (the switch from YAHOO to YUI has not been confirmed).
- *
- * What needs to be fixed:
- *
- * The current YAHOO is not resilient when components are included
- * multiple times.  The problem is aggrevated if the redundant
- * components are from different versions of the library.
- *
- * Developers can't defend against this easily because the negative
- * effects take place immediately when the redundant component is
- * included, modifying existing objects and prototypes.
- *
- * Content from multiple sources, produced by multiple authors, and 
- * on different release cycles is common today.  All of these
- * sources could be using any version of YUI.  The current
- * YAHOO object can be difficult to work with if all the page content is
- * not controlled by an entity that is prepared to deal with managing
- * the YUI dependencies globally.
- *
- * The current workaround is to use YUILoader's sandbox capability
- * to load a complete YUI stack for modules that can live in multiple
- * environments.  This adds overhead, and requires that the module
- * is defined with this use in mind.
- *
- * A developer should be able to include the library and expect it
- * to work exactly the same way in isolation as it does when another
- * YUI stack is included before or after on the same page.
- * 
- * - Including a YUI component should not modify any existing YUI
- *   component on a page.
- *
- * - A developer that includes YUI components should be able to
- *   consume the exact code they included.
- *
- * To address this, this proposal has a few core implementation
- * differences from the current YAHOO implementation:
- *
- * - The global object can be instantiated to provide a clean
- *   YUI/YAHOO object that can be referenced in the application
- *   scope.
- *
- * - YUI components do not directly modify any shared
- *   properties when they are included in the page.
- *
- * - Developers can create a pristine YUI/YAHOO instance and
- *   specify the modules that are needed.  Only then is the
- *   component bound to the YUI/YAHOO instance, and the
- *   inheritance chain established.
- *
- * - YUI components do not directly address a single YUI/YAHOO
- *   global object.  Instead they use a local reference
- *   which is assigned when a YUI/YAHOO instance binds the
- *   component.
- *
- *   2.x:
- *
- *   YAHOO = {}
- *   YAHOO.util = {}
- *   YAHOO.util.CustomEvent = function()
- *   YAHOO.util.CustomEvent.prototype = {}
- *   YAHOO.lang.extend()
- *   new YAHOO.util.CustomEvent()
- *
- *   3.x:
- *
- *   YUI = {}
- *   // Components included, no modification to YUI except updating
- *   // the component metadata.
- *   (function() { // Application context via anonymous function or module pattern
- *       var yui = YUI().use('yahoo', 'event');
- *       // The included CustomEvent is bound to the new YUI instance
- *       new yui.CustomEvent();
- *   })();
- *
- *   Downsides:
- *
- *   - Creates a required convention for component development.
- *     It looks like this should be taken care of by the build system.
- *
- *   - To use YUI, you must specify the component(s) you want.  Optionally
- *     we can provide a wildcard to get everything, but that would require
- *     that we go with YUILoader embedded (for dependency order).
- *     Maybe this is too complicated for little gain.  What happens if
- *     we bind everything?
- *
- *   Potential features:
- *
- *   - Integrate YUILoader.  Instead of requiring that the developer
- *     specify and include all dependencies, allow YUI to load missing
- *     dependencies.  Could be optional, defaulted to 'off' if we want
- *     to defend against lazy development practices.  It is a natural
- *     fit since we require that the developer specify what they will
- *     use anyway.
- *
- *   - Allow version range specification.  The protection the new YUI global
- *     offers makes version specification less important, but this could 
- *     provide an additional layer of protection when a given implementation
- *     requires a specific version or version range of YUI.
- *
- * @module yahoo
- * @title  YAHOO Global
- */
-
-/**
- * YAHOO_config is not included as part of the library.  Instead it is an 
- * object that can be defined by the implementer immediately before 
- * including the YUI library.  The properties included in this object
- * will be used to configure global properties needed as soon as the 
- * library begins to load.
- * @class YAHOO_config
- * @static
- */
-
-/**
- * A reference to a function that will be executed every time a YAHOO module
- * is loaded.  As parameter, this function will receive the version
- * information for the module. See <a href="YAHOO.env.html#getVersion">
- * YAHOO.env.getVersion</a> for the description of the version data structure.
- * @property listener
- * @type Function
- * @static
- * @default undefined
- */
-
-/**
- * Set to true if the library will be dynamically loaded after window.onload.
- * Defaults to false 
- * @property injecting
- * @type boolean
- * @static
- * @default undefined
- */
-
-/**
- * Forces the use of the supplied locale where applicable in the library
- * @property locale
- * @type string
- * @static
- * @default undefined
- */
-
-
 if (typeof YUI === 'undefined' || !YUI) {
     /**
      * The YAHOO global namespace object.  If YAHOO is already defined, the
@@ -174,7 +25,7 @@ YUI.prototype = {
      * Initialize this YUI instance
      * @param o config options
      */
-    init: function(o, global) {
+    init: function(o, precore) {
 
         this.env = {
             // @todo expand the new module metadata
@@ -212,8 +63,11 @@ YUI.prototype = {
         this._uididx = 0;
         this.id = this.uid('YUI');
         this.namespace("util", "widget", "example");
-        // This fails the first time for the global
-        this.use.apply(this, this.core);
+        if (!precore) {
+            // This fails initially for the global (needs to be applied after
+            // the core dependencies have been included).
+            this.use.apply(this, this.core);
+        }
         this.log(this._yuiidx + ') init ');
     },
 
@@ -235,7 +89,9 @@ YUI.prototype = {
         
         // @todo allow requires/supersedes
 
-        // @todo may want to restore the build stamp
+        // @todo may want to restore the build property
+        
+        // @todo fire moduleAvailable event
         
         YUI.env.mods[name] = {
             name: name, 
@@ -256,7 +112,7 @@ YUI.prototype = {
         var a=arguments, mods=YUI.env.mods;
 
         // YUI().use('*');
-        // shortcut should use the loader to assure proper order
+        // shortcut should use the loader to assure proper order?
         if (a[0] === "*") {
             return this.use.apply(this, mods);
         }
@@ -565,7 +421,7 @@ YUI.prototype = {
         // convert the white list array to a hash
         if (wl) {
             w = {};
-            for (i=0; i<wl.len; i=i+1) {
+            for (i=0; i<wl.length; i=i+1) {
                 w[i] = true;
             }
         }
@@ -580,7 +436,7 @@ YUI.prototype = {
             }
 
             ief(r, s, w);
-        }
+        };
 
         var rp = r.prototype, sp = s.prototype;
 
@@ -720,73 +576,7 @@ YUI.prototype = {
 // This means YUI works the same way YAHOO works today.
 //YUI.prototype.augmentObject(YUI, YUI.prototype);
 YUI.prototype.augment(YUI, YUI, 3);
-YUI.init();
-
-// Compatibility layer for 2.x
-(function() {
-    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
-
-    window.YAHOO = YUI;
-
-    if (o) {
-        //YUI.augmentObject(YUI, o);
-        YUI.augment(YUI, o, 2);
-    }
-
-    // Protect against 2.x messing up the new augment
-
-    var ex = YUI.prototype._extended;
-    ex.prototype = {};
-    YUI.augment(ex, ex, 4);
-
-    YUI.register("yahoo", YUI, {version: "@VERSION@", build: "@BUILD@"});
-
-})();
-
-// Usage:
-//
-// var Y = YUI().use('tabview'); // if yuiloader is embedded
-// var Y = YUI().use('yahoo', 'dom', 'event', 'element', 'tabview'); // if not
-// var Y = YUI().use('*'); // a catch-all would require yuiloader to deal with order
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-// The boilerplate code will be generated by the build system.
-
-
-// // No namespace is available yet
-// (function() {
-// 
-//     // The module will be invoked when yui.use() is called
-//     var TabViewModule = function(YAHOO) {
-// 
-//         // Common shortcuts, property driven, generated by build system
-//         var E = YAHOO.util.Event,
-//             D = YAHOO.util.Dom;
-// 
-//         // The local YAHOO reference is the isolated YUI/YAHOO instance that
-//         // this module has been bound to.
-// 
-//         /////////////////////////////////////////////////////////////////////
-//         // Component source files start
-//         /////////////////////////////////////////////////////////////////////
-// 
-//         YAHOO.widget.TabView = function() {};
-//         YAHOO.widget.Tab = function() {};
-// 
-//         YAHOO.extend(YAHOO.widget.TabView, YAHOO.util.Element, {});
-// 
-//         /////////////////////////////////////////////////////////////////////
-//         // Component source files end
-//         /////////////////////////////////////////////////////////////////////
-// 
-//     };
-// 
-//     // Register the module with the global YUI object
-//     YUI.add("tabview", "widget", TabViewModule, "3.0.0");
-// 
-// })();
+YUI.init(true);
 
 (function() {
 
@@ -1384,4 +1174,26 @@ YUI.init();
 })();
 
 YUI.use.apply(YUI, YUI.core);
+// Compatibility layer for 2.x
+(function() {
+
+
+    var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
+
+    window.YAHOO = YUI;
+
+    if (o) {
+        //YUI.augmentObject(YUI, o);
+        YUI.augment(YUI, o, 2);
+    }
+
+    // Protect against 2.x messing up the new augment (to some degree)
+    var ex = YUI.prototype._extended;
+    ex.prototype = {};
+    YUI.augment(ex, ex, 4);
+
+    // add registration for yahoo
+    YUI.register("yahoo", YUI, {version: "@VERSION@", build: "@BUILD@"});
+
+})();
 YAHOO.register("yui", YUI, {version: "@VERSION@", build: "@BUILD@"});
