@@ -12,9 +12,9 @@
              * something else.  This is used to handle the arguments collection 
              * available within functions, and HTMLElement collections
              * @return {int} a number indicating the results:
-             * 0: Not an array or array-like. 
+             * 0: Not an array or an array-like collection
              * 1: A real array. 
-             * 2: Not an array, but is array-like.
+             * 2: array-like collection.
              */
             test: function(o) {
                 var r = 0;
@@ -54,9 +54,19 @@
                     default:
                         return [o];
                 }
+            },
+
+            /**
+             * each or forEach
+             */
+            each: function (a, f, o) {
+                var l = a.length, i;
+                for (i = 0; i < l; i=i+1) {
+                    f.call(o, a[i], i, a);
+                }
             }
 
-            //toHash
+            // hash: return a hash using the array values as the keys
         };
     };
 

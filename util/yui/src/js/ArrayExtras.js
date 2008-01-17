@@ -1,5 +1,6 @@
 // Implements the natvie array functions Mozilla introduced in JS 1.6
 // http://developer.mozilla.org/en/docs/New_in_JavaScript_1.6
+// @todo evaulate the implementations
 (function() {
 
     var M = function(Y) {
@@ -36,17 +37,10 @@
                 return r;
             },
 
-            forEach: function (a, f, o) {
-                var l = a.length, i;
-                for (i = 0; i < l; i=i+1) {
-                    f.call(o, a[i], i, a);
-                }
-            },
 
             indexOf: function (a, o, idx) {
-                if (idx == null) {
-                    idx = 0;
-                } else if (idx < 0) {
+                idx = idx || 0;
+                if (idx < 0) {
                     idx = Math.max(0, a.length + idx);
                 }
                 for (var i = idx; i < a.length; i=i+1) {
@@ -63,7 +57,7 @@
 
             insertBefore: function (a, o, o2) {
                 var i = Y.array.indexOf(a, o2);
-                if (i == -1)
+                if (i === -1)
                     a.push(o);
                 else
                     a.splice(i, 0, o);
@@ -97,8 +91,9 @@
 
             remove: function (a, o) {
                 var i = Y.array.indexOf(a, o);
-                if (i != -1)
+                if (i != -1) {
                     a.splice(i, 1);
+                }
             },
 
             some: function (a, f, o) {
@@ -112,6 +107,8 @@
             }
         };
 
+        // map the utility functions to the native array functions if they
+        // are available.
         for (var i in Extras) {
             Y.array[i] = (Native[i]) ? function() {
                 Native[i].apply(arguments[0], Native.slice.call(arguments, 1));
