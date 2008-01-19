@@ -245,7 +245,7 @@
             }
             
             return collection;
-        },
+        }
     };
     var getClassRegEx = function(className) {
         var re = reClassNameCache[className];
