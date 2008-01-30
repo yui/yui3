@@ -16,7 +16,7 @@
             this.b = "b";
             Y.log("'B' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
-        console.log('plugging B ' + Y.index);
+        console.log('plugging B ' + Y.id);
         Y.extend(Y.example.B, Y.example.A, {
             test: function() {
                 this.Super('test', 'differentparams');
@@ -25,7 +25,7 @@
         });
     };
 
-    YUI.add("b", "example", Mod, "3.0.0");
+    YUI.add("b", Mod, "3.0.0");
 
 })();
 
@@ -51,10 +51,10 @@
             }
         };
 
-        console.log('plugging A ' + Y.index);
+        console.log('plugging A ' + Y.id);
     };
 
-    YUI.add("a", "example", Mod, "3.0.0");
+    YUI.add("a", Mod, "3.0.0");
 
 })();
 
@@ -70,10 +70,10 @@
             Y.log("'C' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
 
-        console.log('plugging C ' + Y.index);
+        console.log('plugging C ' + Y.id);
     };
 
-    YUI.add("c", "example", Mod, "3.0.0");
+    YUI.add("c", Mod, "3.0.0");
 
 })();
 
@@ -121,10 +121,10 @@
                 toString: function() { return [this.a, this.b, this.c, this.d].join(', '); }
             };
 
-            console.log('plugging A ' + Y.index);
+            console.log('plugging A ' + Y.id);
         };
 
-        YUI.add("a", "example", Mod, "3.0.0");
+        YUI.add("a", Mod, "3.0.0");
 
     })();
 

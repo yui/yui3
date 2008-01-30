@@ -3,12 +3,13 @@
 
     var M = function(Y) {
 
+        var L = Y.lang;
+
         /**
          * Executes the supplied function in the context of the supplied 
          * object 'when' milliseconds later.  Executes the function a 
          * single time unless periodic is set to true.
          * @method later
-         * @since 2.4.0
          * @param when {int} the number of milliseconds to wait until the fn 
          * is executed
          * @param o the context object
@@ -24,20 +25,20 @@
          * @return a timer object. Call the cancel() method on this object to 
          * stop the timer.
          */
-        Y.lang.later = function(when, o, fn, data, periodic) {
+        L.later = function(when, o, fn, data, periodic) {
             when = when || 0; 
             o = o || {};
             var m=fn, d=data, f, r;
 
-            if (Y.lang.isString(fn)) {
+            if (L.isString(fn)) {
                 m = o[fn];
             }
 
             if (!m) {
-                throw new TypeError("method undefined");
+                Y.fail("method undefined");
             }
 
-            if (!Y.lang.isArray(d)) {
+            if (!L.isArray(d)) {
                 d = [data];
             }
 
@@ -61,7 +62,7 @@
     };
 
     // Register the module with the global YUI object
-    YUI.add("later", null , M, "3.0.0");
+    YUI.add("later", M, "3.0.0");
 
 })();
 

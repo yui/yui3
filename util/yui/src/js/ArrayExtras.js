@@ -117,7 +117,7 @@
 
     };
 
-    YUI.add("arrayextras", null , M, "3.0.0");
+    YUI.add("arrayextras", M, "3.0.0");
 
 })();
 

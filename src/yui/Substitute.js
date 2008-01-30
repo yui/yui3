@@ -3,6 +3,8 @@
 
     var M = function(Y) {
 
+        var L = Y.lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
+
         /**
          * Does variable substitution on a string. It scans through the string 
          * looking for expressions enclosed in { } braces. If an expression 
@@ -17,7 +19,6 @@
          * been overridden, otherwise it does a shallow dump of the key/value
          * pairs.
          * @method substitute
-         * @since 2.3.0
          * @param s {String} The string that will be modified.
          * @param o {Object} An object containing the replacement values
          * @param f {Function} An optional function that can be used to
@@ -26,10 +27,8 @@
          *                     the key inside of the braces.
          * @return {String} the substituted string
          */
-        Y.lang.substitute = function (s, o, f) {
-            var i, j, k, key, v, meta, l=Y.lang, saved=[], token, 
-                DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
-
+        L.substitute = function (s, o, f) {
+            var i, j, k, key, v, meta, saved=[], token;
 
             for (;;) {
                 i = s.lastIndexOf(LBRACE);
@@ -59,9 +58,9 @@
                     v = f(key, v, meta);
                 }
 
-                if (l.isObject(v)) {
-                    if (l.isArray(v)) {
-                        v = l.dump(v, parseInt(meta, 10));
+                if (L.isObject(v)) {
+                    if (L.isArray(v)) {
+                        v = L.dump(v, parseInt(meta, 10));
                     } else {
                         meta = meta || "";
 
@@ -74,12 +73,12 @@
                         // use the toString if it is not the Object toString 
                         // and the 'dump' meta info was not found
                         if (v.toString===Object.prototype.toString||dump>-1) {
-                            v = l.dump(v, parseInt(meta, 10));
+                            v = L.dump(v, parseInt(meta, 10));
                         } else {
                             v = v.toString();
                         }
                     }
-                } else if (!l.isString(v) && !l.isNumber(v)) {
+                } else if (!L.isString(v) && !L.isNumber(v)) {
                     // This {block} has no replace string. Save it for later.
                     v = "~-" + saved.length + "-~";
                     saved[saved.length] = token;
@@ -103,7 +102,7 @@
     };
 
     // Register the module with the global YUI object
-    YUI.add("substitute", null , M, "3.0.0");
+    YUI.add("substitute", M, "3.0.0");
 
 })();
 

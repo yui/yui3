@@ -1,9 +1,13 @@
-// requires env
 (function() {
 
     var M = function(Y) {
 
-        Y.env.ua = function() {
+        /**
+         * Browser/platform detection
+         * @method ua
+         */
+        Y.ua = function() {
+
             var o={
 
                 /**
@@ -124,7 +128,6 @@
         }();
     };
 
-    // Register the module with the global YUI object
-    YUI.add("ua", null , M, "3.0.0");
+    YUI.add("ua", M, "3.0.0");
 
 })();
