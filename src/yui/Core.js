@@ -139,7 +139,7 @@
             var f = function(fr, fs, proto) {
                 for (var i in fs) { 
                     // if (!proto || (i in fs)) {
-                    if (proto || Y.object.owns(fs, i)) {
+                    if (proto || ov || Y.object.owns(fs, i)) {
                         if (ov || !fr[i]) {
                             if (!w || (i in w)) {
                                 fr[i] = fs[i];
@@ -357,7 +357,7 @@
         Y.on = function(type, f, o) {
 
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':') ;
+                var cat = type.split(':');
                 switch (cat[0]) {
                     default:
                         return Y.subscribe.apply(Y, arguments);
@@ -370,7 +370,7 @@
 
         Y.detach = function(type, f, o) {
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':') ;
+                var cat = type.split(':');
                 switch (cat[0]) {
                     default:
                         return Y.unsubscribe.apply(Y, arguments);

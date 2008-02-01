@@ -2391,6 +2391,10 @@
         // YUI is an event provider
         Y.mix(Y, Y.Event.Target.prototype);
 
+
+        Y.Event.Target.prototype.createEvent = Y.Event.Target.prototype.publish;
+        Y.Event.Target.prototype.fireEvent = Y.Event.Target.prototype.fire;
+
     };
 
     YUI.add("event", M, "3.0.0");

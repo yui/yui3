@@ -50,8 +50,11 @@
 
             augment: Y.bind(Y.augment, Y),
             extend: Y.bind(Y.extend, Y), 
-            merge: Y.bind(Y.merge, Y)
+            // merge: Y.bind(Y.merge, Y)
+            merge: Y.merge
         }, true);
+
+        // L.merge = Y.merge;
 
         Y.augmentProto = L.augmentProto;
 

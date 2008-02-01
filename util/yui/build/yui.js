@@ -688,7 +688,7 @@ YUI.prototype = {
             var f = function(fr, fs, proto) {
                 for (var i in fs) { 
                     // if (!proto || (i in fs)) {
-                    if (proto || Y.object.owns(fs, i)) {
+                    if (proto || ov || Y.object.owns(fs, i)) {
                         if (ov || !fr[i]) {
                             if (!w || (i in w)) {
                                 fr[i] = fs[i];
@@ -906,7 +906,7 @@ YUI.prototype = {
         Y.on = function(type, f, o) {
 
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':') ;
+                var cat = type.split(':');
                 switch (cat[0]) {
                     default:
                         return Y.subscribe.apply(Y, arguments);
@@ -919,7 +919,7 @@ YUI.prototype = {
 
         Y.detach = function(type, f, o) {
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':') ;
+                var cat = type.split(':');
                 switch (cat[0]) {
                     default:
                         return Y.unsubscribe.apply(Y, arguments);
@@ -1491,8 +1491,11 @@ YUI.prototype = {
 
             augment: Y.bind(Y.augment, Y),
             extend: Y.bind(Y.extend, Y), 
-            merge: Y.bind(Y.merge, Y)
+            // merge: Y.bind(Y.merge, Y)
+            merge: Y.merge
         }, true);
+
+        // L.merge = Y.merge;
 
         Y.augmentProto = L.augmentProto;
 
@@ -3945,6 +3948,10 @@ YUI.prototype = {
 
         // YUI is an event provider
         Y.mix(Y, Y.Event.Target.prototype);
+
+
+        Y.Event.Target.prototype.createEvent = Y.Event.Target.prototype.publish;
+        Y.Event.Target.prototype.fireEvent = Y.Event.Target.prototype.fire;
 
     };
 

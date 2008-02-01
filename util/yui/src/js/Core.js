@@ -139,13 +139,14 @@
             var f = function(fr, fs, proto) {
                 for (var i in fs) { 
                     // if (!proto || (i in fs)) {
-                    if (proto || Y.object.owns(fs, i)) {
+                    // @TODO deal with the hasownprop issue
+                    // if (proto || ov || Y.object.owns(fs, i)) {
                         if (ov || !fr[i]) {
                             if (!w || (i in w)) {
                                 fr[i] = fs[i];
                             }
                         }
-                    }
+                    // }
                 }
 
                 _iefix(fr, fs, w);
