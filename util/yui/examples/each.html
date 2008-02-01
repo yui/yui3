@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript">
+
+
+(function() {
+
+    var Y = YUI(), newobj = {};
+
+    var o = {
+        str: "str",
+        arr: [
+            "array1",
+            true,
+            { obj: "obj"},
+            ["array2"]
+        ],
+        dat: new Date(),
+        fn: function() {
+
+        },
+        //win: window,
+        nada: null
+    };
+    
+
+
+    Y.each(o, function(v, k) {
+                      Y.log("Each: " + k + ": " + Y.lang.dump(v) + " ~ " + Y.lang.dump(this));
+                      Y.log("same? " + (this === newobj));
+                      this[k] = v;
+                      this.asdf = "asdf";
+              }, newobj);
+
+    Y.log("each: " + Y.lang.dump(newobj));
+
+})();
+
+</script>
+<body>
+
+<input id="addButton" type="button" value="Add link" />
+
+</body>
+
+</html>
+

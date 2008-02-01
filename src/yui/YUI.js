@@ -47,6 +47,17 @@ YUI.prototype = {
     //    exception/log notification
     // }
 
+        o = o || {};
+
+        // find targeted window and @TODO create facades
+        var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
+        o.win = w;
+        o.doc = w.document;
+    
+        // add a reference to o for anything that needs it
+        // before _setup is called.
+        this.config = o;
+
         this.env = {
             // @todo expand the new module metadata
             mods: {},
@@ -72,6 +83,10 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui");
+        // make a shallow copy of the config.  This won't fix nested configs
+        // so we need to determine if we only allow one level (probably) or
+        // if we make clone create references for functions and elements.
+        this.config = this.merge(this.config);
     },
 
     /**
@@ -265,8 +280,9 @@ YUI.prototype = {
 (function() {
     var Y = YUI, p = Y.prototype, i;
 
+    // inheritance utilities are not available yet
     for (i in p) {
-        if (true) { // hasOwnProperty check not needed
+        if (true) { // hasOwnProperty not available yet and not needed
             Y[i] = p[i];
         }
     }

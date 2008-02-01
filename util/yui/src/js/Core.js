@@ -138,7 +138,8 @@
 
             var f = function(fr, fs, proto) {
                 for (var i in fs) { 
-                    if (!proto || (i in fs)) {
+                    // if (!proto || (i in fs)) {
+                    if (proto || Y.object.owns(fs, i)) {
                         if (ov || !fr[i]) {
                             if (!w || (i in w)) {
                                 fr[i] = fs[i];
@@ -334,15 +335,51 @@
             return this;
         };
 
+        Y.io = function(type, url, callback) {
+
+            switch (type) {
+                case 'script':
+                    break; // get util
+                case 'css': 
+                    break; // get util
+                default:
+                    return Y.io.asyncRequest.apply(Y.io, arguments);
+            }
+
+        };
+
         // Overload specs: element/selector?/widget?
         Y.get = function() {
-
+            return Y.Dom.get.apply(Y.Dom, arguments);
         };
 
         // DOM events and custom events
-        Y.on = function() {
+        Y.on = function(type, f, o) {
+
+            if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.subscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.attach.apply(Y.Event, arguments);
+            }
 
         };
+
+        Y.detach = function(type, f, o) {
+            if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.unsubscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.detach.apply(Y.Event, arguments);
+            }
+        };
+
 
         Y.before = function() {
 

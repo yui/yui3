@@ -6,7 +6,7 @@
     var M = function(Y) {
 
         var L = Y.lang, Native = Array.prototype;
-
+        
         var Extras = {
 
             contains: function (a, o) {
@@ -27,7 +27,7 @@
                 return true;
             },
 
-            filter: function (a, f, o) {
+            filter = function (a, f, o) {
                 var l = a.length, r = [];
                 for (var i = 0; i < l; i=i+1) {
                     if (f.call(o, a[i], i, a)) {

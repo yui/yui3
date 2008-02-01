@@ -3,7 +3,6 @@
 <head>
 <title>YUI 3.0</title>
 <script src="../../build/yui/yui-debug.js" type="text/javascript"></script>
-<style type="text/css"> #linkContainer { position: relative; padding: 10px; border: 1px solid #333333; height: 300px; width: 150px; } </style>
 <script type="text/javascript">
 
 ////////////////////////////////////////////////////////////////////////////
@@ -12,7 +11,7 @@
 
     var Mod = function(Y) {
         Y.example.B = function() {
-            this.Super();
+            this.Super.apply(this, arguments);
             this.b = "b";
             Y.log("'B' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
@@ -65,7 +64,8 @@
     var Mod = function(Y) {
 
         Y.example.C = function() {
-            this.Super();
+            // this.Super();
+            this.Super.apply(this, arguments);
             this.a = "c"; this.b = "c"; this.c = "c";
             Y.log("'C' constructor called: " + Array.prototype.splice.call(arguments, 0));
         };
