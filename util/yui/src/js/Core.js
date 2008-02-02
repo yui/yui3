@@ -325,8 +325,8 @@
             var a = Y.array(arguments, 2, true);
             return function () {
                 // @todo bind args first, or function args first?
-                return f.apply(c || f, a.concat(Y.array(arguments, 0, true)));
-                //return f.apply(c || f, Y.array(arguments, 0, true).concat(a));
+                // return f.apply(c || f, a.concat(Y.array(arguments, 0, true)));
+                return f.apply(c || f, Y.array(arguments, 0, true).concat(a));
             };
         };
 

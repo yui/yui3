@@ -2392,8 +2392,9 @@
         Y.mix(Y, Y.Event.Target.prototype);
 
 
-        Y.Event.Target.prototype.createEvent = Y.Event.Target.prototype.publish;
-        Y.Event.Target.prototype.fireEvent = Y.Event.Target.prototype.fire;
+        // var T = Y.Event.Target;
+        // T.prototype.createEvent = T.prototype.publish;
+        // T.prototype.fireEvent = T.prototype.fire;
 
     };
 
