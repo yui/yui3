@@ -38,6 +38,12 @@
         Y.log(this.id + " mouseover: " + e.target);
     }, Y.Dom.getElementsByClassName('button'));
 
+    Y.on('TEST:EVENT', function() {
+        Y.log('test event subscriber success');
+    });
+
+    Y.fire('TEST:EVENT');
+
 })();
 
 </script>

@@ -2182,8 +2182,9 @@
                 var ce = this.__yui_events[p_type];
 
                 if (!ce) {
-        Y.log(p_type + "event fired before it was created.");
-                    return null;
+        // Y.log(p_type + "event fired before it was created.");
+                    // return null;
+                    ce = this.publish(p_type);
                 }
 
                 var args = [];
