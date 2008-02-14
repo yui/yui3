@@ -1,0 +1,1006 @@
+(function() {
+
+    var M = function(Y) {
+
+        /**
+         * Provides Attribute configurations.
+         * @namespace Y.util
+         * @class Attribute
+         * @constructor
+         * @param hash {Object} The intial Attribute.
+         * @param {Y.AttributeProvider} The owner of the Attribute instance.
+         */
+    
+        Y.Attribute = function(name, map, owner) {
+            this.name = name;
+            if (owner) { 
+                this.owner = owner;
+                this.configure(map, true);
+            }
+        };
+
+        Y.Attribute.prototype = {
+            /**
+             * The name of the attribute.
+             * @property name
+             * @type String
+             */
+            name: undefined,
+    
+            /**
+             * The value of the attribute.
+             * @property value
+             * @type String
+             */
+            value: undefined,
+    
+            /**
+             * The owner of the attribute.
+             * @property owner
+             * @type Y.AttributeProvider
+             */
+            owner: undefined,
+    
+            /**
+             * Whether or not the attribute is read only.
+             * @property readOnly
+             * @type Boolean
+             */
+            readOnly: false,
+    
+            /**
+             * Whether or not the attribute can only be written once.
+             * @property writeOnce
+             * @type Boolean
+             */
+            writeOnce: false,
+    
+            /**
+             * The attribute's initial configuration.
+             * @private
+             * @property _initialConfig
+             * @type Object
+             */
+            _initialConfig: undefined,
+    
+            /**
+             * Whether or not the attribute's value has been set.
+             * @private
+             * @property _written
+             * @type Boolean
+             */
+            _written: false,
+    
+            /**
+             * The method to use when setting the attribute's value.
+             * The method recieves the new value as the only argument.
+             * @property set
+             * @type Function
+             */
+            set: undefined,
+    
+            /**
+             * The method to use when getting the attribute's value.
+             * The method recieves the new value as the only argument.
+             * @property get
+             * @type Function
+             */
+            get: undefined,
+    
+            /**
+             * The validator to use when setting the attribute's value.
+             * @property validator
+             * @type Function
+             * @return Boolean
+             */
+            validator: undefined,
+    
+            /**
+             * Retrieves the current value of the attribute.
+             * @method getValue
+             * @return {any} The current value of the attribute.
+             */
+            getValue: function() {
+                return this.get ? this.get.apply(this.owner, arguments) : this.value;
+            },
+
+            /**
+             * Sets the value of the attribute and fires beforeChange and change events.
+             * @method setValue
+             * @param {Any} value The value to apply to the attribute.
+             * @param {Boolean} silent If true the change events will not be fired.
+             * @return {Boolean} Whether or not the value was set.
+             */
+            setValue: function(value, silent) {
+                var beforeRetVal,
+                    retVal,
+                    owner = this.owner,
+                    name = this.name;
+    
+                var event = {
+                    type: name, 
+                    prevValue: this.getValue(),
+                    newValue: value
+                };
+    
+                if (this.readOnly || ( this.writeOnce && this._written) ) {
+                    Y.log( 'setValue ' + name + ', ' +  value +
+                            ' failed: read only', 'error', 'Attribute');
+                    return false; // write not allowed
+                }
+    
+                if (!silent) {
+                    beforeRetVal = owner.fireBeforeChangeEvent(event);
+                    if (beforeRetVal === false) { // TODO: event.preventDefault
+                        Y.log('setValue ' + name + 
+                                ' cancelled by beforeChange event', 'info', 'Attribute');
+                        return false;
+                    }
+                }
+    
+                if (this.set) {
+                    retVal = this.set.call(owner, value);
+                }
+    
+                if (this.validator && !this.validator.call(owner, value) ) {
+                    Y.log( 'setValue ' + name + ', ' + value +
+                            ' validation failed', 'error', 'Attribute');
+                    return false; // invalid value
+                }
+    
+                this.value = (retVal === undefined) ? value : retVal;
+                this._written = true;
+    
+                event.type = name;
+    
+                if (!silent) {
+                    this.owner.fireChangeEvent(event);
+                }
+    
+                return true;
+            },
+    
+            /**
+             * Allows for configuring the Attribute's properties.
+             * @method configure
+             * @param {Object} map A key-value map of Attribute properties.
+             * @param {} init Whether or not this should become the initial config.
+             */
+            configure: function(map, init) {
+                map = map || {};
+                this._written = false; // reset writeOnce
+                var silent = !!init; // silent set if initializing
+    
+                //this._initialConfig = this._initialConfig || {};
+                for (var key in map) {
+                    if ( key && Y.object.owns(map, key) ) {
+                        if (key == 'value') {
+                            if (map.readOnly && init) { // initialize readOnly with direct set
+                                this.value = map[key];
+                            } else {
+                                this.setValue(map.value, silent);
+                            }
+                        } else {
+                            this[key] = map[key];
+                        }
+                        /* TODO: need initialConfig?
+                            if (init) {
+                                this._initialConfig[key] = map[key];
+                            }
+                        */
+                    }
+                }
+            },
+    
+            /**
+             * Resets the value to the initial config value.
+             * @method resetValue
+             * @return {Boolean} Whether or not the value was set.
+             */
+            resetValue: function() {
+                return this.setValue(this._initialConfig.value);
+            },
+    
+            /**
+             * Resets the attribute config to the initial config state.
+             * @method resetConfig
+             */
+            resetConfig: function() {
+                this.configure(this._initialConfig);
+            },
+    
+            /**
+             * Resets the value to the current value.
+             * Useful when values may have gotten out of sync with actual properties.
+             * @method refresh
+             * @return {Boolean} Whether or not the value was set.
+             */
+            refresh: function(silent) {
+                this.setValue(this.value, silent);
+            }
+        };
+        
+        
+        /**
+         * Provides and manages YUI.Attribute instances
+         * @class AttributeProvider
+         * @uses YUI.Event.Target
+         */
+         function AttributeProvider() {}
+
+         AttributeProvider.prototype = {
+
+            /**
+             * A key-value map of Attribute configurations
+             * @property _configs
+             * @protected (may be used by subclasses and augmentors)
+             * @private
+             * @type {Object}
+             */
+            _configs: null,
+
+            /**
+             * Returns the current value of the attribute.
+             * @method get
+             * @param {String} key The attribute whose value will be returned.
+             */
+            get: function(key) {
+                this._configs = this._configs || {};
+                var config = this._configs[key];
+
+                if (!config) {
+                    Y.log(key + ' not found', 'warn', 'AttributeProvider');
+                    return undefined;
+                }
+
+                return config.getValue();
+            },
+
+            /**
+             * Sets the value of a config.
+             * @method set
+             * @param {String} key The name of the attribute
+             * @param {Any} value The value to apply to the attribute
+             * @param {Boolean} silent Whether or not to suppress change events
+             * @return {Boolean} Whether or not the value was set.
+             */
+            set: function(key, value, silent) {
+                this._configs = this._configs || {};
+                var config = this._configs[key];
+                if (!config) {
+                    Y.log('set failed: ' + key + ' not found',
+                            'error', 'AttributeProvider');
+                    return false;
+                }
+                
+                return config.setValue(value, silent);
+            },
+
+            /**
+             * Returns an array of attribute names.
+             * @method getAttributeKeys
+             * @return {Array} An array of attribute names.
+             */
+            getAttributeKeys: function() {
+                this._configs = this._configs;
+                var keys = [];
+                var config;
+                for (var key in this._configs) {
+                    config = this._configs[key];
+                    if ( Y.object.owns(this._configs, key) && 
+                            !Y.isUndefined(config) ) {
+                        keys[keys.length] = key;
+                    }
+                }
+                
+                return keys;
+            },
+
+            /**
+             * Sets multiple attribute values.
+             * @method setAttributes
+             * @param {Object} map  A key-value map of attributes
+             * @param {Boolean} silent Whether or not to suppress change events
+             */
+            setAttributes: function(map, silent) {
+                for (var key in map) {
+                    if ( Y.object.owns(map, key) ) {
+                        this.set(key, map[key], silent);
+                    }
+                }
+            },
+
+            /**
+             * Resets the specified attribute's value to its initial value.
+             * @method resetValue
+             * @param {String} key The name of the attribute
+             * @param {Boolean} silent Whether or not to suppress change events
+             * @return {Boolean} Whether or not the value was set
+             */
+            resetValue: function(key, silent) {
+                this._configs = this._configs || {};
+                if (this._configs[key]) {
+                    this.set(key, this._configs[key]._initialConfig.value, silent);
+                    return true;
+                }
+                return false;
+            },
+        
+            /**
+             * Sets the attribute's value to its current value.
+             * @method refresh
+             * @param {Boolean} silent Whether or not to suppress change events
+             */
+            refresh: function(silent) {
+                var keys = this.getAttributeKeys();
+                
+                for (var i = 0, len = keys.length; i < len; ++i) { 
+                    this._configs[keys[i]].refresh(silent);
+                }
+            },
+        
+            /**
+             * Returns the attribute's properties.
+             * @method getAttributeConfig
+             * @param {String} key The attribute's name
+             * @private
+             * @return {object} A key-value map containing all of the
+             * attribute's properties.
+             */
+            getAttributeConfig: function(key) {
+                this._configs = this._configs || {};
+                var config = this._configs[key] || {};
+                var map = {}; // returning a copy to prevent overrides
+                
+                for (key in config) {
+                    if ( Y.object.owns(config, key) ) {
+                        map[key] = config[key];
+                    }
+                }
+
+                return map;
+            },
+
+            /**
+             * Sets or updates an Attribute instance's properties. 
+             * @method setAttributeConfig
+             * @param {String} key The attribute's name.
+             * @param {Object} map A key-value map of attribute properties
+             * @param {Boolean} init Whether or not this should become the intial config.
+             */
+            setAttributeConfig: function(attr, map, init) {
+                this._configs = this._configs || {};
+                if (!this._configs[attr]) {
+                    this._configs[attr] = this.createAttribute(attr, map);
+                } else {
+                    this._configs[attr].configure(map, init);
+                }
+            },
+
+            /**
+             * Sets or updates an array of Attribute instance's properties. 
+             * @method setAttributeConfigs
+             * @param {Array} configs An array of Attribute configs
+             * @param {Boolean} init Whether or not this should become the intial config.
+             */
+            setAttributeConfigs: function(configs, init) {
+                for (var attr in configs) {
+                    if ( Y.object.owns(configs, attr) ) {
+                        this.setAttributeConfig(attr, configs[attr], init);
+                    }
+                }
+            },
+
+            hasAttribute: function(prop) {
+                return !! this._configs[prop];
+            },
+
+            /**
+             * Resets an attribute to its intial configuration. 
+             * @method resetAttributeConfig
+             * @param {String} key The attribute's name.
+             * @private
+             */
+            resetAttributeConfig: function(key) {
+                this._configs = this._configs || {};
+                this._configs[key].resetConfig();
+            },
+
+            // wrapper for EventProvider.subscribe
+            // to create events on the fly
+            subscribe: function(type, callback) {
+                this._events = this._events || {};
+
+                if ( !(type in this._events) ) {
+                    this._events[type] = this.publish(type);
+                }
+
+                Y.Event.Target.prototype.subscribe.apply(this, arguments);
+            },
+
+            on: function() {
+                this.subscribe.apply(this, arguments);
+            },
+
+            addListener: function() {
+                this.subscribe.apply(this, arguments);
+            },
+
+            /**
+             * Fires the attribute's beforeChange event. 
+             * @method fireBeforeChangeEvent
+             * @param {String} key The attribute's name.
+             * @param {Obj} e The event object to pass to handlers.
+             */
+            fireBeforeChangeEvent: function(e) {
+                var type = 'before';
+                type += e.type.charAt(0).toUpperCase() + e.type.substr(1) + 'Change';
+                e.type = type;
+                return this.fire(type, e);
+            },
+
+            /**
+             * Fires the attribute's change event. 
+             * @method fireChangeEvent
+             * @param {String} key The attribute's name.
+             * @param {Obj} e The event object to pass to the handlers.
+             */
+            fireChangeEvent: function(e) {
+                e.type += 'Change';
+                return this.fire(e.type, e);
+            },
+
+            createAttribute: function(name, map) {
+                return new Y.Attribute(name, map, this);
+            }
+        };
+
+        Y.augment(AttributeProvider, Y.Event.Target);
+        Y.Attribute.Provider = AttributeProvider;
+    };
+
+    YUI.add("attribute", M, "3.0.0");
+})();
+(function() {
+
+    var M = function(Y) {
+
+        function Base(config) {
+            Y.log('constructor called', 'life', 'Base');
+            this.init(config);
+        }
+
+        Base.NAME = 'base';
+
+        /* No default attributes for Base */
+        // Base.ATTRS = null;
+
+        Base.prototype = {
+
+            /* @final*/
+            init: function(config) {
+                Y.log('init called', 'life', 'Base');
+
+                this.destroyed = false;
+                this.initialized = false;
+
+                if (this.fire('beforeInit') !== false) {
+
+                    // initialize top down ( Base init'd first )
+                    this._initHierarchy(config);
+                    this.initialized = true;
+
+                    this.fire('init', config);
+                }
+                return this;
+            },
+
+            /* @final */
+            destroy: function() {
+                Y.log('destroy called', 'life', 'Base');
+
+                if (this.fire('beforeDestroy') !== false) {
+
+                     // destruct bottom up ( Base destroyed last )
+                    this._destroyHierarchy();
+                    this.destroyed = true;
+
+                    this.fire('destroy');
+                }
+                return this;
+            },
+
+            /**
+             * @protected
+             */
+            _getClasses : function() {
+                if (!this._classes) {
+                    var c = this.constructor, 
+                        classes = [];
+
+                    while (c && c.prototype) {
+                        classes.unshift(c);
+                        c = c.superclass ? c.superclass.constructor : null;
+                    }
+                    this._classes = classes;
+                }
+                return this._classes.concat();
+            },
+
+            /**
+             * @private
+             */
+            _initHierarchy : function(config) {
+                var attributes, 
+                    attr,
+                    constructor,
+                    classes = this._getClasses();
+
+                for (var i = 0; i < classes.length; i++) {
+                    constructor = classes[i];
+                    if (constructor.ATTRS) {
+                        attributes = Y.merge(constructor.ATTRS);
+
+                        Y.log('configuring' + constructor.NAME + 'attributes', 'attr', 'Base');
+
+                        for (attr in config) {
+                            if (attributes[attr]) {
+                                // Not Cloning/Merging on purpose. Don't want to clone
+                                // references to complex objects [ e.g. a reference to a widget ]
+                                attributes[attr].value = config[attr];
+                            }
+                        }
+
+                        this.setAttributeConfigs(attributes, true);
+                    }
+                    if (constructor.prototype.initializer) {
+                        constructor.prototype.initializer.apply(this, arguments);
+                    }
+                }
+            },
+
+            /**
+             * @private
+             */
+            _destroyHierarchy : function() {
+                var constructor = this.constructor;
+                while (constructor && constructor.prototype) {
+                    if (constructor.destructor) {
+                        constructor.prototype.destructor.apply(this, arguments);
+                    }
+                    constructor = constructor.superclass ? constructor.superclass.constructor : null;
+                }
+            },
+
+            toString: function() {
+                return Base.NAME + "[" + this + "]";
+            }
+        };
+
+        Y.augment(Base, Y.Attribute.Provider);
+        Y.Base = Base;
+    };
+
+    YUI.add("base", M, "3.0.0");
+})();
+
+(function() {
+
+    var M = function(Y) {
+
+        // TODO: Move to Y.add/register
+        var _registry = {};
+
+        function Plugin(config) {
+            Plugin.superclass.constructor.apply(this, arguments);
+        }
+
+        // No attributes
+        // Plugin.ATTRS = null
+        Plugin.NAME = "plugin";
+        Plugin.NS = "plugin";
+
+        // TODO: Move to Y.add
+        Plugin.add = function(pluginclass) {
+            // Last wins
+            if (pluginclass.NS) {
+                _registry[pluginclass.NS] = pluginclass;
+            }
+        };
+
+        Plugin.get = function(ns) {
+            return _registry[ns];
+        };
+
+        var proto = {
+
+            _listeners: null,
+            _overrides: null,
+
+            initializer : function(config) {
+
+                if (!config.owner) {
+                    throw('plugin needs to have an owner');
+                }
+
+                this.owner = config.owner;
+                this._listeners = [];
+                this._overrides = [];
+
+                Y.log('Initializing: ' + this.constructor.NAME, 'info', 'Plugin');
+            },
+
+            destructor: function() {
+                var i;
+
+                for (i = 0; i < this._listeners.length; i++) {
+                    var event = this._listeners[i];
+                    if (Y.isObject(event)) {
+                        event.obj.unsubscribe(event.ev, event.fn);
+                    }
+                }
+
+                for (i = 0; i < this._overrides.length; i++) {
+                    var o = this._overrides[i];
+                    if (Y.isObject(o)) {
+                        o.obj[o.method] = o.fn;
+                        this._overrides[i] = null;
+                    }
+                }
+            },
+
+            listen: function(obj, ev, fn, s, o) {
+                this._listeners[this._listeners.length] = { obj: obj, ev: ev, fn: fn };
+                obj.on(ev, fn, s, o);
+            },
+
+            nolisten: function(obj, ev, fn) {
+                obj.unsubscribe(ev, fn);
+                for (var i = 0; i < this._listeners.length; i++) {
+                    if ((this._listeners[i].ev == ev) && (this._listeners[i].fn == fn) && (this._listeners[i].obj == obj)) {
+                        this._listeners[i] = null;
+                        break;
+                    }
+                }
+            },
+
+            listenBefore: function(obj, ev, fn, s, o) {
+                ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
+                this.listen(obj, ev, fn, s, o);
+            },
+
+            nolistenBefore: function(obj, ev, fn) {
+                ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
+                this.nolisten(obj, ev, fn);
+            },
+
+            addOverride: function(obj, method, fn) {
+                if (Y.isFunction(obj[method]) && Y.isFunction(fn)) {
+                    this._overrides[this._overrides.length] = { method: method, obj: obj, fn: obj[method] };
+                    obj[method] = fn;
+                } else {
+                    Y.log('Method (' + method + ') does not belong to object', 'error', 'Plugin');
+                }
+            },
+
+            removeOverride: function(obj, method) {
+                for (var i = 0; i < this._overrides.length; i++) {
+                    var o = this._overrides[i];
+                    if ((o.obj == obj) && (o.method == method)) {
+                        obj[method] = o.fn;
+                        this._overrides[i] = null;
+                    }
+                }
+            },
+
+            setSilent: function(obj, config, val) {
+                obj._configs[config].value = val;
+            },
+
+            toString: function() {
+                return this.name;
+            }
+        };
+
+        Y.extend(Plugin, Y.Base, proto);
+        Y.Plugin = Plugin;
+    };
+
+    YUI.add("plugin", M, "3.0.0");
+})();
+(function() {
+
+    var M = function(Y) {
+
+        var P = Y.Plugin;
+
+        // String constants
+        var PREFIX = "yui-",
+            HIDDEN = PREFIX + "hidden",
+            DISABLED = PREFIX + "disabled";
+
+        var _instances = {};
+
+        function Widget(config) {
+            Y.log('constructor called', 'life', 'Widget');
+
+            this.rendered = false;
+            this._plugins = {};
+
+            Widget.superclass.constructor.apply(this, arguments);
+        }
+
+        Widget.NAME = "widget";
+
+        Widget.ATTRS = {
+            id: {},
+            node: {},
+            disabled: {
+                value: false
+            },
+            visible: {
+                value: true
+            },
+            strings: {
+                // Widget UI strings should go here
+            }
+        };
+
+        Widget.getById = function(id) {
+            return _instances[id];
+        };
+
+        var proto = {
+
+            initializer: function(config) {
+                Y.log('initializer called', 'life', 'Widget');
+
+                if (!config.id || _instances[config.id]) {
+                    throw('Unique id is required');
+                }
+
+                this._initPlugins(config);
+                _instances[this.get('id')] = this;
+            },
+
+            destructor: function() {
+                Y.log('destructor called', 'life', 'Widget');
+
+                this._unplug();
+                delete _instances[this.get('id')];
+            },
+
+            /**
+             * @public
+             * @chain
+             * @final 
+             */
+            render: function() {
+                if (this._destroyed) {
+                    throw('render failed; widget has been destroyed');
+                }
+
+                if (!this._rendered && this.fire("beforeRender") !== false) {
+
+                    this._initUI();
+                    this._syncUI();
+                    this.renderer();
+
+                    this.rendered = true;
+                    this.fire("render");
+                }
+
+                return this;
+            },
+
+            // Creates DOM, invoked by render()
+            renderer: function() {},
+
+            // Initializes DOM and CustomEvent listeners. Not called by framework
+            initUI: function() {},
+
+            // Refereshes UI, Not called by framework
+            syncUI: function() {},
+
+            hide: function() {
+                this.set('visible', false);
+                return this;
+            },
+
+            show: function() {
+                this.set('visible', true);
+                return this;
+            },
+
+            enable: function() {
+                return this.set('enabled', true);
+            },
+
+            disable: function() {
+                return this.set('disabled', false);
+            },
+
+            set: function() { // extend to chain set calls
+                Y.Attribute.Provider.prototype.set.apply(this, arguments);
+                return this;
+            },
+
+            getNodeAttr: function(attr) {
+                if (this._node) {
+                    return this._node[attr];
+                }
+                return undefined;
+            },
+
+            setNodeAttr: function(attr, val) {
+                if (this._node) {
+                    this._node[attr] = val;
+                }
+                return this;
+            },
+
+            /**
+             * @chain
+             * @public
+             */
+            plug: function() {
+                var a = arguments,
+                    p = a[0];
+                if (Y.lang.isArray(p)) {
+                    var ln = p.length;
+                    for (var i = 0; i < ln; i++) {
+                        var plugin = p[i];
+                        this._plug(plugin.ns, plugin.cfg);
+                    }
+                } else {
+                    this._plug.apply(this, a);
+                }
+                return this;
+            },
+
+            /**
+             * @chain
+             * @public
+             */
+            unplug: function(ns) {
+                if (ns) {
+                    this._unplug(ns);
+                } else {
+                    for (ns in this._plugins) {
+                        this._unplug(ns);
+                    }
+                }
+                return this;
+            },
+
+            /**
+             * @public
+             */
+            hasPlugin : function(ns) {
+                return (this._plugins[ns] && this[ns]);
+            },
+
+            /**
+             * @private
+             */
+            _initPlugins: function(config) {
+
+                // Class Based
+                var classes = this._getClasses(), constructor;
+                for (var i = 0; i < classes.length; i++) {
+                    constructor = classes[i];
+                    if (constructor.PLUGINS) {
+                        this.plug(constructor.PLUGINS);
+                    }
+                }
+
+                // User
+                if (config && config.plugins) {
+                    this.plug(config.plugins);
+                }
+            },
+
+            /**
+             * @private
+             */
+            _plug: function(ns, config) {
+                if (ns) {
+                    var PluginClass = P.get(ns);
+                    if (PluginClass) {
+
+                        config = config || {};
+                        config.owner = this;
+
+                        if (this.hasPlugin(ns)) {
+                            // Update config
+                            this[ns].setAttributeConfigs(config, false);
+                        } else {
+                            // Create new instance
+                            this[ns] = new PluginClass(config);
+                            this._plugins[ns] = PluginClass;
+                        }
+                    }
+                }
+            },
+
+            /**
+             * @private
+             */
+            _unplug : function(ns) {
+                if (ns) {
+                    if (this[ns]) {
+                        this[ns].destroy();
+                        delete this[ns];
+                    }
+                    if (this._plugins[ns]) {
+                        delete this._plugins[ns];
+                    }
+                }
+            },
+
+            _initUI: function() {
+                this._initRootNode();
+                this.on('visibleChange', this._onVisibleChange);
+                this.on('disabledChange', this._onDisabledChange);
+            },
+
+            _syncUI: function() {
+                this._uiSetVisible(this.get('visible'));
+                this._uiSetDisabled(this.get('disabled'));
+            },
+
+            _uiSetVisible: function(val) {
+                if (val === true) { 
+                    Y.Dom.removeClass(this._node, HIDDEN); 
+                } else {
+                    Y.Dom.addClass(this._node, HIDDEN); 
+                }
+            },
+
+            _uiSetDisabled: function(val) {
+                if (val === true) {
+                    Y.Dom.addClass(this._node, DISABLED);
+                } else {
+                    Y.Dom.removeClass(this._node, DISABLED);
+                }
+            },
+
+            _initRootNode: function() {
+                // TODO: Node to Id, Id to Node
+                this._node = Y.Dom.get(this.get('id'));
+                this.set('node', this._node);
+
+                var classes = this._getClasses(), constructor;
+                for (var i = 0; i < classes.length; i++) {
+                    constructor = classes[i];
+                    if (constructor.NAME) {
+                        Y.Dom.addClass(this._node, PREFIX + constructor.NAME.toLowerCase());
+                    }
+                }
+            },
+
+            _onVisibleChange: function(evt) {
+                this._uiSetVisible(evt.newValue);
+            },
+
+            _onDisabledChange: function(evt) {
+                this._uiSetDisabled(evt.newValue);
+            },
+
+            toString: function() {
+                return this.constructor.NAME + "[" + this.get('id') + "]";
+            }
+        };
+
+        Widget.PLUGINS = [
+            // TODO: Only for test. Probably not a core plugin
+            {ns:P.Mouse.NS, cfg:null}
+        ];
+
+        Y.extend(Widget, Y.Base, proto);
+        Y.Widget = Widget;
+    };
+
+    YUI.add("widget", M, "3.0.0");
+})();
+
