@@ -597,12 +597,13 @@
 
         // No attributes
         // Plugin.ATTRS = null
+
         Plugin.NAME = "plugin";
         Plugin.NS = "plugin";
 
         // TODO: Move to Y.add
         Plugin.add = function(pluginclass) {
-            // Last wins
+            // Last wins for NS
             if (pluginclass.NS) {
                 _registry[pluginclass.NS] = pluginclass;
             }
@@ -620,10 +621,11 @@
             initializer : function(config) {
 
                 if (!config.owner) {
-                    throw('plugin needs to have an owner');
+                    throw('plugin needs to have an owner defined');
                 }
 
                 this.owner = config.owner;
+
                 this._listeners = [];
                 this._overrides = [];
 
@@ -649,11 +651,13 @@
                 }
             },
 
+            // TODO: Change to use Event Handle, once implemented (and Y.bind)
             listen: function(obj, ev, fn, s, o) {
                 this._listeners[this._listeners.length] = { obj: obj, ev: ev, fn: fn };
                 obj.on(ev, fn, s, o);
             },
 
+            // TODO: Change to use Event Handle, once implemented (and Y.bind)
             nolisten: function(obj, ev, fn) {
                 obj.unsubscribe(ev, fn);
                 for (var i = 0; i < this._listeners.length; i++) {
@@ -664,11 +668,13 @@
                 }
             },
 
+            // TODO: Change to use Event Handle, once implemented (and Y.bind)
             listenBefore: function(obj, ev, fn, s, o) {
                 ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
                 this.listen(obj, ev, fn, s, o);
             },
 
+            // TODO: Change to use Event Handle, once implemented (and Y.bind)
             nolistenBefore: function(obj, ev, fn) {
                 ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
                 this.nolisten(obj, ev, fn);
@@ -698,7 +704,7 @@
             },
 
             toString: function() {
-                return this.name;
+                return this.constructor.NAME + "[" + this.constructor.NS + "]";
             }
         };
 
@@ -734,15 +740,21 @@
 
         Widget.ATTRS = {
             id: {},
+
             node: {},
+
+            parent: {}, // TODO, reconcile parent, id, node
+
             disabled: {
                 value: false
             },
+
             visible: {
-                value: true
+                value: false
             },
+
             strings: {
-                // Widget UI strings should go here
+                // Widget UI strings go here
             }
         };
 
@@ -754,19 +766,15 @@
 
             initializer: function(config) {
                 Y.log('initializer called', 'life', 'Widget');
-
-                if (!config.id || _instances[config.id]) {
-                    throw('Unique id is required');
-                }
-
                 this._initPlugins(config);
+
                 _instances[this.get('id')] = this;
             },
 
             destructor: function() {
                 Y.log('destructor called', 'life', 'Widget');
 
-                this._unplug();
+                this._destroyPlugins();
                 delete _instances[this.get('id')];
             },
 
@@ -776,7 +784,7 @@
              * @final 
              */
             render: function() {
-                if (this._destroyed) {
+                if (this.destroyed) {
                     throw('render failed; widget has been destroyed');
                 }
 
@@ -784,7 +792,10 @@
 
                     this._initUI();
                     this._syncUI();
-                    this.renderer();
+
+                    if (this.renderer) {
+                        this.renderer();
+                    }
 
                     this.rendered = true;
                     this.fire("render");
@@ -793,14 +804,54 @@
                 return this;
             },
 
-            // Creates DOM, invoked by render()
-            renderer: function() {},
+            /** 
+             * Creates DOM (or initializes DOM for P.E.)
+             * 
+             * Invoked by render().
+             * Not chained automatically.
+             */
+            renderer: null,
 
-            // Initializes DOM and CustomEvent listeners. Not called by framework
-            initUI: function() {},
+            /**
+             * Initializes listeners to bind Widget State to DOM
+             * 
+             * Not called by framework.
+             * Not chained automatically.
+             */
+            initUI: null,
 
-            // Refereshes UI, Not called by framework
-            syncUI: function() {},
+            /**
+             * Refreshes rendered UI, based on Widget State
+             * 
+             * Not called by framework.
+             * Not chained automatically.
+             */
+            syncUI: null,
+
+            /**
+             * Sets the state of an Attribute, based on UI state
+             * change. Used to indentify the source of a change as 
+             * UI based, so corresponding onUI listeners are not
+             * invoked (since the UI state is already in sync)
+             */
+            setUI: function() {
+                // TODO: Will identify sets with UI sources, once Event 
+                // and AttributeProvider support is in place for event 
+                // data
+                return this.set.apply(this, arguments);
+            },
+
+            /**
+             * Sets up an event listeners specifically to sync UI with
+             * attribute state. These listeners will NOT be called if 
+             * the setUI method is used to set the attribute (see setUI)
+             */
+            onUI: function() {
+                // TODO: Will identify listeners for UI sources, once 
+                // Event and AttributeProvider support is in place for 
+                // event data
+                return this.on.apply(this, arguments);
+            },
 
             hide: function() {
                 this.set('visible', false);
@@ -825,6 +876,7 @@
                 return this;
             },
 
+            // TODO: Reimplement with new Node Facade
             getNodeAttr: function(attr) {
                 if (this._node) {
                     return this._node[attr];
@@ -832,6 +884,7 @@
                 return undefined;
             },
 
+            // TODO: Reimplement with new Node Facade
             setNodeAttr: function(attr, val) {
                 if (this._node) {
                     this._node[attr] = val;
@@ -849,11 +902,12 @@
                 if (Y.lang.isArray(p)) {
                     var ln = p.length;
                     for (var i = 0; i < ln; i++) {
-                        var plugin = p[i];
-                        this._plug(plugin.ns, plugin.cfg);
+                        this.plug(p[i]);
                     }
+                } else if (Y.lang.isString(p)) {
+                    this._plug(p);
                 } else {
-                    this._plug.apply(this, a);
+                    this._plug(p.ns, p.cfg);
                 }
                 return this;
             },
@@ -885,7 +939,7 @@
              */
             _initPlugins: function(config) {
 
-                // Class Based
+                // Class Configuration
                 var classes = this._getClasses(), constructor;
                 for (var i = 0; i < classes.length; i++) {
                     constructor = classes[i];
@@ -894,10 +948,18 @@
                     }
                 }
 
-                // User
+                // User Configuration
                 if (config && config.plugins) {
                     this.plug(config.plugins);
                 }
+            },
+
+            /**
+             * For readability, symmetry
+             * @private
+             */
+            _destroyPlugins: function() {
+                this._unplug();
             },
 
             /**
@@ -940,8 +1002,9 @@
 
             _initUI: function() {
                 this._initRootNode();
-                this.on('visibleChange', this._onVisibleChange);
-                this.on('disabledChange', this._onDisabledChange);
+
+                this.onUI('visibleChange', this._onVisibleChange);
+                this.onUI('disabledChange', this._onDisabledChange);
             },
 
             _syncUI: function() {
@@ -965,13 +1028,38 @@
                 }
             },
 
+            _syncIdAndNode : function(config) {
+
+                /*
+                if (!config.id && !config.node && !config.parent) {
+                    throw('You need to specify and id, node or parent to provide a location in the DOM to insert the widget');
+                }
+
+                if (config.node && config.node.get) {
+                    if (config.node.get("id")) {
+                        config.id = config.node.get("id");
+                    } else {
+                        config.id = Y.Dom.generateId();
+                        config.node.set("id", config.id);
+                    }
+                }
+
+                if (!config.id) {
+                    config.id = Y.Dom.generateId();
+                }
+                */
+            },
+
             _initRootNode: function() {
+
                 // TODO: Node to Id, Id to Node
                 this._node = Y.Dom.get(this.get('id'));
                 this.set('node', this._node);
 
                 var classes = this._getClasses(), constructor;
-                for (var i = 0; i < classes.length; i++) {
+
+                // Starting from 1, because we don't need Base (yui-base) marker
+                for (var i = 1; i < classes.length; i++) {
                     constructor = classes[i];
                     if (constructor.NAME) {
                         Y.Dom.addClass(this._node, PREFIX + constructor.NAME.toLowerCase());
@@ -989,12 +1077,18 @@
 
             toString: function() {
                 return this.constructor.NAME + "[" + this.get('id') + "]";
-            }
+            },
+
+            /**
+             * Used when dynamically creating the bounding 
+             * box node when required
+             */
+            ROOT_NODE: "div"
         };
 
         Widget.PLUGINS = [
-            // TODO: Only for test. Probably not a core plugin
-            {ns:P.Mouse.NS, cfg:null}
+            // Placeholder for Widget Class Default plugins
+            // {ns:P.Mouse.NS, cfg:mousecfg}
         ];
 
         Y.extend(Widget, Y.Base, proto);
