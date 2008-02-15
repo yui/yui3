@@ -1,7 +1,6 @@
 (function() {
 
     var M = function(Y) {
-
         /**
          * Provides Attribute configurations.
          * @namespace Y.util
@@ -122,7 +121,7 @@
                     prevValue: this.getValue(),
                     newValue: value
                 };
-    
+
                 if (this.readOnly || ( this.writeOnce && this._written) ) {
                     return false; // write not allowed
                 }
@@ -213,8 +212,7 @@
                 this.setValue(this.value, silent);
             }
         };
-        
-        
+
         /**
          * Provides and manages YUI.Attribute instances
          * @class AttributeProvider
@@ -397,16 +395,27 @@
                 this._configs[key].resetConfig();
             },
 
-            // wrapper for EventProvider.subscribe
-            // to create events on the fly
+            // Wrapper for EventProvider.subscribe wrap type in name prefix
             subscribe: function(type, callback) {
                 this._events = this._events || {};
 
+                // Add "name" to type, ("menu:" + "click") when publishing
+                type = this._prefixType(type);
+
                 if ( !(type in this._events) ) {
+                    // Is this required anymore? Y.Event.Target does this
+                    // even more lazily (only when fired)
                     this._events[type] = this.publish(type);
                 }
 
                 Y.Event.Target.prototype.subscribe.apply(this, arguments);
+            },
+
+            // wrapper for EventProvider.fire to wrap type in name prefix
+            fire: function(type, args) {
+                // Add "name" to type, ("menu:" + "click") when publishing
+                arguments[0] = this._prefixType(arguments[0]);
+                Y.Event.Target.prototype.fire.apply(this, arguments);
             },
 
             on: function() {
@@ -424,9 +433,9 @@
              * @param {Obj} e The event object to pass to handlers.
              */
             fireBeforeChangeEvent: function(e) {
-                var type = 'before';
-                type += e.type.charAt(0).toUpperCase() + e.type.substr(1) + 'Change';
-                e.type = type;
+                var type = 'before' + e.type.charAt(0).toUpperCase() + e.type.substr(1) + 'Change';
+                e.type = this._prefixType(type);
+                // Fire will prefix type
                 return this.fire(type, e);
             },
 
@@ -437,17 +446,29 @@
              * @param {Obj} e The event object to pass to the handlers.
              */
             fireChangeEvent: function(e) {
-                e.type += 'Change';
-                return this.fire(e.type, e);
+                var type = e.type + 'Change';
+                e.type = this._prefixType(e.type);
+                // Fire will prefix type
+                return this.fire(type, e);
             },
 
             createAttribute: function(name, map) {
                 return new Y.Attribute(name, map, this);
+            },
+
+            _prefixType : function(type) {
+                // TODO: Say if they pass in "calendar:click" to Menu. Do we return null? 
+                // Or is their intention to capture bubble, and we just pass it through?
+                if (type.indexOf(":") == -1) {
+                   type = this.name + ":" + type;
+                }
+                return type;
             }
         };
 
         Y.augment(AttributeProvider, Y.Event.Target);
         Y.Attribute.Provider = AttributeProvider;
+
     };
 
     YUI.add("attribute", M, "3.0.0");
@@ -456,6 +477,15 @@
 
     var M = function(Y) {
 
+        /**
+         * Provides a base class for managed attribute based 
+         * objects, which automates chaining of init and destroy
+         * lifecycle methods and automatic instantiation of 
+         * registered Attributes, through the static ATTR property
+         * 
+         * @class Base
+         * @uses YUI.Attribute.Provider
+         */
         function Base(config) {
             this.init(config);
         }
@@ -467,13 +497,27 @@
 
         Base.prototype = {
 
-            /* @final*/
+            /**
+             * Init lifecycle method, invoked during 
+             * construction.
+             * 
+             * Provides beforeInit and init lifecycle events
+             * (todo: registration mechanism, through config)
+             * 
+             * @method init
+             * @final
+             * @chain
+             * @param {Object} config Configuration properties for the object
+             */
             init: function(config) {
 
                 this.destroyed = false;
                 this.initialized = false;
+                this.name = this.constructor.NAME;
 
                 if (this.fire('beforeInit') !== false) {
+
+                    // Set name to current class, to use for events.
 
                     // initialize top down ( Base init'd first )
                     this._initHierarchy(config);
@@ -484,7 +528,18 @@
                 return this;
             },
 
-            /* @final */
+
+            /**
+             * Init lifecycle method, invoked during 
+             * construction.
+             * 
+             * Provides beforeInit and init lifecycle events
+             * (todo: registration mechanism, through config)
+             * 
+             * @method destroy
+             * @chain
+             * @final
+             */
             destroy: function() {
 
                 if (this.fire('beforeDestroy') !== false) {
@@ -499,7 +554,11 @@
             },
 
             /**
+             * Returns the top down class heirarchy for this object,
+             * with YUI.Base being the first class in the array
+             * 
              * @protected
+             * @return {Array} array of classes
              */
             _getClasses : function() {
                 if (!this._classes) {
@@ -590,7 +649,6 @@
 
         // TODO: Move to Y.add
         Plugin.add = function(pluginclass) {
-            // Last wins for NS
             if (pluginclass.NS) {
                 _registry[pluginclass.NS] = pluginclass;
             }
@@ -637,13 +695,13 @@
                 }
             },
 
-            // TODO: Change to use Event Handle, once implemented (and Y.bind)
+            // TODO: Change to use Event Handle, once implemented (and then use Y.bind)
             listen: function(obj, ev, fn, s, o) {
                 this._listeners[this._listeners.length] = { obj: obj, ev: ev, fn: fn };
                 obj.on(ev, fn, s, o);
             },
 
-            // TODO: Change to use Event Handle, once implemented (and Y.bind)
+            // TODO: Change to use Event Handle, once implemented (and then use Y.bind)
             nolisten: function(obj, ev, fn) {
                 obj.unsubscribe(ev, fn);
                 for (var i = 0; i < this._listeners.length; i++) {
@@ -705,14 +763,38 @@
 
         var P = Y.Plugin;
 
-        // String constants
+        // String constants, don't want to create
+        // literals everytime they are used.
         var PREFIX = "yui-",
             HIDDEN = PREFIX + "hidden",
             DISABLED = PREFIX + "disabled";
 
+        // Widget id-to-instance map
         var _instances = {};
 
+        /**
+         * A base class for widgets, providing:
+         * <ul>
+         *    <li>The render lifecycle method to the init and destroy lifecycle 
+         *        methods provide by Base</li>
+         *    <li>Abstract methods to support consistent MVC structure across 
+         *        widgets: renderer, initUI, syncUI</li>
+         *    <li>Event subscriber support when binding listeners for model, ui 
+         *        synchronization: onUI, setUI</li>
+         *    <li>Support for common widget attributes, such as id, node, visible, 
+         *        disabled, strings</li>
+         *    <li>Plugin registration and activation support</li>
+         * </ul>
+         * 
+         * @param config {Object} Object literal specifying widget configuration 
+         * properties (may container both attributes and non attribute configuration).
+         * 
+         * @class YUI.Widget
+         * @extends YUI.Base
+         */
         function Widget(config) {
+
+            this._normalizeNodeId(config);
 
             this.rendered = false;
             this._plugins = {};
@@ -720,8 +802,24 @@
             Widget.superclass.constructor.apply(this, arguments);
         }
 
+        /**
+         * Static property used to provie a string to identify the class.
+         * Currently used to apply class identifiers to the root node
+         * and to classify events.
+         * 
+         * @property YUI.Widget.NAME
+         * @type {String}
+         * @static
+         */
         Widget.NAME = "widget";
 
+        /**
+         * Static property used to define default attribute configuration
+         * for the Widget.
+         * 
+         * @property YUI.Widget.ATTRS
+         * @type {Object}
+         */
         Widget.ATTRS = {
             id: {},
 
@@ -742,18 +840,42 @@
             }
         };
 
+        /**
+         * Getter to obtain Widget instances by id.
+         * 
+         * @method YUI.Widget.getById
+         * @param id {String} Id used to identify the widget uniquely.
+         * @return {Widget} Widget instance
+         */
         Widget.getById = function(id) {
             return _instances[id];
         };
 
         var proto = {
 
+            /**
+             * Initializer lifecycle implementation for the Widget class.
+             * 
+             * Base.init will invoke all prototype.initializer methods, for the
+             * class hierarchy (starting from Base), after all attributes have 
+             * been initialized.
+             * 
+             * @param  config {Object} Configuration obejct literal for the widget
+             */
             initializer: function(config) {
                 this._initPlugins(config);
 
                 _instances[this.get('id')] = this;
             },
 
+            /**
+             * Descructor lifecycle implementation for the Widget class.
+             * 
+             * Base.destroy will invoke all prototype.destructor methods, for the
+             * class hierarchy (starting from the lowest sub-class).
+             * 
+             * @param  config {Object} Configuration obejct literal for the widget
+             */
             destructor: function() {
 
                 this._destroyPlugins();
@@ -761,6 +883,20 @@
             },
 
             /**
+             * Establishes the initial DOM for the widget. Invoking this
+             * method will lead to the creating of all DOM elements for
+             * the widget (or the manipulation of existing DOM elements 
+             * for the progressive enhancement use case).
+             * <p>
+             * This method should only be invoked once for an initialized
+             * widget.
+             * </p>
+             * <p>
+             * It delegates to the widget specific renderer method to do
+             * the actual work.
+             * </p>
+             * 
+             * @method render
              * @public
              * @chain
              * @final 
@@ -787,34 +923,47 @@
             },
 
             /** 
-             * Creates DOM (or initializes DOM for P.E.)
+             * Creates DOM (or manipulates DOM for progressive enhancement)
+             * This method is invoked by render() and is not chained 
+             * automatically for the class hierarchy (like initializer, destructor) 
+             * so it should be chained manually for subclasses if required.
              * 
-             * Invoked by render().
-             * Not chained automatically.
+             * @method renderer
              */
-            renderer: null,
+            renderer: function() {},
 
             /**
-             * Initializes listeners to bind Widget State to DOM
+             * Configures/Setsup listeners to bind Widget State to UI/DOM
              * 
-             * Not called by framework.
-             * Not chained automatically.
+             * This method is not called by framework and is not chained 
+             * automatically for the class hierarchy.
+             * 
+             * @method initUI
              */
-            initUI: null,
+            initUI: function(){},
 
             /**
-             * Refreshes rendered UI, based on Widget State
+             * Refreshes the rendered UI, based on Widget State
              * 
-             * Not called by framework.
-             * Not chained automatically.
+             * This method is not called by framework and is not chained
+             * automatically for the class hierarchy.
+             * 
+             * @method syncUI
              */
-            syncUI: null,
+            syncUI: function(){},
 
             /**
-             * Sets the state of an Attribute, based on UI state
+             * Sets the state of an attribute, based on UI state
              * change. Used to indentify the source of a change as 
              * UI based, so corresponding onUI listeners are not
              * invoked (since the UI state is already in sync)
+             * 
+             * @method setUI
+             * @param name {String} attribute name
+             * @param value {Any} attribute value
+             * @param eventCfg {Object|boolean} Event configuration for the
+             * set - silent, source etc. If boolean, true, the set occurs 
+             * silently
              */
             setUI: function() {
                 // TODO: Will identify sets with UI sources, once Event 
@@ -825,8 +974,12 @@
 
             /**
              * Sets up an event listeners specifically to sync UI with
-             * attribute state. These listeners will NOT be called if 
+             * attribute state. These listeners will NOT be invoked if 
              * the setUI method is used to set the attribute (see setUI)
+             * 
+             * @method onUI
+             * @param type {String} type of event
+             * @param callback {Function} handler for the event
              */
             onUI: function() {
                 // TODO: Will identify listeners for UI sources, once 
@@ -853,10 +1006,24 @@
                 return this.set('disabled', false);
             },
 
+            /**
+             * Sets the state of an attribute. Wrapper for
+             * AttributeProvider.set, with additional ability 
+             * to chain.
+             * 
+             * TODO: Check with Matt. How is this supposed 
+             * to work if AttributeProvider set expects a return
+             * value.
+             * 
+             * @method setUI
+             * @chain
+             */
+            /*
             set: function() { // extend to chain set calls
                 Y.Attribute.Provider.prototype.set.apply(this, arguments);
                 return this;
             },
+            */
 
             // TODO: Reimplement with new Node Facade
             getNodeAttr: function(attr) {
@@ -875,10 +1042,22 @@
             },
 
             /**
+             * Register and instantiate a plugin with the Widget.
+             * 
+             * @param p {String | Object |Array} Accepts the registered 
+             * namespace for the Plugin or an object literal with an "ns" property
+             * specifying the namespace for the Plugin and a "cfg" property specifying
+             * the configuration for the Plugin.
+             * <p>
+             * Additionally an Array can also be passed in, with either String or 
+             * Object literal elements, allowing for multiple plugin registration in 
+             * a single call
+             * </p>
+             * @method plug
              * @chain
              * @public
              */
-            plug: function() {
+            plug: function(p) {
                 var a = arguments,
                     p = a[0];
                 if (Y.lang.isArray(p)) {
@@ -895,6 +1074,10 @@
             },
 
             /**
+             * Unregister and destroy a plugin already instantiated with the Widget.
+             * 
+             * @method unplug
+             * @param {String} ns The namespace key for the Plugin
              * @chain
              * @public
              */
@@ -910,7 +1093,13 @@
             },
 
             /**
+             * Determines if a plugin has been registered and instantiated 
+             * for this widget.
+             * 
+             * @method hasPlugin
              * @public
+             * @return {Boolean} returns true, if the plugin has been applied
+             * to this widget.
              */
             hasPlugin : function(ns) {
                 return (this._plugins[ns] && this[ns]);
@@ -937,7 +1126,10 @@
             },
 
             /**
-             * For readability, symmetry
+             * For readability, symmetry - wrapper for _unplug
+             * // TODO - should be able to just do ??
+             * 
+             * _destoryPlugins: this._unplug
              * @private
              */
             _destroyPlugins: function() {
@@ -982,6 +1174,9 @@
                 }
             },
 
+            /**
+             * @protected
+             */
             _initUI: function() {
                 this._initRootNode();
 
@@ -989,11 +1184,21 @@
                 this.onUI('disabledChange', this._onDisabledChange);
             },
 
+            /**
+             * Syncs state of the UI with the widget state
+             * @protected
+             */
             _syncUI: function() {
                 this._uiSetVisible(this.get('visible'));
                 this._uiSetDisabled(this.get('disabled'));
             },
 
+            /**
+             * Sets the state of the visible UI
+             * 
+             * @protected
+             * @param {boolean} val
+             */
             _uiSetVisible: function(val) {
                 if (val === true) { 
                     Y.Dom.removeClass(this._node, HIDDEN); 
@@ -1002,6 +1207,12 @@
                 }
             },
 
+            /**
+             * Sets the state of the disabled/enabled UI
+             * 
+             * @protected
+             * @param {boolean} val
+             */
             _uiSetDisabled: function(val) {
                 if (val === true) {
                     Y.Dom.addClass(this._node, DISABLED);
@@ -1010,7 +1221,11 @@
                 }
             },
 
-            _syncIdAndNode : function(config) {
+            _normalizeNodeId : function(config) {
+
+                if (_instances[config.id]) {
+                    throw('unique id required');
+                }
 
                 /*
                 if (!config.id && !config.node && !config.parent) {
@@ -1049,10 +1264,20 @@
                 }
             },
 
+            /**
+             * Visible attribute UI handler
+             * 
+             * @param {Object} evt
+             */
             _onVisibleChange: function(evt) {
                 this._uiSetVisible(evt.newValue);
             },
 
+            /**
+             * Disabled attribute UI handler
+             * 
+             * @param {Object} evt
+             */
             _onDisabledChange: function(evt) {
                 this._uiSetDisabled(evt.newValue);
             },
@@ -1062,12 +1287,17 @@
             },
 
             /**
-             * Used when dynamically creating the bounding 
-             * box node when required
+             * Used when dynamically creating the bounding box node for the widget
              */
             ROOT_NODE: "div"
         };
 
+        /**
+         * Static registration of default plugins for the class.
+         * 
+         * @property Y.Widget.PLUGINS
+         * @static
+         */
         Widget.PLUGINS = [
             // Placeholder for Widget Class Default plugins
             // {ns:P.Mouse.NS, cfg:mousecfg}
