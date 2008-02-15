@@ -649,7 +649,7 @@ YUI.prototype = {
             // for (var i=0, l=a.length; i<l; i=i+1) {
             //var a=arguments, o=Y.object(a[0]);
             var a=arguments, o={};
-            for (var i=1, l=a.length; i<l; i=i+1) {
+            for (var i=0, l=a.length; i<l; i=i+1) {
                 Y.mix(o, a[i], true);
             }
             return o;
