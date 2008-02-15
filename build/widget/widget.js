@@ -908,12 +908,12 @@
 
                 if (!this._rendered && this.fire("beforeRender") !== false) {
 
-                    this._initUI();
-                    this._syncUI();
-
                     if (this.renderer) {
                         this.renderer();
                     }
+
+                    this._initUI();
+                    this._syncUI();
 
                     this.rendered = true;
                     this.fire("render");
