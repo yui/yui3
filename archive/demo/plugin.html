@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Plugin Class</title>
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css">
+<script type="text/javascript" src="../util/jquery/jquery.js"></script>
+<script type="text/javascript" src="../util/jquery/jqDnR.js"></script>
+<script src="http://dev.jquery.com/view/trunk/plugins/ui/ui.mouse.js"></script>
+<script src="http://dev.jquery.com/view/trunk/plugins/ui/ui.draggable.js"></script>
+<script src="http://dev.jquery.com/view/trunk/plugins/ui/ui.draggable.ext.js"></script>
+
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/event/event-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/logger/logger-min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../widget/container/src/css/overlay.css">
+<link rel="stylesheet" type="text/css" href="../util/resizer/src/css/resize-core.css">
+<link rel="stylesheet" type="text/css" href="../util/draggable/src/css/draggable-core.css">
+<script type="text/javascript" src="../util/element/src/js/const.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
+<script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Object.js"></script>
+<script type="text/javascript" src="../util/plugin/src/js/PluginHost.js"></script>
+<script type="text/javascript" src="../util/plugin/src/js/PluginBase.js"></script>
+<script type="text/javascript" src="../util/element/src/js/Element.js"></script>
+<script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
+<script type="text/javascript" src="../widget/container/src/js/Overlay.js"></script>
+
+
+<script type="text/javascript" src="../util/draggable/src/js/Draggable.js"></script>
+<script type="text/javascript" src="../util/resizer/src/js/resize.js"></script>
+<script type="text/javascript" src="../util/jquery/jqPlugin.js"></script>
+
+<style>
+#o1 {
+    border:1px solid #000;
+    background:#ccc;
+    position: absolute;
+}
+
+#o2 {
+    border:1px solid #000;
+    background:#ddd;
+    position: absolute;
+}
+
+#box {
+    position:relative;
+    height:300px;
+    border:1px solid #ccc;
+    background-color:#ffffcc;
+}
+
+.yui-log .life {
+    background:#cc00cc;
+}
+
+.yui-log .attr {
+    background:#00cc00;
+}
+
+.jqHandle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 5px;
+    width: 5px;
+    cursor: se-resize;
+    background-color: red;
+}
+</style>
+</head>
+<body class="yui-skin-sam">
+    <div id="o1">
+        <em id="em1">Overlay 1</em>
+    </div>
+    <div id="o2">
+        <em id="em2">Overlay 2</em>
+    </div>
+    <div>
+    Overlay1:
+        <button id="render1">Render</button>
+        <button id="show1" disabled>Show</button>
+        <button id="hide1" disabled>Hide</button>
+        <button id="btt1" disabled>Bring to Top</button>
+        <button id="move1" disabled>Move (200,200)</button>
+    </div>
+    <div>
+    Overlay2:
+        <button id="resize2">Resize</button>
+        <button id="drag2">Draggable</button>
+        <button id="show2" disabled>Show</button>
+        <button id="hide2">Hide</button>
+        <button id="focus2">Focus</button>
+        <button id="blur2">Blur</button>
+        <button id="btt2">Bring to Top</button>
+        <button id="move2">Move (300,300)</button>
+        <button id="jq2">Add jQuery</button>
+    </div>
+    <script type="text/javascript">
+    (function() {
+        var Y = YAHOO.util;
+        var YW = YAHOO.widget;
+    
+        Y.Event.onDOMReady(function() {
+            var logger = new YW.LogReader(null, {
+                fontSize: '100%',
+                height: Y.Dom.getViewportHeight() * 0.8 + 'px'
+            });
+
+            logger.hideSource('LogReader');
+        });
+
+        myObj1 = new YAHOO.widget.Overlay('o1', {width:"120px", height:"120px", zindex:5, x:100, y:100});
+        myObj1.blur = function() {
+            alert('Default Blur');
+        };
+        myObj1.focus = function() {
+            alert('Default Focus');
+        };
+        myObj2 = new YAHOO.widget.Overlay('o2', {width:"100px", height:"100px", zindex:6, x:150, y:150});
+        myObj2.blur = function() {
+            alert('Default Blur');
+        };
+        myObj2.focus = function() {
+            alert('Default Focus');
+        };
+        myObj1.on('render', function() {
+            Y.Dom.get('hide1').disabled = false;
+            Y.Dom.get('btt1').disabled = false;
+            Y.Dom.get('move1').disabled = false;
+            this.addPlugin('jqplugin', jqPlugin);
+            this.jqplugin.addResize();
+            this.jqplugin.addDrag();
+        }, myObj1);
+
+        myObj2.render();
+
+        Y.Event.on("render1", "click", function() {
+            myObj1.render();
+            Y.Dom.get('render1').parentNode.removeChild(Y.Dom.get('render1'));
+        }, myObj1, true);
+        Y.Event.on("show1", "click", function() {
+            myObj1.show();
+            Y.Dom.get('show1').disabled = true;
+            Y.Dom.get('hide1').disabled = false;
+        }, myObj1, true);
+        Y.Event.on("hide1", "click", function() {
+            myObj1.hide();
+            Y.Dom.get('show1').disabled = false;
+            Y.Dom.get('hide1').disabled = true;
+        }, myObj1, true);
+        Y.Event.on("btt1", "click", myObj1.bringToTop, myObj1, true);
+        Y.Event.on("move1", "click", function(){myObj1.moveTo(200,200)});
+
+        Y.Event.on("resize2", "click", function() {
+            if (myObj2.jqplugin) {
+                myObj2.jqplugin.addResize();
+            } else {
+                myObj2.addPlugin('resizer', YAHOO.util.Resize, { proxy: true });
+            }
+            var re = Y.Dom.get('resize2');
+            var de = document.createElement('button');
+            de.id = 'destroy2';
+            de.innerHTML = 'Destroy Resize';
+            Y.Event.on(de, 'click', function() {
+                if (myObj2.jqplugin) {
+                    myObj2.jqplugin.removeResize();
+                } else {
+                    myObj2.removePlugin('resizer', YAHOO.util.Resize);
+                }
+                de.parentNode.replaceChild(re, de);
+            });
+            re.parentNode.replaceChild(de, re);
+        }, myObj2, true);
+        Y.Event.on("drag2", "click", function() {
+            if (Y.Dom.get('drag2').innerHTML == 'Draggable') {
+                Y.Dom.get('drag2').innerHTML = 'Non-Draggable';
+                if (myObj2.jqplugin) {
+                    myObj2.jqplugin.addDrag({ handle: $('#em2') });
+                } else {
+                    myObj2.addPlugin('draggable', YAHOO.util.Draggable, { handle: 'em2' });
+                }
+            } else {
+                Y.Dom.get('drag2').innerHTML = 'Draggable';
+                if (myObj2.jqplugin) {
+                    myObj2.jqplugin.removeDrag();
+                } else {
+                    myObj2.removePlugin('draggable', YAHOO.util.Draggable);
+                }
+            }
+        }, myObj2, true);
+        Y.Event.on("show2", "click", function() {
+            myObj2.show();
+            Y.Dom.get('show2').disabled = true;
+            Y.Dom.get('hide2').disabled = false;
+            Y.Dom.get('blur2').disabled = false;
+            Y.Dom.get('focus2').disabled = false;
+        }, myObj2, true);
+        Y.Event.on("hide2", "click", function() {
+            myObj2.hide();
+            Y.Dom.get('show2').disabled = false;
+            Y.Dom.get('hide2').disabled = true;
+            Y.Dom.get('blur2').disabled = true;
+            Y.Dom.get('focus2').disabled = true;
+        }, myObj2, true);
+        Y.Event.on("btt2", "click", myObj2.bringToTop, myObj2, true);
+        Y.Event.on("move2", "click", function(){myObj2.moveTo(300,300)});
+        Y.Event.on("jq2", "click", function() {
+            if (Y.Dom.get('jq2').innerHTML == 'Add jQuery') {
+                Y.Dom.get('jq2').innerHTML = 'Remove jQuery';
+                myObj2.addPlugin('jqplugin', jqPlugin);
+            } else {
+                Y.Dom.get('jq2').innerHTML = 'Add jQuery';
+                myObj2.removePlugin('jqplugin', jqPlugin);
+            }
+        });
+        Y.Event.on("focus2", "click", function() {
+            this.focus();
+        }, myObj2, true);
+        Y.Event.on("blur2", "click", function() {
+            this.blur();
+        }, myObj2, true);
+    })();
+    </script>
+</body>
+</html>
