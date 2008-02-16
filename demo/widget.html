@@ -1,74 +1,44 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>Object Class</title>
+    <title>Widget Class</title>
 
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css">
-<link rel="stylesheet" type="text/css" href="../widget/widget/src/css/widget-core.css">
+    <link rel="stylesheet" type="text/css" href="../widget/widget/src/css/widget-core.css">
 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/yahoo/yahoo-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/dom/dom-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/event/event-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.3.1/build/logger/logger-min.js"></script>
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../build/widget/widget.js"></script>
+    <script type="text/javascript" src="js/Mouse.js"></script>
 
-<script type="text/javascript" src="../util/element/src/js/const.js"></script>
-<script type="text/javascript" src="../util/element/src/js/Attribute.js"></script>
-<script type="text/javascript" src="../widget/widget/src/js/WidgetAttribute.js"></script>
-<script type="text/javascript" src="../util/element/src/js/AttributeProvider.js"></script>
-<script type="text/javascript" src="../util/element/src/js/Object.js"></script>
-<script type="text/javascript" src="../widget/plugins/Mouse.js"></script>
-<script type="text/javascript" src="../util/plugin/src/js/PluginHost.js"></script>
-<script type="text/javascript" src="../widget/widget/src/js/Widget.js"></script>
-
-<style>
-#foo {
-    background:#ccc;
-    height:100px;
-    overflow:hidden;
-}
-
-.yui-log .life {
-    background:#cc00cc;
-}
-
-.yui-log .attr {
-    background:#00cc00;
-}
-</style>
+    <style>
+        #foo {
+            background:#ccc;
+            height:100px;
+            overflow:hidden;
+        }
+    </style>
 </head>
 <body class="yui-skin-sam">
-    <button id="control-show">show</button>
-    <button id="control-hide">hide</button>
-    <div id="foo"><em>foo</em></div>
 
-<script type="text/javascript">
+    <button id="control-show" type="button">show</button>
+    <button id="control-hide" type="button">hide</button>
+    
+    <div id="foo"><em>Widget.Alpha</em></div>
+    
+    <script type="text/javascript">
+        (function() {
+            
+            var Y = YUI().use("attribute", "base", "plugin", "mouseplugin", "widget");
 
-(function() {
-    var Y = YAHOO.util;
-    var YW = YAHOO.widget;
+            widget = new Y.Widget({ id: 'foo', plugins: Y.Plugin.Mouse.NS });
+            widget.render();
 
-    Y.Event.onDOMReady(function() {
-        var logger = new YW.LogReader(null, {
-            fontSize: '100%',
-            height: Y.Dom.getViewportHeight() * 0.8 + 'px'
-        });
+            widget.on('click', function() {
+                Y.log('"widget:click" Custom Event');
+            });
 
-        logger.hideSource('LogReader');
-    });
-
-    var widget = new YW.Widget({ id: 'foo' });
-    widget.render();
-
-    console.log(widget.get('id'));
-    widget.on('click', function() {
-        console.log('click');
-    });
-
-    Y.Event.on('control-show', 'click', widget.show, widget, true);
-    Y.Event.on('control-hide', 'click', widget.hide, widget, true);
-})();
-
-
-</script>
+            Y.on('click', function() {widget.show();}, 'control-show');
+            Y.on('click', function() {widget.hide();}, 'control-hide');
+        })();
+    </script>
 </body>
 </html>
