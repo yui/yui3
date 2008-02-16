@@ -42,16 +42,16 @@
             destructor: function() {
                 var root = this.owner._node;
                 for (var evt in Mouse.Events) {
-                    // Won't work until Y.detach supports node facade
-                    Y.detach(Mouse.Events[evt], Y.bind(this.handler, this), root);
+                    // Won't work until Y.detach supports node facade. Using unsafe getDOMNode for now
+                    Y.detach(Mouse.Events[evt], Y.bind(this.handler, this), Y.Node.getDOMNode(root));
                 }
             },
 
             _initUI: function() {
                 var root = this.owner._node;
                 for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
-                    // Won't work until on supports node facade
-                    Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root);
+                    // Won't work until on supports node facade. Using unsafe getDOMNode for now
+                    Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), Y.Node.getDOMNode(root));
                 }
             }
         };

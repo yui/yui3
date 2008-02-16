@@ -795,8 +795,7 @@
          */
         function Widget(config) {
 
-            this._normalizeNodeId(config);
-
+            this.uid = Y.guid("widget");
             this.rendered = false;
             this._plugins = {};
 
@@ -822,11 +821,15 @@
          * @type {Object}
          */
         Widget.ATTRS = {
-            id : {},
 
-            node: {},
+            parentNode : {},
 
-            parent: {}, // TODO, reconcile parent, id, node
+            node: {
+                // TODO: Write once? Not an attr?
+                set: function(val) {
+                    return this._initNode(val);
+                }
+            },
 
             disabled: {
                 value: false
@@ -864,9 +867,12 @@
              * @param  config {Object} Configuration obejct literal for the widget
              */
             initializer: function(config) {
-                
+
                 this._initPlugins(config);
-                _instances[this.get('id')] = this;
+                
+                if (this.id) {
+                    _instances[this.id] = this;
+                }
             },
 
             /**
@@ -880,7 +886,10 @@
             destructor: function() {
 
                 this._destroyPlugins();
-                delete _instances[this.get('id')];
+                
+                if (this.id) {
+                    delete _instances[this.id];
+                }
             },
 
             /**
@@ -1049,8 +1058,6 @@
              * @public
              */
             plug: function(p) {
-                var a = arguments,
-                    p = a[0];
                 if (Y.lang.isArray(p)) {
                     var ln = p.length;
                     for (var i = 0; i < ln; i++) {
@@ -1169,7 +1176,7 @@
              * @protected
              */
             _initUI: function() {
-                this._initRootNode();
+                this._uiInitNode();
 
                 this.onUI('visibleChange', this._onVisibleChange);
                 this.onUI('disabledChange', this._onDisabledChange);
@@ -1212,37 +1219,32 @@
                 }
             },
 
-            _normalizeNodeId : function(config) {
+            /**
+             * Initializes widget state based on node value
+             * which maybe an instance of Y.Node, or a selector
+             * string
+             * 
+             * @param {Node | String} node An instance of Y.Node, 
+             * representing the widget's bounding box, or a selector
+             * string which can be used to retrieve it. 
+             */
+            _initNode: function(node) {
+                // TODO: Looking at the node impl, this should 
+                // also take care of id generation, if an id doesn't exist
+                node = Y.Node.get(node);
 
-                if (_instances[config.id]) {
-                    throw('unique id required');
+                // Node not found
+                if (!node && !this.get("parentNode")) {
+                    throw('node is required if a parentNode is not provided');
                 }
 
-                /*
-                if (!config.id && !config.node && !config.parent) {
-                    throw('You need to specify and id, node or parent to provide a location in the DOM to insert the widget');
-                }
+                this.id = node.att("id");
+                this._node = node;
 
-                if (config.node && config.node instanceof Y.Node) {
-                    if (config.node.id()) {
-                        config.id = config.node.id();
-                    } else {
-                        config.id = Y.Node.generateId();
-                        config.node.id(config.id);
-                    }
-                }
-
-                if (!config.id) {
-                    config.id = Y.Dom.generateId();
-                }
-                */
+                return node;
             },
 
-            _initRootNode: function() {
-
-                this._node = Y.Node.get("#" + this.get('id'));
-                this.set('node', this._node);
-
+            _uiInitNode: function() {
                 var classes = this._getClasses(), constructor;
 
                 // Starting from 1, because we don't need Base (yui-base) marker
@@ -1273,13 +1275,9 @@
             },
 
             toString: function() {
-                return this.constructor.NAME + "[" + this.get('id') + "]";
-            },
+                return this.constructor.NAME + "[" + this.id + "]";
+            }
 
-            /**
-             * Used when dynamically creating the bounding box node for the widget
-             */
-            ROOT_NODE: "div"
         };
 
         /**

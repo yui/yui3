@@ -11,7 +11,7 @@
     <script type="text/javascript" src="js/Mouse.js"></script>
 
     <style>
-        #foo {
+        .foo {
             background:#ccc;
             height:100px;
             overflow:hidden;
@@ -23,14 +23,14 @@
     <button id="control-show" type="button">show</button>
     <button id="control-hide" type="button">hide</button>
     
-    <div id="foo"><em>Widget.Alpha</em></div>
+    <div class="foo" id="foobar"><em>Widget.Alpha</em></div>
     
     <script type="text/javascript">
         (function() {
 
             var Y = YUI().use("node", "attribute", "base", "plugin", "mouseplugin", "widget");
 
-            widget = new Y.Widget({ id: 'foo', plugins: Y.Plugin.Mouse.NS });
+            widget = new Y.Widget({ node: 'body > div.foo', plugins: Y.Plugin.Mouse.NS });
             widget.render();
 
             widget.on('click', function() {
@@ -39,6 +39,9 @@
 
             Y.on('click', function() {widget.show();}, 'control-show');
             Y.on('click', function() {widget.hide();}, 'control-hide');
+            
+            // console.log(Y.Widget.getByNodeId("yui-gen0"));
+            console.log(Y.Widget.getByNodeId("foobar"));
         })();
     </script>
 </body>
