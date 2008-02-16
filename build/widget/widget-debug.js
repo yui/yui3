@@ -9,7 +9,7 @@
          * @param hash {Object} The intial Attribute.
          * @param {Y.AttributeProvider} The owner of the Attribute instance.
          */
-    
+
         Y.Attribute = function(name, map, owner) {
             this.name = name;
             if (owner) { 
@@ -25,35 +25,35 @@
              * @type String
              */
             name: undefined,
-    
+
             /**
              * The value of the attribute.
              * @property value
              * @type String
              */
             value: undefined,
-    
+
             /**
              * The owner of the attribute.
              * @property owner
              * @type Y.AttributeProvider
              */
             owner: undefined,
-    
+
             /**
              * Whether or not the attribute is read only.
              * @property readOnly
              * @type Boolean
              */
             readOnly: false,
-    
+
             /**
              * Whether or not the attribute can only be written once.
              * @property writeOnce
              * @type Boolean
              */
             writeOnce: false,
-    
+
             /**
              * The attribute's initial configuration.
              * @private
@@ -524,11 +524,11 @@
 
                 this.destroyed = false;
                 this.initialized = false;
+
+                // Set name to current class, to use for events.
                 this.name = this.constructor.NAME;
 
                 if (this.fire('beforeInit') !== false) {
-
-                    // Set name to current class, to use for events.
 
                     // initialize top down ( Base init'd first )
                     this._initHierarchy(config);
@@ -538,7 +538,6 @@
                 }
                 return this;
             },
-
 
             /**
              * Init lifecycle method, invoked during 
@@ -606,6 +605,8 @@
                             if (attributes[attr]) {
                                 // Not Cloning/Merging on purpose. Don't want to clone
                                 // references to complex objects [ e.g. a reference to a widget ]
+                                // This means the user has to clone anything coming in, if they 
+                                // want it detached
                                 attributes[attr].value = config[attr];
                             }
                         }
@@ -778,13 +779,13 @@
 
         var P = Y.Plugin;
 
-        // String constants, don't want to create
-        // literals everytime they are used.
+        // String constants
         var PREFIX = "yui-",
             HIDDEN = PREFIX + "hidden",
             DISABLED = PREFIX + "disabled";
 
-        // Widget id-to-instance map
+        // Widget node id-to-instance map for now, 1-to-1. 
+        // Expand to nodeid-to-arrayofinstances if required.
         var _instances = {};
 
         /**
@@ -880,8 +881,8 @@
              */
             initializer: function(config) {
                 Y.log('initializer called', 'life', 'Widget');
+                
                 this._initPlugins(config);
-
                 _instances[this.get('id')] = this;
             },
 
@@ -1007,13 +1008,11 @@
             },
 
             hide: function() {
-                this.set('visible', false);
-                return this;
+                return this.set('visible', false);
             },
 
             show: function() {
-                this.set('visible', true);
-                return this;
+                return this.set('visible', true);
             },
 
             enable: function() {
@@ -1029,19 +1028,13 @@
              * AttributeProvider.set, with additional ability 
              * to chain.
              * 
-             * TODO: Check with Matt. How is this supposed 
-             * to work if AttributeProvider set expects a return
-             * value.
-             * 
              * @method setUI
              * @chain
              */
-            /*
             set: function() { // extend to chain set calls
                 Y.Attribute.Provider.prototype.set.apply(this, arguments);
                 return this;
             },
-            */
 
             // TODO: Reimplement with new Node Facade
             getNodeAttr: function(attr) {
@@ -1250,12 +1243,12 @@
                     throw('You need to specify and id, node or parent to provide a location in the DOM to insert the widget');
                 }
 
-                if (config.node && config.node.get) {
-                    if (config.node.get("id")) {
-                        config.id = config.node.get("id");
+                if (config.node && config.node instanceof Y.Node) {
+                    if (config.node.id()) {
+                        config.id = config.node.id();
                     } else {
-                        config.id = Y.Dom.generateId();
-                        config.node.set("id", config.id);
+                        config.id = Y.Node.generateId();
+                        config.node.id(config.id);
                     }
                 }
 
