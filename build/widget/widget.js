@@ -822,7 +822,7 @@
          * @type {Object}
          */
         Widget.ATTRS = {
-            id: {},
+            id : {},
 
             node: {},
 
@@ -843,12 +843,12 @@
 
         /**
          * Getter to obtain Widget instances by id.
-         * 
-         * @method YUI.Widget.getById
+         *
+         * @method YUI.Widget.getByNodeId
          * @param id {String} Id used to identify the widget uniquely.
          * @return {Widget} Widget instance
          */
-        Widget.getById = function(id) {
+        Widget.getByNodeId = function(id) {
             return _instances[id];
         };
 
@@ -1018,18 +1018,16 @@
                 return this;
             },
 
-            // TODO: Reimplement with new Node Facade
             getNodeAttr: function(attr) {
                 if (this._node) {
-                    return this._node[attr];
+                    return this._node.att(attr);
                 }
                 return undefined;
             },
 
-            // TODO: Reimplement with new Node Facade
             setNodeAttr: function(attr, val) {
                 if (this._node) {
-                    this._node[attr] = val;
+                    this._node.att(attr, val);
                 }
                 return this;
             },
@@ -1194,9 +1192,9 @@
              */
             _uiSetVisible: function(val) {
                 if (val === true) { 
-                    Y.Dom.removeClass(this._node, HIDDEN); 
+                    this._node.removeClass(HIDDEN); 
                 } else {
-                    Y.Dom.addClass(this._node, HIDDEN); 
+                    this._node.addClass(HIDDEN); 
                 }
             },
 
@@ -1208,9 +1206,9 @@
              */
             _uiSetDisabled: function(val) {
                 if (val === true) {
-                    Y.Dom.addClass(this._node, DISABLED);
+                    this._node.addClass(DISABLED);
                 } else {
-                    Y.Dom.removeClass(this._node, DISABLED);
+                    this._node.removeClass(DISABLED);
                 }
             },
 
@@ -1242,8 +1240,7 @@
 
             _initRootNode: function() {
 
-                // TODO: Node to Id, Id to Node
-                this._node = Y.Dom.get(this.get('id'));
+                this._node = Y.Node.get("#" + this.get('id'));
                 this.set('node', this._node);
 
                 var classes = this._getClasses(), constructor;
@@ -1252,7 +1249,7 @@
                 for (var i = 1; i < classes.length; i++) {
                     constructor = classes[i];
                     if (constructor.NAME) {
-                        Y.Dom.addClass(this._node, PREFIX + constructor.NAME.toLowerCase());
+                        this._node.addClass(PREFIX + constructor.NAME.toLowerCase());
                     }
                 }
             },

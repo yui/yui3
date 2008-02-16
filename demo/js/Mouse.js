@@ -40,14 +40,17 @@
             },
 
             destructor: function() {
+                var root = this.owner._node;
                 for (var evt in Mouse.Events) {
-                    Y.Event.detach(Mouse.Events[evt], Y.bind(this.handler, this), root);
+                    // Won't work until Y.detach supports node facade
+                    Y.detach(Mouse.Events[evt], Y.bind(this.handler, this), root);
                 }
             },
 
             _initUI: function() {
                 var root = this.owner._node;
                 for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
+                    // Won't work until on supports node facade
                     Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root);
                 }
             }

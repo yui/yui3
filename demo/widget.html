@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="../widget/widget/src/css/widget-core.css">
 
     <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../build/node/node.js"></script>
     <script type="text/javascript" src="../build/widget/widget.js"></script>
     <script type="text/javascript" src="js/Mouse.js"></script>
 
@@ -26,8 +27,8 @@
     
     <script type="text/javascript">
         (function() {
-            
-            var Y = YUI().use("attribute", "base", "plugin", "mouseplugin", "widget");
+
+            var Y = YUI().use("node", "attribute", "base", "plugin", "mouseplugin", "widget");
 
             widget = new Y.Widget({ id: 'foo', plugins: Y.Plugin.Mouse.NS });
             widget.render();
