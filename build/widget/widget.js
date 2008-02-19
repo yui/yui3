@@ -579,7 +579,9 @@
                 var attributes, 
                     attr,
                     constructor,
-                    classes = this._getClasses();
+                    classes = this._getClasses(),
+                    isObj = Y.lang.isObject,
+                    owns = Y.object.owns;
 
                 for (var i = 0; i < classes.length; i++) {
                     constructor = classes[i];
@@ -588,7 +590,10 @@
 
 
                         for (attr in config) {
-                            if (attributes[attr]) {
+                            if (owns(attributes, attr)) {
+                                if (!isObj(attributes[attr])) {
+                                    attributes[attr] = {};
+                                }
                                 // Not Cloning/Merging on purpose. Don't want to clone
                                 // references to complex objects [ e.g. a reference to a widget ]
                                 // This means the user has to clone anything coming in, if they 
@@ -870,12 +875,15 @@
 
     var M = function(Y) {
 
-        var P = Y.Plugin;
+        var P = Y.Plugin,
+            L = Y.lang;
 
         // String constants
         var PREFIX = "yui-",
             HIDDEN = PREFIX + "hidden",
-            DISABLED = PREFIX + "disabled";
+            DISABLED = PREFIX + "disabled",
+            WIDTH = "width",
+            HEIGHT = "height";
 
         // Widget nodeid-to-instance map for now, 1-to-1. 
         // Expand to nodeid-to-arrayofinstances if required.
@@ -930,7 +938,7 @@
          */
         Widget.ATTRS = {
 
-            parentNode : {},
+            parentNode : null,
 
             node: {
                 // TODO: Write once? Not an attr?
@@ -945,6 +953,16 @@
 
             visible: {
                 value: false
+            },
+
+            height: {
+                // Default to not set on element style
+                value:""
+            },
+
+            width: {
+                // Default to not set on element style
+                value:""
             },
 
             strings: {
@@ -1166,12 +1184,12 @@
              * @public
              */
             plug: function(p) {
-                if (Y.lang.isArray(p)) {
+                if (L.isArray(p)) {
                     var ln = p.length;
                     for (var i = 0; i < ln; i++) {
                         this.plug(p[i]);
                     }
-                } else if (Y.lang.isString(p)) {
+                } else if (L.isString(p)) {
                     this._plug(p);
                 } else {
                     this._plug(p.ns, p.cfg);
@@ -1277,8 +1295,8 @@
             },
 
             /**
-             * Sets up listeners to synchronize visible and disabled
-             * attributes.
+             * Sets up listeners to synchronize UI state to attribute
+             * state.
              *
              * @method _initUI
              * @protected
@@ -1288,11 +1306,12 @@
 
                 this.onUI('visibleChange', this._onVisibleChange);
                 this.onUI('disabledChange', this._onDisabledChange);
+                this.onUI('heightChange', this._onHeightChange);
+                this.onUI('widthChange', this._onWidthChange);
             },
 
             /**
-             * Updates the widget UI to reflect the state of the visible
-             * and disabled attributes.
+             * Updates the widget UI to reflect the attribute state.
              * 
              * @method _syncUI
              * @protected
@@ -1300,6 +1319,36 @@
             _syncUI: function() {
                 this._uiSetVisible(this.get('visible'));
                 this._uiSetDisabled(this.get('disabled'));
+                this._uiSetHeight(this.get('height'));
+                this._uiSetWidth(this.get('width'));
+            },
+
+            /**
+             * Sets the height on the widget's root element
+             * 
+             * @method _uiSetHeight
+             * @protected
+             * @param {String | Number} val
+             */
+            _uiSetHeight: function(val) {
+                if (L.isNumber(val)) {
+                    val = val + this.DEF_UNIT;
+                }
+                this._node.style(HEIGHT, val);
+            },
+
+            /**
+             * Sets the width on the widget's root element
+             *
+             * @method _uiSetWidth
+             * @protected
+             * @param {String | Number} val
+             */
+            _uiSetWidth: function(val) {
+                if (L.isNumber(val)) {
+                    val = val + this.DEF_UNIT;
+                }
+                this._node.style(WIDTH, val);
             },
 
             /**
@@ -1398,6 +1447,28 @@
             _onDisabledChange: function(evt) {
                 this._uiSetDisabled(evt.newValue);
             },
+            
+            /**
+             * Height attribute UI handler
+             * 
+             * @method _onHeightChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onHeightChange: function(evt) {
+                this._uiSetHeight(evt.newValue);
+            },
+
+            /**
+             * Width attribute UI handler
+             * 
+             * @method _onWidthChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onWidthChange: function(evt) {
+                this._uiSetWidth(evt.newValue);
+            },
 
             /**
              * Generic toString implementation for all widgets.
@@ -1406,7 +1477,12 @@
              */
             toString: function() {
                 return this.constructor.NAME + "[" + this.id + "]";
-            }
+            },
+
+            /**
+             * Default unit to use for style values
+             */
+            DEF_UNIT : "px"
 
         };
 

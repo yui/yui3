@@ -107,7 +107,9 @@
                 var attributes, 
                     attr,
                     constructor,
-                    classes = this._getClasses();
+                    classes = this._getClasses(),
+                    isObj = Y.lang.isObject,
+                    owns = Y.object.owns;
 
                 for (var i = 0; i < classes.length; i++) {
                     constructor = classes[i];
@@ -117,7 +119,10 @@
                         Y.log('configuring' + constructor.NAME + 'attributes', 'attr', 'Base');
 
                         for (attr in config) {
-                            if (attributes[attr]) {
+                            if (owns(attributes, attr)) {
+                                if (!isObj(attributes[attr])) {
+                                    attributes[attr] = {};
+                                }
                                 // Not Cloning/Merging on purpose. Don't want to clone
                                 // references to complex objects [ e.g. a reference to a widget ]
                                 // This means the user has to clone anything coming in, if they 
