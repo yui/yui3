@@ -28,7 +28,7 @@
              * construction.
              * 
              * Provides beforeInit and init lifecycle events
-             * (todo: registration mechanism, through config)
+             * (TODO: registration mechanism for beforeInit, init through config)
              * 
              * @method init
              * @final
@@ -59,8 +59,7 @@
              * Init lifecycle method, invoked during 
              * construction.
              * 
-             * Provides beforeInit and init lifecycle events
-             * (todo: registration mechanism, through config)
+             * Provides beforeDestory and destroy lifecycle events
              * 
              * @method destroy
              * @chain
