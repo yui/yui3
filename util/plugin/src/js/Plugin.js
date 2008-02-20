@@ -3,7 +3,7 @@
     var M = function(Y) {
 
         // TODO: Move to Y.add/register
-        var _registry = {};
+        // var _registry = {};
 
         /**
          * Plugin provides a base class for all Plugin classes.
@@ -51,19 +51,19 @@
          * @param {Function} pluginclass
          */
         // TODO: Move to Y.add
-        Plugin.add = function(pluginclass) {
-            if (pluginclass.NS) {
-                _registry[pluginclass.NS] = pluginclass;
-            }
-        };
+        // Plugin.add = function(pluginclass) {
+        //    if (pluginclass.NS) {
+        //        _registry[pluginclass.NS] = pluginclass;
+        //    }
+        // };
 
         /**
          * Retrieve the plugin class for a given plugin namespace.
          * @param {Object} ns The plugin's namespace
          */
-        Plugin.get = function(ns) {
-            return _registry[ns];
-        };
+        // Plugin.get = function(ns) {
+        //    return _registry[ns];
+        // };
 
         var proto = {
 

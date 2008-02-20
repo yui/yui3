@@ -57,7 +57,7 @@
         };
 
         Y.extend(Mouse, P, proto);
-        P.add(Mouse);
+        // P.add(Mouse);
         P.Mouse = Mouse;
     };
 

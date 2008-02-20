@@ -30,7 +30,7 @@
 
             var Y = YUI().use("node", "attribute", "base", "plugin", "mouseplugin", "widget");
 
-            widget = new Y.Widget({ node: 'body > div.foo', plugins: Y.Plugin.Mouse.NS, width:200});
+            widget = new Y.Widget({ node: 'body > div.foo', width:200});
             widget.render();
 
             widget.get("foo");

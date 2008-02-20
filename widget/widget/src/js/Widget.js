@@ -80,7 +80,7 @@
             },
 
             visible: {
-                value: false
+                value: true
             },
 
             height: {
@@ -301,8 +301,8 @@
              * Register and instantiate a plugin with the Widget.
              * 
              * @param p {String | Object |Array} Accepts the registered 
-             * namespace for the Plugin or an object literal with an "ns" property
-             * specifying the namespace for the Plugin and a "cfg" property specifying
+             * namespace for the Plugin or an object literal with an "fn" property
+             * specifying the Plugin class and a "cfg" property specifying
              * the configuration for the Plugin.
              * <p>
              * Additionally an Array can also be passed in, with either String or 
@@ -319,10 +319,10 @@
                     for (var i = 0; i < ln; i++) {
                         this.plug(p[i]);
                     }
-                } else if (L.isString(p)) {
+                } else if (L.isFunction(p)) {
                     this._plug(p);
                 } else {
-                    this._plug(p.ns, p.cfg);
+                    this._plug(p.fn, p.cfg);
                 }
                 return this;
             },
@@ -389,22 +389,20 @@
             /**
              * @private
              */
-            _plug: function(ns, config) {
-                if (ns) {
-                    var PluginClass = P.get(ns);
-                    if (PluginClass) {
+            _plug: function(PluginClass, config) {
+                if (PluginClass && PluginClass.NS) {
+                    var ns = PluginClass.NS;
 
-                        config = config || {};
-                        config.owner = this;
+                    config = config || {};
+                    config.owner = this;
 
-                        if (this.hasPlugin(ns)) {
-                            // Update config
-                            this[ns].setAttributeConfigs(config, false);
-                        } else {
-                            // Create new instance
-                            this[ns] = new PluginClass(config);
-                            this._plugins[ns] = PluginClass;
-                        }
+                    if (this.hasPlugin(ns)) {
+                        // Update config
+                        this[ns].setAttributeConfigs(config, false);
+                    } else {
+                        // Create new instance
+                        this[ns] = new PluginClass(config);
+                        this._plugins[ns] = PluginClass;
                     }
                 }
             },
@@ -624,7 +622,10 @@
          */
         Widget.PLUGINS = [
             // Placeholder for Widget Class Default plugins
-            // {ns:P.Mouse.NS, cfg:mousecfg}
+            Y.Plugin.Mouse
+            // - OR -
+            // Instantiate a new plugin with or configure an existing plugin
+            // { fn:Y.Plugin.Mouse, cfg:mousecfg }
         ];
 
         Y.extend(Widget, Y.Base, proto);
