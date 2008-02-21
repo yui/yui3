@@ -290,7 +290,7 @@
             Y.MyWidget = MyWidget;
 
             var w = new Y.MyWidget({
-                node:"body > div.mywidget", 
+                root:"body > div.mywidget", 
                 visible:false,
                 foo:"bar",
             });
@@ -426,7 +426,7 @@
             var proto = {
                 initializer: function(config) {
                     Y.log(this.constructor.NAME + " initializer called");
-                    
+
                     var plugin = this;
                     var widget = this.owner;
 
@@ -437,7 +437,7 @@
                 destructor : function() {
                     Y.log(this.constructor.NAME + " destructor called");
 
-                    // Nothing special. Plugin's destructor will remove overrides, listeners,
+                    // Plugin's destructor will remove overrides, listeners,
                     // in the event that the plugin is removed/destroyed.
                 }
             };
