@@ -3,18 +3,19 @@
 <head>
     <title>Widget Class</title>
 
-    <link rel="stylesheet" type="text/css" href="../widget/widget/src/css/widget-core.css">
-
     <script type="text/javascript" src="../build/yui/yui.js"></script>
     <script type="text/javascript" src="../build/node/node.js"></script>
     <script type="text/javascript" src="../build/widget/widget.js"></script>
-    <script type="text/javascript" src="js/Mouse.js"></script>
 
     <style>
         .foo {
             background:#ccc;
             height:100px;
             overflow:hidden;
+        }
+
+        .yui-hidden {
+            visibility:hidden;
         }
     </style>
 </head>
@@ -30,8 +31,9 @@
 
             var Y = YUI().use("node", "attribute", "base", "plugin", "mouseplugin", "widget");
 
-            widget = new Y.Widget({ node: 'body > div.foo', width:200});
+            widget = new Y.Widget({ root: 'body > div.foo', width:200});
             widget.render();
+            console.log(widget.get('width'));
 
             widget.get("foo");
 
