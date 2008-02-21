@@ -7,6 +7,10 @@
 
 </script>
 <style type="text/css">
+    ol, ul, li {
+        margin: 0;
+        padding:0;
+    }
 
 </style>
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.0/build/base/base.css">
@@ -15,12 +19,41 @@
 <h1>Using YUI 3.0</h1>
 <h2>Table of Contents</h2>
 <ol>
-    <li><a href="#yui">YUI Object</a></li>
-    <li><a href="#event">Events</a></li>
-    <li><a href="#node">Node</a></li>
+    <li>
+        <a href="#yui">YUI Object</a>
+        <ul>
+            <li><a href="#yui-add">add()</a></li>
+            <li><a href="#yui-use">use()</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#events">Events</a>
+    </li>
+    <li>
+        <a href="#node">Node</a>
+        <ul>
+            <li><a href="#node-static">static usage</a></li>
+            <li><a href="#node-props">properties</a></li>
+            <li><a href="#node-atts">attributes</a></li>
+            <li><a href="#node-get">instance usage - get()</a></li>
+        </ul>
+    </li>
     <li><a href="#nodelist">NodeList</a></li>
-    <li><a href="#widget">Widget</a></li>
-    <li><a href="#plugin">Plugin</a></li>
+    <li>
+        <a href="#widget">Widget</a>
+            <ul>
+                <li><a href="#widget-classes">classes</a></li>
+                <li><a href="#widget-extend">extending</a></li>
+                <li><a href="#widget-mvc">MVC</a></li>
+            </ul>
+    </li>
+    <li>
+        <a href="#plugin">Plugin</a>
+            <ul>
+                <li><a href="#plugin-classes">classes</a></li>
+                <li><a href="#plugin-extend">extending</a></li>
+            </ul>
+    </li>
 
 <h2>Content</h2>
 <ol>
@@ -28,7 +61,7 @@
         <h3>YUI Object</h3>
         <p>In YUI 3.0 the <code>YUI</code> object replaces the <code>YAHOO</code> object.</p>
 
-        <h4>YUI.add()</h4>
+        <h4 id="yui-add">YUI.add()</h4>
         <p>The <code>YUI.add()</code> method registers a module.  As a <strong>best practice</strong>, always wrap an anonymous function around your module declaration to sandbox it.</p>
         <code><pre>
 
@@ -52,7 +85,7 @@
         })();
     
         </pre></code>
-        <h4>YUI.use()</h4>
+        <h4 id="yui-use">YUI.use()</h4>
         <p>The <code>YUI.use()</code> method creates a new instance of the YUI library which includes the component(s) requested, and any dependencies.  As a <strong>best practice</strong>, always wrap an anonymous function around your YUI instance to sandbox it.</p>
         <code><pre>
 
@@ -67,17 +100,29 @@
 
     </li>
 
-    <li>
+    <li id="events">
         <h3>Events</h3>
+        <p>In YUI 3.0, all events are implemented as Custom Events.  The signature is the same for all event types.  All event handlers recieve an Event object (facade).</p>
+        <code><pre>
+
+        (function() {
+
+            var Y = YUI.use('node');
+            Y.on('click', Y.bind(this.fn, this, arg1, arg2), el);
+            Y.on('node:click', Y.bind(this.fn, this, arg1, arg2), el);
+
+        })();
+    
+        </pre></code>
     </li>
 
-    <li>
+    <li id="node">
         <h3>Node</h3>
         <p>The <code>Node</code> object subsumes the YAHOO.util.Dom object. It works as both a static and instantiable class.</p>
         <p>All strings passed to Node as DOM references are treated as selectors (first matching node wins).</p>
         <p>Any method that normally returns an HTMLElement returns a Node instance bound to the HTMLElement.  Any method that normally returns an HTMLCollection returns a NodeList bound to the HTMLCollection.</p>
 
-        <h4>Static Usage</h4>
+        <h4 id="node-static">Static Usage</h4>
         <code><pre>
 
         (function() {
@@ -85,14 +130,14 @@
             var Y = YUI.use('node');
             Y.Node.style('#foo', 'color', 'red'); 
 
-            Y.Node.replaceChild('#foo', '#bar'); // returns Node instance bound to #bar 
+            Y.Node.replaceChild('#foo', '#baz', '#bar'); // returns Node instance bound to #bar 
             Y.Node.children('#foo'); // returns NodeList instance
 
         })();
     
         </pre></code>
 
-        <h4>HTMLElement Properties</h4>
+        <h4 id="node-props">HTMLElement Properties</h4>
         <p>Standard HTMLElement properties are converted to methods under the Node API.  Writeable properties are overloaded as both setters and getters.</p>
 
         <code><pre>
@@ -109,7 +154,7 @@
     
         </pre></code>
 
-        <h4>HTMLElement Attributes</h4>
+        <h4 id="node-att">HTMLElement Attributes</h4>
         <p>Standard HTMLElement attributes are available via the <code>Node.att()</code> interface.  As with the <code>Node.style()</code> method, it is overloaded as both a setter and getter.  To avoid security leaks, only valid attributes for the specific HTMLElement type are allowed (enforced via get/setAttribute).</p>
 
         <code><pre>
@@ -121,7 +166,69 @@
         })();
 
         </pre></code>
-        <h4>Node.get()</h4>
+        <h4 id="node-get">Node.get()</h4>
+        <p>The <code>Node.get()</code> method is used to create facades for existing HTMLElements.</p>
+        <code><pre>
+
+        (function() {
+
+            var Y = YUI.use('node');
+            var foo = Y.Node.get('#foo'); // creates a Node instance bound to #foo
+            foo.style('color', 'red'); 
+            foo.replaceChild('#baz', '#bar'); // returns Node instance bound to #bar 
+            foo.children(); // returns NodeList instance
+
+        })();
+    
+        </pre></code>
+
+    </li>
+    <li id="nodelist">
+        <h3>Nodelist</h3>
+        <p>The <code>NodeList</code> object provides the Node functionality across a collection of nodes.</p>
+        <p>All strings passed to Node as DOM references are treated as selectors.</p>
+
+        <code><pre>
+
+        (function() {
+
+            var Y = YUI.use('node');
+            Y.NodeList.get('.foo').addClass('bar');
+
+        })();
+    
+        </pre></code>
+
+        <h4 id="node-props">HTMLElement Properties</h4>
+        <p>Standard HTMLElement properties are converted to methods under the Node API.  Writeable properties are overloaded as both setters and getters.</p>
+
+        <code><pre>
+
+        (function() {
+
+            var Y = YUI.use('node');
+            Y.Node.style('#foo', 'color');  // returns document.getElementById(foo).style.color
+            Y.Node.style('#foo', 'color', 'red');  // set document.getElementById(foo).style.color = red;
+
+            Y.Node.scrollTop('#foo');  // returns document.getElementById(foo).scrollTop
+            Y.Node.scrollTop('#foo', 200);  // set document.getElementById(foo).scrollTop = 200
+        })();
+    
+        </pre></code>
+
+        <h4 id="node-att">HTMLElement Attributes</h4>
+        <p>Standard HTMLElement attributes are available via the <code>Node.att()</code> interface.  As with the <code>Node.style()</code> method, it is overloaded as both a setter and getter.  To avoid security leaks, only valid attributes for the specific HTMLElement type are allowed (enforced via get/setAttribute).</p>
+
+        <code><pre>
+
+        (function() {
+            var Y = YUI.use('node');
+            Y.Node.att('#foo', 'title'); // returns document.getElementById(foo).getAttribute('title')
+            Y.Node.att('#foo', 'title', 'i am foo'); // document.getElementById(foo).setAttribute('title', 'i am foo')
+        })();
+
+        </pre></code>
+        <h4 id="node-get">Node.get()</h4>
         <p>The <code>Node.get()</code> method is used to create facades for existing HTMLElements.</p>
         <code><pre>
 
@@ -137,15 +244,11 @@
     
         </pre></code>
 
-        <h4>Open Questions</h4>
-        <ul>
-            <li>Should the private DOM methods that work directly with HTMLElements be exposed to insecure environment?</li>
-        </ul>
     </li>
     <li id="widget">
         <h3>Widget</h3>
 
-        <h4>Class Structure and responsibilities</h4>
+        <h4 id="widget-classes">Class Structure and responsibilities</h4>
 
         <p>The <code>Y.Widget</code> class provides the base implementation for all Widgets. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
 
@@ -215,7 +318,7 @@
             </li>
         </ul>
 
-        <h4>Extending Widget</h4>
+        <h4 id="widget-extend">Extending Widget</h4>
 
         <p>Setup your widget constructor to invoke its superclass, and set its <code>NAME</code> static property</p>
 
@@ -299,7 +402,7 @@
             w.show();
         </pre></code>
 
-        <h4>Separating Visual Representation</h4>
+        <h4 id="widget-mvc">Separating Visual Representation</h4>
 
         <p>To allow for a cleaner separation between your widget's state and its visual representation 
            <em>(e.g. ColorPicker's actual rgb value vs. the fact that it's displayed in a text box as opposed to 3 dropdowns)</em>, 
@@ -363,7 +466,7 @@
     <li id="plugin">
         <h3>Plugin</h3>
 
-        <h4>Class Structure and responsibilities</h4>
+        <h4 id="plugin-classes">Class Structure and responsibilities</h4>
 
         <p>The <code>Y.Plugin</code> class provides the base implementation for all Plugins. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
         <ul>
@@ -389,7 +492,7 @@
             <li>Provides <code>addOverride, removeOverride</code> methods to allows plugin classes to replace methods on the owner (or any other object), with the original methods being restored when the plugin is removed/destroyed.</li>
         </ul>
 
-        <h4>Extending Plugin</h4>
+        <h4 id="plugin-extend">Extending Plugin</h4>
 
         <p>Setup your plugin constructor to invoke its superclass, and set its <code>NAME</code> and <code>NS</code> static properties</p>
 
