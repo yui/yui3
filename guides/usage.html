@@ -287,8 +287,14 @@
             Y.extend(MyWidget, Y.Widget, proto);
             Y.MyWidget = MyWidget;
 
-            var w = new Y.MyWidget({node:"body > div.mywidget", foo:"bar"});
+            var w = new Y.MyWidget({
+                node:"body > div.mywidget", 
+                visible:false,
+                foo:"bar",
+            });
+
             w.render();
+            w.show();
         </pre></code>
 
         <h4>Separating Visual Representation</h4>
