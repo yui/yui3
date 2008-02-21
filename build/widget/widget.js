@@ -587,6 +587,7 @@
                     constructor = classes[i];
                     if (constructor.ATTRS) {
                         attributes = Y.merge(constructor.ATTRS);
+                        console.log(attributes === constructor.ATTRS);
 
 
                         for (attr in config) {
@@ -634,7 +635,6 @@
 
     YUI.add("base", M, "3.0.0");
 })();
-
 (function() {
 
     var M = function(Y) {
@@ -832,7 +832,7 @@
              * @param {Object} fn
              */
             addOverride: function(obj, method, fn) {
-                if (Y.isFunction(obj[method]) && Y.isFunction(fn)) {
+                if (Y.lang.isFunction(obj[method]) && Y.lang.isFunction(fn)) {
                     this._overrides[this._overrides.length] = { method: method, obj: obj, fn: obj[method] };
                     obj[method] = fn;
                 } else {
@@ -915,6 +915,11 @@
             this.rendered = false;
             this._plugins = {};
 
+            if (!config.root) { // create from template if no root provided
+                config = Y.merge(config);
+                config.root = Y.Node.create(this.constructor.TEMPLATE);
+            }
+                
             Widget.superclass.constructor.apply(this, arguments);
         }
 
@@ -929,6 +934,8 @@
          */
         Widget.NAME = "widget";
 
+        Widget.TEMPLATE = ['div'];
+
         /**
          * Static property used to define the default attribute 
          * configuration for the Widget.
@@ -937,10 +944,7 @@
          * @type {Object}
          */
         Widget.ATTRS = {
-
-            parentNode : null,
-
-            node: {
+            root: {
                 // TODO: Write once? Not an attr?
                 set: function(val) {
                     return this._initNode(val);
@@ -1036,19 +1040,28 @@
              * @chain
              * @final 
              */
-            render: function() {
+            render: function(parent) {
                 if (this.destroyed) {
                     throw('render failed; widget has been destroyed');
                 }
 
+                // append to parent if provided, or to body if no parent and not in body
+                if (parent || !Y.Node.contains('body', this._root) ) {
+                    parent = parent || 'body'; 
+                    Y.Node.appendChild(parent, this._root);
+                }
+
                 if (!this._rendered && this.fire("beforeRender") !== false) {
+
+                    this._uiInitNode();
+
+                    this._bindUI();
+                    this._syncUI();
 
                     if (this.renderer) {
                         this.renderer();
                     }
 
-                    this._initUI();
-                    this._syncUI();
 
                     this.rendered = true;
                     this.fire("render");
@@ -1073,9 +1086,19 @@
              * This method is not called by framework and is not chained 
              * automatically for the class hierarchy.
              * 
-             * @method initUI
+             * @method bindUI
              */
-            initUI: function(){},
+            bindUI: function(){},
+
+            /**
+             * Adds nodes to the DOM 
+             * 
+             * This method is not called by framework and is not chained 
+             * automatically for the class hierarchy.
+             * 
+             * @method renderUI
+             */
+            renderUI: function(){},
 
             /**
              * Refreshes the rendered UI, based on Widget State
@@ -1154,15 +1177,15 @@
             },
 
             getNodeAttr: function(attr) {
-                if (this._node) {
-                    return this._node.att(attr);
+                if (this._root) {
+                    return this._root.att(attr);
                 }
                 return undefined;
             },
 
             setNodeAttr: function(attr, val) {
-                if (this._node) {
-                    this._node.att(attr, val);
+                if (this._root) {
+                    this._root.att(attr, val);
                 }
                 return this;
             },
@@ -1296,11 +1319,10 @@
              * Sets up listeners to synchronize UI state to attribute
              * state.
              *
-             * @method _initUI
+             * @method _bindUI
              * @protected
              */
-            _initUI: function() {
-                this._uiInitNode();
+            _bindUI: function() {
 
                 this.onUI('visibleChange', this._onVisibleChange);
                 this.onUI('disabledChange', this._onDisabledChange);
@@ -1332,7 +1354,7 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._node.style(HEIGHT, val);
+                this._root.style(HEIGHT, val);
             },
 
             /**
@@ -1346,7 +1368,7 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._node.style(WIDTH, val);
+                this._root.style(WIDTH, val);
             },
 
             /**
@@ -1358,9 +1380,9 @@
              */
             _uiSetVisible: function(val) {
                 if (val === true) { 
-                    this._node.removeClass(HIDDEN); 
+                    this._root.removeClass(HIDDEN); 
                 } else {
-                    this._node.addClass(HIDDEN); 
+                    this._root.addClass(HIDDEN); 
                 }
             },
 
@@ -1372,9 +1394,9 @@
              */
             _uiSetDisabled: function(val) {
                 if (val === true) {
-                    this._node.addClass(DISABLED);
+                    this._root.addClass(DISABLED);
                 } else {
-                    this._node.removeClass(DISABLED);
+                    this._root.removeClass(DISABLED);
                 }
             },
 
@@ -1395,12 +1417,12 @@
                 node = Y.Node.get(node);
 
                 // Node not found
-                if (!node && !this.get("parentNode")) {
-                    throw('node is required if a parentNode is not provided');
+                if (!node) {
+                    throw('node not found');
                 }
 
                 this.id = node.att("id");
-                this._node = node;
+                this._root = node;
 
                 return node;
             },
@@ -1419,7 +1441,7 @@
                 for (var i = 1; i < classes.length; i++) {
                     constructor = classes[i];
                     if (constructor.NAME) {
-                        this._node.addClass(PREFIX + constructor.NAME.toLowerCase());
+                        this._root.addClass(PREFIX + constructor.NAME.toLowerCase());
                     }
                 }
             },
@@ -1504,4 +1526,3 @@
 
     YUI.add("widget", M, "3.0.0");
 })();
-
