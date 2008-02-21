@@ -23,9 +23,9 @@
 
     <button id="control-show" type="button">show</button>
     <button id="control-hide" type="button">hide</button>
-    
+
     <div class="foo" id="foobar"><em>Widget.Alpha</em></div>
-    
+
     <script type="text/javascript">
         (function() {
 
@@ -33,9 +33,6 @@
 
             widget = new Y.Widget({ root: 'body > div.foo', width:200});
             widget.render();
-            console.log(widget.get('width'));
-
-            widget.get("foo");
 
             widget.on('click', function() {
                 Y.log('"widget:click" Custom Event');
@@ -43,8 +40,7 @@
 
             Y.on('click', function() {widget.show();}, 'control-show');
             Y.on('click', function() {widget.hide();}, 'control-hide');
-            
-            // console.log(Y.Widget.getByNodeId("yui-gen0"));
+
             console.log(Y.Widget.getByNodeId("foobar"));
         })();
     </script>
