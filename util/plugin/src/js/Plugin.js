@@ -103,14 +103,14 @@
 
                 for (i = 0; i < this._listeners.length; i++) {
                     var event = this._listeners[i];
-                    if (Y.isObject(event)) {
+                    if (Y.lang.isObject(event)) {
                         event.obj.unsubscribe(event.ev, event.fn);
                     }
                 }
 
                 for (i = 0; i < this._overrides.length; i++) {
                     var o = this._overrides[i];
-                    if (Y.isObject(o)) {
+                    if (Y.lang.isObject(o)) {
                         o.obj[o.method] = o.fn;
                         this._overrides[i] = null;
                     }

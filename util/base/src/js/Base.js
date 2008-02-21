@@ -145,7 +145,7 @@
             _destroyHierarchy : function() {
                 var constructor = this.constructor;
                 while (constructor && constructor.prototype) {
-                    if (constructor.destructor) {
+                    if (constructor.prototype.destructor) {
                         constructor.prototype.destructor.apply(this, arguments);
                     }
                     constructor = constructor.superclass ? constructor.superclass.constructor : null;

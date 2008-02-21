@@ -599,7 +599,6 @@
                     constructor = classes[i];
                     if (constructor.ATTRS) {
                         attributes = Y.merge(constructor.ATTRS);
-                        console.log(attributes === constructor.ATTRS);
 
                         Y.log('configuring' + constructor.NAME + 'attributes', 'attr', 'Base');
 
@@ -630,7 +629,7 @@
             _destroyHierarchy : function() {
                 var constructor = this.constructor;
                 while (constructor && constructor.prototype) {
-                    if (constructor.destructor) {
+                    if (constructor.prototype.destructor) {
                         constructor.prototype.destructor.apply(this, arguments);
                     }
                     constructor = constructor.superclass ? constructor.superclass.constructor : null;
@@ -648,6 +647,7 @@
 
     YUI.add("base", M, "3.0.0");
 })();
+
 (function() {
 
     var M = function(Y) {
@@ -753,14 +753,14 @@
 
                 for (i = 0; i < this._listeners.length; i++) {
                     var event = this._listeners[i];
-                    if (Y.isObject(event)) {
+                    if (Y.lang.isObject(event)) {
                         event.obj.unsubscribe(event.ev, event.fn);
                     }
                 }
 
                 for (i = 0; i < this._overrides.length; i++) {
                     var o = this._overrides[i];
-                    if (Y.isObject(o)) {
+                    if (Y.lang.isObject(o)) {
                         o.obj[o.method] = o.fn;
                         this._overrides[i] = null;
                     }
@@ -886,6 +886,7 @@
 
     YUI.add("plugin", M, "3.0.0");
 })();
+
 (function() {
 
     var M = function(Y) {
@@ -1544,6 +1545,7 @@
 
     YUI.add("widget", M, "3.0.0");
 })();
+
 (function() {
 
     var M = function(Y) {
@@ -1609,3 +1611,4 @@
 
     YUI.add("mouseplugin", M, "3.0.0");
 })();
+
