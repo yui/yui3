@@ -142,7 +142,7 @@
             <li>Should the private DOM methods that work directly with HTMLElements be exposed to insecure environment?</li>
         </ul>
     </li>
-    <li>
+    <li id="widget">
         <h3>Widget</h3>
 
         <h4>Class Structure and responsibilities</h4>
@@ -347,14 +347,22 @@
 
                 // Set state from RGB UI update
                 _onRGBNodeChange: function(e) {
-                    // e is the Event facade, not a real DOM event
+                    // e is the Y.Event facade, not a real DOM Event
+                    // t is the Y.Node facade, not a real HTML Element
                     var t = e.target;
 
                     // Use setUI, as opposed to set, to stop looping back to update UI.
-                    this.setUI("foo", t.att("value"));
+                    this.setUI("rgb", t.att("value"));
                 }
         </pre></code>
     </li>
+    <li id="plugin">
+        <h3>Plugin</h3>
+
+        <h4>Class Structure and responsibilities</h4>
+
+        <p>The <code>Y.Plugin</code> class provides the base implementation for all Plugins. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
+    </li>    
 </ol>
 </body>
 </html>
