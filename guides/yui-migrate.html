@@ -59,26 +59,27 @@
     <tr>
         <td>YAHOO.util.Dom.get("foo")</td>
         <td>Y.Node.get("#foo")</td>
-        <td>returns Y.Node instance, accepts selector strings</td></tr>
+        <td>returns Y.Node instance, accepts selector strings</td>
+    </tr>
     <tr>
         <td>YAHOO.util.Dom.setStyle("foo", attr, value)</td>
         <td>Y.Node.style("#foo", attr, value)</td>
-        <td>or Y.Node.get("#foo").style(...)</td>
+        <td>or Y.Node.get("#foo").style(attr, value)</td>
     </tr>
     <tr>
         <td>YAHOO.util.Dom.getStyle("foo", attr)</td>
         <td>Y.Node.style("#foo", attr)</td>
-        <td>or Y.Node.get("#foo").style(...)</td>
+        <td>or Y.Node.get("#foo").style(attr)</td>
     </tr>
     <tr>
         <td>YAHOO.util.Dom.addClass("foo", class)</td>
         <td>Y.Node.addClass("#foo", attr)</td>
-        <td>or Y.Node.get("#foo").addClass(...)</td>
+        <td>or Y.Node.get("#foo").addClass(class)</td>
     </tr>
     <tr>
         <td>YAHOO.util.Dom.removeClass("foo", class)</td>
-        <td>Y.Node.removeClass("#foo", attr)</td>
-        <td>or Y.Node.get("#foo").removeClass(...)</td>
+        <td>Y.Node.removeClass("#foo", class)</td>
+        <td>or Y.Node.get("#foo").removeClass(class)</td>
     </tr>
     <tr><td>HTMLElement</td><td>Y.Node</td><td>(Node Facade)</td></tr>
 </table>
