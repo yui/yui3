@@ -333,7 +333,7 @@
                     // Update rgb's UI, when rgb value changes programatically
                     this.onUI("rgbChanged", Y.bind(this._uiSetRGB, this));
 
-                    // Handle DOM change event on textbox (Currently using the older signature, since node passes through to Y.Event.addListener)
+                    // Handle DOM change event on textbox
                     this._rgbNode.on("change", Y.bind(this._onRGBNodeChange, this));
                 },
 
@@ -349,6 +349,7 @@
 
                 // Set state from RGB UI update
                 _onRGBNodeChange: function(e) {
+
                     // e is the Y.Event facade, not a real DOM Event
                     // t is the Y.Node facade, not a real HTML Element
                     var t = e.target;
