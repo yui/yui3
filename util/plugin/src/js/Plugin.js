@@ -196,7 +196,7 @@
              * @param {Object} fn
              */
             addOverride: function(obj, method, fn) {
-                if (Y.isFunction(obj[method]) && Y.isFunction(fn)) {
+                if (Y.lang.isFunction(obj[method]) && Y.lang.isFunction(fn)) {
                     this._overrides[this._overrides.length] = { method: method, obj: obj, fn: obj[method] };
                     obj[method] = fn;
                 } else {
