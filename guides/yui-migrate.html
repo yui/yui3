@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI Core 3.0 Migration</title>
+
+<script type="text/javascript">
+
+</script>
+<style type="text/css">
+    th {
+        background:#ccc;
+    }
+    
+    table {
+        border-collapse:collapse;
+        
+    }
+    
+    caption {
+        font-weight:bold;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.0/build/base/base.css">
+</head>
+<body>
+<h1>Migrating to 3.0 YUI Core</h1>
+<h2>Table of Contents</h2>
+<ol>
+    <li><a href="#env">Env</a></li>
+    <li><a href="#lang">Lang</a></li>
+    <li><a href="#dom">Dom</a></li>
+    <li><a href="#event">Event</a></li>
+    <li><a href="#eventprovider">EventProvider</a></li>
+    <li><a href="#connect">Connect</a></li>
+    <li><a href="#new">New</a></li>
+</ol>
+<h2>Content</h2>
+<table id="env">
+    <caption>Env</caption>
+    <tr><th>2.x</th><th>3.x</th></tr>
+    <tr><td>YAHOO.env.ua</td><td>Y.ua</td></tr>
+</table>
+
+<table id="lang">
+    <caption>Lang</caption>
+    <tr><th>2.x</th><th>3.x</th></tr>
+    <tr><td>YAHOO.lang.augmentProto</td><td>Y.augment</td></tr>
+    <tr><td>YAHOO.lang.augmentObject</td><td>Y.mix</td></tr>
+    <tr><td>YAHOO.lang.merge</td><td>Y.merge</td></tr>
+    <tr><td>YAHOO.lang.extend</td><td>Y.extend</td></tr>
+    <tr><td>YAHOO.lang.isString</td><td>Y.lang.isString</td></tr>
+    <tr><td>YAHOO.lang.is*</td><td>Y.lang.is*</td></tr>
+    <tr><td>YAHOO.lang.hasOwnProperty</td><td>Y.object.owns</td></tr>
+</table>
+
+<table id="dom">
+    <caption>Dom</caption>
+    <tr><th>2.x</th><th>3.x</th><th></th></tr>
+    <tr>
+        <td>YAHOO.util.Dom.get("foo")</td>
+        <td>Y.Node.get("#foo")</td>
+        <td>returns Y.Node instance, accepts selector strings</td></tr>
+    <tr>
+        <td>YAHOO.util.Dom.setStyle("foo", attr, value)</td>
+        <td>Y.Node.style("#foo", attr, value)</td>
+        <td>or Y.Node.get("#foo").style(...)</td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Dom.getStyle("foo", attr)</td>
+        <td>Y.Node.style("#foo", attr)</td>
+        <td>or Y.Node.get("#foo").style(...)</td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Dom.addClass("foo", class)</td>
+        <td>Y.Node.addClass("#foo", attr)</td>
+        <td>or Y.Node.get("#foo").addClass(...)</td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Dom.removeClass("foo", class)</td>
+        <td>Y.Node.removeClass("#foo", attr)</td>
+        <td>or Y.Node.get("#foo").removeClass(...)</td>
+    </tr>
+    <tr><td>HTMLElement</td><td>Y.Node</td><td>(Node Facade)</td></tr>
+</table>
+
+<table id="event">
+    <caption>Event</caption>
+    <tr><th>2.x</th><th>3.x</th><th></th></tr>
+    <tr>
+        <td>YAHOO.util.Event.addListener</td>
+        <td>var handle = Y.on(type, fn, el);</td>
+        <td>Y.on('click', Y.bind(this.fn, this, arg1, arg2), el)</td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Event.removeListener</td>
+        <td>Y.detach(handle), or handle.detach()</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Event.getTarget(e)</td>
+        <td>e.target</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Event.preventDefault(e)</td>
+        <td>e.preventDefault()</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Event.stopPropagation(e)</td>
+        <td>e.stopPropagation()</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>YAHOO.util.Event.stopEvent(e)</td>
+        <td>e.halt()</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>DOM Event</td>
+        <td>Y.Event.Facade</td>
+        <td>(Event Facade)</td>
+    </tr>
+</table>
+
+<table id="eventprovider">
+    <caption>EventProvider</caption>
+    <tr><th>2.x</th><th>3.x</th><th></th></tr>
+    <tr><td>YAHOO.util.EventProvider</td><td>Y.Event.Target</td><td></td></tr>
+    <tr>
+        <td>eventprovider.createEvent</td><td>eventprovider.publish</td>
+        <td>
+            <p>When publishing/listening globally, provide category - Y.publish("category:type")</p>
+            <p>When publishing from a Widget, it will take care of "category" for you</p>
+            <p>oMenu.publish("show"); publishes "menu:show"</p>
+        </td>
+    </tr>
+    <tr>
+        <td>eventprovider.fireEvent</td><td>eventprovider.fire</td>
+        <td>
+            <p>When firing from a Widget, it will take care of category for you</p>
+            <p>oMenu.fire("show"), fires "menu:show"</p>
+        </td>
+    </tr>
+    <tr>
+        <td>eventprovider.subscribe</td><td>eventprovider.on(type, Y.bind(this.fn, this)) (??)</td>
+        <td>
+            <p>When listening on a Widget, it will take care of "category" for you</p>
+            <p>oMenu.on("show", ...), listens for "menu:show"</p>
+        </td>
+    </tr>
+</table>
+
+<table id="connect">
+    <caption>Connect</caption>
+    <tr><th>2.x</th><th>3.x</th></tr>
+    <tr><td>YAHOO.util.Connect.asynchRequest</td><td>Y.io</td></tr>
+    <tr><td>YAHOO.util.Connect.*</td><td>Y.io.*</td></tr>
+</table>
+
+<table id="new">
+    <caption>New</caption>
+    <tr><th>2.x</th><th>3.x</th></tr>
+    <tr><td>-</td><td>Y.later</td></tr>
+    <tr><td>-</td><td>Y.bind</td></tr>
+    <tr><td>-</td><td>Y.each</td></tr>
+    <tr><td>-</td><td>Y.array</td></tr>
+    <tr><td>-</td><td>Y.get</td></tr>
+</table>
+</body>
+</html>
