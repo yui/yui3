@@ -276,7 +276,7 @@
 
                 renderer : function() {
                     // Not chained automatically, need to chain manually
-                    MyWidget.constructor.superclass.apply(this, arguments);
+                    MyWidget.superclass.renderer.apply(this, arguments);
 
                     Y.log(this.constructor.NAME + " renderer called");
                 }
@@ -314,7 +314,7 @@
                 // MyWidget prototype continued...
 
                 renderer: function() {
-                    MyWidget.constructor.superclass.apply(this, arguments);
+                    MyWidget.superclass.renderer.apply(this, arguments);
 
                     this.renderUI();
                     this.syncUI();
