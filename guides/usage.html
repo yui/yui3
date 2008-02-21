@@ -209,7 +209,7 @@
                     <dd>Removes a plugin at the attached namespace, from the widget instance.</dd>
                 </dl>
                 <dl>
-                    <dt><code>Widget.PLUGIN</code></dt>
+                    <dt><code>Widget.PLUGINS</code></dt>
                     <dd>Static array of plugins to be added to the widget instance on initialization (class level plugins).</dd>
                 </dl>
             </li>
@@ -331,10 +331,10 @@
                 // Binds UI
                 bindUI : function() {
                     // Update rgb's UI, when rgb value changes programatically
-                    this.onUI("rgbChanged", this._uiSetRGB);
+                    this.onUI("rgbChanged", Y.bind(this._uiSetRGB, this));
 
                     // Handle DOM change event on textbox (Currently using the older signature, since node passes through to Y.Event.addListener)
-                    Y.Node.on(this._rgbNode, "change", Y.bind(this._onRGBNodeChange, this));
+                    this._rgbNode.on("change", Y.bind(this._onRGBNodeChange, this));
                 },
 
                 // Refresh UI
