@@ -84,7 +84,7 @@ var M = function(Y) {
                 var node = this._root.query(TabView.SELECTORS[name]) || Y.Node.create(TabView.TEMPLATES[name]);
                 this.set(name + 'Node', node);
             }
-console.log(this.get(name + 'Node').att('class'));
+//console.log(this.get(name + 'Node').att('class'));
 
             if (!Y.Node.contains('body', this.get(name + 'Node'))) { // add to root node if not in document
                 this._root.appendChild(this.get(name + 'Node'));
