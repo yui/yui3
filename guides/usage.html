@@ -9,6 +9,7 @@
 <style type="text/css">
 
 </style>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.0/build/base/base.css">
 </head>
 <body>
 <h1>Using YUI 3.0</h1>
@@ -114,12 +115,11 @@
         <code><pre>
 
         (function() {
-
             var Y = YUI.use('node');
             Y.Node.att('#foo', 'title'); // returns document.getElementById(foo).getAttribute('title')
             Y.Node.att('#foo', 'title', 'i am foo'); // document.getElementById(foo).setAttribute('title', 'i am foo')
         })();
-    
+
         </pre></code>
         <h4>Node.get()</h4>
         <p>The <code>Node.get()</code> method is used to create facades for existing HTMLElements.</p>
@@ -141,6 +141,213 @@
         <ul>
             <li>Should the private DOM methods that work directly with HTMLElements be exposed to insecure environment?</li>
         </ul>
+    </li>
+    <li>
+        <h3>Widget</h3>
+
+        <h4>Class Structure and responsibilities</h4>
+
+        <p>The <code>Y.Widget</code> class provides the base implementation for all Widgets. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
+            <ul>
+                <li>Introduces the following base attributes:
+                    <dl>
+                        <dt><code>root</code>:</dt>
+                        <dd>The root <code>Y.Node</code> instance or bounding box for the widget</dd>
+                        <dt><code>width, height</code>:</dt>
+                        <dd>The dimensions of the bounding box for the widget</dd>
+                        <dt><code>visible</code>:</dt>
+                        <dd>Controls the visibility of the bounding box for the widget (through application of a <code>yui-hidden</code> class)</dd>
+                        <dt><code>disabled</code>:</dt>
+                        <dd>Controls the enabled/disabled state of the widget (through application of a <code>yui-disabled</code> class)</dd>
+                        <dt><code>strings</code>:</dt>
+                        <dd>Localizable UI strings for the widget - currently an empty stub</dd>
+                    </dl>
+                </li>
+                <li>
+                    Establishes <code>init</code>, <code>destroy</code> and <code>render</code> lifecycle methods which are <code>final</code>
+                    <dl>
+                        <dt><code>init</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                        <dd>
+                            <ul>
+                                <li>Configures attributes for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
+                                <li>Invokes the <code>prototype.initializer</code> method for Base and all it's sub-classes top down (Base first, sub-class last).</li>
+                            </ul>
+                        </dd>
+                    </dl>
+                    <dl>
+                        <dt><code>render</code>:</dt>
+                        <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the class hierarchy.</dd>
+                    </dl>
+                    <dl>
+                        <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                        <dd>Invokes the <code>prototype.destructor</code> method for Base and all it's sub-classes bottom up (sub-class first, Base last).</dd>
+                    </dl>
+                </li>
+                <li>
+                    Establishes empty abstract methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to provide consistent entry points for rendering across all widgets.
+                    <dl>
+                        <dt><code>renderUI</code></dt>
+                        <dd>Adds elements to the document</dd>
+                    </dl>
+                    <dl>
+                        <dt><code>bindUI</code></dt>
+                        <dd>Sets up listeners for DOM and Custom Events to bind the rendered UI to the widget state, with the help of <code>onUI</code></dd>
+                    </dl>
+                    <dl>
+                        <dt><code>syncUI</code></dt>
+                        <dd>Refreshes the UI state, based on the current state of the widget.</dd>
+                    </dl>
+                </li>
+                <li>Introduces methods and properties for Plugin support:
+                    <dl>
+                        <dt><code>plug(pluginclass, config)</code></dt>
+                        <dd>Adds a plugin to the widget instance, with the configuration specified.</dd>
+                    </dl>
+                    <dl>
+                        <dt><code>unplug(namespace)</code></dt>
+                        <dd>Removes a plugin at the attached namespace, from the widget instance.</dd>
+                    </dl>
+                    <dl>
+                        <dt><code>Widget.PLUGIN</code></dt>
+                        <dd>Static array of plugins to be added to the widget instance on initialization (class level plugins).</dd>
+                    </dl>
+                </li>
+            </ul>
+        <h4>Extending Widget</h4>
+
+        <p>Setup your widget contructor to invoke it's superclass, and set it's <code>NAME</code> static property</p>
+
+        <code><pre>
+            function MyWidget(config) {
+                MyWidget.superclass.constructor.apply(this, arguments);
+            }
+
+            // NAME: Used to mark the root node, with a "yui-mywidget" class,
+            // and namespace custom events generated by the widget instance
+            // Event.Target.publish("mywidget:click"). Potentially also for
+            // Y.create("mywidget") once implemented.
+
+            MyWidget.NAME = "mywidget";
+        </pre></code>
+
+        <p>Setup the default attribute configuration for the Widget if any. <em>Note</em>, setters and validators for attributes should use methods on the prototype to
+        do their work, to facilitate customization.</p>
+
+        <code><pre>
+            MyWidget.ATTRS = {
+                foo : {
+                    set: function() {
+                        // Delegate to an instance method, to allow for customization.
+                        return this._setFoo();
+                    },
+                    value: false
+                },
+
+                // No special configuration for bar.
+                bar : null
+            }
+        </pre></code>
+
+        <p>Setup the static <code>PLUGINS</code> array to define the default set of plugins required for your widget class if any.</p>
+
+        <code><pre>
+            MyWidget.PLUGINS = [
+                // Using default configuration for the IO plugin
+                Y.Plugin.IO,
+
+                // But specify my own configuration for the Draggable plugin
+                { fn:Y.Plugin.Draggable, cfg:myddconfig}
+            ];
+        </pre></code>
+
+        <p>Implement the <code>initializer</code>, <code>destructor</code> and <code>renderer</code> methods for your widget (if additional initialization, destruction or rendering work is required).</p>
+
+        <code><pre>
+            var proto = {
+                initializer: function(config) {
+                    Y.log(this.constructor.NAME + " initializer called");
+                },
+
+                destructor : function() {
+                    Y.log(this.constructor.NAME + " destructor called");
+                },
+
+                renderer : function() {
+                    // Not chained automatically, need to chain manually
+                    MyWidget.constructor.superclass.apply(this, arguments);
+
+                    Y.log(this.constructor.NAME + " renderer called");
+                }
+            };
+        </pre></code>
+
+        <p>And finally, extend Widget which should give you a functional widget you can instantiate within your sandbox:</p>
+
+        <code><pre>
+            Y.extend(MyWidget, Y.Widget, proto);
+            Y.MyWidget = MyWidget;
+
+            var w = new Y.MyWidget({node:"body > div.mywidget", foo:"bar"});
+            w.render();
+        </pre></code>
+
+        <h4>Separating your widget's Visual representation</h4>
+
+        <p>To allow for a cleaner separation between your widget's state and it's visual representation 
+           <em>(e.g. ColorPicker's actual rgb value vs. the fact that it's displayed in a text box as opposed to 3 dropdowns)</em>, 
+           you can see if your renderer implementation can now be broken up into separate methods, to create, bind and refresh the UI.
+        </p>
+
+        <p>This will also allow for easier customization of the widget rather than having one large <em>renderer</em> method which does all three things.</p>
+
+        <p>Using the color picker rgb UI as a concrete example:</p>
+
+        <code><pre>
+                // MyWidget prototype continued...
+
+                renderer: function() {
+                    MyWidget.constructor.superclass.apply(this, arguments);
+
+                    this.renderUI();
+                    this.syncUI();
+                    this.bindUI();
+                },
+
+                // Creates UI
+                renderUI : function() {
+                    var rgbNode = Y.Node.create(['input', { 'type': 'text' }]);
+                    this._root.appendChild(rgbNode);
+                    this._rgbNode = rgbNode;
+                },
+
+                // Binds UI
+                bindUI : function() {
+                    // Update rgb's UI, when rgb value changes programatically
+                    this.onUI("rgbChanged", this._uiSetRGB);
+
+                    // Handle DOM change event on textbox (Currently using the older signature, since node passes through to Y.Event.addListener)
+                    Y.Node.on(this._rgbNode, "change", Y.bind(this._onRGBNodeChange, this));
+                },
+
+                // Refresh UI
+                syncUI: function() {
+                    this._uiSetRGB();
+                },
+
+                // Set RGB UI from state value
+                _uiSetRGB: function() {
+                    this._rgbNode.att("value", this.get("rgb"));
+                },
+
+                // Set state from RGB UI update
+                _onRGBNodeChange: function(e) {
+                    // e is the Event facade, not a real DOM event
+                    var t = e.target;
+
+                    // Use setUI, as opposed to set, to stop looping back to update UI.
+                    this.setUI("foo", t.att("value"));
+                }
+        </pre></code>
     </li>
 </ol>
 </body>
