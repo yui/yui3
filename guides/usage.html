@@ -20,7 +20,7 @@
     <li><a href="#node">Node</a></li>
     <li><a href="#nodelist">NodeList</a></li>
     <li><a href="#widget">Widget</a></li>
-    <li><a href="#plugins">Plugins</a></li>
+    <li><a href="#plugin">Plugin</a></li>
 
 <h2>Content</h2>
 <ol>
@@ -148,74 +148,76 @@
         <h4>Class Structure and responsibilities</h4>
 
         <p>The <code>Y.Widget</code> class provides the base implementation for all Widgets. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
-            <ul>
-                <li>Introduces the following base attributes:
-                    <dl>
-                        <dt><code>root</code>:</dt>
-                        <dd>The root <code>Y.Node</code> instance or bounding box for the widget</dd>
-                        <dt><code>width, height</code>:</dt>
-                        <dd>The dimensions of the bounding box for the widget</dd>
-                        <dt><code>visible</code>:</dt>
-                        <dd>Controls the visibility of the bounding box for the widget (through application of a <code>yui-hidden</code> class)</dd>
-                        <dt><code>disabled</code>:</dt>
-                        <dd>Controls the enabled/disabled state of the widget (through application of a <code>yui-disabled</code> class)</dd>
-                        <dt><code>strings</code>:</dt>
-                        <dd>Localizable UI strings for the widget - currently an empty stub</dd>
-                    </dl>
-                </li>
-                <li>
-                    Establishes <code>init</code>, <code>destroy</code> and <code>render</code> lifecycle methods which are <code>final</code>
-                    <dl>
-                        <dt><code>init</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
-                        <dd>
-                            <ul>
-                                <li>Configures attributes for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
-                                <li>Invokes the <code>prototype.initializer</code> for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
-                            </ul>
-                        </dd>
-                    </dl>
-                    <dl>
-                        <dt><code>render</code>:</dt>
-                        <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the widget class hierarchy.</dd>
-                    </dl>
-                    <dl>
-                        <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
-                        <dd>Invokes the <code>prototype.destructor</code> for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</dd>
-                    </dl>
-                </li>
-                <li>
-                    Establishes empty abstract methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to provide consistent entry points for rendering across all widgets.
-                    <dl>
-                        <dt><code>renderUI</code></dt>
-                        <dd>Adds elements to the document</dd>
-                    </dl>
-                    <dl>
-                        <dt><code>bindUI</code></dt>
-                        <dd>Sets up listeners for DOM and Custom Events to bind the rendered UI to the widget state, with the help of <code>onUI</code></dd>
-                    </dl>
-                    <dl>
-                        <dt><code>syncUI</code></dt>
-                        <dd>Refreshes the UI state, based on the current state of the widget.</dd>
-                    </dl>
-                </li>
-                <li>Introduces methods and properties for Plugin support:
-                    <dl>
-                        <dt><code>plug(pluginclass, config)</code></dt>
-                        <dd>Adds a plugin to the widget instance, with the configuration specified.</dd>
-                    </dl>
-                    <dl>
-                        <dt><code>unplug(namespace)</code></dt>
-                        <dd>Removes a plugin at the attached namespace, from the widget instance.</dd>
-                    </dl>
-                    <dl>
-                        <dt><code>Widget.PLUGIN</code></dt>
-                        <dd>Static array of plugins to be added to the widget instance on initialization (class level plugins).</dd>
-                    </dl>
-                </li>
-            </ul>
+
+        <ul>
+            <li>Introduces the following base attributes:
+                <dl>
+                    <dt><code>root</code>:</dt>
+                    <dd>The root <code>Y.Node</code> instance or bounding box for the widget</dd>
+                    <dt><code>width, height</code>:</dt>
+                    <dd>The dimensions of the bounding box for the widget</dd>
+                    <dt><code>visible</code>:</dt>
+                    <dd>Controls the visibility of the bounding box for the widget (through application of a <code>yui-hidden</code> class)</dd>
+                    <dt><code>disabled</code>:</dt>
+                    <dd>Controls the enabled/disabled state of the widget (through application of a <code>yui-disabled</code> class)</dd>
+                    <dt><code>strings</code>:</dt>
+                    <dd>Localizable UI strings for the widget - currently an empty stub</dd>
+                </dl>
+            </li>
+            <li>
+                Establishes <code>init</code>, <code>destroy</code> and <code>render</code> lifecycle methods which are <code>final</code>
+                <dl>
+                    <dt><code>init</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                    <dd>
+                        <ul>
+                            <li>Configures attributes for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
+                            <li>Invokes the <code>prototype.initializer</code> for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
+                        </ul>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><code>render</code>:</dt>
+                    <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the widget class hierarchy.</dd>
+                </dl>
+                <dl>
+                    <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                    <dd>Invokes the <code>prototype.destructor</code> for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</dd>
+                </dl>
+            </li>
+            <li>
+                Establishes empty abstract methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to provide consistent entry points for rendering across all widgets.
+                <dl>
+                    <dt><code>renderUI</code></dt>
+                    <dd>Adds elements to the document</dd>
+                </dl>
+                <dl>
+                    <dt><code>bindUI</code></dt>
+                    <dd>Sets up listeners for DOM and Custom Events to bind the rendered UI to the widget state, with the help of <code>onUI</code></dd>
+                </dl>
+                <dl>
+                    <dt><code>syncUI</code></dt>
+                    <dd>Refreshes the UI state, based on the current state of the widget.</dd>
+                </dl>
+            </li>
+            <li>Introduces methods and properties for Plugin support:
+                <dl>
+                    <dt><code>plug(pluginclass, config)</code></dt>
+                    <dd>Adds a plugin to the widget instance, with the configuration specified.</dd>
+                </dl>
+                <dl>
+                    <dt><code>unplug(namespace)</code></dt>
+                    <dd>Removes a plugin at the attached namespace, from the widget instance.</dd>
+                </dl>
+                <dl>
+                    <dt><code>Widget.PLUGIN</code></dt>
+                    <dd>Static array of plugins to be added to the widget instance on initialization (class level plugins).</dd>
+                </dl>
+            </li>
+        </ul>
+
         <h4>Extending Widget</h4>
 
-        <p>Setup your widget contructor to invoke its superclass, and set its <code>NAME</code> static property</p>
+        <p>Setup your widget constructor to invoke its superclass, and set its <code>NAME</code> static property</p>
 
         <code><pre>
             function MyWidget(config) {
@@ -245,7 +247,7 @@
 
                 // No special configuration for bar.
                 bar : null
-            }
+            };
         </pre></code>
 
         <p>Setup the static <code>PLUGINS</code> array to define the default set of plugins required for your widget class if any.</p>
@@ -356,13 +358,135 @@
                 }
         </pre></code>
     </li>
+
     <li id="plugin">
         <h3>Plugin</h3>
 
         <h4>Class Structure and responsibilities</h4>
 
         <p>The <code>Y.Plugin</code> class provides the base implementation for all Plugins. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
-    </li>    
+        <ul>
+            <li>
+                Establishes <code>init</code> and <code>destroy</code> lifecycle methods which are <code>final</code>
+                <dl>
+                    <dt><code>init</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                    <dd>
+                        <ul>
+                            <li>Configures attributes for all classes in the plugin hierarchy, top down (Base first, sub-class last).</li>
+                            <li>Invokes the <code>prototype.initializer</code> for all classes in the plugin hierarchy, top down (Base first, sub-class last).</li>
+                        </ul>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
+                    <dd>Invokes the <code>prototype.destructor</code> for all classes in the plugin hierarcy, bottom up (sub-class first, Base last).</dd>
+                </dl>
+            </li>
+            <li>Defines the static <code>NS</code> property, which is the namespace under which the Plugin instance will be attached to the owner.</li>
+            <li>Sets up a reference to the Plugin's owner object, through <code>this.owner</code> during initialization.</li>
+            <li>Provides <code>listen, nolisten, listenBefore, nolistenBefore</code> methods to allow plugin classes to attach listeners for events on the owner (or any other object), which will be detached when the plugin is removed/destroyed.</li>
+            <li>Provides <code>addOverride, removeOverride</code> methods to allows plugin classes to replace methods on the owner (or any other object), with the original methods being restored when the plugin is removed/destroyed.</li>
+        </ul>
+
+        <h4>Extending Plugin</h4>
+
+        <p>Setup your plugin constructor to invoke its superclass, and set its <code>NAME</code> and <code>NS</code> static properties</p>
+
+        <code><pre>
+            function MyPlugin(config) {
+                MyPlugin.superclass.constructor.apply(this, arguments);
+            }
+
+            // NAME: Used to identify the class
+            MyPlugin.NAME = "myplugin";
+
+            // NS: Used to define the namespace (featureset), added to the instance
+            // There could be multiple classes capable of adding the same namespace 
+            // (featureset) to a widget.
+            MyPlugin.NS = "myfeature"; 
+        </pre></code>
+
+        <p>Setup the default attribute configuration for the Plugin if any, similar to Widget</p>
+
+        <code><pre>
+            MyPlugin.ATTRS = {
+                foobar : {
+                    set: function() {
+                        // Delegate to an instance method, to allow for customization.
+                        return this._setFooBar();
+                    },
+                    value: 20
+                }
+            };
+        </pre></code>
+
+        <p>Implement the <code>initializer</code> and <code>destructor</code> methods for your plugin (if additional initialization or destruction work is required).</p>
+
+        <code><pre>
+            var proto = {
+                initializer: function(config) {
+                    Y.log(this.constructor.NAME + " initializer called");
+                    
+                    var plugin = this;
+                    var widget = this.owner;
+
+                    this.addOverride(widget, "doStuff", plugin.doStuff);
+                    this.listen(widget, "fooChange", Y.bind(plugin._onFooChange, plugin));
+                },
+
+                destructor : function() {
+                    Y.log(this.constructor.NAME + " destructor called");
+
+                    // Nothing special. Plugin's destructor will remove overrides, listeners,
+                    // in the event that the plugin is removed/destroyed.
+                }
+            };
+        </pre></code>
+
+        <p>And finally, extend <code>Y.Plugin</code> which should give you a functional plugin class:</p>
+
+        <code><pre>
+            Y.extend(MyPlugin, Y.Plugin, proto);
+            Y.Plugin.MyPlugin = MyPlugin;
+        </pre></code>
+
+        <p>Which you can then pass to a widget instance, or register with a widget class, to instantiate:</p>
+
+        <code><pre>
+            // Class based registration
+            MyWidget.PLUGINS = [
+                Y.Plugin.MyPlugin
+            ];
+
+            - or - 
+
+            MyWidget.PLUGINS = [
+                {fn:Y.Plugin.MyPlugin, cfg:{foobar:10}}
+            ];
+        </pre></code>
+
+        <code><pre>
+            // Instance based registration
+            mywidget.plug(Y.Plugin.MyPlugin);
+
+            - or -
+
+            mywidget.plug({
+                fn:Y.Plugin.MyPlugin, 
+                cfg:{foobar:10}
+            });
+        </pre></code>
+
+        <p>And use:</p>
+
+        <code><pre>
+            mywidget.myfeature.doFeatureStuff();
+            mywidget.myfeature.fire("featureevent");
+
+            // over-ridden by MyFeature plugin
+            mywidget.doStuff()
+        </pre></code>
+    </li>
 </ol>
 </body>
 </html>
