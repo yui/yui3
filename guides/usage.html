@@ -170,17 +170,17 @@
                         <dd>
                             <ul>
                                 <li>Configures attributes for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
-                                <li>Invokes the <code>prototype.initializer</code> method for Base and all it's sub-classes top down (Base first, sub-class last).</li>
+                                <li>Invokes the <code>prototype.initializer</code> for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
                             </ul>
                         </dd>
                     </dl>
                     <dl>
                         <dt><code>render</code>:</dt>
-                        <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the class hierarchy.</dd>
+                        <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the widget class hierarchy.</dd>
                     </dl>
                     <dl>
                         <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
-                        <dd>Invokes the <code>prototype.destructor</code> method for Base and all it's sub-classes bottom up (sub-class first, Base last).</dd>
+                        <dd>Invokes the <code>prototype.destructor</code> for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</dd>
                     </dl>
                 </li>
                 <li>
@@ -215,7 +215,7 @@
             </ul>
         <h4>Extending Widget</h4>
 
-        <p>Setup your widget contructor to invoke it's superclass, and set it's <code>NAME</code> static property</p>
+        <p>Setup your widget contructor to invoke its superclass, and set its <code>NAME</code> static property</p>
 
         <code><pre>
             function MyWidget(config) {
@@ -291,9 +291,9 @@
             w.render();
         </pre></code>
 
-        <h4>Separating your widget's Visual representation</h4>
+        <h4>Separating Visual Representation</h4>
 
-        <p>To allow for a cleaner separation between your widget's state and it's visual representation 
+        <p>To allow for a cleaner separation between your widget's state and its visual representation 
            <em>(e.g. ColorPicker's actual rgb value vs. the fact that it's displayed in a text box as opposed to 3 dropdowns)</em>, 
            you can see if your renderer implementation can now be broken up into separate methods, to create, bind and refresh the UI.
         </p>
