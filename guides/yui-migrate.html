@@ -143,10 +143,10 @@
         </td>
     </tr>
     <tr>
-        <td>eventprovider.subscribe</td><td>eventprovider.on(type, Y.bind(this.fn, this)) (??)</td>
+        <td>eventprovider.subscribe</td><td>eventprovider.subscribe(type, Y.bind(this.fn, this, arg1, arg2)) (will there be an evtprov.on ??)</td>
         <td>
             <p>When listening on a Widget, it will take care of "category" for you</p>
-            <p>oMenu.on("show", ...), listens for "menu:show"</p>
+            <p>oMenu.subscribe("show", ...), listens for "menu:show"</p>
         </td>
     </tr>
 </table>
