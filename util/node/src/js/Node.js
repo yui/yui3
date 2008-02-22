@@ -285,6 +285,7 @@ var M = function(Y) {
         style: function(node, attr, val) { // overloaded for get/set
             if (arguments.length > 2) { // set 
                 node.style[attr] = val; 
+                return;
             } // else set
             return node.style[attr] || Y.Node.computedStyle(node, attr);
         },
@@ -521,6 +522,7 @@ var M = function(Y) {
             var args = [].slice.call(arguments, 0);
             args.unshift(_nodes[this._id]);
             var returnVal = _[f].apply(this, args);
+console.log(returnVal);
             if (returnVal === undefined) {
                 return this;
             } else if (returnVal && returnVal.nodeType) { // wrap DOMNode
