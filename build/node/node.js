@@ -285,6 +285,7 @@ var M = function(Y) {
         style: function(node, attr, val) { // overloaded for get/set
             if (arguments.length > 2) { // set 
                 node.style[attr] = val; 
+                return;
             } // else set
             return node.style[attr] || Y.Node.computedStyle(node, attr);
         },
