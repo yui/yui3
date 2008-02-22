@@ -522,7 +522,6 @@ var M = function(Y) {
             var args = [].slice.call(arguments, 0);
             args.unshift(_nodes[this._id]);
             var returnVal = _[f].apply(this, args);
-console.log(returnVal);
             if (returnVal === undefined) {
                 return this;
             } else if (returnVal && returnVal.nodeType) { // wrap DOMNode
