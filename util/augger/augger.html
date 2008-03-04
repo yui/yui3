@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Util Augger</title>
+    <script type="text/javascript" src="../../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../../build/node/node.js"></script>
+    <script type="text/javascript" src="../attribute/src/js/Attribute.js"></script>
+    <script type="text/javascript" src="../attribute/src/js/AttributeProvider.js"></script>
+    <script type="text/javascript" src="../base/src/js/Base.js"></script>
+    <script type="text/javascript" src="augger.js"></script>
+    <script type="text/javascript" src="drag.js"></script>
+    <script type="text/javascript" src="proxy.js"></script>
+    <script type="text/javascript" src="ticks.js"></script>
+    <style>
+    </style>
+</head>
+<body class="yui-skin-sam">
+<h2>Augger</h2>
+<pre>
+    (function() {
+
+        var Y = YUI().use('event', 'drag');
+        Y.Event.onDOMReady(function() {
+            console.info('here: ', this);
+            var dd = new Y.Drag();
+            console.info('DD: ', dd);
+            dd.use('proxy','ticks',  function() {
+                console.info('Drag: ready');
+                dd._a();
+            });
+
+            var dd2 = new Y.Drag();
+            console.info('DD2: ', dd2);
+            dd2._a();
+
+        });
+
+    })();
+</pre>
+<ul>
+    <li><a href="augger.js">augger.js</a></li>
+    <li><a href="drag.js">drag.js</a></li>
+    <li><a href="proxy.js">proxy.js</a></li>
+    <li><a href="ticks.js">ticks.js</a></li>
+</ul>
+<script type="text/javascript">
+    (function() {
+
+        var Y = YUI().use('event', 'drag');
+        Y.Event.onDOMReady(function() {
+            console.info('here: ', this);
+            var dd = new Y.Drag();
+            console.info('DD: ', dd);
+            dd.use('proxy','ticks',  function() {
+                console.info('Drag: ready', this);
+                dd._a();
+            });
+
+            var dd2 = new Y.Drag();
+            console.info('DD2: ', dd2);
+            dd2._a();
+
+        });
+
+    })();
+</script>
+</body>
+</html>
