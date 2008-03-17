@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript" src="../src/js/State.js"></script>
+<script type="text/javascript">
+
+
+(function() {
+
+    var Y = YUI().use('state'), newobj = {};
+
+    var o = {
+        str: "str",
+        arr: [
+            "array1",
+            true,
+            { obj: "obj"},
+            ["array2"]
+        ],
+        dat: new Date(),
+        fn: function() {
+
+        },
+        //win: window,
+        nada: null
+    };
+
+    var configs = new Y.State();
+    // add a prop
+    configs.add('myprop', o);
+    
+    // show all attributes for this item
+    Y.log("myprop: " + Y.lang.dump(configs.get('myprop')));
+
+    // show a single attribute for this item
+    Y.log("myprop.str: " + configs.get('myprop', 'str'));
+
+    // remove one or more attribute from the item (hash)
+    configs.remove('myprop', {fn: true});
+    Y.log("myprop-fn: " + Y.lang.dump(configs.get('myprop')));
+
+    // remove an attribute from the item (str)
+    configs.remove('myprop', 'dat');
+    Y.log("myprop-dat: " + Y.lang.dump(configs.get('myprop')));
+
+    // remove one or more attributes from the item (array)
+    configs.remove('myprop', ['nada']);
+    Y.log("myprop-nada: " + Y.lang.dump(configs.get('myprop')));
+    
+    // add an attribute to an existing prop
+    configs.add('myprop', {nada:null});
+    Y.log("myprop+nada: " + Y.lang.dump(configs.get('myprop')));
+
+    // delete a property
+    configs.remove('myprop');
+    Y.log("myprop deleted: " + Y.lang.dump(configs.get('myprop')));
+
+    var o2 = Y.clone(o);
+    // Y.log("clone: " + Y.lang.dump(o2));
+
+    configs.add('myprop', o2);
+
+    configs.add('myprop2', {
+        str: 'str2',
+        nada: null
+    });
+
+    Y.log("myprop list: " + Y.lang.dump(configs.list()));
+
+})();
+
+</script>
+<body>
+
+see the console
+
+</body>
+
+</html>
+
