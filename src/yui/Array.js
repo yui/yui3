@@ -76,13 +76,13 @@
          */
         A.each = (Native.forEach) ?
             function (a, f, o) { 
-                Native.forEach.call(a, f, o);
+                Native.forEach.call(a, f, o || Y);
                 return Y;
             } :
             function (a, f, o) { 
                 var l = a.length, i;
                 for (i = 0; i < l; i=i+1) {
-                    f.call(o, a[i], i, a);
+                    f.call(o || Y, a[i], i, a);
                 }
                 return Y;
             };

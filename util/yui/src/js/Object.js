@@ -78,7 +78,7 @@
          * @return {YUI} the YUI instance
          */
         O.each = function (o, f, c) {
-            var s = c;
+            var s = c || Y;
             for (var i in o) {
                 if (O.owns(o, i)) {
                     f.call(s, o[i], i, o);

@@ -132,59 +132,95 @@ YUI.prototype = {
 
     /**
      * Bind a module to a YUI instance
-     * @param {string} 1-n modules to bind (uses arguments array)
+     * @param modules* {string} 1-n modules to bind (uses arguments array)
+     * @param *callback {function} callback function executed when 
+     * the instance has the required functionality.  If included, it
+     * must be the last parameter.
+     *
+     * @TODO 
+     * Implement versioning?  loader can load different versions?
+     * Should sub-modules/plugins be normal modules, or do
+     * we add syntax for specifying these?
+     *
+     * YUI().use('dragdrop')
+     * YUI().use('dragdrop:2.4.0'); // specific version
+     * YUI().use('dragdrop:2.4.0-'); // at least this version
+     * YUI().use('dragdrop:2.4.0-2.9999.9999'); // version range
+     * YUI().use('*'); // use all available modules
+     * YUI().use('lang+dump+substitute'); // use lang and some plugins
+     * YUI().use('lang+*'); // use lang and all known plugins
+     *
+     *
      * @return {YUI} the YUI instance
      */
     use: function() {
-        var a=arguments, mods=YUI.env.mods;
 
+        var a=arguments, l=a.length, mods=YUI.env.mods, Y = this;
 
-        // YUI().use('*');
-        // shortcut should use the loader to assure proper order?
+        // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
-            return this.use.apply(this, mods);
+            return Y.use.apply(Y, mods);
         }
 
-        for (var i=0; i<a.length; i=i+1) {
+        var missing = [], r = [], f = function(name) {
 
-            // @todo 
-            // Implement versioning?  loader can load different versions?
-            // Should sub-modules/plugins be normal modules, or do
-            // we add syntax for specifying these?
-            //
-            // YUI().use('dragdrop')
-            // YUI().use('dragdrop:2.4.0'); // specific version
-            // YUI().use('dragdrop:2.4.0-'); // at least this version
-            // YUI().use('dragdrop:2.4.0-2.9999.9999'); // version range
-            // YUI().use('*'); // use all available modules
-            // YUI().use('lang+dump+substitute'); // use lang and some plugins
-            // YUI().use('lang+*'); // use lang and all known plugins
+            r.push(name);
 
-            var m = mods[a[i]];
+            var m = mods[name];
 
-            this.log('using ' + a[i]);
+            // Y.log('using ' + name);
 
             if (m) {
 
-                // if (m.namespace) {
-                    // this.namespace(m.namespace);
-                // }
-
-                m.fn(this);
-
+                // auto-attach sub-modules
                 var p = m.details.use;
                 if (p) {
-                    for (i = 0; i < p.length; i = i + 1) {
-                        this.use(p[i]);
+                    for (var j = 0; j < p.length; j = j + 1) {
+                        f(p[j]);
                     }
                 }
 
             } else {
-                this.log('module not found: ' + a[i]);
+                Y.log('module not found: ' + name);
+                missing.push(name);
+            }
+        };
+
+        for (var i=0; i<l; i=i+1) {
+            if ((i === l-1) && typeof a[i] === 'function') {
+                // Y.log('found loaded listener');
+                Y.on('yui:load', a[i], Y, Y);
+            } else {
+                f(a[i]);
             }
         }
 
-        return this; // chain support var yui = YUI().use('dragdrop');
+        // Y.log('all reqs: ' + r);
+
+        var attach = function() {
+            for (i=0, l=r.length; i<l; i=i+1) {
+                var m = mods[r[i]];
+                if (m) {
+                    Y.log('attaching ' + r[i]);
+                    m.fn(Y);
+                }
+            }
+
+            if (Y.fire) {
+                // Y.log('firing loaded event');
+                Y.fire('yui:load', Y);
+            } else {
+                // Y.log('loaded event not fired.');
+            }
+        };
+
+        if (false && missing.length) {
+            // dynamic load
+        } else {
+            attach();
+        }
+
+        return Y; // chain support var yui = YUI().use('dragdrop');
     },
 
     /**

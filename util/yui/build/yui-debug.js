@@ -132,59 +132,95 @@ YUI.prototype = {
 
     /**
      * Bind a module to a YUI instance
-     * @param {string} 1-n modules to bind (uses arguments array)
+     * @param modules* {string} 1-n modules to bind (uses arguments array)
+     * @param *callback {function} callback function executed when 
+     * the instance has the required functionality.  If included, it
+     * must be the last parameter.
+     *
+     * @TODO 
+     * Implement versioning?  loader can load different versions?
+     * Should sub-modules/plugins be normal modules, or do
+     * we add syntax for specifying these?
+     *
+     * YUI().use('dragdrop')
+     * YUI().use('dragdrop:2.4.0'); // specific version
+     * YUI().use('dragdrop:2.4.0-'); // at least this version
+     * YUI().use('dragdrop:2.4.0-2.9999.9999'); // version range
+     * YUI().use('*'); // use all available modules
+     * YUI().use('lang+dump+substitute'); // use lang and some plugins
+     * YUI().use('lang+*'); // use lang and all known plugins
+     *
+     *
      * @return {YUI} the YUI instance
      */
     use: function() {
-        var a=arguments, mods=YUI.env.mods;
 
+        var a=arguments, l=a.length, mods=YUI.env.mods, Y = this;
 
-        // YUI().use('*');
-        // shortcut should use the loader to assure proper order?
+        // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
-            return this.use.apply(this, mods);
+            return Y.use.apply(Y, mods);
         }
 
-        for (var i=0; i<a.length; i=i+1) {
+        var missing = [], r = [], f = function(name) {
 
-            // @todo 
-            // Implement versioning?  loader can load different versions?
-            // Should sub-modules/plugins be normal modules, or do
-            // we add syntax for specifying these?
-            //
-            // YUI().use('dragdrop')
-            // YUI().use('dragdrop:2.4.0'); // specific version
-            // YUI().use('dragdrop:2.4.0-'); // at least this version
-            // YUI().use('dragdrop:2.4.0-2.9999.9999'); // version range
-            // YUI().use('*'); // use all available modules
-            // YUI().use('lang+dump+substitute'); // use lang and some plugins
-            // YUI().use('lang+*'); // use lang and all known plugins
+            r.push(name);
 
-            var m = mods[a[i]];
+            var m = mods[name];
 
-            this.log('using ' + a[i]);
+            // Y.log('using ' + name);
 
             if (m) {
 
-                // if (m.namespace) {
-                    // this.namespace(m.namespace);
-                // }
-
-                m.fn(this);
-
+                // auto-attach sub-modules
                 var p = m.details.use;
                 if (p) {
-                    for (i = 0; i < p.length; i = i + 1) {
-                        this.use(p[i]);
+                    for (var j = 0; j < p.length; j = j + 1) {
+                        f(p[j]);
                     }
                 }
 
             } else {
-                this.log('module not found: ' + a[i]);
+                Y.log('module not found: ' + name);
+                missing.push(name);
+            }
+        };
+
+        for (var i=0; i<l; i=i+1) {
+            if ((i === l-1) && typeof a[i] === 'function') {
+                // Y.log('found loaded listener');
+                Y.on('yui:load', a[i], Y, Y);
+            } else {
+                f(a[i]);
             }
         }
 
-        return this; // chain support var yui = YUI().use('dragdrop');
+        // Y.log('all reqs: ' + r);
+
+        var attach = function() {
+            for (i=0, l=r.length; i<l; i=i+1) {
+                var m = mods[r[i]];
+                if (m) {
+                    Y.log('attaching ' + r[i]);
+                    m.fn(Y);
+                }
+            }
+
+            if (Y.fire) {
+                // Y.log('firing loaded event');
+                Y.fire('yui:load', Y);
+            } else {
+                // Y.log('loaded event not fired.');
+            }
+        };
+
+        if (false && missing.length) {
+            // dynamic load
+        } else {
+            attach();
+        }
+
+        return Y; // chain support var yui = YUI().use('dragdrop');
     },
 
     /**
@@ -513,13 +549,13 @@ YUI.prototype = {
          */
         A.each = (Native.forEach) ?
             function (a, f, o) { 
-                Native.forEach.call(a, f, o);
+                Native.forEach.call(a, f, o || Y);
                 return Y;
             } :
             function (a, f, o) { 
                 var l = a.length, i;
                 for (i = 0; i < l; i=i+1) {
-                    f.call(o, a[i], i, a);
+                    f.call(o || Y, a[i], i, a);
                 }
                 return Y;
             };
@@ -671,36 +707,60 @@ YUI.prototype = {
          * @param wl {string[]} a whitelist.  If supplied, only properties in 
          * this list will be applied to the receiver.
          * @param {int} mode what should be copies, and to where
-         *        default(0): standard object mixin
+         *        default(0): object to object
          *        1: prototype to prototype (old augment)
          *        2: prototype to prototype and object props (new augment)
          *        3: prototype to object
          *        4: object to prototype
          * @return {YUI} the YUI instance
          */
-        Y.mix = function(r, s, ov, wl, mode) {
+        Y.mix = function(r, s, ov, wl, mode, merge) {
 
             if (!s||!r) {
                 return Y;
             }
 
-            var w = (wl && wl.length) ? A.hash(wl) : null;
+            var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
+                f = function(fr, fs, proto) {
+                    // if (m && fr && fr.push) {
+                    //     Y.log('concat: ' + fs);
+                    //     fr.concat(fs);
+                    // }
 
-            var f = function(fr, fs, proto) {
-                for (var i in fs) { 
-                    // if (!proto || (i in fs)) {
-                    // @TODO deal with the hasownprop issue
-                    // if (proto || ov || Y.object.owns(fs, i)) {
-                        if (ov || !fr[i]) {
-                            if (!w || (i in w)) {
+                    var arr = m && L.isArray(fr);
+
+                    for (var i in fs) { 
+                        // Y.log('i: ' + i + ", " + fs[i]);
+                        // if (!proto || (i in fs)) {
+                        // @TODO deal with the hasownprop issue
+                        // if (proto || ov || Y.object.owns(fs, i)) {
+
+                        // check white list if it was supplied
+                        if (!w || (i in w)) {
+                            // if the receiver has this property, it is an object,
+                            // and merge is specified, merge the two objects.
+                            if (m && L.isObject(fr[i])) {
+                                // Y.log('recurse: ' + i);
+                                // @TODO recursive or no?
+                                // Y.mix(fr[i], fs[i]); // not recursive
+                                f(fr[i], fs[i]); // recursive
+                            // otherwise apply the property only if overwrite
+                            // is specified or the receiver doesn't have one.
+                            } else if (ov || !fr[i]) {
+                                // Y.log('hash: ' + i);
                                 fr[i] = fs[i];
+                            // if merge is specified and the receiver is an array,
+                            // append the array item
+                            } else if (arr) {
+                                // Y.log('array: ' + i);
+                                fr.push(fs[i]);
                             }
                         }
-                    // }
-                }
+                        // }
+                    }
 
-                _iefix(fr, fs, w);
-            };
+                    _iefix(fr, fs, w);
+                };
 
             var rp = r.prototype, sp = s.prototype;
 
@@ -708,7 +768,7 @@ YUI.prototype = {
                 case 1: // proto to proto
                     f(rp, sp, true);
                     break;
-                case 2: // object augmentation AND proto
+                case 2: // object to object and proto to proto
                     f(r, s);
                     f(rp, sp, true);
                     break;
@@ -718,7 +778,7 @@ YUI.prototype = {
                 case 4: // static to proto
                     f(rp, s);
                     break;
-                default:  // standard object augment
+                default:  // object to object
                     f(r, s);
             }
 
@@ -726,8 +786,7 @@ YUI.prototype = {
         };
 
         /**
-         * Applies prototype and object properties from the supplier to
-         * the receiver.
+         * Applies prototype properties from the supplier to the receiver.
          * @param {Function} r  the object to receive the augmentation
          * @param {Function} s  the object that supplies the properties to augment
          * @param ov {boolean} if true, properties already on the receiver
@@ -738,6 +797,11 @@ YUI.prototype = {
          */
         Y.augment = function(r, s, ov, wl) {
             Y.mix(r, s, ov, wl, 1);
+            return Y;
+        };
+
+        Y.aggregate = function(r, s, ov, wl) {
+            Y.mix(r, s, ov, wl, 0, true);
             return Y;
         };
 
@@ -816,16 +880,16 @@ YUI.prototype = {
             // cost of the array test?  Does the object implementation
             // work properly for array-like collections?
 
-            // switch (A.test(o)) {
-            //     case 1:
-            //         return A.each(o, f, c);
-            //     case 2:
-            //         return A.each(Y.array(o, 0, true), f, c);
-            //     default:
-            //         return Y.object.each(o, f, c);
-            // }
+            switch (A.test(o)) {
+                case 1:
+                    return A.each(o, f, c);
+                case 2:
+                    return A.each(Y.array(o, 0, true), f, c);
+                default:
+                    return Y.object.each(o, f, c);
+            }
 
-            return Y.object.each(o, f, c);
+            // return Y.object.each(o, f, c);
         };
 
         /**
@@ -1032,7 +1096,7 @@ YUI.prototype = {
          * @return {YUI} the YUI instance
          */
         O.each = function (o, f, c) {
-            var s = c;
+            var s = c || Y;
             for (var i in o) {
                 if (O.owns(o, i)) {
                     f.call(s, o[i], i, o);
@@ -3951,6 +4015,7 @@ YUI.prototype = {
 
         // YUI is an event provider
         Y.mix(Y, Y.Event.Target.prototype);
+        // Y.augment(Y, Y.Event.Target);
 
 
         // var T = Y.Event.Target;

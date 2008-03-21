@@ -5,9 +5,9 @@
         var L = Y.lang;
 
         /**
-         * maintain state for a collection of items.  individual properties 
-         * are stored in hash tables.  this is instead of having state objects 
-         * for each item in the collection.  for large collections, especially 
+         * Maintain state for a collection of items.  Individual properties 
+         * are stored in hash tables.  This is instead of having state objects 
+         * for each item in the collection.  For large collections, especially 
          * changing ones, this approach may perform better.
          * @class State
          */
@@ -45,7 +45,7 @@
              * @param o {string|object|array} single key or collection of keys to delete
              */
             remove: function(name, o) {
-                var d = this.data, l = (o) ? o : d,
+                var d = this.data, 
                     del = function(key) {
                         if (d[key] && (name in d[key])) {
                             delete d[key][name];
@@ -55,7 +55,7 @@
                 if (L.isString(o)) {
                     del(o);
                 } else {
-                    Y.each(l, function(v, k) {
+                    Y.each(o || d, function(v, k) {
                         if(L.isString(k)) {
                             del(k);
                         } else {
@@ -71,8 +71,7 @@
              * supplied, a disposable object with all attributes is 
              * returned.  Use of the latter option makes sense when
              * working with single items, but not if object explosion
-             * might cause gc problems.  If a val is specified, only
-             * attributes with the 
+             * might cause gc problems.
              * @method get
              * @param name {string} name of attribute
              * @param key {string} optional attribute to get

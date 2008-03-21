@@ -122,36 +122,60 @@
          * @param wl {string[]} a whitelist.  If supplied, only properties in 
          * this list will be applied to the receiver.
          * @param {int} mode what should be copies, and to where
-         *        default(0): standard object mixin
+         *        default(0): object to object
          *        1: prototype to prototype (old augment)
          *        2: prototype to prototype and object props (new augment)
          *        3: prototype to object
          *        4: object to prototype
          * @return {YUI} the YUI instance
          */
-        Y.mix = function(r, s, ov, wl, mode) {
+        Y.mix = function(r, s, ov, wl, mode, merge) {
 
             if (!s||!r) {
                 return Y;
             }
 
-            var w = (wl && wl.length) ? A.hash(wl) : null;
+            var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
+                f = function(fr, fs, proto) {
+                    // if (m && fr && fr.push) {
+                    //     Y.log('concat: ' + fs);
+                    //     fr.concat(fs);
+                    // }
 
-            var f = function(fr, fs, proto) {
-                for (var i in fs) { 
-                    // if (!proto || (i in fs)) {
-                    // @TODO deal with the hasownprop issue
-                    // if (proto || ov || Y.object.owns(fs, i)) {
-                        if (ov || !fr[i]) {
-                            if (!w || (i in w)) {
+                    var arr = m && L.isArray(fr);
+
+                    for (var i in fs) { 
+                        // Y.log('i: ' + i + ", " + fs[i]);
+                        // if (!proto || (i in fs)) {
+                        // @TODO deal with the hasownprop issue
+                        // if (proto || ov || Y.object.owns(fs, i)) {
+
+                        // check white list if it was supplied
+                        if (!w || (i in w)) {
+                            // if the receiver has this property, it is an object,
+                            // and merge is specified, merge the two objects.
+                            if (m && L.isObject(fr[i])) {
+                                // Y.log('recurse: ' + i);
+                                // @TODO recursive or no?
+                                // Y.mix(fr[i], fs[i]); // not recursive
+                                f(fr[i], fs[i]); // recursive
+                            // otherwise apply the property only if overwrite
+                            // is specified or the receiver doesn't have one.
+                            } else if (ov || !fr[i]) {
+                                // Y.log('hash: ' + i);
                                 fr[i] = fs[i];
+                            // if merge is specified and the receiver is an array,
+                            // append the array item
+                            } else if (arr) {
+                                // Y.log('array: ' + i);
+                                fr.push(fs[i]);
                             }
                         }
-                    // }
-                }
+                        // }
+                    }
 
-                _iefix(fr, fs, w);
-            };
+                    _iefix(fr, fs, w);
+                };
 
             var rp = r.prototype, sp = s.prototype;
 
@@ -159,7 +183,7 @@
                 case 1: // proto to proto
                     f(rp, sp, true);
                     break;
-                case 2: // object augmentation AND proto
+                case 2: // object to object and proto to proto
                     f(r, s);
                     f(rp, sp, true);
                     break;
@@ -169,7 +193,7 @@
                 case 4: // static to proto
                     f(rp, s);
                     break;
-                default:  // standard object augment
+                default:  // object to object
                     f(r, s);
             }
 
@@ -177,8 +201,7 @@
         };
 
         /**
-         * Applies prototype and object properties from the supplier to
-         * the receiver.
+         * Applies prototype properties from the supplier to the receiver.
          * @param {Function} r  the object to receive the augmentation
          * @param {Function} s  the object that supplies the properties to augment
          * @param ov {boolean} if true, properties already on the receiver
@@ -189,6 +212,11 @@
          */
         Y.augment = function(r, s, ov, wl) {
             Y.mix(r, s, ov, wl, 1);
+            return Y;
+        };
+
+        Y.aggregate = function(r, s, ov, wl) {
+            Y.mix(r, s, ov, wl, 0, true);
             return Y;
         };
 
@@ -267,16 +295,16 @@
             // cost of the array test?  Does the object implementation
             // work properly for array-like collections?
 
-            // switch (A.test(o)) {
-            //     case 1:
-            //         return A.each(o, f, c);
-            //     case 2:
-            //         return A.each(Y.array(o, 0, true), f, c);
-            //     default:
-            //         return Y.object.each(o, f, c);
-            // }
+            switch (A.test(o)) {
+                case 1:
+                    return A.each(o, f, c);
+                case 2:
+                    return A.each(Y.array(o, 0, true), f, c);
+                default:
+                    return Y.object.each(o, f, c);
+            }
 
-            return Y.object.each(o, f, c);
+            // return Y.object.each(o, f, c);
         };
 
         /**

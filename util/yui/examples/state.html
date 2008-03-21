@@ -7,25 +7,25 @@
 <script type="text/javascript">
 
 
-(function() {
+YUI().use('state', function(Y) {
+    
+    var newobj = {}, 
 
-    var Y = YUI().use('state'), newobj = {};
+        o = {
+            str: "str",
+            arr: [
+                "array1",
+                true,
+                { obj: "obj"},
+                ["array2"]
+            ],
+            dat: new Date(),
+            fn: function() {
 
-    var o = {
-        str: "str",
-        arr: [
-            "array1",
-            true,
-            { obj: "obj"},
-            ["array2"]
-        ],
-        dat: new Date(),
-        fn: function() {
-
-        },
-        //win: window,
-        nada: null
-    };
+            },
+            //win: window,
+            nada: null
+        };
 
     var configs = new Y.State();
     // add a prop
@@ -68,8 +68,8 @@
     });
 
     Y.log("myprop list: " + Y.lang.dump(configs.list()));
+});
 
-})();
 
 </script>
 <body>

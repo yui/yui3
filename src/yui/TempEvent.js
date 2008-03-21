@@ -2391,6 +2391,7 @@
 
         // YUI is an event provider
         Y.mix(Y, Y.Event.Target.prototype);
+        // Y.augment(Y, Y.Event.Target);
 
 
         // var T = Y.Event.Target;

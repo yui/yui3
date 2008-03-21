@@ -37,6 +37,33 @@
 
     Y.log("each: " + Y.lang.dump(newobj));
 
+    var o1 = {
+        a: "a",
+        b: "b",
+        c: {
+            d: "d",
+            e: "e",
+            f: ["g", "h", "i"]
+        }
+    };
+
+
+    var o2 = {
+        a: "a2",
+        c: {
+            d: "d",
+            e: "e",
+            f: ["g2", "h2", "i2"],
+            j: "j2"
+        },
+        k: "k2"
+    };
+
+    // Y.mix(o1, o2, false, null, 0, true);
+
+    Y.aggregate(o1, o2);
+
+    Y.log("aggregate: " + Y.lang.dump(o1));
 })();
 
 </script>
