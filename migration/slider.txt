@@ -1,0 +1,133 @@
+Slider 3.0 Planning
+
+NOTE: Much of the work for 3.0 migration has already been done (yay).  3.0 development will work from the state of Slider in the 3.x branch.
+
+Thoughts on 2.x implementation
+
+* Constructor sig is not implementer friendly
+    All examples use the factory methods.  This appears to be the common use case.
+
+    3.0 thoughts:
+    Move the factory logic into the constructor, and allow advanced configuration (such as what would have been possible in the 2.x constructor) via config bag.
+
+
+* Region Slider is cruft
+    Region slider support adds a number of methods/forks to the Slider lib.  Unfounded supposition, but I believe the most common Slider implementation by far is horizontal, followed by vertical, followed very distantly by region.
+
+    3.0 thoughts:
+    Break Region Slider into its own class.
+
+
+* Slider need not extend DragDrop
+    The thumb is movable, but the background is not.  Currently Slider extends DragDrop and SliderThumb extends DD.  The background element events can be dealt with outside of an extension model.
+
+    3.0 thoughts:
+    Background events should be manageable using the Event util.
+
+
+* Slider is highly coupled to the DOM.
+    Values are always calculated from DOM positions rather than stored in any model.
+
+    3.0 thoughts:
+    Break out a model representation to store the internal value and possibly the translated value.  I believe this was already done in the 3.0 branch, so I'll work from what's there.
+
+
+* No native support for calculated value
+    The DOM position of the thumb is reported as the value, requiring conversion into a useful value by the implementer.
+
+    3.0 thoughts:
+    Add minValue and maxValue, or something like that, to the core operations.  This has been done in the 3.0 branch already.
+
+
+* Progressive enhancement strategy missing
+    There's not much to do to create the Slider elements, but for progressive enhancement, it would be cleaner if they weren't even present unless functionality were possible.  At least having support for this.
+
+    3.0 thoughts:
+    Offer support to render elements beside or replace an input field/element.
+        - Which type of element? (prob text input)
+            > text is more appropriate for range control
+            > radio group is more appropriate for value gradation
+        - Create elements on which side or replace input? (prob left of input)
+            > beside input is more appropriate for text input
+            > replace is more appropriate for radio group
+            > change text input type to hidden if replacing?
+            > configurable?
+
+
+* State management is complex
+    Setting values can be done via API, thumb click and drag, background click (+optional drag).  Insert animation/gradation into that, and we have a timeline where the decision on when to fire start/stop/change events is opaque.
+
+    3.0 thoughts:
+    Extract the movement/value assignment APIs to state/method objects.  Activating a value assignment from any point of origin will cause future value assignments to reconcile state with the current assignment operation, optionally taking over as the current assignment operation.  Event firing would be managed through the assignment operation.
+
+
+* DualSlider value determination and sharing of background could be lame
+    The amount of code to support the sharing of the Slider background might be excessive, especially if the new version of Slider leverages the background sparsely.  The notion of "value" in DualSlider is different.  Rather than representing a value within a specified range, DualSlider represents a range refinement or two related values.
+
+    3.0 thoughts:
+    Evaluate DualSlider after Slider has had its once over.  It may be good fit for continuing in its current shared-background approach, or might warrant a rewrite to define its own consumption of SliderThumbs.
+
+
+* Ticks -> values, not values -> ticks
+    In the configuration, it is possible to specify a regular tick size, but doing the math to determine the calculated values that those ticks will correspond to is an unnecessary chore on the implementer.
+    
+    3.0 thoughts:
+    We should support arbitrary intermediate values, with tick points placed on the background per internal calculations.  These tick values should correspond to the calculated value range.
+
+
+* DualSlider doesn't natively support highlight
+    A natural extension of the DualSlider's UI is to highlight or exclude the enclosed subregion.  There is an example for this, but no native support.
+
+    3.0 thoughts:
+    Look into adding native support.  Low priority.
+
+
+=============
+Bugs:
+
+556091  - non-uniform tick intervals (depends on DD?).  Otherwise as above.
+662442  - Provide destination on slideStart.
+1406350 - Odd events when dragging slider.
+1461775 - Possible calculation error on RGB example
+1493570 - Tick and movement methods are private
+1634152 - Add support for custom value range
+1671709 & 1671719 - new examples
+1719397 - Value NaN when Slider created off DOM
+1729668 - slide end event does not fire after move via ____
+1754474 - Arrow key handling for DualSlider
+1778932 - Focus change in slide end event causes odd behavior
+1791280 - Creating Slider off displayed DOM
+
+==============
+Migration tasks: ~6 weeks
+
+* Evaluate current 3.0 development  -- 1 week
+* extract RegionSlider (minor) -- 3 days
+* review/refactor event handling (minor - medium) -- up to 2 weeks
+* add progressive enhancement methods (minor) -- 2 days
+* add support for arbitrary value ticks (medium - major) -- 2 weeks?
+* add the slider graphics to sam skin sprite (+DualSlider thumbs) -- a few hrs
+    - might need new images for progressive enhancement case?
+
+=============
+New Tests: ~ 1.5 weeks
+* Slider specific test suite, rather than reliance on Color Picker's adoption (details pending)
+* Progressive enhancement tests
+* Event timing tests
+* DualSlider tests
+
+=============
+New Examples: 3 days if included (low priority)
+per bugs, but probably not any truly needed
+
+=============
+Outstanding dependencies:
+* Discuss the arbitrary ticks with Dav
+
+=============
+Documentation tasks:
+none that I know of
+
+=============
+UED feedback:
+none

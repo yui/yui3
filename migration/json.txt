@@ -1,0 +1,35 @@
+JSON 3.0 Planning
+
+Thoughts on 2.x implementation
+
+* Stringify need not be core.
+    The overwhelming use case for the JSON lib is for parsing.  parse takes up only 814B of the 2588B in json-min.js.  That's a hefty price to pay for JSON.parse.
+
+    3.0 thoughts:
+    Separate JSON.parse, JSON.stringify, then create a convenience bundle if both are desired.
+
+* Date formatting.
+    JSON.js includes some date formatting methods that may be suitable for extraction to common date routines (see Calendar).
+
+    3.0 thoughts:
+    Confirm date lib with Satyen.
+
+* Name parity.
+    Upper case JSON doesn't fit with DOM vs Dom.  Most likely with the new structure, it'll live in Y.json namespace.
+
+================
+Misc
+
+JSON seems well suited to decorate io plugins or be a plugin of its own.  I'll need to confer with the rest of the team re: plans for io plugins/interaction.
+
+============
+Estimates: 3 days
+It should be pretty straight forward to migrate.  The 3 days are for evaluating/adding new features recently announced for json.org/json2.js
+
+===========
+Tests: 1 day
+* Need to migrate local tests to automated tests
+
+===========
+Examples: 2 days
+* Need more examples, and might need examples if used as a plugin

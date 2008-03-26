@@ -1,0 +1,20 @@
+Chain 3.0 Planning (included in DataTable)
+
+Thoughts on 2.x implementation
+
+* Bundled with DataTable
+    Chain has value outside the context of DataTable for managing thread yielding and queued operations.
+
+    3.0 thoughts:
+    Extract to Y.chain or Y.queue.  Discuss naming with team and possibly internal consumption.
+
+==========
+Misc
+
+Chain supports functions or obj lits containing keys method, scope, args, timeout, iterations, and until.  scope and argument can be removed to leverage Y.bind.
+
+Animation may be able to leverage Chain.
+
+==============
+Estimates: 1 day
+No substantive changes

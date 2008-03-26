@@ -1,0 +1,32 @@
+Paginator 3.0 Planning
+
+Thoughts on 2.x implementation
+
+* Bundled with DataTable
+    The basic problem that Paginator addresses is not specific to DataTable.
+
+    3.0 thoughts:
+    Extract Paginator class from DataTable and offer it up as a standalone widget and consume in DT via a Paginated plugin (and a ServerPaginated plugin?)
+
+
+* No progressive enhancement strategy
+    Sniffing existing elements was dropped because the variety of implementations could be vast.
+
+    3.0
+    rely on classes in markup.  Pass container innerHTML as template.
+
+
+* UI centric
+    The basic problem of paginating a larger data set is easy to solve.  Most of the Paginator code is dedicated to supporting a variety of UI configurations.  Pagination is one of those things that should be invisible; assumed.  The UI should fit in with the site/widget design.  The UI Component architecture in Paginator is built to support complete UI flexibility, but at the cost of k weight and no progressive enhancement.  Spending the time to create a custom Paginator UI component is likely comparable to just coding up custom pagination.  And having to sacrifice a container element for all pagination controls rather than pepper functionality on existing UI elements seems draconian.
+
+    3.0 thoughts:
+    Explore a different model, requiring/supporting existing nodes to attach next/prev, first/last, etc functionality to.  Again, the problem is UI implementation flexibility.  I'm open to suggestions.
+
+===========
+Estimates:
+* Migrate -- 3 days
+* Create Plugin for DataTable -- 1 week
+
+==========
+Tests:
+* Needs test suite built
