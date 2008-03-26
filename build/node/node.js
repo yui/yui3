@@ -602,8 +602,7 @@ var M = function(Y) {
             'scrollHeight',
             'tagName',
             'nodeName',
-            'nodeType',
-            'text'
+            'nodeType'
         ],
 
         WRITE: [
@@ -1057,6 +1056,10 @@ var M = function(Y) {
 
         scrollIntoView: function(node) {
             node.scrollIntoView();
+        },
+
+        text: function(node) {
+            return node.innerText || node.textContent;
         },
 
         xy: xy
