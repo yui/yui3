@@ -39,10 +39,10 @@
     }, Y.Dom.getElementsByClassName('button'));
 
     Y.on('TEST:EVENT', function() {
-        Y.log('test event subscriber success');
+        Y.log('test event subscriber success: ' + Y.array(arguments));
     });
 
-    Y.fire('TEST:EVENT');
+    Y.fire('TEST:EVENT', 1, 2);
 
 })();
 

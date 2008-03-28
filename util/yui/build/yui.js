@@ -172,7 +172,6 @@ YUI.prototype = {
                 return;
             }
 
-            // only attach a module once
             used[name] = true;
 
             var m = mods[name], j, req, use;
@@ -196,10 +195,9 @@ YUI.prototype = {
             // Y.log('using ' + name);
             r.push(name);
 
-
             // auto-attach sub-modules
             if (use) {
-                for (var j = 0; j < use.length; j = j + 1) {
+                for (j = 0; j < use.length; j = j + 1) {
                     f(use[j]);
                 }
             }
@@ -1896,7 +1894,7 @@ YUI.add("event", function(Y) {
                 return true;
             }
 
-            var args=Y.array(arguments, true), ret=true, i, rebuild=false;
+            var args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
 
             if (!this.silent) {
                 Y.log( "Firing "       + this  + ", " + 

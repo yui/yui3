@@ -301,7 +301,7 @@ YUI.add("event", function(Y) {
                 return true;
             }
 
-            var args=Y.array(arguments, true), ret=true, i, rebuild=false;
+            var args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
 
             if (!this.silent) {
                 Y.log( "Firing "       + this  + ", " + 
