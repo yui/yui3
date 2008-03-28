@@ -166,6 +166,7 @@ YUI.add("core", function(Y) {
                         // append the array item
                         } else if (arr) {
                             // Y.log('array: ' + i);
+                            // @TODO probably will need to remove dups
                             fr.push(fs[i]);
                         }
                     }
@@ -218,6 +219,7 @@ YUI.add("core", function(Y) {
      * the target has the property, and the property is an object, the target
      * object will be augmented with the supplier's value.  If the property
      * is an array, the suppliers value will be appended to the target.
+     *
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
@@ -324,6 +326,7 @@ YUI.add("core", function(Y) {
      * Other types are returned untouched.  Optionally a
      * function can be provided to handle other data types,
      * filter keys, validate values, etc.
+     *
      * @method clone
      * @param o what to clone
      * @param f function to apply to each item in a collection
@@ -357,6 +360,7 @@ YUI.add("core", function(Y) {
      * supplied object's context, optionally adding any additional
      * supplied parameters to the end of the arguments the function
      * is executed with.
+     *
      * @param f {Function} the function to bind
      * @param c the execution context
      * @return the wrapped function
@@ -372,7 +376,7 @@ YUI.add("core", function(Y) {
 
     Y.ready = function(f, c) {
         var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
-        Y.on("yui:ready", m);
+        Y.on("yui:load", m);
         return this;
     };
 

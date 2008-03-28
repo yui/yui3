@@ -111,6 +111,34 @@ YUI.add("event", function(Y) {
             this.subscribeEvent = 
                     new Y.CustomEvent(onsubscribeType, this, true);
 
+            /**
+             * This event fires only once if true
+             *
+             * @property once
+             * @type boolean
+             * @default false;
+             */
+            this.once = false;
+
+            /**
+             * This event has fired if true
+             *
+             * @property fired
+             * @type boolean
+             * @default false;
+             */
+            this.fired = false;
+
+            /**
+             * This event should only fire one time if true, and if
+             * it has fired, any new subscribers should be notified
+             * immediately.
+             *
+             * @property fireOnce
+             * @type boolean
+             * @default false;
+             */
+            this.fireOnce = false;
         } 
 
 
@@ -167,7 +195,14 @@ YUI.add("event", function(Y) {
                 this.subscribeEvent.fire(fn, obj, override);
             }
 
-            this.subscribers.push( new Y.Subscriber(fn, obj, override) );
+            var s = new Y.Subscriber(fn, obj, override);
+
+            if (this.fireOnce && this.fired) {
+                this._notify(s);
+            }
+
+            this.subscribers.push(s);
+
         },
 
         /**
@@ -200,6 +235,50 @@ YUI.add("event", function(Y) {
             return found;
         },
 
+        _notify: function(s, args) {
+
+            if (!this.silent) {
+                Y.log( this.type + "->" + ": " +  s, 
+                            "info", "Event" );
+            }
+
+            var context = s.getScope(this.context), ret;
+
+            if (this.signature == Y.CustomEvent.FLAT) {
+                var param = null;
+                if (args.length > 0) {
+                    param = args[0];
+                }
+
+                try {
+                    ret = s.fn.call(context, param, s.obj);
+                } catch(e) {
+                    this.lastError = e;
+                    Y.log(this + " subscriber exception: " + e,
+                              "error", "Event");
+                }
+            } else {
+                try {
+                    ret = s.fn.call(context, this.type, args, s.obj);
+                } catch(ex) {
+                    this.lastError = ex;
+                    Y.log(this + " subscriber exception: " + ex,
+                              "error", "Event");
+                }
+            }
+            if (false === ret) {
+                if (!this.silent) {
+                    Y.log("Event cancelled, subscriber " + i + 
+                              " of " + len, "info", "Event");
+                }
+
+                //break;
+                return false;
+            }
+
+            return true;
+        },
+
         /**
          * Notifies the subscribers.  The callback functions will be executed
          * from the context specified when the event was created, and with the 
@@ -222,11 +301,7 @@ YUI.add("event", function(Y) {
                 return true;
             }
 
-            var args=[], ret=true, i, rebuild=false;
-
-            for (i=0; i<arguments.length; ++i) {
-                args.push(arguments[i]);
-            }
+            var args=Y.array(arguments, true), ret=true, i, rebuild=false;
 
             if (!this.silent) {
                 Y.log( "Firing "       + this  + ", " + 
@@ -240,43 +315,9 @@ YUI.add("event", function(Y) {
                 if (!s) {
                     rebuild=true;
                 } else {
-                    if (!this.silent) {
-                        Y.log( this.type + "->" + (i+1) + ": " +  s, 
-                                    "info", "Event" );
-                    }
-
-                    var context = s.getScope(this.context);
-
-                    if (this.signature == Y.CustomEvent.FLAT) {
-                        var param = null;
-                        if (args.length > 0) {
-                            param = args[0];
-                        }
-
-                        try {
-                            ret = s.fn.call(context, param, s.obj);
-                        } catch(e) {
-                            this.lastError = e;
-                            Y.log(this + " subscriber exception: " + e,
-                                      "error", "Event");
-                        }
-                    } else {
-                        try {
-                            ret = s.fn.call(context, this.type, args, s.obj);
-                        } catch(ex) {
-                            this.lastError = ex;
-                            Y.log(this + " subscriber exception: " + ex,
-                                      "error", "Event");
-                        }
-                    }
-                    if (false === ret) {
-                        if (!this.silent) {
-                            Y.log("Event cancelled, subscriber " + i + 
-                                      " of " + len, "info", "Event");
-                        }
-
-                        //break;
-                        return false;
+                    ret = this._notify(s, args);
+                    if (!ret) {
+                        break;
                     }
                 }
             }
@@ -290,7 +331,9 @@ YUI.add("event", function(Y) {
                 this.subscribers=newlist;
             }
 
-            return true;
+            this.fired = true;
+
+            return ret;
         },
 
         /**
@@ -822,7 +865,7 @@ YUI.add("event", function(Y) {
                                     s = p_override;
                                 }
                             }
-                            p_fn.call(s, "DOMReady", [], p_obj);
+                            p_fn.call(s, "event:ready", [], p_obj);
                         }, 0);
                     } else {
                         Y.Event.DOMReadyEvent.subscribe(p_fn, p_obj, p_override);
@@ -1353,32 +1396,6 @@ YUI.add("event", function(Y) {
                         }
                     }
 
-                    // IE events that target non-browser objects (e.g., VML
-                    // canvas) will sometimes throw errors when you try to
-                    // inspect the properties of the event target.  We try to
-                    // detect this condition, and provide a dummy target (the bound
-                    // element) to eliminate spurious errors.  
-
-                    // the implementation caused unexpected results in some 
-                    // implementations, so this has been rolled back for now
-                    /* 
-                    if (ev && this.isIE) {
-
-                        try {
-
-                            var el = ev.srcElement;
-
-                        } catch(ex) {
-
-                            Y.log("Inspecting the target caused an error, " +
-                                "setting the target to the bound element.", "warn");
-                             
-                            ev.target = boundEl;
-                        }
-
-                    }
-                    */
-
                     return new Y.Event.Facade(ev, boundEl);
                 },
 
@@ -1470,16 +1487,6 @@ YUI.add("event", function(Y) {
                 },
 
                 /**
-                 * @private
-                 * @property elCache
-                 * DOM element cache
-                 * @static
-                 * @deprecated Elements are not cached due to issues that arise when
-                 * elements are removed and re-added
-                 */
-                elCache: {},
-
-                /**
                  * We cache elements bound by id because when the unload event 
                  * fires, we can no longer use document.getElementById
                  * @method getEl
@@ -1492,19 +1499,10 @@ YUI.add("event", function(Y) {
                 },
 
                 /**
-                 * Clears the element cache
-                 * @deprecated Elements are not cached any longer
-                 * @method clearCache
-                 * @static
-                 * @private
-                 */
-                clearCache: function() { },
-
-                /**
                  * Custom event the fires when the dom is initially usable
                  * @event DOMReadyEvent
                  */
-                DOMReadyEvent: new Y.CustomEvent("DOMReady", this),
+                DOMReadyEvent: new Y.CustomEvent("event:ready", this),
 
                 /**
                  * hook up any deferred listeners
@@ -1830,18 +1828,6 @@ YUI.add("event", function(Y) {
                 },
                 
                 /**
-                 * Used by old versions of Event.Custom, restored for backwards
-                 * compatibility
-                 * @method regCE
-                 * @private
-                 * @static
-                 * @deprecated still here for backwards compatibility
-                 */
-                regCE: function() {
-                    // does nothing
-                },
-
-                /**
                  * Adds a DOM event directly without the caching, cleanup, context adj, etc
                  *
                  * @method _simpleAdd
@@ -1915,7 +1901,7 @@ YUI.add("event", function(Y) {
                 return EU.removeListener(el, type, fn, data, context);
             };
 
-            // only do this once
+            // only execute DOMReady once
             if (Y !== YUI) {
                 YUI.Event.onDOMReady(EU._ready);
             } else {
@@ -2341,7 +2327,6 @@ YUI.add("event", function(Y) {
             
             this.target = resolve(e.target || e.srcElement);
             this.originalTarget = resolve(e.originalTarget || ot);
-            this.originalTarget = resolve(e.originalTarget || ot);
 
             var t = e.relatedTarget;
             if (!t) {
@@ -2358,9 +2343,7 @@ YUI.add("event", function(Y) {
             // methods
 
             this.stopPropagation = function() {
-                var f = e.stopPropagation;
-                if (f) {
-                    //f(); // error
+                if (e.stopPropagation) {
                     e.stopPropagation();
                 } else {
                     e.cancelBubble = true;
@@ -2368,9 +2351,7 @@ YUI.add("event", function(Y) {
             };
 
             this.preventDefault = function() {
-                var f = e.preventDefault;
-                if (f) {
-                    //f(); // error
+                if (e.preventDefault) {
                     e.preventDefault();
                 } else {
                     e.returnValue = false;

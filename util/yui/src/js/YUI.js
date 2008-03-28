@@ -62,7 +62,8 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
-            _pre: 'yui-uid'
+            _pre: 'yui-uid',
+            _used: {}
         };
 
         var i = YUI.env._idx++;
@@ -87,6 +88,7 @@ YUI.prototype = {
         // so we need to determine if we only allow one level (probably) or
         // if we make clone create references for functions and elements.
         this.config = this.merge(this.config);
+        this.publish('yui:load');
     },
 
     /**
@@ -155,7 +157,8 @@ YUI.prototype = {
      */
     use: function() {
 
-        var a=arguments, l=a.length, mods=YUI.env.mods, Y = this;
+        var a=arguments, l=a.length, mods=YUI.env.mods, 
+            Y = this, used = Y.env._used;
 
         // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
@@ -164,25 +167,41 @@ YUI.prototype = {
 
         var missing = [], r = [], f = function(name) {
 
-            r.push(name);
+            // only attach a module once
+            if (used[name]) {
+                return;
+            }
 
-            var m = mods[name];
+            // only attach a module once
+            used[name] = true;
 
-            // Y.log('using ' + name);
+            var m = mods[name], j, req, use;
 
             if (m) {
-
-                // auto-attach sub-modules
-                var p = m.details.use;
-                if (p) {
-                    for (var j = 0; j < p.length; j = j + 1) {
-                        f(p[j]);
-                    }
-                }
-
+                req = m.details.requires;
+                use = m.details.use;
             } else {
                 Y.log('module not found: ' + name);
                 missing.push(name);
+            }
+
+            // make sure requirements are attached
+            if (req) {
+                for (j = 0; j < req.length; j = j + 1) {
+                    f(req[j]);
+                }
+            }
+
+            // add this module to full list of things to attach
+            // Y.log('using ' + name);
+            r.push(name);
+
+
+            // auto-attach sub-modules
+            if (use) {
+                for (var j = 0; j < use.length; j = j + 1) {
+                    f(use[j]);
+                }
             }
         };
 
