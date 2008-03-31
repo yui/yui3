@@ -1,225 +1,125 @@
-(function() {
+YUI.add('att', function(Y) {
 
-    var M = function(Y) {
+    /**
+     * Manages attributes
+     * @class AttributeProvider
+     * @uses YUI.Event.Target
+     */
+    Y.Att = function() {
+        this._conf = {};
 
-        /**
-         * Provides Attribute configurations.
-         * @namespace Y.util
-         * @class Attribute
-         * @constructor
-         * @param hash {Object} The intial Attribute.
-         * @param {Y.AttributeProvider} The owner of the Attribute instance.
-         */
-    
-        Y.Attribute = function(name, map, owner) {
-            this.name = name;
-            if (owner) { 
-                this.owner = owner;
-                this.configure(map, true);
-            }
-        };
-
-        Y.Attribute.prototype = {
-            /**
-             * The name of the attribute.
-             * @property name
-             * @type String
-             */
-            name: undefined,
-    
-            /**
-             * The value of the attribute.
-             * @property value
-             * @type String
-             */
-            value: undefined,
-    
-            /**
-             * The owner of the attribute.
-             * @property owner
-             * @type Y.AttributeProvider
-             */
-            owner: undefined,
-    
-            /**
-             * Whether or not the attribute is read only.
-             * @property readOnly
-             * @type Boolean
-             */
-            readOnly: false,
-    
-            /**
-             * Whether or not the attribute can only be written once.
-             * @property writeOnce
-             * @type Boolean
-             */
-            writeOnce: false,
-    
-            /**
-             * The attribute's initial configuration.
-             * @private
-             * @property _initialConfig
-             * @type Object
-             */
-            _initialConfig: undefined,
-    
-            /**
-             * Whether or not the attribute's value has been set.
-             * @private
-             * @property _written
-             * @type Boolean
-             */
-            _written: false,
-    
-            /**
-             * The method to use when setting the attribute's value.
-             * The method recieves the new value as the only argument.
-             * @property set
-             * @type Function
-             */
-            set: undefined,
-    
-            /**
-             * The method to use when getting the attribute's value.
-             * The method recieves the new value as the only argument.
-             * @property get
-             * @type Function
-             */
-            get: undefined,
-    
-            /**
-             * The validator to use when setting the attribute's value.
-             * @property validator
-             * @type Function
-             * @return Boolean
-             */
-            validator: undefined,
-    
-            /**
-             * Retrieves the current value of the attribute.
-             * @method getValue
-             * @return {any} The current value of the attribute.
-             */
-            getValue: function() {
-                return this.get ? this.get.apply(this.owner, arguments) : this.value;
-            },
-
-            /**
-             * Sets the value of the attribute and fires beforeChange and change events.
-             * @method setValue
-             * @param {Any} value The value to apply to the attribute.
-             * @param {Boolean} silent If true the change events will not be fired.
-             * @return {Boolean} Whether or not the value was set.
-             */
-            setValue: function(value, silent) {
-                var beforeRetVal,
-                    retVal,
-                    owner = this.owner,
-                    name = this.name;
-    
-                var event = {
-                    type: name, 
-                    prevValue: this.getValue(),
-                    newValue: value
-                };
-    
-                if (this.readOnly || ( this.writeOnce && this._written) ) {
-                    Y.log( 'setValue ' + name + ', ' +  value +
-                            ' failed: read only', 'error', 'Attribute');
-                    return false; // write not allowed
-                }
-    
-                if (!silent) {
-                    beforeRetVal = owner.fireBeforeChangeEvent(event);
-                    if (beforeRetVal === false) { // TODO: event.preventDefault
-                        Y.log('setValue ' + name + 
-                                ' cancelled by beforeChange event', 'info', 'Attribute');
-                        return false;
-                    }
-                }
-    
-                if (this.set) {
-                    retVal = this.set.call(owner, value);
-                }
-    
-                if (this.validator && !this.validator.call(owner, value) ) {
-                    Y.log( 'setValue ' + name + ', ' + value +
-                            ' validation failed', 'error', 'Attribute');
-                    return false; // invalid value
-                }
-    
-                this.value = (retVal === undefined) ? value : retVal;
-                this._written = true;
-    
-                event.type = name;
-    
-                if (!silent) {
-                    this.owner.fireChangeEvent(event);
-                }
-    
-                return true;
-            },
-    
-            /**
-             * Allows for configuring the Attribute's properties.
-             * @method configure
-             * @param {Object} map A key-value map of Attribute properties.
-             * @param {} init Whether or not this should become the initial config.
-             */
-            configure: function(map, init) {
-                map = map || {};
-                this._written = false; // reset writeOnce
-                var silent = !!init; // silent set if initializing
-    
-                //this._initialConfig = this._initialConfig || {};
-                for (var key in map) {
-                    if ( key && Y.object.owns(map, key) ) {
-                        if (key == 'value') {
-                            if (map.readOnly && init) { // initialize readOnly with direct set
-                                this.value = map[key];
-                            } else {
-                                this.setValue(map.value, silent);
-                            }
-                        } else {
-                            this[key] = map[key];
-                        }
-                        /* TODO: need initialConfig?
-                            if (init) {
-                                this._initialConfig[key] = map[key];
-                            }
-                        */
-                    }
-                }
-            },
-    
-            /**
-             * Resets the value to the initial config value.
-             * @method resetValue
-             * @return {Boolean} Whether or not the value was set.
-             */
-            resetValue: function() {
-                return this.setValue(this._initialConfig.value);
-            },
-    
-            /**
-             * Resets the attribute config to the initial config state.
-             * @method resetConfig
-             */
-            resetConfig: function() {
-                this.configure(this._initialConfig);
-            },
-    
-            /**
-             * Resets the value to the current value.
-             * Useful when values may have gotten out of sync with actual properties.
-             * @method refresh
-             * @return {Boolean} Whether or not the value was set.
-             */
-            refresh: function(silent) {
-                this.setValue(this.value, silent);
-            }
-        };
+        console.info('att constructor called');
     };
 
-    YUI.add("attribute", M, "3.0.0");
-})();
+    Y.Att.NAME = 'att';
+
+    Y.Att.prototype = {
+        /**
+         * Adds an attribute.
+         * @method add
+         * @param {String} name The attribute key
+         * @param {Object} val (optional) The attribute value
+         */
+        add: function(name, val) {
+            this._conf = this._conf || {};
+            this._conf[name] = val;
+        },
+
+        /**
+         * Removes an attribute.
+         * @method remove
+         * @param {String} name The attribute key
+         */
+        remove: function(name) {
+            this._conf = this._conf || {};
+            delete this._conf[name];
+        },
+
+        /**
+         * Returns the current value of the attribute.
+         * @method get
+         * @param {String} key The attribute whose value will be returned.
+         */
+        get: function(name) {
+            this._conf = this._conf || {};
+            return this._conf[name];
+        },
+
+        /**
+         * Sets the value of an attribute.
+         * @method set
+         * @param {String} name The name of the attribute
+         * @param {Any} value The value to apply to the attribute
+         * @param {Boolean} silent Whether or not to suppress change events
+         */
+        set: function(name, val) {
+            this._conf = this._conf || {};
+            this._before = this._before || {};
+            var e = val, // simple handler only gets incoming val? event facade?
+                b4 = name + 'Change',
+                conf = this._conf,
+                retVal;
+
+            if (!conf[name]) {
+                Y.log('adding new attribute: ' + name, 'info', 'Base');
+                this.add(name, val);
+                //throw new Error('attribute ' + name + ' is undefined');
+            }
+
+            if (this._before[b4]) {
+                retVal = this._before[b4](e);
+                if (retVal !== undefined && retVal !== Y.CANCEL) {
+                    Y.log('attribute: ' + name + ' modified by before', 'info', 'Base');
+                    val = retVal;
+                }
+            }
+
+            if (retVal !== Y.CANCEL) {
+                conf[name] = val;
+                this.fire(name + 'Change', val);
+            }
+
+            return this;
+        },
+
+        /**
+         * Sets multiple attribute values.
+         * @method setAttributes
+         * @param {Object} atts  A hash of attributes: values
+         */
+        setAtts: function(atts) {
+            for (var att in atts) {
+                if ( Y.object.owns(atts, att) ) {
+                    this.set(att, atts[att]);
+                }
+            }
+        },
+
+        /**
+         * Gets multiple attribute values.
+         * @method setAttributes
+         * @param {Object} atts  A hash of attributes: values
+         */
+        getAtts: function(atts) {
+            var o = {};
+            if (atts) {
+                o = Y.clone(atts);
+            } else {
+                Y.each(atts, function(val, att) {
+                    o[att] = val; 
+                });
+            }
+
+            return o;
+        },
+
+        before: function(name, fn) { // TODO: get from Event.Target
+            this._before = this._before || {};
+            this._before[name] = fn;
+        }
+
+    };
+
+    Y.augment(Y.Att, Y.Event.Target);
+}, '3.0.0');
+
