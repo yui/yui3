@@ -44,6 +44,18 @@
 
     Y.fire('TEST:EVENT', 1, 2);
 
+    Y.fire('asdf:asdf', 1);
+
+    Y.fire('asdf', 1);
+
+    var obj = new Y.Event.Target();
+
+    obj.subscribe('foo', function() {
+        console.info('foo!');
+    });
+
+    obj.fire('foo');
+
 })();
 
 </script>

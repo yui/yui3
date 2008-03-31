@@ -426,17 +426,23 @@ YUI.add("core", function(Y) {
     };
 
 
-    Y.before = function() {
-
+    Y.before = function(type, f, o) { 
+        // method override
+        // callback, object, sMethod
+        if (Y.lang.isFunction(type)) {
+            return Y.Do.before.apply(Y.Do, arguments);
+        }
     };
 
-    // this may not be needed
-    Y.after = function() {
-
+    Y.after = function(type, f, o) {
+        if (Y.lang.isFunction(type)) {
+            return Y.Do.after.apply(Y.Do, arguments);
+        }
     };
 
     // Object factory
     Y.create = function() {
 
     };
+
 }, "3.0.0");
