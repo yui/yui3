@@ -17,8 +17,8 @@ function TestObj(name) {
     }
 }
 
-TestObj.prototype.printName = function (msg) {
-    Y.log(this.name + " 'printName' " + msg);
+TestObj.prototype.printName = function () {
+    Y.log('TestObj ' + this.name + " 'printName' " + Y.lang.dump(Y.array(arguments)));
     return true;
 };
 
@@ -85,6 +85,29 @@ Y.before(causeError, t, "printName", s, 'a', 'b');
 Y.log("-- " + t.printName("testing"));
 
 Y.log("\n");
+
+Y.augment(TestObj, Y.Event.Target);
+
+    // var obj = new Y.Event.Target();
+    var obj = new TestObj('ETTest');
+
+    obj.subscribe('foo', function() {
+        console.info('foo!');
+    });
+
+    // obj.fire('foo');
+
+
+function bef2(msg, obj, a3) {
+    Y.log('bef2: ' + Y.lang.dump(Y.array(arguments)));
+    // alert('bef: ' + Y.lang.dump(Y.array(arguments)));
+}
+
+obj.before(bef2, "printName", obj, 1, 2, 3);
+
+Y.log("obj.printName-- " + obj.printName("ET Test", "second arg"));
+
+
 
 /* Output:
 

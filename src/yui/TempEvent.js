@@ -268,8 +268,7 @@ YUI.add("event", function(Y) {
             }
             if (false === ret) {
                 if (!this.silent) {
-                    Y.log("Event cancelled, subscriber " + i + 
-                              " of " + len, "info", "Event");
+                    Y.log("Event cancelled by subscriber", "info", "Event");
                 }
 
                 //break;
@@ -2114,7 +2113,7 @@ YUI.add("event", function(Y) {
             var events = this.__yui_events;
 
             if (events[p_type]) {
-    Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
+Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
             } else {
 
                 var context  = opts.context  || this;
@@ -2166,7 +2165,7 @@ YUI.add("event", function(Y) {
             var ce = this.__yui_events[p_type];
 
             if (!ce) {
-    // Y.log(p_type + "event fired before it was created.");
+// Y.log(p_type + "event fired before it was created.");
                 // return null;
                 ce = this.publish(p_type);
             }
@@ -2191,6 +2190,56 @@ YUI.add("event", function(Y) {
                 }
             }
             return false;
+        },
+
+        /**
+         * Executes the callback before the given event or
+         * method hosted on this object.
+         *
+         * The signature differs based upon the type of
+         * item that is being wrapped.
+         *
+         * Custom Event: type, callback, context, 1-n additional arguments
+         * to append to the callback's argument list.
+         *
+         * Method: callback, object, methodName, context, 1-n additional 
+         * arguments to append to the callback's argument list.
+         *
+         * @method before
+         * @return the detach handle
+         */
+        before: function() {
+
+            var a = Y.array(arguments, 0, true);
+
+            // insert this object as method target
+            a.splice(1, 0, this);
+
+            // Y.log('ET:before- ' + Y.lang.dump(a));
+
+            return Y.before.apply(Y, a);
+        },
+
+        /**
+         * Executes the callback after the given event or
+         * method hosted on this object.
+         *
+         * The signature differs based upon the type of
+         * item that is being wrapped.
+         *
+         * Custom Event: type, callback, context, 1-n additional arguments
+         * to append to the callback's argument list.
+         *
+         * Method: callback, object, methodName, context, 1-n additional 
+         * arguments to append to the callback's argument list.
+         *
+         * @method after
+         * @return the detach handle
+         */
+        after: function() {
+            var a = Y.array(arguments, 0, true);
+            a.splice(1, 0, this);
+            return Y.after.apply(Y, a);
         }
 
     };

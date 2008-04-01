@@ -290,11 +290,11 @@ YUI.add("core", function(Y) {
             return o;
         }
 
-        var uid = (L.isString(o)) ? o : o.uid;
+        var uid = (L.isString(o)) ? o : o._yuid;
 
         if (!uid) {
             uid = Y.guid();
-            o.uid = uid;
+            o._yuid = uid;
         }
 
         return uid;
@@ -425,7 +425,20 @@ YUI.add("core", function(Y) {
         }
     };
 
-
+    /**
+     * Executes the callback before a DOM event, custom event
+     * or method.  If the first argument is a function, it
+     * is assumed the target is a method.
+     *
+     * For DOM and custom events:
+     * type, callback, context, 1-n arguments
+     *  
+     * For methods:
+     * callback, object (method host), methodName, context, 1-n arguments
+     *
+     * @method before
+     * @return unsubscribe handle
+     */
     Y.before = function(type, f, o) { 
         // method override
         // callback, object, sMethod
@@ -434,6 +447,20 @@ YUI.add("core", function(Y) {
         }
     };
 
+    /**
+     * Executes the callback after a DOM event, custom event
+     * or method.  If the first argument is a function, it
+     * is assumed the target is a method.
+     *
+     * For DOM and custom events:
+     * type, callback, context, 1-n arguments
+     *  
+     * For methods:
+     * callback, object (method host), methodName, context, 1-n arguments
+     *
+     * @method after
+     * @return unsubscribe handle
+     */
     Y.after = function(type, f, o) {
         if (Y.lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);

@@ -167,8 +167,6 @@ YUI.add("aop", function(Y) {
 
     //////////////////////////////////////////////////////////////////////////
 
-    // Y["Event"] && 
-            // Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
-
+// Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
 }, "3.0.0");
