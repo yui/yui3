@@ -741,7 +741,7 @@ YUI.add("core", function(Y) {
                     if (!w || iwl || (i in w)) {
                         // if the receiver has this property, it is an object,
                         // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i])) {
+                        if (m && L.isObject(fr[i], true)) {
                             // Y.log('recurse: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
