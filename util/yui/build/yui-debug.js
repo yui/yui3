@@ -722,7 +722,8 @@ YUI.add("core", function(Y) {
         }
 
         var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
-            f = function(fr, fs, proto) {
+
+            f = function(fr, fs, proto, iwl) {
                 // if (m && fr && fr.push) {
                 //     Y.log('concat: ' + fs);
                 //     fr.concat(fs);
@@ -737,14 +738,14 @@ YUI.add("core", function(Y) {
                     // if (proto || ov || Y.object.owns(fs, i)) {
 
                     // check white list if it was supplied
-                    if (!w || (i in w)) {
+                    if (!w || iwl || (i in w)) {
                         // if the receiver has this property, it is an object,
                         // and merge is specified, merge the two objects.
                         if (m && L.isObject(fr[i])) {
                             // Y.log('recurse: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i]); // recursive
+                            f(fr[i], fs[i], proto, true); // recursive
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
                         } else if (ov || !fr[i]) {

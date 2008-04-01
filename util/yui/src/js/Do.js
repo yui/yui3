@@ -15,7 +15,7 @@ YUI.add("aop", function(Y) {
                 var a = [fn, c].concat(Y.array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(BEFORE, f, obj, sFn, c);
+            this._inject(BEFORE, f, obj, sFn);
         },
 
         // if 'c' context is supplied, apply remaining args to callback
@@ -25,7 +25,7 @@ YUI.add("aop", function(Y) {
                 var a = [fn, c].concat(Y.array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(AFTER, f, obj, sFn, c);
+            this._inject(AFTER, f, obj, sFn);
         },
 
         _inject: function(when, fn, obj, sFn) {

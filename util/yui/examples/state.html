@@ -68,6 +68,48 @@ YUI().use('state', function(Y) {
     });
 
     Y.log("myprop list: " + Y.lang.dump(configs.list()));
+
+
+            var Y = YUI();
+
+            function Main() {
+            }
+
+            Main.NAME = "main";
+
+            Main.ATTRS = {
+                mainA : {
+                    value:"mainA"
+                },
+                mainB : {
+                    value:"mainB"
+                }
+            }
+
+            Main.PLUGINS = [
+                "mainplugin"
+            ];
+
+            function Aggr() {
+            }
+
+            Aggr.NAME = "aggr";
+
+            Aggr.ATTRS = {
+                aggrA : {
+                    value:"aggrA"
+                }
+            };
+            
+            Aggr.PLUGINS = [
+                "aggplugin"
+            ];
+
+            Y.aggregate(Main, Aggr, false, ["ATTRS", "PLUGINS"]);
+
+            console.log(Main.ATTRS);
+            console.log(Main.PLUGINS);
+
 });
 
 
