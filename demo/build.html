@@ -8,6 +8,7 @@
     <script type="text/javascript" src="../util/plugin/src/js/Plugin.js"></script>
     
     <script type="text/javascript">
+    (function() {
         var Y = YUI().use("att", "base", "plugin");
 
         // ----- Main Class -----
@@ -61,6 +62,7 @@
         Y.extend(ExtOnePlugin, Y.Plugin);
 
         function ExtOne() {}
+
         ExtOne.NAME = "extone";
 
         ExtOne.ATTRS = {
@@ -99,6 +101,7 @@
         Y.extend(ExtTwoPlugin, Y.Plugin);
 
         function ExtTwo() {}
+
         ExtTwo.NAME = "exttwo";
 
         ExtTwo.ATTRS = {
@@ -151,7 +154,10 @@
         d.methodF();
 
         Y.log("d instanceof Main:" + (d instanceof Main));
+        Y.log("d instanceof CustMain:" + (d instanceof CustMain));
+        Y.log("d instanceof Main:" + (d instanceof Y.Base));
 
+    })();
     </script>
 </head>
 <body>

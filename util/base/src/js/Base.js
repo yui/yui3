@@ -22,22 +22,22 @@ YUI.add('base', function(Y) {
 
     Y.CANCEL = 'yui:cancel',
 
-
     // TODO: We could have the entry point be something other than initializer, for example initExt.
     // Thought initializer would provide symmetry with Base development.
     // Constructor maybe suitable also. Would avoid backup/restore step
-    
-    // TODO: Do we need to break Array/Object references
     Base.build = function(main, features) {
 
         var newClass = Base.build._getTemplate(main),
             key = main.NAME;
 
+        // - Aggregate KNOWN Static-to-Static
         // - Copy Prototype-to-Prototype
         // - Copy Static-to-Static
         // - Add feature classes
+        Y.aggregate(newClass, main, false, newClass._build.aggregates);
         Y.augment(newClass, main);
         Y.mix(newClass, main);
+
         Y.each(features, function(featureClass) {
 
             // - Backup initializer.
@@ -46,10 +46,7 @@ YUI.add('base', function(Y) {
                 delete featureClass.prototype.initializer;
             }
 
-            // - Aggregate KNOWN Static-to-Static
-            // - Copy Prototype-to-Prototype
-            // - Copy other Static-to-Static (no overwrite or whitelist, so known aggregates should not get blown away)
-            Y.aggregate(newClass, featureClass, false, Base.build._aggregates);
+            Y.aggregate(newClass, featureClass, false, newClass._build.aggregates);
             Y.augment(newClass, featureClass);
             Y.mix(newClass, featureClass);
 
@@ -63,18 +60,16 @@ YUI.add('base', function(Y) {
             newClass.NAME = key;
         });
 
-        // Use to cache later, for Y.create
+        // Use to cache later, for Y.create if required
         newClass._build.id = key;
+        newClass.prototype.constructor = newClass;
 
         return newClass;
     };
 
-    Base.build._aggregates = ['ATTRS', 'PLUGINS', 'CLASSNAMES'];
-
     Base.build._getTemplate = function(main) {
 
         function BuiltClass(){
-            this.constructor = BuiltClass;
             main.apply(this, arguments);
 
             var inits = BuiltClass._build.inits;
@@ -85,9 +80,14 @@ YUI.add('base', function(Y) {
             return this;
         };
 
+        BuiltClass.PLUGINS = [];
+        BuiltClass.ATTRS = {};
+        BuiltClass.CLASSNAMES = {};
+
         BuiltClass._build = {
             id : null,
-            inits : []
+            inits : [],
+            aggregates : ['ATTRS', 'PLUGINS', 'CLASSNAMES']
         }
 
         return BuiltClass;
@@ -97,7 +97,11 @@ YUI.add('base', function(Y) {
         // TODO: allow just Base.create(arg1, ar2, etc)?
         var c = Y.Base.build(main, features),
             cArgs = Y.array(arguments, 2, true);
-        return c.apply({}.prototype = c.prototype, cArgs);
+
+        function F(){};
+        F.prototype = c.prototype;
+
+        return c.apply(new F(), cArgs);
     };
 
     /* No default attributes for Base */
