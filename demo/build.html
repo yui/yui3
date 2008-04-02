@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Base.build</title>
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../util/attribute/src/js/Attribute.js"></script>
+    <script type="text/javascript" src="../util/base/src/js/Base.js"></script>
+    <script type="text/javascript" src="../util/plugin/src/js/Plugin.js"></script>
+    
+    <script type="text/javascript">
+        var Y = YUI().use("att", "base", "plugin");
+
+        // ----- Main Class -----
+
+        function MainPlugin() {}
+
+        MainPlugin.NS = "mainplugin";
+        MainPlugin.NAME = "mainplugin";
+        Y.extend(MainPlugin, Y.Plugin);
+
+        function Main(config) {
+            Main.superclass.constructor.apply(this, arguments);
+        }
+
+        Main.NAME = "main";
+
+        Main.ATTRS = {
+            mainA : "mainA",
+            mainB : "mainB"
+        };
+
+        Main.CLASSNAMES = {
+            main: "yui-main"
+        };
+
+        Main.PLUGINS = [
+            MainPlugin
+        ];
+
+        Main.MAIN_CONSTANT;
+
+        Y.extend(Main, Y.Base, {
+            methodA : function() {
+                Y.log("methodA called - Attr value:" + this.get("mainA"));
+            },
+
+            methodB : function() {
+                Y.log("methodB called - Attr value:" + this.get("mainB"));
+            },
+
+            initializer : function() {
+                Y.log("Main initializer");
+            }
+        });
+
+        // ----- ExtOne --
+
+        function ExtOnePlugin() {}
+        ExtOnePlugin.NS = "extoneplugin";
+        ExtOnePlugin.NAME = "extoneplugin";
+        Y.extend(ExtOnePlugin, Y.Plugin);
+
+        function ExtOne() {}
+        ExtOne.NAME = "extone";
+
+        ExtOne.ATTRS = {
+            extOne : "extOne"
+        };
+
+        ExtOne.CLASSNAMES = {
+            extOne : "yui-extone"
+        };
+
+        ExtOne.PLUGINS = [
+            ExtOnePlugin
+        ];
+
+        ExtOne.EXTONE_CONSTANT;
+
+        ExtOne.prototype = {
+            methodC : function() {
+                Y.log("methodC called - Attr value:" + this.get("extOne"));
+            },
+
+            methodD : function() {
+                Y.log("methodB called - Attr value:" + this.get("extOne"));
+            },
+
+            initializer : function() {
+                Y.log("ExtOne initializer");
+            }
+        };
+
+        // ----- ExtTwo --
+
+        function ExtTwoPlugin() {}
+        ExtTwoPlugin.NS = "exttwoplugin";
+        ExtTwoPlugin.NAME = "exttwoplugin";
+        Y.extend(ExtTwoPlugin, Y.Plugin);
+
+        function ExtTwo() {}
+        ExtTwo.NAME = "exttwo";
+
+        ExtTwo.ATTRS = {
+            extTwo : "extTwo"
+        };
+
+        ExtTwo.CLASSNAMES = {
+            extTwo : "yui-exttwo"
+        };
+
+        ExtTwo.PLUGINS = [
+            ExtTwoPlugin
+        ];
+
+        ExtTwo.EXTTWO_CONSTANT;
+
+        ExtTwo.prototype = {
+            methodE : function() {
+                Y.log("methodE called - Attr value:" + this.get("extTwo"));
+            },
+
+            methodF : function() {
+                Y.log("methodF called - Attr value:" + this.get("extTwo"));
+            },
+
+            initializer : function() {
+                Y.log("ExtTwo initializer");
+            }
+        };
+
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo]);
+        var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
+        c.methodA();
+        c.methodB();
+        c.methodC();
+        c.methodD();
+        c.methodE();
+        c.methodF();
+
+        Y.log("c instanceof Main:" + (c instanceof Main));
+        Y.log("c instanceof CustMain:" + (c instanceof CustMain));
+        Y.log("c instanceof Base:" + (c instanceof Y.Base));
+
+        var d = CustMain.create(Main, [ExtOne, ExtTwo], {mainB: "custMainB", extTwo: "custExtTwo"});
+        d.methodA();
+        d.methodB();
+        d.methodC();
+        d.methodD();
+        d.methodE();
+        d.methodF();
+
+        Y.log("d instanceof Main:" + (d instanceof Main));
+
+    </script>
+</head>
+<body>
+</body>
+</html>
