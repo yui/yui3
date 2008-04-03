@@ -1,0 +1,125 @@
+/*
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+*/
+/*
+	TODO will need to remove settings on HTML since we can't namespace it.
+	TODO with the prefix, should I group by selector or property for weight savings?
+*/
+html{
+	color:#000;
+	background:#FFF;
+}
+/*
+	TODO remove settings on BODY since we can't namespace it.
+*/
+/*
+	TODO test putting a class on HEAD.
+		- Fails on FF. 
+*/
+body,
+.yui-reset div,
+.yui-reset dl,
+.yui-reset dt,
+.yui-reset dd,
+.yui-reset ul,
+.yui-reset ol,
+.yui-reset li,
+.yui-reset h1,
+.yui-reset h2,
+.yui-reset h3,
+.yui-reset h4,
+.yui-reset h5,
+.yui-reset h6,
+.yui-reset pre,
+.yui-reset code,
+.yui-reset form,
+.yui-reset fieldset,
+.yui-reset legend,
+.yui-reset input,
+.yui-reset textarea,
+.yui-reset p,
+.yui-reset blockquote,
+.yui-reset th,
+.yui-reset td {
+	margin:0;
+	padding:0;
+}
+.yui-reset table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+.yui-reset fieldset,
+.yui-reset img {
+	border:0;
+}
+/*
+	TODO think about hanlding inheritence differently, maybe letting IE6 fail a bit...
+*/
+.yui-reset address,
+.yui-reset caption,
+.yui-reset cite,
+.yui-reset code,
+.yui-reset dfn,
+.yui-reset em,
+.yui-reset strong,
+.yui-reset th,
+.yui-reset var {
+	font-style:normal;
+	font-weight:normal;
+}
+/*
+	TODO Figure out where this list-style rule is best set. Hedger has a request to investigate.
+*/
+.yui-reset li {
+	list-style:none;
+}
+
+.yui-reset caption,
+.yui-reset th {
+	text-align:left;
+}
+.yui-reset h1,
+.yui-reset h2,
+.yui-reset h3,
+.yui-reset h4,
+.yui-reset h5,
+.yui-reset h6 {
+	font-size:100%;
+	font-weight:normal;
+}
+.yui-reset q:before,
+.yui-reset q:after {
+	content:'';
+}
+.yui-reset abbr,
+.yui-reset acronym {
+	border:0;
+	font-variant:normal;
+}
+/* to preserve line-height and selector appearance */
+.yui-reset sup {
+	vertical-align:text-top;
+}
+.yui-reset sub {
+	vertical-align:text-bottom;
+}
+.yui-reset input,
+.yui-reset textarea,
+.yui-reset select {
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:inherit;
+}
+/*to enable resizing for IE*/
+.yui-reset input,
+.yui-reset textarea,
+.yui-reset select {
+	*font-size:100%;
+}
+/*because legend doesn't inherit in IE */
+.yui-reset legend {
+	color:#000;
+}
