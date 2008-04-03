@@ -3,6 +3,8 @@ YUI.add('base', function(Y) {
     var L = Y.lang,
         O = Y.object;
 
+    Y.CANCEL = 'yui:cancel';
+
     /**
      * Provides a base class for managed attribute based 
      * objects, which automates chaining of init and destroy
@@ -20,86 +22,108 @@ YUI.add('base', function(Y) {
     Base.NAME = 'base';
     Base._instances = {};
 
-    Y.CANCEL = 'yui:cancel',
+    Base.build = function(main, features, aggregates, methods) {
 
-    // TODO: We could have the entry point be something other than initializer, for example initExt.
-    // Thought initializer would provide symmetry with Base development.
-    // Constructor maybe suitable also. Would avoid backup/restore step
-    Base.build = function(main, features) {
-
-        var newClass = Base.build._getTemplate(main),
+        var newClass = Base.build._getTemplate(main, aggregates),
             key = main.NAME;
 
-        // - Aggregate KNOWN Static-to-Static
-        // - Copy Prototype-to-Prototype
-        // - Copy Static-to-Static
-        // - Add feature classes
-        Y.aggregate(newClass, main, false, newClass._build.aggregates);
-        Y.augment(newClass, main);
-        Y.mix(newClass, main);
+        features = features || [];
+        aggregates = aggregates || [];
 
-        Y.each(features, function(featureClass) {
+        features.splice(0, 0, main);
+        aggregates.splice(0, 0, "ATTRS", "PLUGINS", "CLASSNAMES");
 
-            // - Backup initializer.
-            if (featureClass.prototype.initializer) {
-                var initializer = featureClass.prototype.initializer;
-                delete featureClass.prototype.initializer;
+        // Statics
+        var l = features.length;
+        for (var i = 0; i < l; i++) {
+            var featureClass = features[i];
+
+            // Remove and backup aggregates, since we don't have 
+            // blacklist support for mix (we don't want to mix the aggregates)
+            if (aggregates) {
+                var temp = {};
+                for (var j = 0; j < aggregates.length; j++) {
+                    var val = aggregates[j];
+                    if (O.owns(featureClass, val)) {
+                        temp[val] = featureClass[val];
+                        delete featureClass[val];
+                    }
+                }
             }
 
-            Y.aggregate(newClass, featureClass, false, newClass._build.aggregates);
-            Y.augment(newClass, featureClass);
-            Y.mix(newClass, featureClass);
+            Y.mix(newClass, featureClass, true);
+            Y.aggregate(newClass, temp);
+            Y.mix(featureClass, temp); // Restore aggregates to feature class
 
-            // - Restore initializer
-            if (initializer) {
-                newClass._build.inits.push(initializer);
-                featureClass.prototype.initializer = initializer; 
-            }
+            // Store stack of impl classes, starting with main at idx 0
+            newClass._build.f.push(featureClass);
 
-            key = key + ":" + featureClass.NAME;
-            newClass.NAME = key;
-        });
+            // Used for Y.create to cache later if required.
+            key = key + ":" + Y.stamp(featureClass);
+        }
 
-        // Use to cache later, for Y.create if required
+        // Prototypes, need to do these after all Y.mix(.., .., true).
+        for (i = 0; i < l; i++) {
+            Y.augment(newClass, features[i], true);
+        }
+
         newClass._build.id = key;
+        newClass.NAME = main.NAME;
+
+        newClass.prototype.implements = Base.build._impl;
         newClass.prototype.constructor = newClass;
 
         return newClass;
     };
 
-    Base.build._getTemplate = function(main) {
+    Base.build._getTemplate = function(main, aggregates) {
 
-        function BuiltClass(){
-            main.apply(this, arguments);
-
-            var inits = BuiltClass._build.inits;
-            for (var i = 0; i < inits.length; i++) {
-                inits[i].apply(this, arguments);
+        function BuiltClass() {
+            var f = BuiltClass._build.f;
+            for (var i = 0; i < f.length; i++) {
+                f[i].apply(this, arguments);
             }
-
             return this;
-        };
+        }
 
-        BuiltClass.PLUGINS = [];
-        BuiltClass.ATTRS = {};
-        BuiltClass.CLASSNAMES = {};
+        if (aggregates) {
+            for (var i = 0; i < aggregates.length; i++) {
+                var val = aggregates[i];
+                if (O.owns(main, val)) {
+                    BuiltClass[val] = L.isArray(main[val]) ? [] : {};
+                }
+            }
+        }
 
         BuiltClass._build = {
             id : null,
-            inits : [],
-            aggregates : ['ATTRS', 'PLUGINS', 'CLASSNAMES']
-        }
+            f : []
+        };
 
         return BuiltClass;
     };
 
+    Base.build._impl = function (featureClass) {
+        if (this.constructor._build) {
+            var f = this.constructor._build.f,
+                l = f.length;
+
+            for (var i = 0; i < l; i++) {
+                if (f[i] === featureClass) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+
     Base.create = function(main, features, args) { 
-        // TODO: allow just Base.create(arg1, ar2, etc)?
         var c = Y.Base.build(main, features),
             cArgs = Y.array(arguments, 2, true);
 
         function F(){};
         F.prototype = c.prototype;
+        Y.mix(F, c);
 
         return c.apply(new F(), cArgs);
     };

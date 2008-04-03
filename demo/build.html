@@ -61,7 +61,9 @@
         ExtOnePlugin.NAME = "extoneplugin";
         Y.extend(ExtOnePlugin, Y.Plugin);
 
-        function ExtOne() {}
+        function ExtOne() {
+            Y.log("ExtOne initializer");
+        }
 
         ExtOne.NAME = "extone";
 
@@ -86,10 +88,6 @@
 
             methodD : function() {
                 Y.log("methodB called - Attr value:" + this.get("extOne"));
-            },
-
-            initializer : function() {
-                Y.log("ExtOne initializer");
             }
         };
 
@@ -100,7 +98,9 @@
         ExtTwoPlugin.NAME = "exttwoplugin";
         Y.extend(ExtTwoPlugin, Y.Plugin);
 
-        function ExtTwo() {}
+        function ExtTwo() {
+            Y.log("ExtTwo initializer");
+        }
 
         ExtTwo.NAME = "exttwo";
 
@@ -126,13 +126,9 @@
             methodF : function() {
                 Y.log("methodF called - Attr value:" + this.get("extTwo"));
             },
-
-            initializer : function() {
-                Y.log("ExtTwo initializer");
-            }
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo]);
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], ["ATTRS", "CLASSNAMES", "PLUGINS"]);
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();
@@ -145,7 +141,7 @@
         Y.log("c instanceof CustMain:" + (c instanceof CustMain));
         Y.log("c instanceof Base:" + (c instanceof Y.Base));
 
-        var d = CustMain.create(Main, [ExtOne, ExtTwo], {mainB: "custMainB", extTwo: "custExtTwo"});
+        var d = Y.Base.create(Main, [ExtOne, ExtTwo], {mainB: "custMainB", extTwo: "custExtTwo"});
         d.methodA();
         d.methodB();
         d.methodC();
@@ -156,6 +152,13 @@
         Y.log("d instanceof Main:" + (d instanceof Main));
         Y.log("d instanceof CustMain:" + (d instanceof CustMain));
         Y.log("d instanceof Main:" + (d instanceof Y.Base));
+
+
+        Y.log("d.implements(Main):" + (d.implements(Main)));
+        Y.log("d.implements(ExtOne):" + (d.implements(ExtOne)));
+        Y.log("d.implements(ExtTwo):" + (d.implements(ExtTwo)));
+
+        Y.log("d.implements(Y.Base):" + (d.implements(Y.Base)));
 
     })();
     </script>
