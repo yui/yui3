@@ -22,12 +22,12 @@ YUI.add('base', function(Y) {
     Base.NAME = 'base';
     Base._instances = {};
 
-    Base.build = function(main, features, aggregates/*, TODO: methods */) {
+    Base.build = function(main, features, aggregates, methods) {
 
         var newClass = Base.build._getTemplate(main),
             key = main.NAME,
             featureClass,
-            aggwl,
+            method,
             i,
             fl,
             al;
@@ -51,6 +51,9 @@ YUI.add('base', function(Y) {
             key = key + ":" + Y.stamp(featureClass);
         }
 
+        // Revert prototype copy, due to mix.
+        newClass.prototype = {};
+
         // Prototypes, Aggregates - need to redo these after all Y.mix(.., .., true).
         if (aggregates) {
             for (i = 0; i < al; i++) {
@@ -64,9 +67,17 @@ YUI.add('base', function(Y) {
         for (i = 0; i < fl; i++) {
             featureClass = features[i];
             if (aggregates) {
-                Y.aggregate(newClass, featureClass, true, aggregates);
+                Y.aggregate(newClass, featureClass, false, aggregates);
             }
             Y.augment(newClass, featureClass, true);
+        }
+
+        // Methods
+        if (methods) {
+            for (i = 0; i < methods.length; i++) {
+                method = methods[i];
+                newClass.prototype[method] = Base.build._wrappedFn(method);
+            }
         }
 
         newClass._build.id = key;
@@ -100,15 +111,35 @@ YUI.add('base', function(Y) {
         if (this.constructor._build) {
 
             var f = this.constructor._build.f,
-                l = f.length;
+                l = f.length,
+                i;
 
-            for (var i = 0; i < l; i++) {
+            for (i = 0; i < l; i++) {
                 if (f[i] === featureClass) {
                     return true;
                 }
             }
         }
         return false;
+    };
+
+    Base.build._wrappedFn = function(method) {
+        return function() {
+    
+            var f = this.constructor._build.f,
+                l = f.length,
+                fn,
+                i,
+                r;
+
+            for (i = 0; i < l; i++) {
+                fn = f[i].prototype[method];
+                if (fn) {
+                    // TODO: Can we do anything meaningful with return values?
+                    r = fn.apply(this, arguments);
+                }
+            }
+        };
     };
 
     Base.create = function(main, features, args) { 

@@ -46,7 +46,7 @@
             },
 
             methodB : function() {
-                Y.log("methodB called - Attr value:" + this.get("mainB"));
+                Y.log("Main methodB called - Attr value:" + this.get("mainB"));
             },
 
             initializer : function() {
@@ -82,6 +82,10 @@
         ExtOne.EXTONE_CONSTANT = "EXTONE_CONSTANT";
 
         ExtOne.prototype = {
+            methodB : function() {
+                Y.log("ExtOne methodB called - Attr value:" + this.get("extOne"));
+            },
+
             methodC : function() {
                 Y.log("methodC called - Attr value:" + this.get("extOne"));
             },
@@ -119,16 +123,21 @@
         ExtTwo.EXTTWO_CONSTANT = "EXTTWO_CONSTANT";
 
         ExtTwo.prototype = {
+
+            methodB : function() {
+                Y.log("ExtTwo methodB called - Attr value:" + this.get("extTwo"));
+            },
+
             methodE : function() {
                 Y.log("methodE called - Attr value:" + this.get("extTwo"));
             },
 
             methodF : function() {
                 Y.log("methodF called - Attr value:" + this.get("extTwo"));
-            },
+            }
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo]);
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], null, ["methodB"]);
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();
@@ -140,6 +149,10 @@
         Y.log("c instanceof Main:" + (c instanceof Main));
         Y.log("c instanceof CustMain:" + (c instanceof CustMain));
         Y.log("c instanceof Base:" + (c instanceof Y.Base));
+
+        Y.log("c.implements(Main):" + (c.implements(Main)));
+        Y.log("c.implements(ExtOne):" + (c.implements(ExtOne)));
+        Y.log("c.implements(ExtTwo):" + (c.implements(ExtTwo)));
 
         var d = Y.Base.create(Main, [ExtOne, ExtTwo], {mainB: "custMainB", extTwo: "custExtTwo"});
         d.methodA();
@@ -158,7 +171,6 @@
         Y.log("d.implements(ExtTwo):" + (d.implements(ExtTwo)));
 
         Y.log("d.implements(Y.Base):" + (d.implements(Y.Base)));
-
     })();
     </script>
 </head>
