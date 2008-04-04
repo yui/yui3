@@ -79,7 +79,7 @@
             ExtOnePlugin
         ];
 
-        ExtOne.EXTONE_CONSTANT;
+        ExtOne.EXTONE_CONSTANT = "EXTONE_CONSTANT";
 
         ExtOne.prototype = {
             methodC : function() {
@@ -116,7 +116,7 @@
             ExtTwoPlugin
         ];
 
-        ExtTwo.EXTTWO_CONSTANT;
+        ExtTwo.EXTTWO_CONSTANT = "EXTTWO_CONSTANT";
 
         ExtTwo.prototype = {
             methodE : function() {
@@ -128,7 +128,7 @@
             },
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], ["ATTRS", "CLASSNAMES", "PLUGINS"]);
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo]);
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();
@@ -152,7 +152,6 @@
         Y.log("d instanceof Main:" + (d instanceof Main));
         Y.log("d instanceof CustMain:" + (d instanceof CustMain));
         Y.log("d instanceof Main:" + (d instanceof Y.Base));
-
 
         Y.log("d.implements(Main):" + (d.implements(Main)));
         Y.log("d.implements(ExtOne):" + (d.implements(ExtOne)));

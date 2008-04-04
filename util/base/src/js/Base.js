@@ -22,10 +22,15 @@ YUI.add('base', function(Y) {
     Base.NAME = 'base';
     Base._instances = {};
 
-    Base.build = function(main, features, aggregates, methods) {
+    Base.build = function(main, features, aggregates/*, TODO: methods */) {
 
-        var newClass = Base.build._getTemplate(main, aggregates),
-            key = main.NAME;
+        var newClass = Base.build._getTemplate(main),
+            key = main.NAME,
+            featureClass,
+            aggwl,
+            i,
+            fl,
+            al;
 
         features = features || [];
         aggregates = aggregates || [];
@@ -33,38 +38,35 @@ YUI.add('base', function(Y) {
         features.splice(0, 0, main);
         aggregates.splice(0, 0, "ATTRS", "PLUGINS", "CLASSNAMES");
 
-        // Statics
-        var l = features.length;
-        for (var i = 0; i < l; i++) {
-            var featureClass = features[i];
+        fl = features.length;
+        al = aggregates.length;
 
-            // Remove and backup aggregates, since we don't have 
-            // blacklist support for mix (we don't want to mix the aggregates)
-            if (aggregates) {
-                var temp = {};
-                for (var j = 0; j < aggregates.length; j++) {
-                    var val = aggregates[j];
-                    if (O.owns(featureClass, val)) {
-                        temp[val] = featureClass[val];
-                        delete featureClass[val];
-                    }
-                }
-            }
+        // Statics
+        for (i = 0; i < fl; i++) {
+            featureClass = features[i];
 
             Y.mix(newClass, featureClass, true);
-            Y.aggregate(newClass, temp);
-            Y.mix(featureClass, temp); // Restore aggregates to feature class
 
-            // Store stack of impl classes, starting with main at idx 0
             newClass._build.f.push(featureClass);
-
-            // Used for Y.create to cache later if required.
             key = key + ":" + Y.stamp(featureClass);
         }
 
-        // Prototypes, need to do these after all Y.mix(.., .., true).
-        for (i = 0; i < l; i++) {
-            Y.augment(newClass, features[i], true);
+        // Prototypes, Aggregates - need to redo these after all Y.mix(.., .., true).
+        if (aggregates) {
+            for (i = 0; i < al; i++) {
+                var val = aggregates[i];
+                if (O.owns(main, val)) {
+                    newClass[val] = L.isArray(main[val]) ? [] : {};
+                }
+            }
+        }
+
+        for (i = 0; i < fl; i++) {
+            featureClass = features[i];
+            if (aggregates) {
+                Y.aggregate(newClass, featureClass, true, aggregates);
+            }
+            Y.augment(newClass, featureClass, true);
         }
 
         newClass._build.id = key;
@@ -76,7 +78,7 @@ YUI.add('base', function(Y) {
         return newClass;
     };
 
-    Base.build._getTemplate = function(main, aggregates) {
+    Base.build._getTemplate = function(main) {
 
         function BuiltClass() {
             var f = BuiltClass._build.f;
@@ -84,15 +86,6 @@ YUI.add('base', function(Y) {
                 f[i].apply(this, arguments);
             }
             return this;
-        }
-
-        if (aggregates) {
-            for (var i = 0; i < aggregates.length; i++) {
-                var val = aggregates[i];
-                if (O.owns(main, val)) {
-                    BuiltClass[val] = L.isArray(main[val]) ? [] : {};
-                }
-            }
         }
 
         BuiltClass._build = {
@@ -105,6 +98,7 @@ YUI.add('base', function(Y) {
 
     Base.build._impl = function (featureClass) {
         if (this.constructor._build) {
+
             var f = this.constructor._build.f,
                 l = f.length;
 
