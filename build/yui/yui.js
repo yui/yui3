@@ -1625,14 +1625,7 @@ YUI.add("compat", function(Y) {
     // @todo subscribe register to the module added event to pick
     // modules registered with the new method.
 }, "3.0.0");
-// Temporary wrapper for the 2.x event
-//
-// This will be broken into descrete modules
-//
-// 
-//
-
-YUI.add("event", function(Y) {
+YUI.add("event-custom", function(Y) {
 
     /**
      * The Event.Custom class lets you define events for your application
@@ -2087,6 +2080,9 @@ YUI.add("event", function(Y) {
                ", override: " +  (this.override || "no") + " }";
     };
 
+}, "3.0.0");
+YUI.add("event-dom", function(Y) {
+
     /**
      * The Event Utility provides utilities for managing DOM Events and tools
      * for building event systems
@@ -2096,12 +2092,6 @@ YUI.add("event", function(Y) {
      * @namespace Y
      * @requires yahoo
      */
-
-    // The first instance of Event will win if it is loaded more than once.
-    // @TODO this needs to be changed so that only the state data that needs to
-    // be preserved is kept, while methods are overwritten/added as needed.
-    // This means that the module pattern can't be used.
-    if (!Y.Event) {
 
     /**
      * The event utility provides functions to add and remove event listeners,
@@ -2320,33 +2310,6 @@ YUI.add("event", function(Y) {
                  */
                 lastError: null,
 
-                /**
-                 * Safari detection
-                 * @property isSafari
-                 * @private
-                 * @static
-                 * @deprecated use Y.env.ua.webkit
-                 */
-                isSafari: Y.env.ua.webkit,
-                
-                /**
-                 * webkit version
-                 * @property webkit
-                 * @type string
-                 * @private
-                 * @static
-                 * @deprecated use Y.env.ua.webkit
-                 */
-                webkit: Y.env.ua.webkit,
-                
-                /**
-                 * IE detection 
-                 * @property isIE
-                 * @private
-                 * @static
-                 * @deprecated use Y.env.ua.ie
-                 */
-                isIE: Y.env.ua.ie,
 
                 /**
                  * poll handle
@@ -2541,7 +2504,7 @@ YUI.add("event", function(Y) {
                         return ok;
 
                     } else if (Y.lang.isString(el)) {
-                        var oEl = this.getEl(el);
+                        var oEl = Y.get(el);
                         // If the el argument is a string, we assume it is 
                         // actually the id of the element.  If the page is loaded
                         // we convert el to the actual element, otherwise we 
@@ -2707,8 +2670,8 @@ YUI.add("event", function(Y) {
                  * @private
                  */
                 useLegacyEvent: function(el, sType) {
-                    if (this.webkit && ("click"==sType || "dblclick"==sType)) {
-                        var v = parseInt(this.webkit, 10);
+                    if (Y.ua.webkit && ("click"==sType || "dblclick"==sType)) {
+                        var v = parseInt(Y.ua.webkit, 10);
                         if (!isNaN(v) && v<418) {
                             return true;
                         }
@@ -2737,7 +2700,7 @@ YUI.add("event", function(Y) {
 
                     // The el argument can be a string
                     if (typeof el == "string") {
-                        el = this.getEl(el);
+                        el = Y.get(el);
                     // The el argument can be an array of elements or element ids.
                     } else if ( this._isValidCollection(el)) {
                         var ok = true;
@@ -2828,173 +2791,7 @@ YUI.add("event", function(Y) {
 
                 },
 
-                /**
-                 * Returns the event's target element.  Safari sometimes provides
-                 * a text node, and this is automatically resolved to the text
-                 * node's parent so that it behaves like other browsers.
-                 * @method getTarget
-                 * @param {Event} ev the event
-                 * @param {boolean} resolveTextNode when set to true the target's
-                 *                  parent will be returned if the target is a 
-                 *                  text node.  @deprecated, the text node is
-                 *                  now resolved automatically
-                 * @return {HTMLElement} the event's target
-                 * @static
-                 */
-                getTarget: function(ev, resolveTextNode) {
-                    var t = ev.target || ev.srcElement;
-                    return this.resolveTextNode(t);
-                },
 
-                /**
-                 * In some cases, some browsers will return a text node inside
-                 * the actual element that was targeted.  This normalizes the
-                 * return value for getTarget and getRelatedTarget.
-                 * @method resolveTextNode
-                 * @param {HTMLElement} node node to resolve
-                 * @return {HTMLElement} the normized node
-                 * @static
-                 */
-                resolveTextNode: function(node) {
-                    if (node && 3 == node.nodeType) {
-                        return node.parentNode;
-                    } else {
-                        return node;
-                    }
-                },
-
-                /**
-                 * Returns the event's pageX
-                 * @method getPageX
-                 * @param {Event} ev the event
-                 * @return {int} the event's pageX
-                 * @static
-                 */
-                getPageX: function(ev) {
-                    var x = ev.pageX;
-                    if (!x && 0 !== x) {
-                        x = ev.clientX || 0;
-
-                        if ( this.isIE ) {
-                            x += this._getScrollLeft();
-                        }
-                    }
-
-                    return x;
-                },
-
-                /**
-                 * Returns the event's pageY
-                 * @method getPageY
-                 * @param {Event} ev the event
-                 * @return {int} the event's pageY
-                 * @static
-                 */
-                getPageY: function(ev) {
-                    var y = ev.pageY;
-                    if (!y && 0 !== y) {
-                        y = ev.clientY || 0;
-
-                        if ( this.isIE ) {
-                            y += this._getScrollTop();
-                        }
-                    }
-
-
-                    return y;
-                },
-
-                /**
-                 * Returns the pageX and pageY properties as an indexed array.
-                 * @method getXY
-                 * @param {Event} ev the event
-                 * @return {[x, y]} the pageX and pageY properties of the event
-                 * @static
-                 */
-                getXY: function(ev) {
-                    return [this.getPageX(ev), this.getPageY(ev)];
-                },
-
-                /**
-                 * Returns the event's related target 
-                 * @method getRelatedTarget
-                 * @param {Event} ev the event
-                 * @return {HTMLElement} the event's relatedTarget
-                 * @static
-                 */
-                getRelatedTarget: function(ev) {
-                    var t = ev.relatedTarget;
-                    if (!t) {
-                        if (ev.type == "mouseout") {
-                            t = ev.toElement;
-                        } else if (ev.type == "mouseover") {
-                            t = ev.fromElement;
-                        }
-                    }
-
-                    return this.resolveTextNode(t);
-                },
-
-                /**
-                 * Returns the time of the event.  If the time is not included, the
-                 * event is modified using the current time.
-                 * @method getTime
-                 * @param {Event} ev the event
-                 * @return {Date} the time of the event
-                 * @static
-                 */
-                getTime: function(ev) {
-                    if (!ev.time) {
-                        var t = new Date().getTime();
-                        try {
-                            ev.time = t;
-                        } catch(ex) { 
-                            this.lastError = ex;
-                            return t;
-                        }
-                    }
-
-                    return ev.time;
-                },
-
-                /**
-                 * Convenience method for stopPropagation + preventDefault
-                 * @method stopEvent
-                 * @param {Event} ev the event
-                 * @static
-                 */
-                stopEvent: function(ev) {
-                    this.stopPropagation(ev);
-                    this.preventDefault(ev);
-                },
-
-                /**
-                 * Stops event propagation
-                 * @method stopPropagation
-                 * @param {Event} ev the event
-                 * @static
-                 */
-                stopPropagation: function(ev) {
-                    if (ev.stopPropagation) {
-                        ev.stopPropagation();
-                    } else {
-                        ev.cancelBubble = true;
-                    }
-                },
-
-                /**
-                 * Prevents the default behavior of the event
-                 * @method preventDefault
-                 * @param {Event} ev the event
-                 * @static
-                 */
-                preventDefault: function(ev) {
-                    if (ev.preventDefault) {
-                        ev.preventDefault();
-                    } else {
-                        ev.returnValue = false;
-                    }
-                },
                  
                 /**
                  * Finds the event in the window object, the caller's arguments, or
@@ -3036,7 +2833,7 @@ YUI.add("event", function(Y) {
                     var code = ev.keyCode || ev.charCode || 0;
 
                     // webkit normalization
-                    if (Y.env.ua.webkit && (code in webkitKeymap)) {
+                    if (Y.ua.webkit && (code in webkitKeymap)) {
                         code = webkitKeymap[code];
                     }
                     return code;
@@ -3075,8 +2872,7 @@ YUI.add("event", function(Y) {
                     var id = el.id;
 
                     if (!id) {
-                        id = "yuievtautoid-" + counter;
-                        ++counter;
+                        id = Y.stamp(el);
                         el.id = id;
                     }
 
@@ -3112,17 +2908,6 @@ YUI.add("event", function(Y) {
 
                 },
 
-                /**
-                 * We cache elements bound by id because when the unload event 
-                 * fires, we can no longer use document.getElementById
-                 * @method getEl
-                 * @static
-                 * @private
-                 * @deprecated Elements are not cached any longer
-                 */
-                getEl: function(id) {
-                    return Y.get(id);
-                },
 
                 /**
                  * Custom event the fires when the dom is initially usable
@@ -3140,16 +2925,16 @@ YUI.add("event", function(Y) {
 
                     if (!loadComplete) {
                         loadComplete = true;
-                        var EU = Y.Event;
+                        var E = Y.Event;
 
                         // Just in case DOMReady did not go off for some reason
-                        EU._ready();
+                        E._ready();
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the
                         // the user is more likely to get the onAvailable notifications
                         // before the window load notification
-                        EU._tryPreloadAttach();
+                        E._tryPreloadAttach();
 
                     }
                 },
@@ -3162,15 +2947,15 @@ YUI.add("event", function(Y) {
                  * @private
                  */
                 _ready: function(e) {
-                    var EU = Y.Event;
-                    if (!EU.DOMReady) {
-                        EU.DOMReady=true;
+                    var E = Y.Event;
+                    if (!E.DOMReady) {
+                        E.DOMReady=true;
 
                         // Fire the content ready custom event
-                        EU.DOMReadyEvent.fire();
+                        E.DOMReadyEvent.fire();
 
                         // Remove the DOMContentLoaded (FF/Opera)
-                        EU._simpleRemove(document, "DOMContentLoaded", EU._ready);
+                        E._simpleRemove(document, "DOMContentLoaded", E._ready);
                     }
                 },
 
@@ -3188,7 +2973,7 @@ YUI.add("event", function(Y) {
                         return false;
                     }
 
-                    if (this.isIE) {
+                    if (Y.ua.ie) {
                         // Hold off if DOMReady has not fired and check current
                         // readyState to protect against the IE operation aborted
                         // issue.
@@ -3232,7 +3017,7 @@ YUI.add("event", function(Y) {
                     for (i=0,len=onAvailStack.length; i<len; ++i) {
                         item = onAvailStack[i];
                         if (item && !item.checkReady) {
-                            el = this.getEl(item.id);
+                            el = Y.get(item.id);
                             if (el) {
                                 executeItem(el, item);
                                 onAvailStack[i] = null;
@@ -3246,7 +3031,7 @@ YUI.add("event", function(Y) {
                     for (i=0,len=onAvailStack.length; i<len; ++i) {
                         item = onAvailStack[i];
                         if (item && item.checkReady) {
-                            el = this.getEl(item.id);
+                            el = Y.get(item.id);
 
                             if (el) {
                                 // The element is available, but not necessarily ready
@@ -3290,7 +3075,7 @@ YUI.add("event", function(Y) {
                  * @static
                  */
                 purgeElement: function(el, recurse, sType) {
-                    var oEl = (Y.lang.isString(el)) ? this.getEl(el) : el;
+                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
                     var elListeners = this.getListeners(oEl, sType), i, len;
                     if (elListeners) {
                         for (i=0,len=elListeners.length; i<len ; ++i) {
@@ -3332,7 +3117,7 @@ YUI.add("event", function(Y) {
                         searchLists = [listeners];
                     }
 
-                    var oEl = (Y.lang.isString(el)) ? this.getEl(el) : el;
+                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
 
                     for (var j=0;j<searchLists.length; j=j+1) {
                         var searchList = searchLists[j];
@@ -3366,21 +3151,21 @@ YUI.add("event", function(Y) {
                  */
                 _unload: function(e) {
 
-                    var EU = Y.Event, i, j, l, len, index;
+                    var E = Y.Event, i, j, l, len, index;
 
                     // execute and clear stored unload listeners
                     for (i=0,len=unloadListeners.length; i<len; ++i) {
                         l = unloadListeners[i];
                         if (l) {
                             var context = Y;
-                            if (l[EU.ADJ_SCOPE]) {
-                                if (l[EU.ADJ_SCOPE] === true) {
-                                    context = l[EU.UNLOAD_OBJ];
+                            if (l[E.ADJ_SCOPE]) {
+                                if (l[E.ADJ_SCOPE] === true) {
+                                    context = l[E.UNLOAD_OBJ];
                                 } else {
-                                    context = l[EU.ADJ_SCOPE];
+                                    context = l[E.ADJ_SCOPE];
                                 }
                             }
-                            l[EU.FN].call(context, EU.getEvent(e, l[EU.EL]), l[EU.UNLOAD_OBJ] );
+                            l[E.FN].call(context, E.getEvent(e, l[E.EL]), l[E.UNLOAD_OBJ] );
                             unloadListeners[i] = null;
                             l=null;
                             context=null;
@@ -3390,7 +3175,7 @@ YUI.add("event", function(Y) {
                     unloadListeners = null;
 
                     // Remove listeners to handle IE memory leaks
-                    //if (Y.env.ua.ie && listeners && listeners.length > 0) {
+                    //if (Y.ua.ie && listeners && listeners.length > 0) {
                     
                     // 2.5.0 listeners are removed for all browsers again.  FireFox preserves
                     // at least some listeners between page refreshes, potentially causing
@@ -3402,7 +3187,7 @@ YUI.add("event", function(Y) {
                             index = j-1;
                             l = listeners[index];
                             if (l) {
-                                EU.removeListener(l[EU.EL], l[EU.TYPE], l[EU.FN], index);
+                                E.removeListener(l[E.EL], l[E.TYPE], l[E.FN], index);
                             } 
                             j--;
                         }
@@ -3411,47 +3196,10 @@ YUI.add("event", function(Y) {
 
                     legacyEvents = null;
 
-                    EU._simpleRemove(window, "unload", EU._unload);
+                    E._simpleRemove(window, "unload", E._unload);
 
                 },
 
-                /**
-                 * Returns scrollLeft
-                 * @method _getScrollLeft
-                 * @static
-                 * @private
-                 */
-                _getScrollLeft: function() {
-                    return this._getScroll()[1];
-                },
-
-                /**
-                 * Returns scrollTop
-                 * @method _getScrollTop
-                 * @static
-                 * @private
-                 */
-                _getScrollTop: function() {
-                    return this._getScroll()[0];
-                },
-
-                /**
-                 * Returns the scrollTop and scrollLeft.  Used to calculate the 
-                 * pageX and pageY in Internet Explorer
-                 * @method _getScroll
-                 * @static
-                 * @private
-                 */
-                _getScroll: function() {
-                    var dd = document.documentElement, db = document.body;
-                    if (dd && (dd.scrollTop || dd.scrollLeft)) {
-                        return [dd.scrollTop, dd.scrollLeft];
-                    } else if (db) {
-                        return [db.scrollTop, db.scrollLeft];
-                    } else {
-                        return [0, 0];
-                    }
-                },
                 
                 /**
                  * Adds a DOM event directly without the caching, cleanup, context adj, etc
@@ -3506,97 +3254,9 @@ YUI.add("event", function(Y) {
 
         }();
 
-        (function() {
+}, "3.0.0");
 
-            var EU = Y.Event;
-
-            EU.Custom = Y.CustomEvent;
-            EU.Subscriber = Y.Subscriber;
-
-            /**
-             * Y.Event.on is an alias for addListener
-             * @method on
-             * @see addListener
-             * @static
-             */
-            EU.attach = function(type, fn, el, data, context) {
-                return EU.addListener(el, type, fn, data, context);
-            };
-
-            EU.detach = function(type, fn, el, data, context) {
-                return EU.removeListener(el, type, fn, data, context);
-            };
-
-            // only execute DOMReady once
-            if (Y !== YUI) {
-                YUI.Event.onDOMReady(EU._ready);
-            } else {
-
-
-                /////////////////////////////////////////////////////////////
-                // DOMReady
-                // based on work by: Dean Edwards/John Resig/Matthias Miller 
-
-                // Internet Explorer: use the readyState of a defered script.
-                // This isolates what appears to be a safe moment to manipulate
-                // the DOM prior to when the document's readyState suggests
-                // it is safe to do so.
-                if (EU.isIE) {
-
-                    // Process onAvailable/onContentReady items when when the 
-                    // DOM is ready.
-                    Y.Event.onDOMReady(
-                            Y.Event._tryPreloadAttach,
-                            Y.Event, true);
-
-                    EU._dri = setInterval(function() {
-                        var n = document.createElement('p');  
-                        try {
-                            // throws an error if doc is not ready
-                            n.doScroll('left');
-                            clearInterval(EU._dri);
-                            EU._dri = null;
-                            EU._ready();
-                            n = null;
-                        } catch (ex) { 
-                            n = null;
-                        }
-                    }, EU.POLL_INTERVAL); 
-
-                
-                // The document's readyState in Safari currently will
-                // change to loaded/complete before images are loaded.
-                } else if (EU.webkit && EU.webkit < 525) {
-
-                    EU._dri = setInterval(function() {
-                        var rs=document.readyState;
-                        if ("loaded" == rs || "complete" == rs) {
-                            clearInterval(EU._dri);
-                            EU._dri = null;
-                            EU._ready();
-                        }
-                    }, EU.POLL_INTERVAL); 
-
-                // FireFox and Opera: These browsers provide a event for this
-                // moment.  The latest WebKit releases now support this event.
-                } else {
-
-                    EU._simpleAdd(document, "DOMContentLoaded", EU._ready);
-
-                }
-                /////////////////////////////////////////////////////////////
-
-
-                EU._tryPreloadAttach();
-            }
-
-            // for the moment each instance will get its own load/unload listeners
-            EU._simpleAdd(window, "load", EU._load);
-            EU._simpleAdd(window, "unload", EU._unload);
-
-        })();
-
-    }
+YUI.add("event-target", function(Y) {
 
     /**
      * Event.Target is designed to be used with Y.augment to wrap 
@@ -3871,190 +3531,267 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
 
     };
 
-    // TODO **************** KeyListener needs to be completely redone
-
-    (function() {
-        
-        var whitelist = {
-            "altKey"          : 1,
-            "button"          : 1, // we supply
-            "bubbles"         : 1,
-            "cancelable"      : 1,
-            "charCode"        : 1, // we supply
-            "cancelBubble"    : 1,
-            "currentTarget"   : 1,
-            "ctrlKey"         : 1,
-            "clientX"         : 1,
-            "clientY"         : 1,
-            "detail"          : 1, // not fully implemented
-            // "fromElement"     : 1,
-            "keyCode"         : 1,
-            "height"          : 1,
-            "initEvent"       : 1, // need the init events?
-            "initMouseEvent"  : 1,
-            "initUIEvent"     : 1,
-            "layerX"          : 1,
-            "layerY"          : 1,
-            "metaKey"         : 1,
-            "modifiers"       : 1,
-            "offsetX"         : 1,
-            "offsetY"         : 1,
-            "preventDefault"  : 1, // we supply
-            // "reason"          : 1, // IE proprietary
-            // "relatedTarget"   : 1,
-            "returnValue"     : 1,
-            "shiftKey"        : 1,
-            // "srcUrn"          : 1, // IE proprietary
-            // "srcElement"      : 1,
-            // "srcFilter"       : 1, IE proprietary
-            "stopPropagation" : 1, // we supply
-            // "target"          : 1,
-            "timeStamp"       : 1,
-            // "toElement"       : 1,
-            "type"            : 1,
-            // "view"            : 1,
-            "which"           : 1, // we supply
-            "width"           : 1,
-            "x"               : 1,
-            "y"               : 1
-        };
-
-        var webkitKeymap = {
-            63232: 38, // up
-            63233: 40, // down
-            63234: 37, // left
-            63235: 39, // right
-            63276: 33, // page up
-            63277: 34, // page down
-            25: 9      // SHIFT-TAB (Safari provides a different key code in
-                       // this case, even though the shiftKey modifier is set)
-        };
-
-        // return the element facade
-        var wrapNode = function(n) {
-            return n;
-        };
-
-        var resolve = function(n) {
-            try {
-            if (n && 3 == n.nodeType) {
-                n = n.parentNode;
-            } 
-            } catch(ex) { }
-
-            return wrapNode(n);
-        };
-
-        var ua = Y.ua;
-
-        // provide a single event with browser abstractions resolved
-        //
-        // include all properties for both browers?
-        // include only DOM2 spec properties?
-        // provide browser-specific facade?
-        Y.Event.Facade = function(ev, origTarg) {
-
-            // @TODO the document should be the target's owner document
-
-            var e = ev, ot = origTarg, d = document, b = d.body,
-                x = e.pageX, y = e.pageY;
-
-            for (var i in whitelist) {
-                if (Y.object.owns(whitelist, i)) {
-                    this[i] = e[i];
-                }
-            }
-
-            //////////////////////////////////////////////////////
-            // pageX pageY
-
-            if (!x && 0 !== x) {
-                x = e.clientX || 0;
-                y = e.clientX || 0;
-
-                if (ua.ie) {
-                    x += b.scrollLeft;
-                    y += b.scrollTop;
-                }
-            }
-
-            this.pageX = x;
-            this.pageY = y;
-
-            //////////////////////////////////////////////////////
-            // keyCode
-
-            var c = e.keyCode || e.charCode || 0;
-
-            if (ua.webkit && (c in webkitKeymap)) {
-                c = webkitKeymap[c];
-            }
-
-            this.keyCode = c;
-            this.charCode = c;
-
-            //////////////////////////////////////////////////////
-            // time
-
-            this.time = e.time || new Date().getTime();
-
-            //////////////////////////////////////////////////////
-            // targets
-            
-            this.target = resolve(e.target || e.srcElement);
-            this.originalTarget = resolve(e.originalTarget || ot);
-
-            var t = e.relatedTarget;
-            if (!t) {
-                if (e.type == "mouseout") {
-                    t = e.toElement;
-                } else if (e.type == "mouseover") {
-                    t = e.fromElement;
-                }
-            }
-
-            this.relatedTarget = resolve(t);
-            
-            //////////////////////////////////////////////////////
-            // methods
-
-            this.stopPropagation = function() {
-                if (e.stopPropagation) {
-                    e.stopPropagation();
-                } else {
-                    e.cancelBubble = true;
-                }
-            };
-
-            this.preventDefault = function() {
-                if (e.preventDefault) {
-                    e.preventDefault();
-                } else {
-                    e.returnValue = false;
-                }
-            };
-
-            // stop event
-            this.halt = function() {
-                this.stopPropagation();
-                this.preventDefault();
-            };
-
-        };
-
-    })();
-
-    // YUI is an event provider
     Y.mix(Y, Y.Event.Target.prototype);
-    // Y.augment(Y, Y.Event.Target);
-
-
-    // var T = Y.Event.Target;
-    // T.prototype.createEvent = T.prototype.publish;
-    // T.prototype.fireEvent = T.prototype.fire;
 
 }, "3.0.0");
+YUI.add("event-facade", function(Y) {
 
+    var whitelist = {
+        "altKey"          : 1,
+        "button"          : 1, // we supply
+        "bubbles"         : 1,
+        "cancelable"      : 1,
+        "charCode"        : 1, // we supply
+        "cancelBubble"    : 1,
+        "currentTarget"   : 1,
+        "ctrlKey"         : 1,
+        "clientX"         : 1,
+        "clientY"         : 1,
+        "detail"          : 1, // not fully implemented
+        // "fromElement"     : 1,
+        "keyCode"         : 1,
+        "height"          : 1,
+        "initEvent"       : 1, // need the init events?
+        "initMouseEvent"  : 1,
+        "initUIEvent"     : 1,
+        "layerX"          : 1,
+        "layerY"          : 1,
+        "metaKey"         : 1,
+        "modifiers"       : 1,
+        "offsetX"         : 1,
+        "offsetY"         : 1,
+        "preventDefault"  : 1, // we supply
+        // "reason"          : 1, // IE proprietary
+        // "relatedTarget"   : 1,
+        "returnValue"     : 1,
+        "shiftKey"        : 1,
+        // "srcUrn"          : 1, // IE proprietary
+        // "srcElement"      : 1,
+        // "srcFilter"       : 1, IE proprietary
+        "stopPropagation" : 1, // we supply
+        // "target"          : 1,
+        "timeStamp"       : 1,
+        // "toElement"       : 1,
+        "type"            : 1,
+        // "view"            : 1,
+        "which"           : 1, // we supply
+        "width"           : 1,
+        "x"               : 1,
+        "y"               : 1
+    };
+
+    var webkitKeymap = {
+        63232: 38, // up
+        63233: 40, // down
+        63234: 37, // left
+        63235: 39, // right
+        63276: 33, // page up
+        63277: 34, // page down
+        25: 9      // SHIFT-TAB (Safari provides a different key code in
+                   // this case, even though the shiftKey modifier is set)
+    };
+
+    // return the element facade
+    var wrapNode = function(n) {
+        return n;
+    };
+
+    var resolve = function(n) {
+        try {
+        if (n && 3 == n.nodeType) {
+            n = n.parentNode;
+        } 
+        } catch(ex) { }
+
+        return wrapNode(n);
+    };
+
+    var ua = Y.ua;
+
+    // provide a single event with browser abstractions resolved
+    //
+    // include all properties for both browers?
+    // include only DOM2 spec properties?
+    // provide browser-specific facade?
+    Y.Event.Facade = function(ev, origTarg) {
+
+        // @TODO the document should be the target's owner document
+
+        var e = ev, ot = origTarg, d = document, b = d.body,
+            x = e.pageX, y = e.pageY;
+
+        for (var i in whitelist) {
+            if (Y.object.owns(whitelist, i)) {
+                this[i] = e[i];
+            }
+        }
+
+        //////////////////////////////////////////////////////
+        // pageX pageY
+
+        if (!x && 0 !== x) {
+            x = e.clientX || 0;
+            y = e.clientX || 0;
+
+            if (ua.ie) {
+                x += b.scrollLeft;
+                y += b.scrollTop;
+            }
+        }
+
+        this.pageX = x;
+        this.pageY = y;
+
+        //////////////////////////////////////////////////////
+        // keyCode
+
+        var c = e.keyCode || e.charCode || 0;
+
+        if (ua.webkit && (c in webkitKeymap)) {
+            c = webkitKeymap[c];
+        }
+
+        this.keyCode = c;
+        this.charCode = c;
+
+        //////////////////////////////////////////////////////
+        // time
+
+        this.time = e.time || new Date().getTime();
+
+        //////////////////////////////////////////////////////
+        // targets
+        
+        this.target = resolve(e.target || e.srcElement);
+        this.originalTarget = resolve(e.originalTarget || ot);
+
+        var t = e.relatedTarget;
+        if (!t) {
+            if (e.type == "mouseout") {
+                t = e.toElement;
+            } else if (e.type == "mouseover") {
+                t = e.fromElement;
+            }
+        }
+
+        this.relatedTarget = resolve(t);
+        
+        //////////////////////////////////////////////////////
+        // methods
+
+        this.stopPropagation = function() {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else {
+                e.cancelBubble = true;
+            }
+        };
+
+        this.preventDefault = function() {
+            if (e.preventDefault) {
+                e.preventDefault();
+            } else {
+                e.returnValue = false;
+            }
+        };
+
+        // stop event
+        this.halt = function() {
+            this.stopPropagation();
+            this.preventDefault();
+        };
+
+    };
+
+}, "3.0.0");
+YUI.add("event-ready", function(Y) {
+
+    var E = Y.Event;
+
+    E.Custom = Y.CustomEvent;
+    E.Subscriber = Y.Subscriber;
+
+    /**
+     * Y.Event.on is an alias for addListener
+     * @method on
+     * @see addListener
+     * @static
+     */
+    E.attach = function(type, fn, el, data, context) {
+        return E.addListener(el, type, fn, data, context);
+    };
+
+    E.detach = function(type, fn, el, data, context) {
+        return E.removeListener(el, type, fn, data, context);
+    };
+
+    // only execute DOMReady once
+    if (Y !== YUI) {
+        YUI.Event.onDOMReady(E._ready);
+    } else {
+
+
+        /////////////////////////////////////////////////////////////
+        // DOMReady
+        // based on work by: Dean Edwards/John Resig/Matthias Miller 
+
+        // Internet Explorer: use the readyState of a defered script.
+        // This isolates what appears to be a safe moment to manipulate
+        // the DOM prior to when the document's readyState suggests
+        // it is safe to do so.
+        if (Y.ua.ie) {
+
+            // Process onAvailable/onContentReady items when when the 
+            // DOM is ready.
+            Y.Event.onDOMReady(
+                    Y.Event._tryPreloadAttach,
+                    Y.Event, true);
+
+            E._dri = setInterval(function() {
+                var n = document.createElement('p');  
+                try {
+                    // throws an error if doc is not ready
+                    n.doScroll('left');
+                    clearInterval(E._dri);
+                    E._dri = null;
+                    E._ready();
+                    n = null;
+                } catch (ex) { 
+                    n = null;
+                }
+            }, E.POLL_INTERVAL); 
+
+        
+        // The document's readyState in Safari currently will
+        // change to loaded/complete before images are loaded.
+        } else if (Y.ua.webkit && Y.ua.webkit < 525) {
+
+            E._dri = setInterval(function() {
+                var rs=document.readyState;
+                if ("loaded" == rs || "complete" == rs) {
+                    clearInterval(E._dri);
+                    E._dri = null;
+                    E._ready();
+                }
+            }, E.POLL_INTERVAL); 
+
+        // FireFox and Opera: These browsers provide a event for this
+        // moment.  The latest WebKit releases now support this event.
+        } else {
+
+            E._simpleAdd(document, "DOMContentLoaded", E._ready);
+
+        }
+        /////////////////////////////////////////////////////////////
+
+        E._tryPreloadAttach();
+    }
+
+    // for the moment each instance will get its own load/unload listeners
+    E._simpleAdd(window, "load", E._load);
+    E._simpleAdd(window, "unload", E._unload);
+
+}, "3.0.0");
 /**
  * The dom module provides helper methods for manipulating Dom elements.
  * @module dom
@@ -6808,7 +6545,8 @@ YUI.add("yui", function(Y) {
     Y.log(Y.id + ' setup complete) .');
 } , "3.0.0", {
     // the following will be bound automatically when this code is loaded
-    use: ["lang", "array", "core", "object", "ua", "dump", "substitute", "later", "compat", "event", "dom", "io"]
+    use: ["lang", "array", "core", "object", "ua", "dump", "substitute", "later", "compat", 
+          "event-custom", "event-dom", "event-target", "event-facade", "event-ready", "dom", "io"]
 });
 
 // Bind the core modules to the YUI global
