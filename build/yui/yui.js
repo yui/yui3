@@ -596,6 +596,7 @@ YUI.add("core", function(Y) {
     A = Y.array,
     OP = Object.prototype, 
     IEF = ["toString", "valueOf"], 
+    PROTO = 'prototype',
 
     /**
      * IE will not enumerate native functions in a derived object even if the
@@ -735,6 +736,11 @@ YUI.add("core", function(Y) {
                 var arr = m && L.isArray(fr);
 
                 for (var i in fs) { 
+
+                    if (PROTO === i) {
+                        continue;
+                    }
+
                     // Y.log('i: ' + i + ", " + fs[i]);
                     // if (!proto || (i in fs)) {
                     // @TODO deal with the hasownprop issue
