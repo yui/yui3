@@ -293,7 +293,10 @@ YUI.prototype = {
         // a way to enable console logging without the logger
         // component.
         var l = (this.Logger) || ("console" in window) ? console : function(){};
-        if(l && l.log) {
+
+        if (cat && l === console && console[cat]) {
+            console[cat](msg);
+        } else if(l && l.log) {
             l.log(msg, cat || "", src || "");
         } 
 

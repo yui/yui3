@@ -381,17 +381,23 @@ YUI.add("core", function(Y) {
         return this;
     };
 
-    Y.io = function(type, url, callback) {
-
+    /**
+     * Fetch remote content
+     * @method io
+     * @parameter type {string} get, post, script, css
+     * @param c callback for xhr, options for Get
+     */
+    Y.io = function(type, url, c) {
         switch (type) {
             case 'script':
+                return Y.Get.script(url, c);
                 break; // get util
             case 'css': 
+                return Y.Get.css(url, c);
                 break; // get util
             default:
                 return Y.io.asyncRequest.apply(Y.io, arguments);
         }
-
     };
 
     // Overload specs: element/selector?/widget?
