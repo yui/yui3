@@ -166,7 +166,7 @@ YUI.add("core", function(Y) {
                             f(fr[i], fs[i], proto, true); // recursive
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
-                        } else if (ov || !fr[i]) {
+                        } else if (!arr && (ov || !fr[i])) {
                             // Y.log('hash: ' + i);
                             fr[i] = fs[i];
                         // if merge is specified and the receiver is an array,
