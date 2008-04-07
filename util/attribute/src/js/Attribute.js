@@ -1,17 +1,21 @@
 YUI.add('att', function(Y) {
 
+    Y.use('state');
+
     /**
      * Manages attributes
-     * @class AttributeProvider
+     * @class Att
      * @uses YUI.Event.Target
      */
     Y.Att = function() {
-        this._conf = {};
-
-        console.info('att constructor called');
+        //this._conf = {};
+        this._conf = this._conf || new Y.State(); // TODO: fix init order
+        Y.log('att constructor called');
     };
 
     Y.Att.NAME = 'att';
+
+    Y.Att.ATTRS = [];
 
     Y.Att.prototype = {
         /**
@@ -20,9 +24,10 @@ YUI.add('att', function(Y) {
          * @param {String} name The attribute key
          * @param {Object} val (optional) The attribute value
          */
-        add: function(name, val) {
-            this._conf = this._conf || {};
-            this._conf[name] = val;
+        addAtt: function(name, hash) {
+            //this._conf[name] = val;
+            this._conf = this._conf || new Y.State();
+            this._conf.add(name, hash);
         },
 
         /**
@@ -31,8 +36,8 @@ YUI.add('att', function(Y) {
          * @param {String} name The attribute key
          */
         remove: function(name) {
-            this._conf = this._conf || {};
-            delete this._conf[name];
+            //delete this._conf[name];
+            this._conf.remove(name);
         },
 
         /**
@@ -41,8 +46,8 @@ YUI.add('att', function(Y) {
          * @param {String} key The attribute whose value will be returned.
          */
         get: function(name) {
-            this._conf = this._conf || {};
-            return this._conf[name];
+            //return this._conf[name];
+            return this._conf.get(name, 'value');
         },
 
         /**
@@ -53,30 +58,47 @@ YUI.add('att', function(Y) {
          * @param {Boolean} silent Whether or not to suppress change events
          */
         set: function(name, val) {
-            this._conf = this._conf || {};
-            this._before = this._before || {};
-            var e = val, // simple handler only gets incoming val? event facade?
-                b4 = name + 'Change',
+           var type = name + 'Change',
                 conf = this._conf,
                 retVal;
 
-            if (!conf[name]) {
+            if (conf.get(name, 'readonly')) {
+                Y.log('set ' + name + 'failed; attribute is readonly', 'error', 'Att');
+                return this;
+            }
+
+            if (!conf.get(name)) {
                 Y.log('adding new attribute: ' + name, 'info', 'Base');
-                this.add(name, val);
                 //throw new Error('attribute ' + name + ' is undefined');
             }
 
-            if (this._before[b4]) {
-                retVal = this._before[b4](e);
-                if (retVal !== undefined && retVal !== Y.CANCEL) {
-                    Y.log('attribute: ' + name + ' modified by before', 'info', 'Base');
+            var e = new Evt(type, this.get(name), val);
+
+            //retVal = this.fire('before' + name.charAt(0).toUpperCase() + name.substring(1) + 'Change');
+            retVal = _fireBefore.call(this, e);
+
+/* TODO: allow before to change value? (alternative is cancel then set again)
+            if (retVal) {
+                if (retVal !== undefined && e._prevent === false) {
+                    Y.log('attribute: ' + name + ' modified by before listener', 'info', 'Base');
                     val = retVal;
                 }
             }
 
-            if (retVal !== Y.CANCEL) {
-                conf[name] = val;
-                this.fire(name + 'Change', val);
+*/
+            if (!e._cancel && !e._prevent && conf.get(name, 'set')) {
+                retVal = conf.get(name, 'set')(val);
+                if (retVal !== undefined) {
+                    Y.log('attribute: ' + name + ' modified by setter', 'info', 'Base');
+                    val = retVal; // setter can change value
+                }
+            }
+
+            var validator = conf.get(name, 'validator');
+            if (!e._cancel || ( validator && validator.call(this, val) )) {
+                //conf[name] = val;
+                conf.add(name, { value: val });
+                this.fire(type, e);
             }
 
             return this;
@@ -105,7 +127,7 @@ YUI.add('att', function(Y) {
             if (atts) {
                 o = Y.clone(atts);
             } else {
-                Y.each(atts, function(val, att) {
+                Y.each(this._conf.get('value'), function(val, att) {
                     o[att] = val; 
                 });
             }
@@ -113,13 +135,48 @@ YUI.add('att', function(Y) {
             return o;
         },
 
-        before: function(name, fn) { // TODO: get from Event.Target
-            this._before = this._before || {};
-            this._before[name] = fn;
-        }
+        setDefault: function(name, fn) {
+            this.subscribe(name + 'Change', fn);
+        },
+
 
     };
 
+// TODO: rip out when Event supports before
+    var Evt = function(type, prevVal, newVal) {
+        this.type = type;
+        this.prevVal = prevVal;
+        this.newVal = newVal;        
+    };
+
+    var _fireBefore = function(e) {
+        this._before = this._before || {};
+        var list = this._before[e.type] || {};
+
+        for (var i = 0, len = list.length; i < len; ++i) {
+            if (e._cancelled) {
+                break;
+            }
+            list[i].call(this, e);
+        }
+    };
+
+    Evt.prototype = {
+        type: null,
+        _prevent: false,
+        _default: null,
+        _cancel: false,
+
+        stopPropagation: function() {
+            this._cancel = true;
+        },
+
+        preventDefault: function() {
+            this._prevent = true;
+        }
+    };
+
     Y.augment(Y.Att, Y.Event.Target);
+
 }, '3.0.0');
 
