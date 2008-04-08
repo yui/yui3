@@ -1,5 +1,7 @@
 YUI.add('base', function(Y) {
 
+    Y.use('attribute');
+
     var L = Y.lang,
         O = Y.object;
 
@@ -14,7 +16,7 @@ YUI.add('base', function(Y) {
      * @class Base
      * @uses YUI.Attribute.Provider
      */
-    function Base() {
+    var Base = function() {
         Y.log('constructor called', 'life', 'Base');
         this.init.apply(this, arguments);
     };
@@ -83,7 +85,7 @@ YUI.add('base', function(Y) {
         newClass._build.id = key;
         newClass.NAME = main.NAME;
 
-        newClass.prototype.implements = Base.build._impl;
+        newClass.prototype.hasImpl = Base.build._impl;
         newClass.prototype.constructor = newClass;
 
         return newClass;
@@ -146,7 +148,7 @@ YUI.add('base', function(Y) {
         var c = Y.Base.build(main, features),
             cArgs = Y.array(arguments, 2, true);
 
-        function F(){};
+        var F = function (){};
         F.prototype = c.prototype;
         Y.mix(F, c);
 
@@ -175,6 +177,8 @@ YUI.add('base', function(Y) {
 
             if (this.fire('beforeInit') !== Y.Base.CANCEL) {
                 Y.Base._instances[Y.stamp(this)] = this;
+
+                this._before = {};
 
                 this._destroyed = false;
                 this._initialized = false;
@@ -256,7 +260,7 @@ YUI.add('base', function(Y) {
                 var l = handles.length;
                 for (var h = 0; h < l; h++) {
                     h.detach();
-                };
+                }
                 delete e[category];
             }
         },
@@ -294,8 +298,13 @@ YUI.add('base', function(Y) {
             for (var i = 0; i < classes.length; i++) {
                 constructor = classes[i];
                 if (constructor.ATTRS) {
+                    Y.each(conf, function(val, name) {
+                        conf[name] = { value: val }; 
+                    });
+
                     // Clone constructor.ATTRS, to a local copy
-                    attributes = Y.merge(constructor.ATTRS);
+                    //attributes = Y.merge(constructor.ATTRS);
+                    attributes = Y.merge(constructor.ATTRS, conf); // TODO: allow custom attr?
 
                     Y.log('configuring ' + constructor.NAME + 'attributes', 'info', 'Base');
 
@@ -319,7 +328,7 @@ YUI.add('base', function(Y) {
 
                                 val = conf[att];
                             }
-                            this.set(att, val);
+                            this.addAtt(att, val);
                         }
                     }
                 }
@@ -343,8 +352,8 @@ YUI.add('base', function(Y) {
         },
 
         before: function(name, fn) { // TODO: get from Event.Target
-            this._before = this._before || {};
-            this._before[name] = fn;
+            this._before[name] = this._before[name] || [];
+            this._before[name].push(fn);
         },
 
         on: function() { this.subscribe.apply(this, arguments); }, // TODO: get from Event.Target ?
@@ -354,7 +363,7 @@ YUI.add('base', function(Y) {
         }
     };
 
-    Y.augment(Base, Y.Att);
-    //Y.Base = Base.build(Base, [Y.Att]);
-    Y.Base = Base;
+    //Y.augment(Base, Y.Attribute);
+    Y.Base = Base.build(Base, [Y.Attribute]);
+    //Y.Base = Base;
 }, '3.0.0');
