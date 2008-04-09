@@ -1,6 +1,6 @@
 YUI.add('base', function(Y) {
 
-    Y.use('attribute');
+    // Y.use('attribute');
 
     var L = Y.lang,
         O = Y.object;
@@ -46,14 +46,10 @@ YUI.add('base', function(Y) {
         // Statics
         for (i = 0; i < fl; i++) {
             featureClass = features[i];
-
             Y.mix(newClass, featureClass, true);
-
-            newClass._build.f.push(featureClass);
-            key = key + ":" + Y.stamp(featureClass);
         }
 
-        // Revert prototype copy, due to mix.
+        // Fixed in Y.mix
         newClass.prototype = {};
 
         // Prototypes, Aggregates - need to redo these after all Y.mix(.., .., true).
@@ -66,12 +62,20 @@ YUI.add('base', function(Y) {
             }
         }
 
+        newClass._build = {
+            id : null,
+            f : []
+        };
+
         for (i = 0; i < fl; i++) {
             featureClass = features[i];
             if (aggregates) {
                 Y.aggregate(newClass, featureClass, false, aggregates);
             }
             Y.augment(newClass, featureClass, true);
+
+            newClass._build.f.push(featureClass);
+            key = key + ":" + Y.stamp(featureClass);
         }
 
         // Methods
@@ -100,11 +104,12 @@ YUI.add('base', function(Y) {
             }
             return this;
         }
-
+        /*
         BuiltClass._build = {
             id : null,
             f : []
         };
+        */
 
         return BuiltClass;
     };
@@ -148,7 +153,7 @@ YUI.add('base', function(Y) {
         var c = Y.Base.build(main, features),
             cArgs = Y.array(arguments, 2, true);
 
-        var F = function (){};
+        function F(){}
         F.prototype = c.prototype;
         Y.mix(F, c);
 

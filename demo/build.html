@@ -3,13 +3,18 @@
 <head>
     <title>Base.build</title>
     <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../util/yui/src/js/State.js"></script>
+    <script type="text/javascript" src="../build/attribute/attribute.js"></script>
+    <script type="text/javascript" src="../build/base/base.js"></script>
+    <!--
     <script type="text/javascript" src="../util/attribute/src/js/Attribute.js"></script>
     <script type="text/javascript" src="../util/base/src/js/Base.js"></script>
+    -->
     <script type="text/javascript" src="../util/plugin/src/js/Plugin.js"></script>
-    
+
     <script type="text/javascript">
     (function() {
-        var Y = YUI().use("att", "base", "plugin");
+        var Y = YUI().use("state", "attribute", "base", "plugin");
 
         // ----- Main Class -----
 
@@ -150,9 +155,9 @@
         Y.log("c instanceof CustMain:" + (c instanceof CustMain));
         Y.log("c instanceof Base:" + (c instanceof Y.Base));
 
-        Y.log("c.implements(Main):" + (c.implements(Main)));
-        Y.log("c.implements(ExtOne):" + (c.implements(ExtOne)));
-        Y.log("c.implements(ExtTwo):" + (c.implements(ExtTwo)));
+        Y.log("c.hasImpl(Main):" + (c.hasImpl(Main)));
+        Y.log("c.hasImpl(ExtOne):" + (c.hasImpl(ExtOne)));
+        Y.log("c.hasImpl(ExtTwo):" + (c.hasImpl(ExtTwo)));
 
         var d = Y.Base.create(Main, [ExtOne, ExtTwo], {mainB: "custMainB", extTwo: "custExtTwo"});
         d.methodA();
@@ -166,11 +171,11 @@
         Y.log("d instanceof CustMain:" + (d instanceof CustMain));
         Y.log("d instanceof Main:" + (d instanceof Y.Base));
 
-        Y.log("d.implements(Main):" + (d.implements(Main)));
-        Y.log("d.implements(ExtOne):" + (d.implements(ExtOne)));
-        Y.log("d.implements(ExtTwo):" + (d.implements(ExtTwo)));
+        Y.log("d.hasImpl(Main):" + (d.hasImpl(Main)));
+        Y.log("d.hasImpl(ExtOne):" + (d.hasImpl(ExtOne)));
+        Y.log("d.hasImpl(ExtTwo):" + (d.hasImpl(ExtTwo)));
 
-        Y.log("d.implements(Y.Base):" + (d.implements(Y.Base)));
+        Y.log("d.hasImpl(Y.Base):" + (d.hasImpl(Y.Base)));
     })();
     </script>
 </head>

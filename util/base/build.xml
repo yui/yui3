@@ -17,5 +17,13 @@
         <echo>DOES NOT DO ANYTHING CURRENTLY</echo>
     </target>
 
+    <macrodef name="registerversion">
+        <attribute name="module" />
+        <attribute name="classname" />
+        <attribute name="file" />
+        <sequential>
+        </sequential>
+    </macrodef>
+
 </project>
 
