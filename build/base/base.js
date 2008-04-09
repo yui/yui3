@@ -1,6 +1,6 @@
 YUI.add('base', function(Y) {
 
-    // Y.use('attribute');
+    Y.use('attribute');
 
     var L = Y.lang,
         O = Y.object;
@@ -12,7 +12,7 @@ YUI.add('base', function(Y) {
      * objects, which automates chaining of init and destroy
      * lifecycle methods and automatic instantiation of 
      * registered Attributes, through the static ATTR property
-     * 
+     *
      * @class Base
      * @uses YUI.Attribute.Provider
      */
@@ -49,8 +49,8 @@ YUI.add('base', function(Y) {
             Y.mix(newClass, featureClass, true);
         }
 
-        // Fixed in Y.mix
-        newClass.prototype = {};
+        // Fixed in Y.mix?
+        // newClass.prototype = {};
 
         // Prototypes, Aggregates - need to redo these after all Y.mix(.., .., true).
         if (aggregates) {
@@ -70,7 +70,7 @@ YUI.add('base', function(Y) {
         for (i = 0; i < fl; i++) {
             featureClass = features[i];
             if (aggregates) {
-                Y.aggregate(newClass, featureClass, false, aggregates);
+                Y.aggregate(newClass, featureClass, true, aggregates);
             }
             Y.augment(newClass, featureClass, true);
 
@@ -104,6 +104,7 @@ YUI.add('base', function(Y) {
             }
             return this;
         }
+
         /*
         BuiltClass._build = {
             id : null,
@@ -294,7 +295,7 @@ YUI.add('base', function(Y) {
         /**
          * @private
          */
-        _initHierarchy : function(conf) {
+        _initHierarchy : function(userConf) {
             var attributes, 
                 att,
                 constructor,
@@ -303,37 +304,30 @@ YUI.add('base', function(Y) {
             for (var i = 0; i < classes.length; i++) {
                 constructor = classes[i];
                 if (constructor.ATTRS) {
-                    Y.each(conf, function(val, name) {
-                        conf[name] = { value: val }; 
-                    });
-
                     // Clone constructor.ATTRS, to a local copy
-                    //attributes = Y.merge(constructor.ATTRS);
-                    attributes = Y.merge(constructor.ATTRS, conf); // TODO: allow custom attr?
+                    attributes = Y.merge(constructor.ATTRS);
 
                     Y.log('configuring ' + constructor.NAME + 'attributes', 'info', 'Base');
 
                     for (att in attributes) {
                         if (O.owns(attributes, att)) {
-                            var val = attributes[att];
+                            var defConf = attributes[att];
+                            if (userConf && O.owns(userConf, att)) {
 
-                            if (conf && O.owns(conf, att)) {
-
-                                // TODO: COMMENTING, UNTIL COMPLEX ATTR FINALIZED
-                                // if (!L.isObject(attributes[att])) {
-                                //     attributes[att] = {};
-                                // }
+                                // Support attrs which don't have a def config/value supplied
+                                if (!L.isObject(defConf)) {
+                                    defConf = {};
+                                }
 
                                 // Not Cloning/Merging on purpose. Don't want to clone
                                 // references to complex objects [ e.g. a reference to a widget ]
                                 // This means the user has to clone anything coming in, if they 
                                 // want it detached
-
                                 // attributes[att].value = conf[att];
 
-                                val = conf[att];
+                                defConf.value = userConf[att];
                             }
-                            this.addAtt(att, val);
+                            this.addAtt(att, defConf);
                         }
                     }
                 }
