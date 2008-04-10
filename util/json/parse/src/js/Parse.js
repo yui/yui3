@@ -104,7 +104,7 @@ Y.json.parse = function (s,reviver) {
                                  replace(_BRACKETS,''))) {
         // Eval the text into a JavaScript data structure, apply any
         // reviver function, and return
-        return this._revive( eval('(' + s + ')'), reviver );
+        return _revive( eval('(' + s + ')'), reviver );
     }
 
     // The text is not JSON parsable

@@ -6,6 +6,8 @@
  */
 YUI.add('json-stringify',function (Y) {
 
+var isA = Y.lang.isArray;
+
 Y.json = Y.json || {};
 
 Y.mix(Y.json,{
@@ -152,37 +154,31 @@ Y.mix(Y.json,{
                 // Only recurse if we're above depth config
                 if (d > 0) {
                     // Array
-                    if (Y.lang.isArray(o)) {
+                    if (isA(o)) {
                         for (i = o.length - 1; i >= 0; --i) {
                             a[i] = _stringify(o,i,d-1) || 'null';
                         }
 
-                        // remove the array from the stack
-                        pstack.pop();
-
-                        return '[' + a.join(',') + ']';
-
                     // Object
                     } else {
                         // If whitelist provided, take only those keys
-                        w = Y.lang.isArray(w) ? w : Y.object.keys(w||o);
+                        k = isA(w) ? w : Y.object.keys(w||o);
 
-                        for (i = 0, j = 0, len = w.length; i < len; ++i) {
-                            if (typeof w[i] === 'string') {
-                                v = _stringify(o,w[i],d-1);
+                        for (i = 0, j = 0, len = k.length; i < len; ++i) {
+                            if (typeof k[i] === 'string') {
+                                v = _stringify(o,k[i],d-1);
                                 if (v) {
-                                    a[j++] = _string(w[i]) + ':' + v;
+                                    a[j++] = _string(k[i]) + ':' + v;
                                 }
                             }
                         }
-
-                        // Remove the object from processing stack
-                        pstack.pop();
-
-                        return '{' + a.join(',') + '}';
                     }
                 }
 
+                // remove the array from the stack
+                pstack.pop();
+
+                return isA(o) ? '['+a.join(',')+']' : '{'+a.join(',')+'}';
             }
 
             return undefined; // invalid input
@@ -197,4 +193,3 @@ Y.mix(Y.json,{
 });
 
 },'3.0.0');
-
