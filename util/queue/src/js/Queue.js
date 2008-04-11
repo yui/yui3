@@ -1,7 +1,7 @@
 YUI.add('queue',function (Y) {
 
-var _SL = Y.array.Native.slice,
-    _SP = Y.array.Native.splice;
+var _SL = Array.prototype.slice,
+    _SP = Array.prototype.splice;
 
 /**
  * Mechanism to execute a series of callbacks in a non-blocking queue.  Each
@@ -11,13 +11,11 @@ var _SL = Y.array.Native.slice,
  * object literals with the following keys:
  * <ul>
  *    <li><code>fn</code> - {Function} REQUIRED the callback function.</li>
- *    <li><code>args</code> - {Array} parameters to be passed to method as individual arguments.</li>
  *    <li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
  *    <li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
  *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
  * </ul>
  *
- * @namespace YAHOO.util
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
@@ -75,30 +73,22 @@ Y.Queue.prototype = {
         fn = c.fn || c;
 
         if (typeof fn === 'function') {
-            var args = c.args || [],
-                ms   = c.timeout || 0,
+            var ms   = c.timeout || 0,
                 me   = this;
                 
-            if (!(Y.lang.isArray(args))) {
-                args = [args];
-            }
-
             // Execute immediately if the callback timeout is negative.
             if (ms < 0) {
                 this.id = ms;
                 if (c.until) { // test .until condition
                     for (;!c.until();) {
-                        // @todo What scope should the callback be called from?
-                        fn.apply(c,args);
+                        fn();
                     }
                 } else if (c.iterations) { // test .iterations
                     for (;c.iterations-- > 0;) {
-                        // @todo What scope should the callback be called from?
-                        fn.apply(c,args);
+                        fn();
                     }
                 } else { // single shot callback
-                    // @todo What scope should the callback be called from?
-                    fn.apply(c,args);
+                    fn();
                 }
                 this.q.shift();
                 this.id = 0;
@@ -116,8 +106,7 @@ Y.Queue.prototype = {
 
                 // Set to execute after the configured timeout
                 this.id = setTimeout(function () {
-                    // @todo What scope should the callback be called from?
-                    fn.apply(c,args);
+                    fn();
 
                     // Loop unless the Queue was paused from inside the callback
                     if (me.id) {
