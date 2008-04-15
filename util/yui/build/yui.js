@@ -717,6 +717,8 @@ YUI.add("core", function(Y) {
      *        2: prototype to prototype and object props (new augment)
      *        3: prototype to object
      *        4: object to prototype
+     * @param merge {boolean} merge objects instead of overwriting/ignoring
+     * Used by Y.aggregate
      * @return {YUI} the YUI instance
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
@@ -728,23 +730,18 @@ YUI.add("core", function(Y) {
         var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
 
             f = function(fr, fs, proto, iwl) {
-                // if (m && fr && fr.push) {
-                //     Y.log('concat: ' + fs);
-                //     fr.concat(fs);
-                // }
 
                 var arr = m && L.isArray(fr);
 
                 for (var i in fs) { 
 
+                    // We never want to overwrite the prototype
                     if (PROTO === i) {
                         continue;
                     }
 
                     // Y.log('i: ' + i + ", " + fs[i]);
-                    // if (!proto || (i in fs)) {
                     // @TODO deal with the hasownprop issue
-                    // if (proto || ov || Y.object.owns(fs, i)) {
 
                     // check white list if it was supplied
                     if (!w || iwl || (i in w)) {
@@ -757,6 +754,7 @@ YUI.add("core", function(Y) {
                             f(fr[i], fs[i], proto, true); // recursive
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
+                        // @TODO make sure the 'arr' check isn't desructive
                         } else if (!arr && (ov || !fr[i])) {
                             // Y.log('hash: ' + i);
                             fr[i] = fs[i];
@@ -768,7 +766,6 @@ YUI.add("core", function(Y) {
                             fr.push(fs[i]);
                         }
                     }
-                    // }
                 }
 
                 _iefix(fr, fs, w);
@@ -808,8 +805,7 @@ YUI.add("core", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.augment = function(r, s, ov, wl) {
-        Y.mix(r, s, ov, wl, 1);
-        return Y;
+        return Y.mix(r, s, ov, wl, 1);
     };
 
     /**
@@ -827,8 +823,7 @@ YUI.add("core", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.aggregate = function(r, s, ov, wl) {
-        Y.mix(r, s, ov, wl, 0, true);
-        return Y;
+        return Y.mix(r, s, ov, wl, 0, true);
     };
 
     /**
@@ -1049,6 +1044,8 @@ YUI.add("core", function(Y) {
         if (Y.lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         }
+
+        return Y;
     };
 
     /**
@@ -1069,6 +1066,8 @@ YUI.add("core", function(Y) {
         if (Y.lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         }
+
+        return Y;
     };
 
     // Object factory
@@ -1819,11 +1818,12 @@ YUI.add("event-custom", function(Y) {
          *                                   the execution context of the listener.
          *                                   if an object, that object becomes the
          *                                   the execution context.
+         * @return unsubscribe handle
          */
         subscribe: function(fn, obj, override) {
 
             if (!fn) {
-    throw new Error("Invalid callback for subscriber to '" + this.type + "'");
+throw new Error("Invalid callback for CE: '" + this.type + "'");
             }
 
             if (this.subscribeEvent) {
@@ -1833,7 +1833,11 @@ YUI.add("event-custom", function(Y) {
             var s = new Y.Subscriber(fn, obj, override);
 
             if (this.fireOnce && this.fired) {
+                this.lastError = null;
                 this._notify(s);
+                if (this.lastError) {
+                    throw this.lastError;
+                }
             }
 
             this.subscribers.push(s);
@@ -1944,16 +1948,29 @@ YUI.add("event-custom", function(Y) {
                            "info", "Event"                  );
             }
 
+            var errors = [];
+
             for (i=0; i<len; ++i) {
                 var s = this.subscribers[i];
                 if (!s) {
                     rebuild=true;
                 } else {
+                    this.lastError = null;
                     ret = this._notify(s, args);
+                    if (this.lastError) {
+                        errors.push(this.lastError);
+                    }
                     if (!ret) {
                         break;
                     }
                 }
+            }
+
+            this.fired = true;
+
+            if (errors.length) {
+throw new Y.ChainedError('one or more subscribers threw an error: ' +
+                         errors[0].message, errors);
             }
 
             if (rebuild) {
@@ -1965,7 +1982,6 @@ YUI.add("event-custom", function(Y) {
                 this.subscribers=newlist;
             }
 
-            this.fired = true;
 
             return ret;
         },
@@ -2091,9 +2107,103 @@ YUI.add("event-custom", function(Y) {
      * @method toString
      */
     Y.Subscriber.prototype.toString = function() {
-        return "Subscriber { obj: " + this.obj  + 
-               ", override: " +  (this.override || "no") + " }";
+return "Sub { obj: " + this.obj  + ", override: " + (this.override || "no") + " }";
     };
+
+/**
+ * ChainedErrors wrap one or more exceptions thrown by a subprocess.
+ *
+ * @namespace YAHOO.util
+ * @class ChainedError
+ * @extends Error
+ * @constructor
+ * @param message {String} The message to display when the error occurs.
+ * @param errors {Error[]} an array containing the wrapped exceptions
+ */ 
+Y.ChainedError = function (message, errors){
+
+    arguments.callee.superclass.constructor.call(this, message);
+    
+    /*
+     * Error message. Must be duplicated to ensure browser receives it.
+     * @type String
+     * @property message
+     */
+    this.message = message;
+    
+    /**
+     * The name of the error that occurred.
+     * @type String
+     * @property name
+     */
+    this.name = "ChainedError";
+
+    /**
+     * The list of wrapped exception objects
+     * @type Error[]
+     * @property errors
+     */
+    this.errors = errors || [];
+
+    /**
+     * Pointer to the current exception
+     * @type int
+     * @property index
+     * @default 0
+     */
+    this.index = 0;
+};
+
+Y.extend(Y.ChainedError, Error, {
+
+    /**
+     * Returns a fully formatted error message.
+     * @method getMessage
+     * @return {String} A string describing the error.
+     */
+    getMessage: function () {
+        return this.message;
+    },
+    
+    /**
+     * Returns a string representation of the error.
+     * @method toString
+     * @return {String} A string representation of the error.
+     */
+    toString: function () {
+        return this.name + ": " + this.getMessage();
+    },
+    
+    /**
+     * Returns a primitive value version of the error. Same as toString().
+     * @method valueOf
+     * @return {String} A primitive value version of the error.
+     */
+    valueOf: function () {
+        return this.toString();
+    },
+
+    /**
+     * Returns the next exception object this instance wraps
+     * @method next
+     * @return {Error} the error that was thrown by the subsystem.
+     */
+    next: function() {
+        var e = this.errors[this.index] || null;
+        this.index++;
+        return e;
+    },
+
+    /**
+     * Append an error object
+     * @method add
+     * @param e {Error} the error object to append
+     */
+    add: function(e) {
+        this.errors.push(e);
+    }
+
+});
 
 }, "3.0.0");
 YUI.add("event-dom", function(Y) {

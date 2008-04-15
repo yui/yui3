@@ -126,6 +126,8 @@ YUI.add("core", function(Y) {
      *        2: prototype to prototype and object props (new augment)
      *        3: prototype to object
      *        4: object to prototype
+     * @param merge {boolean} merge objects instead of overwriting/ignoring
+     * Used by Y.aggregate
      * @return {YUI} the YUI instance
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
@@ -137,23 +139,18 @@ YUI.add("core", function(Y) {
         var w = (wl && wl.length) ? A.hash(wl) : null, m = merge,
 
             f = function(fr, fs, proto, iwl) {
-                // if (m && fr && fr.push) {
-                //     Y.log('concat: ' + fs);
-                //     fr.concat(fs);
-                // }
 
                 var arr = m && L.isArray(fr);
 
                 for (var i in fs) { 
 
+                    // We never want to overwrite the prototype
                     if (PROTO === i) {
                         continue;
                     }
 
                     // Y.log('i: ' + i + ", " + fs[i]);
-                    // if (!proto || (i in fs)) {
                     // @TODO deal with the hasownprop issue
-                    // if (proto || ov || Y.object.owns(fs, i)) {
 
                     // check white list if it was supplied
                     if (!w || iwl || (i in w)) {
@@ -166,6 +163,7 @@ YUI.add("core", function(Y) {
                             f(fr[i], fs[i], proto, true); // recursive
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
+                        // @TODO make sure the 'arr' check isn't desructive
                         } else if (!arr && (ov || !fr[i])) {
                             // Y.log('hash: ' + i);
                             fr[i] = fs[i];
@@ -177,7 +175,6 @@ YUI.add("core", function(Y) {
                             fr.push(fs[i]);
                         }
                     }
-                    // }
                 }
 
                 _iefix(fr, fs, w);
@@ -217,8 +214,7 @@ YUI.add("core", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.augment = function(r, s, ov, wl) {
-        Y.mix(r, s, ov, wl, 1);
-        return Y;
+        return Y.mix(r, s, ov, wl, 1);
     };
 
     /**
@@ -236,8 +232,7 @@ YUI.add("core", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.aggregate = function(r, s, ov, wl) {
-        Y.mix(r, s, ov, wl, 0, true);
-        return Y;
+        return Y.mix(r, s, ov, wl, 0, true);
     };
 
     /**
@@ -458,6 +453,8 @@ YUI.add("core", function(Y) {
         if (Y.lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         }
+
+        return Y;
     };
 
     /**
@@ -478,6 +475,8 @@ YUI.add("core", function(Y) {
         if (Y.lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         }
+
+        return Y;
     };
 
     // Object factory

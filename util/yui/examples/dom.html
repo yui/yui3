@@ -50,11 +50,25 @@
 
     var obj = new Y.Event.Target();
 
+
+    // test failure
     obj.subscribe('foo', function() {
-        console.info('foo!');
+        console.info(notdefined);
     });
 
-    obj.fire('foo');
+    obj.subscribe('foo', function() {
+        console.info(notdefined);
+    });
+
+    obj.subscribe('foo', function() {
+        console.info('foo fired anyway!');
+    });
+
+    try {
+        obj.fire('foo');
+    } catch(e) {
+        console.warn('fire() error: ' + Y.lang.dump(e.errors));
+    }
 
 })();
 
