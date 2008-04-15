@@ -5,8 +5,6 @@
  * @class Y.json
  * @static
  */
-YUI.add(function (Y) {
-
 Y.json = Y.json || {};
 
 // All internals kept private for security reasons
@@ -70,7 +68,7 @@ var _ESCAPES = /\\["\\\/bfnrtu]/g,
             var k,v,value = o[key];
             if (value && typeof value === 'object') {
                 for (k in value) {
-                    if (YAHOO.lang.hasOwnProperty(value,k)) {
+                    if (Y.object.owns(value,k)) {
                         v = walk(value, k);
                         if (v === undefined) {
                             delete value[k];
@@ -98,17 +96,15 @@ var _ESCAPES = /\\["\\\/bfnrtu]/g,
  */
 Y.json.parse = function (s,reviver) {
     // Ensure valid JSON
-    if (typeof s === 'string' && this._INVALID.test(s.
-                                    replace(_ESCAPES,'@').
-                                    replace(_VALUES,']').
-                                    replace(_BRACKETS,''))) {
+    if (typeof s === 'string' && _INVALID.test(s.
+                                 replace(_ESCAPES,'@').
+                                 replace(_VALUES,']').
+                                 replace(_BRACKETS,''))) {
         // Eval the text into a JavaScript data structure, apply any
         // reviver function, and return
-        return this._revive( eval('(' + s + ')'), reviver );
+        return _revive( eval('(' + s + ')'), reviver );
     }
 
     // The text is not JSON parsable
     throw new SyntaxError('parseJSON');
 };
-
-},'3.0.0');
