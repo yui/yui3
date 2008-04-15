@@ -1,11 +1,11 @@
+YUI.add('json-stringify', function(Y) {
+
 /**
  * Provides Y.json.stringify method for converting objects to JSON strings.
  * @module json
  * @class Y.json
  * @static
  */
-YUI.add('json-stringify',function (Y) {
-
 var isA = Y.lang.isArray;
 
 Y.json = Y.json || {};
@@ -110,7 +110,6 @@ Y.mix(Y.json,{
                 t = typeof o,
                 i,len,j, // array iteration
                 k,v,     // object iteration
-                vt,      // typeof v during iteration
                 a;       // composition array for performance over string concat
 
             // String
@@ -192,4 +191,5 @@ Y.mix(Y.json,{
     }
 });
 
-},'3.0.0');
+
+}, '@VERSION@' );

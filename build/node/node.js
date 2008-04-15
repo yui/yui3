@@ -670,9 +670,7 @@ var M = function(Y) {
 
     var _createNode = function(data) {
         var frag = Y.config.doc.createElement('div');
-        if (typeof data == 'string') { // TODO: strip scripts
-            frag.innerHTML = (typeof data == 'string') ? data : _createHTML(data);
-        }
+        frag.innerHTML = _createHTML(data);
         return frag.firstChild;
     };
 

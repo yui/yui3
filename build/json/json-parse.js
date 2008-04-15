@@ -1,3 +1,5 @@
+YUI.add('json-parse', function(Y) {
+
 /**
  * Provides Y.json.parse method to take JSON strings and return native
  * JavaScript objects.
@@ -5,8 +7,6 @@
  * @class Y.json
  * @static
  */
-YUI.add('json-parse',function (Y) {
-
 Y.json = Y.json || {};
 
 // All internals kept private for security reasons
@@ -111,4 +111,5 @@ Y.json.parse = function (s,reviver) {
     throw new SyntaxError('parseJSON');
 };
 
-},'3.0.0');
+
+}, '@VERSION@' );
