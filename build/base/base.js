@@ -1,7 +1,5 @@
 YUI.add('base', function(Y) {
 
-    Y.use('attribute');
-
     var L = Y.lang,
         O = Y.object;
 
@@ -24,21 +22,26 @@ YUI.add('base', function(Y) {
     Base.NAME = 'base';
     Base._instances = {};
 
-    Base.build = function(main, features, aggregates, methods) {
-
+    Base.build = function(main, features, config) {
         var newClass = Base.build._getTemplate(main),
             key = main.NAME,
             featureClass,
+            aggregates = [],
+            methods,
             method,
             i,
             fl,
             al;
 
         features = features || [];
-        aggregates = aggregates || [];
+
+        if (config) {
+            aggregates = config.aggregates;
+            methods = config.methods;
+        }
 
         features.splice(0, 0, main);
-        aggregates.splice(0, 0, "ATTRS", "PLUGINS", "CLASSNAMES");
+        aggregates.splice(0, 0, "ATTRS", "PLUGINS");
 
         fl = features.length;
         al = aggregates.length;
@@ -49,10 +52,7 @@ YUI.add('base', function(Y) {
             Y.mix(newClass, featureClass, true);
         }
 
-        // Fixed in Y.mix?
-        // newClass.prototype = {};
-
-        // Prototypes, Aggregates - need to redo these after all Y.mix(.., .., true).
+        // Aggregates - need to reset these after Y.mix(.., .., true).
         if (aggregates) {
             for (i = 0; i < al; i++) {
                 var val = aggregates[i];
@@ -67,6 +67,7 @@ YUI.add('base', function(Y) {
             f : []
         };
 
+        // Augment/Aggregate
         for (i = 0; i < fl; i++) {
             featureClass = features[i];
             if (aggregates) {
@@ -98,19 +99,12 @@ YUI.add('base', function(Y) {
     Base.build._getTemplate = function(main) {
 
         function BuiltClass() {
-            var f = BuiltClass._build.f;
-            for (var i = 0; i < f.length; i++) {
+            var f = BuiltClass._build.f, l = f.length;
+            for (var i = 0; i < l; i++) {
                 f[i].apply(this, arguments);
             }
             return this;
         }
-
-        /*
-        BuiltClass._build = {
-            id : null,
-            f : []
-        };
-        */
 
         return BuiltClass;
     };
@@ -150,13 +144,13 @@ YUI.add('base', function(Y) {
         };
     };
 
-    Base.create = function(main, features, args) { 
+    Base.create = function(main, features, args) {
         var c = Y.Base.build(main, features),
             cArgs = Y.array(arguments, 2, true);
 
         function F(){}
         F.prototype = c.prototype;
-        Y.mix(F, c);
+        // Y.mix(F, c);
 
         return c.apply(new F(), cArgs);
     };
@@ -204,7 +198,7 @@ YUI.add('base', function(Y) {
          * Init lifecycle method, invoked during 
          * construction.
          * 
-         * Provides beforeDestory and destroy lifecycle events
+         * Provides beforeDestroy and destroy lifecycle events
          * 
          * @method destroy
          * @chain
@@ -362,8 +356,8 @@ YUI.add('base', function(Y) {
         }
     };
 
-    //Y.augment(Base, Y.Attribute);
     Y.Base = Base.build(Base, [Y.Attribute]);
-    //Y.Base = Base;
-}, '3.0.0');
 
+
+
+}, '@VERSION@' ,{requires:['attribute']});

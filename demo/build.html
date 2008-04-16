@@ -6,15 +6,11 @@
     <script type="text/javascript" src="../util/yui/src/js/State.js"></script>
     <script type="text/javascript" src="../build/attribute/attribute.js"></script>
     <script type="text/javascript" src="../build/base/base.js"></script>
-    <!--
-    <script type="text/javascript" src="../util/attribute/src/js/Attribute.js"></script>
-    <script type="text/javascript" src="../util/base/src/js/Base.js"></script>
-    -->
     <script type="text/javascript" src="../util/plugin/src/js/Plugin.js"></script>
 
     <script type="text/javascript">
     (function() {
-        var Y = YUI().use("state", "attribute", "base", "plugin");
+        var Y = YUI().use("base", "plugin");
 
         // ----- Main Class -----
 
@@ -102,7 +98,7 @@
             },
 
             methodD : function() {
-                Y.log("methodB called - Attr value:" + this.get("extOne"));
+                Y.log("methodD called - Attr value:" + this.get("extOne"));
             }
         };
 
@@ -150,7 +146,7 @@
             }
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], null, ["methodB"]);
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], {aggregates:["CLASSNAME"], methods:["methodB"]});
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();
