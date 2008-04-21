@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<html debug="true">
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../build/yui-debug.js"></script>
@@ -24,7 +24,8 @@
     Y.log("got " + el);
 
     Y.on('click', function(e) {
-        Y.log(this.id + " click event facade: " + e.target);
+        //alert('asdf');
+        Y.log("SUB, " + this.id + " click event facade: " + e.target);
     }, el);
 
 
@@ -35,6 +36,7 @@
     Y.log('ret: ' + ret);
 
     Y.on('mouseover', function(e) {
+        // alert('asdf');
         Y.log(this.id + " mouseover: " + e.target);
     }, Y.Dom.getElementsByClassName('button'));
 
@@ -47,6 +49,8 @@
     Y.fire('asdf:asdf', 1);
 
     Y.fire('asdf', 1);
+
+    /*
 
     var obj = new Y.Event.Target();
 
@@ -69,6 +73,7 @@
     } catch(e) {
         console.warn('fire() error: ' + Y.lang.dump(e.errors));
     }
+    */
 
 })();
 

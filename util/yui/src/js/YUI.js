@@ -11,7 +11,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @class YUI
      * @static
      */
-    var YUI = function(o) {
+    /*global YUI*/
+    YUI = function(o) {
         var Y = this;
         // Allow var yui = YUI() instead of var yui = new YUI()
         if (window === Y) {
@@ -289,16 +290,17 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        // @todo take out automatic console logging, but provide
-        // a way to enable console logging without the logger
-        // component.
-        var l = (this.Logger) || ("console" in window) ? console : function(){};
+        if (this.logger) {
+            this.fire('yui:log', msg, cat, src);
+            l.log(msg, cat || '', src || '');
+        } else if (typeof console != 'undefined') {
 
-        if (cat && l === console && console[cat]) {
+            // @todo take out automatic console logging, but provide
+            // a way to enable console logging without the logger
+            // component.
+            cat = (cat && console[cat]) ? cat : 'debug';
             console[cat](msg);
-        } else if(l && l.log) {
-            l.log(msg, cat || "", src || "");
-        } 
+        }
 
         return this;
     },

@@ -178,3 +178,12 @@ Y.on('click', function(e) {
 }, el);
 
 
+Custom events default to the LIST signature.  This means the first
+parameter is no longer the event name
+
+onDOMReady event is has the LIST signature
+onDOMReady event is fireOnce (verify this works)
+
+DOM events are wrapped in custom events
+
+
