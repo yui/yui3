@@ -25,13 +25,13 @@
     Y.log("get got " + el);
 
     var f = function(e) {
-        Y.log("SUB1, " + this.id + " click event facade: " + e.target);
+        Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
     }
 
     var h =Y.on('click', f, el);
 
     Y.on('click', function(e) {
-        Y.log("SUB2, " + this.id + " click event facade: " + e.target);
+        Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
         h.detach();
         // Y.detach('click', f, el);
         // Y.Event.purgeElement(this);

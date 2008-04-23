@@ -20,6 +20,25 @@ YUI.add("event-compat", function(Y) {
                  * @deprecated use Y.env.ua.webkit
                  */
                 webkit: Y.ua.webkit,
+
+                /**
+                 * Normalized keycodes for webkit/safari
+                 * @property webkitKeymap
+                 * @type {int: int}
+                 * @private
+                 * @static
+                 * @final
+                 */
+                webkitKeymap = {
+                    63232: 38, // up
+                    63233: 40, // down
+                    63234: 37, // left
+                    63235: 39, // right
+                    63276: 33, // page up
+                    63277: 34, // page down
+                    25: 9      // SHIFT-TAB (Safari provides a different key code in
+                               // this case, even though the shiftKey modifier is set)
+                },
                 
                 /**
                  * IE detection 

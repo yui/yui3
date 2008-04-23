@@ -33,9 +33,6 @@ YUI.add("compat", function(Y) {
     // add old lang properties 
     Y.mix(L, {
 
-        // hasOwnProperty: Y.bind(Y.object.owns, Y),
-        hasOwnProperty: Y.object.owns,
-
         augmentObject: function(r, s) {
             var a = arguments, wl = (a.length > 2) ? Y.array(a, 2, true) : null;
             return Y.mix(r, s, (wl), wl);
@@ -51,6 +48,9 @@ YUI.add("compat", function(Y) {
         // merge: Y.bind(Y.merge, Y)
         merge: Y.merge
     }, true);
+
+    // IE won't enumerate this
+    L.hasOwnProperty = Y.object.owns;
 
     // L.merge = Y.merge;
 

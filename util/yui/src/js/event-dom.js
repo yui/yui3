@@ -33,50 +33,40 @@ YUI.add("event-dom", function(Y) {
              * The number of times to poll after window.onload.  This number is
              * increased if additional late-bound handlers are requested after
              * the page load.
-             * @property retryCount
+             * @property _retryCount
              * @static
              * @private
              */
-            var retryCount = 0;
+            var _retryCount = 0;
 
             /**
              * onAvailable listeners
-             * @property onAvailStack
+             * @property _avail
              * @static
              * @private
              */
-            var onAvailStack = [];
+            var _avail = [];
 
             /**
-             * Counter for auto id generation
-             * @property counter
+             * Custom event wrappers for DOM events.  Key is 
+             * 'event:' + Element uid stamp + event type
+             * @property _wrappers
+             * @type Y.Event.Custom
              * @static
              * @private
              */
-            var counter = 0;
-            
+            var _wrappers = {};
+
             /**
-             * Normalized keycodes for webkit/safari
-             * @property webkitKeymap
-             * @type {int: int}
-             * @private
+             * Custom event wrapper map DOM events.  Key is 
+             * Element uid stamp.  Each item is a hash of custom event
+             * wrappers as provided in the _wrappers collection.  This
+             * provides the infrastructure for getListeners.
+             * @property _el_events
              * @static
-             * @final
+             * @private
              */
-            var webkitKeymap = {
-                63232: 38, // up
-                63233: 40, // down
-                63234: 37, // left
-                63235: 39, // right
-                63276: 33, // page up
-                63277: 34, // page down
-                25: 9      // SHIFT-TAB (Safari provides a different key code in
-                           // this case, even though the shiftKey modifier is set)
-            };
-
-            var wrappers = {};
-
-            var elEvents = {};
+            var _el_events = {};
 
             return {
 
@@ -179,13 +169,13 @@ YUI.add("event-dom", function(Y) {
                     var a = (Y.lang.isString(p_id)) ? [p_id] : p_id;
 
                     for (var i=0; i<a.length; i=i+1) {
-                        onAvailStack.push({id:         a[i], 
+                        _avail.push({id:         a[i], 
                                            fn:         p_fn, 
                                            obj:        p_obj, 
                                            override:   p_override, 
                                            checkReady: checkContent });
                     }
-                    retryCount = this.POLL_RETRYS;
+                    _retryCount = this.POLL_RETRYS;
                     this.startInterval();
                 },
 
@@ -331,7 +321,7 @@ YUI.add("event-dom", function(Y) {
                     // the custom event key is the uid for the element + type
 
                     var ek = Y.stamp(el), key = 'event:' + ek + type,
-                        ce = wrappers[key];
+                        ce = _wrappers[key];
 
 
                     if (!ce) {
@@ -348,9 +338,9 @@ YUI.add("event-dom", function(Y) {
                             ce.fire(Y.Event.getEvent(e));
                         };
 
-                        wrappers[key] = ce;
-                        elEvents[ek] = elEvents[ek] || {};
-                        elEvents[ek][key] = ce;
+                        _wrappers[key] = ce;
+                        _el_events[ek] = _el_events[ek] || {};
+                        _el_events[ek][key] = ce;
 
                         // attach a listener that fires the custom event
                         this.nativeAdd(el, type, ce.fn, false);
@@ -427,7 +417,7 @@ YUI.add("event-dom", function(Y) {
 
 
                     var id = 'event:' + Y.stamp(el) + type, 
-                        ce = wrappers[id];
+                        ce = _wrappers[id];
                     if (ce) {
                         return ce.unsubscribe(fn);
                     }
@@ -599,7 +589,7 @@ YUI.add("event-dom", function(Y) {
                     // tested appropriately
                     var tryAgain = !loadComplete;
                     if (!tryAgain) {
-                        tryAgain = (retryCount > 0);
+                        tryAgain = (_retryCount > 0);
                     }
 
                     // onAvailable
@@ -620,13 +610,13 @@ YUI.add("event-dom", function(Y) {
                     var i,len,item,el;
 
                     // onAvailable
-                    for (i=0,len=onAvailStack.length; i<len; ++i) {
-                        item = onAvailStack[i];
+                    for (i=0,len=_avail.length; i<len; ++i) {
+                        item = _avail[i];
                         if (item && !item.checkReady) {
                             el = Y.get(item.id);
                             if (el) {
                                 executeItem(el, item);
-                                onAvailStack[i] = null;
+                                _avail[i] = null;
                             } else {
                                 notAvail.push(item);
                             }
@@ -634,8 +624,8 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     // onContentReady
-                    for (i=0,len=onAvailStack.length; i<len; ++i) {
-                        item = onAvailStack[i];
+                    for (i=0,len=_avail.length; i<len; ++i) {
+                        item = _avail[i];
                         if (item && item.checkReady) {
                             el = Y.get(item.id);
 
@@ -644,7 +634,7 @@ YUI.add("event-dom", function(Y) {
                                 // @todo should we test parentNode.nextSibling?
                                 if (loadComplete || el.nextSibling) {
                                     executeItem(el, item);
-                                    onAvailStack[i] = null;
+                                    _avail[i] = null;
                                 }
                             } else {
                                 notAvail.push(item);
@@ -652,7 +642,7 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    retryCount = (notAvail.length === 0) ? 0 : retryCount - 1;
+                    _retryCount = (notAvail.length === 0) ? 0 : _retryCount - 1;
 
                     if (tryAgain) {
                         // we may need to strip the nulled out items here
@@ -709,7 +699,7 @@ YUI.add("event-dom", function(Y) {
                  */           
                 getListeners: function(el, type) {
                     var results=[], ek = Y.stamp(el), key = (type) ? 'event:' + type : null,
-                        evts = elEvents[ek];
+                        evts = _el_events[ek];
 
                     if (key) {
                         if (evts[key]) {
@@ -735,11 +725,11 @@ YUI.add("event-dom", function(Y) {
 
                     var E = Y.Event, i, w;
 
-                    for (i in wrappers) {
-                        w = wrappers[i];
+                    for (i in _wrappers) {
+                        w = _wrappers[i];
                         w.unsubscribeAll();
                         E.nativeRemove(w.el, w.type, w.fn);
-                        delete wrappers[i];
+                        delete _wrappers[i];
                     }
 
                     E.nativeRemove(window, "unload", E._unload);
