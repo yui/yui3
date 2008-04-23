@@ -285,7 +285,7 @@ var query = function(selector, root, firstOnly, deDupe) {
 };
 
 var contains = function() {
-    if (document.documentElement.contains && !Y.env.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+    if (document.documentElement.contains && !Y.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
         return function(needle, haystack) {
             return haystack.contains(needle);
         };
@@ -655,7 +655,7 @@ Selector = new Selector();
 Selector.patterns = patterns;
 Y.Selector = Selector;
 
-if (Y.env.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['class'] = 'className';
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
@@ -745,8 +745,7 @@ YUI.add('node', function(Y) {
      * For use with methods that return nodes
      */
     var nodeOut = function(method, a, b, c, d, e) {
-        var node = create(_cache[this._yuid][method](a, b, c, d, e));
-        Y.log(node);
+        node = create(_cache[this._yuid][method](a, b, c, d, e));
         return node;
     };
 
@@ -918,7 +917,7 @@ YUI.add('node', function(Y) {
 
     Y.each(METHODS[BASE_NODE], function(fn, method) {
         Node.prototype[method] = function() {
-            var args = [].splice.call(arguments, 0);
+            var args = [].slice.call(arguments, 0);
             args.unshift(method);
             return fn.apply(this, args);
         };
@@ -939,8 +938,56 @@ YUI.add('node', function(Y) {
         reset: rawOut
 
     };
+
+
+    
     var Element = function(node) {
         Element.superclass.constructor.call(this, node);
+    };
+
+    var _createNode = function(data) {
+        var frag = Y.config.doc.createElement('div');
+        frag.innerHTML = _createHTML(data);
+        return frag.firstChild;
+    };
+
+    var _createHTML = function(jsonml) {
+        var html = [];
+        var att = [];
+
+        if (Y.lang.isString(jsonml)) { // text node
+            return jsonml;
+        }
+
+        if (!jsonml || !jsonml.push) { // isArray
+            return ''; // expecting array 
+        }
+
+        var tag = jsonml[0];
+        if (!Y.lang.isString(tag)) {
+            return null; // bad tag error
+        }
+
+        for (var i = 1, len = jsonml.length; i < len; ++i) {
+            if (typeof jsonml[i] === 'string' || jsonml[i].push) {
+                html[html.length] = _createHTML(jsonml[i]);
+            } else if (typeof jsonml[i] == 'object') {
+                for (var attr in jsonml[i]) {
+                    att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                }
+            }
+        }
+        return '<' + tag + att.join('') + '>' + html.join('') + '</' + tag + '>';
+        
+    };
+
+    /** 
+     *  Creates a node instance from an HTML string or jsonml
+     * @method create
+     * @param {String | Array} jsonml HTML string or jsonml
+     */
+    Element.create = function(jsonml) {
+        return new Element(_createNode(jsonml));
     };
 
     Y.extend(Element, Node, {
@@ -1018,7 +1065,7 @@ YUI.add('node', function(Y) {
          * @return {Boolean} True if the nodes match, false if they do not. 
          */
         compareTo: function(refNode) {
-            refNode = refNode._yuid ? _cache[refNode._yuid] : refNode;
+            refNode = refNode.nodeName ? refNode : _cache[refNode._yuid];
             return _cache[this._yuid] === refNode;
         },
 
@@ -1052,8 +1099,9 @@ YUI.add('node', function(Y) {
 
     Y.each(METHODS[ELEMENT_NODE], function(fn, method) {
         Element.prototype[method] = function() {
-            var args = [].splice.call(arguments, 0);
+            var args = [].slice.call(arguments, 0);
             args.unshift(method);
+
             return fn.apply(this, args);
         };
     });
@@ -1087,8 +1135,7 @@ YUI.add('node', function(Y) {
 
         root = root || doc;
         nodes = new NodeList(Selector.query(selector, root));
-        return new nodes;
-
+        return nodes;
     };
 
 
@@ -1166,7 +1213,7 @@ YUI.add('node', function(Y) {
 
     Y.each(METHODS[DOCUMENT_NODE], function(fn, method) {
         Doc.prototype[method] = function() {
-            var args = [].splice.call(arguments, 0);
+            var args = [].slice.call(arguments, 0);
             args.unshift(method);
             return fn.apply(this, args);
         };
@@ -1242,7 +1289,7 @@ YUI.add('node', function(Y) {
             doc = win.document,
             mode = doc.compatMode;
         
-            if ( (mode || Y.env.ua.ie) && !Y.env.ua.opera ) { // IE, Gecko
+            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
                 h = (mode == 'CSS1Compat') ?
                         doc.documentElement.clientHeight : // Standards
                         doc.body.clientHeight; // Quirks
@@ -1257,7 +1304,7 @@ YUI.add('node', function(Y) {
             doc = win.document,
             mode = doc.compatMode;
         
-            if ( (mode || Y.env.ua.ie) && !Y.env.ua.opera ) { // IE, Gecko
+            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
                 w = (mode == 'CSS1Compat') ?
                         doc.documentElement.clientWidth : // Standards
                         doc.body.clientWidth; // Quirks
@@ -1590,4 +1637,3 @@ YUI.add('nodeextras', function(Y) {
     Y.mix(Y.Node, NodeExtras, 0, null, 4);
 
 }, '3.0.0');
-YAHOO.register("node", YAHOO.util.Node, {version: "@VERSION@", build: "@BUILD@"});

@@ -124,6 +124,12 @@ YUI.add('nodeextras', function(Y) {
             return null;
         },
         
+        /**
+         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+         * @method contains
+         * @param {String | HTMLElement} needle The possible descendent
+         * @return {Boolean} Whether or not this node is an ancestor of needle
+         */
         contains: function(needle) {
             if (this.hasMethod('contains'))  {
                 return this.invoke('contains', this, needle);
@@ -132,6 +138,15 @@ YUI.add('nodeextras', function(Y) {
             }
         },
 
+        /**
+         * Gets the current position of an element based on page coordinates. 
+         * Element must be part of the DOM tree to have page coordinates
+         * (display:none or elements not appended return false).
+         * @method getXY
+         * @return {Array} The XY position of the element
+
+         TODO: test inDocument/display
+         */
         getXY: function() {
             if (Y.Doc.get().get('documentElement').getBoundingClientRect) {
                 return function() {
@@ -179,6 +194,13 @@ YUI.add('nodeextras', function(Y) {
             }
         }(),// NOTE: Executing for loadtime branching
 
+        /**
+         * Set the position of an html element in page coordinates, regardless of how the element is positioned.
+         * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+         * @method setXY
+         * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
+         * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
+         */
         setXY: function(xy, noRetry) {
             var pos = this.getStyle('position'),
                 delta = [ // assuming pixels; if not we will have to retry
@@ -222,7 +244,7 @@ YUI.add('nodeextras', function(Y) {
                }
             }        
 
-            YAHOO.log('setXY setting position to ' + xy, 'info', 'Node');
+            Y.log('setXY setting position to ' + xy, 'info', 'Node');
         }
     
     };
