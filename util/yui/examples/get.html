@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript" src="../src/js/Get.js"></script>
+<script type="text/javascript">
+
+
+(function() {
+
+// var Y = YUI().use('get');
+var Y = YUI();
+
+Y.io('css', ["../../build/menu/assets/skins/sam/menu.css",
+             "../../build/logger/assets/skins/sam/logger.css"], { 
+
+        onSuccess: function() {
+            Y.log("css1 (menu, logger) complet", 'warn');
+        }
+    
+});
+
+
+})();
+
+</script>
+<body>
+
+<input id="addButton" type="button" value="Add link" />
+
+</body>
+
+</html>
+
