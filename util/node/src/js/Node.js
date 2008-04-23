@@ -228,6 +228,12 @@ YUI.add('node', function(Y) {
         },
 
         invoke: function(method, a, b, c, d, e) {
+            if (a) { // first 2 may be Node instances or strings
+                a = (a.nodeName) ? a : getDOMNode(_cache[this._yuid], a);
+                if (b) {
+                    b = (b.nodeName) ? b : getDOMNode(_cache[this._yuid], b);
+                }
+            }
            var  node = _cache[this._yuid];
             if (METHODS_INVOKE[method] && node[method]) {
                 return node[method](a, b, c, d, e);
@@ -241,7 +247,7 @@ YUI.add('node', function(Y) {
          * @param {String} method The method to check for 
          * @return {Boolean} Whether or not the HTMLElement can use the method 
          */
-        hasMethod: function(str, method) {
+        hasMethod: function(method) {
             return !!(METHODS_INVOKE[method] && _cache[this._yuid][method]);
         },
 

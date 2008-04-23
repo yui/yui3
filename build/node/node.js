@@ -891,6 +891,12 @@ YUI.add('node', function(Y) {
         },
 
         invoke: function(method, a, b, c, d, e) {
+            if (a) { // first 2 may be Node instances or strings
+                a = (a.nodeName) ? a : getDOMNode(_cache[this._yuid], a);
+                if (b) {
+                    b = (b.nodeName) ? b : getDOMNode(_cache[this._yuid], b);
+                }
+            }
            var  node = _cache[this._yuid];
             if (METHODS_INVOKE[method] && node[method]) {
                 return node[method](a, b, c, d, e);
@@ -904,7 +910,7 @@ YUI.add('node', function(Y) {
          * @param {String} method The method to check for 
          * @return {Boolean} Whether or not the HTMLElement can use the method 
          */
-        hasMethod: function(str, method) {
+        hasMethod: function(method) {
             return !!(METHODS_INVOKE[method] && _cache[this._yuid][method]);
         },
 
@@ -1517,10 +1523,11 @@ YUI.add('nodeextras', function(Y) {
          * @return {Boolean} Whether or not this node is an ancestor of needle
          */
         contains: function(needle) {
+            needle = Y.Doc.get(needle);
             if (this.hasMethod('contains'))  {
-                return this.invoke('contains', this, needle);
+                return this.invoke('contains', needle);
             } else if ( this.hasMethod('compareDocumentPosition') ) { // gecko
-                return !!(this.invoke('compareDocumentPosition', this, needle) & 16);
+                return !!(this.invoke('compareDocumentPosition', needle) & 16);
             }
         },
 

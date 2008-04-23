@@ -131,10 +131,11 @@ YUI.add('nodeextras', function(Y) {
          * @return {Boolean} Whether or not this node is an ancestor of needle
          */
         contains: function(needle) {
+            needle = Y.Doc.get(needle);
             if (this.hasMethod('contains'))  {
-                return this.invoke('contains', this, needle);
+                return this.invoke('contains', needle);
             } else if ( this.hasMethod('compareDocumentPosition') ) { // gecko
-                return !!(this.invoke('compareDocumentPosition', this, needle) & 16);
+                return !!(this.invoke('compareDocumentPosition', needle) & 16);
             }
         },
 
