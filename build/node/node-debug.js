@@ -1034,8 +1034,15 @@ YUI.add('node', function(Y) {
 
             YAHOO.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
             return null;
-        }
+        },
+
+        addEventListener: function(type, fn, arg) {
+            Y.Event.addListener(_cache[this._yuid], type, fn, arg);
+        },
         
+        removeEventListener: function(type, fn) {
+            Y.Event.removeListener(_cache[this._yuid], type, fn);
+        }
     });
 
     Y.each(METHODS[ELEMENT_NODE], function(fn, method) {
