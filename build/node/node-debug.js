@@ -212,7 +212,7 @@ Selector.prototype = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        YAHOO.log('query: returning ' + result, 'info', 'Selector');
+        //YAHOO.log('query: returning ' + result, 'info', 'Selector');
         return result;
     }
 };
