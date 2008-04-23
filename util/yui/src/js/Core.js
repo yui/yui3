@@ -368,6 +368,9 @@ YUI.add("core", function(Y) {
      * @return the wrapped function
      */
     Y.bind = function(f, c) {
+        // if (!f) {
+            // Y.log('no f');
+        // }
         var a = Y.array(arguments, 2, true);
         return function () {
             // @todo bind args first, or function args first?
@@ -382,7 +385,7 @@ YUI.add("core", function(Y) {
         return this;
     };
 
-    /**
+    /*
      * Fetch remote content
      * @method io
      * @parameter type {string} get, post, script, css
@@ -422,7 +425,9 @@ YUI.add("core", function(Y) {
     };
 
     Y.detach = function(type, f, o) {
-        if (type.indexOf(':') > -1) {
+        if (Y.lang.isObject(type) && type.detach) {
+            return type.detach();
+        } else if (type.indexOf(':') > -1) {
             var cat = type.split(':');
             switch (cat[0]) {
                 default:

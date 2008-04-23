@@ -12,7 +12,10 @@ YUI.add("event-ready", function(Y) {
      * @static
      */
     E.attach = function(type, fn, el, data, context) {
-        return E.addListener(el, type, fn, data, context);
+        var a = Y.array(arguments, 0, true),
+            oEl = a.splice(2, 1);
+        a.unshift(oEl[0]);
+        return E.addListener.apply(E, a);
     };
 
     E.detach = function(type, fn, el, data, context) {
@@ -73,7 +76,7 @@ YUI.add("event-ready", function(Y) {
         // moment.  The latest WebKit releases now support this event.
         } else {
 
-            E._simpleAdd(document, "DOMContentLoaded", E._ready);
+            E.nativeAdd(document, "DOMContentLoaded", E._ready);
 
         }
         /////////////////////////////////////////////////////////////
@@ -82,7 +85,7 @@ YUI.add("event-ready", function(Y) {
     }
 
     // for the moment each instance will get its own load/unload listeners
-    E._simpleAdd(window, "load", E._load);
-    E._simpleAdd(window, "unload", E._unload);
+    E.nativeAdd(window, "load", E._load);
+    E.nativeAdd(window, "unload", E._unload);
 
 }, "3.0.0");

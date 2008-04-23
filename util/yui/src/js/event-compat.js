@@ -89,6 +89,23 @@ YUI.add("event-compat", function(Y) {
                 },
 
                 /**
+                 * Returns the charcode for an event
+                 * @method getCharCode
+                 * @param {Event} ev the event
+                 * @return {int} the event's charCode
+                 * @static
+                 */
+                getCharCode: function(ev) {
+                    var code = ev.keyCode || ev.charCode || 0;
+
+                    // webkit normalization
+                    if (Y.ua.webkit && (code in webkitKeymap)) {
+                        code = webkitKeymap[code];
+                    }
+                    return code;
+                },
+
+                /**
                  * Returns the event's pageY
                  * @method getPageY
                  * @param {Event} ev the event

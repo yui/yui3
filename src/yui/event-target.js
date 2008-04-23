@@ -10,9 +10,9 @@ YUI.add("event-target", function(Y) {
      *
      * @Class Event.Target
      */
-    Y.Event.Target = function() { };
+    Y.EventTarget = function() { };
 
-    Y.Event.Target.prototype = {
+    Y.EventTarget.prototype = {
 
         /**
          * Private storage of custom events
@@ -44,19 +44,23 @@ YUI.add("event-target", function(Y) {
         subscribe: function(p_type, p_fn, p_obj, p_override) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type];
 
-            if (ce) {
-                ce.subscribe(p_fn, p_obj, p_override);
-            } else {
-                this.__yui_subscribers = this.__yui_subscribers || {};
-                var subs = this.__yui_subscribers;
-                if (!subs[p_type]) {
-                    subs[p_type] = [];
-                }
-                subs[p_type].push(
-                    { fn: p_fn, obj: p_obj, override: p_override } );
-            }
+            // var ce = this.__yui_events[p_type];
+            // if (ce) {
+            //     ce.subscribe(p_fn, p_obj, p_override);
+            // } else {
+            //     this.__yui_subscribers = this.__yui_subscribers || {};
+            //     var subs = this.__yui_subscribers;
+            //     if (!subs[p_type]) {
+            //         subs[p_type] = [];
+            //     }
+            //     subs[p_type].push(
+            //         { fn: p_fn, obj: p_obj, override: p_override } );
+            // }
+
+            var ce = this.__yui_events[p_type] || this.publish(p_type);
+            return ce.subscribe(p_fn, p_obj, p_override);
+
         },
 
         /**
@@ -75,6 +79,11 @@ YUI.add("event-target", function(Y) {
          * @return {boolean} true if the subscriber was found and detached.
          */
         unsubscribe: function(p_type, p_fn, p_obj) {
+
+            if (Y.lang.isObject(p_type) && p_type.detach) {
+                return p_type.detach();
+            }
+
             this.__yui_events = this.__yui_events || {};
             var evts = this.__yui_events;
             if (p_type) {
@@ -139,18 +148,35 @@ YUI.add("event-target", function(Y) {
         publish: function(p_type, p_config) {
 
             this.__yui_events = this.__yui_events || {};
-            var opts = p_config || {};
-            var events = this.__yui_events;
+            var opts = p_config || {},
+                events = this.__yui_events,
+                silent = opts.silent || false,
+                context  = opts.context  || this,
+                ce = events[p_type];
 
-            if (events[p_type]) {
+
+
+            if (ce) {
 Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
+
+                // update config for the event
+                
+                ce.context = context;
+
+                // some events are created silent by default, and that
+                // setting needs to be preserved.
+                if ("silent" in opts) {
+                    ce.silent = silent;
+                }
+
+                if ("context" in opts) {
+                    ce.context = context;
+                }
+
             } else {
 
-                var context  = opts.context  || this;
-                var silent = (opts.silent);
 
-                var ce = new Y.CustomEvent(p_type, context, silent,
-                        Y.Event.Custom.FLAT);
+ce = new Y.CustomEvent(p_type, context, silent);
                 events[p_type] = ce;
 
                 if (opts.onSubscribeCallback) {
@@ -165,6 +191,10 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
                         ce.subscribe(qs[i].fn, qs[i].obj, qs[i].override);
                     }
                 }
+            }
+
+            if ("fireOnce" in opts) {
+                ce.fireOnce = opts.fireOnce;
             }
 
             return events[p_type];
@@ -189,22 +219,23 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
-        fire: function(p_type, arg1, arg2, etc) {
+        fire: function(p_type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type];
+            var ce = this.__yui_events[p_type] || this.publish(p_type);
 
-            if (!ce) {
+            //if (!ce) {
 // Y.log(p_type + "event fired before it was created.");
                 // return null;
-                ce = this.publish(p_type);
-            }
+                // ce = this.publish(p_type);
+            // }
 
-            var args = [];
-            for (var i=1; i<arguments.length; ++i) {
-                args.push(arguments[i]);
-            }
-            return ce.fire.apply(ce, args);
+            // var args = [];
+            // for (var i=1; i<arguments.length; ++i) {
+                // args.push(arguments[i]);
+            // }
+
+            return ce.fire.apply(ce, Y.array(arguments, 1, true));
         },
 
         /**
@@ -274,6 +305,6 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
 
     };
 
-    Y.mix(Y, Y.Event.Target.prototype);
+    Y.mix(Y, Y.EventTarget.prototype);
 
 }, "3.0.0");

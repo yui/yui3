@@ -88,8 +88,18 @@ YUI.prototype = {
         // make a shallow copy of the config.  This won't fix nested configs
         // so we need to determine if we only allow one level (probably) or
         // if we make clone create references for functions and elements.
-        this.config = this.merge(this.config);
-        this.publish('yui:load');
+        var c = this.merge(this.config);
+        this.mix(c, {
+            debug: true,
+            useConsole: true,
+            throwFail: false
+        });
+        this.config = c;
+
+        // this.publish('yui:load');
+        // this.publish('yui:log', {
+        //     silent: true
+        // });
     },
 
     /**
@@ -276,8 +286,10 @@ YUI.prototype = {
     },
 
     /**
-     * Uses YUI.widget.Logger to output a log message, if the widget is
-     * available.
+     * If the 'debug' config is true, a 'yui:log' event will be
+     * dispatched, which the logger widget and anything else
+     * can consume.  If the 'useConsole' config is true, it will
+     * write to the browser console if available.
      *
      * @method log
      * @static
@@ -290,16 +302,17 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        if (this.logger) {
-            this.fire('yui:log', msg, cat, src);
-            l.log(msg, cat || '', src || '');
-        } else if (typeof console != 'undefined') {
+        var c = this.config;
 
-            // @todo take out automatic console logging, but provide
-            // a way to enable console logging without the logger
-            // component.
-            cat = (cat && console[cat]) ? cat : 'debug';
-            console[cat](msg);
+        if (c.debug) {
+
+            if (c.useConsole && typeof console != 'undefined') {
+                var f = (cat && console[cat]) ? cat : 'log',
+                    m = (src) ? src + ': ' + msg : msg;
+                console[f](m);
+            }
+
+            this.fire('yui:log', msg, cat, src);
         }
 
         return this;
@@ -307,18 +320,11 @@ YUI.prototype = {
 
     // Centralizing error messaging means we can configure how
     // they are communicated.
-    //
-    // @todo msg can take a constant key or type can be a constant.
     fail: function(msg, e, eType) {
         this.log(msg, "error");
 
-        // @todo provide a configuration option that determines if YUI 
-        // generated errors throws a javascript error.  Some errors
-        // should always generate a js error.  If an error type
-        // is provided, that error is thrown regardless of the 
-        // configuration.
-        if (true) {
-            e = e || new Error(msg);
+        if (this.config.throwFail) {
+            throw e || new Error(msg);
         }
 
         return this;
@@ -961,6 +967,9 @@ YUI.add("core", function(Y) {
      * @return the wrapped function
      */
     Y.bind = function(f, c) {
+        // if (!f) {
+            // Y.log('no f');
+        // }
         var a = Y.array(arguments, 2, true);
         return function () {
             // @todo bind args first, or function args first?
@@ -975,7 +984,7 @@ YUI.add("core", function(Y) {
         return this;
     };
 
-    /**
+    /*
      * Fetch remote content
      * @method io
      * @parameter type {string} get, post, script, css
@@ -1015,7 +1024,9 @@ YUI.add("core", function(Y) {
     };
 
     Y.detach = function(type, f, o) {
-        if (type.indexOf(':') > -1) {
+        if (Y.lang.isObject(type) && type.detach) {
+            return type.detach();
+        } else if (type.indexOf(':') > -1) {
             var cat = type.split(':');
             switch (cat[0]) {
                 default:
@@ -1653,9 +1664,9 @@ YUI.add("event-target", function(Y) {
      *
      * @Class Event.Target
      */
-    Y.Event.Target = function() { };
+    Y.EventTarget = function() { };
 
-    Y.Event.Target.prototype = {
+    Y.EventTarget.prototype = {
 
         /**
          * Private storage of custom events
@@ -1687,19 +1698,23 @@ YUI.add("event-target", function(Y) {
         subscribe: function(p_type, p_fn, p_obj, p_override) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type];
 
-            if (ce) {
-                ce.subscribe(p_fn, p_obj, p_override);
-            } else {
-                this.__yui_subscribers = this.__yui_subscribers || {};
-                var subs = this.__yui_subscribers;
-                if (!subs[p_type]) {
-                    subs[p_type] = [];
-                }
-                subs[p_type].push(
-                    { fn: p_fn, obj: p_obj, override: p_override } );
-            }
+            // var ce = this.__yui_events[p_type];
+            // if (ce) {
+            //     ce.subscribe(p_fn, p_obj, p_override);
+            // } else {
+            //     this.__yui_subscribers = this.__yui_subscribers || {};
+            //     var subs = this.__yui_subscribers;
+            //     if (!subs[p_type]) {
+            //         subs[p_type] = [];
+            //     }
+            //     subs[p_type].push(
+            //         { fn: p_fn, obj: p_obj, override: p_override } );
+            // }
+
+            var ce = this.__yui_events[p_type] || this.publish(p_type);
+            return ce.subscribe(p_fn, p_obj, p_override);
+
         },
 
         /**
@@ -1718,6 +1733,11 @@ YUI.add("event-target", function(Y) {
          * @return {boolean} true if the subscriber was found and detached.
          */
         unsubscribe: function(p_type, p_fn, p_obj) {
+
+            if (Y.lang.isObject(p_type) && p_type.detach) {
+                return p_type.detach();
+            }
+
             this.__yui_events = this.__yui_events || {};
             var evts = this.__yui_events;
             if (p_type) {
@@ -1782,18 +1802,35 @@ YUI.add("event-target", function(Y) {
         publish: function(p_type, p_config) {
 
             this.__yui_events = this.__yui_events || {};
-            var opts = p_config || {};
-            var events = this.__yui_events;
+            var opts = p_config || {},
+                events = this.__yui_events,
+                silent = opts.silent || false,
+                context  = opts.context  || this,
+                ce = events[p_type];
 
-            if (events[p_type]) {
+
+
+            if (ce) {
 Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
+
+                // update config for the event
+                
+                ce.context = context;
+
+                // some events are created silent by default, and that
+                // setting needs to be preserved.
+                if ("silent" in opts) {
+                    ce.silent = silent;
+                }
+
+                if ("context" in opts) {
+                    ce.context = context;
+                }
+
             } else {
 
-                var context  = opts.context  || this;
-                var silent = (opts.silent);
 
-                var ce = new Y.CustomEvent(p_type, context, silent,
-                        Y.Event.Custom.FLAT);
+ce = new Y.CustomEvent(p_type, context, silent);
                 events[p_type] = ce;
 
                 if (opts.onSubscribeCallback) {
@@ -1808,6 +1845,10 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
                         ce.subscribe(qs[i].fn, qs[i].obj, qs[i].override);
                     }
                 }
+            }
+
+            if ("fireOnce" in opts) {
+                ce.fireOnce = opts.fireOnce;
             }
 
             return events[p_type];
@@ -1832,22 +1873,23 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
-        fire: function(p_type, arg1, arg2, etc) {
+        fire: function(p_type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type];
+            var ce = this.__yui_events[p_type] || this.publish(p_type);
 
-            if (!ce) {
+            //if (!ce) {
 // Y.log(p_type + "event fired before it was created.");
                 // return null;
-                ce = this.publish(p_type);
-            }
+                // ce = this.publish(p_type);
+            // }
 
-            var args = [];
-            for (var i=1; i<arguments.length; ++i) {
-                args.push(arguments[i]);
-            }
-            return ce.fire.apply(ce, args);
+            // var args = [];
+            // for (var i=1; i<arguments.length; ++i) {
+                // args.push(arguments[i]);
+            // }
+
+            return ce.fire.apply(ce, Y.array(arguments, 1, true));
         },
 
         /**
@@ -1917,10 +1959,24 @@ Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
 
     };
 
-    Y.mix(Y, Y.Event.Target.prototype);
+    Y.mix(Y, Y.EventTarget.prototype);
 
 }, "3.0.0");
 YUI.add("event-custom", function(Y) {
+
+    Y.EventHandle = function(evt, sub) {
+        if (!evt || !sub) {
+            return null;
+        }
+        this.evt = evt;
+        this.sub = sub;
+    };
+
+    Y.EventHandle.prototype = {
+        detach: function() {
+            this.evt._delete(this.sub);
+        }
+    };
 
     /**
      * The Event.Custom class lets you define events for your application
@@ -1936,7 +1992,7 @@ YUI.add("event-custom", function(Y) {
      * @param {int}     signature the signature that the custom event subscriber
      *                  will receive. Y.Event.Custom.LIST or 
      *                  Y.Event.Custom.FLAT.  The default is
-     *                  Y.Event.Custom.LIST.
+     *                  Y.Event.Custom.FLAT.
      * @namespace Y
      * @class Event.Custom
      * @constructor
@@ -1964,7 +2020,7 @@ YUI.add("event-custom", function(Y) {
          * @property silent
          * @type boolean
          */
-        this.silent = silent;
+        this.silent = silent || (type == "yui:log");
 
         /**
          * Custom events support two styles of arguments provided to the event
@@ -1988,18 +2044,16 @@ YUI.add("event-custom", function(Y) {
          *   @property signature
          *   @type int
          */
-        this.signature = signature || Y.CustomEvent.LIST;
+        this.signature = signature || Y.CustomEvent.FLAT;
 
         /**
          * The subscribers to this event
          * @property subscribers
-         * @type Event.Subscriber[]
+         * @type Event.Subscriber{}
          */
-        this.subscribers = [];
+        this.subscribers = {};
 
-        if (!this.silent) {
-            Y.log( "Creating " + this, "info", "Event" );
-        }
+        this.log("Creating " + this);
 
         var onsubscribeType = "_YUICEOnSubscribe";
 
@@ -2025,15 +2079,6 @@ YUI.add("event-custom", function(Y) {
              */
             this.subscribeEvent = 
                     new Y.CustomEvent(onsubscribeType, this, true);
-
-            /**
-             * This event fires only once if true
-             *
-             * @property once
-             * @type boolean
-             * @default false;
-             */
-            this.once = false;
 
             /**
              * This event has fired if true
@@ -2101,17 +2146,22 @@ YUI.add("event-custom", function(Y) {
          *                                   the execution context.
          * @return unsubscribe handle
          */
-        subscribe: function(fn, obj, override) {
+        subscribe: function(fn, obj) {
 
             if (!fn) {
 throw new Error("Invalid callback for CE: '" + this.type + "'");
             }
 
-            if (this.subscribeEvent) {
-                this.subscribeEvent.fire(fn, obj, override);
+            var se = this.subscribeEvent;
+            if (se) {
+                se.fire.apply(se, arguments);
             }
 
-            var s = new Y.Subscriber(fn, obj, override);
+            // bind context and extra params
+            var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+
+            var s = new Y.Subscriber(m);
+            s.ofn = fn;
 
             if (this.fireOnce && this.fired) {
                 this.lastError = null;
@@ -2121,7 +2171,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 }
             }
 
-            this.subscribers.push(s);
+            this.subscribers[s.id] = s;
+
+            return new Y.EventHandle(this, s);
 
         },
 
@@ -2139,15 +2191,20 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         unsubscribe: function(fn, obj) {
 
+            // if arg[0] typeof unsubscribe handle
+            if (fn && fn.detach) {
+                return fn.detach();
+            }
+
             if (!fn) {
                 return this.unsubscribeAll();
             }
 
             var found = false;
-            for (var i=0, len=this.subscribers.length; i<len; ++i) {
+            for (var i in this.subscribers) {
                 var s = this.subscribers[i];
                 if (s && s.contains(fn, obj)) {
-                    this._delete(i);
+                    this._delete(s);
                     found = true;
                 }
             }
@@ -2157,45 +2214,41 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
         _notify: function(s, args) {
 
-            if (!this.silent) {
-                Y.log( this.type + "->" + ": " +  s, 
-                            "info", "Event" );
-            }
+            this.log(this.type + "->" + ": " +  s);
 
             var context = s.getScope(this.context), ret;
 
             if (this.signature == Y.CustomEvent.FLAT) {
-                var param = null;
-                if (args.length > 0) {
-                    param = args[0];
-                }
 
-                try {
-                    ret = s.fn.call(context, param, s.obj);
-                } catch(e) {
-                    this.lastError = e;
-                    Y.log(this + " subscriber exception: " + e,
-                              "error", "Event");
-                }
+                //try {
+                    ret = s.fn.apply(context, args);
+                // } catch(e) {
+                //    this.lastError = e;
+//this.log(this + " subscriber exception: " + e, "error");
+ //               }
+
             } else {
                 try {
                     ret = s.fn.call(context, this.type, args, s.obj);
                 } catch(ex) {
                     this.lastError = ex;
-                    Y.log(this + " subscriber exception: " + ex,
-                              "error", "Event");
+this.log(this + " subscriber exception: " + ex, "error");
                 }
             }
             if (false === ret) {
-                if (!this.silent) {
-                    Y.log("Event cancelled by subscriber", "info", "Event");
-                }
+                this.log("Event cancelled by subscriber");
 
                 //break;
                 return false;
             }
 
             return true;
+        },
+
+        log: function(msg, cat) {
+            if (!this.silent) {
+                Y.log(msg, cat || "info", "Event");
+            }
         },
 
         /**
@@ -2215,25 +2268,24 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          *                   true otherwise
          */
         fire: function() {
-            var len=this.subscribers.length;
-            if (!len && this.silent) {
-                return true;
-            }
+            // var subs = this.subscribers.slice(), len=subs.length,
+            var subs = Y.merge(this.subscribers),
+                args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
 
-            var args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
+            this.log("Firing "       + this  + ", " + 
+                     "args: "        + args);
+                     // + "subscribers: " + len);
 
-            if (!this.silent) {
-                Y.log( "Firing "       + this  + ", " + 
-                           "args: "        + args  + ", " +
-                           "subscribers: " + len,                 
-                           "info", "Event"                  );
-            }
+            // if (!len) {
+                // return true;
+            // }
 
             var errors = [];
 
-            for (i=0; i<len; ++i) {
-                var s = this.subscribers[i];
-                if (!s) {
+            // for (i=0; i<len; ++i) {
+            for (i in subs) {
+                var s = subs[i];
+                if (!s || !s.fn) {
                     rebuild=true;
                 } else {
                     this.lastError = null;
@@ -2250,19 +2302,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             this.fired = true;
 
             if (errors.length) {
-throw new Y.ChainedError('one or more subscribers threw an error: ' +
+throw new Y.ChainedError(this.type + ': 1 or more subscribers threw an error: ' +
                          errors[0].message, errors);
             }
-
-            if (rebuild) {
-                var newlist=[],subs=this.subscribers;
-                for (i=0,len=subs.length; i<len; i=i+1) {
-                    newlist.push(subs[i]);
-                }
-
-                this.subscribers=newlist;
-            }
-
 
             return ret;
         },
@@ -2273,35 +2315,38 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
          * @return {int} The number of listeners unsubscribed
          */
         unsubscribeAll: function() {
-            for (var i=0, len=this.subscribers.length; i<len; ++i) {
-                this._delete(len - 1 - i);
+            // for (var i=0, len=this.subscribers.length; i<len; ++i) {
+            for (var i in this.subscribers) {
+                this._delete(this.subscribers[i]);
             }
 
-            this.subscribers=[];
+            this.subscribers={};
 
             return i;
         },
 
         /**
          * @method _delete
+         * @param subscriber object
          * @private
          */
-        _delete: function(index) {
-            var s = this.subscribers[index];
+        _delete: function(s) {
+
             if (s) {
                 delete s.fn;
                 delete s.obj;
+                delete s.ofn;
+                delete this.subscribers[s.id];
             }
 
-            this.subscribers[index]=null;
         },
 
         /**
          * @method toString
          */
         toString: function() {
-             return "Event.Custom: " + "'" + this.type  + "', " + 
-                 "context: " + this.context;
+             return "'" + this.type + "'";
+                  // + "context: " + this.context;
 
         }
     };
@@ -2321,6 +2366,7 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
 
         /**
          * The callback that will be execute when the event fires
+         * This is wrappedif obj was supplied.
          * @property fn
          * @type function
          */
@@ -2344,6 +2390,13 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
          * @type boolean|object
          */
         this.override = override;
+
+        this.id = Y.stamp(this);
+
+        /**
+         * Original function
+         */
+        this.ofn = null;
 
     };
 
@@ -2378,9 +2431,9 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
      */
     Y.Subscriber.prototype.contains = function(fn, obj) {
         if (obj) {
-            return (this.fn == fn && this.obj == obj);
+            return ((this.fn == fn || this.ofn == fn) && this.obj == obj);
         } else {
-            return (this.fn == fn);
+            return (this.fn == fn || this.ofn == fn);
         }
     };
 
@@ -2538,23 +2591,6 @@ YUI.add("event-dom", function(Y) {
             var unloadListeners = [];
 
             /**
-             * Cache of DOM0 event handlers to work around issues with DOM2 events
-             * in Safari
-             * @property legacyEvents
-             * @static
-             * @private
-             */
-            var legacyEvents = [];
-
-            /**
-             * Listener stack for DOM0 events
-             * @property legacyHandlers
-             * @static
-             * @private
-             */
-            var legacyHandlers = [];
-
-            /**
              * The number of times to poll after window.onload.  This number is
              * increased if additional late-bound handlers are requested after
              * the page load.
@@ -2571,14 +2607,6 @@ YUI.add("event-dom", function(Y) {
              * @private
              */
             var onAvailStack = [];
-
-            /**
-             * Lookup table for legacy events
-             * @property legacyMap
-             * @static
-             * @private
-             */
-            var legacyMap = [];
 
             /**
              * Counter for auto id generation
@@ -2606,6 +2634,10 @@ YUI.add("event-dom", function(Y) {
                 25: 9      // SHIFT-TAB (Safari provides a different key code in
                            // this case, even though the shiftKey modifier is set)
             };
+
+            var wrappers = {};
+
+            var elEvents = {};
 
             return {
 
@@ -2849,22 +2881,12 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @static
                  */
-                onDOMReady: function(p_fn, p_obj, p_override) {
-                    if (Y.Event.DOMReady) {
-                        setTimeout(function() {
-                            var s = Y;
-                            if (p_override) {
-                                if (p_override === true) {
-                                    s = p_obj;
-                                } else {
-                                    s = p_override;
-                                }
-                            }
-                            p_fn.call(s, "event:ready", [], p_obj);
-                        }, 0);
-                    } else {
-                        Y.Event.DOMReadyEvent.subscribe(p_fn, p_obj, p_override);
-                    }
+                onDOMReady: function(p_fn) {
+                    var ev = Y.Event.DOMReadyEvent;
+                    ev.subscribe.apply(ev, arguments);
+                    // var a = Y.array(arguments, 0, true);
+                    // a.unshift('event:ready');
+                    // Y.on.apply(Y, a);
                 },
 
                 /**
@@ -2875,7 +2897,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {String|HTMLElement|Array|NodeList} el An id, an element 
                  *  reference, or a collection of ids and/or elements to assign the 
                  *  listener to.
-                 * @param {String}   sType     The type of event to append
+                 * @param {String}   type     The type of event to append
                  * @param {Function} fn        The method the event invokes
                  * @param {Object}   obj    An arbitrary object that will be 
                  *                             passed as a parameter to the handler
@@ -2889,25 +2911,29 @@ YUI.add("event-dom", function(Y) {
                  *                        or if the operation throws an exception.
                  * @static
                  */
-                addListener: function(el, sType, fn, obj, override) {
+                addListener: function(el, type, fn, obj) {
+
+                    var a=Y.array(arguments, 1, true), override = a[3];
 
                     if (!fn || !fn.call) {
-    // throw new TypeError(sType + " addListener call failed, callback undefined");
-    Y.log(sType + " addListener call failed, invalid callback", "error", "Event");
+    // throw new TypeError(type + " addListener call failed, callback undefined");
+    Y.log(type + " addListener call failed, invalid callback", "error", "Event");
                         return false;
                     }
 
                     // The el argument can be an array of elements or element ids.
                     if ( this._isValidCollection(el)) {
-                        var ok = true;
-                        for (var i=0,len=el.length; i<len; ++i) {
-                            ok = this.addListener(el[i], 
-                                           sType, 
-                                           fn, 
-                                           obj, 
-                                           override) && ok;
+
+                        var handles=[], h, i, l;
+
+                        for (i=0, l=el.length; i<l; ++i) {
+// handles.push(this.addListener(el[i], type, fn, obj, override));
+                            var b = a.slice();
+                            b.unshift(el[i]);
+                            h = this.addListener.apply(this, b);
+                            handles.push(h);
                         }
-                        return ok;
+                        return handles;
 
                     } else if (Y.lang.isString(el)) {
                         var oEl = Y.get(el);
@@ -2923,7 +2949,8 @@ YUI.add("event-dom", function(Y) {
                         } else {
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
-                               Y.Event.addListener(el, sType, fn, obj, override);
+                                // Y.Event.addListener(el, type, fn, obj, override);
+                                Y.Event.addListener.apply(Y.Event, Y.array(arguments, 0, true));
                             });
 
                             return true;
@@ -2933,25 +2960,43 @@ YUI.add("event-dom", function(Y) {
                     // Element should be an html element or an array if we get 
                     // here.
                     if (!el) {
-                        // this.logger.debug("unable to attach event " + sType);
+                        // this.logger.debug("unable to attach event " + type);
                         return false;
                     }
 
-                    // we need to make sure we fire registered unload events 
-                    // prior to automatically unhooking them.  So we hang on to 
-                    // these instead of attaching them to the window and fire the
-                    // handles explicitly during our one unload event.
-                    if ("unload" == sType && obj !== this) {
-                        unloadListeners[unloadListeners.length] =
-                                [el, sType, fn, obj, override];
-                        return true;
+                    // the custom event key is the uid for the element + type
+
+                    var ek = Y.stamp(el), key = 'event:' + ek + type,
+                        ce = wrappers[key];
+
+
+                    if (!ce) {
+                        // create CE wrapper
+                        ce = Y.publish(key, {
+                            silent: true
+                        });
+
+                        // cache the dom event details in the custom event
+                        // for later removeListener calls
+                        ce.el = el;
+                        ce.type = type;
+                        ce.fn = function(e) {
+                            ce.fire(Y.Event.getEvent(e));
+                        };
+
+                        wrappers[key] = ce;
+                        elEvents[ek] = elEvents[ek] || {};
+                        elEvents[ek][key] = ce;
+
+                        // attach a listener that fires the custom event
+                        this.nativeAdd(el, type, ce.fn, false);
                     }
 
-                    // this.logger.debug("Adding handler: " + el + ", " + sType);
+        
+                    // from type, fn, etc to fn, obj, override
+                    a = Y.array(arguments, 2, true);
+                    // a = a.shift();
 
-                    // if the user chooses to override the context, we use the custom
-                    // object passed in, otherwise the executing context will be the
-                    // HTML element that the event is registered on
                     var context = el;
                     if (override) {
                         if (override === true) {
@@ -2961,130 +3006,20 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    // wrap the function so we can return the obj object when
-                    // the event fires;
-                    var wrappedFn = function(e) {
-                            return fn.call(context, Y.Event.getEvent(e, el), 
-                                    obj);
-                        };
+                    a[1] = context;
 
-                    var li = [el, sType, fn, wrappedFn, context, obj, override];
-                    var index = listeners.length;
-                    // cache the listener so we can try to automatically unload
-                    listeners[index] = li;
+                    // Y.log('DOM event f: ' + a[0]);
+                    // Y.log('dom event ce sub: ' + Y.lang.dump(a));
 
-                    if (this.useLegacyEvent(el, sType)) {
-                        var legacyIndex = this.getLegacyIndex(el, sType);
+                    // var m = a[1] ? Y.bind.apply(context, a) : fn;
+                    // return ce.subscribe(m);
 
-                        // Add a new dom0 wrapper if one is not detected for this
-                        // element
-                        if ( legacyIndex == -1 || 
-                                    el != legacyEvents[legacyIndex][0] ) {
+                    // set context to element if not specified
+                    return ce.subscribe.apply(ce, a);
 
-                            legacyIndex = legacyEvents.length;
-                            legacyMap[el.id + sType] = legacyIndex;
 
-                            // cache the signature for the DOM0 event, and 
-                            // include the existing handler for the event, if any
-                            legacyEvents[legacyIndex] = 
-                                [el, sType, el["on" + sType]];
-                            legacyHandlers[legacyIndex] = [];
-
-                            el["on" + sType] = 
-                                function(e) {
-                                    Y.Event.fireLegacyEvent(
-                                        Y.Event.getEvent(e), legacyIndex);
-                                };
-                        }
-
-                        // add a reference to the wrapped listener to our custom
-                        // stack of events
-                        //legacyHandlers[legacyIndex].push(index);
-                        legacyHandlers[legacyIndex].push(li);
-
-                    } else {
-                        try {
-                            this._simpleAdd(el, sType, wrappedFn, false);
-                        } catch(ex) {
-                            // handle an error trying to attach an event.  If it fails
-                            // we need to clean up the cache
-                            this.lastError = ex;
-                            this.removeListener(el, sType, fn);
-                            return false;
-                        }
-                    }
-
-                    return true;
-                    
                 },
 
-                /**
-                 * When using legacy events, the handler is routed to this object
-                 * so we can fire our custom listener stack.
-                 * @method fireLegacyEvent
-                 * @static
-                 * @private
-                 */
-                fireLegacyEvent: function(e, legacyIndex) {
-                    // this.logger.debug("fireLegacyEvent " + legacyIndex);
-                    var ok=true,le,lh,li,context,ret;
-                    
-                    lh = legacyHandlers[legacyIndex];
-                    for (var i=0,len=lh.length; i<len; ++i) {
-                        li = lh[i];
-                        if ( li && li[this.WFN] ) {
-                            context = li[this.ADJ_SCOPE];
-                            ret = li[this.WFN].call(context, e);
-                            ok = (ok && ret);
-                        }
-                    }
-
-                    // Fire the original handler if we replaced one.  We fire this
-                    // after the other events to keep stopPropagation/preventDefault
-                    // that happened in the DOM0 handler from touching our DOM2
-                    // substitute
-                    le = legacyEvents[legacyIndex];
-                    if (le && le[2]) {
-                        le[2](e);
-                    }
-                    
-                    return ok;
-                },
-
-                /**
-                 * Returns the legacy event index that matches the supplied 
-                 * signature
-                 * @method getLegacyIndex
-                 * @static
-                 * @private
-                 */
-                getLegacyIndex: function(el, sType) {
-                    var key = this.generateId(el) + sType;
-                    if (typeof legacyMap[key] == "undefined") { 
-                        return -1;
-                    } else {
-                        return legacyMap[key];
-                    }
-                },
-
-                /**
-                 * Logic that determines when we should automatically use legacy
-                 * events instead of DOM2 events.  Currently this is limited to old
-                 * Safari browsers with a broken preventDefault
-                 * @method useLegacyEvent
-                 * @static
-                 * @private
-                 */
-                useLegacyEvent: function(el, sType) {
-                    if (Y.ua.webkit && ("click"==sType || "dblclick"==sType)) {
-                        var v = parseInt(Y.ua.webkit, 10);
-                        if (!isNaN(v) && v<418) {
-                            return true;
-                        }
-                    }
-                    return false;
-                },
-                        
                 /**
                  * Removes an event listener
                  *
@@ -3093,7 +3028,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {String|HTMLElement|Array|NodeList} el An id, an element 
                  *  reference, or a collection of ids and/or elements to remove
                  *  the listener from.
-                 * @param {String} sType the type of event to remove.
+                 * @param {String} type the type of event to remove.
                  * @param {Function} fn the method the event invokes.  If fn is
                  *  undefined, then all event handlers for the type of event are 
                  *  removed.
@@ -3101,7 +3036,11 @@ YUI.add("event-dom", function(Y) {
                  *  otherwise.
                  * @static
                  */
-                removeListener: function(el, sType, fn) {
+                removeListener: function(el, type, fn) {
+
+                    if (el && el.detach) {
+                        return el.detach();
+                    }
                     var i, len, li;
 
                     // The el argument can be a string
@@ -3111,7 +3050,7 @@ YUI.add("event-dom", function(Y) {
                     } else if ( this._isValidCollection(el)) {
                         var ok = true;
                         for (i=0,len=el.length; i<len; ++i) {
-                            ok = ( this.removeListener(el[i], sType, fn) && ok );
+                            ok = ( this.removeListener(el[i], type, fn) && ok );
                         }
                         return ok;
                     }
@@ -3119,86 +3058,18 @@ YUI.add("event-dom", function(Y) {
                     if (!fn || !fn.call) {
                         // this.logger.debug("Error, function is not valid " + fn);
                         //return false;
-                        return this.purgeElement(el, false, sType);
+                        return this.purgeElement(el, false, type);
                     }
 
-                    if ("unload" == sType) {
 
-                        for (i=0, len=unloadListeners.length; i<len; i++) {
-                            li = unloadListeners[i];
-                            if (li && 
-                                li[0] == el && 
-                                li[1] == sType && 
-                                li[2] == fn) {
-                                    //unloadListeners.splice(i, 1);
-                                    unloadListeners[i]=null;
-                                    return true;
-                            }
-                        }
-
-                        return false;
+                    var id = 'event:' + Y.stamp(el) + type, 
+                        ce = wrappers[id];
+                    if (ce) {
+                        return ce.unsubscribe(fn);
                     }
-
-                    var cacheItem = null;
-
-                    // The index is a hidden parameter; needed to remove it from
-                    // the method signature because it was tempting users to
-                    // try and take advantage of it, which is not possible.
-                    var index = arguments[3];
-      
-                    if ("undefined" === typeof index) {
-                        index = this._getCacheIndex(el, sType, fn);
-                    }
-
-                    if (index >= 0) {
-                        cacheItem = listeners[index];
-                    }
-
-                    if (!el || !cacheItem) {
-                        // this.logger.debug("cached listener not found");
-                        return false;
-                    }
-
-                    // this.logger.debug("Removing handler: " + el + ", " + sType);
-
-                    if (this.useLegacyEvent(el, sType)) {
-                        var legacyIndex = this.getLegacyIndex(el, sType);
-                        var llist = legacyHandlers[legacyIndex];
-                        if (llist) {
-                            for (i=0, len=llist.length; i<len; ++i) {
-                                li = llist[i];
-                                if (li && 
-                                    li[this.EL] == el && 
-                                    li[this.TYPE] == sType && 
-                                    li[this.FN] == fn) {
-                                        //llist.splice(i, 1);
-                                        llist[i]=null;
-                                        break;
-                                }
-                            }
-                        }
-
-                    } else {
-                        try {
-                            this._simpleRemove(el, sType, cacheItem[this.WFN], false);
-                        } catch(ex) {
-                            this.lastError = ex;
-                            return false;
-                        }
-                    }
-
-                    // removed the wrapped handler
-                    delete listeners[index][this.WFN];
-                    delete listeners[index][this.FN];
-                    //listeners.splice(index, 1);
-                    listeners[index]=null;
-
-                    return true;
 
                 },
 
-
-                 
                 /**
                  * Finds the event in the window object, the caller's arguments, or
                  * in the arguments of another method in the callstack.  This is
@@ -3228,43 +3099,6 @@ YUI.add("event-dom", function(Y) {
                     return new Y.Event.Facade(ev, boundEl);
                 },
 
-                /**
-                 * Returns the charcode for an event
-                 * @method getCharCode
-                 * @param {Event} ev the event
-                 * @return {int} the event's charCode
-                 * @static
-                 */
-                getCharCode: function(ev) {
-                    var code = ev.keyCode || ev.charCode || 0;
-
-                    // webkit normalization
-                    if (Y.ua.webkit && (code in webkitKeymap)) {
-                        code = webkitKeymap[code];
-                    }
-                    return code;
-                },
-
-                /**
-                 * Locating the saved event handler data by function ref
-                 *
-                 * @method _getCacheIndex
-                 * @static
-                 * @private
-                 */
-                _getCacheIndex: function(el, sType, fn) {
-                    for (var i=0,len=listeners.length; i<len; ++i) {
-                        var li = listeners[i];
-                        if ( li                 && 
-                             li[this.FN] == fn  && 
-                             li[this.EL] == el  && 
-                             li[this.TYPE] == sType ) {
-                            return i;
-                        }
-                    }
-
-                    return -1;
-                },
 
                 /**
                  * Generates an unique ID for the element if it does not already 
@@ -3314,12 +3148,14 @@ YUI.add("event-dom", function(Y) {
 
                 },
 
-
                 /**
                  * Custom event the fires when the dom is initially usable
                  * @event DOMReadyEvent
                  */
-                DOMReadyEvent: new Y.CustomEvent("event:ready", this),
+                // DOMReadyEvent: new Y.CustomEvent("event:ready", this),
+                DOMReadyEvent: Y.publish("event:ready", this, {
+                    fireOnce: true
+                }),
 
                 /**
                  * hook up any deferred listeners
@@ -3361,7 +3197,7 @@ YUI.add("event-dom", function(Y) {
                         E.DOMReadyEvent.fire();
 
                         // Remove the DOMContentLoaded (FF/Opera)
-                        E._simpleRemove(document, "DOMContentLoaded", E._ready);
+                        E.nativeRemove(document, "DOMContentLoaded", E._ready);
                     }
                 },
 
@@ -3476,23 +3312,23 @@ YUI.add("event-dom", function(Y) {
                  * @param {HTMLElement} el the element to purge
                  * @param {boolean} recurse recursively purge this element's children
                  * as well.  Use with caution.
-                 * @param {string} sType optional type of listener to purge. If
+                 * @param {string} type optional type of listener to purge. If
                  * left out, all listeners will be removed
                  * @static
                  */
-                purgeElement: function(el, recurse, sType) {
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
-                    var elListeners = this.getListeners(oEl, sType), i, len;
-                    if (elListeners) {
-                        for (i=0,len=elListeners.length; i<len ; ++i) {
-                            var l = elListeners[i];
-                            this.removeListener(oEl, l.type, l.fn, l.index);
+                purgeElement: function(el, recurse, type) {
+                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el,
+                        id = Y.stamp(oEl);
+                    var lis = this.getListeners(oEl, type), i, len;
+                    if (lis) {
+                        for (i=0,len=lis.length; i<len ; ++i) {
+                            lis[i].unsubscribeAll();
                         }
                     }
 
                     if (recurse && oEl && oEl.childNodes) {
                         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                            this.purgeElement(oEl.childNodes[i], recurse, sType);
+                            this.purgeElement(oEl.childNodes[i], recurse, type);
                         }
                     }
                 },
@@ -3502,46 +3338,22 @@ YUI.add("event-dom", function(Y) {
                  * Optionally, you can specify a specific type of event to return.
                  * @method getListeners
                  * @param el {HTMLElement|string} the element or element id to inspect 
-                 * @param sType {string} optional type of listener to return. If
+                 * @param type {string} optional type of listener to return. If
                  * left out, all listeners will be returned
-                 * @return {Object} the listener. Contains the following fields:
-                 * &nbsp;&nbsp;type:   (string)   the type of event
-                 * &nbsp;&nbsp;fn:     (function) the callback supplied to addListener
-                 * &nbsp;&nbsp;obj:    (object)   the custom object supplied to addListener
-                 * &nbsp;&nbsp;adjust: (boolean|object)  whether or not to adjust the default context
-                 * &nbsp;&nbsp;context: (boolean)  the derived context based on the adjust parameter
-                 * &nbsp;&nbsp;index:  (int)      its position in the Event util listener cache
+                 * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)
                  * @static
                  */           
-                getListeners: function(el, sType) {
-                    var results=[], searchLists;
-                    if (!sType) {
-                        searchLists = [listeners, unloadListeners];
-                    } else if (sType === "unload") {
-                        searchLists = [unloadListeners];
+                getListeners: function(el, type) {
+                    var results=[], ek = Y.stamp(el), key = (type) ? 'event:' + type : null,
+                        evts = elEvents[ek];
+
+                    if (key) {
+                        if (evts[key]) {
+                            results.push(evts[key]);
+                        }
                     } else {
-                        searchLists = [listeners];
-                    }
-
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
-
-                    for (var j=0;j<searchLists.length; j=j+1) {
-                        var searchList = searchLists[j];
-                        if (searchList && searchList.length > 0) {
-                            for (var i=0,len=searchList.length; i<len ; ++i) {
-                                var l = searchList[i];
-                                if ( l  && l[this.EL] === oEl && 
-                                        (!sType || sType === l[this.TYPE]) ) {
-                                    results.push({
-                                        type:   l[this.TYPE],
-                                        fn:     l[this.FN],
-                                        obj:    l[this.OBJ],
-                                        adjust: l[this.OVERRIDE],
-                                        context:  l[this.ADJ_SCOPE],
-                                        index:  i
-                                    });
-                                }
-                            }
+                        for (var i in evts) {
+                            results.push(evts[i]);
                         }
                     }
 
@@ -3557,75 +3369,38 @@ YUI.add("event-dom", function(Y) {
                  */
                 _unload: function(e) {
 
-                    var E = Y.Event, i, j, l, len, index;
+                    var E = Y.Event, i, w;
 
-                    // execute and clear stored unload listeners
-                    for (i=0,len=unloadListeners.length; i<len; ++i) {
-                        l = unloadListeners[i];
-                        if (l) {
-                            var context = Y;
-                            if (l[E.ADJ_SCOPE]) {
-                                if (l[E.ADJ_SCOPE] === true) {
-                                    context = l[E.UNLOAD_OBJ];
-                                } else {
-                                    context = l[E.ADJ_SCOPE];
-                                }
-                            }
-                            l[E.FN].call(context, E.getEvent(e, l[E.EL]), l[E.UNLOAD_OBJ] );
-                            unloadListeners[i] = null;
-                            l=null;
-                            context=null;
-                        }
+                    for (i in wrappers) {
+                        w = wrappers[i];
+                        w.unsubscribeAll();
+                        this.nativeRemove(w.el, w.type, w.fn);
+                        delete wrappers[i];
                     }
 
-                    unloadListeners = null;
-
-                    // Remove listeners to handle IE memory leaks
-                    //if (Y.ua.ie && listeners && listeners.length > 0) {
-                    
-                    // 2.5.0 listeners are removed for all browsers again.  FireFox preserves
-                    // at least some listeners between page refreshes, potentially causing
-                    // errors during page load (mouseover listeners firing before they
-                    // should if the user moves the mouse at the correct moment).
-                    if (listeners && listeners.length > 0) {
-                        j = listeners.length;
-                        while (j) {
-                            index = j-1;
-                            l = listeners[index];
-                            if (l) {
-                                E.removeListener(l[E.EL], l[E.TYPE], l[E.FN], index);
-                            } 
-                            j--;
-                        }
-                        l=null;
-                    }
-
-                    legacyEvents = null;
-
-                    E._simpleRemove(window, "unload", E._unload);
-
+                    E.nativeRemove(window, "unload", E._unload);
                 },
 
                 
                 /**
                  * Adds a DOM event directly without the caching, cleanup, context adj, etc
                  *
-                 * @method _simpleAdd
+                 * @method nativeAdd
                  * @param {HTMLElement} el      the element to bind the handler to
-                 * @param {string}      sType   the type of event handler
+                 * @param {string}      type   the type of event handler
                  * @param {function}    fn      the callback to invoke
                  * @param {boolen}      capture capture or bubble phase
                  * @static
                  * @private
                  */
-                _simpleAdd: function () {
+                nativeAdd: function () {
                     if (window.addEventListener) {
-                        return function(el, sType, fn, capture) {
-                            el.addEventListener(sType, fn, (capture));
+                        return function(el, type, fn, capture) {
+                            el.addEventListener(type, fn, !!capture);
                         };
                     } else if (window.attachEvent) {
-                        return function(el, sType, fn, capture) {
-                            el.attachEvent("on" + sType, fn);
+                        return function(el, type, fn, capture) {
+                            el.attachEvent("on" + type, fn);
                         };
                     } else {
                         return function(){};
@@ -3635,22 +3410,22 @@ YUI.add("event-dom", function(Y) {
                 /**
                  * Basic remove listener
                  *
-                 * @method _simpleRemove
+                 * @method nativeRemove
                  * @param {HTMLElement} el      the element to bind the handler to
-                 * @param {string}      sType   the type of event handler
+                 * @param {string}      type   the type of event handler
                  * @param {function}    fn      the callback to invoke
                  * @param {boolen}      capture capture or bubble phase
                  * @static
                  * @private
                  */
-                _simpleRemove: function() {
+                nativeRemove: function() {
                     if (window.removeEventListener) {
-                        return function (el, sType, fn, capture) {
-                            el.removeEventListener(sType, fn, (capture));
+                        return function (el, type, fn, capture) {
+                            el.removeEventListener(type, fn, !!capture);
                         };
                     } else if (window.detachEvent) {
-                        return function (el, sType, fn) {
-                            el.detachEvent("on" + sType, fn);
+                        return function (el, type, fn) {
+                            el.detachEvent("on" + type, fn);
                         };
                     } else {
                         return function(){};
@@ -3659,6 +3434,9 @@ YUI.add("event-dom", function(Y) {
             };
 
         }();
+
+        Y.Event.Custom = Y.CustomEvent;
+        Y.Event.Target = Y.EventTarget;
 
 }, "3.0.0");
 YUI.add("event-facade", function(Y) {
@@ -3720,14 +3498,14 @@ YUI.add("event-facade", function(Y) {
 
     // return the element facade
     var wrapNode = function(n) {
-        return n;
+        return (n && Y.Node) ? Y.Node.get(n) : n;
     };
 
     var resolve = function(n) {
         try {
-        if (n && 3 == n.nodeType) {
-            n = n.parentNode;
-        } 
+            if (n && 3 == n.nodeType) {
+                n = n.parentNode;
+            } 
         } catch(ex) { }
 
         return wrapNode(n);
@@ -3758,7 +3536,7 @@ YUI.add("event-facade", function(Y) {
 
         if (!x && 0 !== x) {
             x = e.clientX || 0;
-            y = e.clientX || 0;
+            y = e.clientY || 0;
 
             if (ua.ie) {
                 x += b.scrollLeft;
@@ -3845,7 +3623,10 @@ YUI.add("event-ready", function(Y) {
      * @static
      */
     E.attach = function(type, fn, el, data, context) {
-        return E.addListener(el, type, fn, data, context);
+        var a = Y.array(arguments, 0, true),
+            oEl = a.splice(2, 1);
+        a.unshift(oEl[0]);
+        return E.addListener.apply(E, a);
     };
 
     E.detach = function(type, fn, el, data, context) {
@@ -3906,7 +3687,7 @@ YUI.add("event-ready", function(Y) {
         // moment.  The latest WebKit releases now support this event.
         } else {
 
-            E._simpleAdd(document, "DOMContentLoaded", E._ready);
+            E.nativeAdd(document, "DOMContentLoaded", E._ready);
 
         }
         /////////////////////////////////////////////////////////////
@@ -3915,8 +3696,8 @@ YUI.add("event-ready", function(Y) {
     }
 
     // for the moment each instance will get its own load/unload listeners
-    E._simpleAdd(window, "load", E._load);
-    E._simpleAdd(window, "unload", E._unload);
+    E.nativeAdd(window, "load", E._load);
+    E.nativeAdd(window, "unload", E._unload);
 
 }, "3.0.0");
 /**
@@ -6673,7 +6454,7 @@ YUI.add("yui", function(Y) {
 } , "3.0.0", {
     // the following will be bound automatically when this code is loaded
     use: ["lang", "array", "core", "object", "ua", "dump", "substitute", "later", "compat", 
-          "event-custom", "event-dom", "event-target", "event-facade", "event-ready", "dom", "io"]
+          "event-target", "event-custom", "event-dom", "event-facade", "event-ready", "dom", "io"]
 });
 
 // Bind the core modules to the YUI global

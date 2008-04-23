@@ -1,5 +1,19 @@
 YUI.add("event-custom", function(Y) {
 
+    Y.EventHandle = function(evt, sub) {
+        if (!evt || !sub) {
+            return null;
+        }
+        this.evt = evt;
+        this.sub = sub;
+    };
+
+    Y.EventHandle.prototype = {
+        detach: function() {
+            this.evt._delete(this.sub);
+        }
+    };
+
     /**
      * The Event.Custom class lets you define events for your application
      * that can be subscribed to by one or more independent component.
@@ -14,7 +28,7 @@ YUI.add("event-custom", function(Y) {
      * @param {int}     signature the signature that the custom event subscriber
      *                  will receive. Y.Event.Custom.LIST or 
      *                  Y.Event.Custom.FLAT.  The default is
-     *                  Y.Event.Custom.LIST.
+     *                  Y.Event.Custom.FLAT.
      * @namespace Y
      * @class Event.Custom
      * @constructor
@@ -42,7 +56,7 @@ YUI.add("event-custom", function(Y) {
          * @property silent
          * @type boolean
          */
-        this.silent = silent;
+        this.silent = silent || (type == "yui:log");
 
         /**
          * Custom events support two styles of arguments provided to the event
@@ -66,18 +80,16 @@ YUI.add("event-custom", function(Y) {
          *   @property signature
          *   @type int
          */
-        this.signature = signature || Y.CustomEvent.LIST;
+        this.signature = signature || Y.CustomEvent.FLAT;
 
         /**
          * The subscribers to this event
          * @property subscribers
-         * @type Event.Subscriber[]
+         * @type Event.Subscriber{}
          */
-        this.subscribers = [];
+        this.subscribers = {};
 
-        if (!this.silent) {
-            Y.log( "Creating " + this, "info", "Event" );
-        }
+        this.log("Creating " + this);
 
         var onsubscribeType = "_YUICEOnSubscribe";
 
@@ -103,15 +115,6 @@ YUI.add("event-custom", function(Y) {
              */
             this.subscribeEvent = 
                     new Y.CustomEvent(onsubscribeType, this, true);
-
-            /**
-             * This event fires only once if true
-             *
-             * @property once
-             * @type boolean
-             * @default false;
-             */
-            this.once = false;
 
             /**
              * This event has fired if true
@@ -179,17 +182,22 @@ YUI.add("event-custom", function(Y) {
          *                                   the execution context.
          * @return unsubscribe handle
          */
-        subscribe: function(fn, obj, override) {
+        subscribe: function(fn, obj) {
 
             if (!fn) {
 throw new Error("Invalid callback for CE: '" + this.type + "'");
             }
 
-            if (this.subscribeEvent) {
-                this.subscribeEvent.fire(fn, obj, override);
+            var se = this.subscribeEvent;
+            if (se) {
+                se.fire.apply(se, arguments);
             }
 
-            var s = new Y.Subscriber(fn, obj, override);
+            // bind context and extra params
+            var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+
+            var s = new Y.Subscriber(m);
+            s.ofn = fn;
 
             if (this.fireOnce && this.fired) {
                 this.lastError = null;
@@ -199,7 +207,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 }
             }
 
-            this.subscribers.push(s);
+            this.subscribers[s.id] = s;
+
+            return new Y.EventHandle(this, s);
 
         },
 
@@ -217,15 +227,20 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         unsubscribe: function(fn, obj) {
 
+            // if arg[0] typeof unsubscribe handle
+            if (fn && fn.detach) {
+                return fn.detach();
+            }
+
             if (!fn) {
                 return this.unsubscribeAll();
             }
 
             var found = false;
-            for (var i=0, len=this.subscribers.length; i<len; ++i) {
+            for (var i in this.subscribers) {
                 var s = this.subscribers[i];
                 if (s && s.contains(fn, obj)) {
-                    this._delete(i);
+                    this._delete(s);
                     found = true;
                 }
             }
@@ -235,45 +250,41 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
         _notify: function(s, args) {
 
-            if (!this.silent) {
-                Y.log( this.type + "->" + ": " +  s, 
-                            "info", "Event" );
-            }
+            this.log(this.type + "->" + ": " +  s);
 
             var context = s.getScope(this.context), ret;
 
             if (this.signature == Y.CustomEvent.FLAT) {
-                var param = null;
-                if (args.length > 0) {
-                    param = args[0];
-                }
 
-                try {
-                    ret = s.fn.call(context, param, s.obj);
-                } catch(e) {
-                    this.lastError = e;
-                    Y.log(this + " subscriber exception: " + e,
-                              "error", "Event");
-                }
+                //try {
+                    ret = s.fn.apply(context, args);
+                // } catch(e) {
+                //    this.lastError = e;
+//this.log(this + " subscriber exception: " + e, "error");
+ //               }
+
             } else {
                 try {
                     ret = s.fn.call(context, this.type, args, s.obj);
                 } catch(ex) {
                     this.lastError = ex;
-                    Y.log(this + " subscriber exception: " + ex,
-                              "error", "Event");
+this.log(this + " subscriber exception: " + ex, "error");
                 }
             }
             if (false === ret) {
-                if (!this.silent) {
-                    Y.log("Event cancelled by subscriber", "info", "Event");
-                }
+                this.log("Event cancelled by subscriber");
 
                 //break;
                 return false;
             }
 
             return true;
+        },
+
+        log: function(msg, cat) {
+            if (!this.silent) {
+                Y.log(msg, cat || "info", "Event");
+            }
         },
 
         /**
@@ -293,25 +304,24 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          *                   true otherwise
          */
         fire: function() {
-            var len=this.subscribers.length;
-            if (!len && this.silent) {
-                return true;
-            }
+            // var subs = this.subscribers.slice(), len=subs.length,
+            var subs = Y.merge(this.subscribers),
+                args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
 
-            var args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
+            this.log("Firing "       + this  + ", " + 
+                     "args: "        + args);
+                     // + "subscribers: " + len);
 
-            if (!this.silent) {
-                Y.log( "Firing "       + this  + ", " + 
-                           "args: "        + args  + ", " +
-                           "subscribers: " + len,                 
-                           "info", "Event"                  );
-            }
+            // if (!len) {
+                // return true;
+            // }
 
             var errors = [];
 
-            for (i=0; i<len; ++i) {
-                var s = this.subscribers[i];
-                if (!s) {
+            // for (i=0; i<len; ++i) {
+            for (i in subs) {
+                var s = subs[i];
+                if (!s || !s.fn) {
                     rebuild=true;
                 } else {
                     this.lastError = null;
@@ -328,19 +338,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             this.fired = true;
 
             if (errors.length) {
-throw new Y.ChainedError('one or more subscribers threw an error: ' +
+throw new Y.ChainedError(this.type + ': 1 or more subscribers threw an error: ' +
                          errors[0].message, errors);
             }
-
-            if (rebuild) {
-                var newlist=[],subs=this.subscribers;
-                for (i=0,len=subs.length; i<len; i=i+1) {
-                    newlist.push(subs[i]);
-                }
-
-                this.subscribers=newlist;
-            }
-
 
             return ret;
         },
@@ -351,35 +351,38 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
          * @return {int} The number of listeners unsubscribed
          */
         unsubscribeAll: function() {
-            for (var i=0, len=this.subscribers.length; i<len; ++i) {
-                this._delete(len - 1 - i);
+            // for (var i=0, len=this.subscribers.length; i<len; ++i) {
+            for (var i in this.subscribers) {
+                this._delete(this.subscribers[i]);
             }
 
-            this.subscribers=[];
+            this.subscribers={};
 
             return i;
         },
 
         /**
          * @method _delete
+         * @param subscriber object
          * @private
          */
-        _delete: function(index) {
-            var s = this.subscribers[index];
+        _delete: function(s) {
+
             if (s) {
                 delete s.fn;
                 delete s.obj;
+                delete s.ofn;
+                delete this.subscribers[s.id];
             }
 
-            this.subscribers[index]=null;
         },
 
         /**
          * @method toString
          */
         toString: function() {
-             return "Event.Custom: " + "'" + this.type  + "', " + 
-                 "context: " + this.context;
+             return "'" + this.type + "'";
+                  // + "context: " + this.context;
 
         }
     };
@@ -399,6 +402,7 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
 
         /**
          * The callback that will be execute when the event fires
+         * This is wrappedif obj was supplied.
          * @property fn
          * @type function
          */
@@ -422,6 +426,13 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
          * @type boolean|object
          */
         this.override = override;
+
+        this.id = Y.stamp(this);
+
+        /**
+         * Original function
+         */
+        this.ofn = null;
 
     };
 
@@ -456,9 +467,9 @@ throw new Y.ChainedError('one or more subscribers threw an error: ' +
      */
     Y.Subscriber.prototype.contains = function(fn, obj) {
         if (obj) {
-            return (this.fn == fn && this.obj == obj);
+            return ((this.fn == fn || this.ofn == fn) && this.obj == obj);
         } else {
-            return (this.fn == fn);
+            return (this.fn == fn || this.ofn == fn);
         }
     };
 

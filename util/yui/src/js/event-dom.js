@@ -49,23 +49,6 @@ YUI.add("event-dom", function(Y) {
             var unloadListeners = [];
 
             /**
-             * Cache of DOM0 event handlers to work around issues with DOM2 events
-             * in Safari
-             * @property legacyEvents
-             * @static
-             * @private
-             */
-            var legacyEvents = [];
-
-            /**
-             * Listener stack for DOM0 events
-             * @property legacyHandlers
-             * @static
-             * @private
-             */
-            var legacyHandlers = [];
-
-            /**
              * The number of times to poll after window.onload.  This number is
              * increased if additional late-bound handlers are requested after
              * the page load.
@@ -82,14 +65,6 @@ YUI.add("event-dom", function(Y) {
              * @private
              */
             var onAvailStack = [];
-
-            /**
-             * Lookup table for legacy events
-             * @property legacyMap
-             * @static
-             * @private
-             */
-            var legacyMap = [];
 
             /**
              * Counter for auto id generation
@@ -117,6 +92,10 @@ YUI.add("event-dom", function(Y) {
                 25: 9      // SHIFT-TAB (Safari provides a different key code in
                            // this case, even though the shiftKey modifier is set)
             };
+
+            var wrappers = {};
+
+            var elEvents = {};
 
             return {
 
@@ -360,22 +339,12 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @static
                  */
-                onDOMReady: function(p_fn, p_obj, p_override) {
-                    if (Y.Event.DOMReady) {
-                        setTimeout(function() {
-                            var s = Y;
-                            if (p_override) {
-                                if (p_override === true) {
-                                    s = p_obj;
-                                } else {
-                                    s = p_override;
-                                }
-                            }
-                            p_fn.call(s, "event:ready", [], p_obj);
-                        }, 0);
-                    } else {
-                        Y.Event.DOMReadyEvent.subscribe(p_fn, p_obj, p_override);
-                    }
+                onDOMReady: function(p_fn) {
+                    var ev = Y.Event.DOMReadyEvent;
+                    ev.subscribe.apply(ev, arguments);
+                    // var a = Y.array(arguments, 0, true);
+                    // a.unshift('event:ready');
+                    // Y.on.apply(Y, a);
                 },
 
                 /**
@@ -386,7 +355,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {String|HTMLElement|Array|NodeList} el An id, an element 
                  *  reference, or a collection of ids and/or elements to assign the 
                  *  listener to.
-                 * @param {String}   sType     The type of event to append
+                 * @param {String}   type     The type of event to append
                  * @param {Function} fn        The method the event invokes
                  * @param {Object}   obj    An arbitrary object that will be 
                  *                             passed as a parameter to the handler
@@ -400,25 +369,29 @@ YUI.add("event-dom", function(Y) {
                  *                        or if the operation throws an exception.
                  * @static
                  */
-                addListener: function(el, sType, fn, obj, override) {
+                addListener: function(el, type, fn, obj) {
+
+                    var a=Y.array(arguments, 1, true), override = a[3];
 
                     if (!fn || !fn.call) {
-    // throw new TypeError(sType + " addListener call failed, callback undefined");
-    Y.log(sType + " addListener call failed, invalid callback", "error", "Event");
+    // throw new TypeError(type + " addListener call failed, callback undefined");
+    Y.log(type + " addListener call failed, invalid callback", "error", "Event");
                         return false;
                     }
 
                     // The el argument can be an array of elements or element ids.
                     if ( this._isValidCollection(el)) {
-                        var ok = true;
-                        for (var i=0,len=el.length; i<len; ++i) {
-                            ok = this.addListener(el[i], 
-                                           sType, 
-                                           fn, 
-                                           obj, 
-                                           override) && ok;
+
+                        var handles=[], h, i, l;
+
+                        for (i=0, l=el.length; i<l; ++i) {
+// handles.push(this.addListener(el[i], type, fn, obj, override));
+                            var b = a.slice();
+                            b.unshift(el[i]);
+                            h = this.addListener.apply(this, b);
+                            handles.push(h);
                         }
-                        return ok;
+                        return handles;
 
                     } else if (Y.lang.isString(el)) {
                         var oEl = Y.get(el);
@@ -434,7 +407,8 @@ YUI.add("event-dom", function(Y) {
                         } else {
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
-                               Y.Event.addListener(el, sType, fn, obj, override);
+                                // Y.Event.addListener(el, type, fn, obj, override);
+                                Y.Event.addListener.apply(Y.Event, Y.array(arguments, 0, true));
                             });
 
                             return true;
@@ -444,25 +418,43 @@ YUI.add("event-dom", function(Y) {
                     // Element should be an html element or an array if we get 
                     // here.
                     if (!el) {
-                        // this.logger.debug("unable to attach event " + sType);
+                        // this.logger.debug("unable to attach event " + type);
                         return false;
                     }
 
-                    // we need to make sure we fire registered unload events 
-                    // prior to automatically unhooking them.  So we hang on to 
-                    // these instead of attaching them to the window and fire the
-                    // handles explicitly during our one unload event.
-                    if ("unload" == sType && obj !== this) {
-                        unloadListeners[unloadListeners.length] =
-                                [el, sType, fn, obj, override];
-                        return true;
+                    // the custom event key is the uid for the element + type
+
+                    var ek = Y.stamp(el), key = 'event:' + ek + type,
+                        ce = wrappers[key];
+
+
+                    if (!ce) {
+                        // create CE wrapper
+                        ce = Y.publish(key, {
+                            silent: true
+                        });
+
+                        // cache the dom event details in the custom event
+                        // for later removeListener calls
+                        ce.el = el;
+                        ce.type = type;
+                        ce.fn = function(e) {
+                            ce.fire(Y.Event.getEvent(e));
+                        };
+
+                        wrappers[key] = ce;
+                        elEvents[ek] = elEvents[ek] || {};
+                        elEvents[ek][key] = ce;
+
+                        // attach a listener that fires the custom event
+                        this.nativeAdd(el, type, ce.fn, false);
                     }
 
-                    // this.logger.debug("Adding handler: " + el + ", " + sType);
+        
+                    // from type, fn, etc to fn, obj, override
+                    a = Y.array(arguments, 2, true);
+                    // a = a.shift();
 
-                    // if the user chooses to override the context, we use the custom
-                    // object passed in, otherwise the executing context will be the
-                    // HTML element that the event is registered on
                     var context = el;
                     if (override) {
                         if (override === true) {
@@ -472,130 +464,20 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    // wrap the function so we can return the obj object when
-                    // the event fires;
-                    var wrappedFn = function(e) {
-                            return fn.call(context, Y.Event.getEvent(e, el), 
-                                    obj);
-                        };
+                    a[1] = context;
 
-                    var li = [el, sType, fn, wrappedFn, context, obj, override];
-                    var index = listeners.length;
-                    // cache the listener so we can try to automatically unload
-                    listeners[index] = li;
+                    // Y.log('DOM event f: ' + a[0]);
+                    // Y.log('dom event ce sub: ' + Y.lang.dump(a));
 
-                    if (this.useLegacyEvent(el, sType)) {
-                        var legacyIndex = this.getLegacyIndex(el, sType);
+                    // var m = a[1] ? Y.bind.apply(context, a) : fn;
+                    // return ce.subscribe(m);
 
-                        // Add a new dom0 wrapper if one is not detected for this
-                        // element
-                        if ( legacyIndex == -1 || 
-                                    el != legacyEvents[legacyIndex][0] ) {
+                    // set context to element if not specified
+                    return ce.subscribe.apply(ce, a);
 
-                            legacyIndex = legacyEvents.length;
-                            legacyMap[el.id + sType] = legacyIndex;
 
-                            // cache the signature for the DOM0 event, and 
-                            // include the existing handler for the event, if any
-                            legacyEvents[legacyIndex] = 
-                                [el, sType, el["on" + sType]];
-                            legacyHandlers[legacyIndex] = [];
-
-                            el["on" + sType] = 
-                                function(e) {
-                                    Y.Event.fireLegacyEvent(
-                                        Y.Event.getEvent(e), legacyIndex);
-                                };
-                        }
-
-                        // add a reference to the wrapped listener to our custom
-                        // stack of events
-                        //legacyHandlers[legacyIndex].push(index);
-                        legacyHandlers[legacyIndex].push(li);
-
-                    } else {
-                        try {
-                            this._simpleAdd(el, sType, wrappedFn, false);
-                        } catch(ex) {
-                            // handle an error trying to attach an event.  If it fails
-                            // we need to clean up the cache
-                            this.lastError = ex;
-                            this.removeListener(el, sType, fn);
-                            return false;
-                        }
-                    }
-
-                    return true;
-                    
                 },
 
-                /**
-                 * When using legacy events, the handler is routed to this object
-                 * so we can fire our custom listener stack.
-                 * @method fireLegacyEvent
-                 * @static
-                 * @private
-                 */
-                fireLegacyEvent: function(e, legacyIndex) {
-                    // this.logger.debug("fireLegacyEvent " + legacyIndex);
-                    var ok=true,le,lh,li,context,ret;
-                    
-                    lh = legacyHandlers[legacyIndex];
-                    for (var i=0,len=lh.length; i<len; ++i) {
-                        li = lh[i];
-                        if ( li && li[this.WFN] ) {
-                            context = li[this.ADJ_SCOPE];
-                            ret = li[this.WFN].call(context, e);
-                            ok = (ok && ret);
-                        }
-                    }
-
-                    // Fire the original handler if we replaced one.  We fire this
-                    // after the other events to keep stopPropagation/preventDefault
-                    // that happened in the DOM0 handler from touching our DOM2
-                    // substitute
-                    le = legacyEvents[legacyIndex];
-                    if (le && le[2]) {
-                        le[2](e);
-                    }
-                    
-                    return ok;
-                },
-
-                /**
-                 * Returns the legacy event index that matches the supplied 
-                 * signature
-                 * @method getLegacyIndex
-                 * @static
-                 * @private
-                 */
-                getLegacyIndex: function(el, sType) {
-                    var key = this.generateId(el) + sType;
-                    if (typeof legacyMap[key] == "undefined") { 
-                        return -1;
-                    } else {
-                        return legacyMap[key];
-                    }
-                },
-
-                /**
-                 * Logic that determines when we should automatically use legacy
-                 * events instead of DOM2 events.  Currently this is limited to old
-                 * Safari browsers with a broken preventDefault
-                 * @method useLegacyEvent
-                 * @static
-                 * @private
-                 */
-                useLegacyEvent: function(el, sType) {
-                    if (Y.ua.webkit && ("click"==sType || "dblclick"==sType)) {
-                        var v = parseInt(Y.ua.webkit, 10);
-                        if (!isNaN(v) && v<418) {
-                            return true;
-                        }
-                    }
-                    return false;
-                },
-                        
                 /**
                  * Removes an event listener
                  *
@@ -604,7 +486,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {String|HTMLElement|Array|NodeList} el An id, an element 
                  *  reference, or a collection of ids and/or elements to remove
                  *  the listener from.
-                 * @param {String} sType the type of event to remove.
+                 * @param {String} type the type of event to remove.
                  * @param {Function} fn the method the event invokes.  If fn is
                  *  undefined, then all event handlers for the type of event are 
                  *  removed.
@@ -612,7 +494,11 @@ YUI.add("event-dom", function(Y) {
                  *  otherwise.
                  * @static
                  */
-                removeListener: function(el, sType, fn) {
+                removeListener: function(el, type, fn) {
+
+                    if (el && el.detach) {
+                        return el.detach();
+                    }
                     var i, len, li;
 
                     // The el argument can be a string
@@ -622,7 +508,7 @@ YUI.add("event-dom", function(Y) {
                     } else if ( this._isValidCollection(el)) {
                         var ok = true;
                         for (i=0,len=el.length; i<len; ++i) {
-                            ok = ( this.removeListener(el[i], sType, fn) && ok );
+                            ok = ( this.removeListener(el[i], type, fn) && ok );
                         }
                         return ok;
                     }
@@ -630,86 +516,18 @@ YUI.add("event-dom", function(Y) {
                     if (!fn || !fn.call) {
                         // this.logger.debug("Error, function is not valid " + fn);
                         //return false;
-                        return this.purgeElement(el, false, sType);
+                        return this.purgeElement(el, false, type);
                     }
 
-                    if ("unload" == sType) {
 
-                        for (i=0, len=unloadListeners.length; i<len; i++) {
-                            li = unloadListeners[i];
-                            if (li && 
-                                li[0] == el && 
-                                li[1] == sType && 
-                                li[2] == fn) {
-                                    //unloadListeners.splice(i, 1);
-                                    unloadListeners[i]=null;
-                                    return true;
-                            }
-                        }
-
-                        return false;
+                    var id = 'event:' + Y.stamp(el) + type, 
+                        ce = wrappers[id];
+                    if (ce) {
+                        return ce.unsubscribe(fn);
                     }
-
-                    var cacheItem = null;
-
-                    // The index is a hidden parameter; needed to remove it from
-                    // the method signature because it was tempting users to
-                    // try and take advantage of it, which is not possible.
-                    var index = arguments[3];
-      
-                    if ("undefined" === typeof index) {
-                        index = this._getCacheIndex(el, sType, fn);
-                    }
-
-                    if (index >= 0) {
-                        cacheItem = listeners[index];
-                    }
-
-                    if (!el || !cacheItem) {
-                        // this.logger.debug("cached listener not found");
-                        return false;
-                    }
-
-                    // this.logger.debug("Removing handler: " + el + ", " + sType);
-
-                    if (this.useLegacyEvent(el, sType)) {
-                        var legacyIndex = this.getLegacyIndex(el, sType);
-                        var llist = legacyHandlers[legacyIndex];
-                        if (llist) {
-                            for (i=0, len=llist.length; i<len; ++i) {
-                                li = llist[i];
-                                if (li && 
-                                    li[this.EL] == el && 
-                                    li[this.TYPE] == sType && 
-                                    li[this.FN] == fn) {
-                                        //llist.splice(i, 1);
-                                        llist[i]=null;
-                                        break;
-                                }
-                            }
-                        }
-
-                    } else {
-                        try {
-                            this._simpleRemove(el, sType, cacheItem[this.WFN], false);
-                        } catch(ex) {
-                            this.lastError = ex;
-                            return false;
-                        }
-                    }
-
-                    // removed the wrapped handler
-                    delete listeners[index][this.WFN];
-                    delete listeners[index][this.FN];
-                    //listeners.splice(index, 1);
-                    listeners[index]=null;
-
-                    return true;
 
                 },
 
-
-                 
                 /**
                  * Finds the event in the window object, the caller's arguments, or
                  * in the arguments of another method in the callstack.  This is
@@ -739,43 +557,6 @@ YUI.add("event-dom", function(Y) {
                     return new Y.Event.Facade(ev, boundEl);
                 },
 
-                /**
-                 * Returns the charcode for an event
-                 * @method getCharCode
-                 * @param {Event} ev the event
-                 * @return {int} the event's charCode
-                 * @static
-                 */
-                getCharCode: function(ev) {
-                    var code = ev.keyCode || ev.charCode || 0;
-
-                    // webkit normalization
-                    if (Y.ua.webkit && (code in webkitKeymap)) {
-                        code = webkitKeymap[code];
-                    }
-                    return code;
-                },
-
-                /**
-                 * Locating the saved event handler data by function ref
-                 *
-                 * @method _getCacheIndex
-                 * @static
-                 * @private
-                 */
-                _getCacheIndex: function(el, sType, fn) {
-                    for (var i=0,len=listeners.length; i<len; ++i) {
-                        var li = listeners[i];
-                        if ( li                 && 
-                             li[this.FN] == fn  && 
-                             li[this.EL] == el  && 
-                             li[this.TYPE] == sType ) {
-                            return i;
-                        }
-                    }
-
-                    return -1;
-                },
 
                 /**
                  * Generates an unique ID for the element if it does not already 
@@ -825,12 +606,14 @@ YUI.add("event-dom", function(Y) {
 
                 },
 
-
                 /**
                  * Custom event the fires when the dom is initially usable
                  * @event DOMReadyEvent
                  */
-                DOMReadyEvent: new Y.CustomEvent("event:ready", this),
+                // DOMReadyEvent: new Y.CustomEvent("event:ready", this),
+                DOMReadyEvent: Y.publish("event:ready", this, {
+                    fireOnce: true
+                }),
 
                 /**
                  * hook up any deferred listeners
@@ -872,7 +655,7 @@ YUI.add("event-dom", function(Y) {
                         E.DOMReadyEvent.fire();
 
                         // Remove the DOMContentLoaded (FF/Opera)
-                        E._simpleRemove(document, "DOMContentLoaded", E._ready);
+                        E.nativeRemove(document, "DOMContentLoaded", E._ready);
                     }
                 },
 
@@ -987,23 +770,23 @@ YUI.add("event-dom", function(Y) {
                  * @param {HTMLElement} el the element to purge
                  * @param {boolean} recurse recursively purge this element's children
                  * as well.  Use with caution.
-                 * @param {string} sType optional type of listener to purge. If
+                 * @param {string} type optional type of listener to purge. If
                  * left out, all listeners will be removed
                  * @static
                  */
-                purgeElement: function(el, recurse, sType) {
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
-                    var elListeners = this.getListeners(oEl, sType), i, len;
-                    if (elListeners) {
-                        for (i=0,len=elListeners.length; i<len ; ++i) {
-                            var l = elListeners[i];
-                            this.removeListener(oEl, l.type, l.fn, l.index);
+                purgeElement: function(el, recurse, type) {
+                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el,
+                        id = Y.stamp(oEl);
+                    var lis = this.getListeners(oEl, type), i, len;
+                    if (lis) {
+                        for (i=0,len=lis.length; i<len ; ++i) {
+                            lis[i].unsubscribeAll();
                         }
                     }
 
                     if (recurse && oEl && oEl.childNodes) {
                         for (i=0,len=oEl.childNodes.length; i<len ; ++i) {
-                            this.purgeElement(oEl.childNodes[i], recurse, sType);
+                            this.purgeElement(oEl.childNodes[i], recurse, type);
                         }
                     }
                 },
@@ -1013,46 +796,22 @@ YUI.add("event-dom", function(Y) {
                  * Optionally, you can specify a specific type of event to return.
                  * @method getListeners
                  * @param el {HTMLElement|string} the element or element id to inspect 
-                 * @param sType {string} optional type of listener to return. If
+                 * @param type {string} optional type of listener to return. If
                  * left out, all listeners will be returned
-                 * @return {Object} the listener. Contains the following fields:
-                 * &nbsp;&nbsp;type:   (string)   the type of event
-                 * &nbsp;&nbsp;fn:     (function) the callback supplied to addListener
-                 * &nbsp;&nbsp;obj:    (object)   the custom object supplied to addListener
-                 * &nbsp;&nbsp;adjust: (boolean|object)  whether or not to adjust the default context
-                 * &nbsp;&nbsp;context: (boolean)  the derived context based on the adjust parameter
-                 * &nbsp;&nbsp;index:  (int)      its position in the Event util listener cache
+                 * @return {Y.Custom.Event} the custom event wrapper for the DOM event(s)
                  * @static
                  */           
-                getListeners: function(el, sType) {
-                    var results=[], searchLists;
-                    if (!sType) {
-                        searchLists = [listeners, unloadListeners];
-                    } else if (sType === "unload") {
-                        searchLists = [unloadListeners];
+                getListeners: function(el, type) {
+                    var results=[], ek = Y.stamp(el), key = (type) ? 'event:' + type : null,
+                        evts = elEvents[ek];
+
+                    if (key) {
+                        if (evts[key]) {
+                            results.push(evts[key]);
+                        }
                     } else {
-                        searchLists = [listeners];
-                    }
-
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el;
-
-                    for (var j=0;j<searchLists.length; j=j+1) {
-                        var searchList = searchLists[j];
-                        if (searchList && searchList.length > 0) {
-                            for (var i=0,len=searchList.length; i<len ; ++i) {
-                                var l = searchList[i];
-                                if ( l  && l[this.EL] === oEl && 
-                                        (!sType || sType === l[this.TYPE]) ) {
-                                    results.push({
-                                        type:   l[this.TYPE],
-                                        fn:     l[this.FN],
-                                        obj:    l[this.OBJ],
-                                        adjust: l[this.OVERRIDE],
-                                        context:  l[this.ADJ_SCOPE],
-                                        index:  i
-                                    });
-                                }
-                            }
+                        for (var i in evts) {
+                            results.push(evts[i]);
                         }
                     }
 
@@ -1068,75 +827,38 @@ YUI.add("event-dom", function(Y) {
                  */
                 _unload: function(e) {
 
-                    var E = Y.Event, i, j, l, len, index;
+                    var E = Y.Event, i, w;
 
-                    // execute and clear stored unload listeners
-                    for (i=0,len=unloadListeners.length; i<len; ++i) {
-                        l = unloadListeners[i];
-                        if (l) {
-                            var context = Y;
-                            if (l[E.ADJ_SCOPE]) {
-                                if (l[E.ADJ_SCOPE] === true) {
-                                    context = l[E.UNLOAD_OBJ];
-                                } else {
-                                    context = l[E.ADJ_SCOPE];
-                                }
-                            }
-                            l[E.FN].call(context, E.getEvent(e, l[E.EL]), l[E.UNLOAD_OBJ] );
-                            unloadListeners[i] = null;
-                            l=null;
-                            context=null;
-                        }
+                    for (i in wrappers) {
+                        w = wrappers[i];
+                        w.unsubscribeAll();
+                        this.nativeRemove(w.el, w.type, w.fn);
+                        delete wrappers[i];
                     }
 
-                    unloadListeners = null;
-
-                    // Remove listeners to handle IE memory leaks
-                    //if (Y.ua.ie && listeners && listeners.length > 0) {
-                    
-                    // 2.5.0 listeners are removed for all browsers again.  FireFox preserves
-                    // at least some listeners between page refreshes, potentially causing
-                    // errors during page load (mouseover listeners firing before they
-                    // should if the user moves the mouse at the correct moment).
-                    if (listeners && listeners.length > 0) {
-                        j = listeners.length;
-                        while (j) {
-                            index = j-1;
-                            l = listeners[index];
-                            if (l) {
-                                E.removeListener(l[E.EL], l[E.TYPE], l[E.FN], index);
-                            } 
-                            j--;
-                        }
-                        l=null;
-                    }
-
-                    legacyEvents = null;
-
-                    E._simpleRemove(window, "unload", E._unload);
-
+                    E.nativeRemove(window, "unload", E._unload);
                 },
 
                 
                 /**
                  * Adds a DOM event directly without the caching, cleanup, context adj, etc
                  *
-                 * @method _simpleAdd
+                 * @method nativeAdd
                  * @param {HTMLElement} el      the element to bind the handler to
-                 * @param {string}      sType   the type of event handler
+                 * @param {string}      type   the type of event handler
                  * @param {function}    fn      the callback to invoke
                  * @param {boolen}      capture capture or bubble phase
                  * @static
                  * @private
                  */
-                _simpleAdd: function () {
+                nativeAdd: function () {
                     if (window.addEventListener) {
-                        return function(el, sType, fn, capture) {
-                            el.addEventListener(sType, fn, (capture));
+                        return function(el, type, fn, capture) {
+                            el.addEventListener(type, fn, !!capture);
                         };
                     } else if (window.attachEvent) {
-                        return function(el, sType, fn, capture) {
-                            el.attachEvent("on" + sType, fn);
+                        return function(el, type, fn, capture) {
+                            el.attachEvent("on" + type, fn);
                         };
                     } else {
                         return function(){};
@@ -1146,22 +868,22 @@ YUI.add("event-dom", function(Y) {
                 /**
                  * Basic remove listener
                  *
-                 * @method _simpleRemove
+                 * @method nativeRemove
                  * @param {HTMLElement} el      the element to bind the handler to
-                 * @param {string}      sType   the type of event handler
+                 * @param {string}      type   the type of event handler
                  * @param {function}    fn      the callback to invoke
                  * @param {boolen}      capture capture or bubble phase
                  * @static
                  * @private
                  */
-                _simpleRemove: function() {
+                nativeRemove: function() {
                     if (window.removeEventListener) {
-                        return function (el, sType, fn, capture) {
-                            el.removeEventListener(sType, fn, (capture));
+                        return function (el, type, fn, capture) {
+                            el.removeEventListener(type, fn, !!capture);
                         };
                     } else if (window.detachEvent) {
-                        return function (el, sType, fn) {
-                            el.detachEvent("on" + sType, fn);
+                        return function (el, type, fn) {
+                            el.detachEvent("on" + type, fn);
                         };
                     } else {
                         return function(){};
@@ -1170,5 +892,8 @@ YUI.add("event-dom", function(Y) {
             };
 
         }();
+
+        Y.Event.Custom = Y.CustomEvent;
+        Y.Event.Target = Y.EventTarget;
 
 }, "3.0.0");

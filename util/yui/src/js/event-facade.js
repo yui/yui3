@@ -57,14 +57,14 @@ YUI.add("event-facade", function(Y) {
 
     // return the element facade
     var wrapNode = function(n) {
-        return n;
+        return (n && Y.Node) ? Y.Node.get(n) : n;
     };
 
     var resolve = function(n) {
         try {
-        if (n && 3 == n.nodeType) {
-            n = n.parentNode;
-        } 
+            if (n && 3 == n.nodeType) {
+                n = n.parentNode;
+            } 
         } catch(ex) { }
 
         return wrapNode(n);
@@ -95,7 +95,7 @@ YUI.add("event-facade", function(Y) {
 
         if (!x && 0 !== x) {
             x = e.clientX || 0;
-            y = e.clientX || 0;
+            y = e.clientY || 0;
 
             if (ua.ie) {
                 x += b.scrollLeft;

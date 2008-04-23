@@ -88,8 +88,18 @@ YUI.prototype = {
         // make a shallow copy of the config.  This won't fix nested configs
         // so we need to determine if we only allow one level (probably) or
         // if we make clone create references for functions and elements.
-        this.config = this.merge(this.config);
-        this.publish('yui:load');
+        var c = this.merge(this.config);
+        this.mix(c, {
+            debug: true,
+            useConsole: true,
+            throwFail: false
+        });
+        this.config = c;
+
+        // this.publish('yui:load');
+        // this.publish('yui:log', {
+        //     silent: true
+        // });
     },
 
     /**
@@ -276,8 +286,10 @@ YUI.prototype = {
     },
 
     /**
-     * Uses YUI.widget.Logger to output a log message, if the widget is
-     * available.
+     * If the 'debug' config is true, a 'yui:log' event will be
+     * dispatched, which the logger widget and anything else
+     * can consume.  If the 'useConsole' config is true, it will
+     * write to the browser console if available.
      *
      * @method log
      * @static
@@ -290,16 +302,17 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        if (this.logger) {
-            this.fire('yui:log', msg, cat, src);
-            l.log(msg, cat || '', src || '');
-        } else if (typeof console != 'undefined') {
+        var c = this.config;
 
-            // @todo take out automatic console logging, but provide
-            // a way to enable console logging without the logger
-            // component.
-            cat = (cat && console[cat]) ? cat : 'debug';
-            console[cat](msg);
+        if (c.debug) {
+
+            if (c.useConsole && typeof console != 'undefined') {
+                var f = (cat && console[cat]) ? cat : 'log',
+                    m = (src) ? src + ': ' + msg : msg;
+                console[f](m);
+            }
+
+            this.fire('yui:log', msg, cat, src);
         }
 
         return this;
@@ -307,18 +320,11 @@ YUI.prototype = {
 
     // Centralizing error messaging means we can configure how
     // they are communicated.
-    //
-    // @todo msg can take a constant key or type can be a constant.
     fail: function(msg, e, eType) {
         this.log(msg, "error");
 
-        // @todo provide a configuration option that determines if YUI 
-        // generated errors throws a javascript error.  Some errors
-        // should always generate a js error.  If an error type
-        // is provided, that error is thrown regardless of the 
-        // configuration.
-        if (true) {
-            e = e || new Error(msg);
+        if (this.config.throwFail) {
+            throw e || new Error(msg);
         }
 
         return this;
