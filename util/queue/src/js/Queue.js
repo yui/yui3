@@ -1,5 +1,3 @@
-YUI.add('queue',function (Y) {
-
 var _SL = Array.prototype.slice,
     _SP = Array.prototype.splice;
 
@@ -32,7 +30,7 @@ Y.Queue = function () {
      */
     me.q = [];
 
-    return me.add.apply(me,_SL.call(arguments));
+    return me.add.apply(me,arguments);
 };
 
 Y.Queue.prototype = {
@@ -160,5 +158,3 @@ Y.Queue.prototype = {
     }
 };
 Y.augment(Y.Queue,Y.Event.Target);
-
-},'3.0.0');
