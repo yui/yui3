@@ -3404,7 +3404,7 @@ YUI.add("event-facade", function(Y) {
 
     // return the element facade
     var wrapNode = function(n) {
-        return (n && Y.Node) ? Y.Node.get(n) : n;
+        return (n && Y.Doc) ? Y.Doc.get(n) : n;
     };
 
     var resolve = function(n) {
