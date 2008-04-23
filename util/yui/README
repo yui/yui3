@@ -177,22 +177,27 @@ Y.on('click', function(e) {
     Y.log('can't prevent this from being executed in 2.x');
 }, el);
 
+///////////////////////////////////////////////////////////////////////
 
 Y.log uses the console and dispatches a 'yui:log' event
     set 'debug' option to off to disable all logging
     set useConsole option to turn off the Y.log console logging
 
-Custom events default to the LIST signature.  This means the first
+Custom events default to the FLAT signature.  This means the first
 parameter is no longer the event name.
 
-LIST signature now provides all arguments supplied after the context
+FLAT signature now provides all arguments supplied after the context
 object
 
-onDOMReady event has the LIST signature
+onDOMReady event has the FLAT signature
 onDOMReady event is fireOnce (verify this works)
 
 DOM events are wrapped in custom events
 
 getListeners now returns the custom event wrappers for the Dom events
+
+Event.Facade targets are now Node instances if Node is available
+
+Get integrated
 
 

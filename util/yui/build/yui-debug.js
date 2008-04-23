@@ -2572,25 +2572,6 @@ YUI.add("event-dom", function(Y) {
             var loadComplete =  false;
 
             /**
-             * Cache of wrapped listeners
-             * @property listeners
-             * @type array
-             * @static
-             * @private
-             */
-            var listeners = [];
-
-            /**
-             * User-defined unload function that will be fired before all events
-             * are detached
-             * @property unloadListeners
-             * @type array
-             * @static
-             * @private
-             */
-            var unloadListeners = [];
-
-            /**
              * The number of times to poll after window.onload.  This number is
              * increased if additional late-bound handlers are requested after
              * the page load.
@@ -2662,81 +2643,6 @@ YUI.add("event-dom", function(Y) {
                  * @final
                  */
                 POLL_INTERVAL: 20,
-
-                /**
-                 * Element to bind, int constant
-                 * @property EL
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                EL: 0,
-
-                /**
-                 * Type of event, int constant
-                 * @property TYPE
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                TYPE: 1,
-
-                /**
-                 * Function to execute, int constant
-                 * @property FN
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                FN: 2,
-
-                /**
-                 * Function wrapped for context correction and cleanup, int constant
-                 * @property WFN
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                WFN: 3,
-
-                /**
-                 * Object passed in by the user that will be returned as a 
-                 * parameter to the callback, int constant.  Specific to
-                 * unload listeners
-                 * @property OBJ
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                UNLOAD_OBJ: 3,
-
-                /**
-                 * Adjusted context, either the element we are registering the event
-                 * on or the custom object passed in by the listener, int constant
-                 * @property ADJ_SCOPE
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                ADJ_SCOPE: 4,
-
-                /**
-                 * The original obj passed into addListener
-                 * @property OBJ
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                OBJ: 5,
-
-                /**
-                 * The original context parameter passed into addListener
-                 * @property OVERRIDE
-                 * @type int
-                 * @static
-                 * @final
-                 */
-                OVERRIDE: 6,
 
                 /**
                  * addListener/removeListener can throw errors in unexpected scenarios.
@@ -3374,7 +3280,7 @@ YUI.add("event-dom", function(Y) {
                     for (i in wrappers) {
                         w = wrappers[i];
                         w.unsubscribeAll();
-                        this.nativeRemove(w.el, w.type, w.fn);
+                        E.nativeRemove(w.el, w.type, w.fn);
                         delete wrappers[i];
                     }
 
