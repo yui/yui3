@@ -2,14 +2,14 @@
  * The selector module provides helper methods allowing CSS3 Selectors to be used with DOM elements.
  * @module selector
  * @title Selector Utility
- * @namespace YAHOO.util
+ * @namespace Y.util
  * @requires yahoo, dom
  */
 
 YUI.add('selector', function(Y) {
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @namespace YAHOO.util
+ * @namespace Y.util
  * @class Selector
  * @static
  */
@@ -24,7 +24,7 @@ Selector.prototype = {
      * @type object
      * @default window.document
      */
-    document: window.document,
+    document: Y.config.doc,
     /**
      * Mapping of attributes to aliases, normally to work around HTMLAttributes
      * that conflict with JS reserved words.
@@ -182,21 +182,21 @@ Selector.prototype = {
             tokens = tokenize(selector);
 
         if (!nodes.item) { // if not HTMLCollection, handle arrays of ids and/or nodes
-            YAHOO.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
+            Y.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 if (!nodes[i].tagName) { // tagName limits to HTMLElements 
                     node = Selector.document.getElementById(nodes[i]);
                     if (node) { // skip IDs that return null 
                         nodes[i] = node;
                     } else {
-                        YAHOO.log('filter: skipping invalid node', 'warn', 'Selector');
+                        Y.log('filter: skipping invalid node', 'warn', 'Selector');
                     }
                 }
             }
         }
         result = rFilter(nodes, tokenize(selector)[0]);
         clearParentCache();
-        YAHOO.log('filter: returning:' + result.length, 'info', 'Selector');
+        Y.log('filter: returning:' + result.length, 'info', 'Selector');
         return result;
     },
 
@@ -212,7 +212,7 @@ Selector.prototype = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        //YAHOO.log('query: returning ' + result, 'info', 'Selector');
+        //Y.log('query: returning ' + result, 'info', 'Selector');
         return result;
     }
 };
@@ -238,7 +238,7 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (root && !root.nodeName) { // assume ID
         root = Selector.document.getElementById(root);
         if (!root) {
-            YAHOO.log('invalid root node provided', 'warn', 'Selector');
+            Y.log('invalid root node provided', 'warn', 'Selector');
             return result;
         }
     }
@@ -279,12 +279,13 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (nodes.length) {
         result = rFilter(nodes, token, firstOnly, deDupe); 
     }
+
     clearParentCache();
     return result;
 };
 
 var contains = function() {
-    if (document.documentElement.contains && !YAHOO.env.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+    if (document.documentElement.contains && !Y.env.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
         return function(needle, haystack) {
             return haystack.contains(needle);
         };
@@ -374,7 +375,7 @@ var parentCache = [];
 var regexCache = {};
 
 var clearFoundCache = function() {
-    YAHOO.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
+    Y.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
     for (var i = 0, len = foundCache.length; i < len; ++i) {
         try { // IE no like delete
             delete foundCache[i]._found;
@@ -383,7 +384,7 @@ var clearFoundCache = function() {
         }
     }
     foundCache = [];
-    YAHOO.log('getBySelector: done clearing foundCache');
+    Y.log('getBySelector: done clearing foundCache');
 };
 
 var clearParentCache = function() {
@@ -577,7 +578,7 @@ var tokenize = function(selector) {
     do {
         found = false; // reset after full pass
         for (var re in patterns) {
-                if (!YAHOO.lang.hasOwnProperty(patterns, re)) {
+                if (!Y.object.owns(patterns, re)) {
                     continue;
                 }
                 if (re != 'tag' && re != 'combinator') { // only one allowed
@@ -636,7 +637,7 @@ var replaceShorthand = function(selector) {
         selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
     }
     for (var re in shorthand) {
-        if (!YAHOO.lang.hasOwnProperty(shorthand, re)) {
+        if (!Y.object.owns(shorthand, re)) {
             continue;
         }
         selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
@@ -654,7 +655,7 @@ Selector = new Selector();
 Selector.patterns = patterns;
 Y.Selector = Selector;
 
-if (YAHOO.env.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.env.ua.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['class'] = 'className';
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
@@ -662,7 +663,7 @@ if (YAHOO.env.ua.ie) { // rewrite class for IE (others use getAttribute('class')
 }, '3.0.0');
 /**
  * DOM Abstractions.
- * @module dom
+ * @module node
  */
 
 YUI.add('node', function(Y) {
@@ -744,7 +745,9 @@ YUI.add('node', function(Y) {
      * For use with methods that return nodes
      */
     var nodeOut = function(method, a, b, c, d, e) {
-        return create(_cache[this._yuid][method](a, b, c, d, e));
+        var node = create(_cache[this._yuid][method](a, b, c, d, e));
+        Y.log(node);
+        return node;
     };
 
     /** 
@@ -904,11 +907,13 @@ YUI.add('node', function(Y) {
          */
         hasMethod: function(str, method) {
             return !!(METHODS_INVOKE[method] && _cache[this._yuid][method]);
-        }
+        },
 
         //normalize: function() {},
         //isSupported: function(feature, version) {},
-
+        toString: function() {
+            return this.get('id') || this.get('nodeName');
+        }
     };
 
     Y.each(METHODS[BASE_NODE], function(fn, method) {
@@ -1027,12 +1032,12 @@ YUI.add('node', function(Y) {
             var node = this;
             while (node = node.get('parentNode')) { // NOTE: assignment
                 if ( test(node) ) {
-                    YAHOO.log('getAncestorBy returning ' + node, 'info', 'Dom');
+                    Y.log('getAncestorBy returning ' + node, 'info', 'Dom');
                     return node;
                 }
             } 
 
-            YAHOO.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
+            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
             return null;
         },
 
@@ -1081,8 +1086,8 @@ YUI.add('node', function(Y) {
         }
 
         root = root || doc;
-        return new NodeList(Selector.query(selector, root));
-        return new NodeList(nodes);
+        nodes = new NodeList(Selector.query(selector, root));
+        return new nodes;
 
     };
 
@@ -1153,7 +1158,7 @@ YUI.add('node', function(Y) {
                 }
             }
 
-            YAHOO.log('getElementsBy returning ' + nodes, 'info', 'Dom');
+            Y.log('getElementsBy returning ' + nodes, 'info', 'Dom');
             
             return new Y.NodeList(nodes);
         }
@@ -1243,7 +1248,7 @@ YUI.add('node', function(Y) {
                         doc.body.clientHeight; // Quirks
             }
         
-            YAHOO.log('GETTERS:height returning ' + h, 'info', 'Win');
+            Y.log('GETTERS:height returning ' + h, 'info', 'Win');
             return h;
         },
 
@@ -1258,7 +1263,7 @@ YUI.add('node', function(Y) {
                         doc.body.clientWidth; // Quirks
             }
         
-            YAHOO.log('GETTERS:width returning ' + w, 'info', 'Win');
+            Y.log('GETTERS:width returning ' + w, 'info', 'Win');
             return w;
         }
     };
@@ -1316,8 +1321,19 @@ YUI.add('node', function(Y) {
 */
     };
 
+
     Y.Node = Element;
     Y.NodeList = NodeList;
+
+    /** 
+     * A wrapper for interacting with DOM elements
+     * Usage:
+     * <p>Doc.get() // returns Doc instance for current document</p>
+     * <p>Doc.get(document) // returns Doc instance for the given document</p>
+     * <p>Doc.get('#foo') // returns Node instance</p>
+     * 
+     * @class Doc
+     */
     Y.Doc = Doc;
     Y.Win = Win;
 }, '3.0.0');
@@ -1567,7 +1583,7 @@ YUI.add('nodeextras', function(Y) {
                }
             }        
 
-            YAHOO.log('setXY setting position to ' + xy, 'info', 'Node');
+            Y.log('setXY setting position to ' + xy, 'info', 'Node');
         }
     
     };
