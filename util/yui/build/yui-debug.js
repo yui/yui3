@@ -1005,7 +1005,7 @@ YUI.add("core", function(Y) {
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {
-        return Y.Dom.get.apply(Y.Dom, arguments);
+        return Y.Doc.get.apply(Y.Doc, arguments);
     };
 
     // DOM events and custom events
