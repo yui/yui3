@@ -757,19 +757,16 @@ YUI.add("event-dom", function(Y) {
                  * @static
                  * @private
                  */
-                nativeAdd: function () {
-                    if (window.addEventListener) {
-                        return function(el, type, fn, capture) {
+                nativeAdd: function(el, type, fn, capture) {
+                    if (el.addEventListener) {
                             el.addEventListener(type, fn, !!capture);
-                        };
-                    } else if (window.attachEvent) {
-                        return function(el, type, fn, capture) {
+                    } else if (el.attachEvent) {
                             el.attachEvent("on" + type, fn);
-                        };
-                    } else {
-                        return function(){};
-                    }
-                }(),
+                    } 
+                    // else {
+                      //   Y.log('DOM evt error')
+                    // }
+                },
 
                 /**
                  * Basic remove listener
@@ -782,19 +779,13 @@ YUI.add("event-dom", function(Y) {
                  * @static
                  * @private
                  */
-                nativeRemove: function() {
-                    if (window.removeEventListener) {
-                        return function (el, type, fn, capture) {
+                nativeRemove: function(el, type, fn, capture) {
+                    if (el.removeEventListener) {
                             el.removeEventListener(type, fn, !!capture);
-                        };
-                    } else if (window.detachEvent) {
-                        return function (el, type, fn) {
+                    } else if (el.detachEvent) {
                             el.detachEvent("on" + type, fn);
-                        };
-                    } else {
-                        return function(){};
                     }
-                }()
+                }
             };
 
         }();

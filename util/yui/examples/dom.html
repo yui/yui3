@@ -21,7 +21,7 @@
         Y.log("onDOMReady fired");
     });
 
-    var el = Y.get('button1');
+    var el = Y.get('#button1');
     Y.log("get got " + el);
 
     var f = function(e) {
@@ -47,7 +47,7 @@
     Y.on('mouseover', function(e) {
         // alert('asdf');
         Y.log(this.id + " mouseover: " + e.target);
-    }, Y.Dom.getElementsByClassName('button'));
+    },  Y.Dom.getElementsByClassName('button'));
 
     /*
 
