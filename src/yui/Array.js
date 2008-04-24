@@ -1,3 +1,8 @@
+/**
+ * Array utilities
+ * @class array
+ * @static
+ */
 YUI.add("array", function(Y) {
 
     var L = Y.lang, Native = Array.prototype;

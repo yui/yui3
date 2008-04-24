@@ -267,7 +267,9 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    var a=Y.array(arguments, 1, true), override = a[3];
+                    Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
+
+                    var a=Y.array(arguments, 1, true), override = a[3], E = Y.Event;
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
@@ -276,18 +278,23 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     // The el argument can be an array of elements or element ids.
-                    if ( this._isValidCollection(el)) {
+                    if (this._isValidCollection(el)) {
 
-                        var handles=[], h, i, l;
+                        // Y.log('collection: ' + el);
 
-                        for (i=0, l=el.length; i<l; ++i) {
+                        var handles=[], h, i, l, proc = function(v, k) {
 // handles.push(this.addListener(el[i], type, fn, obj, override));
+                            // Y.log('collection stuff: ' + v);
                             var b = a.slice();
-                            b.unshift(el[i]);
-                            h = this.addListener.apply(this, b);
+                            b.unshift(v);
+                            h = E.addListener.apply(E, b);
                             handles.push(h);
-                        }
+                        };
+
+                        Y.each(el, proc, E);
+
                         return handles;
+
 
                     } else if (Y.lang.isString(el)) {
                         var oEl = Y.get(el);
@@ -490,13 +497,12 @@ YUI.add("event-dom", function(Y) {
                     try {
                         return ( o                     && // o is something
                                  typeof o !== "string" && // o is not a string
-                                 o.length              && // o is indexed
+                                 (o.each || o.length)              && // o is indexed
                                  !o.tagName            && // o is not an HTML element
                                  !o.alert              && // o is not a window
-                                 typeof o[0] !== "undefined" );
+                                 (o.item || typeof o[0] !== "undefined") );
                     } catch(ex) {
-                        Y.log("_isValidCollection error, assuming that " +
-                    " this is a cross frame problem and not a collection", "warn");
+                        Y.log("collection check failure", "warn");
                         return false;
                     }
 

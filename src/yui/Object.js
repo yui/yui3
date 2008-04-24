@@ -1,4 +1,7 @@
-// object utils
+/**
+ * Object utils
+ * @class object
+ */
 YUI.add("object", function(Y) {
 
     // Returns a new object based upon the supplied object
@@ -77,12 +80,25 @@ YUI.add("object", function(Y) {
      */
     O.each = function (o, f, c) {
         var s = c || Y;
+
+        // hack in NodeList support
+        // if (o.length && o.item) {
+        //     for (var i=0, l=o..get('length'); i<l; i=i+1) {
+        //         f.call(s, o.item(i), i, o);
+        //     }
+        // } else {
+        //     for (var i in o) {
+        //         if (O.owns(o, i)) {
+        //             f.call(s, o[i], i, o);
+        //         }
+        //     }
+        // }
+
         for (var i in o) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
         }
-
         return Y;
     };
 }, "3.0.0");
