@@ -2854,7 +2854,7 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
+                    // Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
 
                     var a=Y.array(arguments, 1, true), override = a[3], E = Y.Event;
 

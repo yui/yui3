@@ -303,8 +303,8 @@
 <span class="c">                 */</span>
                 <span class="nx">addListener</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">)</span> <span class="o">{</span>
 
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;addListener: &#39;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="m">1</span><span class="o">));</span>
-
+                    <span class="c">// Y.log(&#39;addListener: &#39; + Y.lang.dump(Y.array(arguments, 0, true), 1));</span>
+<span class="c"></span>
                     <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">override</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="m">3</span><span class="o">],</span> <span class="nx">E</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">;</span>
 
                     <span class="k">if</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
