@@ -164,9 +164,9 @@ YUI.add("io", function (Y) {
 		for(var i = 0; i < _E.length; i++) {
 			if(c.on[_E[i]]) {
 				o['t:' + _E[i]] = new Y.Event.Target().publish(_E[i]);
-				YAHOO.log('Transaction Event t:' + _E[i] + ' published for transaction ' + o.id, 'info', 'io');
+				Y.log('Transaction Event t:' + _E[i] + ' published for transaction ' + o.id, 'info', 'io');
 				o['t:' + _E[i]].subscribe(c.on[_E[i]], c.context, c.arguments );
-				YAHOO.log('Transaction Event t:' + _E[i] + ' subscribed for transaction ' + o.id, 'info', 'io');
+				Y.log('Transaction Event t:' + _E[i] + ' subscribed for transaction ' + o.id, 'info', 'io');
 			}
 		}
 	};
