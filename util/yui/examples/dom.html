@@ -38,6 +38,8 @@
 
     var f = function(e) {
         Y.log("SUB1, " + this.get('id') + " click event facade: " + e.target);
+        e.stopPropagation();
+        // e.stopImmediatePropagation();
     }
 
     var h =Y.on('click', f, el);

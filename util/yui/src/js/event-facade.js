@@ -77,7 +77,7 @@ YUI.add("event-facade", function(Y) {
     // include all properties for both browers?
     // include only DOM2 spec properties?
     // provide browser-specific facade?
-    Y.Event.Facade = function(ev, origTarg) {
+    Y.Event.Facade = function(ev, origTarg, wrapper) {
 
         // @TODO the document should be the target's owner document
 
@@ -149,6 +149,12 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.cancelBubble = true;
             }
+
+        };
+
+        this.stopImmediatePropagation = function() {
+            this.stopPropagation();
+            wrapper && wrapper.stopImmediatePropagation();
         };
 
         this.preventDefault = function() {

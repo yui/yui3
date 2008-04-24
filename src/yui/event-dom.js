@@ -340,7 +340,7 @@ YUI.add("event-dom", function(Y) {
                         ce.el = el;
                         ce.type = type;
                         ce.fn = function(e) {
-                            ce.fire(Y.Event.getEvent(e));
+                            ce.fire(Y.Event.getEvent(e, el));
                         };
 
                         _wrappers[key] = ce;
@@ -455,7 +455,9 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    return new Y.Event.Facade(ev, boundEl);
+                    // Y.log('wrapper for facade: ' + 'event:' + Y.stamp(boundEl) + e.type);
+
+                    return new Y.Event.Facade(ev, boundEl, _wrappers['event:' + Y.stamp(boundEl) + e.type]);
                 },
 
 

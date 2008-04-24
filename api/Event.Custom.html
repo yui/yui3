@@ -243,6 +243,23 @@ to true to disable debug outpu for this event.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_stopped">stopped</a>
+                                        <code>- int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag for stopPropagation that is modified during fire()
+1 means to stop propagation to bubble targets.  2 means
+to also stop additional subscribers on this target.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_subscribers">subscribers</a>
                                         <code>- Event.Subscriber{}</code>
                                     </h4>
@@ -410,6 +427,75 @@ the handler.
                                                     </code></dt>
                                                     <dd>false if one of the subscribers returned false, 
 true otherwise</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stopImmediatePropagation">stopImmediatePropagation</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>stopImmediatePropagation</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Stops propagation to bubble targets, and prevents any remaining
+subscribers on the current target from executing.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stopPropagation">stopPropagation</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>stopPropagation</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Stop propagation to bubble targets
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -771,6 +857,9 @@ the execution context.
                                 <li class=""><a href="#property_silent">silent</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_stopped">stopped</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_subscribers">subscribers</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
@@ -794,6 +883,12 @@ the execution context.
                                 </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_fire">fire</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_stopImmediatePropagation">stopImmediatePropagation</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_stopPropagation">stopPropagation</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_subscribe">subscribe</a>

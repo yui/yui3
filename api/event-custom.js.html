@@ -192,6 +192,15 @@
 <span class="c">             * @default false;</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+            <span class="c">/**</span>
+<span class="c">             * Flag for stopPropagation that is modified during fire()</span>
+<span class="c">             * 1 means to stop propagation to bubble targets.  2 means</span>
+<span class="c">             * to also stop additional subscribers on this target.</span>
+<span class="c">             * @property stopped</span>
+<span class="c">             * @type int</span>
+<span class="c">             */</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
         <span class="o">}</span> 
 
 
@@ -361,6 +370,9 @@
 <span class="c">         *                   true otherwise</span>
 <span class="c">         */</span>
         <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+
             <span class="c">// var subs = this.subscribers.slice(), len=subs.length,</span>
 <span class="c"></span>            <span class="k">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">),</span>
                 <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">ret</span><span class="o">=</span><span class="kc">true</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">rebuild</span><span class="o">=</span><span class="kc">false</span><span class="o">;</span>
@@ -377,6 +389,12 @@
 
             <span class="c">// for (i=0; i&lt;len; ++i) {</span>
 <span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="c">// stopImmediatePropagation</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">==</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="o">}</span>
+
                 <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">subs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">s</span> <span class="o">||</span> <span class="o">!</span><span class="nx">s</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">rebuild</span><span class="o">=</span><span class="kc">true</span><span class="o">;</span>
@@ -441,7 +459,25 @@
              <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39;&quot;</span><span class="o">;</span>
                   <span class="c">// + &quot;context: &quot; + this.context;</span>
 <span class="c"></span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Stop propagation to bubble targets</span>
+<span class="c">         * @method stopPropagation</span>
+<span class="c">         */</span>
+        <span class="nx">stopPropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Stops propagation to bubble targets, and prevents any remaining</span>
+<span class="c">         * subscribers on the current target from executing.</span>
+<span class="c">         * @method stopImmediatePropagation</span>
+<span class="c">         */</span>
+        <span class="nx">stopImmediatePropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
         <span class="o">}</span>
+
     <span class="o">};</span>
 
     <span class="c">/////////////////////////////////////////////////////////////////////</span>

@@ -2147,6 +2147,15 @@ YUI.add("event-custom", function(Y) {
              * @default false;
              */
             this.fireOnce = false;
+
+            /**
+             * Flag for stopPropagation that is modified during fire()
+             * 1 means to stop propagation to bubble targets.  2 means
+             * to also stop additional subscribers on this target.
+             * @property stopped
+             * @type int
+             */
+            this.stopped = 0;
         } 
 
 
@@ -2316,6 +2325,9 @@ this.log(this + " subscriber exception: " + ex, "error");
          *                   true otherwise
          */
         fire: function() {
+
+            this.stopped = 0;
+
             // var subs = this.subscribers.slice(), len=subs.length,
             var subs = Y.merge(this.subscribers),
                 args=Y.array(arguments, 0, true), ret=true, i, rebuild=false;
@@ -2332,6 +2344,12 @@ this.log(this + " subscriber exception: " + ex, "error");
 
             // for (i=0; i<len; ++i) {
             for (i in subs) {
+
+                // stopImmediatePropagation
+                if (this.stopped == 2) {
+                    break;
+                }
+
                 var s = subs[i];
                 if (!s || !s.fn) {
                     rebuild=true;
@@ -2396,7 +2414,25 @@ throw new Y.ChainedError(this.type + ': 1 or more subscribers threw an error: ' 
              return "'" + this.type + "'";
                   // + "context: " + this.context;
 
+        },
+
+        /**
+         * Stop propagation to bubble targets
+         * @method stopPropagation
+         */
+        stopPropagation: function() {
+            this.stopped = 1;
+        },
+
+        /**
+         * Stops propagation to bubble targets, and prevents any remaining
+         * subscribers on the current target from executing.
+         * @method stopImmediatePropagation
+         */
+        stopImmediatePropagation: function() {
+            this.stopped = 2;
         }
+
     };
 
     /////////////////////////////////////////////////////////////////////
@@ -2929,7 +2965,7 @@ YUI.add("event-dom", function(Y) {
                         ce.el = el;
                         ce.type = type;
                         ce.fn = function(e) {
-                            ce.fire(Y.Event.getEvent(e));
+                            ce.fire(Y.Event.getEvent(e, el));
                         };
 
                         _wrappers[key] = ce;
@@ -3044,7 +3080,9 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    return new Y.Event.Facade(ev, boundEl);
+                    // Y.log('wrapper for facade: ' + 'event:' + Y.stamp(boundEl) + e.type);
+
+                    return new Y.Event.Facade(ev, boundEl, _wrappers['event:' + Y.stamp(boundEl) + e.type]);
                 },
 
 
@@ -3456,7 +3494,7 @@ YUI.add("event-facade", function(Y) {
     // include all properties for both browers?
     // include only DOM2 spec properties?
     // provide browser-specific facade?
-    Y.Event.Facade = function(ev, origTarg) {
+    Y.Event.Facade = function(ev, origTarg, wrapper) {
 
         // @TODO the document should be the target's owner document
 
@@ -3528,6 +3566,12 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.cancelBubble = true;
             }
+
+        };
+
+        this.stopImmediatePropagation = function() {
+            this.stopPropagation();
+            wrapper && wrapper.stopImmediatePropagation();
         };
 
         this.preventDefault = function() {
