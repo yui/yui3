@@ -598,6 +598,16 @@ YUI.add('node', function(Y) {
 
         filter: function(selector) {
             return new NodeList(Selector.filter(_cache[this._yuid], selector));
+        },
+
+        each: function(fn, context) {
+            context = context || this;
+            var nodes = _cache[this._yuid];
+            var node = Doc.get(nodes[i]);
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                _cache[node._yuid] = nodes[i];
+                fn.call(context, node, i, this);
+            }
         }
     };
 
