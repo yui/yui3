@@ -17,6 +17,7 @@ YUI.add("core", function(Y) {
      * @param w a whitelist object (the keys are the valid items to reference)
      * @static
      * @private
+     * @for YUI
      */
     _iefix = (Y.ua && Y.ua.ie) ?
         function(r, s, w) {
@@ -304,19 +305,25 @@ YUI.add("core", function(Y) {
 
     Y.each = function(o, f, c) {
 
-        // @todo, the object implementation works for arrays,
-        // but arrays can use the native implementation if
-        // available.  Is the native implementaiton it worth the 
-        // cost of the array test?  Does the object implementation
-        // work properly for array-like collections?
+        if (o.each && o.item) {
+            return o.each.call(o, f, c);
+        } else {
+            switch (A.test(o)) {
+                case 1:
+                    return A.each(o, f, c);
+                case 2:
+                    return A.each(Y.array(o, 0, true), f, c);
+                default:
 
-        switch (A.test(o)) {
-            case 1:
-                return A.each(o, f, c);
-            case 2:
-                return A.each(Y.array(o, 0, true), f, c);
-            default:
-                return Y.object.each(o, f, c);
+                    // if (o instanceof Y.NodeList) {
+                    //     // Y.log('found NodeList ' + o.length());
+                    //     for (var i=0, l=o.length(); i<l; i=i+1) {
+                    //         f.call(c || o, o.item(i), i, o);
+                    //     }
+                    //     return Y;
+                    // }
+                    return Y.object.each(o, f, c);
+            }
         }
 
         // return Y.object.each(o, f, c);
@@ -391,18 +398,18 @@ YUI.add("core", function(Y) {
      * @parameter type {string} get, post, script, css
      * @param c callback for xhr, options for Get
      */
-    Y.io = function(type, url, c) {
-        switch (type) {
-            case 'script':
-                return Y.Get.script(url, c);
-                break; // get util
-            case 'css': 
-                return Y.Get.css(url, c);
-                break; // get util
-            default:
-                return Y.io.asyncRequest.apply(Y.io, arguments);
-        }
-    };
+    // Y.io = function(type, url, c) {
+    //     switch (type) {
+    //         case 'script':
+    //             return Y.Get.script(url, c);
+    //             break; // get util
+    //         case 'css': 
+    //             return Y.Get.css(url, c);
+    //             break; // get util
+    //         default:
+    //             return Y.io.asyncRequest.apply(Y.io, arguments);
+    //     }
+    // };
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {

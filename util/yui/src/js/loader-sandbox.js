@@ -11,9 +11,9 @@ YUI.add("loader-sandbox", function(Y) {
      */
     Y.Loader.prototype.sandbox = function(o, type) {
         if (o) {
-            // YAHOO.log("sandbox: " + lang.dump(o, 1) + ", " + type);
+            // Y.log("sandbox: " + lang.dump(o, 1) + ", " + type);
         } else {
-            // YAHOO.log("sandbox: " + this.toString() + ", " + type);
+            // Y.log("sandbox: " + this.toString() + ", " + type);
         }
 
         this._config(o);
@@ -39,7 +39,7 @@ throw new Error("You must supply an onSuccess handler for your sandbox");
         // get the connection manager if not on the page
         if (!util.Connect) {
             // get a new loader instance to load connection.
-            var ld = new YAHOO.util.YUILoader();
+            var ld = new Y.YUILoader();
             ld.insert({
                 base: this.base,
                 filter: this.filter,
@@ -86,7 +86,7 @@ throw new Error("You must supply an onSuccess handler for your sandbox");
 
             url = m.fullpath || this._url(m.path);
 
-            // YAHOO.log("xhr request: " + url + ", " + i);
+            // Y.log("xhr request: " + url + ", " + i);
 
             var xhrData = {
 
@@ -97,7 +97,7 @@ throw new Error("You must supply an onSuccess handler for your sandbox");
                     // store the response in the position it was requested
                     this._scriptText[idx] = o.responseText; 
                     
-                    // YAHOO.log("received: " + o.responseText.substr(0, 100) + ", " + idx);
+                    // Y.log("received: " + o.responseText.substr(0, 100) + ", " + idx);
                 
                     if (this.onProgress) {
                         this.onProgress.call(this.scope, {
@@ -114,7 +114,7 @@ throw new Error("You must supply an onSuccess handler for your sandbox");
                     if (this._loadCount >= this._stopCount) {
 
                         // the variable to find
-                        var v = this.varName || "YAHOO";
+                        var v = this.varName || "YUI";
 
                         // wrap the contents of the requested modules in an anonymous function
                         var t = "(function() {\n";

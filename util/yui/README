@@ -186,8 +186,7 @@ Y.log uses the console and dispatches a 'yui:log' event
 Custom events default to the FLAT signature.  This means the first
 parameter is no longer the event name.
 
-FLAT signature now provides all arguments supplied after the context
-object
+FLAT signature now provides all arguments supplied after the context object
 
 onDOMReady event has the FLAT signature
 onDOMReady event is fireOnce (verify this works)
@@ -198,6 +197,9 @@ getListeners now returns the custom event wrappers for the Dom events
 
 Event.Facade targets are now Node instances if Node is available
 
-Get integrated
+Get integrated, but not through the Y.io interface (Y.Get.script)
+
+Event expects selector syntax rather than an id
+
 
 

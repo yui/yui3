@@ -1,4 +1,7 @@
-// object utils
+/**
+ * Object utils
+ * @class object
+ */
 YUI.add("object", function(Y) {
 
     // Returns a new object based upon the supplied object
@@ -16,7 +19,7 @@ YUI.add("object", function(Y) {
      * in the object, or was inherited from the prototype.
      * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
      * This 
-     * There is a discrepancy between YAHOO.lang.hasOwnProperty and
+     * There is a discrepancy between Y.object.owns and
      * Object.prototype.hasOwnProperty when the property is a primitive added to
      * both the instance AND prototype with the same value:
      * <pre>
@@ -25,7 +28,7 @@ YUI.add("object", function(Y) {
      * var a = new A();
      * a.foo = 'foo';
      * alert(a.hasOwnProperty('foo')); // true
-     * alert(YAHOO.lang.hasOwnProperty(a, 'foo')); // false when using fallback
+     * alert(Y.object.owns(a, 'foo')); // false when using fallback
      * </pre>
      * @method owns
      * @param o {any} The object being testing
@@ -77,12 +80,25 @@ YUI.add("object", function(Y) {
      */
     O.each = function (o, f, c) {
         var s = c || Y;
+
+        // hack in NodeList support
+        // if (o.length && o.item) {
+        //     for (var i=0, l=o..get('length'); i<l; i=i+1) {
+        //         f.call(s, o.item(i), i, o);
+        //     }
+        // } else {
+        //     for (var i in o) {
+        //         if (O.owns(o, i)) {
+        //             f.call(s, o[i], i, o);
+        //         }
+        //     }
+        // }
+
         for (var i in o) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
         }
-
         return Y;
     };
 }, "3.0.0");

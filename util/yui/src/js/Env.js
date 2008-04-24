@@ -4,9 +4,9 @@
     var M = function(Y) {
 
         /**
-         * YAHOO.env is used to keep track of what is known about the YUI library and
+         * Y.env is used to keep track of what is known about the YUI library and
          * the browsing environment
-         * @class YAHOO.env
+         * @class env
          * @static
          */
         Y.env = Y.env || {
@@ -56,33 +56,6 @@
 
     // Register the module with the global YUI object
     YUI.add("env", null , M, "3.0.0");
-
-    /*
-     * Initializes the global by creating the default namespaces and applying
-     * any new configuration information that is detected.  This is the setup
-     * for env.
-     * @method init
-     * @static
-     * @private
-     */
-    YUI.namespace("util", "widget", "example");
-    if ("undefined" !== typeof YAHOO_config) {
-        var l=YAHOO_config.listener,ls=YUI.env.listeners,unique=true,i;
-        if (l) {
-            // if YAHOO is loaded multiple times we need to check to see if
-            // this is a new config object.  If it is, add the new component
-            // load listener to the stack
-            for (i=0;i<ls.length;i=i+1) {
-                if (ls[i]==l) {
-                    unique=false;
-                    break;
-                }
-            }
-            if (unique) {
-                ls.push(l);
-            }
-        }
-    }
 
 })();
 

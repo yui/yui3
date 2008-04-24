@@ -4,16 +4,16 @@ YUI.add("get", function(Y) {
         var ua=Y.ua, 
         L=Y.lang;
 
-/**
+/*
  * Provides a mechanism to fetch remote resources and
  * insert them into a document
  * @module get
- * @requires yahoo
  */
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
  * @class Get
+ * @static
  */
 Y.Get = function() {
 

@@ -1,14 +1,34 @@
 YUI.add("event-custom", function(Y) {
 
+    /**
+     * Return value from all subscribe operations
+     * @class Event.Handle
+     * @constructor
+     * @param evt {Event.Custom} the custom event
+     * @param sub {Event.Subscriber} the subscriber
+     */
     Y.EventHandle = function(evt, sub) {
         if (!evt || !sub) {
             return null;
         }
+        /**
+         * The custom event
+         * @type Event.Custom
+         */
         this.evt = evt;
+
+        /**
+         * The subscriber object
+         * @type Event.Subscriber
+         */
         this.sub = sub;
     };
 
     Y.EventHandle.prototype = {
+        /**
+         * Detaches this subscriber
+         * @method detach
+         */
         detach: function() {
             this.evt._delete(this.sub);
         }

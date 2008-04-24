@@ -46,12 +46,11 @@ The following code example provides a step-by-step approach to creating a simple
 <script>
 
 var Y = YUI();
-var div = Y.get('container');
+var div = Y.get('#container');
 
-var handleSuccess = function(o){
+var handleSuccess = function(id, o){
 
-
-	Y.log("The success handler was called.  tId: " + o.tId + ".", "info", "example");
+	Y.log("The success handler was called.  tId: " + Y.lang.dump(Y.array(arguments)) + ".", "info", "example");
 	
 	if(o.responseText !== undefined){
 		div.innerHTML = "<li>Transaction id: " + o.tId + "</li>";
@@ -59,12 +58,12 @@ var handleSuccess = function(o){
 		div.innerHTML += "<li>Status code message: " + o.statusText + "</li>";
 		div.innerHTML += "<li>HTTP headers: <ul>" + o.getAllResponseHeaders + "</ul></li>";
 		div.innerHTML += "<li>Server response: " + o.responseText + "</li>";
-		div.innerHTML += "<li>Argument object: Object ( [foo] => " + o.argument.foo +
-						 " [bar] => " + o.argument.bar +" )</li>";
+		// div.innerHTML += "<li>Argument object: Object ( [foo] => " + o.argument.foo +
+						 // " [bar] => " + o.argument.bar +" )</li>";
 	}
 }
 
-var handleFailure = function(o){
+var handleFailure = function(id, o){
 
 		Y.log("The failure handler was called.  tId: " + o.tId + ".", "info", "example");
 
@@ -77,19 +76,24 @@ var handleFailure = function(o){
 
 var callback =
 {
-  success:handleSuccess,
-  failure:handleFailure,
+  on: {
+      success:handleSuccess,
+      failure:handleFailure
+  },
   argument: { foo:"foo", bar:"bar" }
 };
 
 var sUrl = "assets/get.php?username=anonymous&userid=0";
 
 function makeRequest(){
-	var request = Y.io('GET', sUrl, callback);
-	
-	Y.log("Initiating request; tId: " + request.tId + ".", "info", "example");
+	var request = Y.io(sUrl, callback, 'asd');
+	Y.log("Initiating request; tId: " + Y.lang.dump(request) + ".", "info", "example");
 
 }
+
+Y.on('io:success', function() {
+    Y.log('global: ' + Y.lang.dump(Y.array(arguments)));
+});;
 
 Y.log("As you interact with this example, relevant steps in the process will be logged here.", "info", "example");
 

@@ -9,7 +9,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      * existing YUI object will not be overwritten so that defined
      * namespaces are preserved.  
      * @class YUI
-     * @static
+     * @constructor
+     * @param o configuration object
      */
     /*global YUI*/
     YUI = function(o) {

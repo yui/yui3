@@ -3,7 +3,6 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
-<script type="text/javascript" src="../../build3x/node/node-debug.js"></script>
 
 <body>
 
@@ -14,8 +13,21 @@
 
 (function() {
 
+
+
+
     //var Y = YUI().use('event', 'dom');
-    var Y = YUI().use('node');
+    //var Y = YUI().use('node');
+    var Y = YUI();
+
+    Y.on('yui:log', function(msg) {
+        var d=document, b=d.body, n=d.createElement("div");
+        if (b) {
+            n.appendChild(d.createTextNode(msg));
+            b.appendChild(n);
+        }
+
+    });
 
     Y.Event.onDOMReady(function() {
         Y.log("onDOMReady fired");
@@ -39,15 +51,32 @@
 
 
     var ret = Y.on('click', function(e) {
-        Y.log(this.id + " click event facade: " + e.target);
+        Y.log(this.get('id') + " click event facade: " + e.target);
     }, 'button2');
 
     Y.log('ret: ' + Y.lang.dump(ret, 1));
 
+    var buts = Y.Doc.queryAll('.button');
+
+    /*
+
+    Y.log('queryAll buttons: ' + Y.lang.dump(buts.get('length')));
+
+    buts.each(function(v, k) {
+        Y.log('blah: ' + v);
+    });
+
+    Y.each(buts, function(v, k) {
+        Y.log('blah2: ' + v);
+    });
+    */
+
     Y.on('mouseover', function(e) {
         // alert('asdf');
-        Y.log(this.id + " mouseover: " + e.target);
-    },  Y.Dom.getElementsByClassName('button'));
+        Y.log(this.id || this.get('id') + " mouseover: " + e.target);
+    },  Y.Doc.queryAll('.button'));
+    // },  Y.Selector.query('.button'));
+    // },  ['#button1', '#button2']);
 
     /*
 

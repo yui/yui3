@@ -1,0 +1,1499 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: yui  Event   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>yui&nbsp; <span class="subtitle">3.00pre</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html">yui</a>
+                 &gt; Event 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        <code>static</code>
+                        
+                            Class <b>Event</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        The event utility provides functions to add and remove event listeners,
+event cleansing.  It also tries to automatically remove listeners it
+registers during the unload event.
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__avail">_avail</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            onAvailable listeners
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__dri">_dri</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            document readystate poll handle
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__el_events">_el_events</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Custom event wrapper map DOM events.  Key is 
+Element uid stamp.  Each item is a hash of custom event
+wrappers as provided in the _wrappers collection.  This
+provides the infrastructure for getListeners.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__interval">_interval</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            poll handle
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__retryCount">_retryCount</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of times to poll after window.onload.  This number is
+increased if additional late-bound handlers are requested after
+the page load.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__wrappers">_wrappers</a>
+                                        <code>- private static Y.Event.Custom</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Custom event wrappers for DOM events.  Key is 
+'event:' + Element uid stamp + event type
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_DOMReady">DOMReady</a>
+                                        <code>- static boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            True when the document is initially usable
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_lastError">lastError</a>
+                                        <code>- static Error</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            addListener/removeListener can throw errors in unexpected scenarios.
+These errors are suppressed, the method returns false, and this property
+is set
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_loadComplete">loadComplete</a>
+                                        <code>- private static boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            True after the onload event has fired
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_POLL_INTERVAL">POLL_INTERVAL</a>
+                                        <code>- static final int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The poll interval in milliseconds
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_POLL_RETRYS">POLL_RETRYS</a>
+                                        <code>- static final int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of times we should look for elements that are not
+in the DOM at the time the event is requested after the document
+has been loaded.  The default is 2000@amp;20 ms, so it will poll
+for 40 seconds or until all outstanding handlers are bound
+(whichever comes first).
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__isValidCollection">_isValidCollection</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        boolean
+                                            <strong>_isValidCollection</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            We want to be able to use getElementsByTagName as a collection
+to attach a group of events to.  Unfortunately, different 
+browsers return different types of collections.  This function
+tests to determine if the object is array-like.  It will also 
+fail if the object is an array, but is empty.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             the object to test
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>true if the object is array-like and populated</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__load">_load</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_load</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            hook up any deferred listeners
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ready">_ready</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ready</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires the DOMReady event listeners the first time the document is
+usable.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__tryPreloadAttach">_tryPreloadAttach</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_tryPreloadAttach</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Polling function that runs before the onload event fires, 
+attempting to attach to DOM Nodes as soon as they are 
+available
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__unload">_unload</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_unload</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes all listeners registered by pe.event.  Called 
+automatically during the unload event.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addListener">addListener</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Boolean
+                                            <strong>addListener</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         obj
+                                                    
+                                                
+                                                        , 
+                                                         override
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Appends an event handler
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;String|HTMLElement|Array|NodeList&gt;</code>
+                                                             An id, an element 
+reference, or a collection of ids and/or elements to assign the 
+listener to.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                                 The type of event to append
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                                    The method the event invokes
+                                                        </dd>
+                                                        <dd>
+                                                            <code>obj &lt;Object&gt;</code>
+                                                                An arbitrary object that will be 
+passed as a parameter to the handler
+                                                        </dd>
+                                                        <dd>
+                                                            <code>override &lt;Boolean|object&gt;</code>
+                                                              If true, the obj passed in becomes
+the execution context of the listener. If an
+object, this object becomes the execution
+context.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>True if the action was successful or defered,
+false if one or more of the elements 
+could not have the listener attached,
+or if the operation throws an exception.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_generateId">generateId</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        string
+                                            <strong>generateId</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Generates an unique ID for the element if it does not already 
+have one.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;object&gt;</code>
+                                                             the element to create the id for
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        string
+                                                    </code></dt>
+                                                    <dd>the resulting id of the element</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getEvent">getEvent</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Event
+                                            <strong>getEvent</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                                        , 
+                                                         boundEl
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Finds the event in the window object, the caller's arguments, or
+in the arguments of another method in the callstack.  This is
+executed automatically for events registered through the event
+manager, so the implementer should not normally need to execute
+this function at all.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                             the event parameter from the handler
+                                                        </dd>
+                                                        <dd>
+                                                            <code>boundEl &lt;HTMLElement&gt;</code>
+                                                             the element the listener is attached to
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Event
+                                                    </code></dt>
+                                                    <dd>the event</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getListeners">getListeners</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Y.Custom.Event
+                                            <strong>getListeners</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns all listeners attached to the given element via addListener.
+Optionally, you can specify a specific type of event to return.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;HTMLElement|string&gt;</code>
+                                                              the element or element id to inspect
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                              optional type of listener to return. If
+left out, all listeners will be returned
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Y.Custom.Event
+                                                    </code></dt>
+                                                    <dd>the custom event wrapper for the DOM event(s)</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_nativeAdd">nativeAdd</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>nativeAdd</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         capture
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Adds a DOM event directly without the caching, cleanup, context adj, etc
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;HTMLElement&gt;</code>
+                                                                  the element to bind the handler to
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                               the type of event handler
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;function&gt;</code>
+                                                                  the callback to invoke
+                                                        </dd>
+                                                        <dd>
+                                                            <code>capture &lt;boolen&gt;</code>
+                                                             capture or bubble phase
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_nativeRemove">nativeRemove</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>nativeRemove</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         capture
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Basic remove listener
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;HTMLElement&gt;</code>
+                                                                  the element to bind the handler to
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                               the type of event handler
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;function&gt;</code>
+                                                                  the callback to invoke
+                                                        </dd>
+                                                        <dd>
+                                                            <code>capture &lt;boolen&gt;</code>
+                                                             capture or bubble phase
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>on</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Y.Event.on is an alias for addListener
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onAvailable">onAvailable</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>onAvailable</strong>
+                                           (
+                                                
+                                                        
+                                                         p_id
+                                                    
+                                                
+                                                        , 
+                                                         p_fn
+                                                    
+                                                
+                                                        , 
+                                                         p_obj
+                                                    
+                                                
+                                                        , 
+                                                         p_override
+                                                    
+                                                
+                                                        , 
+                                                         checkContent
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executes the supplied callback when the item with the supplied
+id is found.  This is meant to be used to execute behavior as
+soon as possible as the page loads.  If you use this after the
+initial page load it will poll for a fixed time for the element.
+The number of times it will poll and the frequency are
+configurable.  By default it will poll for 10 seconds.
+<p>The callback is executed with a single parameter:
+the custom object parameter, if provided.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>p_id &lt;string||string[]&gt;</code>
+                                                             the id of the element, or an array
+of ids to look for.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_fn &lt;function&gt;</code>
+                                                             what to execute when the element is found.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_obj &lt;object&gt;</code>
+                                                             an optional object to be passed back as
+a parameter to p_fn.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_override &lt;boolean|object&gt;</code>
+                                                             If set to true, p_fn will execute
+in the context of p_obj, if set to an object it
+will execute in the context of that object
+                                                        </dd>
+                                                        <dd>
+                                                            <code>checkContent &lt;boolean&gt;</code>
+                                                              check child node readiness (onContentReady)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onContentReady">onContentReady</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>onContentReady</strong>
+                                           (
+                                                
+                                                        
+                                                         p_id
+                                                    
+                                                
+                                                        , 
+                                                         p_fn
+                                                    
+                                                
+                                                        , 
+                                                         p_obj
+                                                    
+                                                
+                                                        , 
+                                                         p_override
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Works the same way as onAvailable, but additionally checks the
+state of sibling elements to determine if the content of the
+available element is safe to modify.
+<p>The callback is executed with a single parameter:
+the custom object parameter, if provided.</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>p_id &lt;string&gt;</code>
+                                                             the id of the element to look for.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_fn &lt;function&gt;</code>
+                                                             what to execute when the element is ready.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_obj &lt;object&gt;</code>
+                                                             an optional object to be passed back as
+a parameter to p_fn.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_override &lt;boolean|object&gt;</code>
+                                                             If set to true, p_fn will execute
+in the context of p_obj.  If an object, p_fn will
+exectute in the context of that object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onDOMReady">onDOMReady</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>onDOMReady</strong>
+                                           (
+                                                
+                                                        
+                                                         p_fn
+                                                    
+                                                
+                                                        , 
+                                                         p_obj
+                                                    
+                                                
+                                                        , 
+                                                         p_context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executes the supplied callback when the DOM is first usable.  This
+will execute immediately if called after the DOMReady event has
+fired.   @todo the DOMContentReady event does not fire when the
+script is dynamically injected into the page.  This means the
+DOMReady custom event will never fire in FireFox or Opera when the
+library is injected.  It _will_ fire in Safari, and the IE 
+implementation would allow for us to fire it if the defered script
+is not available.  We want this to behave the same in all browsers.
+Is there a way to identify when the script has been injected 
+instead of included inline?  Is there a way to know whether the 
+window onload event has fired without having had a listener attached 
+to it when it did so?
+<p>The callback is a Event.Custom, so the signature is:</p>
+<p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+<p>For DOMReady events, there are no fire argments, so the
+signature is:</p>
+<p>"DOMReady", [], obj</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>p_fn &lt;function&gt;</code>
+                                                             what to execute when the element is found.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_obj &lt;object&gt;</code>
+                                                             an optional object to be passed back as
+a parameter to p_fn.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>p_context &lt;boolean|object&gt;</code>
+                                                             If set to true, p_fn will execute
+in the context of p_obj, if set to an object it
+will execute in the context of that object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_purgeElement">purgeElement</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>purgeElement</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         recurse
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes all listeners attached to the given element via addListener.
+Optionally, the node's children can also be purged.
+Optionally, you can specify a specific type of event to remove.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;HTMLElement&gt;</code>
+                                                             the element to purge
+                                                        </dd>
+                                                        <dd>
+                                                            <code>recurse &lt;boolean&gt;</code>
+                                                             recursively purge this element's children
+as well.  Use with caution.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                             optional type of listener to purge. If
+left out, all listeners will be removed
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeListener">removeListener</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        boolean
+                                            <strong>removeListener</strong>
+                                           (
+                                                
+                                                        
+                                                         el
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes an event listener
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>el &lt;String|HTMLElement|Array|NodeList&gt;</code>
+                                                             An id, an element 
+reference, or a collection of ids and/or elements to remove
+the listener from.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             the type of event to remove.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             the method the event invokes.  If fn is
+undefined, then all event handlers for the type of event are 
+removed.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>true if the unbind was successful, false 
+otherwise.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_startInterval">startInterval</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>startInterval</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_DOMReadyEvent">DOMReadyEvent</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>DOMReadyEvent</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Custom event the fires when the dom is initially usable
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_json.html">json</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_selector.html">selector</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="array.html">array</a></li>
+                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
+                                <li class="selected"><a href="Event.html">Event</a></li>
+                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
+                                <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
+                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
+                                <li class=""><a href="lang.html">lang</a></li>
+                                <li class=""><a href="object.html">object</a></li>
+                                <li class=""><a href="ua.html">ua</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Array.js.html">Array.js</a></li>
+                                <li class=""><a href="Compat.js.html">Compat.js</a></li>
+                                <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Dump.js.html">Dump.js</a></li>
+                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
+                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
+                                <li class=""><a href="event-facade.js.html">event-facade.js</a></li>
+                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
+                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
+                                <li class=""><a href="Get.js.html">Get.js</a></li>
+                                <li class=""><a href="Init.js.html">Init.js</a></li>
+                                <li class=""><a href="Lang.js.html">Lang.js</a></li>
+                                <li class=""><a href="Later.js.html">Later.js</a></li>
+                                <li class=""><a href="Object.js.html">Object.js</a></li>
+                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
+                                <li class=""><a href="UA.js.html">UA.js</a></li>
+                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__avail">_avail</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__dri">_dri</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__el_events">_el_events</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__interval">_interval</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__retryCount">_retryCount</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__wrappers">_wrappers</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_DOMReady">DOMReady</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_lastError">lastError</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_loadComplete">loadComplete</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_POLL_INTERVAL">POLL_INTERVAL</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_POLL_RETRYS">POLL_RETRYS</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>boolean</code>-->
+                                <a href="#method__isValidCollection">_isValidCollection</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__load">_load</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ready">_ready</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__tryPreloadAttach">_tryPreloadAttach</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unload">_unload</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_addListener">addListener</a>
+                                </li>
+                                <li class=""><!--<code>string</code>-->
+                                <a href="#method_generateId">generateId</a>
+                                </li>
+                                <li class=""><!--<code>Event</code>-->
+                                <a href="#method_getEvent">getEvent</a>
+                                </li>
+                                <li class=""><!--<code>Y.Custom.Event</code>-->
+                                <a href="#method_getListeners">getListeners</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_nativeAdd">nativeAdd</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_nativeRemove">nativeRemove</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_on">on</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onAvailable">onAvailable</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onContentReady">onContentReady</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onDOMReady">onDOMReady</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_purgeElement">purgeElement</a>
+                                </li>
+                                <li class=""><!--<code>boolean</code>-->
+                                <a href="#method_removeListener">removeListener</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_startInterval">startInterval</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_DOMReadyEvent">DOMReadyEvent</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

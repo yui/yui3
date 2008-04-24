@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: yui   Later.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>yui&nbsp; <span class="subtitle">3.00pre</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html">yui</a>
+                
+                 &gt; Later.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">// requires lang</span>
+<span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;later&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes the supplied function in the context of the supplied </span>
+<span class="c">     * object &#39;when&#39; milliseconds later.  Executes the function a </span>
+<span class="c">     * single time unless periodic is set to true.</span>
+<span class="c">     * @method later</span>
+<span class="c">     * @param when {int} the number of milliseconds to wait until the fn </span>
+<span class="c">     * is executed</span>
+<span class="c">     * @param o the context object</span>
+<span class="c">     * @param fn {Function|String} the function to execute or the name of </span>
+<span class="c">     * the method in the &#39;o&#39; object to execute</span>
+<span class="c">     * @param data [Array] data that is provided to the function.  This accepts</span>
+<span class="c">     * either a single item or an array.  If an array is provided, the</span>
+<span class="c">     * function is executed with one parameter for each array item.  If</span>
+<span class="c">     * you need to pass a single array parameter, it needs to be wrapped in</span>
+<span class="c">     * an array [myarray]</span>
+<span class="c">     * @param periodic {boolean} if true, executes continuously at supplied </span>
+<span class="c">     * interval until canceled</span>
+<span class="c">     * @return a timer object. Call the cancel() method on this object to </span>
+<span class="c">     * stop the timer.</span>
+<span class="c">     */</span>
+    <span class="nx">L</span><span class="o">.</span><span class="nx">later</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">when</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">periodic</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">when</span> <span class="o">=</span> <span class="nx">when</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span> 
+        <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
+        <span class="k">var</span> <span class="nx">m</span><span class="o">=</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">data</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">r</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">fn</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">m</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">fn</span><span class="o">];</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;method undefined&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">d</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">d</span> <span class="o">=</span> <span class="o">[</span><span class="nx">data</span><span class="o">];</span>
+        <span class="o">}</span>
+
+        <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">m</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">);</span>
+        <span class="o">};</span>
+
+        <span class="nx">r</span> <span class="o">=</span> <span class="o">(</span><span class="nx">periodic</span><span class="o">)</span> <span class="o">?</span> <span class="nx">setInterval</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">when</span><span class="o">)</span> <span class="o">:</span> <span class="nx">setTimeout</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">when</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="o">{</span>
+            <span class="nx">interval</span><span class="o">:</span> <span class="nx">periodic</span><span class="o">,</span>
+            <span class="nx">cancel</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">interval</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">clearInterval</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">clearTimeout</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">};</span>
+<span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_json.html">json</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_selector.html">selector</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="array.html">array</a></li>
+                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
+                                <li class=""><a href="Event.html">Event</a></li>
+                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
+                                <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
+                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
+                                <li class=""><a href="lang.html">lang</a></li>
+                                <li class=""><a href="object.html">object</a></li>
+                                <li class=""><a href="ua.html">ua</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Array.js.html">Array.js</a></li>
+                                <li class=""><a href="Compat.js.html">Compat.js</a></li>
+                                <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Dump.js.html">Dump.js</a></li>
+                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
+                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
+                                <li class=""><a href="event-facade.js.html">event-facade.js</a></li>
+                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
+                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
+                                <li class=""><a href="Get.js.html">Get.js</a></li>
+                                <li class=""><a href="Init.js.html">Init.js</a></li>
+                                <li class=""><a href="Lang.js.html">Lang.js</a></li>
+                                <li class="selected"><a href="Later.js.html">Later.js</a></li>
+                                <li class=""><a href="Object.js.html">Object.js</a></li>
+                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
+                                <li class=""><a href="UA.js.html">UA.js</a></li>
+                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

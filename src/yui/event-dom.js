@@ -1,6 +1,6 @@
 YUI.add("event-dom", function(Y) {
 
-    /**
+    /*
      * The Event Utility provides utilities for managing DOM Events and tools
      * for building event systems
      *

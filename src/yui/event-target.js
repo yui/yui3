@@ -212,7 +212,7 @@ ce = new Y.CustomEvent(p_type, context, silent);
          *   </ul>
          * If the custom event has not been explicitly created, it will be
          * created now with the default config, context to the host object
-         * @method fireEvent
+         * @method fire
          * @param p_type    {string}  the type, or name of the event
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
          *                            the handler.

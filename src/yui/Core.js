@@ -17,6 +17,7 @@ YUI.add("core", function(Y) {
      * @param w a whitelist object (the keys are the valid items to reference)
      * @static
      * @private
+     * @for YUI
      */
     _iefix = (Y.ua && Y.ua.ie) ?
         function(r, s, w) {

@@ -9,7 +9,8 @@ if (typeof YUI === 'undefined' || !YUI) {
      * existing YUI object will not be overwritten so that defined
      * namespaces are preserved.  
      * @class YUI
-     * @static
+     * @constructor
+     * @param o configuration object
      */
     /*global YUI*/
     YUI = function(o) {
@@ -360,7 +361,7 @@ YUI.add("lang", function(Y) {
 
     /**
      * Provides the language utilites and extensions used by the library
-     * @class YAHOO.lang
+     * @class lang
      */
     Y.lang = Y.lang || {};
 
@@ -492,6 +493,11 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
 
 }, "3.0.0");
 
+/**
+ * Array utilities
+ * @class array
+ * @static
+ */
 YUI.add("array", function(Y) {
 
     var L = Y.lang, Native = Array.prototype;
@@ -616,6 +622,7 @@ YUI.add("core", function(Y) {
      * @param w a whitelist object (the keys are the valid items to reference)
      * @static
      * @private
+     * @for YUI
      */
     _iefix = (Y.ua && Y.ua.ie) ?
         function(r, s, w) {
@@ -903,19 +910,25 @@ YUI.add("core", function(Y) {
 
     Y.each = function(o, f, c) {
 
-        // @todo, the object implementation works for arrays,
-        // but arrays can use the native implementation if
-        // available.  Is the native implementaiton it worth the 
-        // cost of the array test?  Does the object implementation
-        // work properly for array-like collections?
+        if (o.each && o.item) {
+            return o.each.call(o, f, c);
+        } else {
+            switch (A.test(o)) {
+                case 1:
+                    return A.each(o, f, c);
+                case 2:
+                    return A.each(Y.array(o, 0, true), f, c);
+                default:
 
-        switch (A.test(o)) {
-            case 1:
-                return A.each(o, f, c);
-            case 2:
-                return A.each(Y.array(o, 0, true), f, c);
-            default:
-                return Y.object.each(o, f, c);
+                    // if (o instanceof Y.NodeList) {
+                    //     // Y.log('found NodeList ' + o.length());
+                    //     for (var i=0, l=o.length(); i<l; i=i+1) {
+                    //         f.call(c || o, o.item(i), i, o);
+                    //     }
+                    //     return Y;
+                    // }
+                    return Y.object.each(o, f, c);
+            }
         }
 
         // return Y.object.each(o, f, c);
@@ -990,18 +1003,18 @@ YUI.add("core", function(Y) {
      * @parameter type {string} get, post, script, css
      * @param c callback for xhr, options for Get
      */
-    Y.io = function(type, url, c) {
-        switch (type) {
-            case 'script':
-                return Y.Get.script(url, c);
-                break; // get util
-            case 'css': 
-                return Y.Get.css(url, c);
-                break; // get util
-            default:
-                return Y.io.asyncRequest.apply(Y.io, arguments);
-        }
-    };
+    // Y.io = function(type, url, c) {
+    //     switch (type) {
+    //         case 'script':
+    //             return Y.Get.script(url, c);
+    //             break; // get util
+    //         case 'css': 
+    //             return Y.Get.css(url, c);
+    //             break; // get util
+    //         default:
+    //             return Y.io.asyncRequest.apply(Y.io, arguments);
+    //     }
+    // };
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {
@@ -1089,7 +1102,10 @@ YUI.add("core", function(Y) {
     };
 
 }, "3.0.0");
-// object utils
+/**
+ * Object utils
+ * @class object
+ */
 YUI.add("object", function(Y) {
 
     // Returns a new object based upon the supplied object
@@ -1107,7 +1123,7 @@ YUI.add("object", function(Y) {
      * in the object, or was inherited from the prototype.
      * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
      * This 
-     * There is a discrepancy between YAHOO.lang.hasOwnProperty and
+     * There is a discrepancy between Y.object.owns and
      * Object.prototype.hasOwnProperty when the property is a primitive added to
      * both the instance AND prototype with the same value:
      * <pre>
@@ -1116,7 +1132,7 @@ YUI.add("object", function(Y) {
      * var a = new A();
      * a.foo = 'foo';
      * alert(a.hasOwnProperty('foo')); // true
-     * alert(YAHOO.lang.hasOwnProperty(a, 'foo')); // false when using fallback
+     * alert(Y.object.owns(a, 'foo')); // false when using fallback
      * </pre>
      * @method owns
      * @param o {any} The object being testing
@@ -1168,12 +1184,25 @@ YUI.add("object", function(Y) {
      */
     O.each = function (o, f, c) {
         var s = c || Y;
+
+        // hack in NodeList support
+        // if (o.length && o.item) {
+        //     for (var i=0, l=o..get('length'); i<l; i=i+1) {
+        //         f.call(s, o.item(i), i, o);
+        //     }
+        // } else {
+        //     for (var i in o) {
+        //         if (O.owns(o, i)) {
+        //             f.call(s, o[i], i, o);
+        //         }
+        //     }
+        // }
+
         for (var i in o) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
         }
-
         return Y;
     };
 }, "3.0.0");
@@ -1181,7 +1210,7 @@ YUI.add("ua", function(Y) {
 
     /**
      * Browser/platform detection
-     * @method ua
+     * @class ua
      */
     Y.ua = function() {
 
@@ -1866,7 +1895,7 @@ ce = new Y.CustomEvent(p_type, context, silent);
          *   </ul>
          * If the custom event has not been explicitly created, it will be
          * created now with the default config, context to the host object
-         * @method fireEvent
+         * @method fire
          * @param p_type    {string}  the type, or name of the event
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
          *                            the handler.
@@ -1964,15 +1993,35 @@ ce = new Y.CustomEvent(p_type, context, silent);
 }, "3.0.0");
 YUI.add("event-custom", function(Y) {
 
+    /**
+     * Return value from all subscribe operations
+     * @class Event.Handle
+     * @constructor
+     * @param evt {Event.Custom} the custom event
+     * @param sub {Event.Subscriber} the subscriber
+     */
     Y.EventHandle = function(evt, sub) {
         if (!evt || !sub) {
             return null;
         }
+        /**
+         * The custom event
+         * @type Event.Custom
+         */
         this.evt = evt;
+
+        /**
+         * The subscriber object
+         * @type Event.Subscriber
+         */
         this.sub = sub;
     };
 
     Y.EventHandle.prototype = {
+        /**
+         * Detaches this subscriber
+         * @method detach
+         */
         detach: function() {
             this.evt._delete(this.sub);
         }
@@ -1993,7 +2042,6 @@ YUI.add("event-custom", function(Y) {
      *                  will receive. Y.Event.Custom.LIST or 
      *                  Y.Event.Custom.FLAT.  The default is
      *                  Y.Event.Custom.FLAT.
-     * @namespace Y
      * @class Event.Custom
      * @constructor
      */
@@ -2447,7 +2495,6 @@ return "Sub { obj: " + this.obj  + ", override: " + (this.override || "no") + " 
 /**
  * ChainedErrors wrap one or more exceptions thrown by a subprocess.
  *
- * @namespace YAHOO.util
  * @class ChainedError
  * @extends Error
  * @constructor
@@ -2542,14 +2589,12 @@ Y.extend(Y.ChainedError, Error, {
 }, "3.0.0");
 YUI.add("event-dom", function(Y) {
 
-    /**
+    /*
      * The Event Utility provides utilities for managing DOM Events and tools
      * for building event systems
      *
      * @module event
      * @title Event Utility
-     * @namespace Y
-     * @requires yahoo
      */
 
     /**
@@ -2809,7 +2854,9 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    var a=Y.array(arguments, 1, true), override = a[3];
+                    Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
+
+                    var a=Y.array(arguments, 1, true), override = a[3], E = Y.Event;
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
@@ -2818,18 +2865,23 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     // The el argument can be an array of elements or element ids.
-                    if ( this._isValidCollection(el)) {
+                    if (this._isValidCollection(el)) {
 
-                        var handles=[], h, i, l;
+                        // Y.log('collection: ' + el);
 
-                        for (i=0, l=el.length; i<l; ++i) {
+                        var handles=[], h, i, l, proc = function(v, k) {
 // handles.push(this.addListener(el[i], type, fn, obj, override));
+                            // Y.log('collection stuff: ' + v);
                             var b = a.slice();
-                            b.unshift(el[i]);
-                            h = this.addListener.apply(this, b);
+                            b.unshift(v);
+                            h = E.addListener.apply(E, b);
                             handles.push(h);
-                        }
+                        };
+
+                        Y.each(el, proc, E);
+
                         return handles;
+
 
                     } else if (Y.lang.isString(el)) {
                         var oEl = Y.get(el);
@@ -3032,13 +3084,12 @@ YUI.add("event-dom", function(Y) {
                     try {
                         return ( o                     && // o is something
                                  typeof o !== "string" && // o is not a string
-                                 o.length              && // o is indexed
+                                 (o.each || o.length)              && // o is indexed
                                  !o.tagName            && // o is not an HTML element
                                  !o.alert              && // o is not a window
-                                 typeof o[0] !== "undefined" );
+                                 (o.item || typeof o[0] !== "undefined") );
                     } catch(ex) {
-                        Y.log("_isValidCollection error, assuming that " +
-                    " this is a cross frame problem and not a collection", "warn");
+                        Y.log("collection check failure", "warn");
                         return false;
                     }
 
@@ -3588,2752 +3639,2469 @@ YUI.add("event-ready", function(Y) {
 
 }, "3.0.0");
 /**
- * The dom module provides helper methods for manipulating Dom elements.
- * @module dom
+ * The selector module provides helper methods allowing CSS3 Selectors to be used with DOM elements.
+ * @module selector
+ * @title Selector Utility
+ * @namespace Y.util
+ * @requires yahoo, dom
  */
 
-YUI.add("domcore", function(Y) {
+YUI.add('selector', function(Y) {
+/**
+ * Provides helper methods for collecting and filtering DOM elements.
+ * @namespace Y.util
+ * @class Selector
+ * @static
+ */
+var Selector = function() {};
 
-    var id_counter = 0,     // for use with generateId
-        reClassNameCache = {},          // cache regexes for className
-        document = Y.config.doc;     // cache for faster lookups
+var reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
 
-
-    var getClassRegEx = function(className) {
-        var re = reClassNameCache[className];
-        if (!re) {
-            re = new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-            reClassNameCache[className] = re;
-        }
-        return re;
-    };
-    
+Selector.prototype = {
     /**
-     * Provides helper methods for DOM elements.
-     * @class Dom
+     * Default document for use queries 
+     * @property document
+     * @type object
+     * @default window.document
      */
-    Y.Dom = {
-        /**
-         * Returns an HTMLElement reference.
-         * @method get
-         * @param {String | HTMLElement |Array} el Accepts a string to use as an ID for getting a DOM reference, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @return {HTMLElement | Array} A DOM reference to an HTML element or an array of HTMLElements.
-         */
-        get: function(el) {
-            if (el && (el.nodeType || el.item)) { // Node, or NodeList
-                return el;
-            }
+    document: Y.config.doc,
+    /**
+     * Mapping of attributes to aliases, normally to work around HTMLAttributes
+     * that conflict with JS reserved words.
+     * @property attrAliases
+     * @type object
+     */
+    attrAliases: {
+    },
 
-            if (Y.lang.isString(el) || !el) { // id or null
-                return document.getElementById(el);
-            }
-            
-            if (el.length !== undefined) { // array-like 
-                var c = [];
-                for (var i = 0, len = el.length; i < len; ++i) {
-                    c[c.length] = Y.Dom.get(el[i]);
-                }
-                
-                return c;
-            }
+    /**
+     * Mapping of shorthand tokens to corresponding attribute selector 
+     * @property shorthand
+     * @type object
+     */
+    shorthand: {
+        //'(?:(?:[^\\)\\]\\s*>+~,]+)(?:-?[_a-z]+[-\\w]))+#(-?[_a-z]+[-\\w]*)': '[id=$1]',
+        '\\#(-?[_a-z]+[-\\w]*)': '[id=$1]',
+        '\\.(-?[_a-z]+[-\\w]*)': '[class~=$1]'
+    },
 
-            return el; // some other object, just pass it back
+    /**
+     * List of operators and corresponding boolean functions. 
+     * These functions are passed the attribute and the current node's value of the attribute.
+     * @property operators
+     * @type object
+     */
+    operators: {
+        '=': function(attr, val) { return attr === val; }, // Equality
+        '!=': function(attr, val) { return attr !== val; }, // Inequality
+        '~=': function(attr, val) { // Match one of space seperated words 
+            var s = ' ';
+            return (s + attr + s).indexOf((s + val + s)) > -1;
+        },
+        '|=': function(attr, val) { return getRegExp('^' + val + '[-]?').test(attr); }, // Match start with value followed by optional hyphen
+        '^=': function(attr, val) { return attr.indexOf(val) === 0; }, // Match starts with value
+        '$=': function(attr, val) { return attr.lastIndexOf(val) === attr.length - val.length; }, // Match ends with value
+        '*=': function(attr, val) { return attr.indexOf(val) > -1; }, // Match contains value as substring 
+        '': function(attr, val) { return attr; } // Just test for existence of attribute
+    },
+
+    /**
+     * List of pseudo-classes and corresponding boolean functions. 
+     * These functions are called with the current node, and any value that was parsed with the pseudo regex.
+     * @property pseudos
+     * @type object
+     */
+    pseudos: {
+        'root': function(node) {
+            return node === node.ownerDocument.documentElement;
         },
 
-        /**
-         * Determines whether an HTMLElement has the given className.
-         * @method hasClass
-         * @param {String | HTMLElement | Array} el The element or collection to test
-         * @param {String} className the class name to search for
-         * @return {Boolean | Array} A boolean value or array of boolean values
-         */
-        hasClass: function(el, className) {
-            var re = getClassRegEx(className);
-
-            var f = function(el) {
-                Y.log('hasClass returning ' + re.test(el.className), 'info', 'Dom');
-                return re.test(el.className);
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
+        'nth-child': function(node, val) {
+            return getNth(node, val);
         },
+
+        'nth-last-child': function(node, val) {
+            return getNth(node, val, null, true);
+        },
+
+        'nth-of-type': function(node, val) {
+            return getNth(node, val, node.tagName);
+        },
+         
+        'nth-last-of-type': function(node, val) {
+            return getNth(node, val, node.tagName, true);
+        },
+         
+        'first-child': function(node) {
+            return getChildren(node.parentNode)[0] === node;
+        },
+
+        'last-child': function(node) {
+            var children = getChildren(node.parentNode);
+            return children[children.length - 1] === node;
+        },
+
+        'first-of-type': function(node, val) {
+            return getChildren(node.parentNode, node.tagName.toLowerCase())[0];
+        },
+         
+        'last-of-type': function(node, val) {
+            var children = getChildren(node.parentNode, node.tagName.toLowerCase());
+            return children[children.length - 1];
+        },
+         
+        'only-child': function(node) {
+            var children = getChildren(node.parentNode);
+            return children.length === 1 && children[0] === node;
+        },
+
+        'only-of-type': function(node) {
+            return getChildren(node.parentNode, node.tagName.toLowerCase()).length === 1;
+        },
+
+        'empty': function(node) {
+            return node.childNodes.length === 0;
+        },
+
+        'not': function(node, simple) {
+            return !Selector.test(node, simple);
+        },
+
+        'contains': function(node, str) {
+            var text = node.innerText || node.textContent || '';
+            return text.indexOf(str) > -1;
+        },
+        'checked': function(node) {
+            return node.checked === true;
+        }
+    },
+
+    /**
+     * Test if the supplied node matches the supplied selector.
+     * @method test
+     *
+     * @param {HTMLElement | String} node An id or node reference to the HTMLElement being tested.
+     * @param {string} selector The CSS Selector to test the node against.
+     * @return{boolean} Whether or not the node matches the selector.
+     * @static
     
-        /**
-         * Adds a class name to a given element or collection of elements.
-         * @method addClass         
-         * @param {String | HTMLElement | Array} el The element or collection to add the class to
-         * @param {String} className the class name to add to the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        addClass: function(el, className) {
-            var f = function(el) {
-                if (this.hasClass(el, className)) {
-                    return false; // already present
-                }
-                
-                Y.log('addClass adding ' + className, 'info', 'Dom');
-                
-                el.className = Y.lang.trim([el.className, className].join(' '));
-                return true;
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        },
-    
-        /**
-         * Removes a class name from a given element or collection of elements.
-         * @method removeClass         
-         * @param {String | HTMLElement | Array} el The element or collection to remove the class from
-         * @param {String} className the class name to remove from the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        removeClass: function(el, className) {
-            var re = getClassRegEx(className);
-            
-            var f = function(el) {
-                if (!className || !this.hasClass(el, className)) {
-                    return false; // not present
-                }                 
+     */
+    test: function(node, selector) {
+        node = Selector.document.getElementById(node) || node;
 
-                Y.log('removeClass removing ' + className, 'info', 'Dom');
-                
-                var c = el.className;
-                el.className = c.replace(re, ' ');
-                if ( this.hasClass(el, className) ) { // in case of multiple adjacent
-                    this.removeClass(el, className);
-                }
+        if (!node) {
+            return false;
+        }
 
-                el.className = Y.lang.trim(el.className); // remove any trailing spaces
-                return true;
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        },
+        var groups = selector ? selector.split(',') : [];
+        if (groups.length) {
+            for (var i = 0, len = groups.length; i < len; ++i) {
+                if ( rTestNode(node, groups[i]) ) { // passes if ANY group matches
+                    return true;
+                }
+            }
+            return false;
+        }
+        return rTestNode(node, selector);
+    },
+
+    /**
+     * Filters a set of nodes based on a given CSS selector. 
+     * @method filter
+     *
+     * @param {array} nodes A set of nodes/ids to filter. 
+     * @param {string} selector The selector used to test each node.
+     * @return{array} An array of nodes from the supplied array that match the given selector.
+     * @static
+     */
+    filter: function(nodes, selector) {
+        nodes = nodes || [];
+
+        var node,
+            result = [],
+            tokens = tokenize(selector);
+
+        if (!nodes.item) { // if not HTMLCollection, handle arrays of ids and/or nodes
+            Y.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                if (!nodes[i].tagName) { // tagName limits to HTMLElements 
+                    node = Selector.document.getElementById(nodes[i]);
+                    if (node) { // skip IDs that return null 
+                        nodes[i] = node;
+                    } else {
+                        Y.log('filter: skipping invalid node', 'warn', 'Selector');
+                    }
+                }
+            }
+        }
+        result = rFilter(nodes, tokenize(selector)[0]);
+        clearParentCache();
+        Y.log('filter: returning:' + result.length, 'info', 'Selector');
+        return result;
+    },
+
+    /**
+     * Retrieves a set of nodes based on a given CSS selector. 
+     * @method query
+     *
+     * @param {string} selector The CSS Selector to test the node against.
+     * @param {HTMLElement | String} root optional An id or HTMLElement to start the query from. Defaults to Selector.document.
+     * @param {Boolean} firstOnly optional Whether or not to return only the first match.
+     * @return {Array} An array of nodes that match the given selector.
+     * @static
+     */
+    query: function(selector, root, firstOnly) {
+        var result = query(selector, root, firstOnly);
+        //Y.log('query: returning ' + result, 'info', 'Selector');
+        return result;
+    }
+};
+
+var query = function(selector, root, firstOnly, deDupe) {
+    var result =  (firstOnly) ? null : [];
+    if (!selector) {
+        return result;
+    }
+
+    var groups = selector.split(','); // TODO: handle comma in attribute/pseudo
+
+    if (groups.length > 1) {
+        var found;
+        for (var i = 0, len = groups.length; i < len; ++i) {
+            found = arguments.callee(groups[i], root, firstOnly, true);
+            result = firstOnly ? found : result.concat(found); 
+        }
+        clearFoundCache();
+        return result;
+    }
+
+    if (root && !root.nodeName) { // assume ID
+        root = Selector.document.getElementById(root);
+        if (!root) {
+            Y.log('invalid root node provided', 'warn', 'Selector');
+            return result;
+        }
+    }
+
+    root = root || Selector.document;
+    var tokens = tokenize(selector);
+    var idToken = tokens[getIdTokenIndex(tokens)],
+        nodes = [],
+        node,
+        id,
+        token = tokens.pop() || {};
         
-        /**
-         * Replace a class with another class for a given element or collection of elements.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String | HTMLElement | Array} el The element or collection to remove the class from
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        replaceClass: function(el, oldClassName, newClassName) {
-            if (!newClassName || oldClassName === newClassName) { // avoid infinite loop
+    if (idToken) {
+        id = getId(idToken.attributes);
+    }
+
+    // use id shortcut when possible
+    if (id) {
+        node = Selector.document.getElementById(id);
+
+        if (node && (root.nodeName == '#document' || contains(node, root))) {
+            if ( rTestNode(node, null, idToken) ) {
+                if (idToken === token) {
+                    nodes = [node]; // simple selector
+                } else {
+                    root = node; // start from here
+                }
+            }
+        } else {
+            return result;
+        }
+    }
+
+    if (root && !nodes.length) {
+        nodes = root.getElementsByTagName(token.tag);
+    }
+
+    if (nodes.length) {
+        result = rFilter(nodes, token, firstOnly, deDupe); 
+    }
+
+    clearParentCache();
+    return result;
+};
+
+var contains = function() {
+    if (document.documentElement.contains && !Y.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+        return function(needle, haystack) {
+            return haystack.contains(needle);
+        };
+    } else if ( document.documentElement.compareDocumentPosition ) { // gecko
+        return function(needle, haystack) {
+            return !!(haystack.compareDocumentPosition(needle) & 16);
+        };
+    } else  { // Safari < 3
+        return function(needle, haystack) {
+            var parent = needle.parentNode;
+            while (parent) {
+                if (needle === parent) {
+                    return true;
+                }
+                parent = parent.parentNode;
+            } 
+            return false;
+        }; 
+    }
+}();
+
+var rFilter = function(nodes, token, firstOnly, deDupe) {
+    var result = firstOnly ? null : [];
+
+    for (var i = 0, len = nodes.length; i < len; i++) {
+        if (! rTestNode(nodes[i], '', token, deDupe)) {
+            continue;
+        }
+
+        if (firstOnly) {
+            return nodes[i];
+        }
+        if (deDupe) {
+            if (nodes[i]._found) {
+                continue;
+            }
+            nodes[i]._found = true;
+            foundCache[foundCache.length] = nodes[i];
+        }
+
+        result[result.length] = nodes[i];
+    }
+
+    return result;
+};
+
+var rTestNode = function(node, selector, token, deDupe) {
+    token = token || tokenize(selector).pop() || {};
+
+    if (!node.tagName ||
+        (token.tag !== '*' && node.tagName.toUpperCase() !== token.tag) ||
+        (deDupe && node._found) ) {
+        return false;
+    }
+
+    if (token.attributes.length) {
+        var attribute;
+        for (var i = 0, len = token.attributes.length; i < len; ++i) {
+            attribute = node.getAttribute(token.attributes[i][0], 2);
+            if (attribute === undefined) {
                 return false;
             }
-            
-            var re = getClassRegEx(oldClassName);
+            if ( Selector.operators[token.attributes[i][1]] &&
+                    !Selector.operators[token.attributes[i][1]](attribute, token.attributes[i][2])) {
+                return false;
+            }
+        }
+    }
 
-            var f = function(el) {
-                Y.log('replaceClass replacing ' + oldClassName + ' with ' + newClassName, 'info', 'Dom');
-            
-                if ( !this.hasClass(el, oldClassName) ) {
-                    this.addClass(el, newClassName); // just add it if nothing to replace
-                    return true; // NOTE: return
-                }
-            
-                el.className = el.className.replace(re, ' ' + newClassName + ' ');
+    if (token.pseudos.length) {
+        for (var i = 0, len = token.pseudos.length; i < len; ++i) {
+            if (Selector.pseudos[token.pseudos[i][0]] &&
+                    !Selector.pseudos[token.pseudos[i][0]](node, token.pseudos[i][1])) {
+                return false;
+            }
+        }
+    }
 
-                if ( this.hasClass(el, oldClassName) ) { // in case of multiple adjacent
-                    this.replaceClass(el, oldClassName, newClassName);
-                }
+    return (token.previous && token.previous.combinator !== ',') ?
+            combinators[token.previous.combinator](node, token) :
+            true;
+};
 
-                el.className = Y.lang.trim(el.className); // remove any trailing spaces
+
+var foundCache = [];
+var parentCache = [];
+var regexCache = {};
+
+var clearFoundCache = function() {
+    Y.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
+    for (var i = 0, len = foundCache.length; i < len; ++i) {
+        try { // IE no like delete
+            delete foundCache[i]._found;
+        } catch(e) {
+            foundCache[i].removeAttribute('_found');
+        }
+    }
+    foundCache = [];
+    Y.log('getBySelector: done clearing foundCache');
+};
+
+var clearParentCache = function() {
+    if (!document.documentElement.children) { // caching children lookups for gecko
+        return function() {
+            for (var i = 0, len = parentCache.length; i < len; ++i) {
+                delete parentCache[i]._children;
+            }
+            parentCache = [];
+        };
+    } else return function() {}; // do nothing
+}();
+
+var getRegExp = function(str, flags) {
+    flags = flags || '';
+    if (!regexCache[str + flags]) {
+        regexCache[str + flags] = new RegExp(str, flags);
+    }
+    return regexCache[str + flags];
+};
+
+var combinators = {
+    ' ': function(node, token) {
+        while (node = node.parentNode) {
+            if (rTestNode(node, '', token.previous)) {
                 return true;
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
+            }
+        }  
+        return false;
+    },
+
+    '>': function(node, token) {
+        return rTestNode(node.parentNode, null, token.previous);
+    },
+    '+': function(node, token) {
+        var sib = node.previousSibling;
+        while (sib && sib.nodeType !== 1) {
+            sib = sib.previousSibling;
+        }
+
+        if (sib && rTestNode(sib, null, token.previous)) {
+            return true; 
+        }
+        return false;
+    },
+
+    '~': function(node, token) {
+        var sib = node.previousSibling;
+        while (sib) {
+            if (sib.nodeType === 1 && rTestNode(sib, null, token.previous)) {
+                return true;
+            }
+            sib = sib.previousSibling;
+        }
+
+        return false;
+    }
+};
+
+var getChildren = function() {
+    if (document.documentElement.children) { // document for capability test
+        return function(node, tag) {
+            return (tag) ? node.children.tags(tag) : node.children || [];
+        };
+    } else {
+        return function(node, tag) {
+            if (node._children) {
+                return node._children;
+            }
+            var children = [],
+                childNodes = node.childNodes;
+
+            for (var i = 0, len = childNodes.length; i < len; ++i) {
+                if (childNodes[i].tagName) {
+                    if (!tag || childNodes[i].tagName.toLowerCase() === tag) {
+                        children[children.length] = childNodes[i];
+                    }
+                }
+            }
+            node._children = children;
+            parentCache[parentCache.length] = node;
+            return children;
+        };
+    }
+}();
+
+/*
+    an+b = get every _a_th node starting at the _b_th
+    0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
+    1n+b =  get every element starting from b ("1" may may be omitted, e.g. "1n+0" or "n+0" or "n")
+    an+0 = get every _a_th element, "0" may be omitted 
+*/
+var getNth = function(node, expr, tag, reverse) {
+    if (tag) tag = tag.toLowerCase();
+    reNth.test(expr);
+    var a = parseInt(RegExp.$1, 10), // include every _a_ elements (zero means no repeat, just first _a_)
+        n = RegExp.$2, // "n"
+        oddeven = RegExp.$3, // "odd" or "even"
+        b = parseInt(RegExp.$4, 10) || 0, // start scan from element _b_
+        result = [];
+
+    var siblings = getChildren(node.parentNode, tag);
+
+    if (oddeven) {
+        a = 2; // always every other
+        op = '+';
+        n = 'n';
+        b = (oddeven === 'odd') ? 1 : 0;
+    } else if ( isNaN(a) ) {
+        a = (n) ? 1 : 0; // start from the first or no repeat
+    }
+
+    if (a === 0) { // just the first
+        if (reverse) {
+            b = siblings.length - b + 1; 
+        }
+
+        if (siblings[b - 1] === node) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else if (a < 0) {
+        reverse = !!reverse;
+        a = Math.abs(a);
+    }
+
+    if (!reverse) {
+        for (var i = b - 1, len = siblings.length; i < len; i += a) {
+            if ( i >= 0 && siblings[i] === node ) {
+                return true;
+            }
+        }
+    } else {
+        for (var i = siblings.length - b, len = siblings.length; i >= 0; i -= a) {
+            if ( i < len && siblings[i] === node ) {
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
+var getId = function(attr) {
+    for (var i = 0, len = attr.length; i < len; ++i) {
+        if (attr[i][0] == 'id' && attr[i][1] === '=') {
+            return attr[i][2];
+        }
+    }
+};
+
+var getIdTokenIndex = function(tokens) {
+    for (var i = 0, len = tokens.length; i < len; ++i) {
+        if (getId(tokens[i].attributes)) {
+            return i;
+        }
+    }
+    return -1;
+};
+
+var patterns = {
+    tag: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
+    attributes: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
+    //attributes: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^'"\]]*)['"]?\]*/i,
+    pseudos: /^:([-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
+    combinator: /^\s*([>+~]|\s)\s*/
+};
+
+/**
+    Break selector into token units per simple selector.
+    Combinator is attached to left-hand selector.
+ */
+var tokenize = function(selector) {
+    var token = {},     // one token per simple selector (left selector holds combinator)
+        tokens = [],    // array of tokens
+        id,             // unique id for the simple selector (if found)
+        found = false,  // whether or not any matches were found this pass
+        match;          // the regex match
+
+    selector = replaceShorthand(selector); // convert ID and CLASS shortcuts to attributes
+
+    /*
+        Search for selector patterns, store, and strip them from the selector string
+        until no patterns match (invalid selector) or we run out of chars.
+
+        Multiple attributes and pseudos are allowed, in any order.
+        for example:
+            'form:first-child[type=button]:not(button)[lang|=en]'
+    */
+    do {
+        found = false; // reset after full pass
+        for (var re in patterns) {
+                if (!Y.object.owns(patterns, re)) {
+                    continue;
+                }
+                if (re != 'tag' && re != 'combinator') { // only one allowed
+                    token[re] = token[re] || [];
+                }
+            if (match = patterns[re].exec(selector)) { // note assignment
+                found = true;
+                if (re != 'tag' && re != 'combinator') { // only one allowed
+                    //token[re] = token[re] || [];
+
+                    // capture ID for fast path to element
+                    if (re === 'attributes' && match[1] === 'id') {
+                        token.id = match[3];
+                    }
+
+                    token[re].push(match.slice(1));
+                } else { // single selector (tag, combinator)
+                    token[re] = match[1];
+                }
+                selector = selector.replace(match[0], ''); // strip current match from selector
+                if (re === 'combinator' || !selector.length) { // next token or done
+                    token.attributes = fixAttributes(token.attributes);
+                    token.pseudos = token.pseudos || [];
+                    token.tag = token.tag ? token.tag.toUpperCase() : '*';
+                    tokens.push(token);
+
+                    token = { // prep next token
+                        previous: token
+                    };
+                }
+            }
+        }
+    } while (found);
+
+    return tokens;
+};
+
+var fixAttributes = function(attr) {
+    var aliases = Selector.attrAliases;
+    attr = attr || [];
+    for (var i = 0, len = attr.length; i < len; ++i) {
+        if (aliases[attr[i][0]]) { // convert reserved words, etc
+            attr[i][0] = aliases[attr[i][0]];
+        }
+        if (!attr[i][1]) { // use exists operator
+            attr[i][1] = '';
+        }
+    }
+    return attr;
+};
+
+var replaceShorthand = function(selector) {
+    var shorthand = Selector.shorthand;
+    var attrs = selector.match(patterns.attributes); // pull attributes to avoid false pos on "." and "#"
+    if (attrs) {
+        selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
+    }
+    for (var re in shorthand) {
+        if (!Y.object.owns(shorthand, re)) {
+            continue;
+        }
+        selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
+    }
+
+    if (attrs) {
+        for (var i = 0, len = attrs.length; i < len; ++i) {
+            selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
+        }
+    }
+    return selector;
+};
+
+Selector = new Selector();
+Selector.patterns = patterns;
+Y.Selector = Selector;
+
+if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+    Y.Selector.attrAliases['class'] = 'className';
+    Y.Selector.attrAliases['for'] = 'htmlFor';
+}
+
+}, '3.0.0');
+/**
+ * DOM Abstractions.
+ * @module node
+ */
+
+YUI.add('node', function(Y) {
+
+    /**
+     * A wrapper for DOM Nodes.
+     * Node properties can be accessed via the set/get methods.
+     * With the exception of the noted properties,
+     * only strings, numbers, and booleans are passed through. 
+     * Use Y.get() or Y.Doc.get() to create Node instances.
+     *
+     * @class Node
+     */
+
+    var BASE_NODE                   = 0, 
+        ELEMENT_NODE                = 1,
+        ATTRIBUTE_NODE              = 2,
+        TEXT_NODE                   = 3,
+        CDATA_SECTION_NODE          = 4,
+        ENTITY_REFERENCE_NODE       = 5,
+        ENTITY_NODE                 = 6,
+        PROCESSING_INSTRUCTION_NODE = 7,
+        COMMENT_NODE                = 8,
+        DOCUMENT_NODE               = 9,
+        DOCUMENT_TYPE_NODE          = 10,
+        DOCUMENT_FRAGMENT_NODE      = 11,
+        NOTATION_NODE               = 12;
+
+
+    var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
+
+    Y.use('selector'); // TODO: need this?  should be able to "use" from "add"
+    var Selector = Y.Selector;
+    var _cache = {};
+
+    // private factory
+    var create = function(node) {
+        if (!node) {
+            return null;
+        }
+        if (!node.nodeName && node.get) {
+            return node; // Node instance
+        }
+
+        if (node.item && 'length' in node) {
+            return new NodeList(node);
+        }
+
+        switch(node.nodeType) {
+            case ELEMENT_NODE:
+                return new Element(node);
+
+            case DOCUMENT_NODE:
+                return new Doc(node);
+
+            default: // BASIC NODE (TEXT_NODE, etc.)
+                return new Node(node);
+        }
+    };
+
+    // returns HTMLElement
+    var getDOMNode = function(root, node) {
+        if (typeof node == 'string') {
+            return Selector.query(node, root, true);
+        }
+
+        return      (node && node._yuid) ? _cache[node._yuid] :
+                    (node && node.nodeName) ?  node :
+                    null;
+    };
+
+    /** 
+     * Wraps the inputs value of the method in a node instance
+     * Wraps the return value of the method in a node instance
+     * For use with methods that accept and return nodes
+     */
+    var nodeInOut = function(method, a, b, c, d, e) {
+        if (a) { // first 2 may be Node instances or strings
+            a = (!a.nodeName) ? getDOMNode(_cache[this._yuid], a) : a;
+            if (b) {
+                b = (!b.nodeName) ? getDOMNode(_cache[this._yuid], b) : b;
+            }
+        }
+        return create(_cache[this._yuid][method](a, b, c, d, e));
+    };
+
+    /** 
+     * Wraps the return value of the method in a node instance
+     * For use with methods that return nodes
+     */
+    var nodeOut = function(method, a, b, c, d, e) {
+        node = create(_cache[this._yuid][method](a, b, c, d, e));
+        return node;
+    };
+
+    /** 
+     * Passes method directly to HTMLElement
+     */
+    var rawOut = function(method, a, b, c, d, e) {
+        return _cache[this._yuid][method](a, b, c, d, e);
+    };
+
+    var PROPS_WRAP = {
+
+        /**
+         * Returns a Node instance. 
+         * @property parentNode
+         * @type Node
+         */
+        'parentNode': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property childNodes
+         * @type NodeList
+         */
+        'childNodes': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property firstChild
+         * @type Node
+         */
+        'firstChild': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property lastChild
+         * @type Node
+         */
+        'lastChild': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property previousSibling
+         * @type Node
+         */
+        'previousSibling': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property previousSibling
+         * @type Node
+         */
+        'nextSibling': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property ownerDocument
+         * @type Doc
+         */
+        'ownerDocument': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * Only valid for HTMLElement nodes.
+         * @property offsetParent
+         * @type Node
+         */
+        'offsetParent': ELEMENT_NODE,
+
+        // form
+        'elements': ELEMENT_NODE
+    };
+
+    var PROPS_READ = { // white list (currently all strings|numbers|booleans are allowed)
+    };
+
+    var PROPS_WRITE = { // white list (currently all strings|numbers|booleans are allowed)
+    };
+
+    var SETTERS = { // custom setters for specific properties
+
+    };
+
+    var GETTERS = {};
+    GETTERS[ELEMENT_NODE] = { // custom getters for specific properties
+        /**
+         * Normalizes nodeInnerText and textContent. 
+         * @property text
+         * @type String
+         */
+        'text': function(node) {
+            return node.innerText || node.textContent || '';
+        },
+
+        /**
+         * A NodeList containing only HTMLElement child nodes 
+         * @property child
+         * @type NodeList
+         */
+        children: function() {
+            return this.queryAll('> *');
+        }
+    };
+
+    GETTERS[DOCUMENT_NODE] = { // custom getters for specific properties
+        /**
+         * Document height 
+         * @property height
+         * @type Number
+         */
+        'height':  function(doc) {
+            var win = doc.defaultView || doc.parentWindow;
+            var h = (doc.compatMode != 'CSS1Compat') ?
+                    doc.body.scrollHeight : doc.documentElement.scrollHeight; // body first for safari
+            return Math.max(h, WIN_GETTERS['height'](win));
+        },
+
+        /**
+         * Document width 
+         * @property width
+         * @type Number
+         */
+        'width':  function(doc) {
+            var win = doc.defaultView || doc.parentWindow;
+            var w = (doc.compatMode != 'CSS1Compat') ?
+                    doc.body.scrollWidth : doc.documentElement.scrollWidth; // body first for safari
+            return Math.max(w, WIN_GETTERS['width'](win));
+        },
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property width
+         * @type Number
+         */
+        'scrollTop':  function(doc) {
+            return Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
+        },
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property width
+         * @type Number
+         */
+        'scrollLeft':  function(doc) {
+            return Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
+        }
+    };
+
+    var METHODS = {};
+
+    METHODS[BASE_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method insertBefore
+         * @param {String | HTMLElement | Node} node Node to be inserted 
+         * @param {String | HTMLElement | Node} refNode Node to be inserted before
+         */
+        insertBefore: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method replaceChild
+         * @param {String | HTMLElement | Node} node Node to be inserted 
+         * @param {String | HTMLElement | Node} refNode Node to be replaced 
+         * @return {Node} The replaced node 
+         */
+        replaceChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method removeChild
+         * @param {String | HTMLElement | Node} node Node to be removed 
+         * @return {Node} The removed node 
+         */
+        removeChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method appendChild
+         * @param {String | HTMLElement | Node} node Node to be appended 
+         * @return {Node} The appended node 
+         */
+        appendChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method cloneNode
+         * @param {String | HTMLElement | Node} node Node to be cloned 
+         * @return {Node} The clone 
+         */
+        cloneNode: nodeOut
+    };
+
+    var METHODS_INVOKE = {
+        'getBoundingClientRect': true,
+        'contains': true,
+        'compareDocumentPosition': true
+    };
+
+    var Node = function(node) {
+        if (!node || !node.nodeName) {
+            return null;
+            throw new Error('Node: invalid node');
+        }
+        _cache[Y.stamp(this)] = node;
+    };
+
+    Node.prototype = {
+        /**
+         * Set the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         */
+        set: function(prop, val) {
+            node = _cache[this._yuid];
+            if (prop in SETTERS) { // use custom setter
+                SETTERS[prop](node, prop, val); 
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in PROPS_WRITE) { // safe to write
+                node[prop] = val;
+            }
+            return this;
+        },
+
+        /**
+         * Get the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {any} Current value of the property
+         */
+        get: function(prop) {
+            var val;
+            node = _cache[this._yuid];
+            if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document, Window)
+                val = create(node[prop]);
+            } else if (GETTERS[node.nodeType] && GETTERS[node.nodeType][prop]) { // use custom getter
+                val = GETTERS[node.nodeType][prop].call(this, node, prop, val);
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in PROPS_READ) { // safe to read
+                val = node[prop];
+            }
+            return val;
+        },
+
+        /**
+         * Tests whether or not the bound HTMLElement has any child nodes. 
+         * @method hasChildNodes
+         * @return {Boolean} Whether or not the HTMLElement has childNodes 
+         */
+        hasChildNodes: function() {
+            return !!_cache[this._yuid].childNodes.length;
+        },
+
+        invoke: function(method, a, b, c, d, e) {
+            if (a) { // first 2 may be Node instances or strings
+                a = (a.nodeName) ? a : getDOMNode(_cache[this._yuid], a);
+                if (b) {
+                    b = (b.nodeName) ? b : getDOMNode(_cache[this._yuid], b);
+                }
+            }
+           var  node = _cache[this._yuid];
+            if (METHODS_INVOKE[method] && node[method]) {
+                return node[method](a, b, c, d, e);
+            }
+            return null;
+        },
+
+        /**
+         * Tests whether or not the bound HTMLElement can use the given method. 
+         * @method hasMethod
+         * @param {String} method The method to check for 
+         * @return {Boolean} Whether or not the HTMLElement can use the method 
+         */
+        hasMethod: function(method) {
+            return !!(METHODS_INVOKE[method] && _cache[this._yuid][method]);
+        },
+
+        //normalize: function() {},
+        //isSupported: function(feature, version) {},
+        toString: function() {
+            return this.get('id') || this.get('nodeName');
+        }
+    };
+
+    Y.each(METHODS[BASE_NODE], function(fn, method) {
+        Node.prototype[method] = function() {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(method);
+            return fn.apply(this, args);
+        };
+    });
+
+    METHODS[ELEMENT_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method getAttribute
+         * @param {String} attribute The attribute to retrieve 
+         * @return {String} The current value of the attribute 
+         */
+        getAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method setAttribute
+         * @param {String} attribute The attribute to set 
+         * @param {String} The value to apply to the attribute 
+         */
+        setAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method removeAttribute
+         * @param {String} attribute The attribute to be removed 
+         */
+        removeAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method hasAttribute
+         * @param {String} attribute The attribute to test for 
+         * @return {Boolean} Whether or not the attribute is present 
+         */
+        hasAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method scrollIntoView
+         */
+        scrollIntoView: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method getElementsByTagName
+         * @param {String} tagName The tagName to collect 
+         * @return {NodeList} A NodeList representing the HTMLCollection
+         */
+        getElementsByTagName: nodeOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method focus
+         */
+        focus: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method blur
+         */
+        blur: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method submit
+         */
+        submit: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method reset
+         */
+        reset: rawOut
+
+    };
+
+
+    
+    var Element = function(node) {
+        Element.superclass.constructor.call(this, node);
+    };
+
+    var _createNode = function(data) {
+        var frag = Y.config.doc.createElement('div');
+        frag.innerHTML = _createHTML(data);
+        return frag.firstChild;
+    };
+
+    var _createHTML = function(jsonml) {
+        var html = [];
+        var att = [];
+
+        if (Y.lang.isString(jsonml)) { // text node
+            return jsonml;
+        }
+
+        if (!jsonml || !jsonml.push) { // isArray
+            return ''; // expecting array 
+        }
+
+        var tag = jsonml[0];
+        if (!Y.lang.isString(tag)) {
+            return null; // bad tag error
+        }
+
+        for (var i = 1, len = jsonml.length; i < len; ++i) {
+            if (typeof jsonml[i] === 'string' || jsonml[i].push) {
+                html[html.length] = _createHTML(jsonml[i]);
+            } else if (typeof jsonml[i] == 'object') {
+                for (var attr in jsonml[i]) {
+                    att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                }
+            }
+        }
+        return '<' + tag + att.join('') + '>' + html.join('') + '</' + tag + '>';
+        
+    };
+
+    /** 
+     *  Creates a node instance from an HTML string or jsonml
+     * @method create
+     * @param {String | Array} jsonml HTML string or jsonml
+     */
+    Element.create = function(jsonml) {
+        return new Element(_createNode(jsonml));
+    };
+
+    Y.extend(Element, Node, {
+        /**
+         * Retrieves a single node based on the given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {Node} A Node instance for the matching HTMLElement.
+         */
+        query: function(selector) {
+            return new Element(Selector.query(selector, _cache[this._yuid], true));
+        },
+
+        /**
+         * Retrieves a nodeList based on the given CSS selector. 
+         * @method queryAll
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+         */
+        queryAll: function(selector) {
+            return new NodeList(Selector.query(selector, _cache[this._yuid]));
+        },
+
+        /**
+         * Test if the supplied node matches the supplied selector.
+         * @method test
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {boolean} Whether or not the node matches the selector.
+         */
+        test: function(selector) {
+            return Selector.test(_cache[this._yuid], selector);
+        },
+
+        /**
+         * Retrieves a style attribute from the given node.
+         * @method getStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The current value of the style property for the element.
+         */
+        getStyle: function(attr) {
+            var node = _cache[this._yuid];
+            var val = node.style[attr];
+            var view = node.ownerDocument.defaultView;
+            if (val === '') { // TODO: is empty string sufficient?
+                if (view && view.getComputedStyle) {
+                    val = view.getComputedStyle(node, '')[attr];
+                } else if (node.currentStyle) {
+                    val =  node.currentStyle[attr];
+                }
+            }
+            if (val === undefined) {
+                val = ''; // TODO: more robust
+            }
+            return val;
+        },
+
+        /**
+         * Applies a CSS style to a given node.
+         * @method getStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The current value of the style property for the element.
+         */
+        setStyle: function(attr, val) {
+             _cache[this._yuid].style[attr] = val;
+        },
+
+        /**
+         * Compares nodes to determine if they match.
+         * Node instances can be compared to each other and/or HTMLElements/selectors.
+         * @method compareTo
+         * @param {String | HTMLElement | Node} refNode The reference node to compare to the node.
+         * @return {Boolean} True if the nodes match, false if they do not. 
+         */
+        compareTo: function(refNode) {
+            refNode = refNode.nodeName ? refNode : _cache[refNode._yuid];
+            return _cache[this._yuid] === refNode;
+        },
+
+       /**
+         * Returns the nearest ancestor that passes the test applied by supplied boolean method.
+         * @method getAncestorBy
+         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
+         * @return {Object} HTMLElement or null if not found
+         */
+        ancestor: function(test) {
+            var node = this;
+            while (node = node.get('parentNode')) { // NOTE: assignment
+                if ( test(node) ) {
+                    Y.log('getAncestorBy returning ' + node, 'info', 'Dom');
+                    return node;
+                }
+            } 
+
+            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
+            return null;
+        },
+
+       /**
+         * Attaches a handler for the given DOM event.
+         * @method addEventListener
+         * @param {String} type The type of DOM Event to listen for 
+         * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} arg An argument object to pass to the handler 
+         */
+        addEventListener: function(type, fn, arg) {
+            Y.Event.nativeAdd(_cache[this._yuid], type, fn, arg);
         },
         
-        /**
-         * Returns an ID and applies it to the element "el", if provided.
-         * @method generateId  
-         * @param {String | HTMLElement | Array} el (optional) An optional element array of elements to add an ID to (no ID is added if one is already present).
-         * @param {String} prefix (optional) an optional prefix to use (defaults to "yui-gen").
-         * @return {String | Array} The generated ID, or array of generated IDs (or original ID if already present on an element)
+       /**
+         * Attaches a handler for the given DOM event.
+         * @method removeEventListener
+         * @param {String} type The type of DOM Event
+         * @param {Function} fn The handler to call when the event fires 
          */
-        generateId: function(el, prefix) {
-            prefix = prefix || 'yui-gen';
+        removeEventListener: function(type, fn) {
+            Y.Event.nativeRemove(_cache[this._yuid], type, fn);
+        }
+    });
 
-            var f = function(el) {
-                if (el && el.id) { // do not override existing ID
-                    Y.log('generateId returning existing id ' + el.id, 'info', 'Dom');
-                    return el.id;
-                } 
+    Y.each(METHODS[ELEMENT_NODE], function(fn, method) {
+        Element.prototype[method] = function() {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(method);
 
-                var id = prefix + id_counter++;
-                Y.log('generateId generating ' + id, 'info', 'Dom');
+            return fn.apply(this, args);
+        };
+    });
 
-                if (el) {
-                    el.id = id;
-                }
-                
-                return id;
-            };
 
-            // batch fails when no element, so just generate and return single ID
-            return Y.Dom.batch(el, f, Y.Dom, true) || f.apply(Y.Dom, arguments);
-        },
+    /** 
+     * A wrapper for interacting with DOM elements
+     * Usage:
+     * <p>Doc.get() // returns Doc instance for current document</p>
+     * <p>Doc.get(document) // returns Doc instance for the given document</p>
+     * <p>Doc.get('#foo') // returns Node instance</p>
+     * 
+     * @class Doc
+     */
+    var Doc = function(node) {
+        node = node || Y.config.doc;
+        Doc.superclass.constructor.call(this, node);
+    };
+
+    
+    Doc.get = function(doc, node) {
+        if (!doc) {
+            return create(Y.config.doc);
+        }
+
+        if (doc.nodeName != '#document') {
+            node = doc;
+            doc = Y.config.doc;
+        }
+        if (node && typeof node == 'string') {
+            node = Selector.query(node, doc, true);
+        }
+        return create(node);
+    };
+
+    /**
+     * Retrieves a nodeList based on the given CSS selector. 
+     * @method queryAll
+     *
+     * @param {HTMLDocument} document The document to search against.
+     * @param {string} selector The CSS selector to test against.
+     * @param {HTMLElement} root The root node to start from.
+     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+     */
+    Doc.queryAll = function(doc, selector, root) {
+        if (doc.nodeName != '#document') {
+            selector = doc;
+            doc = Y.config.doc;
+        }
+
+        root = root || doc;
+        nodes = new NodeList(Selector.query(selector, root));
+        return nodes;
+    };
+
+    /**
+     * Returns a wrapper instance. 
+     * @property documentElement
+     * @type Node
+     */
+    PROPS_WRAP.documentElement = DOCUMENT_NODE;
+
+    /**
+     * Returns a wrapper instance. 
+     * @property body
+     * @type Node
+     */
+    PROPS_WRAP.body = DOCUMENT_NODE;
+
+
+    METHODS[DOCUMENT_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method createElement
+         * @param {String} tagName The type of element to create 
+         * @return {Node} A Node instance bound to the HTMLElement 
+         */
+        createElement: nodeOut,
+        //createDocumentFragment: fragReturn,
 
         /**
-         * Returns a array of HTMLElements that pass the test applied by supplied boolean method.
-         * For optimized performance, include a tag and/or root node when possible.
-         * @method getElementsBy
-         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
-         * @param {String} tag (optional) The tag name of the elements being collected
-         * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point 
-         * @param {Function} apply (optional) A function to apply to each element when found 
-         * @return {Array} Array of HTMLElements
+         * Passes through to DOM method.
+         * @method createTextNode
+         * @param {String} text The text value of the node 
+         * @return {Node} A Node instance bound to the TextNode 
          */
-        getElementsBy: function(method, tag, root, apply) {
+        createTextNode: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method getElementsByTagName
+         * @param {String} text The text value of the node 
+         * @return {Node} A Node instance bound to the TextNode 
+         */
+        getElementsByTagName: nodeOut,
+
+        //createElementNS: nodeOut,
+        //getElementsByTagNameNS: nodeOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method getElementsById
+         * @param {String} id The id to search for 
+         * @return {Node} A Node instance bound to the HTMLElement 
+         */
+        getElementById: nodeOut
+    };
+
+    Y.extend(Doc, Node, {
+        /**
+         * Retrieves a Node instance based on the given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+         */
+        query: Element.prototype.query,
+
+        /**
+         * Retrieves a nodeList based on the given CSS selector. 
+         * @method queryAll
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+         */
+        queryAll: Element.prototype.queryAll,
+
+        getElementsBy: function(method, test, tag, root, apply) {
             tag = tag || '*';
-            root = (root) ? Y.Dom.get(root) : null || document; 
+            doc = doc.nodeName ? new Doc(doc) : doc;
 
-            if (!root) {
-                return [];
+            if (root) {
+                root = (root.tagName) ? new Element(root) : (root.get) ? root : null;
+            } else {
+                root = doc;
+            }
+
+            var elements;
+
+            if (root) {
+                elements = root.getElementsByTagName(tag);
+            } else {
+                elements = [];
             }
 
             var nodes = [],
-                elements = root.getElementsByTagName(tag);
+                item;
             
-            for (var i = 0, len = elements.length; i < len; ++i) {
-                if ( method(elements[i]) ) {
-                    nodes[nodes.length] = elements[i];
+            for (var i = 0, len = elements.length(); i < len; ++i) {
+                item = elements.item(i);
+                if ( test(item) ) {
+                    nodes[nodes.length] = item;
                     if (apply) {
-                        apply(elements[i]);
+                        apply(item);
                     }
                 }
             }
 
             Y.log('getElementsBy returning ' + nodes, 'info', 'Dom');
             
-            return nodes;
+            return new Y.NodeList(nodes);
+        }
+    });
+
+    Y.each(METHODS[DOCUMENT_NODE], function(fn, method) {
+        Doc.prototype[method] = function() {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(method);
+            return fn.apply(this, args);
+        };
+    });
+
+    var NodeList = function(nodes) {
+        _cache[Y.stamp(this)] = nodes;
+    };
+
+    /** 
+     * A wrapper for interacting with DOM elements
+     * @class NodeList
+     */
+    NodeList.prototype = {
+        /**
+         * Retrieves the Node instance at the given index. 
+         * @method item
+         *
+         * @param {Number} index The index of the target Node.
+         * @return {Node} The Node instance at the given index.
+         */
+        item: function(index) {
+            var node = _cache[this._yuid][index];
+            return (node && node.tagName) ? create(node) : (node && node.get) ? node : null;
+        },
+
+        /**
+         * Set the value of the property/attribute on all HTMLElements bound to this NodeList.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         * @see Node
+         */
+        set: function(name, val) {
+            var nodes = _cache[this._yuid];
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                Node.set(nodes[i], name, val);
+            }
+
+            return this;
+        },
+
+        /**
+         * Get the value of the property/attribute for each of the HTMLElements bound to this NodeList.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {Array} Array containing the current values mapped to the Node indexes 
+         * @see Node
+         */
+        get: function(name) {
+            if (name == 'length') {
+                return _cache[this._yuid].length;
+            }
+            var nodes = _cache[this._yuid];
+            var ret = [];
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                ret[i] = Node.get(nodes[i], name);
+            }
+
+            return ret;
+        },
+
+        /**
+         * Filters the NodeList instance down to only nodes matching the given selector.
+         * @method filter
+         * @param {String} selector The selector to filter against
+         * @return {NodeList} NodeList containing the updated collection 
+         * @see Selector
+         */
+        filter: function(selector) {
+            return new NodeList(Selector.filter(_cache[this._yuid], selector));
+        },
+
+        /**
+         * Applies the given function to each Node in the NodeList.
+         * @method each
+         * @param {Function} fn The function to apply 
+         * @return {NodeList} NodeList containing the updated collection 
+         * @see Y.each
+         */
+        each: function(fn, context) {
+            context = context || this;
+            var nodes = _cache[this._yuid];
+            var node = Doc.get(nodes[i]); // reusing single instance for each node
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                _cache[node._yuid] = nodes[i]; // remap Node instance to current node
+                fn.call(context, node, i, this);
+            }
+        }
+    };
+
+    Y.each(Element.prototype, function(fn, method) {
+        var ret;
+        var a = [];
+        NodeList.prototype[method] = function(a, b, c, d, e) {
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                ret = Element[method].call(Element, nodes[i], a, b, c, d, e);
+                if (ret !== Element) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
+    });
+
+    /**
+     * A wrapper for DOM Windows.
+     * Window properties can be accessed via the set/get methods.
+     * With the exception of the noted properties,
+     * only strings, numbers, and booleans are passed through. 
+     * Use Win.get() to create new Win instances.
+     *
+     * @class Win
+     */
+    // TODO: merge with NODE statics?
+    var WIN_PROPS_WRAP = {
+        /**
+         * Returns a Doc instance wrapping the window.document 
+         * @property document
+         * @type Doc
+         */
+        'document': 1,
+
+        /**
+         * Returns a Win instance wrapping the window.window 
+         * @property window
+         * @type Doc
+         */
+        'window': 1,
+        //'top': 1,
+        //'opener': 1,
+        //'parent': 1,
+
+        /**
+         * Returns a Node instance wrapping the window.frameElement 
+         * @property frameElement
+         * @type Doc
+         */
+        'frameElement': 1
+    };
+
+    var WIN_GETTERS = {
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property height
+         * @type String
+         */
+        'height': function(win) {
+            var h = win.innerHeight, // Safari, Opera
+            doc = win.document,
+            mode = doc.compatMode;
+        
+            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
+                h = (mode == 'CSS1Compat') ?
+                        doc.documentElement.clientHeight : // Standards
+                        doc.body.clientHeight; // Quirks
+            }
+        
+            Y.log('GETTERS:height returning ' + h, 'info', 'Win');
+            return h;
+        },
+
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property width
+         * @type String
+         */
+        'width': function(win) {
+            var w = win.innerWidth, // Safari, Opera
+            doc = win.document,
+            mode = doc.compatMode;
+        
+            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
+                w = (mode == 'CSS1Compat') ?
+                        doc.documentElement.clientWidth : // Standards
+                        doc.body.clientWidth; // Quirks
+            }
+        
+            Y.log('GETTERS:width returning ' + w, 'info', 'Win');
+            return w;
+        }
+    };
+
+    var WIN_SETTERS = {};
+    var WIN_PROPS_READ = {};
+    var WIN_PROPS_WRITE = {};
+
+
+    var Win = function(win) {
+        win = win || Y.config.win; // TODO: abstract window ref?
+        _cache[Y.stamp(this)] = win; 
+    };
+
+    /**
+     * Returns a Win instance bound to the given or current window.
+     * @method get
+     * @param {Window} win optional window reference. Defaults to current window.
+     * @return {Win} A Win instance bound to the given window. 
+     * @static
+     */
+    Win.get = function(win) {
+        return new Win(win);
+    };
+
+    Win.prototype = {
+        /**
+         * Get the value of the property/attribute on the window bound to this Win.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {any} Current value of the property
+         */
+        get: function(prop) {
+            var val;
+            var node = _cache[this._yuid];
+            if (prop in WIN_PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document, Window)
+                val = create(node[prop]);
+            } else if (prop in WIN_GETTERS) { // use custom setter
+                val = WIN_GETTERS[prop](node, prop, val);
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in WIN_PROPS_READ) { // safe to read
+                val = node[prop];
+            }
+            return val;
+        },
+
+        /**
+         * Set the value of the property/attribute on the window bound to this Win.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         */
+        set: function(prop, val) {
+            var node = _cache[this._yuid];
+            if (prop in WIN_SETTERS) { // use custom setter
+                WIN_SETTERS[prop](node, prop, val); 
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in WIN_PROPS_WRITE) { // safe to write
+                node[prop] = val;
+            }
+            return this;
+        },
+
+        /**
+         * Passes through to DOM window.
+         * @method scrollTo
+         */
+        'scrollTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method scrollBy
+         */
+        'scrollBy': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method resizeTo
+         */
+        'resizeTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method resizeBy
+         */
+        'resizeBy': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method moveTo
+         */
+        'moveTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method moveBy
+         */
+        'moveBy': rawOut
+
+
+/* TODO: allow?
+        'focus': rawOut,
+        'blur': rawOut,
+
+        'close': rawOut,
+        'open': nodeInOut,
+
+        'forward': rawOut,
+        'back': rawOut,
+*/
+    };
+
+
+    Y.Node = Element;
+    Y.NodeList = NodeList;
+    Y.Doc = Doc;
+    Y.Win = Win;
+}, '3.0.0');
+/**
+ * Extended interface for Node
+ * @module nodeextras
+ */
+
+YUI.add('nodeextras', function(Y) {
+
+    /**
+     * An interface for advanced DOM features.
+     * @interface NodeExtras
+     */
+
+    Y.use('node');
+
+    var regexCache = {};
+    var getRegExp = function(str, flags) {
+        flags = flags || '';
+        if (!regexCache[str + flags]) {
+            regexCache[str + flags] = new RegExp(str, flags);
+        }
+        return regexCache[str + flags];
+    };
+
+    var NodeExtras = {
+        /**
+         * Determines whether an HTMLElement has the given className.
+         * @method hasClass
+         * @param {String} className the class name to search for
+         * @return {Boolean | Array} A boolean value or array of boolean values
+         */
+        hasClass: function(className) {
+            var re = getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
+            return re.test(this.get('className'));
+        },
+
+        /**
+         * Adds a class name to a given element or collection of elements.
+         * @method addClass         
+         * @param {String} className the class name to add to the class attribute
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        addClass: function(className) {
+            if (this.hasClass(node, className)) {
+                return; // already present
+            }
+            
+            //Y.log('addClass adding ' + className, 'info', 'Node');
+            
+            this.set('className', Y.lang.trim([this.get('className'), className].join(' ')));
+        },
+
+        /**
+         * Removes a class name from a given element or collection of elements.
+         * @method removeClass         
+         * @param {String} className the class name to remove from the class attribute
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        removeClass: function(className) {
+            if (!className || !this.hasClass(className)) {
+                return; // not present
+            }                 
+
+            //Y.log('removeClass removing ' + className, 'info', 'Node');
+            
+            this.set('className', Y.lang.trim(this.get('className').replace(getRegExp('(?:^|\\s+)'
+                    + className + '(?:\\s+|$)'), ' ')));
+
+            if ( this.hasClass(className) ) { // in case of multiple adjacent
+                this.removeClass(className);
+            }
+        },
+
+        /**
+         * Replace a class with another class for a given element or collection of elements.
+         * If no oldClassName is present, the newClassName is simply added.
+         * @method replaceClass  
+         * @param {String} oldClassName the class name to be replaced
+         * @param {String} newClassName the class name that will be replacing the old class name
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        replaceClass: function(newC, oldC) {
+            //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
+        
+            if ( !this.hasClass(oldC) ) {
+                this.addClass(newC); // just add it if nothing to replace
+                return; // NOTE: return
+            }
+        
+            var re = getRegExp('(?:^|\\s+)' + oldC + '(?:\\s+|$)');
+            this.set('className', this.get('className').replace(re, ' ' + newC + ' '));
+
+            if ( this.hasClass(oldC) ) { // in case of multiple adjacent
+                this.replaceClass(oldC, newC);
+            }
+
+            this.set('className', Y.lang.trim(this.get('className'))); // remove any trailing spaces
+        },
+
+        /**
+         * Returns the previous sibling that is an HTMLElement. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method getPreviousSiblingBy
+         * @param {Function} method A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Node} Node instance or null if not found
+         */
+        previousSibling: function(method) {
+            var node = this;
+            while (node) {
+                node = node.get('previousSibling');
+                if ( node && node.get('nodeType') === 1 ) {
+                    return node;
+                }
+            }
+            return null;
+        }, 
+
+        /**
+         * Returns the next HTMLElement sibling that passes the boolean method. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method getNextSiblingBy
+         * @param {Function} method A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Object} HTMLElement or null if not found
+         */
+        nextSibling: function(method) {
+            var node = this;
+            while (node) {
+                node = node.get('nextSibling');
+                if ( node && node.get('nodeType') === 1 ) {
+                    return node;
+                }
+            }
+            return null;
         },
         
         /**
-         * Runs the supplied method against each item in the Collection/Array.
-         * The method is called with the element(s) as the first arg, and the optional param as the second ( method(el, o) ).
-         * @method batch
-         * @param {String | HTMLElement | Array} el (optional) An element or array of elements to apply the method to
-         * @param {Function} method The method to apply to the element(s)
-         * @param {Any} o (optional) An optional arg that is passed to the supplied method
-         * @param {Boolean} override (optional) Whether or not to override the scope of "method" with "o"
-         * @return {Any | Array} The return value(s) from the supplied method
+         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+         * @method contains
+         * @param {String | HTMLElement} needle The possible descendent
+         * @return {Boolean} Whether or not this node is an ancestor of needle
          */
-        batch: function(el, method, o, override) {
-            el = (el && (el.tagName || el.item)) ? el : Y.Dom.get(el); // skip get() when possible
-
-            if (!el || !method) {
-                Y.log('batch failed: invalid arguments', 'error', 'Dom');
-                return false;
-            } 
-            var scope = (override) ? o : window;
-            
-            if (el.tagName || el.length === undefined) { // element or not array-like 
-                return method.call(scope, el, o);
-            } 
-
-            var collection = [];
-            
-            for (var i = 0, len = el.length; i < len; ++i) {
-                collection[collection.length] = method.call(scope, el[i], o);
+        contains: function(needle) {
+            needle = Y.Doc.get(needle);
+            if (this.hasMethod('contains'))  {
+                return this.invoke('contains', needle);
+            } else if ( this.hasMethod('compareDocumentPosition') ) { // gecko
+                return !!(this.invoke('compareDocumentPosition', needle) & 16);
             }
-            
-            return collection;
-        }
-    };
-
-}, "3.0.0");
-
-YUI.add("region", function(Y) {
-
-    /**
-     * A region is a representation of an object on a grid.  It is defined
-     * by the top, right, bottom, left extents, so is rectangular by default.  If 
-     * other shapes are required, this class could be extended to support it.
-     * @class Region
-     * @param {Int} t the top extent
-     * @param {Int} r the right extent
-     * @param {Int} b the bottom extent
-     * @param {Int} l the left extent
-     * @constructor
-     */
-    Y.Region = function(t, r, b, l) {
+        },
 
         /**
-         * The region's top extent
-         * @property top
-         * @type Int
+         * Gets the current position of an element based on page coordinates. 
+         * Element must be part of the DOM tree to have page coordinates
+         * (display:none or elements not appended return false).
+         * @method getXY
+         * @return {Array} The XY position of the element
+
+         TODO: test inDocument/display
          */
-        this.top = t;
-        
-        /**
-         * The region's top extent as index, for symmetry with set/getXY
-         * @property 1
-         * @type Int
-         */
-        this[1] = t;
+        getXY: function() {
+            if (Y.Doc.get().get('documentElement').getBoundingClientRect) {
+                return function() {
+                    var doc = this.get('ownerDocument'),
+                        body = doc.get('body');
+                        scrollLeft = Math.max(doc.get('scrollLeft'), body.get('scrollLeft')),
+                        scrollTop = Math.max(doc.get('scrollTop'), body.get('scrollTop')),
+                        box = this.invoke('getBoundingClientRect'),
+                        xy = [box.left, box.top];
 
-        /**
-         * The region's right extent
-         * @property right
-         * @type int
-         */
-        this.right = r;
+                    if ((scrollTop || scrollLeft) && this.getStyle('position') != 'fixed') { // no scroll accounting for fixed
+                        xy[0] += scrollLeft;
+                        xy[1] += scrollTop;
+                    }
+                    return xy;
+                };
+            } else {
+                return function(xy) { // manually calculate by crawling up offsetParents
+                    var xy = [this.get('offsetLeft'), this.get('offsetTop')];
 
-        /**
-         * The region's bottom extent
-         * @property bottom
-         * @type Int
-         */
-        this.bottom = b;
+                    var parentNode = this;
+                    while (parentNode = parentNode.get('offsetParent')) {
+                        xy[0] += parentNode.get('offsetLeft');
+                        xy[1] += parentNode.get('offsetTop');
+                    }
 
-        /**
-         * The region's left extent
-         * @property left
-         * @type Int
-         */
-        this.left = l;
-        
-        /**
-         * The region's left extent as index, for symmetry with set/getXY
-         * @property 0
-         * @type Int
-         */
-        this[0] = l;
-    };
+                    // account for any scrolled ancestors
+                    if (this.getStyle('position') != 'fixed') {
+                        parentNode = this;
+                        var scrollTop, scrollLeft;
 
-    /**
-     * Returns true if this region contains the region passed in
-     * @method contains
-     * @param  {Region}  region The region to evaluate
-     * @return {Boolean}        True if the region is contained with this region, 
-     *                          else false
-     */
-    Y.Region.prototype.contains = function(region) {
-        return ( region.left   >= this.left   && 
-                 region.right  <= this.right  && 
-                 region.top    >= this.top    && 
-                 region.bottom <= this.bottom    );
+                        while (parentNode = parentNode.get('parentNode')) {
+                            scrollTop = parentNode.get('scrollTop');
+                            scrollLeft = parentNode.get('scrollLeft');
 
-        // this.logger.debug("does " + this + " contain " + region + " ... " + ret);
-    };
-
-    /**
-     * Returns the area of the region
-     * @method getArea
-     * @return {Int} the region's area
-     */
-    Y.Region.prototype.getArea = function() {
-        return ( (this.bottom - this.top) * (this.right - this.left) );
-    };
-
-    /**
-     * Returns the region where the passed in region overlaps with this one
-     * @method intersect
-     * @param  {Region} region The region that intersects
-     * @return {Region}        The overlap region, or null if there is no overlap
-     */
-    Y.Region.prototype.intersect = function(region) {
-        var t = Math.max( this.top,    region.top    );
-        var r = Math.min( this.right,  region.right  );
-        var b = Math.min( this.bottom, region.bottom );
-        var l = Math.max( this.left,   region.left   );
-        
-        if (b >= t && r >= l) {
-            return new Y.Region(t, r, b, l);
-        } else {
-            return null;
-        }
-    };
-
-    /**
-     * Returns the region representing the smallest region that can contain both
-     * the passed in region and this region.
-     * @method union
-     * @param  {Region} region The region that to create the union with
-     * @return {Region}        The union region
-     */
-    Y.Region.prototype.union = function(region) {
-        var t = Math.min( this.top,    region.top    );
-        var r = Math.max( this.right,  region.right  );
-        var b = Math.max( this.bottom, region.bottom );
-        var l = Math.min( this.left,   region.left   );
-
-        return new Y.Region(t, r, b, l);
-    };
-
-    /**
-     * toString
-     * @method toString
-     * @return string the region properties
-     */
-    Y.Region.prototype.toString = function() {
-        return ( "Region {"    +
-                 "top: "       + this.top    + 
-                 ", right: "   + this.right  + 
-                 ", bottom: "  + this.bottom + 
-                 ", left: "    + this.left   + 
-                 "}" );
-    };
-
-    /**
-     * Returns a region that is occupied by the DOM element
-     * @method getRegion
-     * @param  {HTMLElement} el The element
-     * @return {Region}         The region that the element occupies
-     * @static
-     */
-    Y.Region.getRegion = function(el) {
-        var p = Y.Dom.getXY(el);
-
-        var t = p[1];
-        var r = p[0] + el.offsetWidth;
-        var b = p[1] + el.offsetHeight;
-        var l = p[0];
-
-        return new Y.Region(t, r, b, l);
-    };
-
-    /////////////////////////////////////////////////////////////////////////////
-
-
-    /**
-     * A point is a region that is special in that it represents a single point on 
-     * the grid.
-     * @namespace YAHOO.util
-     * @class Point
-     * @param {Int} x The X position of the point
-     * @param {Int} y The Y position of the point
-     * @constructor
-     * @extends Y.Region
-     */
-    Y.Point = function(x, y) {
-       if (YAHOO.lang.isArray(x)) { // accept input from Dom.getXY, Event.getXY, etc.
-          y = x[1]; // dont blow away x yet
-          x = x[0];
-       }
-       
-        /**
-         * The X position of the point, which is also the right, left and index zero (for Dom.getXY symmetry)
-         * @property x
-         * @type Int
-         */
-
-        this.x = this.right = this.left = this[0] = x;
-         
-        /**
-         * The Y position of the point, which is also the top, bottom and index one (for Dom.getXY symmetry)
-         * @property y
-         * @type Int
-         */
-        this.y = this.top = this.bottom = this[1] = y;
-    };
-
-    Y.extend(Y.Point, Y.Region);
-
-}, "3.0.0");
-
-
-YUI.add("screen", function(Y) {
-
-    var Dom = Y.Dom,
-        document = Y.config.doc;     // cache for faster lookups
-    
-    // brower detection
-    var isOpera = Y.ua.opera,
-        isSafari = Y.ua.webkit, 
-        isGecko = Y.ua.gecko,
-        isIE = Y.ua.ie; 
-    
-    // regex cache
-    var patterns = {
-        ROOT_TAG: /^body|html$/i // body for quirks mode, html for standards
-    };
-
-    var getXY = function() {
-        if (document.documentElement.getBoundingClientRect) { // IE
-            return function(el) {
-                var box = el.getBoundingClientRect();
-
-                var rootNode = el.ownerDocument;
-                return [box.left + Y.Dom.getDocumentScrollLeft(rootNode), box.top +
-                        Y.Dom.getDocumentScrollTop(rootNode)];
-            };
-        } else {
-            return function(el) { // manually calculate by crawling up offsetParents
-                var pos = [el.offsetLeft, el.offsetTop];
-                var parentNode = el.offsetParent;
-
-                // safari: subtract body offsets if el is abs (or any offsetParent), unless body is offsetParent
-                var accountForBody = (isSafari &&
-                        Y.Dom.getStyle(el, 'position') == 'absolute' &&
-                        el.offsetParent == el.ownerDocument.body);
-
-                if (parentNode != el) {
-                    while (parentNode) {
-                        pos[0] += parentNode.offsetLeft;
-                        pos[1] += parentNode.offsetTop;
-                        if (!accountForBody && isSafari && 
-                                Y.Dom.getStyle(parentNode,'position') == 'absolute' ) { 
-                            accountForBody = true;
+                            if (scrollTop || scrollLeft) {
+                                xy[0] -= scrollLeft;
+                                xy[1] -= scrollTop;
+                            }
                         }
-                        parentNode = parentNode.offsetParent;
+
                     }
-                }
-
-                if (accountForBody) { //safari doubles in this case
-                    pos[0] -= el.ownerDocument.body.offsetLeft;
-                    pos[1] -= el.ownerDocument.body.offsetTop;
-                } 
-                parentNode = el.parentNode;
-
-                // account for any scrolled ancestors
-                while ( parentNode.tagName && !patterns.ROOT_TAG.test(parentNode.tagName) ) 
-                {
-                   // work around opera inline/table scrollLeft/Top bug
-                   if (Y.Dom.getStyle(parentNode, 'display').search(/^inline|table-row.*$/i)) { 
-                        pos[0] -= parentNode.scrollLeft;
-                        pos[1] -= parentNode.scrollTop;
-                    }
-                    
-                    parentNode = parentNode.parentNode; 
-                }
-
-                return pos;
-            };
-        }
-    }(); // NOTE: Executing for loadtime branching
-
-    Dom.getXY = function(el) {
-        var f = function(el) {
-            // has to be part of document to have pageXY
-            if ( (el.parentNode === null || el.offsetParent === null ||
-                    this.getStyle(el, 'display') == 'none') && el != el.ownerDocument.body) {
-                Y.log('getXY failed: element not available', 'error', 'Dom');
-                return false;
+                    return xy;
+                };
             }
-            
-            Y.log('getXY returning ' + getXY(el), 'info', 'Dom');
-            return getXY(el);
-        };
-        
-        return Y.Dom.batch(el, f, Y.Dom, true);
-    };
-        
-    Dom.getX = function(el) {
-        var f = function(el) {
-            return Y.Dom.getXY(el)[0];
-        };
-        
-        return Y.Dom.batch(el, f, Y.Dom, true);
-    };
-        
-    Dom.getY = function(el) {
-        var f = function(el) {
-            return Y.Dom.getXY(el)[1];
-        };
-        
-        return Y.Dom.batch(el, f, Y.Dom, true);
-    };
-        
-    Dom.setXY = function(el, pos, noRetry) {
-        var f = function(el) {
-            var style_pos = this.getStyle(el, 'position');
-            if (style_pos == 'static') { // default to relative
-                this.setStyle(el, 'position', 'relative');
-                style_pos = 'relative';
-            }
+        }(),// NOTE: Executing for loadtime branching
 
-            var pageXY = this.getXY(el);
-            if (pageXY === false) { // has to be part of doc to have pageXY
-                Y.log('setXY failed: element not available', 'error', 'Dom');
-                return false; 
-            }
-            
-            var delta = [ // assuming pixels; if not we will have to retry
-                parseInt( this.getStyle(el, 'left'), 10 ),
-                parseInt( this.getStyle(el, 'top'), 10 )
-            ];
-        
-            if ( isNaN(delta[0]) ) {// in case of 'auto'
-                delta[0] = (style_pos == 'relative') ? 0 : el.offsetLeft;
-            } 
-            if ( isNaN(delta[1]) ) { // in case of 'auto'
-                delta[1] = (style_pos == 'relative') ? 0 : el.offsetTop;
-            } 
-    
-            if (pos[0] !== null) { el.style.left = pos[0] - pageXY[0] + delta[0] + 'px'; }
-            if (pos[1] !== null) { el.style.top = pos[1] - pageXY[1] + delta[1] + 'px'; }
-          
-            if (!noRetry) {
-                var newXY = this.getXY(el);
-
-                // if retry is true, try one more time if we miss 
-               if ( (pos[0] !== null && newXY[0] != pos[0]) || 
-                    (pos[1] !== null && newXY[1] != pos[1]) ) {
-                   this.setXY(el, pos, true);
-               }
-            }        
-    
-            Y.log('setXY setting position to ' + pos, 'info', 'Dom');
-        };
-        
-        Y.Dom.batch(el, f, Y.Dom, true);
-    };
-        
-    Dom.setX = function(el, x) {
-        Y.Dom.setXY(el, [x, null]);
-    };
-    
-    Dom.setY = function(el, y) {
-        Y.Dom.setXY(el, [null, y]);
-    };
-        
-    Dom.getRegion = function(el) {
-        var f = function(el) {
-            if ( (el.parentNode === null || el.offsetParent === null ||
-                    this.getStyle(el, 'display') == 'none') && el != document.body) {
-                Y.log('getRegion failed: element not available', 'error', 'Dom');
-                return false;
-            }
-
-            var region = Y.Region.getRegion(el);
-            Y.log('getRegion returning ' + region, 'info', 'Dom');
-            return region;
-        };
-        
-        return Y.Dom.batch(el, f, Y.Dom, true);
-    };
-        
-    /**
-     * Returns the width of the client (viewport).
-     * @method getClientWidth
-     * @deprecated Now using getViewportWidth.  This interface left intact for back compat.
-     * @return {Int} The width of the viewable area of the page.
-     */
-    Dom.getClientWidth = function() {
-        return Y.Dom.getViewportWidth();
-    };
-    
-    /**
-     * Returns the height of the client (viewport).
-     * @method getClientHeight
-     * @deprecated Now using getViewportHeight.  This interface left intact for back compat.
-     * @return {Int} The height of the viewable area of the page.
-     */
-    Dom.getClientHeight = function() {
-        return Y.Dom.getViewportHeight();
-    };
-    
-    Dom.getDocumentHeight = function() {
-        var scrollHeight = (document.compatMode != 'CSS1Compat') ? document.body.scrollHeight : document.documentElement.scrollHeight;
-
-        var h = Math.max(scrollHeight, Y.Dom.getViewportHeight());
-        Y.log('getDocumentHeight returning ' + h, 'info', 'Dom');
-        return h;
-    };
-    
-    Dom.getDocumentWidth = function() {
-        var scrollWidth = (document.compatMode != 'CSS1Compat') ? document.body.scrollWidth : document.documentElement.scrollWidth;
-        var w = Math.max(scrollWidth, Y.Dom.getViewportWidth());
-        Y.log('getDocumentWidth returning ' + w, 'info', 'Dom');
-        return w;
-    };
-
-    Dom.getViewportHeight = function() {
-        var height = self.innerHeight; // Safari, Opera
-        var mode = document.compatMode;
-    
-        if ( (mode || isIE) && !isOpera ) { // IE, Gecko
-            height = (mode == 'CSS1Compat') ?
-                    document.documentElement.clientHeight : // Standards
-                    document.body.clientHeight; // Quirks
-        }
-    
-        Y.log('getViewportHeight returning ' + height, 'info', 'Dom');
-        return height;
-    };
-    
-    Dom.getViewportWidth = function() {
-        var width = self.innerWidth;  // Safari
-        var mode = document.compatMode;
-        
-        if (mode || isIE) { // IE, Gecko, Opera
-            width = (mode == 'CSS1Compat') ?
-                    document.documentElement.clientWidth : // Standards
-                    document.body.clientWidth; // Quirks
-        }
-        Y.log('getViewportWidth returning ' + width, 'info', 'Dom');
-        return width;
-    };
- 
-    Dom.getDocumentScrollLeft = function(doc) {
-        doc = doc || document;
-        return Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
-    };
-
-    Dom.getDocumentScrollTop = function(doc) {
-        doc = doc || document;
-        return Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
-    };
-
-    /**
-     * Creates a Region based on the viewport relative to the document. 
-     * @method getClientRegion
-     * @return {Region} A Region object representing the viewport which accounts for document scroll
-     */
-    Dom.getClientRegion = function() {
-        var t = Y.Dom.getDocumentScrollTop(),
-            l = Y.Dom.getDocumentScrollLeft(),
-            r = Y.Dom.getViewportWidth() + l,
-            b = Y.Dom.getViewportHeight() + t;
-
-        return new Y.Region(t, r, b, l);
-    };
-    
-
-    /**
-     * Provides helper methods for positioning and managing viewport 
-     * @namespace YAHOO.util
-     * @class Screen
-     */
-    Y.Screen = {
         /**
          * Set the position of an html element in page coordinates, regardless of how the element is positioned.
          * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
          * @method setXY
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-         * @param {Array} pos Contains X & Y values for new position (coordinates are page-based)
+         * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
          * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
          */
-        setXY: Y.Dom.setXY,
-        /**
-         * Gets the current position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method getXY
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-         * @return {Array} The XY position of the element(s)
-         */
-        getXY: Y.Dom.getXY,
-        /**
-         * Set the X position of an html element in page coordinates, regardless of how the element is positioned.
-         * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method setX
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @param {Int} x The value to use as the X coordinate for the element(s).
-         */
-        setX: Y.Dom.setX,
-        /**
-         * Gets the current X position of an element based on page coordinates.  The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method getX
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-         * @return {Number | Array} The X position of the element(s)
-         */
-        getX: Y.Dom.getX,
-        /**
-         * Set the Y position of an html element in page coordinates, regardless of how the element is positioned.
-         * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method setY
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @param {Int} x To use as the Y coordinate for the element(s).
-         */
-        setY: Y.Dom.setY,
-        /**
-         * Gets the current Y position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method getY
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-         * @return {Number | Array} The Y position of the element(s)
-         */
-        getY: Y.Dom.getY,
-        /**
-         * Returns the region position of the given element.
-         * The element must be part of the DOM tree to have a region (display:none or elements not appended return false).
-         * @method getRegion
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @return {Region | Array} A Region or array of Region instances containing "top, left, bottom, right" member data.
-         */
-        getRegion: Y.Dom.getRegion,
-        getClientRegion: Y.Dom.getClientRegion,
-        /**
-         * Returns the current height of the viewport.
-         * @method getViewportWidth
-         * @return {Int} The height of the viewable area of the page (excludes scrollbars).
-         */
-        getViewportWidth: Y.Dom.getViewportWidth,
-        /**
-         * Returns the current height of the viewport.
-         * @method getViewportHeight
-         * @return {Int} The height of the viewable area of the page (excludes scrollbars).
-         */
-        getViewportHeight: Y.Dom.getViewportHeight,
-        /**
-         * Returns the width of the document.
-         * @method getDocumentWidth
-         * @return {Int} The width of the actual document (which includes the body and its margin).
-         */
-        getDocumentWidth: Y.Dom.getDocumentWidth,
-        /**
-         * Returns the height of the document.
-         * @method getDocumentHeight
-         * @return {Int} The height of the actual document (which includes the body and its margin).
-         */
-        getDocumentHeight: Y.Dom.getDocumentHeight,
-        /**
-         * Returns the top scroll value of the document 
-         * @method getDocumentScrollTop
-         * @param {HTMLDocument} document (optional) The document to get the scroll value of
-         * @return {Int}  The amount that the document is scrolled to the top
-         */
-        getDocumentScrollTop: Y.Dom.getDocumentScrollTop,
-        /**
-         * Returns the left scroll value of the document 
-         * @method getDocumentScrollLeft
-         * @param {HTMLDocument} document (optional) The document to get the scroll value of
-         * @return {Int}  The amount that the document is scrolled to the left
-         */
-        getDocumentScrollLeft: Y.Dom.getDocumentScrollLeft
-    };
-
-}, "3.0.0");
-
-
-YUI.add("style", function(Y) {
-
-    var getStyle,           // for load time browser branching
-        setStyle,           // ditto
-        propertyCache = {}, // for faster hyphen converts
-        document = Y.config.doc;     // cache for faster lookups
-    
-    // brower detection
-    var isOpera = Y.ua.opera,
-        isSafari = Y.ua.webkit, 
-        isGecko = Y.ua.gecko,
-        isIE = Y.ua.ie; 
-    
-    // regex cache
-    var patterns = {
-        HYPHEN: /(-[a-z])/i // to normalize get/setStyle
-    };
-
-    var toCamel = function(property) {
-        if ( !patterns.HYPHEN.test(property) ) {
-            return property; // no hyphens
-        }
+        setXY: function(xy, noRetry) {
+            var pos = this.getStyle('position'),
+                delta = [ // assuming pixels; if not we will have to retry
+                    parseInt( this.getStyle('left'), 10 ),
+                    parseInt( this.getStyle('top'), 10 )
+                ];
         
-        if (propertyCache[property]) { // already converted
-            return propertyCache[property];
-        }
-       
-        var converted = property;
- 
-        while( patterns.HYPHEN.exec(converted) ) {
-            converted = converted.replace(RegExp.$1,
-                    RegExp.$1.substr(1).toUpperCase());
-        }
-        
-        propertyCache[property] = converted;
-        return converted;
-        //return property.replace(/-([a-z])/gi, function(m0, m1) {return m1.toUpperCase()}) // cant use function as 2nd arg yet due to safari bug
-    };
-    
-    // branching at load instead of runtime
-    if (document.defaultView && document.defaultView.getComputedStyle) { // W3C DOM method
-        getStyle = function(el, property) {
-            var value = null;
-            
-            if (property == 'float') { // fix reserved word
-                property = 'cssFloat';
+            if (pos == 'static') { // default to relative
+                pos = 'relative';
+                this.setStyle('position', pos);
             }
 
-            var computed = document.defaultView.getComputedStyle(el, '');
-            if (computed) { // test computed before touching for safari
-                value = computed[toCamel(property)];
+            var currentXY = this.getXY();
+            if (currentXY === false) { // has to be part of doc to have xy
+                YAHOO.log('xy failed: node not available', 'error', 'Node');
+                return false; 
             }
             
-            return el.style[property] || value;
-        };
-    } else if (document.documentElement.currentStyle && isIE) { // IE method
-        getStyle = function(el, property) {                         
-            switch( toCamel(property) ) {
-                case 'opacity' :// IE opacity uses filter
-                    var val = 100;
-                    try { // will error if no DXImageTransform
-                        val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+            if ( isNaN(delta[0]) ) {// in case of 'auto'
+                delta[0] = (pos == 'relative') ? 0 : this.get('offsetLeft');
+            } 
+            if ( isNaN(delta[1]) ) { // in case of 'auto'
+                delta[1] = (pos == 'relative') ? 0 : this.get('offsetTop');
+            } 
 
-                    } catch(e) {
-                        try { // make sure its in the document
-                            val = el.filters('alpha').opacity;
-                        } catch(ex) {
-                            Y.log('getStyle: IE filter failed',
-                                    'error', 'Dom');
-                        }
-                    }
-                    return val / 100;
-                case 'float': // fix reserved word
-                    property = 'styleFloat'; // fall through
-                default: 
-                    // test currentStyle before touching
-                    var value = el.currentStyle ? el.currentStyle[property] : null;
-                    return ( el.style[property] || value );
+            if (pos[0] !== null) {
+                this.setStyle('left', xy[0] - currentXY[0] + delta[0] + 'px');
             }
-        };
-    } else { // default to inline only
-        getStyle = function(el, property) { return el.style[property]; };
-    }
+
+            if (pos[1] !== null) {
+                this.setStyle('top', xy[1] - currentXY[1] + delta[1] + 'px');
+            }
+          
+            if (!noRetry) {
+                var newXY = this.getXY();
+
+                // if retry is true, try one more time if we miss 
+               if ( (xy[0] !== null && newXY[0] != xy[0]) || 
+                    (xy[1] !== null && newXY[1] != xy[1]) ) {
+                   this.setXY(xy, true);
+               }
+            }        
+
+            Y.log('setXY setting position to ' + xy, 'info', 'Node');
+        }
     
-    if (isIE) {
-        setStyle = function(el, property, val) {
-            switch (property) {
-                case 'opacity':
-                    if ( Y.lang.isString(el.style.filter) ) { // in case not appended
-                        el.style.filter = 'alpha(opacity=' + val * 100 + ')';
-                        
-                        if (!el.currentStyle || !el.currentStyle.hasLayout) {
-                            el.style.zoom = 1; // when no layout or cant tell
-                        }
-                    }
-                    break;
-                case 'float':
-                    property = 'styleFloat';
-                default:
-                el.style[property] = val;
-            }
-        };
-    } else {
-        setStyle = function(el, property, val) {
-            if (property == 'float') {
-                property = 'cssFloat';
-            }
-            el.style[property] = val;
-        };
-    }
-
-    Y.Dom.getStyle = function(el, property) {
-        property = toCamel(property);
-        
-        var f = function(element) {
-            return getStyle(element, property);
-        };
-        
-        return Y.Dom.batch(el, f, Y.Dom, true);
-    };
-    
-     Y.Dom.setStyle = function(el, property, val) {
-        property = toCamel(property);
-        
-        var f = function(element) {
-            setStyle(element, property, val);
-            Y.log('setStyle setting ' + property + ' to ' + val, 'info', 'Dom');
-            
-        };
-        
-        Y.Dom.batch(el, f, Y.Dom, true);
     };
 
-    
-    /**
-     * Provides helper methods for styling DOM elements.
-     * @namespace YAHOO.util
-     * @class Style
-     */
-    Y.Style = {
-        /**
-         * Normalizes currentStyle and ComputedStyle.
-         * @method get
-         * @param {String | HTMLElement |Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @param {String} property The style property whose value is returned.
-         * @return {String | Array} The current value of the style property for the element(s).
-         */
-        get: Y.Dom.getStyle,
-        /**
-         * Wrapper for setting style properties of HTMLElements.  Normalizes "opacity" across modern browsers.
-         * @method set
-         * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-         * @param {String} property The style property to be set.
-         * @param {String} val The value to apply to the given property.
-         */
-        set: Y.Dom.setStyle
-    };
-}, "3.0.0");
-
-
-
-YUI.add("domextras", function(Y) {
-
-    var Dom = Y.Dom,
-        id_counter = 0,     // for use with generateId
-        reClassNameCache = {},          // cache regexes for className
-        document = window.document;     // cache for faster lookups
-    
-    // brower detection
-    var isOpera = Y.ua.opera,
-        isSafari = Y.ua.webkit, 
-        isGecko = Y.ua.gecko,
-        isIE = Y.ua.ie; 
-    
-    // regex cache
-    var patterns = {
-        ROOT_TAG: /^body|html$/i // body for quirks mode, html for standards
-    };
-
-    var getClassRegEx = function(className) {
-        var re = reClassNameCache[className];
-        if (!re) {
-            re = new RegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-            reClassNameCache[className] = re;
-        }
-        return re;
-    };
-
-    var testElement = function(node, method) {
-        return node && node.nodeType == 1 && ( !method || method(node) );
-    };
-
-    /**
-     * Returns a array of HTMLElements with the given class.
-     * For optimized performance, include a tag and/or root node when possible.
-     * @method getElementsByClassName
-     * @param {String} className The class name to match against
-     * @param {String} tag (optional) The tag name of the elements being collected
-     * @param {String | HTMLElement} root (optional) The HTMLElement or an ID to use as the starting point 
-     * @param {Function} apply (optional) A function to apply to each element when found 
-     * @return {Array} An array of elements that have the given class name
-     */
-    Dom.getElementsByClassName = function(className, tag, root, apply) {
-        tag = tag || '*';
-        root = (root) ? Y.Dom.get(root) : null || document; 
-        if (!root) {
-            return [];
-        }
-
-        var nodes = [],
-            elements = root.getElementsByTagName(tag),
-            re = getClassRegEx(className);
-
-        for (var i = 0, len = elements.length; i < len; ++i) {
-            if ( re.test(elements[i].className) ) {
-                nodes[nodes.length] = elements[i];
-                if (apply) {
-                    apply.call(elements[i], elements[i]);
-                }
-            }
-        }
-        
-        return nodes;
-    };
-        
-    /**
-     * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
-     * @method isAncestor
-     * @param {String | HTMLElement} haystack The possible ancestor
-     * @param {String | HTMLElement} needle The possible descendent
-     * @return {Boolean} Whether or not the haystack is an ancestor of needle
-     */
-    Dom.isAncestor = function(haystack, needle) {
-        haystack = Y.Dom.get(haystack);
-        needle = Y.Dom.get(needle);
-        
-        if (!haystack || !needle) {
-            return false;
-        }
-
-        if (haystack.contains && needle.nodeType && !isSafari) { // safari contains is broken
-            Y.log('isAncestor returning ' + haystack.contains(needle), 'info', 'Dom');
-            return haystack.contains(needle);
-        }
-        else if ( haystack.compareDocumentPosition && needle.nodeType ) {
-            Y.log('isAncestor returning ' + !!(haystack.compareDocumentPosition(needle) & 16), 'info', 'Dom');
-            return !!(haystack.compareDocumentPosition(needle) & 16);
-        } else if (needle.nodeType) {
-            // fallback to crawling up (safari)
-            return !!this.getAncestorBy(needle, function(el) {
-                return el == haystack; 
-            }); 
-        }
-        Y.log('isAncestor failed; most likely needle is not an HTMLElement', 'error', 'Dom');
-        return false;
-    };
-        
-    /**
-     * Determines whether an HTMLElement is present in the current document.
-     * @method inDocument         
-     * @param {String | HTMLElement} el The element to search for
-     * @return {Boolean} Whether or not the element is present in the current document
-     */
-    Dom.inDocument = function(el) {
-        return this.isAncestor(document.documentElement, el);
-    };
-    
-   /**
-     * Returns the nearest ancestor that passes the test applied by supplied boolean method.
-     * For performance reasons, IDs are not accepted and argument validation omitted.
-     * @method getAncestorBy
-     * @param {HTMLElement} node The HTMLElement to use as the starting point 
-     * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getAncestorBy = function(node, method) {
-        while ((node = node.parentNode)) { // NOTE: assignment
-            if ( testElement(node, method) ) {
-                Y.log('getAncestorBy returning ' + node, 'info', 'Dom');
-                return node;
-            }
-        } 
-
-        Y.log('getAncestorBy returning null (no ancestor passed test)', 'error', 'Dom');
-        return null;
-    };
-    
-    /**
-     * Returns the nearest ancestor with the given className.
-     * @method getAncestorByClassName
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @param {String} className
-     * @return {Object} HTMLElement
-     */
-    Dom.getAncestorByClassName = function(node, className) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getAncestorByClassName failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-        var method = function(el) { return Y.Dom.hasClass(el, className); };
-        return Y.Dom.getAncestorBy(node, method);
-    };
-
-    /**
-     * Returns the nearest ancestor with the given tagName.
-     * @method getAncestorByTagName
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @param {String} tagName
-     * @return {Object} HTMLElement
-     */
-    Dom.getAncestorByTagName = function(node, tagName) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getAncestorByTagName failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-        var method = function(el) {
-             return el.tagName && el.tagName.toUpperCase() == tagName.toUpperCase();
-        };
-
-        return Y.Dom.getAncestorBy(node, method);
-    };
-
-    /**
-     * Returns the previous sibling that is an HTMLElement. 
-     * For performance reasons, IDs are not accepted and argument validation omitted.
-     * Returns the nearest HTMLElement sibling if no method provided.
-     * @method getPreviousSiblingBy
-     * @param {HTMLElement} node The HTMLElement to use as the starting point 
-     * @param {Function} method A boolean function used to test siblings
-     * that receives the sibling node being tested as its only argument
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getPreviousSiblingBy = function(node, method) {
-        while (node) {
-            node = node.previousSibling;
-            if ( testElement(node, method) ) {
-                return node;
-            }
-        }
-        return null;
-    };
-
-    /**
-     * Returns the previous sibling that is an HTMLElement 
-     * @method getPreviousSibling
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getPreviousSibling = function(node) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getPreviousSibling failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-
-        return Y.Dom.getPreviousSiblingBy(node);
-    };
-
-    /**
-     * Returns the next HTMLElement sibling that passes the boolean method. 
-     * For performance reasons, IDs are not accepted and argument validation omitted.
-     * Returns the nearest HTMLElement sibling if no method provided.
-     * @method getNextSiblingBy
-     * @param {HTMLElement} node The HTMLElement to use as the starting point 
-     * @param {Function} method A boolean function used to test siblings
-     * that receives the sibling node being tested as its only argument
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getNextSiblingBy = function(node, method) {
-        while (node) {
-            node = node.nextSibling;
-            if ( testElement(node, method) ) {
-                return node;
-            }
-        }
-        return null;
-    };
-
-    /**
-     * Returns the next sibling that is an HTMLElement 
-     * @method getNextSibling
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getNextSibling = function(node) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getNextSibling failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-
-        return Y.Dom.getNextSiblingBy(node);
-    };
-
-    /**
-     * Returns the first HTMLElement child that passes the test method. 
-     * @method getFirstChildBy
-     * @param {HTMLElement} node The HTMLElement to use as the starting point 
-     * @param {Function} method A boolean function used to test children
-     * that receives the node being tested as its only argument
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getFirstChildBy = function(node, method) {
-        var child = ( testElement(node.firstChild, method) ) ? node.firstChild : null;
-        return child || Y.Dom.getNextSiblingBy(node.firstChild, method);
-    };
-
-    /**
-     * Returns the first HTMLElement child. 
-     * @method getFirstChild
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getFirstChild = function(node, method) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getFirstChild failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-        return Y.Dom.getFirstChildBy(node);
-    };
-
-    /**
-     * Returns the last HTMLElement child that passes the test method. 
-     * @method getLastChildBy
-     * @param {HTMLElement} node The HTMLElement to use as the starting point 
-     * @param {Function} method A boolean function used to test children
-     * that receives the node being tested as its only argument
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getLastChildBy = function(node, method) {
-        if (!node) {
-            Y.log('getLastChild failed: invalid node argument', 'error', 'Dom');
-            return null;
-        }
-        var child = ( testElement(node.lastChild, method) ) ? node.lastChild : null;
-        return child || Y.Dom.getPreviousSiblingBy(node.lastChild, method);
-    };
-
-    /**
-     * Returns the last HTMLElement child. 
-     * @method getLastChild
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @return {Object} HTMLElement or null if not found
-     */
-    Dom.getLastChild = function(node) {
-        node = Y.Dom.get(node);
-        return Y.Dom.getLastChildBy(node);
-    };
-
-    /**
-     * Returns an array of HTMLElement childNodes that pass the test method. 
-     * @method getChildrenBy
-     * @param {HTMLElement} node The HTMLElement to start from
-     * @param {Function} method A boolean function used to test children
-     * that receives the node being tested as its only argument
-     * @return {Array} A static array of HTMLElements
-     */
-    Dom.getChildrenBy = function(node, method) {
-        var child = Y.Dom.getFirstChildBy(node, method);
-        var children = child ? [child] : [];
-
-        Y.Dom.getNextSiblingBy(child, function(node) {
-            if ( !method || method(node) ) {
-                children[children.length] = node;
-            }
-            return false; // fail test to collect all children
-        });
-
-        return children;
-    };
-
-    /**
-     * Returns an array of HTMLElement childNodes. 
-     * @method getChildren
-     * @param {String | HTMLElement} node The HTMLElement or an ID to use as the starting point 
-     * @return {Array} A static array of HTMLElements
-     */
-    Dom.getChildren = function(node) {
-        node = Y.Dom.get(node);
-        if (!node) {
-            Y.log('getChildren failed: invalid node argument', 'error', 'Dom');
-        }
-
-        return Y.Dom.getChildrenBy(node);
-    };
-
-    /**
-     * Inserts the new node as the previous sibling of the reference node 
-     * @method insertBefore
-     * @param {String | HTMLElement} newNode The node to be inserted
-     * @param {String | HTMLElement} referenceNode The node to insert the new node before 
-     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
-     */
-    Dom.insertBefore = function(newNode, referenceNode) {
-        newNode = Y.Dom.get(newNode); 
-        referenceNode = Y.Dom.get(referenceNode); 
-        
-        if (!newNode || !referenceNode || !referenceNode.parentNode) {
-            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'Dom');
-            return null;
-        }       
-
-        return referenceNode.parentNode.insertBefore(newNode, referenceNode); 
-    };
-
-    /**
-     * Inserts the new node as the next sibling of the reference node 
-     * @method insertAfter
-     * @param {String | HTMLElement} newNode The node to be inserted
-     * @param {String | HTMLElement} referenceNode The node to insert the new node after 
-     * @return {HTMLElement} The node that was inserted (or null if insert fails) 
-     */
-    Dom.insertAfter = function(newNode, referenceNode) {
-        newNode = Y.Dom.get(newNode); 
-        referenceNode = Y.Dom.get(referenceNode); 
-        
-        if (!newNode || !referenceNode || !referenceNode.parentNode) {
-            Y.log('insertAfter failed: missing or invalid arg(s)', 'error', 'Dom');
-            return null;
-        }       
-
-        if (referenceNode.nextSibling) {
-            return referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling); 
-        } else {
-            return referenceNode.parentNode.appendChild(newNode);
-        }
-    };
-
-
-}, "3.0.0");
-
-YUI.add("dom", function(Y) {
-    Y.log(Y.id + ' DOM setup complete) .');
-} , "3.0.0", {
-    use: ["domcore", "region", "screen", "style", "domextras"]
-});
-
-YUI.add("io", function(Y) {
-
-    /**
-     * The Connection Manager provides a simplified interface to the XMLHttpRequest
-     * object.  It handles cross-browser instantiantion of XMLHttpRequest, negotiates the
-     * interactive states and server response, returning the results to a pre-defined
-     * callback you create.
-     *
-     * @module connection
-     * @requires yahoo
-     * @requires event
-     */
-
-    Y.mix(Y.io, Y.Event.Target.prototype);
-
-    /**
-     * The Connection Manager singleton provides methods for creating and managing
-     * asynchronous transactions.
-     *
-     * @class XHR
-     */
-
-    Y.mix(Y.io, {
-      /**
-       * @description Array of MSFT ActiveX ids for XMLHttpRequest.
-       * @property _msxml_progid
-       * @private
-       * @static
-       * @type array
-       */
-        _msxml_progid:[
-            'Microsoft.XMLHTTP',
-            'MSXML2.XMLHTTP.3.0',
-            'MSXML2.XMLHTTP'
-            ],
-
-      /**
-       * @description Object literal of HTTP header(s)
-       * @property _http_header
-       * @private
-       * @static
-       * @type object
-       */
-        _http_headers:{},
-
-      /**
-       * @description Determines if HTTP headers are set.
-       * @property _has_http_headers
-       * @private
-       * @static
-       * @type boolean
-       */
-        _has_http_headers:false,
-
-     /**
-      * @description Determines if a default header of
-      * Content-Type of 'application/x-www-form-urlencoded'
-      * will be added to any client HTTP headers sent for POST
-      * transactions.
-      * @property _use_default_post_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _use_default_post_header:true,
-
-     /**
-      * @description The default header used for POST transactions.
-      * @property _default_post_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _default_post_header:'application/x-www-form-urlencoded; charset=UTF-8',
-
-     /**
-      * @description The default header used for transactions involving the
-      * use of HTML forms.
-      * @property _default_form_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _default_form_header:'application/x-www-form-urlencoded',
-
-     /**
-      * @description Determines if a default header of
-      * 'X-Requested-With: XMLHttpRequest'
-      * will be added to each transaction.
-      * @property _use_default_xhr_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _use_default_xhr_header:true,
-
-     /**
-      * @description The default header value for the label
-      * "X-Requested-With".  This is sent with each
-      * transaction, by default, to identify the
-      * request as being made by YUI Connection Manager.
-      * @property _default_xhr_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _default_xhr_header:'XMLHttpRequest',
-
-     /**
-      * @description Determines if custom, default headers
-      * are set for each transaction.
-      * @property _has_default_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _has_default_headers:true,
-
-     /**
-      * @description Determines if custom, default headers
-      * are set for each transaction.
-      * @property _has_default_header
-      * @private
-      * @static
-      * @type boolean
-      */
-        _default_headers:{},
-
-     /**
-      * @description Property modified by setForm() to determine if the data
-      * should be submitted as an HTML form.
-      * @property _isFormSubmit
-      * @private
-      * @static
-      * @type boolean
-      */
-        _isFormSubmit:false,
-
-     /**
-      * @description Property modified by setForm() to determine if a file(s)
-      * upload is expected.
-      * @property _isFileUpload
-      * @private
-      * @static
-      * @type boolean
-      */
-        _isFileUpload:false,
-
-     /**
-      * @description Property modified by setForm() to set a reference to the HTML
-      * form node if the desired action is file upload.
-      * @property _formNode
-      * @private
-      * @static
-      * @type object
-      */
-        _formNode:null,
-
-     /**
-      * @description Property modified by setForm() to set the HTML form data
-      * for each transaction.
-      * @property _sFormData
-      * @private
-      * @static
-      * @type string
-      */
-        _sFormData:null,
-
-     /**
-      * @description Collection of polling references to the polling mechanism in handleReadyState.
-      * @property _poll
-      * @private
-      * @static
-      * @type object
-      */
-        _poll:{},
-
-     /**
-      * @description Queue of timeout values for each transaction callback with a defined timeout value.
-      * @property _timeOut
-      * @private
-      * @static
-      * @type object
-      */
-        _timeOut:{},
-
-      /**
-       * @description The polling frequency, in milliseconds, for HandleReadyState.
-       * when attempting to determine a transaction's XHR readyState.
-       * The default is 50 milliseconds.
-       * @property _polling_interval
-       * @private
-       * @static
-       * @type int
-       */
-         _polling_interval:50,
-
-      /**
-       * @description A transaction counter that increments the transaction id for each transaction.
-       * @property _transaction_id
-       * @private
-       * @static
-       * @type int
-       */
-         _transaction_id:0,
-
-      /**
-       * @description Tracks the name-value pair of the "clicked" submit button if multiple submit
-       * buttons are present in an HTML form; and, if Event is available.
-       * @property _submitElementValue
-       * @private
-       * @static
-       * @type string
-       */
-         _submitElementValue:null,
-
-      /**
-       * @description Determines whether Event is available and returns true or false.
-       * If true, an event listener is bound at the document level to trap click events that
-       * resolve to a target type of "Submit".  This listener will enable setForm() to determine
-       * the clicked "Submit" value in a multi-Submit button, HTML form.
-       * @property _hasSubmitListener
-       * @private
-       * @static
-       */
-         _hasSubmitListener:(function()
-         {
-            Y.on(
-                'click',
-                function(e){
-                    var obj = e.target;
-                    if(obj.type && obj.type.toLowerCase() == 'submit'){
-                        Y.IO._submitElementValue = encodeURIComponent(obj.name) + "=" + encodeURIComponent(obj.value);
-                    }
-                },
-                Y.config.doc );
-            return true;
-         })(),
-
-      /**
-       * @description Custom event that fires at the start of a transaction
-       * @property startEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        startEvent: Y.io.publish('start'), // new Y.CustomEvent('start'),
-
-      /**
-       * @description Custom event that fires when a transaction response has completed.
-       * @property completeEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        completeEvent: Y.io.publish('complete'), // new Y.CustomEvent('complete'),
-
-      /**
-       * @description Custom event that fires when handleTransactionResponse() determines a
-       * response in the HTTP 2xx range.
-       * @property successEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        successEvent: Y.io.publish('success'), // new Y.CustomEvent('success'),
-
-      /**
-       * @description Custom event that fires when handleTransactionResponse() determines a
-       * response in the HTTP 4xx/5xx range.
-       * @property failureEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        failureEvent: Y.io.publish('failure'), //new Y.CustomEvent('failure'),
-
-      /**
-       * @description Custom event that fires when handleTransactionResponse() determines a
-       * response in the HTTP 4xx/5xx range.
-       * @property failureEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        uploadEvent: Y.io.publish('upload'), // new Y.CustomEvent('upload'),
-
-      /**
-       * @description Custom event that fires when a transaction is successfully aborted.
-       * @property abortEvent
-       * @private
-       * @static
-       * @type CustomEvent
-       */
-        abortEvent: Y.io.publish('abort'), // new Y.CustomEvent('abort'),
-
-      /**
-       * @description A reference table that maps callback custom events members to its specific
-       * event name.
-       * @property _customEvents
-       * @private
-       * @static
-       * @type object
-       */
-        _customEvents:
-        {
-            onStart:['startEvent', 'start'],
-            onComplete:['completeEvent', 'complete'],
-            onSuccess:['successEvent', 'success'],
-            onFailure:['failureEvent', 'failure'],
-            onUpload:['uploadEvent', 'upload'],
-            onAbort:['abortEvent', 'abort']
-        },
-
-      /**
-       * @description Member to add an ActiveX id to the existing xml_progid array.
-       * In the event(unlikely) a new ActiveX id is introduced, it can be added
-       * without internal code modifications.
-       * @method setProgId
-       * @public
-       * @static
-       * @param {string} id The ActiveX id to be added to initialize the XHR object.
-       * @return void
-       */
-        setProgId:function(id)
-        {
-            this._msxml_progid.unshift(id);
-            Y.log('ActiveX Program Id  ' + id + ' added to _msxml_progid.', 'info', 'Connection');
-        },
-
-      /**
-       * @description Member to override the default POST header.
-       * @method setDefaultPostHeader
-       * @public
-       * @static
-       * @param {boolean} b Set and use default header - true or false .
-       * @return void
-       */
-        setDefaultPostHeader:function(b)
-        {
-            if(typeof b == 'string'){
-                this._default_post_header = b;
-                Y.log('Default POST header set to  ' + b, 'info', 'Connection');
-            }
-            else if(typeof b == 'boolean'){
-                this._use_default_post_header = b;
-            }
-        },
-
-      /**
-       * @description Member to override the default transaction header..
-       * @method setDefaultXhrHeader
-       * @public
-       * @static
-       * @param {boolean} b Set and use default header - true or false .
-       * @return void
-       */
-        setDefaultXhrHeader:function(b)
-        {
-            if(typeof b == 'string'){
-                this._default_xhr_header = b;
-                Y.log('Default XHR header set to  ' + b, 'info', 'Connection');
-            }
-            else{
-                this._use_default_xhr_header = b;
-            }
-        },
-
-      /**
-       * @description Member to modify the default polling interval.
-       * @method setPollingInterval
-       * @public
-       * @static
-       * @param {int} i The polling interval in milliseconds.
-       * @return void
-       */
-        setPollingInterval:function(i)
-        {
-            if(typeof i == 'number' && isFinite(i)){
-                this._polling_interval = i;
-                Y.log('Default polling interval set to ' + i +'ms', 'info', 'Connection');
-            }
-        },
-
-      /**
-       * @description Instantiates a XMLHttpRequest object and returns an object with two properties:
-       * the XMLHttpRequest instance and the transaction id.
-       * @method createXhrObject
-       * @private
-       * @static
-       * @param {int} transactionId Property containing the transaction id for this transaction.
-       * @return object
-       */
-        createXhrObject:function(transactionId)
-        {
-            var obj,http;
-            try
-            {
-                // Instantiates XMLHttpRequest in non-IE browsers and assigns to http.
-                http = new XMLHttpRequest();
-                //  Object literal with http and tId properties
-                obj = { conn:http, tId:transactionId };
-                Y.log('XHR object created for transaction ' + transactionId, 'info', 'Connection');
-            }
-            catch(e)
-            {
-                for(var i=0; i<this._msxml_progid.length; ++i){
-                    try
-                    {
-                        // Instantiates XMLHttpRequest for IE and assign to http
-                        http = new ActiveXObject(this._msxml_progid[i]);
-                        //  Object literal with conn and tId properties
-                        obj = { conn:http, tId:transactionId };
-                        Y.log('ActiveX XHR object created for transaction ' + transactionId, 'info', 'Connection');
-                        break;
-                    }
-                    catch(ex){}
-                }
-            }
-            finally
-            {
-                return obj;
-            }
-        },
-
-      /**
-       * @description This method is called by asyncRequest to create a
-       * valid connection object for the transaction.  It also passes a
-       * transaction id and increments the transaction id counter.
-       * @method getConnectionObject
-       * @private
-       * @static
-       * @return {object}
-       */
-        getConnectionObject:function(isFileUpload)
-        {
-            var o;
-            var tId = this._transaction_id;
-
-            try
-            {
-                if(!isFileUpload){
-                    o = this.createXhrObject(tId);
-                }
-                else{
-                    o = {};
-                    o.tId = tId;
-                    o.isUpload = true;
-                }
-
-                if(o){
-                    this._transaction_id++;
-                }
-            }
-            catch(e){}
-            finally
-            {
-                return o;
-            }
-        },
-
-      /**
-       * @description Method for initiating an asynchronous request via the XHR object.
-       * @method asyncRequest
-       * @public
-       * @static
-       * @param {string} method HTTP transaction method
-       * @param {string} uri Fully qualified path of resource
-       * @param {callback} callback User-defined callback function or object
-       * @param {string} postData POST body
-       * @return {object} Returns the connection object
-       */
-        asyncRequest:function(method, uri, callback, postData)
-        {
-            var o = (this._isFileUpload)?this.getConnectionObject(true):this.getConnectionObject();
-            var args = (callback && callback.argument)?callback.argument:null;
-
-            if(!o){
-                Y.log('Unable to create connection object.', 'error', 'Connection');
-                return null;
-            }
-            else{
-
-                // Intialize any transaction-specific custom events, if provided.
-                if(callback && callback.customevents){
-
-                    Y.mix(o, Y.Event.Target.prototype);
-                    this.initCustomEvents(o, callback);
-                }
-
-                if(this._isFormSubmit){
-                    if(this._isFileUpload){
-                        this.uploadFile(o, callback, uri, postData);
-                        return o;
-                    }
-
-                    // If the specified HTTP method is GET, setForm() will return an
-                    // encoded string that is concatenated to the uri to
-                    // create a querystring.
-                    if(method.toUpperCase() == 'GET'){
-                        if(this._sFormData.length !== 0){
-                            // If the URI already contains a querystring, append an ampersand
-                            // and then concatenate _sFormData to the URI.
-                            uri += ((uri.indexOf('?') == -1)?'?':'&') + this._sFormData;
-                        }
-                    }
-                    else if(method.toUpperCase() == 'POST'){
-                        // If POST data exist in addition to the HTML form data,
-                        // it will be concatenated to the form data.
-                        postData = postData?this._sFormData + "&" + postData:this._sFormData;
-                    }
-                }
-
-                if(method.toUpperCase() == 'GET' && (callback && callback.cache === false)){
-                    // If callback.cache is defined and set to false, a
-                    // timestamp value will be added to the querystring.
-                    uri += ((uri.indexOf('?') == -1)?'?':'&') + "rnd=" + new Date().valueOf().toString();
-                }
-
-                o.conn.open(method, uri, true);
-
-                // Each transaction will automatically include a custom header of
-                // "X-Requested-With: XMLHttpRequest" to identify the request as
-                // having originated from Connection Manager.
-                if(this._use_default_xhr_header){
-                    if(!this._default_headers['X-Requested-With']){
-                        this.initHeader('X-Requested-With', this._default_xhr_header, true);
-                        Y.log('Initialize transaction header X-Request-Header to XMLHttpRequest.', 'info', 'Connection');
-                    }
-                }
-
-                //If the transaction method is POST and the POST header value is set to true
-                //or a custom value, initalize the Content-Type header to this value.
-                if((method.toUpperCase() == 'POST' && this._use_default_post_header) && this._isFormSubmit === false){
-                    this.initHeader('Content-Type', this._default_post_header);
-                    Y.log('Initialize header Content-Type to application/x-www-form-urlencoded; UTF-8 for POST transaction.', 'info', 'Connection');
-                }
-
-                //Initialize all default and custom HTTP headers,
-                if(this._has_default_headers || this._has_http_headers){
-                    this.setHeader(o);
-                }
-
-                this.handleReadyState(o, callback);
-                o.conn.send(postData || null);
-                Y.log('Transaction ' + o.tId + ' sent.', 'info', 'Connection');
-
-
-                // Reset the HTML form data and state properties as
-                // soon as the data are submitted.
-                if(this._isFormSubmit === true){
-                    this.resetFormState();
-                }
-
-                // Fire global custom event -- startEvent
-                this.startEvent.fire(o, args);
-
-                if(o.startEvent){
-                    // Fire transaction custom event -- startEvent
-                    o.startEvent.fire(o, args);
-                }
-
-                return o;
-            }
-        },
-
-      /**
-       * @description This method creates and subscribes custom events,
-       * specific to each transaction
-       * @method initCustomEvents
-       * @private
-       * @static
-       * @param {object} o The connection object
-       * @param {callback} callback The user-defined callback object
-       * @return {void}
-       */
-        initCustomEvents:function(o, callback)
-        {
-            // Enumerate through callback.customevents members and bind/subscribe
-            // events that match in the _customEvents table.
-            for(var prop in callback.customevents){
-                if(this._customEvents[prop][0]){
-                    // Create the custom event
-                    o[this._customEvents[prop][0]] = new Y.io.publish(this._customEvents[prop][1], (callback.scope)?callback.scope:null);
-                    Y.log('Transaction-specific Custom Event ' + o[this._customEvents[prop][1]] + ' created.', 'info', 'Connection');
-
-                    // Subscribe the custom event
-                    o[this._customEvents[prop][0]].subscribe(callback.customevents[prop]);
-                    Y.log('Transaction-specific Custom Event ' + o[this._customEvents[prop][1]] + ' subscribed.', 'info', 'Connection');
-                }
-            }
-        },
-
-      /**
-       * @description This method serves as a timer that polls the XHR object's readyState
-       * property during a transaction, instead of binding a callback to the
-       * onreadystatechange event.  Upon readyState 4, handleTransactionResponse
-       * will process the response, and the timer will be cleared.
-       * @method handleReadyState
-       * @private
-       * @static
-       * @param {object} o The connection object
-       * @param {callback} callback The user-defined callback object
-       * @return {void}
-       */
-
-        handleReadyState:function(o, callback)
-
-        {
-            var oConn = this;
-            var args = (callback && callback.argument)?callback.argument:null;
-
-            if(callback && callback.timeout){
-                this._timeOut[o.tId] = Y.config.win.setTimeout(function(){ oConn.abort(o, callback, true); }, callback.timeout);
-            }
-
-            this._poll[o.tId] = Y.config.win.setInterval(
-                function(){
-                    if(o.conn && o.conn.readyState === 4){
-
-                        // Clear the polling interval for the transaction
-                        // and remove the reference from _poll.
-                        Y.config.win.clearInterval(oConn._poll[o.tId]);
-                        delete oConn._poll[o.tId];
-
-                        if(callback && callback.timeout){
-                            Y.config.win.clearTimeout(oConn._timeOut[o.tId]);
-                            delete oConn._timeOut[o.tId];
-                        }
-
-                        // Fire global custom event -- completeEvent
-                        oConn.completeEvent.fire(o, args);
-
-                        if(o.completeEvent){
-                            // Fire transaction custom event -- completeEvent
-                            o.completeEvent.fire(o, args);
-                        }
-
-                        oConn.handleTransactionResponse(o, callback);
-                    }
-                }
-            ,this._polling_interval);
-        },
-
-      /**
-       * @description This method attempts to interpret the server response and
-       * determine whether the transaction was successful, or if an error or
-       * exception was encountered.
-       * @method handleTransactionResponse
-       * @private
-       * @static
-       * @param {object} o The connection object
-       * @param {object} callback The user-defined callback object
-       * @param {boolean} isAbort Determines if the transaction was terminated via abort().
-       * @return {void}
-       */
-        handleTransactionResponse:function(o, callback, isAbort)
-        {
-            var httpStatus, responseObject;
-            var args = (callback && callback.argument)?callback.argument:null;
-
-            try
-            {
-                if(o.conn.status !== undefined && o.conn.status !== 0){
-                    httpStatus = o.conn.status;
-                }
-                else{
-                    httpStatus = 13030;
-                }
-            }
-            catch(e){
-
-                 // 13030 is a custom code to indicate the condition -- in Mozilla/FF --
-                 // when the XHR object's status and statusText properties are
-                 // unavailable, and a query attempt throws an exception.
-                httpStatus = 13030;
-            }
-
-            if(httpStatus >= 200 && httpStatus < 300 || httpStatus === 1223){
-                responseObject = this.createResponseObject(o, args);
-                if(callback && callback.success){
-                    if(!callback.scope){
-                        callback.success(responseObject);
-                        Y.log('Success callback. HTTP code is ' + httpStatus, 'info', 'Connection');
-                    }
-                    else{
-                        // If a scope property is defined, the callback will be fired from
-                        // the context of the object.
-                        callback.success.apply(callback.scope, [responseObject]);
-                        Y.log('Success callback with scope. HTTP code is ' + httpStatus, 'info', 'Connection');
-                    }
-                }
-
-                // Fire global custom event -- successEvent
-                this.successEvent.fire(responseObject);
-
-                if(o.successEvent){
-                    // Fire transaction custom event -- successEvent
-                    o.successEvent.fire(responseObject);
-                }
-            }
-            else{
-                switch(httpStatus){
-                    // The following cases are wininet.dll error codes that may be encountered.
-                    case 12002: // Server timeout
-                    case 12029: // 12029 to 12031 correspond to dropped connections.
-                    case 12030:
-                    case 12031:
-                    case 12152: // Connection closed by server.
-                    case 13030: // See above comments for variable status.
-                        responseObject = this.createExceptionObject(o.tId, args, (isAbort?isAbort:false));
-                        if(callback && callback.failure){
-                            if(!callback.scope){
-                                callback.failure(responseObject);
-                                Y.log('Failure callback. Exception detected. Status code is ' + httpStatus, 'warn', 'Connection');
-                            }
-                            else{
-                                callback.failure.apply(callback.scope, [responseObject]);
-                                Y.log('Failure callback with scope. Exception detected. Status code is ' + httpStatus, 'warn', 'Connection');
-                            }
-                        }
-
-                        break;
-                    default:
-                        responseObject = this.createResponseObject(o, args);
-                        if(callback && callback.failure){
-                            if(!callback.scope){
-                                callback.failure(responseObject);
-                                Y.log('Failure callback. HTTP status code is ' + httpStatus, 'warn', 'Connection');
-                            }
-                            else{
-                                callback.failure.apply(callback.scope, [responseObject]);
-                                Y.log('Failure callback with scope. HTTP status code is ' + httpStatus, 'warn', 'Connection');
-                            }
-                        }
-                }
-
-                // Fire global custom event -- failureEvent
-                this.failureEvent.fire(responseObject);
-
-                if(o.failureEvent){
-                    // Fire transaction custom event -- failureEvent
-                    o.failureEvent.fire(responseObject);
-                }
-
-            }
-
-            this.releaseObject(o);
-            responseObject = null;
-        },
-
-      /**
-       * @description This method evaluates the server response, creates and returns the results via
-       * its properties.  Success and failure cases will differ in the response
-       * object's property values.
-       * @method createResponseObject
-       * @private
-       * @static
-       * @param {object} o The connection object
-       * @param {callbackArg} callbackArg The user-defined argument or arguments to be passed to the callback
-       * @return {object}
-       */
-        createResponseObject:function(o, callbackArg)
-        {
-            var obj = {};
-            var headerObj = {};
-
-            try
-            {
-                var headerStr = o.conn.getAllResponseHeaders();
-                var header = headerStr.split('\n');
-                for(var i=0; i<header.length; i++){
-                    var delimitPos = header[i].indexOf(':');
-                    if(delimitPos != -1){
-                        headerObj[header[i].substring(0,delimitPos)] = header[i].substring(delimitPos+2);
-                    }
-                }
-            }
-            catch(e){}
-
-            obj.tId = o.tId;
-            // Normalize IE's response to HTTP 204 when Win error 1223.
-            obj.status = (o.conn.status == 1223)?204:o.conn.status;
-            // Normalize IE's statusText to "No Content" instead of "Unknown".
-            obj.statusText = (o.conn.status == 1223)?"No Content":o.conn.statusText;
-            obj.getResponseHeader = headerObj;
-            obj.getAllResponseHeaders = headerStr;
-            obj.responseText = o.conn.responseText;
-            obj.responseXML = o.conn.responseXML;
-
-            if(callbackArg){
-                obj.argument = callbackArg;
-            }
-
-            return obj;
-        },
-
-      /**
-       * @description If a transaction cannot be completed due to dropped or closed connections,
-       * there may be not be enough information to build a full response object.
-       * The failure callback will be fired and this specific condition can be identified
-       * by a status property value of 0.
-       *
-       * If an abort was successful, the status property will report a value of -1.
-       *
-       * @method createExceptionObject
-       * @private
-       * @static
-       * @param {int} tId The Transaction Id
-       * @param {callbackArg} callbackArg The user-defined argument or arguments to be passed to the callback
-       * @param {boolean} isAbort Determines if the exception case is caused by a transaction abort
-       * @return {object}
-       */
-        createExceptionObject:function(tId, callbackArg, isAbort)
-        {
-            var COMM_CODE = 0;
-            var COMM_ERROR = 'communication failure';
-            var ABORT_CODE = -1;
-            var ABORT_ERROR = 'transaction aborted';
-
-            var obj = {};
-
-            obj.tId = tId;
-            if(isAbort){
-                obj.status = ABORT_CODE;
-                obj.statusText = ABORT_ERROR;
-            }
-            else{
-                obj.status = COMM_CODE;
-                obj.statusText = COMM_ERROR;
-            }
-
-            if(callbackArg){
-                obj.argument = callbackArg;
-            }
-
-            return obj;
-        },
-
-      /**
-       * @description Method that initializes the custom HTTP headers for the each transaction.
-       * @method initHeader
-       * @public
-       * @static
-       * @param {string} label The HTTP header label
-       * @param {string} value The HTTP header value
-       * @param {string} isDefault Determines if the specific header is a default header
-       * automatically sent with each transaction.
-       * @return {void}
-       */
-        initHeader:function(label, value, isDefault)
-        {
-            var headerObj = (isDefault)?this._default_headers:this._http_headers;
-            headerObj[label] = value;
-
-            if(isDefault){
-                this._has_default_headers = true;
-            }
-            else{
-                this._has_http_headers = true;
-            }
-        },
-
-
-      /**
-       * @description Accessor that sets the HTTP headers for each transaction.
-       * @method setHeader
-       * @private
-       * @static
-       * @param {object} o The connection object for the transaction.
-       * @return {void}
-       */
-        setHeader:function(o)
-        {
-            var prop;
-            if(this._has_default_headers){
-                for(prop in this._default_headers){
-                    if(Y.lang.hasOwnProperty(this._default_headers, prop)){
-                        o.conn.setRequestHeader(prop, this._default_headers[prop]);
-                        Y.log('Default HTTP header ' + prop + ' set with value of ' + this._default_headers[prop], 'info', 'Connection');
-                    }
-                }
-            }
-
-            if(this._has_http_headers){
-                for(prop in this._http_headers){
-                    if(Y.lang.hasOwnProperty(this._http_headers, prop)){
-                        o.conn.setRequestHeader(prop, this._http_headers[prop]);
-                        Y.log('HTTP header ' + prop + ' set with value of ' + this._http_headers[prop], 'info', 'Connection');
-                    }
-                }
-                delete this._http_headers;
-
-                this._http_headers = {};
-                this._has_http_headers = false;
-            }
-        },
-
-      /**
-       * @description Resets the default HTTP headers object
-       * @method resetDefaultHeaders
-       * @public
-       * @static
-       * @return {void}
-       */
-        resetDefaultHeaders:function(){
-            delete this._default_headers;
-            this._default_headers = {};
-            this._has_default_headers = false;
-        },
-
-      /**
-       * @description This method assembles the form label and value pairs and
-       * constructs an encoded string.
-       * asyncRequest() will automatically initialize the transaction with a
-       * a HTTP header Content-Type of application/x-www-form-urlencoded.
-       * @method setForm
-       * @public
-       * @static
-       * @param {string || object} form id or name attribute, or form object.
-       * @param {boolean} optional enable file upload.
-       * @param {boolean} optional enable file upload over SSL in IE only.
-       * @return {string} string of the HTML form field name and value pairs..
-       */
-        setForm:function(formId, isUpload, secureUri)
-        {
-            // reset the HTML form data and state properties
-            this.resetFormState();
-
-            var oForm;
-            if(typeof formId == 'string'){
-                // Determine if the argument is a form id or a form name.
-                // Note form name usage is deprecated, but supported
-                // here for backward compatibility.
-                oForm = (Y.get(formId) || Y.config.doc.forms[formId]);
-            }
-            else if(typeof formId == 'object'){
-                // Treat argument as an HTML form object.
-                oForm = formId;
-            }
-            else{
-                Y.log('Unable to create form object ' + formId, 'warn', 'Connection');
-                return;
-            }
-
-            // If the isUpload argument is true, setForm will call createFrame to initialize
-            // an iframe as the form target.
-            //
-            // The argument secureURI is also required by IE in SSL environments
-            // where the secureURI string is a fully qualified HTTP path, used to set the source
-            // of the iframe, to a stub resource in the same domain.
-            if(isUpload){
-
-                // Create iframe in preparation for file upload.
-                var io = this.createFrame(secureUri?secureUri:null);
-                // Set form reference and file upload properties to true.
-                this._isFormSubmit = true;
-                this._isFileUpload = true;
-                this._formNode = oForm;
-
-                return;
-
-            }
-
-            var oElement, oName, oValue, oDisabled;
-            var hasSubmit = false;
-
-            // Iterate over the form elements collection to construct the
-            // label-value pairs.
-            for (var i=0; i<oForm.elements.length; i++){
-                oElement = oForm.elements[i];
-                oDisabled = oElement.disabled;
-                oName = oElement.name;
-                oValue = oElement.value;
-
-                // Do not submit fields that are disabled or
-                // do not have a name attribute value.
-                if(!oDisabled && oName)
-                {
-                    switch(oElement.type)
-                    {
-                        case 'select-one':
-                        case 'select-multiple':
-                            for(var j=0; j<oElement.options.length; j++){
-                                if(oElement.options[j].selected){
-                                    if(Y.config.win.ActiveXObject){
-                                        this._sFormData += encodeURIComponent(oName) + '=' + encodeURIComponent(oElement.options[j].attributes.value.specified?oElement.options[j].value:oElement.options[j].text) + '&';
-                                    }
-                                    else{
-                                        this._sFormData += encodeURIComponent(oName) + '=' + encodeURIComponent(oElement.options[j].hasAttribute('value')?oElement.options[j].value:oElement.options[j].text) + '&';
-                                    }
-                                }
-                            }
-                            break;
-                        case 'radio':
-                        case 'checkbox':
-                            if(oElement.checked){
-                                this._sFormData += encodeURIComponent(oName) + '=' + encodeURIComponent(oValue) + '&';
-                            }
-                            break;
-                        case 'file':
-                            // stub case as XMLHttpRequest will only send the file path as a string.
-                        case undefined:
-                            // stub case for fieldset element which returns undefined.
-                        case 'reset':
-                            // stub case for input type reset button.
-                        case 'button':
-                            // stub case for input type button elements.
-                            break;
-                        case 'submit':
-                            if(hasSubmit === false){
-                                if(this._hasSubmitListener && this._submitElementValue){
-                                    this._sFormData += this._submitElementValue + '&';
-                                }
-                                else{
-                                    this._sFormData += encodeURIComponent(oName) + '=' + encodeURIComponent(oValue) + '&';
-                                }
-
-                                hasSubmit = true;
-                            }
-                            break;
-                        default:
-                            this._sFormData += encodeURIComponent(oName) + '=' + encodeURIComponent(oValue) + '&';
-                    }
-                }
-            }
-
-            this._isFormSubmit = true;
-            this._sFormData = this._sFormData.substr(0, this._sFormData.length - 1);
-
-            Y.log('Form initialized for transaction. HTML form POST message is: ' + this._sFormData, 'info', 'Connection');
-
-            this.initHeader('Content-Type', this._default_form_header);
-            Y.log('Initialize header Content-Type to application/x-www-form-urlencoded for setForm() transaction.', 'info', 'Connection');
-
-            return this._sFormData;
-        },
-
-      /**
-       * @description Resets HTML form properties when an HTML form or HTML form
-       * with file upload transaction is sent.
-       * @method resetFormState
-       * @private
-       * @static
-       * @return {void}
-       */
-        resetFormState:function(){
-            this._isFormSubmit = false;
-            this._isFileUpload = false;
-            this._formNode = null;
-            this._sFormData = "";
-        },
-
-      /**
-       * @description Creates an iframe to be used for form file uploads.  It is remove from the
-       * document upon completion of the upload transaction.
-       * @method createFrame
-       * @private
-       * @static
-       * @param {string} optional qualified path of iframe resource for SSL in IE.
-       * @return {void}
-       */
-        createFrame:function(secureUri){
-
-            // IE does not allow the setting of id and name attributes as object
-            // properties via createElement().  A different iframe creation
-            // pattern is required for IE.
-            var frameId = 'yuiIO' + this._transaction_id;
-            var io;
-            if(Y.config.win.ActiveXObject){
-                io = Y.config.doc.createElement('<iframe id="' + frameId + '" name="' + frameId + '" />');
-
-                // IE will throw a security exception in an SSL environment if the
-                // iframe source is undefined.
-                if(typeof secureUri == 'boolean'){
-                    io.src = 'javascript:false';
-                }
-                else if(typeof secureUri == 'string'){
-                    // Deprecated
-                    io.src = secureUri;
-                }
-            }
-            else{
-                io = Y.config.doc.createElement('iframe');
-                io.id = frameId;
-                io.name = frameId;
-            }
-
-            io.style.position = 'absolute';
-            io.style.top = '-1000px';
-            io.style.left = '-1000px';
-
-            Y.config.doc.body.appendChild(io);
-            Y.log('File upload iframe created. Id is:' + frameId, 'info', 'Connection');
-        },
-
-      /**
-       * @description Parses the POST data and creates hidden form elements
-       * for each key-value, and appends them to the HTML form object.
-       * @method appendPostData
-       * @private
-       * @static
-       * @param {string} postData The HTTP POST data
-       * @return {array} formElements Collection of hidden fields.
-       */
-        appendPostData:function(postData)
-        {
-            var formElements = [];
-            var postMessage = postData.split('&');
-            for(var i=0; i < postMessage.length; i++){
-                var delimitPos = postMessage[i].indexOf('=');
-                if(delimitPos != -1){
-                    formElements[i] = Y.config.doc.createElement('input');
-                    formElements[i].type = 'hidden';
-                    formElements[i].name = postMessage[i].substring(0,delimitPos);
-                    formElements[i].value = postMessage[i].substring(delimitPos+1);
-                    this._formNode.appendChild(formElements[i]);
-                }
-            }
-
-            return formElements;
-        },
-
-      /**
-       * @description Uploads HTML form, inclusive of files/attachments, using the
-       * iframe created in createFrame to facilitate the transaction.
-       * @method uploadFile
-       * @private
-       * @static
-       * @param {int} id The transaction id.
-       * @param {object} callback User-defined callback object.
-       * @param {string} uri Fully qualified path of resource.
-       * @param {string} postData POST data to be submitted in addition to HTML form.
-       * @return {void}
-       */
-        uploadFile:function(o, callback, uri, postData){
-
-            // Each iframe has an id prefix of "yuiIO" followed
-            // by the unique transaction id.
-            var oConn = this;
-            var frameId = 'yuiIO' + o.tId;
-            var uploadEncoding = 'multipart/form-data';
-            var io = Y.get(frameId);
-            var args = (callback && callback.argument)?callback.argument:null;
-
-            // Track original HTML form attribute values.
-            var rawFormAttributes =
-            {
-                action:this._formNode.getAttribute('action'),
-                method:this._formNode.getAttribute('method'),
-                target:this._formNode.getAttribute('target')
-            };
-
-            // Initialize the HTML form properties in case they are
-            // not defined in the HTML form.
-            this._formNode.setAttribute('action', uri);
-            this._formNode.setAttribute('method', 'POST');
-            this._formNode.setAttribute('target', frameId);
-
-            if(this._formNode.encoding){
-                // IE does not respect property enctype for HTML forms.
-                // Instead it uses the property - "encoding".
-                this._formNode.setAttribute('encoding', uploadEncoding);
-            }
-            else{
-                this._formNode.setAttribute('enctype', uploadEncoding);
-            }
-
-            var oElements;
-
-            if(postData){
-                oElements = this.appendPostData(postData);
-            }
-
-            // Start file upload.
-            this._formNode.submit();
-
-            // Fire global custom event -- startEvent
-            this.startEvent.fire(o, args);
-
-            if(o.startEvent){
-                // Fire transaction custom event -- startEvent
-                o.startEvent.fire(o, args);
-            }
-
-            // Start polling if a callback is present and the timeout
-            // property has been defined.
-            if(callback && callback.timeout){
-                this._timeOut[o.tId] = Y.config.win.setTimeout(function(){ oConn.abort(o, callback, true); }, callback.timeout);
-            }
-
-            // Remove HTML elements created by appendPostData
-            if(oElements && oElements.length > 0){
-                for(var i=0; i < oElements.length; i++){
-                    this._formNode.removeChild(oElements[i]);
-                }
-            }
-
-            // Restore HTML form attributes to their original
-            // values prior to file upload.
-            for(var prop in rawFormAttributes){
-                if(Y.object.owns(rawFormAttributes, prop)){
-                    if(rawFormAttributes[prop]){
-                        this._formNode.setAttribute(prop, rawFormAttributes[prop]);
-                    }
-                    else{
-                        this._formNode.removeAttribute(prop);
-                    }
-                }
-            }
-
-            // Reset HTML form state properties.
-            this.resetFormState();
-
-            // Create the upload callback handler that fires when the iframe
-            // receives the load event.  Subsequently, the event handler is detached
-            // and the iframe removed from the document.
-            var uploadCallback = function()
-            {
-                if(callback && callback.timeout){
-                    Y.config.win.clearTimeout(oConn._timeOut[o.tId]);
-                    delete oConn._timeOut[o.tId];
-                }
-
-                // Fire global custom event -- completeEvent
-                oConn.completeEvent.fire(o, args);
-
-                if(o.completeEvent){
-                    // Fire transaction custom event -- completeEvent
-                    o.completeEvent.fire(o, args);
-                }
-
-                var obj = {};
-                obj.tId = o.tId;
-                obj.argument = callback.argument;
-
-                try
-                {
-                    // responseText and responseXML will be populated with the same data from the iframe.
-                    // Since the HTTP headers cannot be read from the iframe
-                    obj.responseText = io.contentWindow.document.body?io.contentWindow.document.body.innerHTML:io.contentWindow.document.documentElement.textContent;
-                    obj.responseXML = io.contentWindow.document.XMLDocument?io.contentWindow.document.XMLDocument:io.contentWindow.document;
-                }
-                catch(e){}
-
-                if(callback && callback.upload){
-                    if(!callback.scope){
-                        callback.upload(obj);
-                        Y.log('Upload callback.', 'info', 'Connection');
-                    }
-                    else{
-                        callback.upload.apply(callback.scope, [obj]);
-                        Y.log('Upload callback with scope.', 'info', 'Connection');
-                    }
-                }
-
-                // Fire global custom event -- uploadEvent
-                oConn.uploadEvent.fire(obj);
-
-                if(o.uploadEvent){
-                    // Fire transaction custom event -- uploadEvent
-                    o.uploadEvent.fire(obj);
-                }
-
-                Y.detach("load", uploadCallback, io);
-
-                setTimeout(
-                    function(){
-                        Y.config.doc.body.removeChild(io);
-                        oConn.releaseObject(o);
-                        Y.log('File upload iframe destroyed. Id is:' + frameId, 'info', 'Connection');
-                    }, 100);
-            };
-
-            // Bind the onload handler to the iframe to detect the file upload response.
-            Y.on("load", uploadCallback, io);
-        },
-
-      /**
-       * @description Method to terminate a transaction, if it has not reached readyState 4.
-       * @method abort
-       * @public
-       * @static
-       * @param {object} o The connection object returned by asyncRequest.
-       * @param {object} callback  User-defined callback object.
-       * @param {string} isTimeout boolean to indicate if abort resulted from a callback timeout.
-       * @return {boolean}
-       */
-        abort:function(o, callback, isTimeout)
-        {
-            var abortStatus;
-            var args = (callback && callback.argument)?callback.argument:null;
-
-
-            if(o && o.conn){
-                if(this.isCallInProgress(o)){
-                    // Issue abort request
-                    o.conn.abort();
-
-                    Y.config.win.clearInterval(this._poll[o.tId]);
-                    delete this._poll[o.tId];
-
-                    if(isTimeout){
-                        Y.config.win.clearTimeout(this._timeOut[o.tId]);
-                        delete this._timeOut[o.tId];
-                    }
-
-                    abortStatus = true;
-                }
-            }
-            else if(o && o.isUpload === true){
-                var frameId = 'yuiIO' + o.tId;
-                var io = Y.get(frameId);
-
-                if(io){
-                    // Remove all listeners on the iframe prior to
-                    // its destruction.
-                    Y.detach("load", io);
-                    // Destroy the iframe facilitating the transaction.
-                    Y.config.doc.body.removeChild(io);
-                    Y.log('File upload iframe destroyed. Id is:' + frameId, 'info', 'Connection');
-
-                    if(isTimeout){
-                        Y.config.win.clearTimeout(this._timeOut[o.tId]);
-                        delete this._timeOut[o.tId];
-                    }
-
-                    abortStatus = true;
-                }
-            }
-            else{
-                abortStatus = false;
-            }
-
-            if(abortStatus === true){
-                // Fire global custom event -- abortEvent
-                this.abortEvent.fire(o, args);
-
-                if(o.abortEvent){
-                    // Fire transaction custom event -- abortEvent
-                    o.abortEvent.fire(o, args);
-                }
-
-                this.handleTransactionResponse(o, callback, true);
-                Y.log('Transaction ' + o.tId + ' aborted.', 'info', 'Connection');
-            }
-
-            return abortStatus;
-        },
-
-      /**
-       * @description Determines if the transaction is still being processed.
-       * @method isCallInProgress
-       * @public
-       * @static
-       * @param {object} o The connection object returned by asyncRequest
-       * @return {boolean}
-       */
-        isCallInProgress:function(o)
-        {
-            // if the XHR object assigned to the transaction has not been dereferenced,
-            // then check its readyState status.  Otherwise, return false.
-            if(o && o.conn){
-                return o.conn.readyState !== 4 && o.conn.readyState !== 0;
-            }
-            else if(o && o.isUpload === true){
-                var frameId = 'yuiIO' + o.tId;
-                return (Y.get(frameId)) ? true : false;
-            }
-            else{
-                return false;
-            }
-        },
-
-      /**
-       * @description Dereference the XHR instance and the connection object after the transaction is completed.
-       * @method releaseObject
-       * @private
-       * @static
-       * @param {object} o The connection object
-       * @return {void}
-       */
-        releaseObject:function(o)
-        {
-            if(o && o.conn){
-                //dereference the XHR instance.
-                o.conn = null;
-
-                Y.log('Connection object for transaction ' + o.tId + ' destroyed.', 'info', 'Connection');
-
-                //dereference the connection object.
-                o = null;
-            }
-        }
-    });
+    Y.mix(Y.Node, NodeExtras, 0, null, 4);
+
+}, '3.0.0');
+YUI.add("io", function (Y) {
+
+	// Transaction event handlers map
+	var _E = ['start', 'complete', 'success', 'failure', 'abort'];
+
+	// Window reference
+	var w = Y.config.win;
+
+	// Transaction id counter
+	var transactionId = 0;
+
+	// HTTP headers map
+	var _headers = {
+		'X-Requested-With' : 'XMLHttpRequest'
+	};
+
+	// Timeout map
+	var _timeout = {};
+
+	// Transaction queue and queue properties
+	var _q = [];
+	var _qState = 1;
+	var _qMaxSize = false;
+
+	/* Define Queue Functions */
+	function _queue(uri, c) {
+
+		if (_qMaxSize === false || _q.length < _qMaxSize) {
+			var id = _id();
+			_q.push({ uri: uri, id: id, cfg:c });
+		}
+		else {
+			Y.log('Unable to queue transaction object.  Maximum queue size reached.', 'warn', 'io');
+			return false;
+		}
+
+		if (_qState === 1) {
+			_shift();
+		}
+
+		Y.log('Object queued.  Transaction id is' + id, 'info', 'io');
+		return id;
+	};
+
+	function _unshift(id) {
+		var r;
+
+		for (var i = 0; i < _q.length; i++) {
+			if (_q[i].id === id) {
+				r = _q.splice(i, 1);
+				var p = _q.unshift(r[0]);
+				Y.log('Object promoted to top of queue.  Transaction id is' + id, 'info', 'io');
+				break;
+			}
+		}
+	};
+
+	function _shift() {
+		var c = _q.shift();
+		_io(c.uri, c.cfg, c.id);
+	};
+
+	function _size(i) {
+		if (i) {
+			_qMaxSize = i;
+			Y.log('Queue size set to ' + i, 'info', 'io');
+			return i;
+		}
+		else {
+			return _q.length;
+		}
+	};
+
+	function _start() {
+		var len = (_q.length > _qMaxSize > 0) ? _qMaxSize : _q.length;
+
+		if (len > 1) {
+			for (var i=0; i < len; i++) {
+				_shift();
+			}
+		}
+		else {
+			_shift();
+		}
+
+		Y.log('Queue started.', 'info', 'io');
+	};
+
+	function _stop() {
+		_qState = 0;
+		Y.log('Queue stopped.', 'info', 'io');
+	};
+
+	function _purge(id) {
+		if (Y.lang.isNumber(id)) {
+			for (var i = 0; i < _q.length; i++) {
+				if (_q[i].id === id) {
+					_q.splice(i, 1);
+					Y.log('Object purged from queue.  Transaction id is' + id, 'info', 'io');
+					break;
+				}
+			}
+		}
+	};
+	/* End Queue Functions */
+
+	/* --- Define Constructor --- */
+	function _io(uri, c, id) {
+		// Create transaction object
+
+		var o = _create(Y.lang.isNumber(id) ? id : null);
+		var m = (c && c.method) ? c.method.toUpperCase() : 'GET';
+		var d = (c && c.data) ? c.data : null;
+
+		/* Determine configuration properties */
+		if(c){
+			// If config.timeout is defined, initialize timeout poll.
+			if (c.timeout) {
+				_startTimeout(o, c);
+			}
+
+			// If config.form is defined, perform data operations.
+			if (c.form) {
+				// Serialize the HTML form into a string of name-value pairs.
+				var f = _serialize(c.form);
+				// If config.data is defined, concatenate the data to the form string.
+				if (d) {
+					f += "&" + d;
+					Y.log('Configuration object.data added to serialized HTML form data. The string is: ' + f, 'info', 'io');
+				}
+
+				if (m === 'POST') {
+					d = f;
+					_setHeader('Content-Type', 'application/x-www-form-urlencoded');
+					Y.log('Content-Type set to *application/x-www-form-urlencoded* for HTML form POST.', 'info', 'io');
+				}
+				else if (m === 'GET') {
+					uri = _concat(uri, f);
+					Y.log('Configuration object.data added to serialized HTML form data. The querystring is: ' + uri, 'info', 'io');
+				}
+			}
+			else if (d && m === 'GET') {
+				uri = _concat(uri, c.data);
+				Y.log('Configuration object data added to URI. The querystring is: ' + uri, 'info', 'io');
+			}
+			else if (d && m === 'POST') {
+				_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+				Y.log('Content-Type set to *application/x-www-form-urlencoded; charset=UTF-8* for POST transaction.', 'info', 'io');
+			}
+
+			if (c.on) {
+				_tEvents(o, c);
+				Y.log('Transaction Event handlers detected. Transaction id is' + o.id, 'info', 'io');
+			}
+		}
+
+		/* End Configuration Properties */
+
+		o.c.onreadystatechange = function() { _readyState(o, c); };
+		_open(o.c, m, uri);
+		_setHeaders(o.c, (c && c.headers) ? c.headers : {});
+		_async(o, (d || ''), c);
+
+		o.abort = function () {
+			_abort(o, c);
+		}
+
+		o.status = function() {
+			return o.c.readyState !== 4 && o.c.readyState !== 0;
+		}
+
+		return o;
+	};
+	/* --- End Constructor --- */
+
+	function _tEvents(o, c){
+		for(var i = 0; i < _E.length; i++) {
+			if(c.on[_E[i]]) {
+				o['t:' + _E[i]] = new Y.Event.Target().publish(_E[i]);
+				Y.log('Transaction Event t:' + _E[i] + ' published for transaction ' + o.id, 'info', 'io');
+				o['t:' + _E[i]].subscribe(c.on[_E[i]], c.context, c.arguments );
+				Y.log('Transaction Event t:' + _E[i] + ' subscribed for transaction ' + o.id, 'info', 'io');
+			}
+		}
+	};
+
+	function _transport(t){
+		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+	};
+
+	function _id(){
+		var id = transactionId;
+		transactionId++;
+
+		Y.log('Transaction id generated. The id is: ' + id, 'info', 'io');
+		return id;
+	}
+
+	function _create(i, t) {
+
+		var o = {};
+		o.id = Y.lang.isNumber(i) ? i : _id();
+		o.c = _transport(t);
+
+		return o;
+	};
+
+	function _concat(s, d) {
+		s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
+		return s;
+	};
+
+	function _setHeader(l, v) {
+		if (v) {
+			_headers[l] = v;
+		}
+		else {
+			delete _headers[l];
+		}
+	};
+
+	function _setHeaders(o, h) {
+
+		var p;
+
+		for (p in _headers) {
+			if (_headers.hasOwnProperty(p)) {
+				h[p] = _headers[p];
+				Y.log('Default HTTP header ' + p + ' found with value of ' + _headers[p], 'info', 'io');
+			}
+		}
+
+		for (p in h) {
+			if (h.hasOwnProperty(p)) {
+				o.setRequestHeader(p, h[p]);
+				Y.log('HTTP Header ' + p + ' set with value of ' + h[p], 'info', 'io');
+			}
+		}
+	};
+
+	function _open(o, m, uri) {
+		o.open(m, uri, true);
+	};
+
+	function _async(o, d, c) {
+		o.c.send(d);
+		var a = (c && c.arguments) ? c.arguments : null;
+		// Fire global "io:start" event
+		Y.fire('io:start', o.id);
+
+		// Fire transaction "start" event
+		if (o['t:start']) {
+			o['t:start'].fire(o.id, a);
+		}
+		Y.log('Transaction ' + o.id + ' started.', 'info', 'io');
+	};
+
+	function _startTimeout(o, c) {
+		_timeout[o.id] = w.setTimeout(function() { _abort(o, c); }, c.timeout);
+	};
+
+	function _clearTimeout(id) {
+		w.clearTimeout(_timeout[id]);
+		delete _timeout[id];
+	};
+
+	function _readyState(o, c) {
+
+		if (o.c.readyState === 4) {
+
+			if (c && c.timeout) {
+				_clearTimeout(o.id);
+			}
+
+			// Fire global "io:complete" event
+			Y.fire('io:complete', o.id, o.c);
+
+			if (o['t:complete']) {
+				o['t:complete'].fire(o.id, o.c, c.arguments);
+			}
+
+			Y.log('Transaction ' + o.id + ' completed.', 'info', 'io');
+			_handleResponse(o, c);
+		}
+	};
+
+	function _handleResponse(o, c) {
+
+		try{
+			if (o.c.status && o.c.status !== 0) {
+				status = o.c.status;
+			}
+			else {
+				status = 0;
+			}
+		}
+		catch(e) {
+			status = 0;
+			Y.log('HTTP status unreadable. The transaction is: ' + o.id, 'warn', 'io');
+		}
+
+		/*
+		 * IE reports HTTP 204 as HTTP 1223.
+		 * However, the response data are still available.
+		 */
+		if (status >= 200 && status < 300 || status === 1223) {
+			// Fire global "io:success" event
+			Y.fire('io:success', o.id, o.c);
+
+			if (o['t:success']) {
+				o['t:success'].fire(o.id, o.c, c.arguments);
+			}
+			Y.log('HTTP Status evaluates to Success. The transaction is: ' + o.id, 'info', 'io');
+		}
+		else {
+			// Fire global "io:failure" event
+			Y.fire('io:failure', o.id, o.c);
+
+			if (o['t:failure']) {
+				o['t:failure'].fire(o.id, o.c, c.arguments);
+			}
+			Y.log('HTTP Status evaluates to Failure. The transaction is: ' + o.id, 'info', 'io');
+		}
+
+		_destroy(o, c);
+	};
+
+	function _abort(o, c) {
+
+		var a = (c && c.arguments) ? c.arguments : null;
+
+		if(o && o.c) {
+			o.c.abort();
+
+			if (c) {
+				if (c.timeout) {
+					_clearTimeout(o.id);
+				}
+			}
+			// Fire global "io:abort" event
+			Y.fire('io:abort', o.id);
+
+			if (o['t:abort']) {
+				o['t:abort'].fire(o.id, a);
+			}
+
+			Y.log('Transaction timeout or explicit abort. The transaction is: ' + o.id, 'info', 'io');
+
+			_destroy(o);
+		}
+	};
+
+	function _destroy(o) {
+		// IE6 will throw a "Type Mismatch" error if the event handler is set to "null".
+		if(w.XMLHttpRequest) {
+			o.c.onreadystatechange = null;
+		}
+
+		o.c = null;
+		o = null;
+	};
+
+	/* start HTML form serialization */
+	function _serialize(o) {
+		var str = '';
+		var f = (typeof o.id == 'object') ? o.id : Y.config.doc.getElementById(o.id);
+		var useDf = o.useDisabled || false;
+		var eUC = encodeURIComponent;
+		var e, n, v, dF;
+
+		// Iterate over the form elements collection to construct the name-value pairs.
+		for (var i=0; i < f.elements.length; i++) {
+			e = f.elements[i];
+			dF = e.disabled;
+			n = e.name;
+			v = e.value;
+
+			if ((useDf) ? n : (n && dF));
+			{
+				switch(e.type)
+				{
+					case 'select-one':
+					case 'select-multiple':
+						for (var j = 0; j < e.options.length; j++) {
+							if (e.options[j].selected) {
+								if (Y.ua.ie) {
+									str += eUC(n) + '=' + eUC(e.options[j].attributes['value'].specified ? e.options[j].value : e.options[j].text) + '&';
+								}
+								else {
+									str += eUC(n) + '=' + eUC(e.options[j].hasAttribute('value') ? e.options[j].value : e.options[j].text) + '&';
+								}
+							}
+						}
+						break;
+					case 'radio':
+					case 'checkbox':
+						if (e.checked) {
+							str += eUC(n) + '=' + eUC(v) + '&';
+						}
+						break;
+					case 'file':
+					case undefined:
+					case 'reset':
+					case 'button':
+						break;
+					case 'submit':
+					default:
+						str += eUC(n) + '=' + eUC(v) + '&';
+				}
+			}
+		}
+
+		Y.log('HTML form serialized. The value is: ' + str.substr(0, str.length - 1), 'info', 'io');
+		return str.substr(0, str.length - 1);
+	};
+	/* end form serialization */
+
+	/* yui.io HTTP header interface definition*/
+	_io.header = _setHeader;
+	/* end yui.io interface */
+
+	/* queue interface definition*/
+	_io.queue = _queue;
+	_io.queue.size = _size;
+	_io.queue.start = _start;
+	_io.queue.stop = _stop;
+	_io.queue.promote = _unshift;
+	_io.queue.purge = _purge;
+	/* end queue interface */
+
+	Y.io = _io;
 
 }, "3.0.0");
 
@@ -6342,16 +6110,16 @@ YUI.add("get", function(Y) {
         var ua=Y.ua, 
         L=Y.lang;
 
-/**
+/*
  * Provides a mechanism to fetch remote resources and
  * insert them into a document
  * @module get
- * @requires yahoo
  */
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
- * @class Y.Get
+ * @class Get
+ * @static
  */
 Y.Get = function() {
 
@@ -7022,11 +6790,13 @@ YUI.add("yui", function(Y) {
     Y.log(Y.id + ' setup complete) .');
 } , "3.0.0", {
     // the following will be bound automatically when this code is loaded
-    use: ["lang", "array", "core", "object", "ua", "dump", "substitute", "later", "compat", 
-          "event-target", "event-custom", "event-dom", "event-facade", "event-ready", "dom", 
-          "io", "get"]
+    use: ["lang", "array", "core", "object", "ua", "dump", "substitute", "later", 
+          "compat", 
+          "event-target", "event-custom", "event-dom", "event-facade", "event-ready",
+          "node", 
+          "io", 
+          "get"]
 });
 
 // Bind the core modules to the YUI global
 YUI._setup();
-YAHOO.register("yui", YUI, {version: "@VERSION@", build: "@BUILD@"});
