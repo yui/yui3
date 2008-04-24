@@ -246,8 +246,8 @@ YUI.add("io", function (Y) {
 	};
 
 	function _readyState(o, c) {
+
 		if (o.c.readyState === 4) {
-			var a = (c && c.arguments) ? c.arguments : null;
 
 			if (c && c.timeout) {
 				_clearTimeout(o.id);
@@ -257,7 +257,7 @@ YUI.add("io", function (Y) {
 			Y.fire('io:complete', o.id, o.c);
 
 			if (o['t:complete']) {
-				o['t:complete'].fire(o.id, o.c, a);
+				o['t:complete'].fire(o.id, o.c, c.arguments);
 			}
 
 			_handleResponse(o, c);
@@ -287,7 +287,7 @@ YUI.add("io", function (Y) {
 			Y.fire('io:success', o.id, o.c);
 
 			if (o['t:success']) {
-				o['t:success'].fire(o.id, o.c, a);
+				o['t:success'].fire(o.id, o.c, c.arguments);
 			}
 		}
 		else {
@@ -295,7 +295,7 @@ YUI.add("io", function (Y) {
 			Y.fire('io:failure', o.id, o.c);
 
 			if (o['t:failure']) {
-				o['t:failure'].fire(o.id, o.c, a);
+				o['t:failure'].fire(o.id, o.c, c.arguments);
 			}
 		}
 
