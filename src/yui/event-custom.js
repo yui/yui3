@@ -29,7 +29,6 @@ YUI.add("event-custom", function(Y) {
      *                  will receive. Y.Event.Custom.LIST or 
      *                  Y.Event.Custom.FLAT.  The default is
      *                  Y.Event.Custom.FLAT.
-     * @namespace Y
      * @class Event.Custom
      * @constructor
      */
@@ -483,7 +482,6 @@ return "Sub { obj: " + this.obj  + ", override: " + (this.override || "no") + " 
 /**
  * ChainedErrors wrap one or more exceptions thrown by a subprocess.
  *
- * @namespace YAHOO.util
  * @class ChainedError
  * @extends Error
  * @constructor

@@ -13,7 +13,7 @@ YUI.add("get", function(Y) {
 
 /**
  * Fetches and inserts one or more script or link nodes into the document 
- * @class Y.Get
+ * @class Get
  */
 Y.Get = function() {
 

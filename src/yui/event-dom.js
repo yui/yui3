@@ -6,8 +6,6 @@ YUI.add("event-dom", function(Y) {
      *
      * @module event
      * @title Event Utility
-     * @namespace Y
-     * @requires yahoo
      */
 
     /**

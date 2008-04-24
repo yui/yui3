@@ -19,7 +19,7 @@ YUI.add("object", function(Y) {
      * in the object, or was inherited from the prototype.
      * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
      * This 
-     * There is a discrepancy between YAHOO.lang.hasOwnProperty and
+     * There is a discrepancy between Y.object.owns and
      * Object.prototype.hasOwnProperty when the property is a primitive added to
      * both the instance AND prototype with the same value:
      * <pre>
@@ -28,7 +28,7 @@ YUI.add("object", function(Y) {
      * var a = new A();
      * a.foo = 'foo';
      * alert(a.hasOwnProperty('foo')); // true
-     * alert(YAHOO.lang.hasOwnProperty(a, 'foo')); // false when using fallback
+     * alert(Y.object.owns(a, 'foo')); // false when using fallback
      * </pre>
      * @method owns
      * @param o {any} The object being testing
