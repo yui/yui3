@@ -1095,11 +1095,11 @@ YUI.add('node', function(Y) {
         },
 
         addEventListener: function(type, fn, arg) {
-            Y.Event.addListener(_cache[this._yuid], type, fn, arg);
+            Y.Event.nativeAdd(_cache[this._yuid], type, fn, arg);
         },
         
         removeEventListener: function(type, fn) {
-            Y.Event.removeListener(_cache[this._yuid], type, fn);
+            Y.Event.nativeRemove(_cache[this._yuid], type, fn);
         }
     });
 

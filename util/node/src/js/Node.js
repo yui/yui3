@@ -432,11 +432,11 @@ YUI.add('node', function(Y) {
         },
 
         addEventListener: function(type, fn, arg) {
-            Y.Event.addListener(_cache[this._yuid], type, fn, arg);
+            Y.Event.nativeAdd(_cache[this._yuid], type, fn, arg);
         },
         
         removeEventListener: function(type, fn) {
-            Y.Event.removeListener(_cache[this._yuid], type, fn);
+            Y.Event.nativeRemove(_cache[this._yuid], type, fn);
         }
     });
 
@@ -568,10 +568,6 @@ YUI.add('node', function(Y) {
 
     // include here to allow access to private Node class
     NodeList.prototype = {
-        length: function() {
-            return _cache[this._yuid].length;
-        },
-
         item: function(index) {
             var node = _cache[this._yuid][index];
             return (node && node.tagName) ? create(node) : (node && node.get) ? node : null;
@@ -587,6 +583,9 @@ YUI.add('node', function(Y) {
         },
 
         get: function(name) {
+            if (name == 'length') {
+                return _cache[this._yuid].length;
+            }
             var nodes = _cache[this._yuid];
             var ret = [];
             for (var i = 0, len = nodes.length; i < len; ++i) {
@@ -603,9 +602,9 @@ YUI.add('node', function(Y) {
         each: function(fn, context) {
             context = context || this;
             var nodes = _cache[this._yuid];
-            var node = Doc.get(nodes[i]);
+            var node = Doc.get(nodes[i]); // reusing single instance for each node
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                _cache[node._yuid] = nodes[i];
+                _cache[node._yuid] = nodes[i]; // remap Node instance to current node
                 fn.call(context, node, i, this);
             }
         }
