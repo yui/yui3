@@ -1,4 +1,14 @@
+/**
+ * Extended interface for Node
+ * @module nodeextras
+ */
+
 YUI.add('nodeextras', function(Y) {
+
+    /**
+     * An interface for advanced DOM features.
+     * @interface NodeExtras
+     */
 
     Y.use('node');
 

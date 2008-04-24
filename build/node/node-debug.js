@@ -668,6 +668,16 @@ if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
 
 YUI.add('node', function(Y) {
 
+    /**
+     * A wrapper for DOM Nodes.
+     * Node properties can be accessed via the set/get methods.
+     * With the exception of the noted properties,
+     * only strings, numbers, and booleans are passed through. 
+     * Use Y.get() or Y.Doc.get() to create Node instances.
+     *
+     * @class Node
+     */
+
     var BASE_NODE                   = 0, 
         ELEMENT_NODE                = 1,
         ATTRIBUTE_NODE              = 2,
@@ -757,18 +767,63 @@ YUI.add('node', function(Y) {
     };
 
     var PROPS_WRAP = {
+
+        /**
+         * Returns a Node instance. 
+         * @property parentNode
+         * @type Node
+         */
         'parentNode': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property childNodes
+         * @type NodeList
+         */
         'childNodes': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property firstChild
+         * @type Node
+         */
         'firstChild': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property lastChild
+         * @type Node
+         */
         'lastChild': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property previousSibling
+         * @type Node
+         */
         'previousSibling': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property previousSibling
+         * @type Node
+         */
         'nextSibling': BASE_NODE,
+
+        /**
+         * Returns a wrapper instance. 
+         * @property ownerDocument
+         * @type Doc
+         */
         'ownerDocument': BASE_NODE,
 
+        /**
+         * Returns a wrapper instance. 
+         * Only valid for HTMLElement nodes.
+         * @property offsetParent
+         * @type Node
+         */
         'offsetParent': ELEMENT_NODE,
-
-        'documentElement': DOCUMENT_NODE,
-        'body': DOCUMENT_NODE,
 
         // form
         'elements': ELEMENT_NODE
@@ -786,16 +841,31 @@ YUI.add('node', function(Y) {
 
     var GETTERS = {};
     GETTERS[ELEMENT_NODE] = { // custom getters for specific properties
+        /**
+         * Normalizes nodeInnerText and textContent. 
+         * @property text
+         * @type String
+         */
         'text': function(node) {
             return node.innerText || node.textContent || '';
         },
 
+        /**
+         * A NodeList containing only HTMLElement child nodes 
+         * @property child
+         * @type NodeList
+         */
         children: function() {
             return this.queryAll('> *');
         }
     };
 
     GETTERS[DOCUMENT_NODE] = { // custom getters for specific properties
+        /**
+         * Document height 
+         * @property height
+         * @type Number
+         */
         'height':  function(doc) {
             var win = doc.defaultView || doc.parentWindow;
             var h = (doc.compatMode != 'CSS1Compat') ?
@@ -803,6 +873,11 @@ YUI.add('node', function(Y) {
             return Math.max(h, WIN_GETTERS['height'](win));
         },
 
+        /**
+         * Document width 
+         * @property width
+         * @type Number
+         */
         'width':  function(doc) {
             var win = doc.defaultView || doc.parentWindow;
             var w = (doc.compatMode != 'CSS1Compat') ?
@@ -810,10 +885,20 @@ YUI.add('node', function(Y) {
             return Math.max(w, WIN_GETTERS['width'](win));
         },
 
+        /**
+         * Amount page has been scroll vertically 
+         * @property width
+         * @type Number
+         */
         'scrollTop':  function(doc) {
             return Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
         },
 
+        /**
+         * Amount page has been scroll horizontally 
+         * @property width
+         * @type Number
+         */
         'scrollLeft':  function(doc) {
             return Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
         }
@@ -822,10 +907,45 @@ YUI.add('node', function(Y) {
     var METHODS = {};
 
     METHODS[BASE_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method insertBefore
+         * @param {String | HTMLElement | Node} node Node to be inserted 
+         * @param {String | HTMLElement | Node} refNode Node to be inserted before
+         */
         insertBefore: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method replaceChild
+         * @param {String | HTMLElement | Node} node Node to be inserted 
+         * @param {String | HTMLElement | Node} refNode Node to be replaced 
+         * @return {Node} The replaced node 
+         */
         replaceChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method removeChild
+         * @param {String | HTMLElement | Node} node Node to be removed 
+         * @return {Node} The removed node 
+         */
         removeChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method appendChild
+         * @param {String | HTMLElement | Node} node Node to be appended 
+         * @return {Node} The appended node 
+         */
         appendChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method cloneNode
+         * @param {String | HTMLElement | Node} node Node to be cloned 
+         * @return {Node} The clone 
+         */
         cloneNode: nodeOut
     };
 
@@ -930,17 +1050,75 @@ YUI.add('node', function(Y) {
     });
 
     METHODS[ELEMENT_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method getAttribute
+         * @param {String} attribute The attribute to retrieve 
+         * @return {String} The current value of the attribute 
+         */
         getAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method setAttribute
+         * @param {String} attribute The attribute to set 
+         * @param {String} The value to apply to the attribute 
+         */
         setAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method removeAttribute
+         * @param {String} attribute The attribute to be removed 
+         */
         removeAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method hasAttribute
+         * @param {String} attribute The attribute to test for 
+         * @return {Boolean} Whether or not the attribute is present 
+         */
         hasAttribute: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method scrollIntoView
+         */
         scrollIntoView: rawOut,
 
+        /**
+         * Passes through to DOM method.
+         * @method getElementsByTagName
+         * @param {String} tagName The tagName to collect 
+         * @return {NodeList} A NodeList representing the HTMLCollection
+         */
         getElementsByTagName: nodeOut,
 
+        /**
+         * Passes through to DOM method.
+         * @method focus
+         */
         focus: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method blur
+         */
         blur: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method submit
+         */
         submit: rawOut,
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method reset
+         */
         reset: rawOut
 
     };
@@ -1094,10 +1272,23 @@ YUI.add('node', function(Y) {
             return null;
         },
 
+       /**
+         * Attaches a handler for the given DOM event.
+         * @method addEventListener
+         * @param {String} type The type of DOM Event to listen for 
+         * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} arg An argument object to pass to the handler 
+         */
         addEventListener: function(type, fn, arg) {
             Y.Event.nativeAdd(_cache[this._yuid], type, fn, arg);
         },
         
+       /**
+         * Attaches a handler for the given DOM event.
+         * @method removeEventListener
+         * @param {String} type The type of DOM Event
+         * @param {Function} fn The handler to call when the event fires 
+         */
         removeEventListener: function(type, fn) {
             Y.Event.nativeRemove(_cache[this._yuid], type, fn);
         }
@@ -1112,6 +1303,16 @@ YUI.add('node', function(Y) {
         };
     });
 
+
+    /** 
+     * A wrapper for interacting with DOM elements
+     * Usage:
+     * <p>Doc.get() // returns Doc instance for current document</p>
+     * <p>Doc.get(document) // returns Doc instance for the given document</p>
+     * <p>Doc.get('#foo') // returns Node instance</p>
+     * 
+     * @class Doc
+     */
     var Doc = function(node) {
         node = node || Y.config.doc;
         Doc.superclass.constructor.call(this, node);
@@ -1133,6 +1334,15 @@ YUI.add('node', function(Y) {
         return create(node);
     };
 
+    /**
+     * Retrieves a nodeList based on the given CSS selector. 
+     * @method queryAll
+     *
+     * @param {HTMLDocument} document The document to search against.
+     * @param {string} selector The CSS selector to test against.
+     * @param {HTMLElement} root The root node to start from.
+     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+     */
     Doc.queryAll = function(doc, selector, root) {
         if (doc.nodeName != '#document') {
             selector = doc;
@@ -1144,16 +1354,56 @@ YUI.add('node', function(Y) {
         return nodes;
     };
 
+    /**
+     * Returns a wrapper instance. 
+     * @property documentElement
+     * @type Node
+     */
+    PROPS_WRAP.documentElement = DOCUMENT_NODE;
+
+    /**
+     * Returns a wrapper instance. 
+     * @property body
+     * @type Node
+     */
+    PROPS_WRAP.body = DOCUMENT_NODE;
+
 
     METHODS[DOCUMENT_NODE] = {
+        /**
+         * Passes through to DOM method.
+         * @method createElement
+         * @param {String} tagName The type of element to create 
+         * @return {Node} A Node instance bound to the HTMLElement 
+         */
         createElement: nodeOut,
         //createDocumentFragment: fragReturn,
+
+        /**
+         * Passes through to DOM method.
+         * @method createTextNode
+         * @param {String} text The text value of the node 
+         * @return {Node} A Node instance bound to the TextNode 
+         */
         createTextNode: nodeInOut,
 
+        /**
+         * Passes through to DOM method.
+         * @method getElementsByTagName
+         * @param {String} text The text value of the node 
+         * @return {Node} A Node instance bound to the TextNode 
+         */
         getElementsByTagName: nodeOut,
 
         //createElementNS: nodeOut,
         //getElementsByTagNameNS: nodeOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method getElementsById
+         * @param {String} id The id to search for 
+         * @return {Node} A Node instance bound to the HTMLElement 
+         */
         getElementById: nodeOut
     };
 
@@ -1175,10 +1425,6 @@ YUI.add('node', function(Y) {
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
          */
         queryAll: Element.prototype.queryAll,
-
-        test: function() {
-            Element.prototype.test.apply(this, arguments);
-        },
 
         getElementsBy: function(method, test, tag, root, apply) {
             tag = tag || '*';
@@ -1229,13 +1475,31 @@ YUI.add('node', function(Y) {
         _cache[Y.stamp(this)] = nodes;
     };
 
-    // include here to allow access to private Node class
+    /** 
+     * A wrapper for interacting with DOM elements
+     * @class NodeList
+     */
     NodeList.prototype = {
+        /**
+         * Retrieves the Node instance at the given index. 
+         * @method item
+         *
+         * @param {Number} index The index of the target Node.
+         * @return {Node} The Node instance at the given index.
+         */
         item: function(index) {
             var node = _cache[this._yuid][index];
             return (node && node.tagName) ? create(node) : (node && node.get) ? node : null;
         },
 
+        /**
+         * Set the value of the property/attribute on all HTMLElements bound to this NodeList.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         * @see Node
+         */
         set: function(name, val) {
             var nodes = _cache[this._yuid];
             for (var i = 0, len = nodes.length; i < len; ++i) {
@@ -1245,6 +1509,14 @@ YUI.add('node', function(Y) {
             return this;
         },
 
+        /**
+         * Get the value of the property/attribute for each of the HTMLElements bound to this NodeList.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {Array} Array containing the current values mapped to the Node indexes 
+         * @see Node
+         */
         get: function(name) {
             if (name == 'length') {
                 return _cache[this._yuid].length;
@@ -1258,10 +1530,24 @@ YUI.add('node', function(Y) {
             return ret;
         },
 
+        /**
+         * Filters the NodeList instance down to only nodes matching the given selector.
+         * @method filter
+         * @param {String} selector The selector to filter against
+         * @return {NodeList} NodeList containing the updated collection 
+         * @see Selector
+         */
         filter: function(selector) {
             return new NodeList(Selector.filter(_cache[this._yuid], selector));
         },
 
+        /**
+         * Applies the given function to each Node in the NodeList.
+         * @method each
+         * @param {Function} fn The function to apply 
+         * @return {NodeList} NodeList containing the updated collection 
+         * @see Y.each
+         */
         each: function(fn, context) {
             context = context || this;
             var nodes = _cache[this._yuid];
@@ -1288,17 +1574,48 @@ YUI.add('node', function(Y) {
         };
     });
 
+    /**
+     * A wrapper for DOM Windows.
+     * Window properties can be accessed via the set/get methods.
+     * With the exception of the noted properties,
+     * only strings, numbers, and booleans are passed through. 
+     * Use Win.get() to create new Win instances.
+     *
+     * @class Win
+     */
     // TODO: merge with NODE statics?
     var WIN_PROPS_WRAP = {
+        /**
+         * Returns a Doc instance wrapping the window.document 
+         * @property document
+         * @type Doc
+         */
         'document': 1,
+
+        /**
+         * Returns a Win instance wrapping the window.window 
+         * @property window
+         * @type Doc
+         */
         'window': 1,
-        'top': 1,
-        'opener': 1,
-        'parent': 1,
+        //'top': 1,
+        //'opener': 1,
+        //'parent': 1,
+
+        /**
+         * Returns a Node instance wrapping the window.frameElement 
+         * @property frameElement
+         * @type Doc
+         */
         'frameElement': 1
     };
 
     var WIN_GETTERS = {
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property height
+         * @type String
+         */
         'height': function(win) {
             var h = win.innerHeight, // Safari, Opera
             doc = win.document,
@@ -1314,6 +1631,11 @@ YUI.add('node', function(Y) {
             return h;
         },
 
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property width
+         * @type String
+         */
         'width': function(win) {
             var w = win.innerWidth, // Safari, Opera
             doc = win.document,
@@ -1329,6 +1651,7 @@ YUI.add('node', function(Y) {
             return w;
         }
     };
+
     var WIN_SETTERS = {};
     var WIN_PROPS_READ = {};
     var WIN_PROPS_WRITE = {};
@@ -1339,7 +1662,25 @@ YUI.add('node', function(Y) {
         _cache[Y.stamp(this)] = win; 
     };
 
+    /**
+     * Returns a Win instance bound to the given or current window.
+     * @method get
+     * @param {Window} win optional window reference. Defaults to current window.
+     * @return {Win} A Win instance bound to the given window. 
+     * @static
+     */
+    Win.get = function(win) {
+        return new Win(win);
+    };
+
     Win.prototype = {
+        /**
+         * Get the value of the property/attribute on the window bound to this Win.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {any} Current value of the property
+         */
         get: function(prop) {
             var val;
             var node = _cache[this._yuid];
@@ -1353,6 +1694,13 @@ YUI.add('node', function(Y) {
             return val;
         },
 
+        /**
+         * Set the value of the property/attribute on the window bound to this Win.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         */
         set: function(prop, val) {
             var node = _cache[this._yuid];
             if (prop in WIN_SETTERS) { // use custom setter
@@ -1363,11 +1711,40 @@ YUI.add('node', function(Y) {
             return this;
         },
 
+        /**
+         * Passes through to DOM window.
+         * @method scrollTo
+         */
         'scrollTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method scrollBy
+         */
         'scrollBy': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method resizeTo
+         */
         'resizeTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method resizeBy
+         */
         'resizeBy': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method moveTo
+         */
         'moveTo': rawOut,
+
+        /**
+         * Passes through to DOM window.
+         * @method moveBy
+         */
         'moveBy': rawOut
 
 
@@ -1386,20 +1763,20 @@ YUI.add('node', function(Y) {
 
     Y.Node = Element;
     Y.NodeList = NodeList;
-
-    /** 
-     * A wrapper for interacting with DOM elements
-     * Usage:
-     * <p>Doc.get() // returns Doc instance for current document</p>
-     * <p>Doc.get(document) // returns Doc instance for the given document</p>
-     * <p>Doc.get('#foo') // returns Node instance</p>
-     * 
-     * @class Doc
-     */
     Y.Doc = Doc;
     Y.Win = Win;
 }, '3.0.0');
+/**
+ * Extended interface for Node
+ * @module nodeextras
+ */
+
 YUI.add('nodeextras', function(Y) {
+
+    /**
+     * An interface for advanced DOM features.
+     * @interface NodeExtras
+     */
 
     Y.use('node');
 
