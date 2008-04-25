@@ -49,6 +49,10 @@ YUI.add('node', function(Y) {
             return new NodeList(node);
         }
 
+        if (node.window) {
+            return new Win(node);
+        }
+
         switch(node.nodeType) {
             case ELEMENT_NODE:
                 return new Element(node);
@@ -72,10 +76,8 @@ YUI.add('node', function(Y) {
                     null;
     };
 
-    /** 
-     * Wraps the inputs value of the method in a node instance
-     * Wraps the return value of the method in a node instance
-     * For use with methods that accept and return nodes
+    /**
+     * Wraps the input and outputs of a node instance
      */
     var nodeInOut = function(method, a, b, c, d, e) {
         if (a) { // first 2 may be Node instances or strings
@@ -87,16 +89,14 @@ YUI.add('node', function(Y) {
         return create(_cache[this._yuid][method](a, b, c, d, e));
     };
 
-    /** 
-     * Wraps the return value of the method in a node instance
-     * For use with methods that return nodes
+    /*
+     * Wraps the return value in a node instance
      */
     var nodeOut = function(method, a, b, c, d, e) {
-        node = create(_cache[this._yuid][method](a, b, c, d, e));
-        return node;
+        return create(_cache[this._yuid][method](a, b, c, d, e));
     };
 
-    /** 
+    /* 
      * Passes method directly to HTMLElement
      */
     var rawOut = function(method, a, b, c, d, e) {
@@ -113,49 +113,49 @@ YUI.add('node', function(Y) {
         'parentNode': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a NodeList instance. 
          * @property childNodes
          * @type NodeList
          */
         'childNodes': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * @property firstChild
          * @type Node
          */
         'firstChild': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * @property lastChild
          * @type Node
          */
         'lastChild': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * @property previousSibling
          * @type Node
          */
         'previousSibling': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * @property previousSibling
          * @type Node
          */
         'nextSibling': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * @property ownerDocument
          * @type Doc
          */
         'ownerDocument': BASE_NODE,
 
         /**
-         * Returns a wrapper instance. 
+         * Returns a Node instance. 
          * Only valid for HTMLElement nodes.
          * @property offsetParent
          * @type Node
@@ -189,7 +189,7 @@ YUI.add('node', function(Y) {
 
         /**
          * A NodeList containing only HTMLElement child nodes 
-         * @property child
+         * @property children
          * @type NodeList
          */
         children: function() {
@@ -207,7 +207,7 @@ YUI.add('node', function(Y) {
             var win = doc.defaultView || doc.parentWindow;
             var h = (doc.compatMode != 'CSS1Compat') ?
                     doc.body.scrollHeight : doc.documentElement.scrollHeight; // body first for safari
-            return Math.max(h, WIN_GETTERS['height'](win));
+            return Math.max(h, WIN_GETTERS.height(win));
         },
 
         /**
@@ -219,7 +219,7 @@ YUI.add('node', function(Y) {
             var win = doc.defaultView || doc.parentWindow;
             var w = (doc.compatMode != 'CSS1Compat') ?
                     doc.body.scrollWidth : doc.documentElement.scrollWidth; // body first for safari
-            return Math.max(w, WIN_GETTERS['width'](win));
+            return Math.max(w, WIN_GETTERS.width(win));
         },
 
         /**
@@ -294,8 +294,8 @@ YUI.add('node', function(Y) {
 
     var Node = function(node) {
         if (!node || !node.nodeName) {
+            Y.log('invalid node', 'error', 'Node');
             return null;
-            throw new Error('Node: invalid node');
         }
         _cache[Y.stamp(this)] = node;
     };
@@ -309,7 +309,7 @@ YUI.add('node', function(Y) {
          * @param {any} val Value to apply to the given property
          */
         set: function(prop, val) {
-            node = _cache[this._yuid];
+            var node = _cache[this._yuid];
             if (prop in SETTERS) { // use custom setter
                 SETTERS[prop](node, prop, val); 
             } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in PROPS_WRITE) { // safe to write
@@ -327,7 +327,7 @@ YUI.add('node', function(Y) {
          */
         get: function(prop) {
             var val;
-            node = _cache[this._yuid];
+            var node = _cache[this._yuid];
             if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document, Window)
                 val = create(node[prop]);
             } else if (GETTERS[node.nodeType] && GETTERS[node.nodeType][prop]) { // use custom getter
@@ -494,7 +494,9 @@ YUI.add('node', function(Y) {
                 html[html.length] = _createHTML(jsonml[i]);
             } else if (typeof jsonml[i] == 'object') {
                 for (var attr in jsonml[i]) {
-                    att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                    if (jsonml[i].hasOwnProperty(attr)) {
+                        att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                    }
                 }
             }
         }
@@ -592,7 +594,7 @@ YUI.add('node', function(Y) {
 
        /**
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
-         * @method getAncestorBy
+         * @method ancestor
          * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
          * @return {Object} HTMLElement or null if not found
          */
@@ -656,6 +658,17 @@ YUI.add('node', function(Y) {
     };
 
     
+    /**
+     * Retrieves a wrapped instance (Win, Doc, Node, or NodeList) for the given object/string. 
+     * If a doc is given, obj is found in doc scope.  Use all flag 
+     * @method get
+     *
+     * Use 'window' or 'document' strings to return Win or Doc instances
+     * @param {document|window|HTMLElement|HTMLCollection|Array|String} doc optional The object to wrap. Defaults to current document
+     * @param {document|window|HTMLElement|HTMLCollection|Array|String} node The object to wrap or all flag.
+     * @param {Boolean} all Returns a NodeList if true (only valid for selector string input) 
+     * @return {Win|Doc|Node|NodeList} A wrapper instance for the supplied object(s).
+     */
     Doc.get = function(doc, node) {
         if (!doc) {
             return create(Y.config.doc);
@@ -665,12 +678,48 @@ YUI.add('node', function(Y) {
             node = doc;
             doc = Y.config.doc;
         }
+
         if (node && typeof node == 'string') {
             node = Selector.query(node, doc, true);
         }
+
         return create(node);
     };
 
+/* TODO: handle all input types (HTMLElement, HTMLCollection, window, document, Array, Node, NodeList, Win, Doc, selector)
+    Doc.get = function(doc, node, all) {
+
+        if (!doc) {
+            return new Doc(doc);
+        }
+
+        if (doc.window && doc.window.documentElement) {
+            return new Win(doc);
+        }
+
+        if (doc.nodeName != '#document') {
+            all = node;
+            node = doc;
+            doc = Y.config.doc;
+        }
+
+        if (node && typeof node == 'string') {
+            switch(node) {
+                case 'window':
+                   node = doc.defaultView || doc.parentWindow; 
+                   break;
+                case 'document':
+                   node = doc;
+                    break;
+                default: 
+                    node = Selector.query(node, doc, !all);
+            }
+        }
+
+        return create(node);
+    };
+
+*/
     /**
      * Retrieves a nodeList based on the given CSS selector. 
      * @method queryAll
@@ -687,19 +736,18 @@ YUI.add('node', function(Y) {
         }
 
         root = root || doc;
-        nodes = new NodeList(Selector.query(selector, root));
-        return nodes;
+        return new NodeList(Selector.query(selector, root));
     };
 
     /**
-     * Returns a wrapper instance. 
+     * Returns a Node instance. 
      * @property documentElement
      * @type Node
      */
     PROPS_WRAP.documentElement = DOCUMENT_NODE;
 
     /**
-     * Returns a wrapper instance. 
+     * Returns a Node instance. 
      * @property body
      * @type Node
      */
@@ -765,7 +813,7 @@ YUI.add('node', function(Y) {
 
         getElementsBy: function(method, test, tag, root, apply) {
             tag = tag || '*';
-            doc = doc.nodeName ? new Doc(doc) : doc;
+            var doc = doc.nodeName ? new Doc(doc) : doc;
 
             if (root) {
                 root = (root.tagName) ? new Element(root) : (root.get) ? root : null;
@@ -888,7 +936,7 @@ YUI.add('node', function(Y) {
         each: function(fn, context) {
             context = context || this;
             var nodes = _cache[this._yuid];
-            var node = Doc.get(nodes[i]); // reusing single instance for each node
+            var node = Doc.get().createElement('div'); // reusing single instance for each node
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 _cache[node._yuid] = nodes[i]; // remap Node instance to current node
                 fn.call(context, node, i, this);
@@ -900,6 +948,7 @@ YUI.add('node', function(Y) {
         var ret;
         var a = [];
         NodeList.prototype[method] = function(a, b, c, d, e) {
+            var nodes = _cache[this._yuid];
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 ret = Element[method].call(Element, nodes[i], a, b, c, d, e);
                 if (ret !== Element) {
@@ -1007,6 +1056,7 @@ YUI.add('node', function(Y) {
      * @static
      */
     Win.get = function(win) {
+        win = win || window;
         return new Win(win);
     };
 

@@ -40,7 +40,7 @@ YUI.add('nodeextras', function(Y) {
          * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
         addClass: function(className) {
-            if (this.hasClass(node, className)) {
+            if (this.hasClass(className)) {
                 return; // already present
             }
             
@@ -62,8 +62,9 @@ YUI.add('nodeextras', function(Y) {
 
             //Y.log('removeClass removing ' + className, 'info', 'Node');
             
-            this.set('className', Y.lang.trim(this.get('className').replace(getRegExp('(?:^|\\s+)'
-                    + className + '(?:\\s+|$)'), ' ')));
+            this.set('className',
+                    Y.lang.trim(this.get('className').replace(getRegExp('(?:^|\\s+)' +
+                            className + '(?:\\s+|$)'), ' ')));
 
             if ( this.hasClass(className) ) { // in case of multiple adjacent
                 this.removeClass(className);
@@ -162,7 +163,7 @@ YUI.add('nodeextras', function(Y) {
             if (Y.Doc.get().get('documentElement').getBoundingClientRect) {
                 return function() {
                     var doc = this.get('ownerDocument'),
-                        body = doc.get('body');
+                        body = doc.get('body'),
                         scrollLeft = Math.max(doc.get('scrollLeft'), body.get('scrollLeft')),
                         scrollTop = Math.max(doc.get('scrollTop'), body.get('scrollTop')),
                         box = this.invoke('getBoundingClientRect'),
