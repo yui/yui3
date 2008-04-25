@@ -47,7 +47,7 @@
                 config = Y.merge(config);
                 config.root = Y.Node.create(this.constructor.TEMPLATE);
             }
-                
+
             Widget.superclass.constructor.apply(this, arguments);
         }
 
@@ -128,7 +128,7 @@
                 Y.log('initializer called', 'life', 'Widget');
 
                 this._initPlugins(config);
-                
+
                 if (this.id) {
                     _instances[this.id] = this;
                 }
@@ -170,19 +170,18 @@
              * @chain
              * @final 
              */
-            render: function(parent) {
+            render: function(parentNode) {
                 if (this.destroyed) {
                     throw('render failed; widget has been destroyed');
                 }
 
                 // append to parent if provided, or to body if no parent and not in body
-                if (parent || !Y.Node.contains('body', this._root) ) {
-                    parent = parent || 'body'; 
-                    Y.Node.appendChild(parent, this._root);
+                parentNode = parentNode || Y.Doc.get("body");
+                if (parentNode && !parentNode.invoke("contains", this._root)) {
+                    parentNode.appendChild(this._root);
                 }
 
-                if (!this._rendered && this.fire("beforeRender") !== false) {
-
+                if (!this.rendered && this.fire("beforeRender") !== false) {
                     this._uiInitNode();
 
                     this._bindUI();
@@ -191,7 +190,6 @@
                     if (this.renderer) {
                         this.renderer();
                     }
-
 
                     this.rendered = true;
                     this.fire("render");
@@ -302,7 +300,7 @@
              */
             set: function() { 
                 // extend to chain set calls
-                Y.Attribute.Provider.prototype.set.apply(this, arguments);
+                Y.Attribute.prototype.set.apply(this, arguments);
                 return this;
             },
 
@@ -337,15 +335,17 @@
              * @public
              */
             plug: function(p) {
-                if (L.isArray(p)) {
-                    var ln = p.length;
-                    for (var i = 0; i < ln; i++) {
-                        this.plug(p[i]);
+                if (p) {
+                    if (L.isArray(p)) {
+                        var ln = p.length;
+                        for (var i = 0; i < ln; i++) {
+                            this.plug(p[i]);
+                        }
+                    } else if (L.isFunction(p)) {
+                        this._plug(p);
+                    } else {
+                        this._plug(p.fn, p.cfg);
                     }
-                } else if (L.isFunction(p)) {
-                    this._plug(p);
-                } else {
-                    this._plug(p.fn, p.cfg);
                 }
                 return this;
             },
@@ -484,7 +484,7 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._root.style(HEIGHT, val);
+                this._root.setStyle(HEIGHT, val);
             },
 
             /**
@@ -498,7 +498,7 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._root.style(WIDTH, val);
+                this._root.setStyle(WIDTH, val);
             },
 
             /**
@@ -544,14 +544,16 @@
             _initNode: function(node) {
                 // TODO: Looking at the node impl, this should 
                 // also take care of id generation, if an id doesn't exist
-                node = Y.Node.get(node);
+                if (L.isString(node)) {
+                    node = Y.Doc.get(node);
+                }
 
                 // Node not found
                 if (!node) {
                     throw('node not found');
                 }
 
-                this.id = node.att("id");
+                this.id = node.get("id");
                 this._root = node;
 
                 return node;
@@ -584,7 +586,7 @@
              * @param {Object} evt Event object literal passed by AttributeProvider
              */
             _onVisibleChange: function(evt) {
-                this._uiSetVisible(evt.newValue);
+                this._uiSetVisible(evt.newVal);
             },
 
             /**
@@ -595,7 +597,7 @@
              * @param {Object} evt Event object literal passed by AttributeProvider
              */
             _onDisabledChange: function(evt) {
-                this._uiSetDisabled(evt.newValue);
+                this._uiSetDisabled(evt.newVal);
             },
             
             /**
@@ -606,7 +608,7 @@
              * @param {Object} evt Event object literal passed by AttributeProvider
              */
             _onHeightChange: function(evt) {
-                this._uiSetHeight(evt.newValue);
+                this._uiSetHeight(evt.newVal);
             },
 
             /**
@@ -617,12 +619,11 @@
              * @param {Object} evt Event object literal passed by AttributeProvider
              */
             _onWidthChange: function(evt) {
-                this._uiSetWidth(evt.newValue);
+                this._uiSetWidth(evt.newVal);
             },
 
             /**
              * Generic toString implementation for all widgets.
-             * 
              * @method toString
              */
             toString: function() {

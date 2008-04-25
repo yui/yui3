@@ -320,6 +320,9 @@
                                 defConf.value = userConf[att];
                             }
                             this.addAtt(att, defConf);
+                            if ("value" in defConf) {
+                                this.set(att, defConf.value);
+                            }
                         }
                     }
                 }

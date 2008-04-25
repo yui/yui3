@@ -41,17 +41,16 @@
 
             destructor: function() {
                 var root = this.owner._root;
-                for (var evt in Mouse.Events) {
-                    // Won't work until Y.detach supports node facade. Using unsafe getDOMNode for now
-                    Y.detach(Mouse.Events[evt], Y.bind(this.handler, this), Y.Node.getDOMNode(root));
+                for (var i = 0, len = this._handles.length; i < len; ++i) {
+                    this._handles[i].detach();
                 }
             },
 
             _initUI: function() {
                 var root = this.owner._root;
+                this._handles = [];
                 for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
-                    // Won't work until on supports node facade. Using unsafe getDOMNode for now
-                    Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), Y.Node.getDOMNode(root));
+                    this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root));
                 }
             }
         };
