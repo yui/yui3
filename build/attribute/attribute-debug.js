@@ -121,7 +121,7 @@ YUI.add('attribute', function(Y) {
 
 */
             if (!e._cancel && !e._prevent && conf.get(name, 'set')) {
-                retVal = conf.get(name, 'set')(val);
+                retVal = conf.get(name, 'set').call(this, val);
                 if (retVal !== undefined) {
                     Y.log('attribute: ' + name + ' modified by setter', 'info', 'Base');
                     val = retVal; // setter can change value

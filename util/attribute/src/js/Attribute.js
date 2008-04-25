@@ -1,23 +1,57 @@
-YUI.add('att', function(Y) {
+YUI.add('attribute', function(Y) {
 
     Y.use('state');
+
+    // TODO: rip out when Event supports cancel/preventDef
+    var Evt = function(type, prevVal, newVal) {
+        this.type = type;
+        this.prevVal = prevVal;
+        this.newVal = newVal;        
+    };
+
+    var _fireBefore = function(e) {
+        this._before = this._before || {};
+        var list = this._before[e.type] || {};
+
+        for (var i = 0, len = list.length; i < len; ++i) {
+            if (e._cancelled) {
+                break;
+            }
+            list[i].call(this, e);
+        }
+    };
+
+    Evt.prototype = {
+        type: null,
+        _prevent: false,
+        _default: null,
+        _cancel: false,
+
+        stopPropagation: function() {
+            this._cancel = true;
+        },
+
+        preventDefault: function() {
+            this._prevent = true;
+        }
+    };
 
     /**
      * Manages attributes
      * @class Att
      * @uses YUI.Event.Target
      */
-    Y.Att = function() {
+    Y.Attribute = function() {
         //this._conf = {};
         this._conf = this._conf || new Y.State(); // TODO: fix init order
         Y.log('att constructor called');
     };
 
-    Y.Att.NAME = 'att';
+    Y.Attribute.NAME = 'att';
 
-    Y.Att.ATTRS = [];
+    Y.Attribute.ATTRS = [];
 
-    Y.Att.prototype = {
+    Y.Attribute.prototype = {
         /**
          * Adds an attribute.
          * @method add
@@ -63,7 +97,7 @@ YUI.add('att', function(Y) {
                 retVal;
 
             if (conf.get(name, 'readonly')) {
-                Y.log('set ' + name + 'failed; attribute is readonly', 'error', 'Att');
+                Y.log('set ' + name + 'failed; attribute is readonly', 'error', 'Attribute');
                 return this;
             }
 
@@ -87,7 +121,7 @@ YUI.add('att', function(Y) {
 
 */
             if (!e._cancel && !e._prevent && conf.get(name, 'set')) {
-                retVal = conf.get(name, 'set')(val);
+                retVal = conf.get(name, 'set').call(this, val);
                 if (retVal !== undefined) {
                     Y.log('attribute: ' + name + ' modified by setter', 'info', 'Base');
                     val = retVal; // setter can change value
@@ -133,50 +167,10 @@ YUI.add('att', function(Y) {
             }
 
             return o;
-        },
-
-        setDefault: function(name, fn) {
-            this.subscribe(name + 'Change', fn);
-        },
-
-
-    };
-
-// TODO: rip out when Event supports before
-    var Evt = function(type, prevVal, newVal) {
-        this.type = type;
-        this.prevVal = prevVal;
-        this.newVal = newVal;        
-    };
-
-    var _fireBefore = function(e) {
-        this._before = this._before || {};
-        var list = this._before[e.type] || {};
-
-        for (var i = 0, len = list.length; i < len; ++i) {
-            if (e._cancelled) {
-                break;
-            }
-            list[i].call(this, e);
         }
     };
 
-    Evt.prototype = {
-        type: null,
-        _prevent: false,
-        _default: null,
-        _cancel: false,
-
-        stopPropagation: function() {
-            this._cancel = true;
-        },
-
-        preventDefault: function() {
-            this._prevent = true;
-        }
-    };
-
-    Y.augment(Y.Att, Y.Event.Target);
+    Y.augment(Y.Attribute, Y.Event.Target);
 
 }, '3.0.0');
 
