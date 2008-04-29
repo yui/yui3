@@ -48,7 +48,7 @@ YUI.add("testconsolelogger", function(Y){
                 break;
         }
     
-        YAHOO.log(message, messageType, "TestRunner");       
+        Y.log(message, messageType, "TestRunner");       
     
     
     }

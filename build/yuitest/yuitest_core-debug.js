@@ -36,8 +36,7 @@
             }
         
         };
-        
-        
+                
         Y.Test.Case.prototype = {  
         
             /**
@@ -62,7 +61,14 @@
              * @method wait
              */
             wait : function (segment /*:Function*/, delay /*:int*/) /*:Void*/{
-                throw new Y.Test.Wait(segment, delay);
+                var args = arguments;
+                if (Y.lang.isFunction(args[0])){
+                    throw new Y.Test.Wait(args[0], args[1]);
+                } else {
+                    throw new Y.Test.Wait(function(){
+                        Y.Assert.fail("Timeout: wait() called but resume() never called.");
+                    }, (Y.lang.isNumber(args[0]) ? args[0] : 10000));
+                }
             },
         
             //-------------------------------------------------------------------------
@@ -355,7 +361,7 @@
            
             }
             
-            Y.lang.extend(TestRunner, Y.Event.Target, {
+            Y.extend(TestRunner, Y.Event.Target, {
             
                 //-------------------------------------------------------------------------
                 // Constants
@@ -609,7 +615,13 @@
                     var node /*:TestNode*/ = this._cur;
                     var testName /*:String*/ = node.testObject;
                     var testCase /*:Y.Test.Case*/ = node.parent.testObject;
-                    
+                
+                    //cancel other waits if available
+                    if (testCase.__yui_wait){
+                        clearTimeout(testCase.__yui_wait);
+                        delete testCase.__yui_wait;
+                    }
+    
                     //get the "should" test cases
                     var shouldFail /*:Object*/ = (testCase._should.fail || {})[testName];
                     var shouldError /*:Object*/ = (testCase._should.error || {})[testName];
@@ -639,14 +651,14 @@
                                 error = thrown;
                                 failed = true;
                             }
-                        } else if (thrown instanceof Y.Test.Case.Wait){
+                        } else if (thrown instanceof Y.Test.Wait){
                         
                             if (Y.lang.isFunction(thrown.segment)){
                                 if (Y.lang.isNumber(thrown.delay)){
                                 
                                     //some environments don't support setTimeout
                                     if (typeof setTimeout != "undefined"){
-                                        setTimeout(function(){
+                                        testCase.__yui_wait = setTimeout(function(){
                                             Y.Test.Runner._resumeTest(thrown.segment);
                                         }, thrown.delay);
                                     } else {

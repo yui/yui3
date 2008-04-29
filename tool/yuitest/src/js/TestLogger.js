@@ -178,7 +178,7 @@ YAHOO.lang.extend(YAHOO.tool.TestLogger, YAHOO.widget.LogReader, {
                 message = "info";
         }
     
-        YAHOO.log(message, messageType, "TestRunner");    
+        Y.log(message, messageType, "TestRunner");    
     }
     
 });
