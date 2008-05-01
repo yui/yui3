@@ -3,7 +3,7 @@ YUI.add('sample', function(Y) {
      * Basic template for utilities that consume Nodes 
      * @class Sample
      */
-    Sample = function() {
+    var Sample = function() {
         Sample.superclass.constructor.apply(this, arguments);
     };
 
