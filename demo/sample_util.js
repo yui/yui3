@@ -1,15 +1,15 @@
-YUI.add('anim', function(Y) {
+YUI.add('sample', function(Y) {
     /**
-     * Handles animation queueing and threading.
-     * @class Anim
+     * Basic template for utilities that consume Nodes 
+     * @class Sample
      */
-    Anim = function() {
-        Anim.superclass.constructor.apply(this, arguments);
+    Sample = function() {
+        Sample.superclass.constructor.apply(this, arguments);
     };
 
-    Anim.NAME = 'anim';
+    Sample.NAME = '';
 
-    Anim.ATTRS = {
+    Sample.ATTRS = {
         node: {
             set: function(node) {
                 return Y.Node.get(node);
@@ -24,7 +24,7 @@ YUI.add('anim', function(Y) {
         stop: function() {}
     };
 
-    Y.extend(Anim, Y.Base, proto);
-    Y.Anim = Anim;
+    Y.extend(Sample, Y.Base, proto);
+    Y.sample = Sample;
 
 }, '3.0.0', {requires: ['base']});
