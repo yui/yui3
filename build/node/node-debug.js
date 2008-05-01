@@ -673,7 +673,7 @@ YUI.add('node', function(Y) {
      * Node properties can be accessed via the set/get methods.
      * With the exception of the noted properties,
      * only strings, numbers, and booleans are passed through. 
-     * Use Y.get() or Y.Doc.get() to create Node instances.
+     * Use Y.get() or Y.Node.get() to create Node instances.
      *
      * @class Node
      */
@@ -693,79 +693,80 @@ YUI.add('node', function(Y) {
         NOTATION_NODE               = 12;
 
 
+    var OWNER_DOCUMENT = 'ownerDocument',
+        DEFAULT_VIEW = 'defaultView',
+        PARENT_WINDOW = 'parentWindow',
+        DOCUMENT_ELEMENT = 'documentElement',
+        NODE_NAME = 'nodeName',
+        COMPAT_MODE = 'compatMode',
+        PARENT_NODE = 'parentNode',
+        SCROLL_TOP = 'scrollTop',
+        SCROLL_LEFT = 'scrollLeft',
+        NODE_TYPE = 'nodeType';
+
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
     Y.use('selector'); // TODO: need this?  should be able to "use" from "add"
     var Selector = Y.Selector;
-    var _cache = {};
+    var _nodes = {};
+    var _styles = {};
 
     // private factory
-    var create = function(node) {
+    var wrap = function(node) {
         if (!node) {
             return null;
         }
-        if (!node.nodeName && node.get) {
-            return node; // Node instance
-        }
 
-        if (node.item && 'length' in node) {
+        if ( (node.item || node.push) && 'length' in node) {
             return new NodeList(node);
         }
 
-        if (node.window) {
-            return new Win(node);
-        }
-
-        switch(node.nodeType) {
-            case ELEMENT_NODE:
-                return new Element(node);
-
-            case DOCUMENT_NODE:
-                return new Doc(node);
-
-            default: // BASIC NODE (TEXT_NODE, etc.)
-                return new Node(node);
-        }
+        return new Node(node);
     };
 
     // returns HTMLElement
-    var getDOMNode = function(root, node) {
-        if (typeof node == 'string') {
-            return Selector.query(node, root, true);
+    var getDOMNode = function(node) {
+        if (node[NODE_TYPE]) {
+            return node;
+        } else if (node._yuid) {
+            node = _nodes[node._yuid];
         }
 
-        return      (node && node._yuid) ? _cache[node._yuid] :
-                    (node && node.nodeName) ?  node :
-                    null;
+        return  node || null;
+
     };
 
     /**
      * Wraps the input and outputs of a node instance
      */
     var nodeInOut = function(method, a, b, c, d, e) {
-        if (a) { // first 2 may be Node instances or strings
-            a = (!a.nodeName) ? getDOMNode(_cache[this._yuid], a) : a;
+        if (a) { // first 2 may be Node instances or nodes (TODO: or strings?)
+            a = getDOMNode(a);
             if (b) {
-                b = (!b.nodeName) ? getDOMNode(_cache[this._yuid], b) : b;
+                b = getDOMNode(b);
             }
         }
-        return create(_cache[this._yuid][method](a, b, c, d, e));
+        return wrap(_nodes[this._yuid][method](a, b, c, d, e));
     };
 
     /*
      * Wraps the return value in a node instance
      */
     var nodeOut = function(method, a, b, c, d, e) {
-        return create(_cache[this._yuid][method](a, b, c, d, e));
+        return wrap(_nodes[this._yuid][method](a, b, c, d, e));
     };
 
     /* 
-     * Passes method directly to HTMLElement
+     * Returns directy from node method call 
      */
     var rawOut = function(method, a, b, c, d, e) {
-        return _cache[this._yuid][method](a, b, c, d, e);
+        return _nodes[this._yuid][method](a, b, c, d, e);
     };
 
+    var noOut = function(method, a, b, c, d, e) {
+        _nodes[this._yuid][method](a, b, c, d, e);
+        return this;
+    };
     var PROPS_WRAP = {
 
         /**
@@ -826,87 +827,25 @@ YUI.add('node', function(Y) {
         'offsetParent': ELEMENT_NODE,
 
         // form
-        'elements': ELEMENT_NODE
-    };
-
-    var PROPS_READ = { // white list (currently all strings|numbers|booleans are allowed)
-    };
-
-    var PROPS_WRITE = { // white list (currently all strings|numbers|booleans are allowed)
-    };
-
-    var SETTERS = { // custom setters for specific properties
-
-    };
-
-    var GETTERS = {};
-    GETTERS[ELEMENT_NODE] = { // custom getters for specific properties
-        /**
-         * Normalizes nodeInnerText and textContent. 
-         * @property text
-         * @type String
-         */
-        'text': function(node) {
-            return node.innerText || node.textContent || '';
-        },
+        'elements': ELEMENT_NODE,
 
         /**
-         * A NodeList containing only HTMLElement child nodes 
-         * @property children
-         * @type NodeList
+         * Returns a Node instance. 
+         * @property documentElement
+         * @type Node
          */
-        children: function() {
-            return this.queryAll('> *');
-        }
+        'documentElement': DOCUMENT_NODE,
+
+        /**
+         * Returns a Node instance. 
+         * @property body
+         * @type Node
+         */
+        'body': DOCUMENT_NODE
+
     };
 
-    GETTERS[DOCUMENT_NODE] = { // custom getters for specific properties
-        /**
-         * Document height 
-         * @property height
-         * @type Number
-         */
-        'height':  function(doc) {
-            var win = doc.defaultView || doc.parentWindow;
-            var h = (doc.compatMode != 'CSS1Compat') ?
-                    doc.body.scrollHeight : doc.documentElement.scrollHeight; // body first for safari
-            return Math.max(h, WIN_GETTERS.height(win));
-        },
-
-        /**
-         * Document width 
-         * @property width
-         * @type Number
-         */
-        'width':  function(doc) {
-            var win = doc.defaultView || doc.parentWindow;
-            var w = (doc.compatMode != 'CSS1Compat') ?
-                    doc.body.scrollWidth : doc.documentElement.scrollWidth; // body first for safari
-            return Math.max(w, WIN_GETTERS.width(win));
-        },
-
-        /**
-         * Amount page has been scroll vertically 
-         * @property width
-         * @type Number
-         */
-        'scrollTop':  function(doc) {
-            return Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
-        },
-
-        /**
-         * Amount page has been scroll horizontally 
-         * @property width
-         * @type Number
-         */
-        'scrollLeft':  function(doc) {
-            return Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
-        }
-    };
-
-    var METHODS = {};
-
-    METHODS[BASE_NODE] = {
+    var METHODS = {
         /**
          * Passes through to DOM method.
          * @method insertBefore
@@ -942,114 +881,19 @@ YUI.add('node', function(Y) {
 
         /**
          * Passes through to DOM method.
+         * @method hasChildNodes
+         * @return {Boolean} Whether or not the node has any childNodes 
+         */
+        hasChildNodes: rawOut,
+
+        /**
+         * Passes through to DOM method.
          * @method cloneNode
          * @param {String | HTMLElement | Node} node Node to be cloned 
          * @return {Node} The clone 
          */
-        cloneNode: nodeOut
-    };
+        cloneNode: nodeOut,
 
-    var METHODS_INVOKE = {
-        'getBoundingClientRect': true,
-        'contains': true,
-        'compareDocumentPosition': true
-    };
-
-    var Node = function(node) {
-        if (!node || !node.nodeName) {
-            Y.log('invalid node', 'error', 'Node');
-            return null;
-        }
-        _cache[Y.stamp(this)] = node;
-    };
-
-    Node.prototype = {
-        /**
-         * Set the value of the property/attribute on the HTMLElement bound to this Node.
-         * Only strings/numbers/booleans are passed through unless a SETTER exists.
-         * @method set
-         * @param {String} prop Property to set 
-         * @param {any} val Value to apply to the given property
-         */
-        set: function(prop, val) {
-            var node = _cache[this._yuid];
-            if (prop in SETTERS) { // use custom setter
-                SETTERS[prop](node, prop, val); 
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in PROPS_WRITE) { // safe to write
-                node[prop] = val;
-            }
-            return this;
-        },
-
-        /**
-         * Get the value of the property/attribute on the HTMLElement bound to this Node.
-         * Only strings/numbers/booleans are passed through unless a GETTER exists.
-         * @method get
-         * @param {String} prop Property to get 
-         * @return {any} Current value of the property
-         */
-        get: function(prop) {
-            var val;
-            var node = _cache[this._yuid];
-            if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document, Window)
-                val = create(node[prop]);
-            } else if (GETTERS[node.nodeType] && GETTERS[node.nodeType][prop]) { // use custom getter
-                val = GETTERS[node.nodeType][prop].call(this, node, prop, val);
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in PROPS_READ) { // safe to read
-                val = node[prop];
-            }
-            return val;
-        },
-
-        /**
-         * Tests whether or not the bound HTMLElement has any child nodes. 
-         * @method hasChildNodes
-         * @return {Boolean} Whether or not the HTMLElement has childNodes 
-         */
-        hasChildNodes: function() {
-            return !!_cache[this._yuid].childNodes.length;
-        },
-
-        invoke: function(method, a, b, c, d, e) {
-            if (a) { // first 2 may be Node instances or strings
-                a = (a.nodeName) ? a : getDOMNode(_cache[this._yuid], a);
-                if (b) {
-                    b = (b.nodeName) ? b : getDOMNode(_cache[this._yuid], b);
-                }
-            }
-           var  node = _cache[this._yuid];
-            if (METHODS_INVOKE[method] && node[method]) {
-                return node[method](a, b, c, d, e);
-            }
-            return null;
-        },
-
-        /**
-         * Tests whether or not the bound HTMLElement can use the given method. 
-         * @method hasMethod
-         * @param {String} method The method to check for 
-         * @return {Boolean} Whether or not the HTMLElement can use the method 
-         */
-        hasMethod: function(method) {
-            return !!(METHODS_INVOKE[method] && _cache[this._yuid][method]);
-        },
-
-        //normalize: function() {},
-        //isSupported: function(feature, version) {},
-        toString: function() {
-            return this.get('id') || this.get('nodeName');
-        }
-    };
-
-    Y.each(METHODS[BASE_NODE], function(fn, method) {
-        Node.prototype[method] = function() {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(method);
-            return fn.apply(this, args);
-        };
-    });
-
-    METHODS[ELEMENT_NODE] = {
         /**
          * Passes through to DOM method.
          * @method getAttribute
@@ -1064,14 +908,7 @@ YUI.add('node', function(Y) {
          * @param {String} attribute The attribute to set 
          * @param {String} The value to apply to the attribute 
          */
-        setAttribute: rawOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method removeAttribute
-         * @param {String} attribute The attribute to be removed 
-         */
-        removeAttribute: rawOut,
+        setAttribute: noOut,
 
         /**
          * Passes through to DOM method.
@@ -1085,7 +922,7 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * @method scrollIntoView
          */
-        scrollIntoView: rawOut,
+        scrollIntoView: noOut,
 
         /**
          * Passes through to DOM method.
@@ -1099,35 +936,424 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * @method focus
          */
-        focus: rawOut,
+        focus: noOut,
 
         /**
          * Passes through to DOM method.
          * @method blur
          */
-        blur: rawOut,
+        blur: noOut,
 
         /**
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method submit
          */
-        submit: rawOut,
+        submit: noOut,
 
         /**
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method reset
          */
-        reset: rawOut
-
+        reset: noOut
     };
 
+    var METHODS_INVOKE = {
+        'getBoundingClientRect': true,
+        'contains': true,
+        'compareDocumentPosition': true
+    };
 
+    var Node = function(node) {
+        if (!node || !node[NODE_NAME]) {
+            Y.log('invalid node:' + node, 'error', 'Node');
+            return null;
+        }
+        _nodes[Y.stamp(this)] = node;
+        _styles[Y.stamp(this)] = node.style;
+    };
+
+    var getWinSize = function(node) {
+        node = _nodes[node._yuid];
+        var doc = (node[NODE_TYPE] == DOCUMENT_NODE) ? node : node[OWNER_DOCUMENT],
+            win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
+            mode = doc[COMPAT_MODE],
+            height = win.innerHeight,
+            width = win.innerWidth,
+            root = doc[DOCUMENT_ELEMENT];
     
-    var Element = function(node) {
-        Element.superclass.constructor.call(this, node);
+        if ( mode && !Y.ua.opera ) { // IE, Gecko
+            if (mode != 'CSS1Compat') { // Quirks
+                root = doc.body; 
+            }
+            height = root.clientHeight;
+            width = root.clientWidth;
+        }
+        return { 'height': height, 'width': width }; 
     };
+
+    var getDocSize = function(node) {
+        node = _nodes[node._yuid];
+        var doc = (node[NODE_TYPE] == DOCUMENT_NODE) ? node : node[OWNER_DOCUMENT],
+            root = doc[DOCUMENT_ELEMENT];
+
+        if (doc[COMPAT_MODE] != 'CSS1Compat') {
+            root = doc.body;
+        }
+
+        return {
+            'height': root.scrollHeight,
+            'width': root.scrollWidth
+        }
+    };
+
+    var SETTERS = {};
+    var GETTERS = {
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property winHeight
+         * @type String
+         */
+        'winHeight': function(node) {
+            var h = getWinSize(node).height;
+            Y.log('GETTERS:winHeight returning ' + h, 'info', 'Node');
+            return h;
+        },
+
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property winWidth
+         * @type String
+         */
+        'winWidth': function(node) {
+            var w = getWinSize(node).width;
+            Y.log('GETTERS:winWidth returning ' + w, 'info', 'Node');
+            return w;
+        },
+
+        /**
+         * Document height 
+         * @property docHeight
+         * @type Number
+         */
+        'docHeight':  function(node) {
+            var h = getDocSize(node).height;
+            return Math.max(h, getWinSize(node).height);
+        },
+
+        /**
+         * Document width 
+         * @property docWidth
+         * @type Number
+         */
+        'docWidth':  function(node) {
+            var w = getDocSize(node).width;
+            return Math.max(w, getWinSize(node).width);
+        },
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property docScrollX
+         * @type Number
+         */
+        'docScrollX':  function(node) {
+            var doc = _nodes[node._yuid][OWNER_DOCUMENT];
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        },
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property docScrollY
+         * @type Number
+         */
+        'docScrollY':  function(node) {
+            var doc = _nodes[node._yuid][OWNER_DOCUMENT];
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+        }
+    };
+
+    Node.setters = function(prop, fn) {
+        if (typeof prop == 'string') {
+            SETTERS[prop] = fn;
+        } else { // assume object
+            Y.each(prop, function(fn, prop) {
+                Node.setters(prop, fn);
+            });
+        } 
+    };
+
+    Node.getters = function(prop, fn) {
+        if (typeof prop == 'string') {
+            return GETTERS[prop] = fn;
+        } else { // assume object
+            Y.each(prop, function(fn, prop) {
+                Node.getters(prop, fn);
+            });
+        } 
+    };
+
+    Node.methods = function(name, fn) {
+        if (typeof name == 'string') {
+            Node.prototype[name] = function(a, b, c, d, e) {
+                var ret = fn(this, a, b, c, d, e);
+                if (ret === undefined) {
+                    ret = this;
+                }
+                return ret;
+            };
+
+            NodeList.prototype[name] = function(a, b, c, d, e) {
+                var ret = [];
+                this.each(function(node) {
+                    ret.push(node[name](a, b, c, d, e));
+                });
+                if (!ret.length) {
+                    ret = this;
+                }
+                return ret;
+            };
+            
+        } else { // assume object
+            Y.each(name, function(fn, name) {
+                Node.methods(name, fn);
+            });
+        }
+    };
+
+    Node.prototype = {
+        /**
+         * Set the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         */
+        set: function(prop, val) {
+            var node = _nodes[this._yuid];
+            if (prop in SETTERS) { // use custom setter
+                SETTERS[prop](this, prop, val);  // passing Node instance
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to write
+                node[prop] = val;
+            }
+            return this;
+        },
+
+        /**
+         * Get the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {any} Current value of the property
+         */
+        get: function(prop) {
+            var val;
+            var node = _nodes[this._yuid];
+            if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
+                val = wrap(node[prop]);
+            } else if (GETTERS[prop]) { // use custom getter
+                val = GETTERS[prop](this, prop); // passing Node instance
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
+                val = node[prop];
+            }
+            return val;
+        },
+
+        invoke: function(method, a, b, c, d, e) {
+            if (a) { // first 2 may be Node instances or strings
+                a = (a[NODE_NAME]) ? a : getDOMNode(a);
+                if (b) {
+                    b = (b[NODE_NAME]) ? b : getDOMNode(b);
+                }
+            }
+           var  node = _nodes[this._yuid];
+            if (METHODS_INVOKE[method] && node[method]) {
+                return node[method](a, b, c, d, e);
+            }
+            return null;
+        },
+
+        /**
+         * Tests whether or not the bound HTMLElement can use the given method. 
+         * @method hasMethod
+         * @param {String} method The method to check for 
+         * @return {Boolean} Whether or not the HTMLElement can use the method 
+         */
+        hasMethod: function(method) {
+            return !!(METHODS_INVOKE[method] && _nodes[this._yuid][method]);
+        },
+
+        //normalize: function() {},
+        //isSupported: function(feature, version) {},
+        toString: function() {
+            return this.get('id') || this.get(NODE_NAME);
+        },
+
+        /**
+         * Retrieves a single node based on the given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {Node} A Node instance for the matching HTMLElement.
+         */
+        query: function(selector) {
+            return new Node(Selector.query(selector, _nodes[this._yuid], true));
+        },
+
+        /**
+         * Retrieves a nodeList based on the given CSS selector. 
+         * @method queryAll
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+         */
+        queryAll: function(selector) {
+            return new NodeList(Selector.query(selector, _nodes[this._yuid]));
+        },
+
+        /**
+         * Test if the supplied node matches the supplied selector.
+         * @method test
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {boolean} Whether or not the node matches the selector.
+         */
+        test: function(selector) {
+            return Selector.test(_nodes[this._yuid], selector);
+        },
+
+        /**
+         * Retrieves a style attribute from the given node.
+         * @method getStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The current value of the style property for the element.
+         */
+        getStyle: function(attr) {
+            var style = _styles[this._yuid];
+            var val = style[attr];
+            if (val === '') { // TODO: is empty string sufficient?
+                var node = _nodes[this._yuid];
+                var view = node[OWNER_DOCUMENT][DEFAULT_VIEW];
+                if (view && view.getComputedStyle) {
+                    val = view.getComputedStyle(node, '')[attr];
+                } else if (node.currentStyle) {
+                    val =  node.currentStyle[attr];
+                }
+            }
+
+            if (val === undefined) {
+                val = ''; // TODO: more robust
+            }
+            return val;
+        },
+
+        /**
+         * Applies a CSS style to a given node.
+         * @method getStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The current value of the style property for the element.
+         */
+        setStyle: function(attr, val) {
+             _styles[this._yuid][attr] = val;
+            return this;
+        },
+
+        /**
+         * Compares nodes to determine if they match.
+         * Node instances can be compared to each other and/or HTMLElements/selectors.
+         * @method compareTo
+         * @param {String | HTMLElement | Node} refNode The reference node to compare to the node.
+         * @return {Boolean} True if the nodes match, false if they do not. 
+         */
+        compareTo: function(refNode) {
+            refNode = refNode[NODE_NAME] ? refNode : _nodes[refNode._yuid];
+            return _nodes[this._yuid] === refNode;
+        },
+
+       /*
+         * Returns the nearest ancestor that passes the test applied by supplied boolean method.
+         * @method ancestor
+         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
+         * @return {Node} The matching Node instance or null if not found
+         */
+        ancestor: function(test) {
+            var node = this;
+            while (node = node.get(PARENT_NODE)) { // NOTE: assignment
+                if ( test(node) ) {
+                    Y.log('ancestor returning ' + node, 'info', 'Node');
+                    return node;
+                }
+            } 
+
+            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
+            return null;
+        },
+
+       /*
+         * Attaches a handler for the given DOM event.
+         * @method attach
+         * @param {String} type The type of DOM Event to listen for 
+         * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} arg An argument object to pass to the handler 
+         */
+
+        attach: function(type, fn, arg) {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(_nodes[this._yuid]);
+            return Y.Event.addListener.apply(Y.Event, args);
+        },
+
+       /*
+         * Alias for attach.
+         * @method on
+         * @param {String} type The type of DOM Event to listen for 
+         * @param {Function} fn The handler to call when the event fires 
+         * @param {Object} arg An argument object to pass to the handler 
+         * @see attach
+         */
+
+        on: function(type, fn, arg) {
+            return this.attach.apply(this, arguments);
+        },
+
+        addEventListener: function(type, fn, arg) {
+            return Y.Event.nativeAdd(_nodes[this._yuid], type, fn, arg);
+        },
+        
+       /**
+         * Attaches a handler for the given DOM event.
+         * @method detach
+         * @param {String} type The type of DOM Event
+         * @param {Function} fn The handler to call when the event fires 
+         */
+        detach: function(type, fn) {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(_nodes[this._yuid]);
+            return Y.Event.removeListener.apply(Y.Event, args);
+        },
+
+        removeEventListener: function(type, fn) {
+            return Y.Event.nativeRemove(_nodes[this._yuid], type, fn);
+        },
+
+       /**
+         * Creates a Node instance from HTML string or jsonml
+         * @method create
+         * @param {String|Array} html The string or jsonml to create from 
+         * @return {Node} A new Node instance 
+         */
+        create: function(html) {
+            return Y.Node.create(html);
+        }
+    };
+
+    Y.each(METHODS, function(fn, method) {
+        Node.prototype[method] = function() {
+            var args = [].slice.call(arguments, 0);
+            args.unshift(method);
+            return fn.apply(this, args);
+        };
+    });
 
     var _createNode = function(data) {
         var frag = Y.config.doc.createElement('div');
@@ -1168,366 +1394,106 @@ YUI.add('node', function(Y) {
     };
 
     /** 
-     *  Creates a node instance from an HTML string or jsonml
+     *  Creates a Node instance from an HTML string or jsonml
      * @method create
      * @param {String | Array} jsonml HTML string or jsonml
      */
-    Element.create = function(jsonml) {
-        return new Element(_createNode(jsonml));
+    Node.create = function(jsonml) {
+        return new Node(_createNode(jsonml));
     };
 
-    Y.extend(Element, Node, {
-        /**
-         * Retrieves a single node based on the given CSS selector. 
-         * @method query
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {Node} A Node instance for the matching HTMLElement.
-         */
-        query: function(selector) {
-            return new Element(Selector.query(selector, _cache[this._yuid], true));
-        },
-
-        /**
-         * Retrieves a nodeList based on the given CSS selector. 
-         * @method queryAll
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
-         */
-        queryAll: function(selector) {
-            return new NodeList(Selector.query(selector, _cache[this._yuid]));
-        },
-
-        /**
-         * Test if the supplied node matches the supplied selector.
-         * @method test
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {boolean} Whether or not the node matches the selector.
-         */
-        test: function(selector) {
-            return Selector.test(_cache[this._yuid], selector);
-        },
-
-        /**
-         * Retrieves a style attribute from the given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
-         */
-        getStyle: function(attr) {
-            var node = _cache[this._yuid];
-            var val = node.style[attr];
-            var view = node.ownerDocument.defaultView;
-            if (val === '') { // TODO: is empty string sufficient?
-                if (view && view.getComputedStyle) {
-                    val = view.getComputedStyle(node, '')[attr];
-                } else if (node.currentStyle) {
-                    val =  node.currentStyle[attr];
-                }
-            }
-            if (val === undefined) {
-                val = ''; // TODO: more robust
-            }
-            return val;
-        },
-
-        /**
-         * Applies a CSS style to a given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
-         */
-        setStyle: function(attr, val) {
-             _cache[this._yuid].style[attr] = val;
-        },
-
-        /**
-         * Compares nodes to determine if they match.
-         * Node instances can be compared to each other and/or HTMLElements/selectors.
-         * @method compareTo
-         * @param {String | HTMLElement | Node} refNode The reference node to compare to the node.
-         * @return {Boolean} True if the nodes match, false if they do not. 
-         */
-        compareTo: function(refNode) {
-            refNode = refNode.nodeName ? refNode : _cache[refNode._yuid];
-            return _cache[this._yuid] === refNode;
-        },
-
-       /**
-         * Returns the nearest ancestor that passes the test applied by supplied boolean method.
-         * @method ancestor
-         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
-         * @return {Object} HTMLElement or null if not found
-         */
-        ancestor: function(test) {
-            var node = this;
-            while (node = node.get('parentNode')) { // NOTE: assignment
-                if ( test(node) ) {
-                    Y.log('getAncestorBy returning ' + node, 'info', 'Dom');
-                    return node;
-                }
-            } 
-
-            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
-            return null;
-        },
-
-       /**
-         * Attaches a handler for the given DOM event.
-         * @method addEventListener
-         * @param {String} type The type of DOM Event to listen for 
-         * @param {Function} fn The handler to call when the event fires 
-         * @param {Object} arg An argument object to pass to the handler 
-         */
-        addEventListener: function(type, fn, arg) {
-            Y.Event.nativeAdd(_cache[this._yuid], type, fn, arg);
-        },
-        
-       /**
-         * Attaches a handler for the given DOM event.
-         * @method removeEventListener
-         * @param {String} type The type of DOM Event
-         * @param {Function} fn The handler to call when the event fires 
-         */
-        removeEventListener: function(type, fn) {
-            Y.Event.nativeRemove(_cache[this._yuid], type, fn);
-        }
-    });
-
-    Y.each(METHODS[ELEMENT_NODE], function(fn, method) {
-        Element.prototype[method] = function() {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(method);
-
-            return fn.apply(this, args);
-        };
-    });
-
-
-    /** 
-     * A wrapper for interacting with DOM elements
-     * Usage:
-     * <p>Doc.get() // returns Doc instance for current document</p>
-     * <p>Doc.get(document) // returns Doc instance for the given document</p>
-     * <p>Doc.get('#foo') // returns Node instance</p>
-     * 
-     * @class Doc
-     */
-    var Doc = function(node) {
-        node = node || Y.config.doc;
-        Doc.superclass.constructor.call(this, node);
+    Node.byId = function(id, doc) {
+        doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
+        return doc.getElementById(id);
     };
 
-    
     /**
-     * Retrieves a wrapped instance (Win, Doc, Node, or NodeList) for the given object/string. 
-     * If a doc is given, obj is found in doc scope.  Use all flag 
+     * Retrieves a Node instance for the given object/string. 
      * @method get
      *
-     * Use 'window' or 'document' strings to return Win or Doc instances
-     * @param {document|window|HTMLElement|HTMLCollection|Array|String} doc optional The object to wrap. Defaults to current document
-     * @param {document|window|HTMLElement|HTMLCollection|Array|String} node The object to wrap or all flag.
-     * @param {Boolean} all Returns a NodeList if true (only valid for selector string input) 
-     * @return {Win|Doc|Node|NodeList} A wrapper instance for the supplied object(s).
+     * Use 'document' string to retrieve document Node instance from string
+     * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.
+     * @param {document|Node} doc optional The document containing the node. Defaults to current document.
+     * @return {Node} A wrapper instance for the supplied object.
      */
-    Doc.get = function(doc, node) {
-        if (!doc) {
-            return create(Y.config.doc);
+    Node.get = function(node, doc) {
+        if (node instanceof Node) {
+            return node;
         }
-
-        if (doc.nodeName != '#document') {
-            node = doc;
-            doc = Y.config.doc;
-        }
-
-        if (node && typeof node == 'string') {
-            node = Selector.query(node, doc, true);
-        }
-
-        return create(node);
-    };
-
-/* TODO: handle all input types (HTMLElement, HTMLCollection, window, document, Array, Node, NodeList, Win, Doc, selector)
-    Doc.get = function(doc, node, all) {
 
         if (!doc) {
-            return new Doc(doc);
-        }
-
-        if (doc.window && doc.window.documentElement) {
-            return new Win(doc);
-        }
-
-        if (doc.nodeName != '#document') {
-            all = node;
-            node = doc;
             doc = Y.config.doc;
+        } else if (doc._yuid && _nodes[doc._yuid]) {
+            doc = _nodes[doc._yuid]; 
         }
-
+    
         if (node && typeof node == 'string') {
             switch(node) {
-                case 'window':
-                   node = doc.defaultView || doc.parentWindow; 
-                   break;
                 case 'document':
-                   node = doc;
+                    node = Y.config.doc;
                     break;
                 default: 
-                    node = Selector.query(node, doc, !all);
+                    node = Selector.query(node, doc, true);
             }
         }
 
-        return create(node);
+        return wrap(node);
     };
 
-*/
     /**
-     * Retrieves a nodeList based on the given CSS selector. 
-     * @method queryAll
-     *
-     * @param {HTMLDocument} document The document to search against.
-     * @param {string} selector The CSS selector to test against.
-     * @param {HTMLElement} root The root node to start from.
-     * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+     * Retrieves a NodeList instance for the given object/string. 
+     * @method all
+     * @param {HTMLCollection|Array|String} node The object to wrap.
+     * @param {document|Node} doc optional The document containing the node. Defaults to current document.
+     * @return {NodeList} A wrapper instance for the supplied nodes.
      */
-    Doc.queryAll = function(doc, selector, root) {
-        if (doc.nodeName != '#document') {
-            selector = doc;
+    Node.all = function(nodes, doc) {
+        if (nodes instanceof NodeList) {
+            return nodes;
+        }
+
+        if (!doc) {
             doc = Y.config.doc;
+        } else if (doc._yuid && _nodes[doc._yuid]) {
+            doc = _nodes[doc._yuid]; 
+        }
+    
+        if (nodes && typeof nodes == 'string') {
+            nodes = Selector.query(nodes, doc);
         }
 
-        root = root || doc;
-        return new NodeList(Selector.query(selector, root));
-    };
+        return wrap(nodes);
 
-    /**
-     * Returns a Node instance. 
-     * @property documentElement
-     * @type Node
-     */
-    PROPS_WRAP.documentElement = DOCUMENT_NODE;
-
-    /**
-     * Returns a Node instance. 
-     * @property body
-     * @type Node
-     */
-    PROPS_WRAP.body = DOCUMENT_NODE;
-
-
-    METHODS[DOCUMENT_NODE] = {
-        /**
-         * Passes through to DOM method.
-         * @method createElement
-         * @param {String} tagName The type of element to create 
-         * @return {Node} A Node instance bound to the HTMLElement 
-         */
-        createElement: nodeOut,
-        //createDocumentFragment: fragReturn,
-
-        /**
-         * Passes through to DOM method.
-         * @method createTextNode
-         * @param {String} text The text value of the node 
-         * @return {Node} A Node instance bound to the TextNode 
-         */
-        createTextNode: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method getElementsByTagName
-         * @param {String} text The text value of the node 
-         * @return {Node} A Node instance bound to the TextNode 
-         */
-        getElementsByTagName: nodeOut,
-
-        //createElementNS: nodeOut,
-        //getElementsByTagNameNS: nodeOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method getElementsById
-         * @param {String} id The id to search for 
-         * @return {Node} A Node instance bound to the HTMLElement 
-         */
-        getElementById: nodeOut
-    };
-
-    Y.extend(Doc, Node, {
-        /**
-         * Retrieves a Node instance based on the given CSS selector. 
-         * @method query
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
-         */
-        query: Element.prototype.query,
-
-        /**
-         * Retrieves a nodeList based on the given CSS selector. 
-         * @method queryAll
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
-         */
-        queryAll: Element.prototype.queryAll,
-
-        getElementsBy: function(method, test, tag, root, apply) {
-            tag = tag || '*';
-            var doc = doc.nodeName ? new Doc(doc) : doc;
-
-            if (root) {
-                root = (root.tagName) ? new Element(root) : (root.get) ? root : null;
-            } else {
-                root = doc;
-            }
-
-            var elements;
-
-            if (root) {
-                elements = root.getElementsByTagName(tag);
-            } else {
-                elements = [];
-            }
-
-            var nodes = [],
-                item;
-            
-            for (var i = 0, len = elements.length(); i < len; ++i) {
-                item = elements.item(i);
-                if ( test(item) ) {
-                    nodes[nodes.length] = item;
-                    if (apply) {
-                        apply(item);
-                    }
-                }
-            }
-
-            Y.log('getElementsBy returning ' + nodes, 'info', 'Dom');
-            
-            return new Y.NodeList(nodes);
-        }
-    });
-
-    Y.each(METHODS[DOCUMENT_NODE], function(fn, method) {
-        Doc.prototype[method] = function() {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(method);
-            return fn.apply(this, args);
-        };
-    });
-
-    var NodeList = function(nodes) {
-        _cache[Y.stamp(this)] = nodes;
     };
 
     /** 
      * A wrapper for interacting with DOM elements
      * @class NodeList
      */
-    NodeList.prototype = {
+    var NodeList = function(nodes) {
+        _nodes[Y.stamp(this)] = nodes;
+    };
+
+    NodeList.prototype = {};
+    Y.each(Node.prototype, function(fn, method) {
+        var ret;
+        var a = [];
+        NodeList.prototype[method] = function() {
+            var nodes = _nodes[this._yuid];
+            var node = new Node(Y.doc.config.createElement('div'));
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                _nodes[node._yuid] = nodes[i];
+                ret = node[method].apply(node, arguments);
+                if (ret !== undefined) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
+    });
+
+    Y.mix(NodeList.prototype, {
         /**
          * Retrieves the Node instance at the given index. 
          * @method item
@@ -1536,8 +1502,8 @@ YUI.add('node', function(Y) {
          * @return {Node} The Node instance at the given index.
          */
         item: function(index) {
-            var node = _cache[this._yuid][index];
-            return (node && node.tagName) ? create(node) : (node && node.get) ? node : null;
+            var node = _nodes[this._yuid][index];
+            return (node && node.tagName) ? wrap(node) : (node && node.get) ? node : null;
         },
 
         /**
@@ -1549,7 +1515,7 @@ YUI.add('node', function(Y) {
          * @see Node
          */
         set: function(name, val) {
-            var nodes = _cache[this._yuid];
+            var nodes = _nodes[this._yuid];
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 Node.set(nodes[i], name, val);
             }
@@ -1567,9 +1533,9 @@ YUI.add('node', function(Y) {
          */
         get: function(name) {
             if (name == 'length') {
-                return _cache[this._yuid].length;
+                return _nodes[this._yuid].length;
             }
-            var nodes = _cache[this._yuid];
+            var nodes = _nodes[this._yuid];
             var ret = [];
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 ret[i] = Node.get(nodes[i], name);
@@ -1586,7 +1552,7 @@ YUI.add('node', function(Y) {
          * @see Selector
          */
         filter: function(selector) {
-            return new NodeList(Selector.filter(_cache[this._yuid], selector));
+            return new NodeList(Selector.filter(_nodes[this._yuid], selector));
         },
 
         /**
@@ -1598,223 +1564,18 @@ YUI.add('node', function(Y) {
          */
         each: function(fn, context) {
             context = context || this;
-            var nodes = _cache[this._yuid];
-            var node = Doc.get().createElement('div'); // reusing single instance for each node
+            var nodes = _nodes[this._yuid];
+            var node = new Node(Y.config.doc.createElement('div')); // reusing single instance for each node
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                _cache[node._yuid] = nodes[i]; // remap Node instance to current node
+                _nodes[node._yuid] = nodes[i]; // remap Node instance to current node
                 fn.call(context, node, i, this);
             }
-        }
-    };
-
-    Y.each(Element.prototype, function(fn, method) {
-        var ret;
-        var a = [];
-        NodeList.prototype[method] = function(a, b, c, d, e) {
-            var nodes = _cache[this._yuid];
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                ret = Element[method].call(Element, nodes[i], a, b, c, d, e);
-                if (ret !== Element) {
-                    a[i] = ret;
-                }
-            }
-
-            return a.length ? a : this;
-        };
-    });
-
-    /**
-     * A wrapper for DOM Windows.
-     * Window properties can be accessed via the set/get methods.
-     * With the exception of the noted properties,
-     * only strings, numbers, and booleans are passed through. 
-     * Use Win.get() to create new Win instances.
-     *
-     * @class Win
-     */
-    // TODO: merge with NODE statics?
-    var WIN_PROPS_WRAP = {
-        /**
-         * Returns a Doc instance wrapping the window.document 
-         * @property document
-         * @type Doc
-         */
-        'document': 1,
-
-        /**
-         * Returns a Win instance wrapping the window.window 
-         * @property window
-         * @type Doc
-         */
-        'window': 1,
-        //'top': 1,
-        //'opener': 1,
-        //'parent': 1,
-
-        /**
-         * Returns a Node instance wrapping the window.frameElement 
-         * @property frameElement
-         * @type Doc
-         */
-        'frameElement': 1
-    };
-
-    var WIN_GETTERS = {
-        /**
-         * Returns the inner height of the viewport (exludes scrollbar). 
-         * @property height
-         * @type String
-         */
-        'height': function(win) {
-            var h = win.innerHeight, // Safari, Opera
-            doc = win.document,
-            mode = doc.compatMode;
-        
-            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
-                h = (mode == 'CSS1Compat') ?
-                        doc.documentElement.clientHeight : // Standards
-                        doc.body.clientHeight; // Quirks
-            }
-        
-            Y.log('GETTERS:height returning ' + h, 'info', 'Win');
-            return h;
-        },
-
-        /**
-         * Returns the inner width of the viewport (exludes scrollbar). 
-         * @property width
-         * @type String
-         */
-        'width': function(win) {
-            var w = win.innerWidth, // Safari, Opera
-            doc = win.document,
-            mode = doc.compatMode;
-        
-            if ( (mode || Y.ua.ie) && !Y.ua.opera ) { // IE, Gecko
-                w = (mode == 'CSS1Compat') ?
-                        doc.documentElement.clientWidth : // Standards
-                        doc.body.clientWidth; // Quirks
-            }
-        
-            Y.log('GETTERS:width returning ' + w, 'info', 'Win');
-            return w;
-        }
-    };
-
-    var WIN_SETTERS = {};
-    var WIN_PROPS_READ = {};
-    var WIN_PROPS_WRITE = {};
-
-
-    var Win = function(win) {
-        win = win || Y.config.win; // TODO: abstract window ref?
-        _cache[Y.stamp(this)] = win; 
-    };
-
-    /**
-     * Returns a Win instance bound to the given or current window.
-     * @method get
-     * @param {Window} win optional window reference. Defaults to current window.
-     * @return {Win} A Win instance bound to the given window. 
-     * @static
-     */
-    Win.get = function(win) {
-        win = win || window;
-        return new Win(win);
-    };
-
-    Win.prototype = {
-        /**
-         * Get the value of the property/attribute on the window bound to this Win.
-         * Only strings/numbers/booleans are passed through unless a GETTER exists.
-         * @method get
-         * @param {String} prop Property to get 
-         * @return {any} Current value of the property
-         */
-        get: function(prop) {
-            var val;
-            var node = _cache[this._yuid];
-            if (prop in WIN_PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document, Window)
-                val = create(node[prop]);
-            } else if (prop in WIN_GETTERS) { // use custom setter
-                val = WIN_GETTERS[prop](node, prop, val);
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in WIN_PROPS_READ) { // safe to read
-                val = node[prop];
-            }
-            return val;
-        },
-
-        /**
-         * Set the value of the property/attribute on the window bound to this Win.
-         * Only strings/numbers/booleans are passed through unless a SETTER exists.
-         * @method set
-         * @param {String} prop Property to set 
-         * @param {any} val Value to apply to the given property
-         */
-        set: function(prop, val) {
-            var node = _cache[this._yuid];
-            if (prop in WIN_SETTERS) { // use custom setter
-                WIN_SETTERS[prop](node, prop, val); 
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop]) || prop in WIN_PROPS_WRITE) { // safe to write
-                node[prop] = val;
-            }
             return this;
-        },
+        }
+    }, true);
 
-        /**
-         * Passes through to DOM window.
-         * @method scrollTo
-         */
-        'scrollTo': rawOut,
-
-        /**
-         * Passes through to DOM window.
-         * @method scrollBy
-         */
-        'scrollBy': rawOut,
-
-        /**
-         * Passes through to DOM window.
-         * @method resizeTo
-         */
-        'resizeTo': rawOut,
-
-        /**
-         * Passes through to DOM window.
-         * @method resizeBy
-         */
-        'resizeBy': rawOut,
-
-        /**
-         * Passes through to DOM window.
-         * @method moveTo
-         */
-        'moveTo': rawOut,
-
-        /**
-         * Passes through to DOM window.
-         * @method moveBy
-         */
-        'moveBy': rawOut
-
-
-/* TODO: allow?
-        'focus': rawOut,
-        'blur': rawOut,
-
-        'close': rawOut,
-        'open': nodeInOut,
-
-        'forward': rawOut,
-        'back': rawOut,
-*/
-    };
-
-
-    Y.Node = Element;
+    Y.Node = Node;
     Y.NodeList = NodeList;
-    Y.Doc = Doc;
-    Y.Win = Win;
 }, '3.0.0');
 /**
  * Extended interface for Node
@@ -1830,6 +1591,19 @@ YUI.add('nodeextras', function(Y) {
 
     Y.use('node');
 
+    var CLASS_NAME = 'className',
+        OFFSET_TOP = 'offsetTop',
+        POSITION = 'position',
+        FIXED = 'fixed',
+        RELATIVE = 'relative',
+        LEFT = 'left',
+        TOP = 'top',
+        NODE_TYPE = 'nodeType',
+        OFFSET_LEFT = 'offsetLeft',
+        GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
+        CONTAINS = 'contains',
+        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition';
+
     var regexCache = {};
     var getRegExp = function(str, flags) {
         flags = flags || '';
@@ -1839,16 +1613,36 @@ YUI.add('nodeextras', function(Y) {
         return regexCache[str + flags];
     };
 
-    var NodeExtras = {
+    Y.Node.getters({
+        /**
+         * Normalizes nodeInnerText and textContent. 
+         * @property text
+         * @type String
+         */
+        'text': function(node) {
+            return node.get('innerText') || node.get('textContent') || '';
+        },
+
+        /**
+         * A NodeList containing only HTMLElement child nodes 
+         * @property children
+         * @type NodeList
+         */
+        'children': function(node) {
+            return node.queryAll('> *');
+        }
+    });
+
+    Y.Node.methods({
         /**
          * Determines whether an HTMLElement has the given className.
          * @method hasClass
          * @param {String} className the class name to search for
          * @return {Boolean | Array} A boolean value or array of boolean values
          */
-        hasClass: function(className) {
+        hasClass: function(node, className) {
             var re = getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-            return re.test(this.get('className'));
+            return re.test(node.get(CLASS_NAME));
         },
 
         /**
@@ -1857,14 +1651,14 @@ YUI.add('nodeextras', function(Y) {
          * @param {String} className the class name to add to the class attribute
          * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
-        addClass: function(className) {
-            if (this.hasClass(className)) {
+        addClass: function(node, className) {
+            if (node.hasClass(className)) {
                 return; // already present
             }
             
             //Y.log('addClass adding ' + className, 'info', 'Node');
             
-            this.set('className', Y.lang.trim([this.get('className'), className].join(' ')));
+            node.set(CLASS_NAME, Y.lang.trim([node.get(CLASS_NAME), className].join(' ')));
         },
 
         /**
@@ -1873,19 +1667,19 @@ YUI.add('nodeextras', function(Y) {
          * @param {String} className the class name to remove from the class attribute
          * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
-        removeClass: function(className) {
-            if (!className || !this.hasClass(className)) {
+        removeClass: function(node, className) {
+            if (!className || !node.hasClass(className)) {
                 return; // not present
             }                 
 
             //Y.log('removeClass removing ' + className, 'info', 'Node');
             
-            this.set('className',
-                    Y.lang.trim(this.get('className').replace(getRegExp('(?:^|\\s+)' +
+            node.set(CLASS_NAME,
+                    Y.lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' ')));
 
-            if ( this.hasClass(className) ) { // in case of multiple adjacent
-                this.removeClass(className);
+            if ( node.hasClass(className) ) { // in case of multiple adjacent
+                node.removeClass(className);
             }
         },
 
@@ -1897,37 +1691,36 @@ YUI.add('nodeextras', function(Y) {
          * @param {String} newClassName the class name that will be replacing the old class name
          * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
-        replaceClass: function(newC, oldC) {
+        replaceClass: function(node, newC, oldC) {
             //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
         
-            if ( !this.hasClass(oldC) ) {
-                this.addClass(newC); // just add it if nothing to replace
+            if ( !node.hasClass(oldC) ) {
+                node.addClass(newC); // just add it if nothing to replace
                 return; // NOTE: return
             }
         
             var re = getRegExp('(?:^|\\s+)' + oldC + '(?:\\s+|$)');
-            this.set('className', this.get('className').replace(re, ' ' + newC + ' '));
+            node.set(CLASS_NAME, node.get(CLASS_NAME).replace(re, ' ' + newC + ' '));
 
-            if ( this.hasClass(oldC) ) { // in case of multiple adjacent
-                this.replaceClass(oldC, newC);
+            if ( node.hasClass(oldC) ) { // in case of multiple adjacent
+                node.replaceClass(oldC, newC);
             }
 
-            this.set('className', Y.lang.trim(this.get('className'))); // remove any trailing spaces
+            node.set(CLASS_NAME, Y.lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
         },
 
         /**
          * Returns the previous sibling that is an HTMLElement. 
          * Returns the nearest HTMLElement sibling if no method provided.
-         * @method getPreviousSiblingBy
+         * @method previous
          * @param {Function} method A boolean function used to test siblings
          * that receives the sibling node being tested as its only argument
          * @return {Node} Node instance or null if not found
          */
-        previousSibling: function(method) {
-            var node = this;
+        previous: function(node, method) {
             while (node) {
                 node = node.get('previousSibling');
-                if ( node && node.get('nodeType') === 1 ) {
+                if ( node && node.get(NODE_TYPE) === 1 ) {
                     return node;
                 }
             }
@@ -1937,16 +1730,15 @@ YUI.add('nodeextras', function(Y) {
         /**
          * Returns the next HTMLElement sibling that passes the boolean method. 
          * Returns the nearest HTMLElement sibling if no method provided.
-         * @method getNextSiblingBy
+         * @method next
          * @param {Function} method A boolean function used to test siblings
          * that receives the sibling node being tested as its only argument
          * @return {Object} HTMLElement or null if not found
          */
-        nextSibling: function(method) {
-            var node = this;
+        next: function(node, method) {
             while (node) {
                 node = node.get('nextSibling');
-                if ( node && node.get('nodeType') === 1 ) {
+                if ( node && node.get(NODE_TYPE) === 1 ) {
                     return node;
                 }
             }
@@ -1959,12 +1751,12 @@ YUI.add('nodeextras', function(Y) {
          * @param {String | HTMLElement} needle The possible descendent
          * @return {Boolean} Whether or not this node is an ancestor of needle
          */
-        contains: function(needle) {
-            needle = Y.Doc.get(needle);
-            if (this.hasMethod('contains'))  {
-                return this.invoke('contains', needle);
-            } else if ( this.hasMethod('compareDocumentPosition') ) { // gecko
-                return !!(this.invoke('compareDocumentPosition', needle) & 16);
+        contains: function(node, needle) {
+            needle = Y.Node.get(needle);
+            if (node.hasMethod(CONTAINS))  {
+                return node.invoke(CONTAINS, needle);
+            } else if ( node.hasMethod(COMPARE_DOCUMENT_POSITION) ) { // gecko
+                return !!(node.invoke(COMPARE_DOCUMENT_POSITION, needle) & 16);
             }
         },
 
@@ -1978,34 +1770,32 @@ YUI.add('nodeextras', function(Y) {
          TODO: test inDocument/display
          */
         getXY: function() {
-            if (Y.Doc.get().get('documentElement').getBoundingClientRect) {
-                return function() {
-                    var doc = this.get('ownerDocument'),
-                        body = doc.get('body'),
-                        scrollLeft = Math.max(doc.get('scrollLeft'), body.get('scrollLeft')),
-                        scrollTop = Math.max(doc.get('scrollTop'), body.get('scrollTop')),
-                        box = this.invoke('getBoundingClientRect'),
-                        xy = [box.left, box.top];
+            if (Y.Node.get('document').get('documentElement').hasMethod(GET_BOUNDING_CLIENT_RECT)) {
+                return function(node) {
+                    var scrollLeft = node.get('docScrollX');
+                        scrollTop = node.get('docScrollY');
+                        box = node.invoke(GET_BOUNDING_CLIENT_RECT),
+                        xy = [box[LEFT], box[TOP]];
 
-                    if ((scrollTop || scrollLeft) && this.getStyle('position') != 'fixed') { // no scroll accounting for fixed
+                    if ((scrollTop || scrollLeft) && node.getStyle(POSITION) != FIXED) { // no scroll accounting for fixed
                         xy[0] += scrollLeft;
                         xy[1] += scrollTop;
                     }
                     return xy;
                 };
             } else {
-                return function(xy) { // manually calculate by crawling up offsetParents
-                    var xy = [this.get('offsetLeft'), this.get('offsetTop')];
+                return function(node) { // manually calculate by crawling up offsetParents
+                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)];
 
-                    var parentNode = this;
+                    var parentNode = node;
                     while (parentNode = parentNode.get('offsetParent')) {
-                        xy[0] += parentNode.get('offsetLeft');
-                        xy[1] += parentNode.get('offsetTop');
+                        xy[0] += parentNode.get(OFFSET_LEFT);
+                        xy[1] += parentNode.get(OFFSET_TOP);
                     }
 
                     // account for any scrolled ancestors
-                    if (this.getStyle('position') != 'fixed') {
-                        parentNode = this;
+                    if (node.getStyle(POSITION) != FIXED) {
+                        parentNode = node;
                         var scrollTop, scrollLeft;
 
                         while (parentNode = parentNode.get('parentNode')) {
@@ -2031,54 +1821,52 @@ YUI.add('nodeextras', function(Y) {
          * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
          * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
          */
-        setXY: function(xy, noRetry) {
-            var pos = this.getStyle('position'),
+        setXY: function(node, xy, noRetry) {
+            var pos = node.getStyle(POSITION),
                 delta = [ // assuming pixels; if not we will have to retry
-                    parseInt( this.getStyle('left'), 10 ),
-                    parseInt( this.getStyle('top'), 10 )
+                    parseInt( node.getStyle(LEFT), 10 ),
+                    parseInt( node.getStyle(TOP), 10 )
                 ];
         
             if (pos == 'static') { // default to relative
-                pos = 'relative';
-                this.setStyle('position', pos);
+                pos = RELATIVE;
+                node.setStyle(POSITION, RELATIVE);
             }
 
-            var currentXY = this.getXY();
+            var currentXY = node.getXY();
             if (currentXY === false) { // has to be part of doc to have xy
                 YAHOO.log('xy failed: node not available', 'error', 'Node');
                 return false; 
             }
             
             if ( isNaN(delta[0]) ) {// in case of 'auto'
-                delta[0] = (pos == 'relative') ? 0 : this.get('offsetLeft');
+                delta[0] = (pos == RELATIVE) ? 0 : node.get(OFFSET_LEFT);
             } 
             if ( isNaN(delta[1]) ) { // in case of 'auto'
-                delta[1] = (pos == 'relative') ? 0 : this.get('offsetTop');
+                delta[1] = (pos == RELATIVE) ? 0 : node.get(OFFSET_TOP);
             } 
 
             if (pos[0] !== null) {
-                this.setStyle('left', xy[0] - currentXY[0] + delta[0] + 'px');
+                node.setStyle(LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
             }
 
             if (pos[1] !== null) {
-                this.setStyle('top', xy[1] - currentXY[1] + delta[1] + 'px');
+                node.setStyle(TOP, xy[1] - currentXY[1] + delta[1] + 'px');
             }
           
             if (!noRetry) {
-                var newXY = this.getXY();
+                var newXY = node.getXY();
 
                 // if retry is true, try one more time if we miss 
                if ( (xy[0] !== null && newXY[0] != xy[0]) || 
                     (xy[1] !== null && newXY[1] != xy[1]) ) {
-                   this.setXY(xy, true);
+                   node.setXY(xy, true);
                }
             }        
 
             Y.log('setXY setting position to ' + xy, 'info', 'Node');
         }
     
-    };
-
-    Y.mix(Y.Node, NodeExtras, 0, null, 4);
+    });
 
 }, '3.0.0');
