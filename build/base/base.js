@@ -182,7 +182,7 @@ YUI.add('base', function(Y) {
 
                 this._destroyed = false;
                 this._initialized = false;
-                this._eventHandlers = {};
+                this._eventHandles = {};
 
                 // Set name to current class, to use for events.
                 this.name = this.constructor.NAME;
