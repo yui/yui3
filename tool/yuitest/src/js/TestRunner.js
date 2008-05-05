@@ -346,6 +346,7 @@
                         if (this._cur == this._root){
                             this._cur.results.type = "report";
                             this._cur.results.timestamp = (new Date()).toLocaleString();
+                            this._cur.results.duration = (new Date()) - this._cur.results.duration;                            
                             this.fire(this.COMPLETE_EVENT, { results: this._cur.results});
                             this._cur = null;
                         } else {
@@ -658,6 +659,9 @@
         
                     //build the test tree
                     runner._buildTestTree();
+                                
+                    //set when the test started
+                    runner._root.results.duration = (new Date()).valueOf();
                     
                     //fire the begin event
                     runner.fire(runner.BEGIN_EVENT);
