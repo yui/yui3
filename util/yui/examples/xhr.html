@@ -17,6 +17,7 @@ body {
 </style>
 
 <script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript" src="../../build3x/io/io.js"></script>
 
 <!--begin custom header content for this example-->
 <style>
@@ -45,7 +46,7 @@ The following code example provides a step-by-step approach to creating a simple
 
 <script>
 
-var Y = YUI();
+var Y = YUI().use('dump', 'io');
 var div = Y.get('#container');
 
 var handleSuccess = function(id, o){

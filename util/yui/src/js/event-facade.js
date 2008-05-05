@@ -149,7 +149,7 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.cancelBubble = true;
             }
-
+            wrapper && wrapper.stopPropagation();
         };
 
         this.stopImmediatePropagation = function() {
@@ -163,6 +163,7 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.returnValue = false;
             }
+            wrapper && wrapper.preventDefault();
         };
 
         // stop event

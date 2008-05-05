@@ -1,32 +1,29 @@
 YUI.add("event-ready", function(Y) {
 
-    var E = Y.Event;
+    if (Y === YUI) {
+        return;
+    }
 
-    E.Custom = Y.CustomEvent;
-    E.Subscriber = Y.Subscriber;
+    var env = YUI.env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
 
-    /**
-     * Y.Event.on is an alias for addListener
-     * @method on
-     * @see addListener
-     * @static
-     */
-    E.attach = function(type, fn, el, data, context) {
-        var a = Y.array(arguments, 0, true),
-            oEl = a.splice(2, 1);
-        a.unshift(oEl[0]);
-        return E.addListener.apply(E, a);
-    };
+    if (!env._ready) {
 
-    E.detach = function(type, fn, el, data, context) {
-        return E.removeListener(el, type, fn, data, context);
-    };
+        env._ready = function() {
+            if (!env.DOMReady) {
+                env.DOMReady=true;
 
-    // only execute DOMReady once
-    if (Y !== YUI) {
-        YUI.Event.onDOMReady(E._ready);
-    } else {
+                // Fire the content ready custom event
+                // E.DOMReadyEvent.fire();
 
+                // Remove the DOMContentLoaded (FF/Opera)
+
+                if (D.removeEventListener) {
+                    D.removeEventListener("DOMContentLoaded", env._ready, false);
+                }
+            }
+        };
+
+        // create custom event
 
         /////////////////////////////////////////////////////////////
         // DOMReady
@@ -38,54 +35,57 @@ YUI.add("event-ready", function(Y) {
         // it is safe to do so.
         if (Y.ua.ie) {
 
-            // Process onAvailable/onContentReady items when when the 
-            // DOM is ready.
-            Y.Event.onDOMReady(
-                    Y.Event._tryPreloadAttach,
-                    Y.Event, true);
-
-            E._dri = setInterval(function() {
-                var n = document.createElement('p');  
+            env._dri = setInterval(function() {
+                var n = D.createElement('p');  
                 try {
                     // throws an error if doc is not ready
                     n.doScroll('left');
-                    clearInterval(E._dri);
-                    E._dri = null;
-                    E._ready();
+                    clearInterval(env._dri);
+                    env._dri = null;
+                    env._ready();
                     n = null;
                 } catch (ex) { 
                     n = null;
                 }
-            }, E.POLL_INTERVAL); 
+            }, POLL_INTERVAL); 
 
         
         // The document's readyState in Safari currently will
         // change to loaded/complete before images are loaded.
         } else if (Y.ua.webkit && Y.ua.webkit < 525) {
 
-            E._dri = setInterval(function() {
-                var rs=document.readyState;
+            env._dri = setInterval(function() {
+                var rs=D.readyState;
                 if ("loaded" == rs || "complete" == rs) {
-                    clearInterval(E._dri);
-                    E._dri = null;
-                    E._ready();
+                    clearInterval(env._dri);
+                    env._dri = null;
+                    env._ready();
                 }
-            }, E.POLL_INTERVAL); 
+            }, POLL_INTERVAL); 
 
         // FireFox and Opera: These browsers provide a event for this
         // moment.  The latest WebKit releases now support this event.
         } else {
-
-            E.nativeAdd(document, "DOMContentLoaded", E._ready);
-
+            D.addEventListener("DOMContentLoaded", env._ready, false);
         }
+
         /////////////////////////////////////////////////////////////
 
-        E._tryPreloadAttach();
     }
 
-    // for the moment each instance will get its own load/unload listeners
-    E.nativeAdd(window, "load", E._load);
-    E.nativeAdd(window, "unload", E._unload);
+    Y.publish('event:ready', {
+        fireOnce: true
+    });
+
+    var yready = function() {
+        Y.fire('event:ready');
+    };
+
+    if (env.DOMReady) {
+        yready();
+    } else {
+        Y.before(yready, env, "_ready");
+    }
+
 
 }, "3.0.0");

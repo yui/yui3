@@ -48,7 +48,7 @@ YUI.add("state", function(Y) {
                     if (d[key] && (name in d[key])) {
                         delete d[key][name];
                     }
-                }
+                };
 
             if (L.isString(o)) {
                 del(o);

@@ -234,9 +234,27 @@
                 <span class="nx">ce</span><span class="o">.</span><span class="nx">fireOnce</span> <span class="o">=</span> <span class="nx">opts</span><span class="o">.</span><span class="nx">fireOnce</span><span class="o">;</span>
             <span class="o">}</span>
 
+            <span class="nx">ce</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="nx">opts</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
+
             <span class="k">return</span> <span class="nx">events</span><span class="o">[</span><span class="nx">p_type</span><span class="o">];</span>
         <span class="o">},</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Registers another Event.Target as a bubble target.  Bubble order</span>
+<span class="c">         * is determined by the order registered.  Multiple targets can</span>
+<span class="c">         * be specified.</span>
+<span class="c">         */</span>
+        <span class="nx">addTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span> <span class="o">||</span> <span class="o">{};</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Removes a bubble target</span>
+<span class="c">         */</span>
+        <span class="nx">removeTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)];</span>
+        <span class="o">},</span>
 
        <span class="c">/**</span>
 <span class="c">         * Fire a custom event by name.  The callback functions will be executed</span>
@@ -261,18 +279,29 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span><span class="o">[</span><span class="nx">p_type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">p_type</span><span class="o">);</span>
 
-            <span class="c">//if (!ce) {</span>
-<span class="c">// Y.log(p_type + &quot;event fired before it was created.&quot;);</span>
-<span class="c"></span>                <span class="c">// return null;</span>
-<span class="c"></span>                <span class="c">// ce = this.publish(p_type);</span>
+            <span class="c">// the originalTarget is what the listener was bound to</span>
+<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+
+            <span class="c">// the target is what started the bubble</span>
+<span class="c"></span>            <span class="c">// if (!ce.target) {</span>
+<span class="c"></span>                <span class="c">// ce.target = this;</span>
 <span class="c"></span>            <span class="c">// }</span>
 <span class="c"></span>
-            <span class="c">// var args = [];</span>
-<span class="c"></span>            <span class="c">// for (var i=1; i&lt;arguments.length; ++i) {</span>
-<span class="c"></span>                <span class="c">// args.push(arguments[i]);</span>
-<span class="c"></span>            <span class="c">// }</span>
+            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">)),</span>
+                <span class="nx">targs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">;</span>
+
+            <span class="c">// bubble</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c">// @TODO need to provide the event target to the bubble target</span>
+<span class="c"></span>                    <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="c">// clear target for next fire()</span>
+<span class="c"></span>            <span class="c">// ce.target = null;</span>
 <span class="c"></span>
-            <span class="k">return</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+            <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -392,6 +421,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

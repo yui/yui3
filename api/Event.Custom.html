@@ -140,6 +140,23 @@ instance.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_defaultFn">defaultFn</a>
+                                        <code>- Function</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The default function to execute after event listeners
+have fire, but only if the default action was not
+prevented.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_fired">fired</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -178,6 +195,22 @@ immediately.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_host">host</a>
+                                        <code>- Event.Target</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Specifies the host for this custom event.  This is used
+to enable event bubbling
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_lastError">lastError</a>
                                         <code>- Error</code>
                                     </h4>
@@ -186,6 +219,22 @@ immediately.
                                             In order to make it possible to execute the rest of the subscriber
 stack when one thows an exception, the subscribers exceptions are
 caught.  The most recent exception is stored in this property
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_prevented">prevented</a>
+                                        <code>- int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag for preventDefault that is modified during fire().
+if it is not 0, the default behavior for this event
                                         </div>
                                     </div>
      
@@ -819,6 +868,7 @@ the execution context.
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
@@ -842,13 +892,22 @@ the execution context.
                                 <li class=""><a href="#property_context">context</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_defaultFn">defaultFn</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_fired">fired</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_fireOnce">fireOnce</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_host">host</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_lastError">lastError</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_prevented">prevented</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_signature">signature</a>

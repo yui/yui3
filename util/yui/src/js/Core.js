@@ -165,7 +165,7 @@ YUI.add("core", function(Y) {
                         // otherwise apply the property only if overwrite
                         // is specified or the receiver doesn't have one.
                         // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !fr[i])) {
+                        } else if (!arr && (ov || !(i in fr))) {
                             // Y.log('hash: ' + i);
                             fr[i] = fs[i];
                         // if merge is specified and the receiver is an array,
@@ -413,7 +413,7 @@ YUI.add("core", function(Y) {
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {
-        return Y.Doc.get.apply(Y.Doc, arguments);
+        return Y.Node.get.apply(Y.Node, arguments);
     };
 
     // DOM events and custom events

@@ -234,11 +234,11 @@ YUI.add("event-dom", function(Y) {
                  * @static
                  */
                 onDOMReady: function(p_fn) {
-                    var ev = Y.Event.DOMReadyEvent;
-                    ev.subscribe.apply(ev, arguments);
-                    // var a = Y.array(arguments, 0, true);
-                    // a.unshift('event:ready');
-                    // Y.on.apply(Y, a);
+                    // var ev = Y.Event.DOMReadyEvent;
+                    // ev.subscribe.apply(ev, arguments);
+                    var a = Y.array(arguments, 0, true);
+                    a.unshift('event:ready');
+                    Y.on.apply(Y, a);
                 },
 
                 /**
@@ -332,7 +332,8 @@ YUI.add("event-dom", function(Y) {
                     if (!ce) {
                         // create CE wrapper
                         ce = Y.publish(key, {
-                            silent: true
+                            silent: true,
+                            host: this
                         });
 
                         // cache the dom event details in the custom event
@@ -508,14 +509,14 @@ YUI.add("event-dom", function(Y) {
 
                 },
 
-                /**
+                /*
                  * Custom event the fires when the dom is initially usable
                  * @event DOMReadyEvent
                  */
                 // DOMReadyEvent: new Y.CustomEvent("event:ready", this),
-                DOMReadyEvent: Y.publish("event:ready", this, {
-                    fireOnce: true
-                }),
+                // DOMReadyEvent: Y.publish("event:ready", this, {
+                    // fireOnce: true
+                // }),
 
                 /**
                  * hook up any deferred listeners
@@ -530,7 +531,8 @@ YUI.add("event-dom", function(Y) {
                         var E = Y.Event;
 
                         // Just in case DOMReady did not go off for some reason
-                        E._ready();
+                        // E._ready();
+                        Y.fire('event:ready');
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the
@@ -541,25 +543,25 @@ YUI.add("event-dom", function(Y) {
                     }
                 },
 
-                /**
+                /*
                  * Fires the DOMReady event listeners the first time the document is
                  * usable.
                  * @method _ready
                  * @static
                  * @private
                  */
-                _ready: function(e) {
-                    var E = Y.Event;
-                    if (!E.DOMReady) {
-                        E.DOMReady=true;
+                // _ready: function(e) {
+                //     var E = Y.Event;
+                //     if (!E.DOMReady) {
+                //         E.DOMReady=true;
 
-                        // Fire the content ready custom event
-                        E.DOMReadyEvent.fire();
+                //         // Fire the content ready custom event
+                //         E.DOMReadyEvent.fire();
 
-                        // Remove the DOMContentLoaded (FF/Opera)
-                        E.nativeRemove(document, "DOMContentLoaded", E._ready);
-                    }
-                },
+                //         // Remove the DOMContentLoaded (FF/Opera)
+                //         E.nativeRemove(document, "DOMContentLoaded", E._ready);
+                //     }
+                // },
 
                 /**
                  * Polling function that runs before the onload event fires, 
@@ -786,7 +788,38 @@ YUI.add("event-dom", function(Y) {
 
         }();
 
-        Y.Event.Custom = Y.CustomEvent;
-        Y.Event.Target = Y.EventTarget;
+        var E = Y.Event;
+
+        // Process onAvailable/onContentReady items when when the DOM is ready in IE
+        if (Y.ua.ie) {
+            Y.on('event:ready', E._tryPreloadAttach, E, true);
+        }
+
+        E.Custom = Y.CustomEvent;
+        E.Subscriber = Y.Subscriber;
+        E.Target = Y.EventTarget;
+
+        /**
+         * Y.Event.on is an alias for addListener
+         * @method on
+         * @see addListener
+         * @static
+         */
+        E.attach = function(type, fn, el, data, context) {
+            var a = Y.array(arguments, 0, true),
+                oEl = a.splice(2, 1);
+            a.unshift(oEl[0]);
+            return E.addListener.apply(E, a);
+        };
+
+        E.detach = function(type, fn, el, data, context) {
+            return E.removeListener(el, type, fn, data, context);
+        };
+
+        // for the moment each instance will get its own load/unload listeners
+        E.nativeAdd(window, "load", E._load);
+        E.nativeAdd(window, "unload", E._unload);
+
+        E._tryPreloadAttach();
 
 }, "3.0.0");

@@ -272,12 +272,12 @@
 <span class="c">                 * @static</span>
 <span class="c">                 */</span>
                 <span class="nx">onDOMReady</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p_fn</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">DOMReadyEvent</span><span class="o">;</span>
-                    <span class="nx">ev</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                    <span class="c">// var a = Y.array(arguments, 0, true);</span>
-<span class="c"></span>                    <span class="c">// a.unshift(&#39;event:ready&#39;);</span>
-<span class="c"></span>                    <span class="c">// Y.on.apply(Y, a);</span>
-<span class="c"></span>                <span class="o">},</span>
+                    <span class="c">// var ev = Y.Event.DOMReadyEvent;</span>
+<span class="c"></span>                    <span class="c">// ev.subscribe.apply(ev, arguments);</span>
+<span class="c"></span>                    <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                    <span class="nx">a</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="s1">&#39;event:ready&#39;</span><span class="o">);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+                <span class="o">},</span>
 
                 <span class="c">/**</span>
 <span class="c">                 * Appends an event handler</span>
@@ -370,7 +370,8 @@
                     <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
                         <span class="c">// create CE wrapper</span>
 <span class="c"></span>                        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">key</span><span class="o">,</span> <span class="o">{</span>
-                            <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span>
+                            <span class="nx">silent</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                            <span class="nx">host</span><span class="o">:</span> <span class="k">this</span>
                         <span class="o">});</span>
 
                         <span class="c">// cache the dom event details in the custom event</span>
@@ -546,15 +547,15 @@
 
                 <span class="o">},</span>
 
-                <span class="c">/**</span>
+                <span class="c">/*</span>
 <span class="c">                 * Custom event the fires when the dom is initially usable</span>
 <span class="c">                 * @event DOMReadyEvent</span>
 <span class="c">                 */</span>
                 <span class="c">// DOMReadyEvent: new Y.CustomEvent(&quot;event:ready&quot;, this),</span>
-<span class="c"></span>                <span class="nx">DOMReadyEvent</span><span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="s2">&quot;event:ready&quot;</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="nx">fireOnce</span><span class="o">:</span> <span class="kc">true</span>
-                <span class="o">}),</span>
-
+<span class="c"></span>                <span class="c">// DOMReadyEvent: Y.publish(&quot;event:ready&quot;, this, {</span>
+<span class="c"></span>                    <span class="c">// fireOnce: true</span>
+<span class="c"></span>                <span class="c">// }),</span>
+<span class="c"></span>
                 <span class="c">/**</span>
 <span class="c">                 * hook up any deferred listeners</span>
 <span class="c">                 * @method _load</span>
@@ -568,7 +569,8 @@
                         <span class="k">var</span> <span class="nx">E</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">;</span>
 
                         <span class="c">// Just in case DOMReady did not go off for some reason</span>
-<span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">_ready</span><span class="o">();</span>
+<span class="c"></span>                        <span class="c">// E._ready();</span>
+<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;event:ready&#39;</span><span class="o">);</span>
 
                         <span class="c">// Available elements may not have been detected before the</span>
 <span class="c"></span>                        <span class="c">// window load event fires. Try to find them now so that the</span>
@@ -579,26 +581,26 @@
                     <span class="o">}</span>
                 <span class="o">},</span>
 
-                <span class="c">/**</span>
+                <span class="c">/*</span>
 <span class="c">                 * Fires the DOMReady event listeners the first time the document is</span>
 <span class="c">                 * usable.</span>
 <span class="c">                 * @method _ready</span>
 <span class="c">                 * @static</span>
 <span class="c">                 * @private</span>
 <span class="c">                 */</span>
-                <span class="nx">_ready</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">E</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(!</span><span class="nx">E</span><span class="o">.</span><span class="nx">DOMReady</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">E</span><span class="o">.</span><span class="nx">DOMReady</span><span class="o">=</span><span class="kc">true</span><span class="o">;</span>
-
-                        <span class="c">// Fire the content ready custom event</span>
-<span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">DOMReadyEvent</span><span class="o">.</span><span class="nx">fire</span><span class="o">();</span>
-
-                        <span class="c">// Remove the DOMContentLoaded (FF/Opera)</span>
-<span class="c"></span>                        <span class="nx">E</span><span class="o">.</span><span class="nx">nativeRemove</span><span class="o">(</span><span class="nb">document</span><span class="o">,</span> <span class="s2">&quot;DOMContentLoaded&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_ready</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">},</span>
-
+                <span class="c">// _ready: function(e) {</span>
+<span class="c"></span>                <span class="c">//     var E = Y.Event;</span>
+<span class="c"></span>                <span class="c">//     if (!E.DOMReady) {</span>
+<span class="c"></span>                <span class="c">//         E.DOMReady=true;</span>
+<span class="c"></span>
+                <span class="c">//         // Fire the content ready custom event</span>
+<span class="c"></span>                <span class="c">//         E.DOMReadyEvent.fire();</span>
+<span class="c"></span>
+                <span class="c">//         // Remove the DOMContentLoaded (FF/Opera)</span>
+<span class="c"></span>                <span class="c">//         E.nativeRemove(document, &quot;DOMContentLoaded&quot;, E._ready);</span>
+<span class="c"></span>                <span class="c">//     }</span>
+<span class="c"></span>                <span class="c">// },</span>
+<span class="c"></span>
                 <span class="c">/**</span>
 <span class="c">                 * Polling function that runs before the onload event fires, </span>
 <span class="c">                 * attempting to attach to DOM Nodes as soon as they are </span>
@@ -824,8 +826,39 @@
 
         <span class="o">}();</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">;</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">E</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">;</span>
+
+        <span class="c">// Process onAvailable/onContentReady items when when the DOM is ready in IE</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;event:ready&#39;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_tryPreloadAttach</span><span class="o">,</span> <span class="nx">E</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="nx">E</span><span class="o">.</span><span class="nx">Custom</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">;</span>
+        <span class="nx">E</span><span class="o">.</span><span class="nx">Subscriber</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Subscriber</span><span class="o">;</span>
+        <span class="nx">E</span><span class="o">.</span><span class="nx">Target</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Y.Event.on is an alias for addListener</span>
+<span class="c">         * @method on</span>
+<span class="c">         * @see addListener</span>
+<span class="c">         * @static</span>
+<span class="c">         */</span>
+        <span class="nx">E</span><span class="o">.</span><span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span>
+                <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">2</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">oEl</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">addListener</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">};</span>
+
+        <span class="nx">E</span><span class="o">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">el</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">removeListener</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">context</span><span class="o">);</span>
+        <span class="o">};</span>
+
+        <span class="c">// for the moment each instance will get its own load/unload listeners</span>
+<span class="c"></span>        <span class="nx">E</span><span class="o">.</span><span class="nx">nativeAdd</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_load</span><span class="o">);</span>
+        <span class="nx">E</span><span class="o">.</span><span class="nx">nativeAdd</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s2">&quot;unload&quot;</span><span class="o">,</span> <span class="nx">E</span><span class="o">.</span><span class="nx">_unload</span><span class="o">);</span>
+
+        <span class="nx">E</span><span class="o">.</span><span class="nx">_tryPreloadAttach</span><span class="o">();</span>
 
 <span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
 </pre></div>
@@ -875,6 +908,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class="selected"><a href="event-dom.js.html">event-dom.js</a></li>

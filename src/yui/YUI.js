@@ -46,7 +46,12 @@ YUI.prototype = {
     //    filter
     //    win
     //    doc
-    //    exception/log notification
+    //    debug
+    //    useConsole
+    //    throwFail
+    //    pollInterval
+    //    compat
+    //    core
     // }
 
         o = o || {};
@@ -64,7 +69,7 @@ YUI.prototype = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
-            _pre: 'yui-uid',
+            _pre: 'yuid',
             _used: {}
         };
 
@@ -174,7 +179,10 @@ YUI.prototype = {
 
         // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
-            return Y.use.apply(Y, mods);
+            //return Y.use.apply(Y, Y.object.keys(mods));
+            for (var k in mods) {
+                Y.use(k);
+            }
         }
 
         var missing = [], r = [], f = function(name) {
@@ -313,7 +321,7 @@ YUI.prototype = {
                 console[f](m);
             }
 
-            this.fire('yui:log', msg, cat, src);
+            this.fire && this.fire('yui:log', msg, cat, src);
         }
 
         return this;
@@ -354,5 +362,6 @@ YUI.prototype = {
 
     // set up the environment
     Y._init();
+
 
 })();

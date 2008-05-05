@@ -197,9 +197,27 @@ ce = new Y.CustomEvent(p_type, context, silent);
                 ce.fireOnce = opts.fireOnce;
             }
 
+            ce.host = opts.host || ce.host || this;
+
             return events[p_type];
         },
 
+        /**
+         * Registers another Event.Target as a bubble target.  Bubble order
+         * is determined by the order registered.  Multiple targets can
+         * be specified.
+         */
+        addTarget: function(o) {
+            this.__yui_targets = this.__yui_targets || {};
+            this.__yui_targets[Y.stamp(o)] = o;
+        },
+
+        /**
+         * Removes a bubble target
+         */
+        removeTarget: function(o) {
+            delete this.__yui_targets[Y.stamp(o)];
+        },
 
        /**
          * Fire a custom event by name.  The callback functions will be executed
@@ -224,18 +242,29 @@ ce = new Y.CustomEvent(p_type, context, silent);
             this.__yui_events = this.__yui_events || {};
             var ce = this.__yui_events[p_type] || this.publish(p_type);
 
-            //if (!ce) {
-// Y.log(p_type + "event fired before it was created.");
-                // return null;
-                // ce = this.publish(p_type);
+            // the originalTarget is what the listener was bound to
+            ce.originalTarget = this;
+
+            // the target is what started the bubble
+            // if (!ce.target) {
+                // ce.target = this;
             // }
 
-            // var args = [];
-            // for (var i=1; i<arguments.length; ++i) {
-                // args.push(arguments[i]);
-            // }
+            var ret = ce.fire.apply(ce, Y.array(arguments, 1, true)),
+                targs = this.__yui_targets;
 
-            return ce.fire.apply(ce, Y.array(arguments, 1, true));
+            // bubble
+            if (!ce.stopped && targs) {
+                for (var i in targs) {
+                    // @TODO need to provide the event target to the bubble target
+                    targs[i].fire.apply(arguments);
+                }
+            }
+
+            // clear target for next fire()
+            // ce.target = null;
+
+            return ret;
         },
 
         /**

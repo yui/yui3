@@ -14,7 +14,7 @@
 (function() {
 
     //var Y = YUI().use('event', 'dom');
-    var Y = YUI();
+    var Y = YUI().use('dump');
 
     Y.Event.onDOMReady(function() {
         Y.log("onDOMReady fired");
@@ -34,9 +34,9 @@
 
     Y.log('ret: ' + ret);
 
-    Y.on('mouseover', function(e) {
-        Y.log(this.id + " mouseover: " + e.target);
-    }, Y.Dom.getElementsByClassName('button'));
+    // Y.on('mouseover', function(e) {
+        // Y.log(this.id + " mouseover: " + e.target);
+    // }, Y.Node.getElementsByClassName('button'));
 
     Y.on('TEST:EVENT', function() {
         Y.log('test event subscriber success: ' + Y.array(arguments));

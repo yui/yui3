@@ -36,20 +36,54 @@
                         <style>
                             #doc3 #classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;yui&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; setup complete) .&#39;</span><span class="o">);</span>
-<span class="o">}</span> <span class="o">,</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">,</span> <span class="o">{</span>
-    <span class="c">// the following will be bound automatically when this code is loaded</span>
-<span class="c"></span>    <span class="nx">use</span><span class="o">:</span> <span class="o">[</span><span class="s2">&quot;lang&quot;</span><span class="o">,</span> <span class="s2">&quot;array&quot;</span><span class="o">,</span> <span class="s2">&quot;core&quot;</span><span class="o">,</span> <span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="s2">&quot;ua&quot;</span><span class="o">,</span> <span class="s2">&quot;dump&quot;</span><span class="o">,</span> <span class="s2">&quot;substitute&quot;</span><span class="o">,</span> <span class="s2">&quot;later&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;compat&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;event-target&quot;</span><span class="o">,</span> <span class="s2">&quot;event-custom&quot;</span><span class="o">,</span> <span class="s2">&quot;event-dom&quot;</span><span class="o">,</span> <span class="s2">&quot;event-facade&quot;</span><span class="o">,</span> <span class="s2">&quot;event-ready&quot;</span><span class="o">,</span>
-          <span class="s2">&quot;node&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;io&quot;</span><span class="o">,</span> 
-          <span class="s2">&quot;get&quot;</span><span class="o">]</span>
-<span class="o">});</span>
+<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-<span class="c">// Bind the core modules to the YUI global</span>
-<span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
+    <span class="k">var</span> <span class="nx">core</span> <span class="o">=</span> <span class="o">[],</span>
+
+    <span class="nx">M</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">;</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; setup complete) .&#39;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">core</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">;</span>
+
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">compat</span> <span class="o">||</span> <span class="nx">Y</span> <span class="o">!==</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="nx">core</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;lang&quot;</span><span class="o">,</span> <span class="s2">&quot;array&quot;</span><span class="o">,</span> <span class="s2">&quot;core&quot;</span><span class="o">,</span> <span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="s2">&quot;ua&quot;</span><span class="o">,</span> <span class="s2">&quot;later&quot;</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">core</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;compat&quot;</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="nx">core</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span>
+              <span class="s2">&quot;aop&quot;</span><span class="o">,</span> 
+              <span class="s2">&quot;event-custom&quot;</span><span class="o">,</span> 
+              <span class="s2">&quot;event-target&quot;</span><span class="o">,</span> 
+              <span class="s2">&quot;event-ready&quot;</span><span class="o">,</span>
+              <span class="s2">&quot;event-dom&quot;</span><span class="o">,</span> <span class="s2">&quot;event-facade&quot;</span><span class="o">,</span>
+              <span class="s2">&quot;node&quot;</span><span class="o">,</span>
+              <span class="c">// &quot;io&quot;, </span>
+<span class="c"></span>              <span class="c">// &quot;dump&quot;, </span>
+<span class="c"></span>              <span class="c">// &quot;substitute&quot;,</span>
+<span class="c"></span>              <span class="s2">&quot;get&quot;</span>
+              <span class="o">);</span>
+
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">core</span><span class="o">);</span>
+    <span class="o">};</span>
+     
+    <span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;yui&quot;</span><span class="o">,</span> <span class="nx">M</span><span class="o">,</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
+    
+    <span class="c">// {</span>
+<span class="c"></span>        <span class="c">// the following will be bound automatically when this code is loaded</span>
+<span class="c"></span>      <span class="c">//   use: core</span>
+<span class="c"></span>    <span class="c">// });</span>
+<span class="c"></span>
+<span class="o">})();</span>
 </pre></div>
                     </div>
 			</div>
@@ -97,6 +131,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

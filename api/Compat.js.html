@@ -39,6 +39,9 @@
 <div class="highlight" ><pre><span class="c">// Compatibility layer for 2.x</span>
 <span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;compat&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
+    <span class="c">// Bind the core modules to the YUI global</span>
+<span class="c"></span>    <span class="nx">YUI</span><span class="o">.</span><span class="nx">_setup</span><span class="o">();</span>
+
     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">===</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
         
         <span class="c">// get any existing YAHOO obj props</span>
@@ -194,6 +197,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class="selected"><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

@@ -206,3 +206,65 @@ Unsubscribe/detach still support the old method of detaching events
 
 Event isn't current handling NodeList collections correctly, so Y.Doc.query() can't currently be used to bind multiple listeners
 
+stopImmediatePropagation
+
+///////////////////////////////////////////////////////////////////////
+
+config option for compat layer
+
+querystring param for debug config
+
+dispatch dom events through CE interface
+    can execute listeners, but is a mock event object enough?
+    stopProbagation and preventDefault wouldn't work
+
+defaultFn, addTarget
+
+Wrap all YUI in anonymous function to secure config options?
+
+CE before/after
+
+Make
+
+///////////////////////////////////////////////////////////////////////
+
+Untrusted Metro instance do not get:
+
+    io
+
+    get
+
+    node
+
+    _setup -- move to compatability layer?
+
+    Deliver a version with only the stuff the untrusted version uses
+    
+    Make the initial YUI 'use' set a config
+
+///////////////////////////////////////////////////////////////////////
+
+Handle yui:log recursion. 
+    Silent flag needs to make subscriber generated custom events silent
+    // Event source needed to protect against recursive calls?
+
+//////////////////////////////////////////////////////////////////////
+
+DOMReady refactored so that the YUI global does not have to be event enabled
+
+Y.use('*') works
+
+io is no longer included in yui.js
+
+dump and substitute are still included in yui.js, but they are not bound by default
+
+the compatibility layer is still included in yui.js, but by default it is not bound
+
+added a config option for 'compat', default off.  This hooks up the compatibility layer
+set to true.
+
+The YUI global does not get the core library bound to it unless compat is set to true
+
+added a config option for 'core', default undefined.  This is an array that will
+supplant the array of core YUI modules bound in Init.js.
+

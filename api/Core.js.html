@@ -203,7 +203,7 @@
 <span class="c"></span>                        <span class="c">// otherwise apply the property only if overwrite</span>
 <span class="c"></span>                        <span class="c">// is specified or the receiver doesn&#39;t have one.</span>
 <span class="c"></span>                        <span class="c">// @TODO make sure the &#39;arr&#39; check isn&#39;t desructive</span>
-<span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">arr</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
+<span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">arr</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">fr</span><span class="o">)))</span> <span class="o">{</span>
                             <span class="c">// Y.log(&#39;hash: &#39; + i);</span>
 <span class="c"></span>                            <span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                         <span class="c">// if merge is specified and the receiver is an array,</span>
@@ -451,7 +451,7 @@
 <span class="c"></span>
     <span class="c">// Overload specs: element/selector?/widget?</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Doc</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Doc</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">// DOM events and custom events</span>
@@ -582,6 +582,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class="selected"><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

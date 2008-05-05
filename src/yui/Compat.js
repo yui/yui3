@@ -1,6 +1,9 @@
 // Compatibility layer for 2.x
 YUI.add("compat", function(Y) {
 
+    // Bind the core modules to the YUI global
+    YUI._setup();
+
     if (Y === YUI) {
         
         // get any existing YAHOO obj props

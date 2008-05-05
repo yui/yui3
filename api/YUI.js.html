@@ -84,7 +84,12 @@
 <span class="c"></span>    <span class="c">//    filter</span>
 <span class="c"></span>    <span class="c">//    win</span>
 <span class="c"></span>    <span class="c">//    doc</span>
-<span class="c"></span>    <span class="c">//    exception/log notification</span>
+<span class="c"></span>    <span class="c">//    debug</span>
+<span class="c"></span>    <span class="c">//    useConsole</span>
+<span class="c"></span>    <span class="c">//    throwFail</span>
+<span class="c"></span>    <span class="c">//    pollInterval</span>
+<span class="c"></span>    <span class="c">//    compat</span>
+<span class="c"></span>    <span class="c">//    core</span>
 <span class="c"></span>    <span class="c">// }</span>
 <span class="c"></span>
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
@@ -102,7 +107,7 @@
             <span class="c">// @todo expand the new module metadata</span>
 <span class="c"></span>            <span class="nx">mods</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_idx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
-            <span class="nx">_pre</span><span class="o">:</span> <span class="s1">&#39;yui-uid&#39;</span><span class="o">,</span>
+            <span class="nx">_pre</span><span class="o">:</span> <span class="s1">&#39;yuid&#39;</span><span class="o">,</span>
             <span class="nx">_used</span><span class="o">:</span> <span class="o">{}</span>
         <span class="o">};</span>
 
@@ -212,7 +217,10 @@
 
         <span class="c">// YUI().use(&#39;*&#39;); // assumes you need everything you&#39;ve included</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">mods</span><span class="o">);</span>
+            <span class="c">//return Y.use.apply(Y, Y.object.keys(mods));</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">missing</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -351,7 +359,7 @@
                 <span class="nx">console</span><span class="o">[</span><span class="nx">f</span><span class="o">](</span><span class="nx">m</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:log&#39;</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:log&#39;</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -392,6 +400,7 @@
 
     <span class="c">// set up the environment</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
+
 
 <span class="o">})();</span>
 </pre></div>
@@ -441,6 +450,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

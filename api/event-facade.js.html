@@ -187,7 +187,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">e</span><span class="o">.</span><span class="nx">cancelBubble</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
-
+            <span class="nx">wrapper</span> <span class="o">&amp;&amp;</span> <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
         <span class="o">};</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -201,6 +201,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">e</span><span class="o">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
+            <span class="nx">wrapper</span> <span class="o">&amp;&amp;</span> <span class="nx">wrapper</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
         <span class="o">};</span>
 
         <span class="c">// stop event</span>
@@ -259,6 +260,7 @@
                                 <li class=""><a href="Array.js.html">Array.js</a></li>
                                 <li class=""><a href="Compat.js.html">Compat.js</a></li>
                                 <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class=""><a href="Do.js.html">Do.js</a></li>
                                 <li class=""><a href="Dump.js.html">Dump.js</a></li>
                                 <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
                                 <li class=""><a href="event-dom.js.html">event-dom.js</a></li>

@@ -14,11 +14,9 @@
 (function() {
 
 
-
-
     //var Y = YUI().use('event', 'dom');
     //var Y = YUI().use('node');
-    var Y = YUI();
+    var Y = YUI().use('dump', 'substitute', 'compat');
 
     Y.on('yui:log', function(msg) {
         var d=document, b=d.body, n=d.createElement("div");
@@ -58,9 +56,9 @@
 
     Y.log('ret: ' + Y.lang.dump(ret, 1));
 
-    var buts = Y.Doc.queryAll('.button');
 
     /*
+    var buts = Y.Node.queryAll('.button');
 
     Y.log('queryAll buttons: ' + Y.lang.dump(buts.get('length')));
 
@@ -76,8 +74,8 @@
     Y.on('mouseover', function(e) {
         // alert('asdf');
         Y.log(this.id || this.get('id') + " mouseover: " + e.target);
-    },  Y.Doc.queryAll('.button'));
-    // },  Y.Selector.query('.button'));
+    // },  Y.Node.queryAll('.button'));
+    },  Y.Selector.query('.button'));
     // },  ['#button1', '#button2']);
 
     /*
@@ -118,6 +116,13 @@
     }
     */
 
+    //if (Object.prototype.hasOwnProperty)  {
+        //alert('asdf');
+    //}
+    //window.blah ="ad"
+    //alert(window.hasOwnProperty('blah'));
+    //alert(window.hasOwnProperty('document'));
+    //alert(Y.object.owns(window, 'blah'));
 })();
 
 </script>
