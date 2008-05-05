@@ -691,30 +691,28 @@ YUI.add('node', function(Y) {
         PARENT_WINDOW = 'parentWindow',
         DOCUMENT_ELEMENT = 'documentElement',
         NODE_NAME = 'nodeName',
+        NODE_TYPE = 'nodeType',
         COMPAT_MODE = 'compatMode',
         PARENT_NODE = 'parentNode',
         SCROLL_TOP = 'scrollTop',
-        SCROLL_LEFT = 'scrollLeft',
-        NODE_TYPE = 'nodeType';
+        SCROLL_LEFT = 'scrollLeft';
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
-    Y.use('selector'); // TODO: need this?  should be able to "use" from "add"
     var Selector = Y.Selector;
     var _nodes = {};
     var _styles = {};
 
     // private factory
     var wrap = function(node) {
-        if (!node) {
-            return null;
+        var ret = null;
+        if (node && NODE_TYPE in node) {
+            ret = new Node(node);
+        } else if (node && ('item' in node || 'push' in node) && 'length' in node) {
+            ret = new NodeList(node);
         }
 
-        if ( (node.item || node.push) && 'length' in node) {
-            return new NodeList(node);
-        }
-
-        return new Node(node);
+        return ret;
     };
 
     // returns HTMLElement
@@ -959,7 +957,7 @@ YUI.add('node', function(Y) {
     };
 
     var Node = function(node) {
-        if (!node || !node[NODE_NAME]) {
+        if (!node || !node[NODE_TYPE]) {
             return null;
         }
         _nodes[Y.stamp(this)] = node;
@@ -1239,12 +1237,24 @@ YUI.add('node', function(Y) {
 
         /**
          * Applies a CSS style to a given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
+         * @method setStyle
+         * @param {String} attr The style attribute to set. 
+         * @param {String|Number} val The value. 
          */
         setStyle: function(attr, val) {
              _styles[this._yuid][attr] = val;
+            return this;
+        },
+
+        /**
+         * Sets multiple style properties.
+         * @method setStyles
+         * @param {Object} hash An object literal of property:value pairs. 
+         */
+        setStyles: function(hash) {
+            Y.each(hash, function(v, n) {
+                this.setStyle(n, v);
+            }, this);
             return this;
         },
 
@@ -1335,11 +1345,10 @@ YUI.add('node', function(Y) {
         }
     };
 
+    var slice = [].slice;
     Y.each(METHODS, function(fn, method) {
         Node.prototype[method] = function() {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(method);
-            return fn.apply(this, args);
+            return fn.apply(this, [method].concat(slice.call(arguments)));
         };
     });
 
@@ -1459,6 +1468,7 @@ YUI.add('node', function(Y) {
      * @class NodeList
      */
     var NodeList = function(nodes) {
+        // TODO: input validation
         _nodes[Y.stamp(this)] = nodes;
     };
 
@@ -1564,7 +1574,7 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0');
+}, '3.0.0', { requires: ['selector'] });
 /**
  * Extended interface for Node
  * @module nodeextras
@@ -1706,7 +1716,9 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('previousSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;
@@ -1724,7 +1736,9 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('nextSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;
