@@ -1,7 +1,5 @@
 YUI.add('attribute', function(Y) {
 
-    Y.use('state');
-
     // TODO: rip out when Event supports cancel/preventDef
     var Evt = function(type, prevVal, newVal) {
         this.type = type;
@@ -61,6 +59,7 @@ YUI.add('attribute', function(Y) {
         addAtt: function(name, hash) {
             //this._conf[name] = val;
             this._conf = this._conf || new Y.State();
+            Y.log('adding attribute: ' + name, 'info', 'Attribute');
             this._conf.add(name, hash);
         },
 
@@ -172,6 +171,5 @@ YUI.add('attribute', function(Y) {
 
     Y.augment(Y.Attribute, Y.Event.Target);
 
-}, '3.0.0');
+}, '3.0.0', { requires: ['state'] });
 
-YAHOO.register("attribute", YUI.Attribute, {version: "@VERSION@", build: "@BUILD@"});
