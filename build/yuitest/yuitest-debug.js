@@ -3286,11 +3286,12 @@ YUI.add("mock", function(Y){
             var name = expectation.method,
                 args = expectation.arguments || [],
                 result = expectation.returns,
-                callCount = expectation.callCount,
+                callCount = L.isNumber(expectation.callCount) ? expectation.callCount : 1,
                 error = expectation.error;
                 
             //save expectations
             mock.__expectations[name] = expectation;
+            expectation.callCount = callCount;
             expectation.actualCallCount = 0;
                 
             //process arguments
