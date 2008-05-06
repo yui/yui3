@@ -1746,7 +1746,7 @@ YUI.add("aop", function(Y) {
             }
 
             // subscriber id
-            var sid = id + Y.stamp(fn);
+            var sid = id + Y.stamp(fn) + sFn;
 
             // register the callback
             o[sFn].register(sid, fn, when);
