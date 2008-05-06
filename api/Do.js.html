@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: yui   Do.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>yui&nbsp; <span class="subtitle">3.00pre</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html">yui</a>
+                
+                 &gt; Do.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;aop&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">var</span> <span class="nx">BEFORE</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span>
+        <span class="nx">AFTER</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span> <span class="o">=</span> <span class="o">{</span>
+
+        <span class="nx">objs</span><span class="o">:</span> <span class="o">{},</span>
+
+        <span class="c">// if &#39;c&#39; context is supplied, apply remaining args to callback</span>
+<span class="c"></span>        <span class="nx">before</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+                <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_inject</span><span class="o">(</span><span class="nx">BEFORE</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">// if &#39;c&#39; context is supplied, apply remaining args to callback</span>
+<span class="c"></span>        <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">[</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">c</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">4</span><span class="o">,</span> <span class="kc">true</span><span class="o">));</span>
+                <span class="nx">f</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_inject</span><span class="o">(</span><span class="nx">AFTER</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_inject</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">when</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c">// object id</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">obj</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(!</span> <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">])</span> <span class="o">{</span>
+                <span class="c">// create a map entry for the obj if it doesn&#39;t exist</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">]</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="o">}</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">objs</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+
+            <span class="k">if</span> <span class="o">(!</span> <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">])</span> <span class="o">{</span>
+                <span class="c">// create a map entry for the method if it doesn&#39;t exist</span>
+<span class="c"></span>                <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Method</span><span class="o">(</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">);</span>
+
+                <span class="c">// re-route the method to our wrapper</span>
+<span class="c"></span>                <span class="nx">obj</span><span class="o">[</span><span class="nx">sFn</span><span class="o">]</span> <span class="o">=</span> 
+                    <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">].</span><span class="nx">exec</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">],</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="o">};</span>
+            <span class="o">}</span>
+
+            <span class="c">// subscriber id</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">sid</span> <span class="o">=</span> <span class="nx">id</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">fn</span><span class="o">);</span>
+
+            <span class="c">// register the callback</span>
+<span class="c"></span>            <span class="nx">o</span><span class="o">[</span><span class="nx">sFn</span><span class="o">].</span><span class="nx">register</span><span class="o">(</span><span class="nx">sid</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">when</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="nx">sid</span><span class="o">;</span>
+
+        <span class="o">},</span>
+
+        <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">sid</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">sid</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">sid</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">_unload</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">me</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Method</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">sFn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">obj</span> <span class="o">=</span> <span class="nx">obj</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">methodName</span> <span class="o">=</span> <span class="nx">sFn</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">method</span> <span class="o">=</span> <span class="nx">obj</span><span class="o">[</span><span class="nx">sFn</span><span class="o">];</span>
+        <span class="c">// this.before = [];</span>
+<span class="c"></span>        <span class="c">// this.after = [];</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">before</span> <span class="o">=</span> <span class="o">{};</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">after</span> <span class="o">=</span> <span class="o">{};</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Method</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">register</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">sid</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">when</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">when</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// this.after.push(fn);</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">[</span><span class="nx">sid</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="c">// this.before.push(fn);</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">[</span><span class="nx">sid</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">Method</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">exec</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">newRet</span><span class="o">;</span>
+
+        <span class="c">// for (i=0; i&lt;this.before.length; ++i) {</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+
+            <span class="c">// Stop processing if an Error is returned</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nb">Error</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// this.logger.debug(&quot;Error before &quot; + this.methodName + </span>
+<span class="c"></span>                <span class="c">//      &quot;: &quot; ret.msg);</span>
+<span class="c"></span>                <span class="k">return</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">retVal</span><span class="o">;</span>
+            <span class="c">// Check for altered arguments</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">AlterArgs</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// this.logger.debug(&quot;Params altered before &quot; + </span>
+<span class="c"></span>                <span class="c">//      this.methodName + &quot;: &quot; ret.msg);</span>
+<span class="c"></span>                <span class="nx">args</span> <span class="o">=</span> <span class="nx">ret</span><span class="o">.</span><span class="nx">newArgs</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="c">// execute method</span>
+<span class="c"></span>        <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+
+        <span class="c">// execute after methods.</span>
+<span class="c"></span>        <span class="c">// for (i=0; i&lt;this.after.length; ++i) {</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">newRet</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">obj</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
+            <span class="c">// Stop processing if an Error is returned</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">newRet</span> <span class="o">&amp;&amp;</span> <span class="nx">newRet</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nb">Error</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// this.logger.debug(&quot;Error after &quot; + this.methodName + </span>
+<span class="c"></span>                <span class="c">//      &quot;: &quot; ret.msg);</span>
+<span class="c"></span>                <span class="k">return</span> <span class="nx">newRet</span><span class="o">.</span><span class="nx">retVal</span><span class="o">;</span>
+            <span class="c">// Check for a new return value</span>
+<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">newRet</span> <span class="o">&amp;&amp;</span> <span class="nx">newRet</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">AlterReturn</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// this.logger.debug(&quot;Return altered after &quot; + </span>
+<span class="c"></span>                <span class="c">//      this.methodName + &quot;: &quot; newRet.msg);</span>
+<span class="c"></span>                <span class="nx">ret</span> <span class="o">=</span> <span class="nx">newRet</span><span class="o">.</span><span class="nx">newRetVal</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>
+    <span class="c">/**</span>
+<span class="c">     * Return an Error object when you want to terminate the execution</span>
+<span class="c">     * of all subsequent method calls</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nb">Error</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">retVal</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">retVal</span> <span class="o">=</span> <span class="nx">retVal</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Return an AlterArgs object when you want to change the arguments that</span>
+<span class="c">     * were passed into the function.  An example would be a service that scrubs</span>
+<span class="c">     * out illegal characters prior to executing the core business logic.</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">AlterArgs</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">newArgs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">newArgs</span> <span class="o">=</span> <span class="nx">newArgs</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Return an AlterReturn object when you want to change the result returned</span>
+<span class="c">     * from the core method to the caller</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">AlterReturn</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">newRetVal</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">msg</span> <span class="o">=</span> <span class="nx">msg</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">newRetVal</span> <span class="o">=</span> <span class="nx">newRetVal</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">//////////////////////////////////////////////////////////////////////////</span>
+<span class="c"></span>
+<span class="c">// Y[&quot;Event&quot;] &amp;&amp; Y.Event.addListener(window, &quot;unload&quot;, Y.Do._unload, Y.Do);</span>
+<span class="c"></span>
+<span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_json.html">json</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_selector.html">selector</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="array.html">array</a></li>
+                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
+                                <li class=""><a href="Event.html">Event</a></li>
+                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
+                                <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
+                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
+                                <li class=""><a href="lang.html">lang</a></li>
+                                <li class=""><a href="object.html">object</a></li>
+                                <li class=""><a href="ua.html">ua</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Array.js.html">Array.js</a></li>
+                                <li class=""><a href="Compat.js.html">Compat.js</a></li>
+                                <li class=""><a href="Core.js.html">Core.js</a></li>
+                                <li class="selected"><a href="Do.js.html">Do.js</a></li>
+                                <li class=""><a href="Dump.js.html">Dump.js</a></li>
+                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
+                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
+                                <li class=""><a href="event-facade.js.html">event-facade.js</a></li>
+                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
+                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
+                                <li class=""><a href="Get.js.html">Get.js</a></li>
+                                <li class=""><a href="Init.js.html">Init.js</a></li>
+                                <li class=""><a href="Lang.js.html">Lang.js</a></li>
+                                <li class=""><a href="Later.js.html">Later.js</a></li>
+                                <li class=""><a href="Object.js.html">Object.js</a></li>
+                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
+                                <li class=""><a href="UA.js.html">UA.js</a></li>
+                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

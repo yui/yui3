@@ -1,5 +1,7 @@
 YUI.add("event-facade", function(Y) {
 
+    /*
+
     var whitelist = {
         "altKey"          : 1,
         "button"          : 1, // we supply
@@ -44,6 +46,8 @@ YUI.add("event-facade", function(Y) {
         "y"               : 1
     };
 
+    */
+
     var webkitKeymap = {
         63232: 38, // up
         63233: 40, // down
@@ -57,7 +61,7 @@ YUI.add("event-facade", function(Y) {
 
     // return the element facade
     var wrapNode = function(n) {
-        return (n && Y.Doc) ? Y.Doc.get(n) : n;
+        return (n && Y.Node) ? Y.Node.get(n) : n;
     };
 
     var resolve = function(n) {
@@ -84,8 +88,15 @@ YUI.add("event-facade", function(Y) {
         var e = ev, ot = origTarg, d = document, b = d.body,
             x = e.pageX, y = e.pageY;
 
-        for (var i in whitelist) {
-            if (Y.object.owns(whitelist, i)) {
+
+        // for (var i in whitelist) {
+        //     if (Y.object.owns(whitelist, i)) {
+        //         this[i] = e[i];
+        //     }
+        // }
+
+        for (var i in e) {
+            if (!Y.lang.isObject(e[i])) {
                 this[i] = e[i];
             }
         }

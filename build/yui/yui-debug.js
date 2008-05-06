@@ -1724,6 +1724,8 @@ YUI.add("aop", function(Y) {
         },
 
         _inject: function(when, fn, obj, sFn) {
+
+            // object id
             var id = Y.stamp(obj);
 
             if (! this.objs[id]) {
@@ -1743,18 +1745,21 @@ YUI.add("aop", function(Y) {
                     };
             }
 
-            // register the callback
-            o[sFn].register(id, fn, when);
+            // subscriber id
+            var sid = id + Y.stamp(fn);
 
-            return id;
+            // register the callback
+            o[sFn].register(sid, fn, when);
+
+            return sid;
 
         },
 
-        detach: function(id) {
-            if (id in this.before) {
+        detach: function(sid) {
+            if (sid in this.before) {
                 delete this.before[id];
             }
-            if (id in this.after) {
+            if (sid in this.after) {
                 delete this.after[id];
             }
         },
@@ -1776,13 +1781,13 @@ YUI.add("aop", function(Y) {
         this.after = {};
     };
 
-    Y.Do.Method.prototype.register = function (id, fn, when) {
+    Y.Do.Method.prototype.register = function (sid, fn, when) {
         if (when) {
             // this.after.push(fn);
-            this.after[id] = fn;
+            this.after[sid] = fn;
         } else {
             // this.before.push(fn);
-            this.before[id] = fn;
+            this.before[sid] = fn;
         }
     };
 
@@ -3804,6 +3809,8 @@ YUI.add("event-dom", function(Y) {
 }, "3.0.0");
 YUI.add("event-facade", function(Y) {
 
+    /*
+
     var whitelist = {
         "altKey"          : 1,
         "button"          : 1, // we supply
@@ -3848,6 +3855,8 @@ YUI.add("event-facade", function(Y) {
         "y"               : 1
     };
 
+    */
+
     var webkitKeymap = {
         63232: 38, // up
         63233: 40, // down
@@ -3861,7 +3870,7 @@ YUI.add("event-facade", function(Y) {
 
     // return the element facade
     var wrapNode = function(n) {
-        return (n && Y.Doc) ? Y.Doc.get(n) : n;
+        return (n && Y.Node) ? Y.Node.get(n) : n;
     };
 
     var resolve = function(n) {
@@ -3888,8 +3897,15 @@ YUI.add("event-facade", function(Y) {
         var e = ev, ot = origTarg, d = document, b = d.body,
             x = e.pageX, y = e.pageY;
 
-        for (var i in whitelist) {
-            if (Y.object.owns(whitelist, i)) {
+
+        // for (var i in whitelist) {
+        //     if (Y.object.owns(whitelist, i)) {
+        //         this[i] = e[i];
+        //     }
+        // }
+
+        for (var i in e) {
+            if (!Y.lang.isObject(e[i])) {
                 this[i] = e[i];
             }
         }
@@ -4679,30 +4695,28 @@ YUI.add('node', function(Y) {
         PARENT_WINDOW = 'parentWindow',
         DOCUMENT_ELEMENT = 'documentElement',
         NODE_NAME = 'nodeName',
+        NODE_TYPE = 'nodeType',
         COMPAT_MODE = 'compatMode',
         PARENT_NODE = 'parentNode',
         SCROLL_TOP = 'scrollTop',
-        SCROLL_LEFT = 'scrollLeft',
-        NODE_TYPE = 'nodeType';
+        SCROLL_LEFT = 'scrollLeft';
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
-    Y.use('selector'); // TODO: need this?  should be able to "use" from "add"
     var Selector = Y.Selector;
     var _nodes = {};
     var _styles = {};
 
     // private factory
     var wrap = function(node) {
-        if (!node) {
-            return null;
+        var ret = null;
+        if (node && NODE_TYPE in node) {
+            ret = new Node(node);
+        } else if (node && ('item' in node || 'push' in node) && 'length' in node) {
+            ret = new NodeList(node);
         }
 
-        if ( (node.item || node.push) && 'length' in node) {
-            return new NodeList(node);
-        }
-
-        return new Node(node);
+        return ret;
     };
 
     // returns HTMLElement
@@ -4947,7 +4961,7 @@ YUI.add('node', function(Y) {
     };
 
     var Node = function(node) {
-        if (!node || !node[NODE_NAME]) {
+        if (!node || !node[NODE_TYPE]) {
             Y.log('invalid node:' + node, 'error', 'Node');
             return null;
         }
@@ -5230,12 +5244,25 @@ YUI.add('node', function(Y) {
 
         /**
          * Applies a CSS style to a given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
+         * @method setStyle
+         * @param {String} attr The style attribute to set. 
+         * @param {String|Number} val The value. 
          */
         setStyle: function(attr, val) {
+            Y.log('setting style ' + attr + ' to ' + val, 'info', 'Node');
              _styles[this._yuid][attr] = val;
+            return this;
+        },
+
+        /**
+         * Sets multiple style properties.
+         * @method setStyles
+         * @param {Object} hash An object literal of property:value pairs. 
+         */
+        setStyles: function(hash) {
+            Y.each(hash, function(v, n) {
+                this.setStyle(n, v);
+            }, this);
             return this;
         },
 
@@ -5328,11 +5355,10 @@ YUI.add('node', function(Y) {
         }
     };
 
+    var slice = [].slice;
     Y.each(METHODS, function(fn, method) {
         Node.prototype[method] = function() {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(method);
-            return fn.apply(this, args);
+            return fn.apply(this, [method].concat(slice.call(arguments)));
         };
     });
 
@@ -5452,6 +5478,7 @@ YUI.add('node', function(Y) {
      * @class NodeList
      */
     var NodeList = function(nodes) {
+        // TODO: input validation
         _nodes[Y.stamp(this)] = nodes;
     };
 
@@ -5557,7 +5584,7 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0');
+}, '3.0.0', { requires: ['selector'] });
 /**
  * Extended interface for Node
  * @module nodeextras
@@ -5702,7 +5729,9 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('previousSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;
@@ -5720,7 +5749,9 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('nextSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;

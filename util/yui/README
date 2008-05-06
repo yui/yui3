@@ -268,3 +268,7 @@ The YUI global does not get the core library bound to it unless compat is set to
 added a config option for 'core', default undefined.  This is an array that will
 supplant the array of core YUI modules bound in Init.js.
 
+
+//////////////////////////////////////////////////////////////////////
+
+Event Facade: fixed to work with new Node interface.  Do (now in the core): fixed multiple subscriber problem

@@ -29,6 +29,8 @@ YUI.add("aop", function(Y) {
         },
 
         _inject: function(when, fn, obj, sFn) {
+
+            // object id
             var id = Y.stamp(obj);
 
             if (! this.objs[id]) {
@@ -48,18 +50,21 @@ YUI.add("aop", function(Y) {
                     };
             }
 
-            // register the callback
-            o[sFn].register(id, fn, when);
+            // subscriber id
+            var sid = id + Y.stamp(fn);
 
-            return id;
+            // register the callback
+            o[sFn].register(sid, fn, when);
+
+            return sid;
 
         },
 
-        detach: function(id) {
-            if (id in this.before) {
+        detach: function(sid) {
+            if (sid in this.before) {
                 delete this.before[id];
             }
-            if (id in this.after) {
+            if (sid in this.after) {
                 delete this.after[id];
             }
         },
@@ -81,13 +86,13 @@ YUI.add("aop", function(Y) {
         this.after = {};
     };
 
-    Y.Do.Method.prototype.register = function (id, fn, when) {
+    Y.Do.Method.prototype.register = function (sid, fn, when) {
         if (when) {
             // this.after.push(fn);
-            this.after[id] = fn;
+            this.after[sid] = fn;
         } else {
             // this.before.push(fn);
-            this.before[id] = fn;
+            this.before[sid] = fn;
         }
     };
 

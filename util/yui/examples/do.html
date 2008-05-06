@@ -103,7 +103,22 @@ function bef2(msg, obj, a3) {
     // alert('bef: ' + Y.lang.dump(Y.array(arguments)));
 }
 
+function bef3(msg, obj, a3) {
+    Y.log('bef3: ' + Y.lang.dump(Y.array(arguments)));
+}
+
+function aft2(msg, obj, a3) {
+    Y.log('aft2: ' + Y.lang.dump(Y.array(arguments)));
+}
+
+function aft3(msg, obj, a3) {
+    Y.log('aft3: ' + Y.lang.dump(Y.array(arguments)));
+}
+
 obj.before(bef2, "printName", obj, 1, 2, 3);
+obj.before(bef3, "printName", obj, 1, 2, 3);
+obj.after(aft2, "printName", obj, 1, 2, 3);
+obj.after(aft3, "printName", obj, 1, 2, 3);
 
 Y.log("obj.printName-- " + obj.printName("ET Test", "second arg"));
 

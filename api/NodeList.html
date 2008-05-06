@@ -56,11 +56,140 @@
                     </div>
 
 
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="property_children">children</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A NodeList containing only HTMLElement child nodes
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_text">text</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Normalizes nodeInnerText and textContent.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
 
 
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addClass">addClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean | Array
+                                            <strong>addClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Adds a class name to a given element or collection of elements.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to add to the class attribute
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean | Array
+                                                    </code></dt>
+                                                    <dd>A pass/fail boolean or array of booleans</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_contains">contains</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>contains</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>needle &lt;String | HTMLElement&gt;</code>
+                                                             The possible descendent
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not this node is an ancestor of needle</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="">
                                     <h4>
                                         <a name="method_each">each</a></h4>
@@ -202,6 +331,89 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_getXY">getXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array
+                                            <strong>getXY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets the current position of an element based on page coordinates. 
+Element must be part of the DOM tree to have page coordinates
+(display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>The XY position of the element
+TODO: test inDocument/display</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_hasClass">hasClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean | Array
+                                            <strong>hasClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement has the given className.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to search for
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean | Array
+                                                    </code></dt>
+                                                    <dd>A boolean value or array of boolean values</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_item">item</a></h4>
                                     <div class="detail">
                                         <code>
@@ -239,6 +451,203 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                                         Node
                                                     </code></dt>
                                                     <dd>The Node instance at the given index.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_next">next</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>next</strong>
+                                           (
+                                                
+                                                        
+                                                         method
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the next HTMLElement sibling that passes the boolean method. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>method &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>HTMLElement or null if not found</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_previous">previous</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>previous</strong>
+                                           (
+                                                
+                                                        
+                                                         method
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the previous sibling that is an HTMLElement. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>method &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>Node instance or null if not found</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeClass">removeClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean | Array
+                                            <strong>removeClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes a class name from a given element or collection of elements.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to remove from the class attribute
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean | Array
+                                                    </code></dt>
+                                                    <dd>A pass/fail boolean or array of booleans</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_replaceClass">replaceClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean | Array
+                                            <strong>replaceClass</strong>
+                                           (
+                                                
+                                                        
+                                                         oldClassName
+                                                    
+                                                
+                                                        , 
+                                                         newClassName
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Replace a class with another class for a given element or collection of elements.
+If no oldClassName is present, the newClassName is simply added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>oldClassName &lt;String&gt;</code>
+                                                             the class name to be replaced
+                                                        </dd>
+                                                        <dd>
+                                                            <code>newClassName &lt;String&gt;</code>
+                                                             the class name that will be replacing the old class name
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean | Array
+                                                    </code></dt>
+                                                    <dd>A pass/fail boolean or array of booleans</dd>
                                                 </dl>
              
                                         </div>
@@ -301,6 +710,61 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setXY">setXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setXY</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                                        , 
+                                                         noRetry
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the position of an html element in page coordinates, regardless of how the element is positioned.
+The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             Contains X & Y values for new position (coordinates are page-based)
+                                                        </dd>
+                                                        <dd>
+                                                            <code>noRetry &lt;Boolean&gt;</code>
+                                                             By default we try and set the position a second time if the first fails
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -334,10 +798,8 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Doc.html">Doc</a></li>
                                 <li class=""><a href="Node.html">Node</a></li>
                                 <li class="selected"><a href="NodeList.html">NodeList</a></li>
-                                <li class=""><a href="Win.html">Win</a></li>
                         </ul>
                     </div>
 
@@ -349,10 +811,27 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                         </ul>
                     </div>
 
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_children">children</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_text">text</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
 
                     <div class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><!--<code>Boolean | Array</code>-->
+                                <a href="#method_addClass">addClass</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_contains">contains</a>
+                                </li>
                                 <li class=""><!--<code>NodeList</code>-->
                                 <a href="#method_each">each</a>
                                 </li>
@@ -362,11 +841,32 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                 <li class=""><!--<code>Array</code>-->
                                 <a href="#method_get">get</a>
                                 </li>
+                                <li class=""><!--<code>Array</code>-->
+                                <a href="#method_getXY">getXY</a>
+                                </li>
+                                <li class=""><!--<code>Boolean | Array</code>-->
+                                <a href="#method_hasClass">hasClass</a>
+                                </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_item">item</a>
                                 </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_next">next</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_previous">previous</a>
+                                </li>
+                                <li class=""><!--<code>Boolean | Array</code>-->
+                                <a href="#method_removeClass">removeClass</a>
+                                </li>
+                                <li class=""><!--<code>Boolean | Array</code>-->
+                                <a href="#method_replaceClass">replaceClass</a>
+                                </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_set">set</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setXY">setXY</a>
                                 </li>
                         </ul>
                     </div>
