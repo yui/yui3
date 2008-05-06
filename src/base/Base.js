@@ -303,9 +303,9 @@
 
                     for (att in attributes) {
                         if (O.owns(attributes, att)) {
-                            var defConf = attributes[att];
+                            var defConf = attributes[att],
+                                val = defConf.value;
                             if (userConf && O.owns(userConf, att)) {
-
                                 // Support attrs which don't have a def config/value supplied
                                 if (!L.isObject(defConf)) {
                                     defConf = {};
@@ -316,12 +316,11 @@
                                 // This means the user has to clone anything coming in, if they 
                                 // want it detached
                                 // attributes[att].value = conf[att];
-
-                                defConf.value = userConf[att];
+                                val = userConf[att];
                             }
                             this.addAtt(att, defConf);
-                            if ("value" in defConf) {
-                                this.set(att, defConf.value);
+                            if (!L.isUndefined(val)) {
+                                this.set(att, val);
                             }
                         }
                     }
