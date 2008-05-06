@@ -1,0 +1,8 @@
+#ddm_play {
+    position: absolute;
+    z-index: 9999;
+    opacity: .5;
+    background-color: red;
+    filter: alpha(opacity=50);
+    display: none;
+}
