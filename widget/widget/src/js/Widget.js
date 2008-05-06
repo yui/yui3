@@ -176,7 +176,7 @@
                 }
 
                 // append to parent if provided, or to body if no parent and not in body
-                parentNode = parentNode || Y.Doc.get("body");
+                parentNode = parentNode || Y.Node.get("body");
                 if (parentNode && !parentNode.invoke("contains", this._root)) {
                     parentNode.appendChild(this._root);
                 }
@@ -545,7 +545,7 @@
                 // TODO: Looking at the node impl, this should 
                 // also take care of id generation, if an id doesn't exist
                 if (L.isString(node)) {
-                    node = Y.Doc.get(node);
+                    node = Y.Node.get(node);
                 }
 
                 // Node not found

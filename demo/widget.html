@@ -43,9 +43,9 @@
                         Y.log('"widget:click" Custom Event');
                     });
 
-                    Y.on('click', Y.bind(widget.show, widget), '#control-show');
-                    Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
-        
+                    Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
+                    Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+
                     console.log(Y.Widget.getByNodeId("foobar"));
                 });
         })();
