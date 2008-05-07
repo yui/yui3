@@ -311,9 +311,14 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        var c = this.config;
+        var c = this.config, Y = this, 
+            bail = (Y.env._eventstack && Y.env._eventstack.logging);
 
-        if (c.debug) {
+        // suppress log message if the config is off or the event stack
+        // or the event call stack contains a consumer of the yui:log event
+        if (c.debug && !bail) {
+
+            Y.env._lastlog = msg;
 
             if (c.useConsole && typeof console != 'undefined') {
                 var f = (cat && console[cat]) ? cat : 'log',
@@ -321,10 +326,10 @@ YUI.prototype = {
                 console[f](m);
             }
 
-            this.fire && this.fire('yui:log', msg, cat, src);
+            Y.fire && Y.fire('yui:log', msg, cat, src);
         }
 
-        return this;
+        return Y;
     },
 
     // Centralizing error messaging means we can configure how

@@ -114,7 +114,6 @@ YUI.add("event-custom", function(Y) {
          */
         this.subscribers = {};
 
-
         /**
          * This event has fired if true
          *
@@ -204,6 +203,7 @@ this.subscribeEvent = new Y.CustomEvent(onsubscribeType, this, true);
          * @type Error
          */
         this.lastError = null;
+
     };
 
     /**
@@ -343,7 +343,9 @@ this.log(this + " subscriber exception: " + ex, "error");
         },
 
         log: function(msg, cat) {
-            if (!this.silent) {
+            var es = Y.env._eventstack,
+                s =  es && es.silent;
+            if (!s && !this.silent) {
                 Y.log(msg, cat || "info", "Event");
             }
         },
@@ -366,62 +368,80 @@ this.log(this + " subscriber exception: " + ex, "error");
          */
         fire: function() {
 
-            if (this.fireOnce && this.fired) {
-                this.log('fireOnce event: ' + this + ' already fired');
-                return true;
+            var es = Y.env._eventstack;
+
+            if (es) {
+                es.silent = (es.silent || this.silent);
+                es.logging = (es.logging || (this.type === 'yui:log'));
+            } else {
+                Y.env._eventstack = {
+                   // id of the first event in the stack
+                   id: this.id,
+                   silent: this.silent,
+                   logging: (this.type === 'yui:log')
+                };
+
+                es = Y.env._eventstack;
             }
 
-            this.fired = true;
-            this.stopped = 0;
-            this.prevented = 0;
+            var ret = true;
 
-            // var subs = this.subscribers.slice(), len=subs.length,
-            var subs = Y.merge(this.subscribers),
-                args=Y.array(arguments, 0, true), ret=true, i;
+            if (this.fireOnce && this.fired) {
 
-            this.log("Firing " + this  + ", " + "args: " + args);
-                     // + "subscribers: " + len);
+                this.log('fireOnce event: ' + this + ' already fired');
 
-            // if (!len) {
-                // return true;
-            // }
+            } else {
 
-            var errors = [];
+                this.fired = true;
+                this.stopped = 0;
+                this.prevented = 0;
 
-            // for (i=0; i<len; ++i) {
-            for (i in subs) {
-                if (Y.object.owns(subs, i)) {
-                    // stopImmediatePropagation
-                    if (this.stopped == 2) {
-                        break;
-                    }
+                // var subs = this.subscribers.slice(), len=subs.length,
+                var subs = Y.merge(this.subscribers), errors = [],
+                            args=Y.array(arguments, 0, true), i;
 
-                    var s = subs[i];
-                    if (s && s.fn) {
-                        this.lastError = null;
-                        ret = this._notify(s, args);
-                        if (this.lastError) {
-                            errors.push(this.lastError);
-                        }
-                        if (!ret) {
+                this.log("Firing " + this  + ", " + "args: " + args);
+
+                for (i in subs) {
+                    if (Y.object.owns(subs, i)) {
+
+                        // stopImmediatePropagation
+                        if (this.stopped == 2) {
                             break;
                         }
+
+                        var s = subs[i];
+                        if (s && s.fn) {
+                            this.lastError = null;
+                            ret = this._notify(s, args);
+                            if (this.lastError) {
+                                errors.push(this.lastError);
+                            }
+                            if (!ret) {
+                                break;
+                            }
+                        }
                     }
+                }
+
+                // @TODO need context
+                if (this.defaultFn) {
+                    this.defaultFn.apply(this, args);
+                }
+
+                if (es.id === this.id) {
+                    // console.log('clearing stack: ' + es.id + ', ' + this);
+                    Y.env._eventstack = null;
+                }
+
+                if (errors.length) {
+                    throw new Y.ChainedError(this.type + ': ' + 
+                        '1 or more subscriber errors: ' + errors[0].message, errors);
                 }
             }
 
 
-            // @TODO need context
-            if (this.defaultFn) {
-                this.defaultFn.apply(this, args);
-            }
-
-            if (errors.length) {
-throw new Y.ChainedError(this.type + ': 1 or more subscribers threw an error: ' +
-                         errors[0].message, errors);
-            }
-
-            return ret;
+            return (ret !== false);
         },
 
         /**
@@ -462,8 +482,7 @@ throw new Y.ChainedError(this.type + ': 1 or more subscribers threw an error: ' 
          * @method toString
          */
         toString: function() {
-             return "'" + this.type + "' "
-                  + "id: " + this.id;
+             return "'" + this.type + "' " + "id: " + this.id;
                   // + "context: " + this.context;
 
         },

@@ -16,6 +16,13 @@
     //var Y = YUI().use('event', 'dom');
     var Y = YUI().use('dump');
 
+    var obj = new Y.Event.Target();
+
+    Y.on('yui:log', function() {
+        console.log('LOG NOTIFICATION (console): ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('log NOTIFICATION (Y.log): ' + Y.lang.dump(Y.array(arguments)));
+    });
+
     Y.Event.onDOMReady(function() {
         Y.log("onDOMReady fired");
     });
@@ -48,7 +55,6 @@
 
     Y.fire('asdf', 1);
 
-    var obj = new Y.Event.Target();
     var h = obj.subscribe('foo', function() {
         console.info('subscriber 1 executed: ' + Y.array(arguments));
     });
@@ -75,6 +81,10 @@
     Y.log('nothing should execute');
     obj.fire('foo', 4);
 
+    Y.on('yui:log', function() {
+        obj.fire('log recursion', 5);
+        Y.log('recurse');
+    });
 
 /*
     
@@ -97,10 +107,6 @@
         console.warn('fire() error: ' + Y.lang.dump(e.errors));
     }
     */
-
-    Y.on('yui:log', function() {
-        console.log('log CE: ' + Y.lang.dump(Y.array(arguments)));
-    });
 
 })();
 
