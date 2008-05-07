@@ -48,7 +48,7 @@ YUI.add("mock", function(Y){
             var name = expectation.method,
                 args = expectation.arguments || [],
                 result = expectation.returns,
-                callCount = L.isNumber(expectation.callCount) ? 1 : 0,
+                callCount = L.isNumber(expectation.callCount) ? expectation.callCount : 1,
                 error = expectation.error;
                 
             //save expectations
@@ -58,9 +58,12 @@ YUI.add("mock", function(Y){
                 
             //process arguments
             Y.array.each(args, function(arg, i, array){
-                array[i] = function(value){
-                    Y.Assert.areSame(arg, value, "Argument " + i + " of " + name + " is incorrect."); 
-                };                
+                //array[i] = function(value){
+                //    Y.Assert.areSame(arg, value, "Argument " + i + " of " + name + " is incorrect."); 
+                //};
+                if (!(array[i] instanceof Y.Mock.Expectation)){
+                    array[i] = Y.Mock.Expectation(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + " is incorrect.");
+                }
             });
         
             //if the method is expected to be called
@@ -69,7 +72,12 @@ YUI.add("mock", function(Y){
                     expectation.actualCallCount++;
                     Y.Assert.areEqual(args.length, arguments.length, "Method " + name + "() passed incorrect number of arguments.");
                     for (var i=0, len=args.length; i < len; i++){
-                        args[i](arguments[i]);
+                        if (args[i]){
+                            args[i].verify(arguments[i]);
+                        } else {
+                            Y.Assert.fail("Argument " + i + " (" + arguments[i] + ") was not expected to be used.");
+                        }
+                        
                     }                
                     if (error){
                         throw error;
@@ -98,5 +106,19 @@ YUI.add("mock", function(Y){
             }
         });    
     };
+
+    Y.Mock.Expectation = function(method, args, message){
+        if (this instanceof Y.Mock.Expectation){
+            this.verify = function(value){
+                args = [].concat(args);
+                args.push(value);
+                args.push(message);
+                method.apply(null, args);
+            };
+        } else {
+            return new Y.Mock.Expectation(method, args, message);
+        }
+    };
+    
 
 }, "3.0.0");

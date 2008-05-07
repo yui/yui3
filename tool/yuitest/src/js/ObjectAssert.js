@@ -13,30 +13,11 @@
          * @static
          */
         Y.ObjectAssert = {
-                
-            /**
-             * Asserts that all properties in the object exist in another object.
-             * @param {Object} expected An object with the expected properties.
-             * @param {Object} actual An object with the actual properties.
-             * @param {String} message (Optional) The message to display if the assertion fails.
-             * @method propertiesAreEqual
-             * @static
-             */
-            propertiesAreEqual : function (expected /*:Object*/, actual /*:Object*/, 
-                                   message /*:String*/) /*:Void*/ {
-                
-                //get all properties in the object
-                var properties /*:Array*/ = [];        
-                for (var property in expected){
-                    properties.push(property);
-                }
-                
-                //see if the properties are in the expected object
-                for (var i=0; i < properties.length; i++){
-                    Assert.isNotUndefined(actual[properties[i]], 
-                        Assert._formatMessage(message, "Property '" + properties[i] + "' expected."));
-                }
         
+            areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
+                Y.object.each(expected, function(value, name){
+                    Y.Assert.areEqual(expected[name], actual[name], Y.Assert._formatMessage(message, "Values should be equal for property " + name));
+                });            
             },
             
             /**
@@ -44,13 +25,29 @@
              * @param {String} propertyName The name of the property to test.
              * @param {Object} object The object to search.
              * @param {String} message (Optional) The message to display if the assertion fails.
-             * @method hasProperty
+             * @method has
              * @static
              */    
-            hasProperty : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            has : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!(propertyName in object)){
                     Assert.fail(Assert._formatMessage(message, "Property '" + propertyName + "' not found on object."));
                 }    
+            },
+            
+            /**
+             * Asserts that an object has all properties of a reference object.
+             * @param {Object} refObject The object whose properties should be on the object to test.
+             * @param {Object} object The object to search.
+             * @param {String} message (Optional) The message to display if the assertion fails.
+             * @method hasAll
+             * @static
+             */    
+            hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+                Y.object.each(refObject, function(value, name){
+                    if (!(name in object)){
+                        Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object."));
+                    }    
+                });
             },
             
             /**
@@ -58,13 +55,29 @@
              * @param {String} propertyName The name of the property to test.
              * @param {Object} object The object to search.
              * @param {String} message (Optional) The message to display if the assertion fails.
-             * @method hasProperty
+             * @method owns
              * @static
              */    
-            hasOwnProperty : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+            owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.object.owns(object, propertyName)){
                     Assert.fail(Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
                 }     
+            },
+            
+            /**
+             * Asserts that all properties on a given object also exist on an object instance (not on its prototype).
+             * @param {Object} refObject The object whose properties should be owned by the object to test.
+             * @param {Object} object The object to search.
+             * @param {String} message (Optional) The message to display if the assertion fails.
+             * @method ownsAll
+             * @static
+             */    
+            ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
+                Y.object.each(refObject, function(value, name){
+                    if (!Y.object.owns(object, name)){
+                        Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
+                    }     
+                });
             }
         };
 

@@ -47,7 +47,7 @@
              * @static
              */
             fail : function (message /*:String*/) /*:Void*/ {
-                throw new Y.Assert.Error(this._formatMessage(message, "Test force-failed."));
+                throw new Y.Assert.Error(Y.Assert._formatMessage(message, "Test force-failed."));
             },       
             
             //-------------------------------------------------------------------------
@@ -65,7 +65,7 @@
              */
             areEqual : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (expected != actual) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Values should be equal."), expected, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be equal."), expected, actual);
                 }
             },
             
@@ -81,7 +81,7 @@
             areNotEqual : function (unexpected /*:Object*/, actual /*:Object*/, 
                                  message /*:String*/) /*:Void*/ {
                 if (unexpected == actual) {
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Values should not be equal."), unexpected);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be equal."), unexpected);
                 }
             },
             
@@ -96,7 +96,7 @@
              */
             areNotSame : function (unexpected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (unexpected === actual) {
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Values should not be the same."), unexpected);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be the same."), unexpected);
                 }
             },
         
@@ -111,7 +111,7 @@
              */
             areSame : function (expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (expected !== actual) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Values should be the same."), expected, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Values should be the same."), expected, actual);
                 }
             },    
             
@@ -129,7 +129,7 @@
              */
             isFalse : function (actual /*:Boolean*/, message /*:String*/) {
                 if (false !== actual) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be false."), false, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be false."), false, actual);
                 }
             },
             
@@ -143,7 +143,7 @@
              */
             isTrue : function (actual /*:Boolean*/, message /*:String*/) /*:Void*/ {
                 if (true !== actual) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be true."), true, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be true."), true, actual);
                 }
         
             },
@@ -161,7 +161,7 @@
              */
             isNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
                 if (!isNaN(actual)){
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be NaN."), NaN, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be NaN."), NaN, actual);
                 }    
             },
             
@@ -174,7 +174,7 @@
              */
             isNotNaN : function (actual /*:Object*/, message /*:String*/) /*:Void*/{
                 if (isNaN(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Values should not be NaN."), NaN);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be NaN."), NaN);
                 }    
             },
             
@@ -188,7 +188,7 @@
              */
             isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (Y.lang.isNull(actual)) {
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Values should not be null."), null);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
                 }
             },
         
@@ -202,7 +202,7 @@
              */
             isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (Y.lang.isUndefined(actual)) {
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should not be undefined."), undefined);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
                 }
             },
         
@@ -216,7 +216,7 @@
              */
             isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isNull(actual)) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be null."), null, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
                 }
             },
                 
@@ -230,7 +230,7 @@
              */
             isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isUndefined(actual)) {
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be undefined."), undefined, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
                 }
             },    
             
@@ -247,7 +247,7 @@
              */
             isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isArray(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be an array."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
                 }    
             },
            
@@ -260,7 +260,7 @@
              */
             isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isBoolean(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be a Boolean."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
                 }    
             },
            
@@ -273,7 +273,7 @@
              */
             isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isFunction(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be a function."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
                 }    
             },
            
@@ -289,7 +289,7 @@
              */
             isInstanceOf : function (expected /*:Function*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!(actual instanceof expected)){
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value isn't an instance of expected type."), expected, actual);
                 }
             },
             
@@ -302,7 +302,7 @@
              */
             isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isNumber(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be a number."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
                 }    
             },    
             
@@ -315,7 +315,7 @@
              */
             isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isObject(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be an object."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
                 }
             },
             
@@ -328,7 +328,7 @@
              */
             isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
                 if (!Y.lang.isString(actual)){
-                    throw new Y.Assert.UnexpectedValue(this._formatMessage(message, "Value should be a string."), actual);
+                    throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
                 }
             },
             
@@ -342,7 +342,7 @@
              */
             isTypeOf : function (expectedType /*:String*/, actualValue /*:Object*/, message /*:String*/) /*:Void*/{
                 if (typeof actualValue != expectedType){
-                    throw new Y.Assert.ComparisonFailure(this._formatMessage(message, "Value should be of type " + expected + "."), expected, typeof actual);
+                    throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be of type " + expected + "."), expected, typeof actual);
                 }
             }
         };
