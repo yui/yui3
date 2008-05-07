@@ -38,21 +38,24 @@
                         </style>
 <div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">core</span> <span class="o">=</span> <span class="o">[],</span>
+    <span class="k">var</span> <span class="nx">min</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;lang&#39;</span><span class="o">,</span> <span class="s1">&#39;array&#39;</span><span class="o">,</span> <span class="s1">&#39;core&#39;</span><span class="o">],</span> <span class="nx">core</span><span class="o">,</span>
 
     <span class="nx">M</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">;</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; setup complete) .&#39;</span><span class="o">);</span>
+        <span class="c">// apply the minimal required functionality</span>
+<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">min</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39; setup completing) .&#39;</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="nx">core</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">core</span><span class="o">;</span>
 
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">compat</span> <span class="o">||</span> <span class="nx">Y</span> <span class="o">!==</span> <span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
-            <span class="nx">core</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;lang&quot;</span><span class="o">,</span> <span class="s2">&quot;array&quot;</span><span class="o">,</span> <span class="s2">&quot;core&quot;</span><span class="o">,</span> <span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="s2">&quot;ua&quot;</span><span class="o">,</span> <span class="s2">&quot;later&quot;</span><span class="o">];</span>
+            <span class="nx">core</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="s2">&quot;ua&quot;</span><span class="o">,</span> <span class="s2">&quot;later&quot;</span><span class="o">];</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">C</span><span class="o">.</span><span class="nx">compat</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">core</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;compat&quot;</span><span class="o">);</span>
@@ -64,12 +67,11 @@
               <span class="s2">&quot;event-target&quot;</span><span class="o">,</span> 
               <span class="s2">&quot;event-ready&quot;</span><span class="o">,</span>
               <span class="s2">&quot;event-dom&quot;</span><span class="o">,</span> <span class="s2">&quot;event-facade&quot;</span><span class="o">,</span>
-              <span class="s2">&quot;node&quot;</span><span class="o">,</span>
-              <span class="c">// &quot;io&quot;, </span>
-<span class="c"></span>              <span class="c">// &quot;dump&quot;, </span>
+              <span class="s2">&quot;node&quot;</span><span class="o">,</span> 
+              <span class="s2">&quot;io&quot;</span><span class="o">,</span> 
+              <span class="c">// &quot;dump&quot;, </span>
 <span class="c"></span>              <span class="c">// &quot;substitute&quot;,</span>
-<span class="c"></span>              <span class="s2">&quot;get&quot;</span>
-              <span class="o">);</span>
+<span class="c"></span>              <span class="s2">&quot;get&quot;</span><span class="o">);</span>
 
         <span class="o">}</span>
 

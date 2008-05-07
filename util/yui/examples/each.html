@@ -8,7 +8,8 @@
 
 (function() {
 
-    var Y = YUI().use('dump'), newobj = {};
+    // var Y = YUI().use('dump'), newobj = {};
+    var Y = YUI({core:['lang', 'array', 'core']}).use('*'), newobj = {};
 
     var o = {
         str: "str",

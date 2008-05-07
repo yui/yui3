@@ -6566,21 +6566,24 @@ Y.Get = function() {
 }, "3.0.0");
 (function() {
 
-    var core = [],
+    var min = ['lang', 'array', 'core'], core,
 
     M = function(Y) {
 
         var C = Y.config;
 
-        Y.log(Y.id + ' setup complete) .');
+        // apply the minimal required functionality
+        Y.use.apply(Y, min);
+
+        Y.log(Y.id + ' setup completing) .');
 
         if (C.core) {
 
             core = C.core;
 
-        } else if (C.compat || Y !== YUI) {
+        } else {
 
-            core = ["lang", "array", "core", "object", "ua", "later"];
+            core = ["object", "ua", "later"];
 
             if (C.compat) {
                 core.push("compat");
@@ -6592,12 +6595,11 @@ Y.Get = function() {
               "event-target", 
               "event-ready",
               "event-dom", "event-facade",
-              "node",
-              // "io", 
+              "node", 
+              "io", 
               // "dump", 
               // "substitute",
-              "get"
-              );
+              "get");
 
         }
 
