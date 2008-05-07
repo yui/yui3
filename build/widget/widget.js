@@ -655,7 +655,8 @@
 
                     if (this.hasPlugin(ns)) {
                         // Update config
-                        this[ns].setAttributeConfigs(config, false);
+                        // this[ns].setAttributeConfigs(config, false);
+                        this[ns].setAtts(config);
                     } else {
                         // Create new instance
                         this[ns] = new PluginClass(config);
