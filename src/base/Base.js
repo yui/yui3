@@ -298,33 +298,32 @@
                 if (constructor.ATTRS) {
                     // Clone constructor.ATTRS, to a local copy
                     attributes = Y.merge(constructor.ATTRS);
-
                     Y.log('configuring ' + constructor.NAME + 'attributes', 'info', 'Base');
 
                     for (att in attributes) {
                         if (O.owns(attributes, att)) {
-                            var defConf = attributes[att],
-                                val = defConf.value;
-                            if (userConf && O.owns(userConf, att)) {
-                                // Support attrs which don't have a def config/value supplied
-                                if (!L.isObject(defConf)) {
-                                    defConf = {};
-                                }
 
-                                // Not Cloning/Merging on purpose. Don't want to clone
+                            var defConf = attributes[att],
+                                // To account for a value of 'undefined'
+                                hasInitValue = ("value" in defConf),
+                                initValue = defConf.value;
+
+                            if (userConf && O.owns(userConf, att)) {
+                                // Not Cloning/Merging user value on purpose. Don't want to clone
                                 // references to complex objects [ e.g. a reference to a widget ]
-                                // This means the user has to clone anything coming in, if they 
-                                // want it detached
-                                // attributes[att].value = conf[att];
-                                val = userConf[att];
+                                // This means the user has to clone anything coming in, if separate
+                                // value instances required per base instance
+                                hasInitValue = true;
+                                initValue = userConf[att];
                             }
                             this.addAtt(att, defConf);
-                            if (!L.isUndefined(val)) {
-                                this.set(att, val);
+                            if (hasInitValue) {
+                                this.set(att, initValue);
                             }
                         }
                     }
                 }
+
                 if (constructor.prototype.initializer) {
                     constructor.prototype.initializer.apply(this, arguments);
                 }
