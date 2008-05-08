@@ -405,6 +405,15 @@
                 
                     //get relevant information
                     var node /*:TestNode*/ = this._cur;
+                    
+                    //if there's no node, it probably means a wait() was called after resume()
+                    if (!node){
+                        //TODO: Handle in some way?
+                        //console.log("wait() called after resume()");
+                        //this.fire("error", { testCase: "(unknown)", test: "(unknown)", error: new Error("wait() called after resume()")} );
+                        return;
+                    }
+                    
                     var testName /*:String*/ = node.testObject;
                     var testCase /*:Y.Test.Case*/ = node.parent.testObject;
                 
