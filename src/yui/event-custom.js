@@ -343,9 +343,9 @@ this.log(this + " subscriber exception: " + ex, "error");
         },
 
         log: function(msg, cat) {
-            var es = Y.env._eventstack,
-                s =  es && es.silent;
-            if (!s && !this.silent) {
+            var es = Y.env._eventstack, s =  es && es.silent;
+            // if (!s && !this.silent) {
+            if (!this.silent) {
                 Y.log(msg, cat || "info", "Event");
             }
         },

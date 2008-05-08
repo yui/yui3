@@ -2220,9 +2220,9 @@ this.log(this + " subscriber exception: " + ex, "error");
         },
 
         log: function(msg, cat) {
-            var es = Y.env._eventstack,
-                s =  es && es.silent;
-            if (!s && !this.silent) {
+            var es = Y.env._eventstack, s =  es && es.silent;
+            // if (!s && !this.silent) {
+            if (!this.silent) {
                 Y.log(msg, cat || "info", "Event");
             }
         },
@@ -3880,34 +3880,45 @@ YUI.add("event-facade", function(Y) {
     };
 
     */
+    var ua = Y.ua,
 
-    var webkitKeymap = {
-        63232: 38, // up
-        63233: 40, // down
-        63234: 37, // left
-        63235: 39, // right
-        63276: 33, // page up
-        63277: 34, // page down
-        25: 9      // SHIFT-TAB (Safari provides a different key code in
-                   // this case, even though the shiftKey modifier is set)
-    };
+        webkitKeymap = {
+            63232: 38, // up
+            63233: 40, // down
+            63234: 37, // left
+            63235: 39, // right
+            63276: 33, // page up
+            63277: 34, // page down
+            25: 9      // SHIFT-TAB (Safari provides a different key code in
+                       // this case, even though the shiftKey modifier is set)
+        },
 
-    // return the element facade
-    var wrapNode = function(n) {
-        return (n && Y.Node) ? Y.Node.get(n) : n;
-    };
+        // return the element facade
+        wrapNode = function(n) {
+            return (n) ? Y.Node.get(n) : n;
+        },
 
-    var resolve = function(n) {
-        try {
-            if (n && 3 == n.nodeType) {
-                n = n.parentNode;
-            } 
-        } catch(ex) { }
+        // resolve = (ua.webkit) ? function(n) {
+        //     try {
+        //         if (ua.webkit && n && 3 == n.nodeType) {
+        //             n = n.parentNode;
+        //         } 
+        //     } catch(ex) { }
+        //     return wrapNode(n);
+        // } : function(n) {
+        //     return wrapNode(n);
+        // };
 
-        return wrapNode(n);
-    };
+        resolve = function(n) {
+            try {
+                if (ua.webkit && n && 3 == n.nodeType) {
+                    n = n.parentNode;
+                } 
+            } catch(ex) { }
 
-    var ua = Y.ua;
+            return wrapNode(n);
+        };
+
 
     // provide a single event with browser abstractions resolved
     //
@@ -3971,7 +3982,21 @@ YUI.add("event-facade", function(Y) {
         // targets
         
         this.target = resolve(e.target || e.srcElement);
-        this.originalTarget = resolve(e.originalTarget || ot);
+
+        /**
+         * The original target is the element that the listener is attached to.
+         * This property will be the same as 'this' if the listener did not
+         * override the default execution context.  @TODO FireFox throws an
+         * error when attempting to access the properties of the originalTarget
+         * in certain circumstances, e.g., when a document click listener is
+         * attached, the error is thrown if a text box is clicked.  The error
+         * itself happens below the JS layer, so it can't be trapped.  The
+         * error does not effect the operation of the page, so we may want to
+         * allow this to be enabled via a config option.  It would be nice
+         * to restore this property, but for now
+         */
+        // this.originalTarget = resolve(e.originalTarget || ot);
+        this.originalTarget = resolve(ot);
 
         var t = e.relatedTarget;
         if (!t) {

@@ -271,4 +271,25 @@ supplant the array of core YUI modules bound in Init.js.
 
 //////////////////////////////////////////////////////////////////////
 
+Y.log recursion
+
 Event Facade: fixed to work with new Node interface.  Do (now in the core): fixed multiple subscriber problem
+
+
+Remove originalTarget -- FF unhandled error
+
+//////////////////////////////////////////////////////////////////////
+
+throws a YAHOO.util.ChainedError if one or more subscribers throw an error.
+
+uploader dependencies
+
+option dependencies and sorting
+
+augmentObject override works correctly when values are falsy
+
+lang organization
+
+PHP loader - APC cache causing sporadic failures
+
+
