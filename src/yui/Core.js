@@ -32,10 +32,9 @@ YUI.add("core", function(Y) {
         } : function() {};
    
 
-    var Ext = function() { };
-
-    Ext.prototype = {
-        /**
+    // var Ext = function() { };
+    // Ext.prototype = {
+        /*
          * Execute a superclass method or constructor
          * @method Super
          * @param m {string} method name to execute.  If falsy, the 
@@ -55,6 +54,7 @@ YUI.add("core", function(Y) {
          * Super('methodname', arg1, arg2);
          *
          */
+        /*
         Super: function(m) {
 
             //  var args = arguments,
@@ -84,6 +84,8 @@ YUI.add("core", function(Y) {
             }
         }
     };
+
+    */
 
     /**
      * Returns a new object containing all of the properties of
@@ -267,10 +269,16 @@ YUI.add("core", function(Y) {
         }
     
         // Add object properties too
-        Y.mix(r, s);
+        // @TODO removed for now because it isn't that useful and
+        // has caused a few issues overwriting things that should
+        // not be.  You can do this manually if needed.  Revisit
+        // if this is something that really is needed for some
+        // reason.
+        // Y.mix(r, s);
 
-        // Add superclass convienience functions
-        Y.augment(r, Ext);
+        // Add superclass convienience functions 
+        // @TODO revisit when we have something that works
+        // Y.augment(r, Ext);
 
         // Add prototype overrides
         if (px) {

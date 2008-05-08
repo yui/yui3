@@ -70,10 +70,9 @@
         <span class="o">}</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
    
 
-    <span class="k">var</span> <span class="nx">Ext</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="o">};</span>
-
-    <span class="nx">Ext</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="c">/**</span>
+    <span class="c">// var Ext = function() { };</span>
+<span class="c"></span>    <span class="c">// Ext.prototype = {</span>
+<span class="c"></span>        <span class="c">/*</span>
 <span class="c">         * Execute a superclass method or constructor</span>
 <span class="c">         * @method Super</span>
 <span class="c">         * @param m {string} method name to execute.  If falsy, the </span>
@@ -93,35 +92,38 @@
 <span class="c">         * Super(&#39;methodname&#39;, arg1, arg2);</span>
 <span class="c">         *</span>
 <span class="c">         */</span>
-        <span class="nx">Super</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="c">//  var args = arguments,</span>
-<span class="c"></span>            <span class="c">//      a = (args.length &gt; 1) ?</span>
-<span class="c"></span>            <span class="c">//              Y.array(args, 1, true) :</span>
-<span class="c"></span>            <span class="c">//              args.callee.caller[&quot;arguments&quot;],</span>
-<span class="c"></span>            <span class="c">//      s = this.constructor.superclass;</span>
+        <span class="c">/*</span>
+<span class="c">        Super: function(m) {</span>
 <span class="c"></span>
-            <span class="c">// var args = arguments, s = this.constructor.superclass, a;</span>
-<span class="c"></span>            <span class="c">// if (args.length &gt; 1) {</span>
-<span class="c"></span>            <span class="c">//     a = Y.array(args, 1, true);</span>
-<span class="c"></span>            <span class="c">// } else {</span>
-<span class="c"></span>            <span class="c">//     var c = args.callee.caller;</span>
-<span class="c"></span>            <span class="c">//     a = (c &amp;&amp; &quot;arguments&quot; in c) ? c.arguments : [];</span>
-<span class="c"></span>            <span class="c">// }</span>
+<span class="c">            //  var args = arguments,</span>
+<span class="c">            //      a = (args.length &gt; 1) ?</span>
+<span class="c">            //              Y.array(args, 1, true) :</span>
+<span class="c">            //              args.callee.caller[&quot;arguments&quot;],</span>
+<span class="c">            //      s = this.constructor.superclass;</span>
 <span class="c"></span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">s</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">superclass</span><span class="o">;</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="k">in</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">s</span><span class="o">[</span><span class="nx">m</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="nx">m</span> <span class="o">+</span> <span class="s2">&quot; super method not found&quot;</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">s</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
+<span class="c">            // var args = arguments, s = this.constructor.superclass, a;</span>
+<span class="c">            // if (args.length &gt; 1) {</span>
+<span class="c">            //     a = Y.array(args, 1, true);</span>
+<span class="c">            // } else {</span>
+<span class="c">            //     var c = args.callee.caller;</span>
+<span class="c">            //     a = (c &amp;&amp; &quot;arguments&quot; in c) ? c.arguments : [];</span>
+<span class="c">            // }</span>
+<span class="c"></span>
+<span class="c">            var a = Y.array(arguments, 1, true), s = this.constructor.superclass;</span>
+<span class="c"></span>
+<span class="c">            if (m) {</span>
+<span class="c">                if (m in s) {</span>
+<span class="c">                    s[m].apply(this, a);</span>
+<span class="c">                } else {</span>
+<span class="c">                    Y.fail(m + &quot; super method not found&quot;);</span>
+<span class="c">                }</span>
+<span class="c">            } else {</span>
+<span class="c">                s.constructor.apply(this, a);</span>
+<span class="c">            }</span>
+<span class="c">        }</span>
+<span class="c">    };</span>
+<span class="c"></span>
+<span class="c">    */</span>
 
     <span class="c">/**</span>
 <span class="c">     * Returns a new object containing all of the properties of</span>
@@ -305,11 +307,17 @@
         <span class="o">}</span>
     
         <span class="c">// Add object properties too</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
-
-        <span class="c">// Add superclass convienience functions</span>
-<span class="c"></span>        <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">Ext</span><span class="o">);</span>
-
+<span class="c"></span>        <span class="c">// @TODO removed for now because it isn&#39;t that useful and</span>
+<span class="c"></span>        <span class="c">// has caused a few issues overwriting things that should</span>
+<span class="c"></span>        <span class="c">// not be.  You can do this manually if needed.  Revisit</span>
+<span class="c"></span>        <span class="c">// if this is something that really is needed for some</span>
+<span class="c"></span>        <span class="c">// reason.</span>
+<span class="c"></span>        <span class="c">// Y.mix(r, s);</span>
+<span class="c"></span>
+        <span class="c">// Add superclass convienience functions </span>
+<span class="c"></span>        <span class="c">// @TODO revisit when we have something that works</span>
+<span class="c"></span>        <span class="c">// Y.augment(r, Ext);</span>
+<span class="c"></span>
         <span class="c">// Add prototype overrides</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">px</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">rp</span><span class="o">,</span> <span class="nx">px</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
