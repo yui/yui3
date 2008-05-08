@@ -1,0 +1,62 @@
+.yui-skin-sam .yui-log {
+    border: 1px solid #777;
+    color:#000;
+    font: normal 77%/1.3 Arial, sans-serif;
+    position:absolute;
+    right:1em;
+    top:1em;
+    text-align:left;
+    width:31em;
+    z-index:9000;
+}
+
+.yui-skin-sam .yui-log-hd,
+.yui-skin-sam .yui-log-controls {
+    background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+    height: 2em;
+    padding: 0 1ex;
+}
+.yui-skin-sam .yui-log-hd h4 {
+    font-size: 100%;
+    line-height: 2em;
+    margin: 0;
+    Xpadding-left: 1em;
+}
+.yui-skin-sam .yui-log-button {
+    background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+    border: none;
+    border-left: 1px solid #777;
+    font-size: inherit;
+    height: 2em;
+    position: absolute;
+    right: 0;
+}
+.yui-skin-sam .yui-log-console {
+    background: #fff;
+    border-top: 1px solid #777;
+    border-bottom: 1px solid #777;
+    height: 20em;
+    overflow: auto;
+    width: 100%;
+}
+.yui-skin-sam .yui-log-hd .yui-log-controls {
+    position: absolute;
+    right: 0;
+}
+
+.yui-skin-sam .yui-log-ft .yui-log-categories,
+.yui-skin-sam .yui-log-ft .yui-log-sources {
+    background: #eef;
+    border-top: 1px solid #777;
+    height: auto;
+    padding: .3em 1ex;
+}
+.yui-skin-sam .yui-log-ft .yui-log-sources {
+    background: #fee;
+}
+
+/* Log entries */
+.yui-skin-sam .yui-log-entry {
+    border-bottom: 1px dotted #aaa;
+    padding: 0 1ex;
+}

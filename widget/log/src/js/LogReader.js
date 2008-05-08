@@ -23,13 +23,18 @@ Y.mix(Y.log.Reader, {
         EXPAND      : 'yui-log-expand',
         ACTIVE      : 'yui-log-active',
         CLEAR       : 'yui-log-clear',
-        CAT_FILTERS : 'yui-log-categories',
-        SRC_FILTERS : 'yui-log-sources',
+        CAT_CHECKS  : 'yui-log-categories',
+        SRC_CHECKS  : 'yui-log-sources',
         CATEGORY    : 'yui-log-category',
         SOURCE      : 'yui-log-source',
-        FILTER      : 'yui-log-filter',
+        ENTRY       : 'yui-log-entry',
+        VERBOSE     : 'yui-log-verbose',
+        ENTRY_META  : 'yui-log-entry-meta',
+        ENTRY_CAT   : 'yui-log-entry-cat',
+        ENTRY_SRC   : 'yui-log-entry-src',
+        ENTRY_TYPE  : 'yui-log-entry-type',
         HIDE_BASE   : 'yui-log-hide-',
-        FILTER_BASE : 'yui-log-filter-'
+        ENTRY_TYPE_BASE : 'yui-log-entry-type-'
     },
 
     STRINGS : {
@@ -56,16 +61,16 @@ Y.mix(Y.log.Reader, {
 
         defaultSource   : {value:'global'},
 
-        filters         : {
+        entryTypes       : { // display these entry types
             value:{
                 category : {
-                    info : false,
-                    warn : false,
-                    error: false,
-                    time : false
+                    info : true,
+                    warn : true,
+                    error: true,
+                    time : true
                 },
                 source   : {
-                    global : false
+                    global : true
                 }
             }
         },
@@ -98,13 +103,8 @@ Y.mix(Y.log.Reader, {
         verbose : {
             value: true,
             set : function (val) {
-                var d = Y.config.debug;
-                Y.config.debug = false;
-
                 this.set('defaultTemplate',
                     (val ? Y.log.Reader.VERBOSE : Y.log.Reader.BASIC));
-
-                Y.config.debug = d;
 
                 return !!val;
             }
@@ -127,8 +127,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _title : null,
     _console : null,
     _foot : null,
-    _catFilters : null,
-    _srcFilters : null,
+    _catChecks : null,
+    _srcChecks : null,
 
     _timeout : null,
 
@@ -136,9 +136,6 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     // Override default AttributeProvider methods to handle object values
     get : function (attr) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var path = attr.split('.'),
             att  = path[0],
             i = 1, l = path.length - 1,
@@ -149,18 +146,12 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 v = v[path[i]];
             }
 
-            Y.config.debug = d;
             return v === undefined ? undefined : v[path[i]];
         }
 
-
-        Y.config.debug = d;
         return v;
     },
     set : function (attr,val,silent) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var path = attr.split('.'),
             att  = path[0],
             i = 1, l = path.length - 1,
@@ -174,22 +165,16 @@ Y.extend(Y.log.Reader,Y.Widget,{
             }
 
             if (o === undefined) {
-                Y.config.debug = d;
-
                 return this;
             }
 
             o[path[i]] = val;
         }
 
-        Y.config.debug = d;
         return Y.log.Reader.superclass.set.call(this,att,v,silent);
     },
 
     initializer : function (cfg) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         this.buffer    = [];
 
         // HACK: AttributeProvider should clone object values but doesn't yet
@@ -198,77 +183,63 @@ Y.extend(Y.log.Reader,Y.Widget,{
         this._initTemplates();
 
         Y.on('yui:log',Y.bind(this._handleLogEntry,this));
-
-        Y.config.debug = d;
     },
 
     // HACK: AttributeProvider should clone object attribute values
     _initObjectAttributes : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
-        var attrs = ['filters','templates','entryWriters'],
+        var attrs = ['entryTypes','templates','entryWriters'],
             i = attrs.length - 1;
 
         for (;i>=0;--i) {
             this.set(attrs[i],Y.clone(this.get(attrs[i])),true);
         }
-
-        Y.config.debug = d;
     },
 
     _initTemplates : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var C = Y.log.Reader.CLASSES;
 
         // For verbose log entries
         this.set('templates.verbose',
-            '<div class="'+C.MESSAGE+' '+C.VERBOSE+'">'+
-                '<pre>'+
+            '<pre class="'+C.ENTRY+' '+C.VERBOSE+'">'+
+                '<div class="'+C.ENTRY_META+'">'+
                     '<p>'+
                         '<span class="'+C.ENTRY_CAT+'">{label}</span>'+
-                        ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
+                        '<span class="'+C.ENTRY_TIME+'">'+
+                            ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
+                        '</span>'+
                     '</p>'+
-                    '<p>{sourceAndDetail}</p>'+
-                    '<p>{message}</p>'+
-                '</pre>'+
-            '</div>');
+                    '<p class="'+C.ENTRY_SRC+'">{sourceAndDetail}</p>'+
+                '</div>'+
+                '<p>{message}</p>'+
+            '</pre>');
 
         // For basic log entries
         this.set('templates.basic',
-            '<div class="'+C.MESSAGE+'">'+
-                '<pre>'+
-                    '<p>'+
+            '<pre class="'+C.ENTRY+'">'+
+                '<p>'+
+                    '<span class="'+C.ENTRY_META+'">'+
                         '<span class="'+C.ENTRY_CAT+'">{label}</span>'+
-                        ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
-                        ' {sourceAndDetail}:'+
-                        ' {message}'+
-                    '</p>'+
-                '</pre>'+
-            '</div>');
-
-        Y.config.debug = d;
+                        '<span class="'+C.ENTRY_TIME+'">'+
+                            ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
+                        '</span>'+
+                        '<span class="'+C.ENTRY_SRC+'">'+
+                            ' {sourceAndDetail}'+
+                        '</span>:'+
+                    '</span>'+
+                    ' {message}'+
+                '</p>'+
+            '</pre>');
     },
 
     renderer : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         Y.log.Reader.superclass.renderer.apply(this,arguments);
 
         this.renderUI();
         this.syncUI();
         this.bindUI();
-
-        Y.config.debug = d;
     },
 
     renderUI : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         if (!this.rendered) {
             this._root.innerHTML = '';
 
@@ -278,14 +249,9 @@ Y.extend(Y.log.Reader,Y.Widget,{
             this._renderConsole();
             this._renderFoot();
         }
-
-        Y.config.debug = d;
     },
 
     _renderHead : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var C = Y.log.Reader.CLASSES,
             S = Y.log.Reader.STRINGS;
 
@@ -303,75 +269,61 @@ Y.extend(Y.log.Reader,Y.Widget,{
         this._title = this._head.query('h4');
 
         this._root.insertBefore(this._head,this._root.get('firstChild')||null);
-
-        Y.config.debug = d;
     },
 
     _renderConsole : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         this._console = this._root.insertBefore(
             Y.Node.create('<div class="'+Y.log.Reader.CLASSES.CONSOLE+'"></div>'),
             this._foot || null);
-
-        Y.config.debug = d;
     },
 
     _renderFoot : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var C = Y.log.Reader.CLASSES,
             S = Y.log.Reader.STRINGS,
-            filters,f;
+            entryTypes,t;
 
         this._foot = Y.Node.create(
             '<div class="'+C.FT+'">'+
                 '<div class="'+C.CONTROLS+'">'+
-                    '<label class="'+C.LABEL+'">'+S.ACTIVE+
-                        ' <input type="checkbox" class="'+
-                            C.CHECKBOX+' '+C.ACTIVE+'" value="1">'+
+                    '<label class="'+C.LABEL+'">'+
+                        '<input type="checkbox" class="'+
+                            C.CHECKBOX+' '+C.ACTIVE+'" value="1"> '+
+                            S.ACTIVE+
                     '</label>'+
                     '<input type="button" class="'+C.BUTTON+' '+C.CLEAR+'"'+
                         ' value="'+S.CLEAR+'">'+
                 '</div>');
 
-        this._catFilters = this._foot.appendChild(Y.Node.create(
-            '<div class="'+C.CONTROLS + ' ' + C.CAT_FILTERS + '"></div>'));
+        this._catChecks = this._foot.appendChild(Y.Node.create(
+            '<div class="'+C.CONTROLS + ' ' + C.CAT_CHECKS + '"></div>'));
             
-        this._srcFilters = this._foot.appendChild(Y.Node.create(
-            '<div class="'+C.CONTROLS + ' ' + C.SRC_FILTERS + '"></div>'));
+        this._srcChecks = this._foot.appendChild(Y.Node.create(
+            '<div class="'+C.CONTROLS + ' ' + C.SRC_CHECKS + '"></div>'));
 
-        // Add the category filter checks
-        filters = this.get('filters.category');
-        for (f in filters) {
-            if (Y.object.owns(filters,f)) {
-                this._catFilters.appendChild(
-                    this._createFilter(C.CATEGORY,f));
+        // Add the category entryType checks
+        entryTypes = this.get('entryTypes.category');
+        for (t in entryTypes) {
+            if (Y.object.owns(entryTypes,t)) {
+                this._catChecks.appendChild(
+                    this._createEntryType(C.CATEGORY,t));
             }
         }
 
-        // Add the source filter checks
-        filters = this.get('filters.source');
-        for (f in filters) {
-            if (Y.object.owns(filters,f)) {
-                this._srcFilters.appendChild(
-                    this._createFilter(C.SOURCE,f));
+        // Add the source entryType checks
+        entryTypes = this.get('entryTypes.source');
+        for (t in entryTypes) {
+            if (Y.object.owns(entryTypes,t)) {
+                this._srcChecks.appendChild(
+                    this._createEntryType(C.SOURCE,t));
             }
         }
 
         this._root.appendChild(this._foot);
-
-        Y.config.debug = d;
     },
 
     syncUI : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var C = Y.log.Reader.CLASSES,
-            filters;
+            entryTypes;
 
         // Set active check
         this._setActive(this.get('active'));
@@ -382,31 +334,26 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Add/remove the hidden foot class
         this._setFooterEnabled(this.get('footerEnabled'));
 
-        // Category filter checks
-        filters = this.get('filters.category');
+        // Category entryType checks
+        entryTypes = this.get('entryTypes.category');
         this._foot.queryAll('input[type=checkbox].'+C.CATEGORY).each(
             function (check) {
-                check.set('checked', (check.get('value') in filters) ?
-                    !!filters[check.get('value')] : false);
+                check.set('checked', (check.get('value') in entryTypes) ?
+                    entryTypes[check.get('value')] : true);
             });
             
-        // Source filter checks
-        filters = this.get('filters.source');
+        // Source entryType checks
+        entryTypes = this.get('entryTypes.source');
         this._foot.queryAll('input[type=checkbox].'+C.SOURCE).each(
             function (check) {
-                check.set('checked', (check.get('value') in filters) ?
-                    !!filters[check.get('value')] : false);
+                check.set('checked', (check.get('value') in entryTypes) ?
+                    entryTypes[check.get('value')] : true);
             });
-
-        Y.config.debug = d;
     },
 
     bindUI : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         // UI control click events
-        // (collapse, expand, active, clear, filters)
+        // (collapse, expand, active, clear, categories, sources)
         // move to queryAll(..).on('click',..)
         var controls = this._root.queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
             i = controls.get('length') - 1;
@@ -421,16 +368,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
         this.on('collapsedChange',     Y.bind(this._setCollapsed,this));
         this.on('consoleLimitChange',  Y.bind(this._setConsoleLimit,this));
         this.on('footerEnabledChange', Y.bind(this._setFooterEnabled,this));
-        // HACK: will point to this._setFilter or something like that
-        this.on('filtersChange',       Y.bind(this._handleFiltersChange,this));
-
-        Y.config.debug = d;
+        // HACK: will point to this._setEntryType or something like that
+        this.on('entryTypesChange',    Y.bind(this._handleEntryTypesChange,this));
     },
 
     _handleControlClick : function (e) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var C = Y.log.Reader.CLASSES,
             t = e.target;
 
@@ -439,38 +381,28 @@ Y.extend(Y.log.Reader,Y.Widget,{
         } else if (t.hasClass(C.EXPAND)) {
             this.set('collapsed', false);
         } else if (t.hasClass(C.ACTIVE)) {
-            this.set('active', false);
+            this.set('active', t.get('checked'));
         } else if (t.hasClass(C.CLEAR)) {
             this.clearConsole();
         } else if (t.hasClass(C.FILTER)) {
-            this.set('filters.' +
+            this.set('entryTypes.' +
                 (t.hasClass(C.CATEGORY) ? 'category.' : 'source.') +
                 t.get('value'),
                 t.get('checked'));
         }
-
-        Y.config.debug = d;
     },
 
     _setTitle : function (v) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         v = typeof v == 'object' ? v.newVal : v;
 
         this._title.set('innerHTML',v);
-        
-        Y.config.debug = d;
     },
 
     _setActive : function (b) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         b = typeof b == 'object' ? b.newVal : b;
 
         // TODO: this should be this._head.queryAll(..).set('checked',!!b)
-        var checks = this._head.queryAll(
+        var checks = this._foot.queryAll(
                         'input[type=checkbox].'+Y.log.Reader.CLASSES.ACTIVE),
             i = checks.get('length') - 1;
 
@@ -484,35 +416,20 @@ Y.extend(Y.log.Reader,Y.Widget,{
             clearTimeout(this._timeout);
             this._timeout = null;
         }
-
-        Y.config.debug = d;
     },
 
     _setCollapsed : function (b) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         b = typeof b == 'object' ? b.newVal : b;
 
         this._root[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
-
-        Y.config.debug = d;
     },
 
     _setConsoleLimit : function (v) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         v = typeof v === 'object' ? v.newVal : v;
         this._trimOldEntries(v);
-
-        Y.config.debug = d;
     },
 
     clearConsole : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         // TODO: clear event listeners from console contents
         this._console.set('innerHTML','');
 
@@ -522,41 +439,31 @@ Y.extend(Y.log.Reader,Y.Widget,{
         }
 
         this.buffer = [];
-
-        Y.config.debug = d;
     },
 
     reset : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         this.clearConsole();
         this.set('startTime',new Date());
         this.set('enabled',true);
         this.set('active',true);
 
         this.fire('reset');
-
-        Y.config.debug = d;
     },
 
     _handleLogEntry : function (msg,cat,src) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         if (this.get('enabled')) {
             var m     = this.normalizeMessage(msg,cat,src),
-                known = this.get('filters');
+                known = this.get('entryTypes');
 
             if (m) {
                 // New category?
                 if (m.category && !(m.category in known.category)) {
-                    this.createCategory(m.category,false);
+                    this.createCategory(m.category,true);
                 }
 
                 // New source?
                 if (m.source && !(m.source in known.source)) {
-                    this.createSource(m.source,false);
+                    this.createSource(m.source,true);
                 }
 
                 // buffer the output
@@ -564,14 +471,9 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 this._schedulePrint();
             }
         }
-
-        Y.config.debug = d;
     },
 
     normalizeMessage : function (msg,cat,src) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var m = {
             time            : new Date(),
             message         : msg,
@@ -587,7 +489,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Extract m.source "Foo" from m.sourceAndDetail "Foo bar baz"
         m.source          = /^(\S+)\s/.test(m.sourceAndDetail) ?
                                 RegExp.$1 : m.sourceAndDetail;
-        m.label           = m.category.toUpperCase();
+        m.label           = m.category;
         m.localTime       = m.time.toLocaleTimeString ? 
                             m.time.toLocaleTimeString() : (m.time + '');
         m.elapsedTime     = m.time - this.get('lastTime');
@@ -595,28 +497,18 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         this.set('lastTime',m.time);
 
-        Y.config.debug = d;
-
         return m;
     },
 
     _schedulePrint : function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         if (this.get('active') && !this._timeout) {
             this._timeout = setTimeout(
                 Y.bind(this.printBuffer,this),
                 this.get('printTimeout'));
         }
-
-        Y.config.debug = d;
     },
 
     printBuffer: function () {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         if (this.get('active') && this.rendered) {
             clearTimeout(this._timeout);
             this._timeout = null;
@@ -632,14 +524,9 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 this._trimOldEntries();
             }
         }
-
-        Y.config.debug = d;
     },
 
     printLogEntry : function (m) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         var writers = this.get('entryWriters'),
             wr = writers[m.cat] || writers[this.get('defaultWriter')],
             output;
@@ -656,14 +543,9 @@ Y.extend(Y.log.Reader,Y.Widget,{
                     this._console.get('scrollHeight'));
             }
         }
-
-        Y.config.debug = d;
     },
 
     _entryFromTemplate : function (m) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         m = this._htmlEscapeMessage(m);
 
         var templates = this.get('templates'),
@@ -673,15 +555,10 @@ Y.extend(Y.log.Reader,Y.Widget,{
         n.addClass(this._filterClass(m.category));
         n.addClass(this._filterClass(m.source));
 
-        Y.config.debug = d;
-
         return n;
     },
 
     _htmlEscapeMessage : function (m) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         function esc(s) {
             return s.replace(/&/g,'&#38;').
                      replace(/</g,'&#60;').
@@ -697,15 +574,10 @@ Y.extend(Y.log.Reader,Y.Widget,{
         m.category        = typeof m.category        === 'string' ?
             esc(m.category)        : m.category;
 
-        Y.config.debug = d;
-
         return m;
     },
 
     _trimOldEntries : function (max) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         if (this._console) {
             var entries = this._console.get('childNodes'),
                 idx     = entries.get('length') -
@@ -721,43 +593,30 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 }
             }
         }
-
-        Y.config.debug = d;
     },
 
     // Log entry display filtering methods
     hideEntries : function (name) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
-        var filters = this.get('filters'),f;
-        for (f in filters) {
-            if (Y.object.owns(filters,f) && Y.object.owns(filters[f],name)) {
-                this.set('filters.'+f+'.'+name, true);
+        var entryTypes = this.get('entryTypes'),t;
+        for (t in entryTypes) {
+            if (Y.object.owns(entryTypes,t) &&
+                Y.object.owns(entryTypes[t],name)) {
+                this.set('entryTypes.'+t+'.'+name, false);
             }
         }
-
-        Y.config.debug = d;
     },
 
     showEntries : function (name) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
-        var filters = this.get('filters'),f;
-        for (f in filters) {
-            if (Y.object.owns(filters,f) && Y.object.owns(filters[f],name)) {
-                this.set('filters.'+f+'.'+name, true);
+        var entryTypes = this.get('entryTypes'),t;
+        for (t in entryTypes) {
+            if (Y.object.owns(entryTypes,t) &&
+                Y.object.owns(entryTypes[t],name)) {
+                this.set('entryTypes.'+t+'.'+name, true);
             }
         }
-
-        Y.config.debug = d;
     },
 
-    _setFilter : function (name,checked) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
+    _setEntryType : function (name,checked) {
         // TODO: should be this._foot.queryAll(..).set('checked',checked)
         var checks = this._foot.queryAll('input[type=checkbox].'+
                         this._filterClass(name)),
@@ -767,52 +626,26 @@ Y.extend(Y.log.Reader,Y.Widget,{
             checks.item(i).set('checked',checked);
         }
 
-        this._filterEntries(name, !!checked);
-
-        Y.config.debug = d;
+        this._filterEntries(name, !checked);
     },
 
     _filterEntries : function (name,on) {
-        // TODO: break out support for cascading hide class via Y.css plugin ala
-        /*
         // add or remove the filter class from the root node
-        this._root[on?'addClass':'removeClass'](this._filterClass(name),true);
-        */
-
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
-        // TODO: should be this._console.queryAll(..).setStyle('display',..);
-        var entries = this._console.queryAll('.'+this._filterClass(name)),
-            i = entries.get('length') - 1;
-
-        for (;i>=0;--i) {
-            entries.item(i).setStyle('display',(on?'none':''));
-        }
-        
-        Y.config.debug = d;
+        this._root[on?'addClass':'removeClass'](this._filterClass(name,true));
     },
 
     _setFooterEnabled : function (show) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
         this._root[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
-
-        Y.config.debug = d;
     },
 
-    createCategory : function (name, filtered) {
-        this.set('filters.category.'+name, !!filtered);
+    createCategory : function (name, show) {
+        this.set('entryTypes.category.'+name, !!show);
     },
-    createSource : function (name, filtered) {
-        this.set('filters.source.'+name, !!filtered);
+    createSource : function (name, show) {
+        this.set('entryTypes.source.'+name, !!show);
     },
 
-    _createFilter : function (type,name) {
-        var d = Y.config.debug;
-        Y.config.debug = false;
-
+    _createEntryType : function (type,name) {
         var C     = Y.log.Reader.CLASSES,
             label = Y.Node.create(
                 '<label class="'+C.LABEL+'">'+
@@ -821,23 +654,17 @@ Y.extend(Y.log.Reader,Y.Widget,{
                         name+
                 '</label>');
 
-        // TODO: Break this out into a Y.css module
-        /*
-        if (Y.css && !/^(?:info|warn|error|time)$/.test(name.toLowerCase())) {
-            Y.css('.'+this._filterClass(name,true) + ' .'+this._filterClass(name), {display: 'none'});
-        }
-        */
-
-        Y.config.debug = d;
+        Y.css('.'+this._filterClass(name,true) + ' .'+this._filterClass(name),
+            {display: 'none'});
 
         return label;
     },
 
     _filterClass : function (name,hide) {
-        return Y.log.Reader.CLASSES[(hide ? 'HIDE_BASE' : 'FILTER_BASE')]+name;
+        return Y.log.Reader.CLASSES[(hide ? 'HIDE_BASE' : 'ENTRY_TYPE_BASE')]+name;
     },
 
-    _handleFiltersChange : function (e) {
+    _handleEntryTypesChange : function (e) {
         // HACK: until set passes payload, we have to manually determine
         // what changed.
 
@@ -882,19 +709,19 @@ Y.extend(Y.log.Reader,Y.Widget,{
             on = val(e.newVal,bPaths[i]);
             // TODO: this does not handle deletions
             if (val(e.prevVal,bPaths[i]) !== on) {
-                // Change to existing filter
+                // Change to existing entryType bool
                 name = bPaths[i][1];
-                this._setFilter(name,on);
+                this._setEntryType(name,on);
             }
             done[bPaths[i].join('.')] = true;
         }
         for (i=0,l=aPaths.length;i<l;++i) {
             if (!done[aPaths[i].join('.')]) {
-                // New filter check
-                type = aPaths[i][0] == 'category'?C.CATEGORY:C.SOURCE;
+                // New entryType check
+                type = aPaths[i][0] == 'category' ? C.CATEGORY : C.SOURCE;
                 name = aPaths[i][1];
-                this._createFilter(type,name);
-                this._setFilter(name,val(e.newVal,aPaths[i]));
+                this._createEntryType(type,name);
+                this._setEntryType(name,val(e.newVal,aPaths[i]));
             }
         }
     }
