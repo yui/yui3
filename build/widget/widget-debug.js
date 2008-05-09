@@ -384,7 +384,7 @@
                 Y.log('destructor called', 'life', 'Widget');
 
                 this._destroyPlugins();
-                
+
                 if (this.id) {
                     delete _instances[this.id];
                 }
@@ -414,9 +414,9 @@
                     throw('render failed; widget has been destroyed');
                 }
 
-                // append to parent if provided, or to body if no parent and not in body
+                // append to parent if provided, or to body if no parent and not in body 
                 parentNode = parentNode || Y.Node.get("body");
-                if (parentNode && !parentNode.invoke("contains", this._root)) {
+                if (parentNode && !parentNode.contains(this._root)) {
                     parentNode.appendChild(this._root);
                 }
 
