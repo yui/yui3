@@ -141,6 +141,10 @@ YUI.add("event-facade", function(Y) {
         this.charCode = c;
 
         //////////////////////////////////////////////////////
+        // button
+        this.button = e.which || e.button
+
+        //////////////////////////////////////////////////////
         // time
 
         this.time = e.time || new Date().getTime();

@@ -372,7 +372,7 @@ this.log(this + " subscriber exception: " + ex, "error");
 
             if (es) {
                 es.silent = (es.silent || this.silent);
-                es.logging = (es.logging || (this.type === 'yui:log'));
+                // es.logging = (es.logging || (this.type === 'yui:log'));
             } else {
                 Y.env._eventstack = {
                    // id of the first event in the stack
@@ -402,8 +402,19 @@ this.log(this + " subscriber exception: " + ex, "error");
 
                 this.log("Firing " + this  + ", " + "args: " + args);
 
+                var hasSub = false;
+                es.lastLogState = es.logging;
+
                 for (i in subs) {
                     if (Y.object.owns(subs, i)) {
+
+                        if (!hasSub) {
+
+                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            // es.logging = (this.type === 'yui:log');
+
+                            hasSub = true;
+                        }
 
                         // stopImmediatePropagation
                         if (this.stopped == 2) {
@@ -423,6 +434,8 @@ this.log(this + " subscriber exception: " + ex, "error");
                         }
                     }
                 }
+
+                es.logging = (es.lastLogState);
 
                 // @TODO need context
                 if (this.defaultFn) {

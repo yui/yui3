@@ -275,10 +275,13 @@ Y.log recursion
 
 Event Facade: fixed to work with new Node interface.  Do (now in the core): fixed multiple subscriber problem
 
+originalTarget borrows the reference from addListener instead of the event property to get around a FireFox bug.
 
-Remove originalTarget -- FF unhandled error
+Y.extend does not copy object properties any longer.  It also no longer adds Super, which doesn't work after the first level of inheritance
 
 //////////////////////////////////////////////////////////////////////
+
+2.5.2
 
 throws a YAHOO.util.ChainedError if one or more subscribers throw an error.
 
