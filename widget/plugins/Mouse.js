@@ -25,14 +25,13 @@
         // Mouse.ATTRS = null;
 
         var proto = {
-            initializer: function(config) {
 
+            initializer: function(config) {
                 if (!this.owner.rendered) {
                     this.listen(this.owner, "render", Y.bind(this._initUI, this));
                 } else {
                     this._initUI();
                 }
-
             },
 
             handler: function(evt) {
@@ -40,9 +39,11 @@
             },
 
             destructor: function() {
-                var root = this.owner._root;
-                for (var i = 0, len = this._handles.length; i < len; ++i) {
-                    this._handles[i].detach();
+                // If the plugin is being destroyed before render is called
+                if (this._handles) {
+                    for (var i = 0, len = this._handles.length; i < len; ++i) {
+                        this._handles[i].detach();
+                    }
                 }
             },
 
@@ -56,7 +57,6 @@
         };
 
         Y.extend(Mouse, P, proto);
-        // P.add(Mouse);
         P.Mouse = Mouse;
     };
 
