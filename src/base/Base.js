@@ -324,7 +324,7 @@
                     }
                 }
 
-                if (constructor.prototype.initializer) {
+                if (O.owns(constructor.prototype, "initializer")) {
                     constructor.prototype.initializer.apply(this, arguments);
                 }
             }
@@ -336,7 +336,7 @@
         _destroyHierarchy : function() {
             var constructor = this.constructor;
             while (constructor && constructor.prototype) {
-                if (constructor.prototype.destructor) {
+                if (O.owns(constructor.prototype, "destructor")) {
                     constructor.prototype.destructor.apply(this, arguments);
                 }
                 constructor = constructor.superclass ? constructor.superclass.constructor : null;
