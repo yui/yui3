@@ -48,6 +48,8 @@ YUI.prototype = {
     //    doc
     //    debug
     //    useConsole
+    //    logInclude
+    //    logExclude
     //    throwFail
     //    pollInterval
     //    compat
@@ -97,8 +99,8 @@ YUI.prototype = {
         var c = this.merge(this.config);
         this.mix(c, {
             debug: true,
-            useConsole: true,
-            throwFail: false
+            useConsole: true
+            // , throwFail: false
         });
         this.config = c;
 
@@ -200,7 +202,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name);
+                Y.log('module not found: ' + name, 'info', 'YUI');
                 missing.push(name);
             }
 
@@ -238,7 +240,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    Y.log('attaching ' + r[i]);
+                    Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -311,21 +313,45 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        var c = this.config, Y = this, 
-            bail = (Y.env._eventstack && Y.env._eventstack.logging);
+        var Y = this, c = Y.config, es = Y.env._eventstack,
+            bail = (es && es.logging);
 
         // suppress log message if the config is off or the event stack
         // or the event call stack contains a consumer of the yui:log event
         if (c.debug && !bail) {
 
-            Y.env._lastlog = msg;
+
+            // Y.env._lastlog = msg;
 
             if (c.useConsole && typeof console != 'undefined') {
-                var f = (cat && console[cat]) ? cat : 'log',
-                    m = (src) ? src + ': ' + msg : msg;
-                console[f](m);
+
+                // apply source filters
+                if (src) {
+
+
+                    var exc = c.logExclude, inc = c.logInclude;
+
+                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
+
+                    if (inc && !(src in inc)) {
+                        // console.log('bail: inc list found, but src is not in list: ' + src);
+                        bail = true;
+                    } else if (exc && (src in exc)) {
+                        // console.log('bail: exc list found, and src is in it: ' + src);
+                        bail = true;
+                    }
+                }
+
+                if (!bail) {
+
+                    var f = (cat && console[cat]) ? cat : 'log',
+                        m = (src) ? src + ': ' + msg : msg;
+                    console[f](m);
+                }
             }
 
+            // category filters are not used to suppress the log event
+            // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
         }
 

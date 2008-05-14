@@ -238,6 +238,21 @@ for 40 seconds or until all outstanding handlers are bound
 
                                     <hr />
                                     </div>
+                                    <div class="private">
+                                    <h4><a name="property_webkitKeymap">webkitKeymap</a>
+                                        <code>- private object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            webkit key remapping required for Safari < 3.1
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
 
 
                             </div>
@@ -1206,6 +1221,42 @@ otherwise.</dd>
                                     </div>
                                     <div class="private">
                                     <h4>
+                                        <a name="method_resolve">resolve</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>resolve</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns a wrapped node.  Intended to be used on event targets,
+so it will return the node's parent if the target is a text
+node
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
                                         <a name="method_startInterval">startInterval</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1220,6 +1271,40 @@ otherwise.</dd>
                                         
                                         <div class="description">
                                             
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_wrapNode">wrapNode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>wrapNode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Wraps an element in a Node facade
                                         </div>
 
                                         <div class="description">
@@ -1275,6 +1360,7 @@ otherwise.</dd>
                                 <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class="selected"><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
                                 <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
                                 <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>
@@ -1314,37 +1400,40 @@ otherwise.</dd>
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property__avail">_avail</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__dri">_dri</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__el_events">_el_events</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__interval">_interval</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__retryCount">_retryCount</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__wrappers">_wrappers</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_DOMReady">DOMReady</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_lastError">lastError</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property_loadComplete">loadComplete</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_POLL_INTERVAL">POLL_INTERVAL</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_POLL_RETRYS">POLL_RETRYS</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;object&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_webkitKeymap">webkitKeymap</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -1401,7 +1490,13 @@ otherwise.</dd>
                                 <a href="#method_removeListener">removeListener</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
+                                <a href="#method_resolve">resolve</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
                                 <a href="#method_startInterval">startInterval</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_wrapNode">wrapNode</a>
                                 </li>
                         </ul>
                     </div>

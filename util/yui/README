@@ -279,6 +279,10 @@ originalTarget borrows the reference from addListener instead of the event prope
 
 Y.extend does not copy object properties any longer.  It also no longer adds Super, which doesn't work after the first level of inheritance
 
+Fixed a case where log messages were inadvertently suppressed
+
+EventFacade.button == e.which || e.button
+
 //////////////////////////////////////////////////////////////////////
 
 2.5.2

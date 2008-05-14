@@ -87,6 +87,11 @@
 <span class="c">    */</span>
     <span class="k">var</span> <span class="nx">ua</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">,</span>
 
+        <span class="c">/**</span>
+<span class="c">         * webkit key remapping required for Safari &lt; 3.1</span>
+<span class="c">         * @property webkitKeymap</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
         <span class="nx">webkitKeymap</span> <span class="o">=</span> <span class="o">{</span>
             <span class="m">63232</span><span class="o">:</span> <span class="m">38</span><span class="o">,</span> <span class="c">// up</span>
 <span class="c"></span>            <span class="m">63233</span><span class="o">:</span> <span class="m">40</span><span class="o">,</span> <span class="c">// down</span>
@@ -98,8 +103,12 @@
 <span class="c"></span>                       <span class="c">// this case, even though the shiftKey modifier is set)</span>
 <span class="c"></span>        <span class="o">},</span>
 
-        <span class="c">// return the element facade</span>
-<span class="c"></span>        <span class="nx">wrapNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Wraps an element in a Node facade</span>
+<span class="c">         * @method wrapNode</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">wrapNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">:</span> <span class="nx">n</span><span class="o">;</span>
         <span class="o">},</span>
 
@@ -114,6 +123,13 @@
 <span class="c"></span>        <span class="c">//     return wrapNode(n);</span>
 <span class="c"></span>        <span class="c">// };</span>
 <span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * Returns a wrapped node.  Intended to be used on event targets,</span>
+<span class="c">         * so it will return the node&#39;s parent if the target is a text</span>
+<span class="c">         * node</span>
+<span class="c">         * @method resolve</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
         <span class="nx">resolve</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">try</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
@@ -130,28 +146,30 @@
 <span class="c"></span>    <span class="c">// include all properties for both browers?</span>
 <span class="c"></span>    <span class="c">// include only DOM2 spec properties?</span>
 <span class="c"></span>    <span class="c">// provide browser-specific facade?</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>
+    <span class="c">/**</span>
+<span class="c">     * Wraps a DOM event, properties requiring browser abstraction are</span>
+<span class="c">     * fixed here.  Provids a security layer when required.</span>
+<span class="c">     * @class Event.Facade</span>
+<span class="c">     * @param ev {Event} the DOM event</span>
+<span class="c">     * @param origTarg {HTMLElement} the element the listener was attached to</span>
+<span class="c">     * @param wrapper {Event.Custom} the custom event wrapper for this DOM event</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// @TODO the document should be the target&#39;s owner document</span>
 <span class="c"></span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
             <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">;</span>
 
-
-        <span class="c">// for (var i in whitelist) {</span>
-<span class="c"></span>        <span class="c">//     if (Y.object.owns(whitelist, i)) {</span>
-<span class="c"></span>        <span class="c">//         this[i] = e[i];</span>
-<span class="c"></span>        <span class="c">//     }</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">// copy all primitives</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">e</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">e</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="c">//////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// pageX pageY</span>
 <span class="c"></span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="m">0</span> <span class="o">!==</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">clientX</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
@@ -163,49 +181,87 @@
             <span class="o">}</span>
         <span class="o">}</span>
 
+        <span class="c">/**</span>
+<span class="c">         * The X location of the event on the page (including scroll)</span>
+<span class="c">         * @property pageX</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">pageX</span> <span class="o">=</span> <span class="nx">x</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The Y location of the event on the page (including scroll)</span>
+<span class="c">         * @property pageY</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">pageY</span> <span class="o">=</span> <span class="nx">y</span><span class="o">;</span>
 
         <span class="c">//////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// keyCode</span>
 <span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * The keyCode for key events.  Uses charCode if keyCode is not available</span>
+<span class="c">         * @property keyCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
         <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">c</span> <span class="k">in</span> <span class="nx">webkitKeymap</span><span class="o">))</span> <span class="o">{</span>
             <span class="nx">c</span> <span class="o">=</span> <span class="nx">webkitKeymap</span><span class="o">[</span><span class="nx">c</span><span class="o">];</span>
         <span class="o">}</span>
 
+        <span class="c">/**</span>
+<span class="c">         * The keyCode for key events.  Uses charCode if keyCode is not available</span>
+<span class="c">         * @property keyCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The charCode for key events.  Same as keyCode</span>
+<span class="c">         * @property charCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
 
         <span class="c">//////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// button</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">button</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">which</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">button</span>
+<span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * The button that was pushed.</span>
+<span class="c">         * @property button</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">button</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">which</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">button</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The button that was pushed.  Same as button.</span>
+<span class="c">         * @property which</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">which</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">which</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">button</span>
 
         <span class="c">//////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// time</span>
 <span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * Timestamp for the event</span>
+<span class="c">         * @property time</span>
+<span class="c">         * @type Date</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">time</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">time</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">();</span>
 
         <span class="c">//////////////////////////////////////////////////////</span>
-<span class="c"></span>        <span class="c">// targets</span>
 <span class="c"></span>        
+        <span class="c">/**</span>
+<span class="c">         * Node reference for the targeted element</span>
+<span class="c">         * @propery target</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">);</span>
 
         <span class="c">/**</span>
-<span class="c">         * The original target is the element that the listener is attached to.</span>
-<span class="c">         * This property will be the same as &#39;this&#39; if the listener did not</span>
-<span class="c">         * override the default execution context.  @TODO FireFox throws an</span>
-<span class="c">         * error when attempting to access the properties of the originalTarget</span>
-<span class="c">         * in certain circumstances, e.g., when a document click listener is</span>
-<span class="c">         * attached, the error is thrown if a text box is clicked.  The error</span>
-<span class="c">         * itself happens below the JS layer, so it can&#39;t be trapped.  The</span>
-<span class="c">         * error does not effect the operation of the page, so we may want to</span>
-<span class="c">         * allow this to be enabled via a config option.  It would be nice</span>
-<span class="c">         * to restore this property, but for now</span>
+<span class="c">         * Node reference for the element that the listener was attached to.</span>
+<span class="c">         * @propery originalTarget</span>
+<span class="c">         * @type Node</span>
 <span class="c">         */</span>
-        <span class="c">// this.originalTarget = resolve(e.originalTarget || ot);</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
@@ -216,6 +272,11 @@
             <span class="o">}</span>
         <span class="o">}</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Node reference to the relatedTarget</span>
+<span class="c">         * @propery relatedTarget</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
         
         <span class="c">//////////////////////////////////////////////////////</span>
@@ -283,6 +344,7 @@
                                 <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
                                 <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
                                 <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>

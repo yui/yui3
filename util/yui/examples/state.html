@@ -12,7 +12,9 @@
 // }).use('state', function(Y) {
 
 
-YUI().use('dump', 'state', function(Y) {
+// YUI({logExclude: {'Event': true}}).use('dump', 'state', function(Y) {
+// YUI({logInclude: {'Example': true}}).use('dump', 'state', function(Y) {
+YUI({logInclude: {}}).use('dump', 'state', function(Y) {
     
     var newobj = {}, 
 
@@ -37,30 +39,30 @@ YUI().use('dump', 'state', function(Y) {
     configs.add('myprop', o);
     
     // show all attributes for this item
-    Y.log("myprop: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // show a single attribute for this item
-    Y.log("myprop.str: " + configs.get('myprop', 'str'));
+    Y.log("myprop.str: " + configs.get('myprop', 'str'), 'info', 'Example');
 
     // remove one or more attribute from the item (hash)
     configs.remove('myprop', {fn: true});
-    Y.log("myprop-fn: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop-fn: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // remove an attribute from the item (str)
     configs.remove('myprop', 'dat');
-    Y.log("myprop-dat: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop-dat: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // remove one or more attributes from the item (array)
     configs.remove('myprop', ['nada']);
-    Y.log("myprop-nada: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop-nada: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
     
     // add an attribute to an existing prop
     configs.add('myprop', {nada:null});
-    Y.log("myprop+nada: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop+nada: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // delete a property
     configs.remove('myprop');
-    Y.log("myprop deleted: " + Y.lang.dump(configs.get('myprop')));
+    Y.log("myprop deleted: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
 
     var o2 = Y.clone(o);
     // Y.log("clone: " + Y.lang.dump(o2));
@@ -72,7 +74,7 @@ YUI().use('dump', 'state', function(Y) {
         nada: null
     });
 
-    Y.log("myprop list: " + Y.lang.dump(configs.list()));
+    Y.log("myprop list: " + Y.lang.dump(configs.list()), 'info', 'Example');
 
 
             var Y = YUI();
@@ -112,8 +114,8 @@ YUI().use('dump', 'state', function(Y) {
 
             Y.aggregate(Main, Aggr, false, ["ATTRS", "PLUGINS"]);
 
-            console.log(Main.ATTRS);
-            console.log(Main.PLUGINS);
+            Y.log(Main.ATTRS, 'info', 'Example');
+            Y.log(Main.PLUGINS, 'info', 'Example');
 
 });
 

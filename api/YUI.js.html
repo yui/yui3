@@ -86,6 +86,8 @@
 <span class="c"></span>    <span class="c">//    doc</span>
 <span class="c"></span>    <span class="c">//    debug</span>
 <span class="c"></span>    <span class="c">//    useConsole</span>
+<span class="c"></span>    <span class="c">//    logInclude</span>
+<span class="c"></span>    <span class="c">//    logExclude</span>
 <span class="c"></span>    <span class="c">//    throwFail</span>
 <span class="c"></span>    <span class="c">//    pollInterval</span>
 <span class="c"></span>    <span class="c">//    compat</span>
@@ -135,9 +137,9 @@
 <span class="c"></span>        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">c</span><span class="o">,</span> <span class="o">{</span>
             <span class="nx">debug</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-            <span class="nx">useConsole</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
-            <span class="nx">throwFail</span><span class="o">:</span> <span class="kc">false</span>
-        <span class="o">});</span>
+            <span class="nx">useConsole</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="c">// , throwFail: false</span>
+<span class="c"></span>        <span class="o">});</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
 
         <span class="c">// this.publish(&#39;yui:load&#39;);</span>
@@ -238,7 +240,7 @@
                 <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
                 <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;module not found: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
                 <span class="nx">missing</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
             <span class="o">}</span>
 
@@ -276,7 +278,7 @@
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
                     <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -349,22 +351,46 @@
 <span class="c">     */</span>
     <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> 
-            <span class="nx">bail</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">logging</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span>
+            <span class="nx">bail</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span> <span class="o">&amp;&amp;</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">);</span>
 
         <span class="c">// suppress log message if the config is off or the event stack</span>
 <span class="c"></span>        <span class="c">// or the event call stack contains a consumer of the yui:log event</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">debug</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_lastlog</span> <span class="o">=</span> <span class="nx">msg</span><span class="o">;</span>
 
+            <span class="c">// Y.env._lastlog = msg;</span>
+<span class="c"></span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">useConsole</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">console</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="o">[</span><span class="nx">cat</span><span class="o">])</span> <span class="o">?</span> <span class="nx">cat</span> <span class="o">:</span> <span class="s1">&#39;log&#39;</span><span class="o">,</span>
-                    <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="o">;</span>
-                <span class="nx">console</span><span class="o">[</span><span class="nx">f</span><span class="o">](</span><span class="nx">m</span><span class="o">);</span>
+
+                <span class="c">// apply source filters</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
+
+
+                    <span class="k">var</span> <span class="nx">exc</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logExclude</span><span class="o">,</span> <span class="nx">inc</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logInclude</span><span class="o">;</span>
+
+                    <span class="c">// console.log(&#39;checking src filter: &#39; + src + &#39;, inc: &#39; + inc + &#39;, exc: &#39; + exc);</span>
+<span class="c"></span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">inc</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="c">// console.log(&#39;bail: inc list found, but src is not in list: &#39; + src);</span>
+<span class="c"></span>                        <span class="nx">bail</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">exc</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">exc</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="c">// console.log(&#39;bail: exc list found, and src is in it: &#39; + src);</span>
+<span class="c"></span>                        <span class="nx">bail</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
+
+                    <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="o">[</span><span class="nx">cat</span><span class="o">])</span> <span class="o">?</span> <span class="nx">cat</span> <span class="o">:</span> <span class="s1">&#39;log&#39;</span><span class="o">,</span>
+                        <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="o">;</span>
+                    <span class="nx">console</span><span class="o">[</span><span class="nx">f</span><span class="o">](</span><span class="nx">m</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:log&#39;</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">);</span>
+            <span class="c">// category filters are not used to suppress the log event</span>
+<span class="c"></span>            <span class="c">// so that the data can be stored and displayed later.</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:log&#39;</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
@@ -438,6 +464,7 @@
                                 <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
                                 <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
                                 <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>

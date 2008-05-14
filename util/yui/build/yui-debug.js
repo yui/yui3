@@ -48,6 +48,8 @@ YUI.prototype = {
     //    doc
     //    debug
     //    useConsole
+    //    logInclude
+    //    logExclude
     //    throwFail
     //    pollInterval
     //    compat
@@ -97,8 +99,8 @@ YUI.prototype = {
         var c = this.merge(this.config);
         this.mix(c, {
             debug: true,
-            useConsole: true,
-            throwFail: false
+            useConsole: true
+            // , throwFail: false
         });
         this.config = c;
 
@@ -200,7 +202,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name);
+                Y.log('module not found: ' + name, 'info', 'YUI');
                 missing.push(name);
             }
 
@@ -238,7 +240,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    Y.log('attaching ' + r[i]);
+                    Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -311,21 +313,45 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        var c = this.config, Y = this, 
-            bail = (Y.env._eventstack && Y.env._eventstack.logging);
+        var Y = this, c = Y.config, es = Y.env._eventstack,
+            bail = (es && es.logging);
 
         // suppress log message if the config is off or the event stack
         // or the event call stack contains a consumer of the yui:log event
         if (c.debug && !bail) {
 
-            Y.env._lastlog = msg;
+
+            // Y.env._lastlog = msg;
 
             if (c.useConsole && typeof console != 'undefined') {
-                var f = (cat && console[cat]) ? cat : 'log',
-                    m = (src) ? src + ': ' + msg : msg;
-                console[f](m);
+
+                // apply source filters
+                if (src) {
+
+
+                    var exc = c.logExclude, inc = c.logInclude;
+
+                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
+
+                    if (inc && !(src in inc)) {
+                        // console.log('bail: inc list found, but src is not in list: ' + src);
+                        bail = true;
+                    } else if (exc && (src in exc)) {
+                        // console.log('bail: exc list found, and src is in it: ' + src);
+                        bail = true;
+                    }
+                }
+
+                if (!bail) {
+
+                    var f = (cat && console[cat]) ? cat : 'log',
+                        m = (src) ? src + ': ' + msg : msg;
+                    console[f](m);
+                }
             }
 
+            // category filters are not used to suppress the log event
+            // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
         }
 
@@ -3903,6 +3929,11 @@ YUI.add("event-facade", function(Y) {
     */
     var ua = Y.ua,
 
+        /**
+         * webkit key remapping required for Safari < 3.1
+         * @property webkitKeymap
+         * @private
+         */
         webkitKeymap = {
             63232: 38, // up
             63233: 40, // down
@@ -3914,7 +3945,11 @@ YUI.add("event-facade", function(Y) {
                        // this case, even though the shiftKey modifier is set)
         },
 
-        // return the element facade
+        /**
+         * Wraps an element in a Node facade
+         * @method wrapNode
+         * @private
+         */
         wrapNode = function(n) {
             return (n) ? Y.Node.get(n) : n;
         },
@@ -3930,6 +3965,13 @@ YUI.add("event-facade", function(Y) {
         //     return wrapNode(n);
         // };
 
+        /**
+         * Returns a wrapped node.  Intended to be used on event targets,
+         * so it will return the node's parent if the target is a text
+         * node
+         * @method resolve
+         * @private
+         */
         resolve = function(n) {
             try {
                 if (ua.webkit && n && 3 == n.nodeType) {
@@ -3946,6 +3988,15 @@ YUI.add("event-facade", function(Y) {
     // include all properties for both browers?
     // include only DOM2 spec properties?
     // provide browser-specific facade?
+
+    /**
+     * Wraps a DOM event, properties requiring browser abstraction are
+     * fixed here.  Provids a security layer when required.
+     * @class Event.Facade
+     * @param ev {Event} the DOM event
+     * @param origTarg {HTMLElement} the element the listener was attached to
+     * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
+     */
     Y.Event.Facade = function(ev, origTarg, wrapper) {
 
         // @TODO the document should be the target's owner document
@@ -3953,13 +4004,7 @@ YUI.add("event-facade", function(Y) {
         var e = ev, ot = origTarg, d = document, b = d.body,
             x = e.pageX, y = e.pageY;
 
-
-        // for (var i in whitelist) {
-        //     if (Y.object.owns(whitelist, i)) {
-        //         this[i] = e[i];
-        //     }
-        // }
-
+        // copy all primitives
         for (var i in e) {
             if (!Y.lang.isObject(e[i])) {
                 this[i] = e[i];
@@ -3967,7 +4012,6 @@ YUI.add("event-facade", function(Y) {
         }
 
         //////////////////////////////////////////////////////
-        // pageX pageY
 
         if (!x && 0 !== x) {
             x = e.clientX || 0;
@@ -3979,48 +4023,86 @@ YUI.add("event-facade", function(Y) {
             }
         }
 
+        /**
+         * The X location of the event on the page (including scroll)
+         * @property pageX
+         * @type int
+         */
         this.pageX = x;
+
+        /**
+         * The Y location of the event on the page (including scroll)
+         * @property pageY
+         * @type int
+         */
         this.pageY = y;
 
         //////////////////////////////////////////////////////
-        // keyCode
 
+        /**
+         * The keyCode for key events.  Uses charCode if keyCode is not available
+         * @property keyCode
+         * @type int
+         */
         var c = e.keyCode || e.charCode || 0;
 
         if (ua.webkit && (c in webkitKeymap)) {
             c = webkitKeymap[c];
         }
 
+        /**
+         * The keyCode for key events.  Uses charCode if keyCode is not available
+         * @property keyCode
+         * @type int
+         */
         this.keyCode = c;
+
+        /**
+         * The charCode for key events.  Same as keyCode
+         * @property charCode
+         * @type int
+         */
         this.charCode = c;
 
         //////////////////////////////////////////////////////
-        // button
+
+        /**
+         * The button that was pushed.
+         * @property button
+         * @type int
+         */
         this.button = e.which || e.button
 
-        //////////////////////////////////////////////////////
-        // time
+        /**
+         * The button that was pushed.  Same as button.
+         * @property which
+         * @type int
+         */
+        this.which = e.which || e.button
 
+        //////////////////////////////////////////////////////
+
+        /**
+         * Timestamp for the event
+         * @property time
+         * @type Date
+         */
         this.time = e.time || new Date().getTime();
 
         //////////////////////////////////////////////////////
-        // targets
         
+        /**
+         * Node reference for the targeted element
+         * @propery target
+         * @type Node
+         */
         this.target = resolve(e.target || e.srcElement);
 
         /**
-         * The original target is the element that the listener is attached to.
-         * This property will be the same as 'this' if the listener did not
-         * override the default execution context.  @TODO FireFox throws an
-         * error when attempting to access the properties of the originalTarget
-         * in certain circumstances, e.g., when a document click listener is
-         * attached, the error is thrown if a text box is clicked.  The error
-         * itself happens below the JS layer, so it can't be trapped.  The
-         * error does not effect the operation of the page, so we may want to
-         * allow this to be enabled via a config option.  It would be nice
-         * to restore this property, but for now
+         * Node reference for the element that the listener was attached to.
+         * @propery originalTarget
+         * @type Node
          */
-        // this.originalTarget = resolve(e.originalTarget || ot);
         this.originalTarget = resolve(ot);
 
         var t = e.relatedTarget;
@@ -4032,6 +4114,11 @@ YUI.add("event-facade", function(Y) {
             }
         }
 
+        /**
+         * Node reference to the relatedTarget
+         * @propery relatedTarget
+         * @type Node
+         */
         this.relatedTarget = resolve(t);
         
         //////////////////////////////////////////////////////
