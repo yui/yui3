@@ -75,16 +75,19 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Returns the current value of the attribute. If the attribute
-         * has been configured with a 'get' handler, the 'get' handler will be 
-         * used to retrieve the current value of the attribute. 
+         * has been configured with a 'get' handler, this method will delegate
+         * to the 'get' handler to obtain the value of the attribute.
+         * The 'get' handler will be passed the current value of the attribute 
+         * as the only argument.
          * @method get
          * @param {String} key The attribute whose value will be returned.
          */
         get: function(name) {
             var conf = this._conf,
-                get = conf.get(name, 'get');
+                get = conf.get(name, 'get'),
+                rawVal = conf.get(name, 'value');
 
-            return (get) ? get.call(this, name) : conf.get(name, 'value');
+            return (get) ? get.call(this, rawVal) : rawVal;
         },
 
         /**
@@ -114,15 +117,15 @@ YUI.add('attribute', function(Y) {
             //retVal = this.fire('before' + name.charAt(0).toUpperCase() + name.substring(1) + 'Change');
             retVal = _fireBefore.call(this, e);
 
-/* TODO: allow before to change value? (alternative is cancel then set again)
-            if (retVal) {
-                if (retVal !== undefined && e._prevent === false) {
-                    Y.log('attribute: ' + name + ' modified by before listener', 'info', 'Base');
-                    val = retVal;
-                }
-            }
-
-*/
+            /* TODO: allow before to change value? (alternative is cancel then set again)
+                        if (retVal) {
+                            if (retVal !== undefined && e._prevent === false) {
+                                Y.log('attribute: ' + name + ' modified by before listener', 'info', 'Base');
+                                val = retVal;
+                            }
+                        }
+            
+            */
             if (!e._cancel && !e._prevent && conf.get(name, 'set')) {
                 retVal = conf.get(name, 'set').call(this, val);
                 if (retVal !== undefined) {
