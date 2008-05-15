@@ -74,13 +74,17 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Returns the current value of the attribute.
+         * Returns the current value of the attribute. If the attribute
+         * has been configured with a 'get' handler, the 'get' handler will be 
+         * used to retrieve the current value of the attribute. 
          * @method get
          * @param {String} key The attribute whose value will be returned.
          */
         get: function(name) {
-            //return this._conf[name];
-            return this._conf.get(name, 'value');
+            var conf = this._conf,
+                get = conf.get(name, 'get');
+
+            return (get) ? get.call(this, name) : conf.get(name, 'value');
         },
 
         /**
