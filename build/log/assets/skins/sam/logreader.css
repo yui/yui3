@@ -32,12 +32,11 @@
     font-size: 100%;
     line-height: 2em;
     margin: 0;
-    Xpadding-left: 1em;
 }
 .yui-skin-sam .yui-log-button {
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     border: none;
-    border-left: 1px solid #777;
+    border-left: 2px groove #ccc;
     font-size: inherit;
     height: 2em;
     position: absolute;
@@ -70,5 +69,36 @@
 /* Log entries */
 .yui-skin-sam .yui-log-entry {
     border-bottom: 1px dotted #aaa;
-    padding: 0 1ex;
+    margin: 0;
+    padding: 0 0 .5ex;
+}
+.yui-skin-sam .yui-log-entry p,
+.yui-skin-sam .yui-log-verbose .yui-log-entry-meta p {
+    margin: 0;
+}
+.yui-skin-sam .yui-log-verbose p,
+.yui-skin-sam .yui-log-verbose .yui-log-entry-meta p.yui-log-entry-src {
+    margin-left: 1ex;
+}
+
+.yui-skin-sam .yui-log-entry-meta {
+    font-family: Arial, sans-serif;
+}
+.yui-skin-sam .yui-log-entry-cat {
+    text-transform: uppercase;
+    padding: 2px 4px;
+    background-color: #ccc;
+}
+.yui-skin-sam .yui-log-entry-src {
+    font-style: italic;
+}
+.yui-skin-sam .yui-log-entry-type-info .yui-log-entry-cat {
+    background-color: #ac2;
+}
+.yui-skin-sam .yui-log-entry-type-warn .yui-log-entry-cat {
+    background-color: #e81;
+}
+.yui-skin-sam .yui-log-entry-type-error .yui-log-entry-cat {
+    background-color: #b00;
+    color: #fff;
 }
