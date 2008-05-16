@@ -42,7 +42,7 @@ YUI.add('attribute', function(Y) {
     Y.Attribute = function() {
         //this._conf = {};
         this._conf = this._conf || new Y.State(); // TODO: fix init order
-        Y.log('att constructor called');
+        Y.log('att constructor called', 'info', 'Attribute');
     };
 
     Y.Attribute.NAME = 'att';
