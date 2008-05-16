@@ -32,6 +32,7 @@ Y.mix(Y.log.Reader, {
         ENTRY_META  : 'yui-log-entry-meta',
         ENTRY_CAT   : 'yui-log-entry-cat',
         ENTRY_SRC   : 'yui-log-entry-src',
+        ENTRY_TIME  : 'yui-log-entry-time',
         ENTRY_TYPE  : 'yui-log-entry-type',
         HIDE_BASE   : 'yui-log-hide-',
         ENTRY_TYPE_BASE : 'yui-log-entry-type-'
@@ -183,6 +184,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         this._initTemplates();
 
         Y.on('yui:log',Y.bind(this._handleLogEntry,this));
+        //this.unplug('mouse');
     },
 
     // HACK: AttributeProvider should clone object attribute values
@@ -580,16 +582,17 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _trimOldEntries : function (max) {
         if (this._console) {
             var entries = this._console.get('childNodes'),
-                idx     = entries.get('length') -
-                            ((max|0) || this.get('consoleLimit')),
-                del,i;
+                i = entries.get('length') - ((max|0)||this.get('consoleLimit'));
 
-            if (idx > 0) {
-                del = this.get('newestOnTop') ?
-                        entries.slice(idx) : entries.slice(0,idx);
-
-                for (i=del.length-1;i>=0;--i) {
-                    this._console.removeChild(entries[i]);
+            if (i > 0) {
+                if (this.get('newestOnTop')) {
+                    for (var l = entries.get('length'); i<l; i++) {
+                        this._console.removeChild(entries.item(i));
+                    }
+                } else {
+                    for (;i>=0;--i) {
+                        this._console.removeChild(entries.item(i));
+                    }
                 }
             }
         }
@@ -654,7 +657,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
                         name+
                 '</label>');
 
-        Y.css('.'+this._filterClass(name,true) + ' .'+this._filterClass(name),
+        Y.css('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
             {display: 'none'});
 
         return label;
@@ -703,7 +706,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
             aPaths  = buildPaths(e.newVal),
             done = {},
             i = 0, l = bPaths.length,
-            type,name,on;
+            name,on;
 
         for (;i<l;++i) {
             on = val(e.newVal,bPaths[i]);
@@ -718,9 +721,15 @@ Y.extend(Y.log.Reader,Y.Widget,{
         for (i=0,l=aPaths.length;i<l;++i) {
             if (!done[aPaths[i].join('.')]) {
                 // New entryType check
-                type = aPaths[i][0] == 'category' ? C.CATEGORY : C.SOURCE;
                 name = aPaths[i][1];
-                this._createEntryType(type,name);
+                if (aPaths[i][0] == 'category') {
+                    this._catChecks.appendChild(
+                        this._createEntryType(C.CATEGORY,name));
+                } else {
+                    this._srcChecks.appendChild(
+                        this._createEntryType(C.SOURCE,name));
+                }
+
                 this._setEntryType(name,val(e.newVal,aPaths[i]));
             }
         }
