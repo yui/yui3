@@ -656,6 +656,14 @@
                         }
                                    
                     } catch (thrown /*:Error*/){
+
+                        //cancel any pending waits, the test already failed
+                        if (testCase.__yui_wait){
+                            clearTimeout(testCase.__yui_wait);
+                            delete testCase.__yui_wait;
+                        }                    
+                    
+                        //figure out what type of error it was
                         if (thrown instanceof Y.Assert.Error) {
                             if (!shouldFail){
                                 error = thrown;
@@ -3309,7 +3317,8 @@ YUI.add("mock", function(Y){
                 args = expectation.arguments || [],
                 result = expectation.returns,
                 callCount = L.isNumber(expectation.callCount) ? expectation.callCount : 1,
-                error = expectation.error;
+                error = expectation.error,
+                run = expectation.run || function(){};
                 
             //save expectations
             mock.__expectations[name] = expectation;
@@ -3321,8 +3330,8 @@ YUI.add("mock", function(Y){
                 //array[i] = function(value){
                 //    Y.Assert.areSame(arg, value, "Argument " + i + " of " + name + " is incorrect."); 
                 //};
-                if (!(array[i] instanceof Y.Mock.Expectation)){
-                    array[i] = Y.Mock.Expectation(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + " is incorrect.");
+                if (!(array[i] instanceof Y.Mock.Value)){
+                    array[i] = Y.Mock.Value(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + "() is incorrect.");
                 }
             });
         
@@ -3339,9 +3348,13 @@ YUI.add("mock", function(Y){
                         }
                         
                     }                
+
+                    run.apply(this, arguments);
+                    
                     if (error){
                         throw error;
                     }
+                    
                     return result;
                 };
             } else {
@@ -3367,7 +3380,7 @@ YUI.add("mock", function(Y){
         });    
     };
 
-    Y.Mock.Expectation = function(method, args, message){
+    Y.Mock.Value = Y.Mock.Expectation = function(method, args, message){
         if (this instanceof Y.Mock.Expectation){
             this.verify = function(value){
                 args = [].concat(args);
@@ -3376,10 +3389,15 @@ YUI.add("mock", function(Y){
                 method.apply(null, args);
             };
         } else {
-            return new Y.Mock.Expectation(method, args, message);
+            return new Y.Mock.Value(method, args, message);
         }
     };
     
+    Y.Mock.Value.Any = Y.Mock.Value(function(){},[]);
+    Y.Mock.Value.Boolean = Y.Mock.Value(Y.Assert.isBoolean,[]);
+    Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber,[]);
+    Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString,[]);
+    Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
 
 }, "3.0.0");
 

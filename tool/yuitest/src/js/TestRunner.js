@@ -447,6 +447,14 @@
                         }
                                    
                     } catch (thrown /*:Error*/){
+
+                        //cancel any pending waits, the test already failed
+                        if (testCase.__yui_wait){
+                            clearTimeout(testCase.__yui_wait);
+                            delete testCase.__yui_wait;
+                        }                    
+                    
+                        //figure out what type of error it was
                         if (thrown instanceof Y.Assert.Error) {
                             if (!shouldFail){
                                 error = thrown;
