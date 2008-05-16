@@ -5,17 +5,17 @@
         /**
          * The YUI JavaScript profiler.
          * @module profiler
-         * @namespace YAHOO.tool
+         * @namespace Y
          * @requires yahoo
          */
         
         /**
          * Profiles functions in JavaScript.
-         * @namespace YAHOO.tool
-         * @class Profiler
+         * @namespace Y
+         * @class profiler
          * @static
          */
-        Y.Profiler = {
+        Y.profiler = {
         
             //-------------------------------------------------------------------------
             // Private Properties

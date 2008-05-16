@@ -29,10 +29,10 @@ YUI.add("cookie", function(Y){
     
     /**
      * Cookie utility.
-     * @class Cookie
+     * @class cookie
      * @static
      */
-    Y.Cookie = {
+    Y.cookie = {
                     
         //-------------------------------------------------------------------------
         // Private Methods
@@ -421,5 +421,4 @@ YUI.add("cookie", function(Y){
     
     };
 }, "3.0.0");
-  
 

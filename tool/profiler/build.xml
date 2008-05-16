@@ -16,14 +16,13 @@
     <target name="examples" description="Component Specific Over-ride">
         <echo>DOES NOT DO ANYTHING CURRENTLY</echo>
     </target>
-    
-    <macrodef name="registerversion">
-        <attribute name="module" />
-        <attribute name="classname" />
-        <attribute name="file" />
-        <sequential>
-        </sequential>
-    </macrodef>    
 
+<macrodef name="registerversion">
+    <attribute name="module" />
+    <attribute name="classname" />
+    <attribute name="file" />
+    <sequential>
+    </sequential>
+</macrodef>
 </project>
 
