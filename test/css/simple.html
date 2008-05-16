@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Y.css simple example page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <style type="text/css">
+        #x {
+            background-color: #eee;
+            color: #fff;
+            border: 10px solid #ccc;
+            width: 90%;
+            margin: 2em auto;
+            overflow: hidden;
+        }
+        .foo, .bar {
+            height: 3em;
+            width: 3em;
+            background: #fff;
+            margin: 1em;
+            display: inline;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Y.css simple test</h1>
+    <div class="markup">
+        <div id="x">
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+            <div class="foo"></div>
+            <div class="bar"></div>
+        </div>
+    </div>
+    <input type="button" name="go" id="go" value="go">
+
+    <script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/yui/yui.js"></script>
+    <script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/css/css.js"></script>
+    <script type="text/javascript">
+    YUI().use('css',function (Y) {
+        Y.on('click',function (e) {
+            Y.css('.foo', {
+                width: '4em',
+                background: '#a55'
+            });
+        },'#go');
+    });
+    </script>
+    <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+    <script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>
