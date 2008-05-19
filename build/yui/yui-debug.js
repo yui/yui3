@@ -3392,7 +3392,7 @@ YUI.add("event-dom", function(Y) {
                     if (!ce) {
                         // create CE wrapper
                         ce = Y.publish(key, {
-                            // silent: true,
+                            silent: true,
                             // host: this,
                             bubbles: false
                         });
