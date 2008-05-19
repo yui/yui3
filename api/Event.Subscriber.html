@@ -71,7 +71,7 @@
                                                 obj
 
                                                 , 
-                                                override
+                                                args
                                     )
                                 </code>
                                 <div class="description">
@@ -81,7 +81,7 @@
                                                     <code>fn
                                                     &lt;Function&gt; 
                                                     </code>
-                                                           The function to execute
+                                                           The wrapped function to execute
                                                 </dd>
                                                 <dd>
                                                     <code>obj
@@ -90,11 +90,10 @@
                                                           An object to be passed along when the event fires
                                                 </dd>
                                                 <dd>
-                                                    <code>override
-                                                    &lt;boolean&gt; 
+                                                    <code>args
+                                                    &lt;Array&gt; 
                                                     </code>
-                                                     If true, the obj passed in becomes the execution
-context of the listener
+                                                            subscribe() additional arguments
                                                 </dd>
                                         </dl>
                                     
@@ -108,8 +107,24 @@ context of the listener
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
+                                    <h4><a name="property_args">args</a>
+                                        <code>- Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Optional additional arguments supplied to subscribe().  If present,
+these will be appended to the arguments supplied to fire()
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_fn">fn</a>
-                                        <code>- function</code>
+                                        <code>- Function</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -124,8 +139,23 @@ This is wrapped by Y.bind if obj was supplied.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_id">id</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Unique subscriber id
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_obj">obj</a>
-                                        <code>- object</code>
+                                        <code>- Object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -140,32 +170,13 @@ the event fires
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_ofn">ofn</a>
-                                        <code>- object</code>
+                                    <h4><a name="property_wrappedFn">wrappedFn</a>
+                                        <code>- Function</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Original function supplied to subscribe to help with unsubscribe 
-operations
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_override">override</a>
-                                        <code>- boolean|object</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            The default execution context for the event listener is defined when the
-event is created (usually the object which contains the event).
-By setting override to true, the execution context becomes the custom
-object passed in by the subscriber.  If override is an object, that 
-object becomes the context.
+                                            }
+fn bound to obj with additional arguments applied via Y.bind
                                         </div>
                                     </div>
      
@@ -241,27 +252,29 @@ subscriber's signature.</dd>
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_getScope">getScope</a></h4>
+                                        <a name="method_notify">notify</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>getScope</strong>
+                                            <strong>notify</strong>
                                            (
                                                 
                                                         
-                                                         defaultScope
+                                                         defaultContext
+                                                    
+                                                
+                                                        , 
+                                                         args
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Returns the execution context for this listener.  If override was set to true
-the custom obj will be the context.  If override is an object, that is the
-context, otherwise the default context will be used.
+                                            Executes the subscriber.
                                         </div>
 
                                         <div class="description">
@@ -269,9 +282,13 @@ context, otherwise the default context will be used.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>defaultScope &lt;Object&gt;</code>
-                                                             the context to use if this listener does not
-override it.
+                                                            <code>defaultContext &lt;object&gt;</code>
+                                                             The execution context if not overridden
+by the subscriber
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array&gt;</code>
+                                                              Arguments array for the subscriber
                                                         </dd>
                                                 </dl>
 
@@ -398,17 +415,20 @@ override it.
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_args">args</a>
+                                        <!--<code>&lt;Function&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_fn">fn</a>
-                                        <!--<code>&lt;boolean|object&gt;</code>-->
+                                        <!--<code>&lt;Function&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_id">id</a>
+                                        <!--<code>&lt;Function&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_obj">obj</a>
-                                        <!--<code>&lt;boolean|object&gt;</code>-->
+                                        <!--<code>&lt;Function&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_ofn">ofn</a>
-                                        <!--<code>&lt;boolean|object&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_override">override</a>
-                                        <!--<code>&lt;boolean|object&gt;</code>-->
+                                <li class=""><a href="#property_wrappedFn">wrappedFn</a>
+                                        <!--<code>&lt;Function&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -420,7 +440,7 @@ override it.
                                 <a href="#method_contains">contains</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_getScope">getScope</a>
+                                <a href="#method_notify">notify</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_toString">toString</a>

@@ -78,21 +78,6 @@ not be created at all.
 
                                     <hr />
                                     </div>
-                                    <div class="private">
-                                    <h4><a name="property___yui_subscribers">__yui_subscribers</a>
-                                        <code>- private Object[]</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Private storage of custom event subscribers
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
 
 
                             </div>
@@ -233,7 +218,7 @@ arguments to append to the callback's argument list.
                                            (
                                                 
                                                         
-                                                         p_type
+                                                         type
                                                     
                                                 
                                                         , 
@@ -261,7 +246,7 @@ created now with the default config, context to the host object
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_type &lt;string&gt;</code>
+                                                            <code>type &lt;string&gt;</code>
                                                                   the type, or name of the event
                                                         </dd>
                                                         <dd>
@@ -286,14 +271,14 @@ the handler.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_hasEvent">hasEvent</a></h4>
+                                        <a name="method_getEvent">getEvent</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        void
-                                            <strong>hasEvent</strong>
+                                        Event.Target
+                                            <strong>getEvent</strong>
                                            (
                                                 
                                                         
@@ -304,8 +289,8 @@ the handler.
                                         </code>
                                         
                                         <div class="description">
-                                            Returns true if the custom event of the provided type has been created
-with publish.
+                                            Returns the custom event of the provided type has been created, a
+falsy value otherwise
                                         </div>
 
                                         <div class="description">
@@ -321,9 +306,9 @@ with publish.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Event.Target
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>the custom event or a falsy value</dd>
                                                 </dl>
              
                                         </div>
@@ -344,11 +329,11 @@ with publish.
                                            (
                                                 
                                                         
-                                                         p_type
+                                                         type
                                                     
                                                 
                                                         , 
-                                                         p_config
+                                                         opts
                                                     
                                                 
                                             )
@@ -365,11 +350,11 @@ case the custom event is returned.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_type &lt;string&gt;</code>
+                                                            <code>type &lt;string&gt;</code>
                                                               the type, or name of the event
                                                         </dd>
                                                         <dd>
-                                                            <code>p_config &lt;object&gt;</code>
+                                                            <code>opts &lt;object&gt;</code>
                                                               optional config params.  Valid properties are:
 <ul>
 <li>
@@ -450,19 +435,15 @@ the event.
                                            (
                                                 
                                                         
-                                                         p_type
+                                                         type
                                                     
                                                 
                                                         , 
-                                                         p_fn
+                                                         fn
                                                     
                                                 
                                                         , 
-                                                         p_obj
-                                                    
-                                                
-                                                        , 
-                                                         p_override
+                                                         context
                                                     
                                                 
                                             )
@@ -477,22 +458,17 @@ the event.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_type &lt;string&gt;</code>
-                                                                    the type, or name of the event
+                                                            <code>type &lt;string&gt;</code>
+                                                                   The type, or name of the event
                                                         </dd>
                                                         <dd>
-                                                            <code>p_fn &lt;function&gt;</code>
-                                                                    the function to exectute when the event fires
+                                                            <code>fn &lt;function&gt;</code>
+                                                                   The function to exectute when the event fires
                                                         </dd>
                                                         <dd>
-                                                            <code>p_obj &lt;Object&gt;</code>
-                                                                     An object to be passed along when the event 
+                                                            <code>context &lt;Object&gt;</code>
+                                                                An object to be passed along when the event 
 fires
-                                                        </dd>
-                                                        <dd>
-                                                            <code>p_override &lt;boolean&gt;</code>
-                                                               If true, the obj passed in becomes the 
-execution context of the listener
                                                         </dd>
                                                 </dl>
 
@@ -522,15 +498,15 @@ execution context of the listener
                                            (
                                                 
                                                         
-                                                         p_type
+                                                         type
                                                     
                                                 
                                                         , 
-                                                         p_fn
+                                                         fn
                                                     
                                                 
                                                         , 
-                                                         p_obj
+                                                         context
                                                     
                                                 
                                             )
@@ -545,18 +521,19 @@ execution context of the listener
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_type &lt;string&gt;</code>
-                                                                The type, or name of the event.  If the type
+                                                            <code>type &lt;string|Object&gt;</code>
+                                                                Either the handle to the subscriber or the 
+type of event.  If the type
 is not specified, it will attempt to remove
 the listener from all hosted events.
                                                         </dd>
                                                         <dd>
-                                                            <code>p_fn &lt;Function&gt;</code>
+                                                            <code>fn &lt;Function&gt;</code>
                                                                 The subscribed function to unsubscribe, if not
 supplied, all subscribers will be removed.
                                                         </dd>
                                                         <dd>
-                                                            <code>p_obj &lt;Object&gt;</code>
+                                                            <code>context &lt;Object&gt;</code>
                                                                  The custom object passed to subscribe.  This is
 optional, but if supplied will be used to
 disambiguate multiple listeners that are the same
@@ -591,7 +568,7 @@ that lives on the prototype)
                                            (
                                                 
                                                         
-                                                         p_type
+                                                         type
                                                     
                                                 
                                             )
@@ -608,7 +585,7 @@ be removed.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_type &lt;string&gt;</code>
+                                                            <code>type &lt;string&gt;</code>
                                                                 The type, or name of the event
                                                         </dd>
                                                 </dl>
@@ -705,9 +682,6 @@ be removed.
                                 <li class="private"><a href="#property___yui_events">__yui_events</a>
                                         <!--<code>&lt;Object[]&gt;</code>-->
                                 </li>
-                                <li class="private"><a href="#property___yui_subscribers">__yui_subscribers</a>
-                                        <!--<code>&lt;Object[]&gt;</code>-->
-                                </li>
                         </ul>
                     </div>
 
@@ -726,8 +700,8 @@ be removed.
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_fire">fire</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_hasEvent">hasEvent</a>
+                                <li class=""><!--<code>Event.Target</code>-->
+                                <a href="#method_getEvent">getEvent</a>
                                 </li>
                                 <li class=""><!--<code>Event.Custom</code>-->
                                 <a href="#method_publish">publish</a>

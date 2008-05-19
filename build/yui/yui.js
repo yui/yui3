@@ -1957,15 +1957,15 @@ YUI.add("event-custom", function(Y) {
      *                  refer to this object in the callback.  Default value: 
      *                  the window object.  The listener can override this.
      * @param {boolean} silent pass true to prevent the event from writing to
-     *                  the debugsystem
-     * @param {int}     signature the signature that the custom event subscriber
-     *                  will receive. Y.Event.Custom.LIST or 
-     *                  Y.Event.Custom.FLAT.  The default is
-     *                  Y.Event.Custom.FLAT.
+     *                  the debug system
      * @class Event.Custom
      * @constructor
      */
-    Y.CustomEvent = function(type, context, silent, o) {
+    Y.CustomEvent = function(type, o) {
+
+        if (arguments.length > 2) {
+            console.log('CustomEvent sig context and silent flags must be part of the config', 'error', 'Event');
+        }
 
         o = o || {};
 
@@ -1984,7 +1984,7 @@ YUI.add("event-custom", function(Y) {
          * @property context
          * @type object
          */
-        this.context = context || Y;
+        this.context = Y;
 
         /**
          * By default all custom events are logged in the debug build, set silent
@@ -1992,31 +1992,7 @@ YUI.add("event-custom", function(Y) {
          * @property silent
          * @type boolean
          */
-        this.silent = silent || (type == "yui:log");
-
-        /**
-         * Custom events support two styles of arguments provided to the event
-         * subscribers.  
-         * <ul>
-         * <li>Y.Event.Custom.LIST: 
-         *   <ul>
-         *   <li>param1: event name</li>
-         *   <li>param2: array of arguments sent to fire</li>
-         *   <li>param3: <optional> a custom object supplied by the subscriber</li>
-         *   </ul>
-         * </li>
-         * <li>Y.Event.Custom.FLAT
-         *   <ul>
-         *   <li>param1: the first argument passed to fire.  If you need to
-         *           pass multiple parameters, use and array or object literal</li>
-         *   <li>param2: <optional> a custom object supplied by the subscriber</li>
-         *   </ul>
-         * </li>
-         * </ul>
-         *   @property signature
-         *   @type int
-         */
-        this.signature = o.signature || Y.CustomEvent.FLAT;
+        this.silent = (type == "yui:log");
 
         /**
          * The subscribers to this event
@@ -2043,7 +2019,7 @@ YUI.add("event-custom", function(Y) {
          * @type boolean
          * @default false;
          */
-        this.fireOnce = o.fireOnce || false;
+        this.fireOnce = false;
 
         /**
          * Flag for stopPropagation that is modified during fire()
@@ -2068,7 +2044,7 @@ YUI.add("event-custom", function(Y) {
          * @property host
          * @type Event.Target
          */
-        this.host = o.host;
+        this.host = null;
 
         /**
          * The default function to execute after event listeners
@@ -2077,7 +2053,13 @@ YUI.add("event-custom", function(Y) {
          * @property defaultFn
          * @type Function
          */
-        this.defaultFn = o.defaultFn;
+        this.defaultFn = null;
+
+        this.cancelable = true;
+
+        this.bubbles = true;
+
+        this.applyConfig(o, true);
 
         this.log("Creating " + this);
 
@@ -2101,8 +2083,10 @@ YUI.add("event-custom", function(Y) {
              *                                   if an object, that object becomes the
              *                                   the execution context.
              */
-this.subscribeEvent = new Y.CustomEvent(onsubscribeType, this, true);
-
+            this.subscribeEvent = new Y.CustomEvent(onsubscribeType, {
+                    context: this,
+                    silent: true
+                });
         } 
 
 
@@ -2115,29 +2099,14 @@ this.subscribeEvent = new Y.CustomEvent(onsubscribeType, this, true);
          */
         this.lastError = null;
 
+
     };
 
-    /**
-     * Event.Subscriber listener sigature constant.  The LIST type returns three
-     * parameters: the event type, the array of args passed to fire, and
-     * the optional custom object
-     * @property Y.Event.Custom.LIST
-     * @static
-     * @type int
-     */
-    Y.CustomEvent.LIST = 0;
-
-    /**
-     * Event.Subscriber listener sigature constant.  The FLAT type returns two
-     * parameters: the first argument passed to fire and the optional 
-     * custom object
-     * @property Y.Event.Custom.FLAT
-     * @static
-     * @type int
-     */
-    Y.CustomEvent.FLAT = 1;
-
     Y.CustomEvent.prototype = {
+
+        applyConfig: function(o, force) {
+            Y.mix(this, o, force);
+        },
 
         /**
          * Subscribes the caller to this event
@@ -2163,10 +2132,12 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             }
 
             // bind context and extra params
-            var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+            // var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+            // var s = new Y.Subscriber(m);
+            // s.ofn = fn;
 
-            var s = new Y.Subscriber(m);
-            s.ofn = fn;
+            var s = new Y.Subscriber(fn, obj, Y.array(arguments, 2, true));
+
 
             if (this.fireOnce && this.fired) {
                 this.lastError = null;
@@ -2224,29 +2195,44 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             this.log(this.type + "->" + ": " +  s);
 
-            var context = s.getScope(this.context), ret;
+            var ret;
 
-            if (this.signature == Y.CustomEvent.FLAT) {
+            // try {
+            //     // var context = s.getScope(this.context), ret;
+            //     // ret = s.fn.apply(context, args);
+            //     ret = s.notify(this.context, args);
+            // } catch(e) {
+            //     this.lastError = e;
+            //     this.log(this + " subscriber exception: " + e, "error");
+            // }
+            
+            var wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
+            
+            // emit an Event.Facade if this is that sort of event
+            if (wrap) {
 
-                //try {
-                    ret = s.fn.apply(context, args);
-                // } catch(e) {
-                //    this.lastError = e;
-//this.log(this + " subscriber exception: " + e, "error");
- //               }
+                // @TODO object literal support to fire makes it possible for
+                // config info to be passed if we wish.
+                
+                var ef = new Y.Event.Facade(this);
 
-            } else {
-                try {
-                    ret = s.fn.call(context, this.type, args, s.obj);
-                } catch(ex) {
-                    this.lastError = ex;
-this.log(this + " subscriber exception: " + ex, "error");
+                // update the details field with the arguments
+                ef.details = this.details;
+
+                // if the first argument is an object literal, apply the
+                // properties to the event facade
+                if (args && Y.lang.isObject(args[0], true)) {
+                    Y.mix(ef, args[0]);
                 }
-            }
-            if (false === ret) {
-                this.log("Event cancelled by subscriber");
 
-                //break;
+                a[0] = ef;
+
+            }
+             
+            ret = s.notify(this.context, a);
+
+            if (false === ret || this.stopped) {
+                this.log("Event canceled by subscriber");
                 return false;
             }
 
@@ -2303,13 +2289,14 @@ this.log(this + " subscriber exception: " + ex, "error");
 
             } else {
 
+                // var subs = this.subscribers.slice(), len=subs.length,
+                var subs = Y.merge(this.subscribers), errors = [],
+                           args=Y.array(arguments, 0, true), i;
+
                 this.fired = true;
                 this.stopped = 0;
                 this.prevented = 0;
-
-                // var subs = this.subscribers.slice(), len=subs.length,
-                var subs = Y.merge(this.subscribers), errors = [],
-                            args=Y.array(arguments, 0, true), i;
+                this.details = args;
 
                 this.log("Firing " + this  + ", " + "args: " + args);
 
@@ -2348,9 +2335,16 @@ this.log(this + " subscriber exception: " + ex, "error");
 
                 es.logging = (es.lastLogState);
 
+                // execute the default behavior if not prevented
                 // @TODO need context
-                if (this.defaultFn) {
-                    this.defaultFn.apply(this, args);
+                if (this.defaultFn && !this.prevented) {
+                    this.defaultFn.apply(this.host || this, args);
+                }
+
+                // bubble if this is hosted in an event target and propagation has not been stopped
+                if (this.bubbles && this.host && !this.stopped) {
+                    this.log('bubbling ' + this);
+                    ret = this.host.bubble(this);
                 }
 
                 if (es.id === this.id) {
@@ -2396,7 +2390,6 @@ this.log(this + " subscriber exception: " + ex, "error");
             if (s) {
                 delete s.fn;
                 delete s.obj;
-                delete s.ofn;
                 delete this.subscribers[s.id];
             }
 
@@ -2438,20 +2431,20 @@ this.log(this + " subscriber exception: " + ex, "error");
 
     /**
      * Stores the subscriber information to be used when the event fires.
-     * @param {Function} fn       The function to execute
+     * @param {Function} fn       The wrapped function to execute
      * @param {Object}   obj      An object to be passed along when the event fires
-     * @param {boolean}  override If true, the obj passed in becomes the execution
-     *                            context of the listener
+     * @param {Array} args        subscribe() additional arguments
+     *
      * @class Event.Subscriber
      * @constructor
      */
-    Y.Subscriber = function(fn, obj, override) {
+    Y.Subscriber = function(fn, obj, args) {
 
         /**
          * The callback that will be execute when the event fires
          * This is wrapped by Y.bind if obj was supplied.
          * @property fn
-         * @type function
+         * @type Function
          */
         this.fn = fn;
 
@@ -2459,73 +2452,81 @@ this.log(this + " subscriber exception: " + ex, "error");
          * An optional custom object that will passed to the callback when
          * the event fires
          * @property obj
-         * @type object
+         * @type Object
          */
-        this.obj = Y.lang.isUndefined(obj) ? null : obj;
+        this.obj = obj;
 
         /**
-         * The default execution context for the event listener is defined when the
-         * event is created (usually the object which contains the event).
-         * By setting override to true, the execution context becomes the custom
-         * object passed in by the subscriber.  If override is an object, that 
-         * object becomes the context.
-         * @property override
-         * @type boolean|object
+         * Unique subscriber id
+         * @property id
+         * @type String
          */
-        this.override = override;
-
         this.id = Y.stamp(this);
 
         /**
-         * Original function supplied to subscribe to help with unsubscribe 
-         * operations
+         * Optional additional arguments supplied to subscribe().  If present,
+         * these will be appended to the arguments supplied to fire()
+         * @property args
+         * @type Array
          */
-        this.ofn = null;
+        // this.args = args;
 
-    };
-
-    /**
-     * Returns the execution context for this listener.  If override was set to true
-     * the custom obj will be the context.  If override is an object, that is the
-     * context, otherwise the default context will be used.
-     * @method getScope
-     * @param {Object} defaultScope the context to use if this listener does not
-     *                              override it.
-     */
-    Y.Subscriber.prototype.getScope = function(defaultScope) {
-        if (this.override) {
-            if (this.override === true) {
-                return this.obj;
-            } else {
-                return this.override;
-            }
-        }
-        return defaultScope;
-    };
-
-    /**
-     * Returns true if the fn and obj match this objects properties.
-     * Used by the unsubscribe method to match the right subscriber.
-     *
-     * @method contains
-     * @param {Function} fn the function to execute
-     * @param {Object} obj an object to be passed along when the event fires
-     * @return {boolean} true if the supplied arguments match this 
-     *                   subscriber's signature.
-     */
-    Y.Subscriber.prototype.contains = function(fn, obj) {
+        var m = fn;
+        
         if (obj) {
-            return ((this.fn == fn || this.ofn == fn) && this.obj == obj);
-        } else {
-            return (this.fn == fn || this.ofn == fn);
+            var a = (args) ? Y.array(args) : [];
+            a.unshift(fn, obj);
+            m = Y.bind.apply(Y, a);
         }
+        
+        /**
+         * }
+         * fn bound to obj with additional arguments applied via Y.bind
+         * @property wrappedFn
+         * @type Function
+         */
+        this.wrappedFn = m;
+
     };
 
-    /**
-     * @method toString
-     */
-    Y.Subscriber.prototype.toString = function() {
-return "Sub { obj: " + this.obj  + ", override: " + (this.override || "no") + " }";
+    Y.Subscriber.prototype = {
+
+        /**
+         * Executes the subscriber.
+         * @method notify
+         * @param defaultContext The execution context if not overridden
+         * by the subscriber
+         * @param args {Array} Arguments array for the subscriber
+         */
+        notify: function(defaultContext, args) {
+            var c = this.obj || defaultContext;
+            return this.wrappedFn.apply(c, args);
+        },
+
+        /**
+         * Returns true if the fn and obj match this objects properties.
+         * Used by the unsubscribe method to match the right subscriber.
+         *
+         * @method contains
+         * @param {Function} fn the function to execute
+         * @param {Object} obj an object to be passed along when the event fires
+         * @return {boolean} true if the supplied arguments match this 
+         *                   subscriber's signature.
+         */
+        contains: function(fn, obj) {
+            if (obj) {
+                return ((this.fn == fn) && this.obj == obj);
+            } else {
+                return (this.fn == fn);
+            }
+        },
+
+        /**
+         * @method toString
+         */
+        toString: function() {
+            return "Subscriber " + this.id;
+        }
     };
 
 /**
@@ -2648,79 +2649,61 @@ YUI.add("event-target", function(Y) {
         __yui_events: null,
 
         /**
-         * Private storage of custom event subscribers
-         * @property __yui_subscribers
-         * @type Object[]
-         * @private
-         */
-        __yui_subscribers: null,
-        
-        /**
          * Subscribe to a Event.Custom by event type
          *
          * @method subscribe
-         * @param p_type     {string}   the type, or name of the event
-         * @param p_fn       {function} the function to exectute when the event fires
-         * @param p_obj      {Object}   An object to be passed along when the event 
-         *                              fires
-         * @param p_override {boolean}  If true, the obj passed in becomes the 
-         *                              execution context of the listener
+         * @param type    {string}   The type, or name of the event
+         * @param fn      {function} The function to exectute when the event fires
+         * @param context {Object}   An object to be passed along when the event 
+         *                            fires
          */
-        subscribe: function(p_type, p_fn, p_obj, p_override) {
+        subscribe: function(type, fn, context, p_override) {
 
             this.__yui_events = this.__yui_events || {};
 
-            // var ce = this.__yui_events[p_type];
-            // if (ce) {
-            //     ce.subscribe(p_fn, p_obj, p_override);
-            // } else {
-            //     this.__yui_subscribers = this.__yui_subscribers || {};
-            //     var subs = this.__yui_subscribers;
-            //     if (!subs[p_type]) {
-            //         subs[p_type] = [];
-            //     }
-            //     subs[p_type].push(
-            //         { fn: p_fn, obj: p_obj, override: p_override } );
-            // }
+            var ce = this.__yui_events[type] || this.publish(type),
+                a = Y.array(arguments, 1, true);
 
-            var ce = this.__yui_events[p_type] || this.publish(p_type);
-            return ce.subscribe(p_fn, p_obj, p_override);
+            // return ce.subscribe(fn, context, p_override);
+            return ce.subscribe.apply(ce, a);
 
         },
 
         /**
          * Unsubscribes one or more listeners the from the specified event
          * @method unsubscribe
-         * @param p_type {string}   The type, or name of the event.  If the type
-         *                          is not specified, it will attempt to remove
-         *                          the listener from all hosted events.
-         * @param p_fn   {Function} The subscribed function to unsubscribe, if not
+         * @param type {string|Object}   Either the handle to the subscriber or the 
+         *                        type of event.  If the type
+         *                        is not specified, it will attempt to remove
+         *                        the listener from all hosted events.
+         * @param fn   {Function} The subscribed function to unsubscribe, if not
          *                          supplied, all subscribers will be removed.
-         * @param p_obj  {Object}   The custom object passed to subscribe.  This is
+         * @param context  {Object}   The custom object passed to subscribe.  This is
          *                        optional, but if supplied will be used to
          *                        disambiguate multiple listeners that are the same
          *                        (e.g., you subscribe many object using a function
          *                        that lives on the prototype)
          * @return {boolean} true if the subscriber was found and detached.
          */
-        unsubscribe: function(p_type, p_fn, p_obj) {
+        unsubscribe: function(type, fn, context) {
 
-            if (Y.lang.isObject(p_type) && p_type.detach) {
-                return p_type.detach();
+            // If this is a
+            if (Y.lang.isObject(type) && type.detach) {
+                return type.detach();
             }
 
             this.__yui_events = this.__yui_events || {};
             var evts = this.__yui_events;
-            if (p_type) {
-                var ce = evts[p_type];
+            if (type) {
+                var ce = evts[type];
                 if (ce) {
-                    return ce.unsubscribe(p_fn, p_obj);
+                    return ce.unsubscribe(fn, context);
                 }
             } else {
                 var ret = true;
                 for (var i in evts) {
                     if (Y.object.owns(evts, i)) {
-                        ret = ret && evts[i].unsubscribe(p_fn, p_obj);
+                        ret = ret && evts[i].unsubscribe(fn, context);
                     }
                 }
                 return ret;
@@ -2734,10 +2717,10 @@ YUI.add("event-target", function(Y) {
          * is not specified, all listeners from all hosted custom events will
          * be removed.
          * @method unsubscribeAll
-         * @param p_type {string}   The type, or name of the event
+         * @param type {string}   The type, or name of the event
          */
-        unsubscribeAll: function(p_type) {
-            return this.unsubscribe(p_type);
+        unsubscribeAll: function(type) {
+            return this.unsubscribe(type);
         },
 
         /**
@@ -2747,8 +2730,8 @@ YUI.add("event-target", function(Y) {
          *
          * @method publish
          *
-         * @param p_type {string} the type, or name of the event
-         * @param p_config {object} optional config params.  Valid properties are:
+         * @param type {string} the type, or name of the event
+         * @param opts {object} optional config params.  Valid properties are:
          *
          *  <ul>
          *    <li>
@@ -2770,61 +2753,58 @@ YUI.add("event-target", function(Y) {
          *  @return {Event.Custom} the custom event
          *
          */
-        publish: function(p_type, p_config) {
+        publish: function(type, opts) {
 
             this.__yui_events = this.__yui_events || {};
-            var opts = p_config || {},
-                events = this.__yui_events,
-                silent = opts.silent || false,
-                context  = opts.context  || this,
-                ce = events[p_type];
 
-
+            var o = opts || {}, events = this.__yui_events, ce = events[type];
 
             if (ce) {
-Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
+                Y.log("publish() skipped: '"+type+"' exists");
 
                 // update config for the event
                 
-                ce.context = context;
+                // ce.context = context;
 
                 // some events are created silent by default, and that
                 // setting needs to be preserved.
-                if ("silent" in opts) {
-                    ce.silent = silent;
-                }
+                // if ("silent" in o) {
+                //     ce.silent = silent;
+                // }
 
-                if ("context" in opts) {
-                    ce.context = context;
-                }
+                // if ("context" in o) {
+                //     ce.context = context;
+                // }
+
+                // if ("fireOnce" in o) {
+                //     ce.fireOnce = o.fireOnce;
+                // }
+                // ce.host = o.host || ce.host || this;
+                
+                // override config
+                // Y.mix(ce, o, true);
+
+                ce.applyConfig(o, true);
 
             } else {
 
+                // defaults
+                Y.mix(o, {
+                    context: this,
+                    host: this
+                })
 
-ce = new Y.CustomEvent(p_type, context, silent);
-                events[p_type] = ce;
+                ce = new Y.CustomEvent(type, o);
 
-                if (opts.onSubscribeCallback) {
-                    ce.subscribeEvent.subscribe(opts.onSubscribeCallback);
+                events[type] = ce;
+
+                if (o.onSubscribeCallback) {
+                    ce.subscribeEvent.subscribe(o.onSubscribeCallback);
                 }
 
-                this.__yui_subscribers = this.__yui_subscribers || {};
-                var qs = this.__yui_subscribers[p_type];
-
-                if (qs) {
-                    for (var i=0; i<qs.length; ++i) {
-                        ce.subscribe(qs[i].fn, qs[i].obj, qs[i].override);
-                    }
-                }
             }
 
-            if ("fireOnce" in opts) {
-                ce.fireOnce = opts.fireOnce;
-            }
-
-            ce.host = opts.host || ce.host || this;
-
-            return events[p_type];
+            return events[type];
         },
 
         /**
@@ -2856,56 +2836,80 @@ ce = new Y.CustomEvent(p_type, context, silent);
          * If the custom event has not been explicitly created, it will be
          * created now with the default config, context to the host object
          * @method fire
-         * @param p_type    {string}  the type, or name of the event
+         * @param type    {string}  the type, or name of the event
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
          *                            the handler.
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
-        fire: function(p_type) {
+        fire: function(type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type] || this.publish(p_type);
+            var ce = this.getEvent(type) || this.publish(type);
 
             // the originalTarget is what the listener was bound to
             ce.originalTarget = this;
 
             // the target is what started the bubble
-            // if (!ce.target) {
-                // ce.target = this;
-            // }
-
-            var ret = ce.fire.apply(ce, Y.array(arguments, 1, true)),
-                targs = this.__yui_targets;
-
-            // bubble
-            if (!ce.stopped && targs) {
-                for (var i in targs) {
-                    // @TODO need to provide the event target to the bubble target
-                    targs[i].fire.apply(arguments);
-                }
+            if (!ce.target) {
+                ce.target = this;
             }
 
+            var a = Y.array(arguments, 1, true);
+
+            var ret = ce.fire.apply(ce, a);
+
             // clear target for next fire()
-            // ce.target = null;
+            ce.target = null;
 
             return ret;
         },
 
         /**
-         * Returns true if the custom event of the provided type has been created
-         * with publish.
-         * @method hasEvent
+         * Returns the custom event of the provided type has been created, a
+         * falsy value otherwise
+         * @method getEvent
          * @param type {string} the type, or name of the event
+         * @return {Event.Target} the custom event or a falsy value
          */
-        hasEvent: function(type) {
-            if (this.__yui_events) {
-                if (this.__yui_events[type]) {
-                    return true;
+        getEvent: function(type) {
+            var e = this.__yui_events;
+            return (e && e[type]);
+        },
+
+        bubble: function(current, target) {
+
+            var targs = this.__yui_targets, ret = true;
+
+            if (!current.stopped && targs) {
+                for (var i in targs) {
+                    // @TODO need to provide the event target to the bubble target
+
+                    var t = targs[i], type = current.type,
+                        ce = t.getEvent(type) || t.publish(type);
+
+                    ce.target = current.target;
+
+                    ret = ret && ce.fire.apply(ce, current.details);
+
+                    if (ce.stopped) {
+                        
+                        break;
+                    }
                 }
             }
-            return false;
+
+            return ret;
         },
+
+        // hasEvent: function(type) {
+        //     if (this.__yui_events) {
+        //         if (this.__yui_events[type]) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // },
 
         /**
          * Executes the callback before the given event or
@@ -3206,27 +3210,29 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onAvailable
                  *
-                 * @param {string||string[]}   p_id the id of the element, or an array
+                 * @param {string||string[]}   id the id of the element, or an array
                  * of ids to look for.
-                 * @param {function} p_fn what to execute when the element is found.
+                 * @param {function} fn what to execute when the element is found.
                  * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_override If set to true, p_fn will execute
+                 *                   a parameter to fn.
+                 * @param {boolean|object}  p_override If set to true, fn will execute
                  *                   in the context of p_obj, if set to an object it
                  *                   will execute in the context of that object
                  * @param checkContent {boolean} check child node readiness (onContentReady)
                  * @static
                  */
-                onAvailable: function(p_id, p_fn, p_obj, p_override, checkContent) {
+                // @TODO fix arguments
+                onAvailable: function(id, fn, p_obj, p_override, checkContent) {
 
-                    var a = (Y.lang.isString(p_id)) ? [p_id] : p_id;
+                    // var a = (Y.lang.isString(id)) ? [id] : id;
+                    var a = Y.array(id);
 
                     for (var i=0; i<a.length; i=i+1) {
-                        _avail.push({id:         a[i], 
-                                           fn:         p_fn, 
-                                           obj:        p_obj, 
-                                           override:   p_override, 
-                                           checkReady: checkContent });
+                        _avail.push({ id:         a[i], 
+                                      fn:         fn, 
+                                      obj:        p_obj, 
+                                      override:   p_override, 
+                                      checkReady: checkContent });
                     }
                     _retryCount = this.POLL_RETRYS;
                     this.startInterval();
@@ -3242,18 +3248,19 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onContentReady
                  *
-                 * @param {string}   p_id the id of the element to look for.
-                 * @param {function} p_fn what to execute when the element is ready.
+                 * @param {string}   id the id of the element to look for.
+                 * @param {function} fn what to execute when the element is ready.
                  * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_override If set to true, p_fn will execute
-                 *                   in the context of p_obj.  If an object, p_fn will
+                 *                   a parameter to fn.
+                 * @param {boolean|object}  p_override If set to true, fn will execute
+                 *                   in the context of p_obj.  If an object, fn will
                  *                   exectute in the context of that object
                  *
                  * @static
                  */
-                onContentReady: function(p_id, p_fn, p_obj, p_override) {
-                    this.onAvailable(p_id, p_fn, p_obj, p_override, true);
+                // @TODO fix arguments
+                onContentReady: function(id, fn, p_obj, p_override) {
+                    this.onAvailable(id, fn, p_obj, p_override, true);
                 },
 
                 /**
@@ -3279,16 +3286,13 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onDOMReady
                  *
-                 * @param {function} p_fn what to execute when the element is found.
-                 * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_context If set to true, p_fn will execute
-                 *                   in the context of p_obj, if set to an object it
-                 *                   will execute in the context of that object
+                 * @param {function} fn what to execute when the element is found.
+                 * @optional context execution context
+                 * @optional args 1..n arguments to send to the listener
                  *
                  * @static
                  */
-                onDOMReady: function(p_fn) {
+                onDOMReady: function(fn) {
                     // var ev = Y.Event.DOMReadyEvent;
                     // ev.subscribe.apply(ev, arguments);
                     var a = Y.array(arguments, 0, true);
@@ -3336,7 +3340,7 @@ YUI.add("event-dom", function(Y) {
                         // Y.log('collection: ' + el);
 
                         var handles=[], h, i, l, proc = function(v, k) {
-// handles.push(this.addListener(el[i], type, fn, obj, override));
+                            // handles.push(this.addListener(el[i], type, fn, obj, override));
                             // Y.log('collection stuff: ' + v);
                             var b = a.slice();
                             b.unshift(v);
@@ -3361,6 +3365,7 @@ YUI.add("event-dom", function(Y) {
                         if (oEl) {
                             el = oEl;
                         } else {
+                            //
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
                                 // Y.Event.addListener(el, type, fn, obj, override);
@@ -3387,8 +3392,9 @@ YUI.add("event-dom", function(Y) {
                     if (!ce) {
                         // create CE wrapper
                         ce = Y.publish(key, {
-                            silent: true,
-                            host: this
+                            // silent: true,
+                            // host: this,
+                            bubbles: false
                         });
 
                         // cache the dom event details in the custom event
@@ -3445,10 +3451,8 @@ YUI.add("event-dom", function(Y) {
                  *  the listener from.
                  * @param {String} type the type of event to remove.
                  * @param {Function} fn the method the event invokes.  If fn is
-                 *  undefined, then all event handlers for the type of event are 
-                 *  removed.
-                 * @return {boolean} true if the unbind was successful, false 
-                 *  otherwise.
+                 *  undefined, then all event handlers for the type of event are *  removed.
+                 * @return {boolean} true if the unbind was successful, false *  otherwise.
                  * @static
                  */
                 removeListener: function(el, type, fn) {
@@ -3997,7 +4001,7 @@ YUI.add("event-facade", function(Y) {
      * @param origTarg {HTMLElement} the element the listener was attached to
      * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
      */
-    Y.Event.Facade = function(ev, origTarg, wrapper) {
+    Y.Event.Facade = function(ev, origTarg, wrapper, details) {
 
         // @TODO the document should be the target's owner document
 
@@ -4067,18 +4071,20 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
 
         /**
-         * The button that was pushed.
-         * @property button
-         * @type int
-         */
-        this.button = e.which || e.button
-
-        /**
          * The button that was pushed.  Same as button.
          * @property which
          * @type int
          */
-        this.which = e.which || e.button
+        this.which = e.which || e.button;
+
+        /**
+         * The event details.  Currently supported for Custom
+         * Events only, where it contains the arguments that
+         * were passed to fire().
+         * @property details
+         * @type Array
+         */
+        this.details = details;
 
         //////////////////////////////////////////////////////
 
@@ -4124,6 +4130,10 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
         // methods
 
+        /**
+         * Stops the propagation to the next bubble target
+         * @method stopPropagation
+         */
         this.stopPropagation = function() {
             if (e.stopPropagation) {
                 e.stopPropagation();
@@ -4133,11 +4143,21 @@ YUI.add("event-facade", function(Y) {
             wrapper && wrapper.stopPropagation();
         };
 
+        /**
+         * Stops the propagation to the next bubble target and
+         * prevents any additional listeners from being exectued
+         * on the current target.
+         * @method stopImmediatePropagation
+         */
         this.stopImmediatePropagation = function() {
             this.stopPropagation();
             wrapper && wrapper.stopImmediatePropagation();
         };
 
+        /**
+         * Prevents the event's default behavior
+         * @method preventDefault
+         */
         this.preventDefault = function() {
             if (e.preventDefault) {
                 e.preventDefault();
@@ -4147,9 +4167,19 @@ YUI.add("event-facade", function(Y) {
             wrapper && wrapper.preventDefault();
         };
 
-        // stop event
-        this.halt = function() {
-            this.stopPropagation();
+        /**
+         * Stops the event propagation and prevents the default
+         * event behavior.
+         * @method halt
+         * @param immediate {boolean} if true additional listeners
+         * on the current target will not be executed
+         */
+        this.halt = function(immediate) {
+            if (immediate) {
+                this.stopImmediatePropagation();
+            } else {
+                this.stopPropagation();
+            }
             this.preventDefault();
         };
 

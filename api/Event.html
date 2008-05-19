@@ -852,11 +852,11 @@ left out, all listeners will be returned
                                            (
                                                 
                                                         
-                                                         p_id
+                                                         id
                                                     
                                                 
                                                         , 
-                                                         p_fn
+                                                         fn
                                                     
                                                 
                                                         , 
@@ -890,22 +890,22 @@ the custom object parameter, if provided.</p>
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_id &lt;string||string[]&gt;</code>
+                                                            <code>id &lt;string||string[]&gt;</code>
                                                              the id of the element, or an array
 of ids to look for.
                                                         </dd>
                                                         <dd>
-                                                            <code>p_fn &lt;function&gt;</code>
+                                                            <code>fn &lt;function&gt;</code>
                                                              what to execute when the element is found.
                                                         </dd>
                                                         <dd>
                                                             <code>p_obj &lt;object&gt;</code>
                                                              an optional object to be passed back as
-a parameter to p_fn.
+a parameter to fn.
                                                         </dd>
                                                         <dd>
                                                             <code>p_override &lt;boolean|object&gt;</code>
-                                                             If set to true, p_fn will execute
+                                                             If set to true, fn will execute
 in the context of p_obj, if set to an object it
 will execute in the context of that object
                                                         </dd>
@@ -941,11 +941,11 @@ will execute in the context of that object
                                            (
                                                 
                                                         
-                                                         p_id
+                                                         id
                                                     
                                                 
                                                         , 
-                                                         p_fn
+                                                         fn
                                                     
                                                 
                                                         , 
@@ -972,22 +972,22 @@ the custom object parameter, if provided.</p>
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_id &lt;string&gt;</code>
+                                                            <code>id &lt;string&gt;</code>
                                                              the id of the element to look for.
                                                         </dd>
                                                         <dd>
-                                                            <code>p_fn &lt;function&gt;</code>
+                                                            <code>fn &lt;function&gt;</code>
                                                              what to execute when the element is ready.
                                                         </dd>
                                                         <dd>
                                                             <code>p_obj &lt;object&gt;</code>
                                                              an optional object to be passed back as
-a parameter to p_fn.
+a parameter to fn.
                                                         </dd>
                                                         <dd>
                                                             <code>p_override &lt;boolean|object&gt;</code>
-                                                             If set to true, p_fn will execute
-in the context of p_obj.  If an object, p_fn will
+                                                             If set to true, fn will execute
+in the context of p_obj.  If an object, fn will
 exectute in the context of that object
                                                         </dd>
                                                 </dl>
@@ -1018,15 +1018,7 @@ exectute in the context of that object
                                            (
                                                 
                                                         
-                                                         p_fn
-                                                    
-                                                
-                                                        , 
-                                                         p_obj
-                                                    
-                                                
-                                                        , 
-                                                         p_context
+                                                         fn
                                                     
                                                 
                                             )
@@ -1057,19 +1049,8 @@ signature is:</p>
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>p_fn &lt;function&gt;</code>
+                                                            <code>fn &lt;function&gt;</code>
                                                              what to execute when the element is found.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>p_obj &lt;object&gt;</code>
-                                                             an optional object to be passed back as
-a parameter to p_fn.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>p_context &lt;boolean|object&gt;</code>
-                                                             If set to true, p_fn will execute
-in the context of p_obj, if set to an object it
-will execute in the context of that object
                                                         </dd>
                                                 </dl>
 
@@ -1200,8 +1181,7 @@ the listener from.
                                                         <dd>
                                                             <code>fn &lt;Function&gt;</code>
                                                              the method the event invokes.  If fn is
-undefined, then all event handlers for the type of event are 
-removed.
+undefined, then all event handlers for the type of event are *  removed.
                                                         </dd>
                                                 </dl>
 
@@ -1210,8 +1190,7 @@ removed.
                                                     <code>
                                                         boolean
                                                     </code></dt>
-                                                    <dd>true if the unbind was successful, false 
-otherwise.</dd>
+                                                    <dd>true if the unbind was successful, false *  otherwise.</dd>
                                                 </dl>
              
                                         </div>

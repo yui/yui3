@@ -23,79 +23,61 @@ YUI.add("event-target", function(Y) {
         __yui_events: null,
 
         /**
-         * Private storage of custom event subscribers
-         * @property __yui_subscribers
-         * @type Object[]
-         * @private
-         */
-        __yui_subscribers: null,
-        
-        /**
          * Subscribe to a Event.Custom by event type
          *
          * @method subscribe
-         * @param p_type     {string}   the type, or name of the event
-         * @param p_fn       {function} the function to exectute when the event fires
-         * @param p_obj      {Object}   An object to be passed along when the event 
-         *                              fires
-         * @param p_override {boolean}  If true, the obj passed in becomes the 
-         *                              execution context of the listener
+         * @param type    {string}   The type, or name of the event
+         * @param fn      {function} The function to exectute when the event fires
+         * @param context {Object}   An object to be passed along when the event 
+         *                            fires
          */
-        subscribe: function(p_type, p_fn, p_obj, p_override) {
+        subscribe: function(type, fn, context, p_override) {
 
             this.__yui_events = this.__yui_events || {};
 
-            // var ce = this.__yui_events[p_type];
-            // if (ce) {
-            //     ce.subscribe(p_fn, p_obj, p_override);
-            // } else {
-            //     this.__yui_subscribers = this.__yui_subscribers || {};
-            //     var subs = this.__yui_subscribers;
-            //     if (!subs[p_type]) {
-            //         subs[p_type] = [];
-            //     }
-            //     subs[p_type].push(
-            //         { fn: p_fn, obj: p_obj, override: p_override } );
-            // }
+            var ce = this.__yui_events[type] || this.publish(type),
+                a = Y.array(arguments, 1, true);
 
-            var ce = this.__yui_events[p_type] || this.publish(p_type);
-            return ce.subscribe(p_fn, p_obj, p_override);
+            // return ce.subscribe(fn, context, p_override);
+            return ce.subscribe.apply(ce, a);
 
         },
 
         /**
          * Unsubscribes one or more listeners the from the specified event
          * @method unsubscribe
-         * @param p_type {string}   The type, or name of the event.  If the type
-         *                          is not specified, it will attempt to remove
-         *                          the listener from all hosted events.
-         * @param p_fn   {Function} The subscribed function to unsubscribe, if not
+         * @param type {string|Object}   Either the handle to the subscriber or the 
+         *                        type of event.  If the type
+         *                        is not specified, it will attempt to remove
+         *                        the listener from all hosted events.
+         * @param fn   {Function} The subscribed function to unsubscribe, if not
          *                          supplied, all subscribers will be removed.
-         * @param p_obj  {Object}   The custom object passed to subscribe.  This is
+         * @param context  {Object}   The custom object passed to subscribe.  This is
          *                        optional, but if supplied will be used to
          *                        disambiguate multiple listeners that are the same
          *                        (e.g., you subscribe many object using a function
          *                        that lives on the prototype)
          * @return {boolean} true if the subscriber was found and detached.
          */
-        unsubscribe: function(p_type, p_fn, p_obj) {
+        unsubscribe: function(type, fn, context) {
 
-            if (Y.lang.isObject(p_type) && p_type.detach) {
-                return p_type.detach();
+            // If this is a
+            if (Y.lang.isObject(type) && type.detach) {
+                return type.detach();
             }
 
             this.__yui_events = this.__yui_events || {};
             var evts = this.__yui_events;
-            if (p_type) {
-                var ce = evts[p_type];
+            if (type) {
+                var ce = evts[type];
                 if (ce) {
-                    return ce.unsubscribe(p_fn, p_obj);
+                    return ce.unsubscribe(fn, context);
                 }
             } else {
                 var ret = true;
                 for (var i in evts) {
                     if (Y.object.owns(evts, i)) {
-                        ret = ret && evts[i].unsubscribe(p_fn, p_obj);
+                        ret = ret && evts[i].unsubscribe(fn, context);
                     }
                 }
                 return ret;
@@ -109,10 +91,10 @@ YUI.add("event-target", function(Y) {
          * is not specified, all listeners from all hosted custom events will
          * be removed.
          * @method unsubscribeAll
-         * @param p_type {string}   The type, or name of the event
+         * @param type {string}   The type, or name of the event
          */
-        unsubscribeAll: function(p_type) {
-            return this.unsubscribe(p_type);
+        unsubscribeAll: function(type) {
+            return this.unsubscribe(type);
         },
 
         /**
@@ -122,8 +104,8 @@ YUI.add("event-target", function(Y) {
          *
          * @method publish
          *
-         * @param p_type {string} the type, or name of the event
-         * @param p_config {object} optional config params.  Valid properties are:
+         * @param type {string} the type, or name of the event
+         * @param opts {object} optional config params.  Valid properties are:
          *
          *  <ul>
          *    <li>
@@ -145,61 +127,58 @@ YUI.add("event-target", function(Y) {
          *  @return {Event.Custom} the custom event
          *
          */
-        publish: function(p_type, p_config) {
+        publish: function(type, opts) {
 
             this.__yui_events = this.__yui_events || {};
-            var opts = p_config || {},
-                events = this.__yui_events,
-                silent = opts.silent || false,
-                context  = opts.context  || this,
-                ce = events[p_type];
 
-
+            var o = opts || {}, events = this.__yui_events, ce = events[type];
 
             if (ce) {
-Y.log("Event.Target publish skipped: '"+p_type+"' already exists");
+                Y.log("publish() skipped: '"+type+"' exists");
 
                 // update config for the event
                 
-                ce.context = context;
+                // ce.context = context;
 
                 // some events are created silent by default, and that
                 // setting needs to be preserved.
-                if ("silent" in opts) {
-                    ce.silent = silent;
-                }
+                // if ("silent" in o) {
+                //     ce.silent = silent;
+                // }
 
-                if ("context" in opts) {
-                    ce.context = context;
-                }
+                // if ("context" in o) {
+                //     ce.context = context;
+                // }
+
+                // if ("fireOnce" in o) {
+                //     ce.fireOnce = o.fireOnce;
+                // }
+                // ce.host = o.host || ce.host || this;
+                
+                // override config
+                // Y.mix(ce, o, true);
+
+                ce.applyConfig(o, true);
 
             } else {
 
+                // defaults
+                Y.mix(o, {
+                    context: this,
+                    host: this
+                })
 
-ce = new Y.CustomEvent(p_type, context, silent);
-                events[p_type] = ce;
+                ce = new Y.CustomEvent(type, o);
 
-                if (opts.onSubscribeCallback) {
-                    ce.subscribeEvent.subscribe(opts.onSubscribeCallback);
+                events[type] = ce;
+
+                if (o.onSubscribeCallback) {
+                    ce.subscribeEvent.subscribe(o.onSubscribeCallback);
                 }
 
-                this.__yui_subscribers = this.__yui_subscribers || {};
-                var qs = this.__yui_subscribers[p_type];
-
-                if (qs) {
-                    for (var i=0; i<qs.length; ++i) {
-                        ce.subscribe(qs[i].fn, qs[i].obj, qs[i].override);
-                    }
-                }
             }
 
-            if ("fireOnce" in opts) {
-                ce.fireOnce = opts.fireOnce;
-            }
-
-            ce.host = opts.host || ce.host || this;
-
-            return events[p_type];
+            return events[type];
         },
 
         /**
@@ -231,56 +210,80 @@ ce = new Y.CustomEvent(p_type, context, silent);
          * If the custom event has not been explicitly created, it will be
          * created now with the default config, context to the host object
          * @method fire
-         * @param p_type    {string}  the type, or name of the event
+         * @param type    {string}  the type, or name of the event
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
          *                            the handler.
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
-        fire: function(p_type) {
+        fire: function(type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.__yui_events[p_type] || this.publish(p_type);
+            var ce = this.getEvent(type) || this.publish(type);
 
             // the originalTarget is what the listener was bound to
             ce.originalTarget = this;
 
             // the target is what started the bubble
-            // if (!ce.target) {
-                // ce.target = this;
-            // }
-
-            var ret = ce.fire.apply(ce, Y.array(arguments, 1, true)),
-                targs = this.__yui_targets;
-
-            // bubble
-            if (!ce.stopped && targs) {
-                for (var i in targs) {
-                    // @TODO need to provide the event target to the bubble target
-                    targs[i].fire.apply(arguments);
-                }
+            if (!ce.target) {
+                ce.target = this;
             }
 
+            var a = Y.array(arguments, 1, true);
+
+            var ret = ce.fire.apply(ce, a);
+
             // clear target for next fire()
-            // ce.target = null;
+            ce.target = null;
 
             return ret;
         },
 
         /**
-         * Returns true if the custom event of the provided type has been created
-         * with publish.
-         * @method hasEvent
+         * Returns the custom event of the provided type has been created, a
+         * falsy value otherwise
+         * @method getEvent
          * @param type {string} the type, or name of the event
+         * @return {Event.Target} the custom event or a falsy value
          */
-        hasEvent: function(type) {
-            if (this.__yui_events) {
-                if (this.__yui_events[type]) {
-                    return true;
+        getEvent: function(type) {
+            var e = this.__yui_events;
+            return (e && e[type]);
+        },
+
+        bubble: function(current, target) {
+
+            var targs = this.__yui_targets, ret = true;
+
+            if (!current.stopped && targs) {
+                for (var i in targs) {
+                    // @TODO need to provide the event target to the bubble target
+
+                    var t = targs[i], type = current.type,
+                        ce = t.getEvent(type) || t.publish(type);
+
+                    ce.target = current.target;
+
+                    ret = ret && ce.fire.apply(ce, current.details);
+
+                    if (ce.stopped) {
+                        
+                        break;
+                    }
                 }
             }
-            return false;
+
+            return ret;
         },
+
+        // hasEvent: function(type) {
+        //     if (this.__yui_events) {
+        //         if (this.__yui_events[type]) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // },
 
         /**
          * Executes the callback before the given event or

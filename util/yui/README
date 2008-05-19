@@ -268,35 +268,102 @@ The YUI global does not get the core library bound to it unless compat is set to
 added a config option for 'core', default undefined.  This is an array that will
 supplant the array of core YUI modules bound in Init.js.
 
+Event Facade: fixed to work with new Node interface.  Do (now in the core): fixed multiple subscriber problem
 
 //////////////////////////////////////////////////////////////////////
 
-Y.log recursion
-
-Event Facade: fixed to work with new Node interface.  Do (now in the core): fixed multiple subscriber problem
+Fixed Y.log custom event recursion
+    This required the addition of a call stack, which may be expanded to provide additional debugging assistance.
 
 originalTarget borrows the reference from addListener instead of the event property to get around a FireFox bug.
 
-Y.extend does not copy object properties any longer.  It also no longer adds Super, which doesn't work after the first level of inheritance
+Y.extend does not copy object properties any longer.  It also no longer adds Super, which didn't work beyond the first level of inheritance
 
 Fixed a case where log messages were inadvertently suppressed
 
 EventFacade.button == e.which || e.button
 
+Added logInclude and logExclude config options to filter log sources
+
 //////////////////////////////////////////////////////////////////////
 
-2.5.2
+Removed the old custom event signatures
 
-throws a YAHOO.util.ChainedError if one or more subscribers throw an error.
+Event.Target.subscribe propagates multiple arguments correctly
 
-uploader dependencies
+Event.Target.fire() can now emit Event.Facade payload rather than fire() arguments.  
+    defaultFn - default behavior that executes even if a subscriber stops the event propagation
+        preventDefault() - prevents if the event is 'cancelable'
+    add/removeTarget - provides bubbling if event 'bubbles'
+        stopPropagation()/stopImmediatePropagation()
+    details - constains arguments provided to fire()
+    target - object fire() was executed on
+    originalTarget - used to get the subscriber's host when subscriber changes execution context
 
-option dependencies and sorting
+//////////////////////////////////////////////////////////////////////
 
-augmentObject override works correctly when values are falsy
+Event.Target hasEvent replaced with getEvent
 
-lang organization
+Event.Custom constructor signature is now type and options --- 
+removed context and silent as arguments in the constructor, now these
+must be passed into the config.
 
-PHP loader - APC cache causing sporadic failures
+Added 'defaultFn' custom event property
+
+Added 'emitFacade' config that publish() can use to use the Event.Facade signature.
+This is in place until we can configure Event.Target to always produce events
+with the Event.Facade signature.
+
+When the facade in place, if the first argument is an object, these properties are
+mixed into the event facade.  This provides some transparency to events that are
+already being used this way, and makes it so that the consumer can use well known
+property names rather than e.details[1]
+
+    var o1 = new Y.Event.Target(),
+        o2 = new Y.Event.Target(),
+        o3 = new Y.Event.Target();
+
+        o1.publish('o:1', {
+            defaultFn: function() {
+                Y.log('DEFAULT FN o1');
+            },
+
+            emitFacade: true
+        });
+
+        o1.addTarget(o2);
+
+
+        o2.addTarget(o3);
+
+        o1.subscribe('o:1', function(e) {
+            Y.log('o1: ' + Y.lang.dump(Y.array(arguments)));
+
+            // e.halt();
+        });
+
+        o2.subscribe('o:1', function(e) {
+            Y.log('o1 to o2: ' + Y.lang.dump(Y.array(arguments)));
+        });
+
+        o3.subscribe('o:1', function(e) {
+            Y.log('o1 to o3: ' + Y.lang.dump(Y.array(arguments)));
+        });
+
+
+        o3.subscribe('o:2', function(e) {
+            Y.log('o2 to o3: ' + Y.lang.dump(Y.array(arguments)));
+        });
+
+        // with facade
+        o1.fire('o:1', {
+
+            foo: 1,
+            bar: "absorbed from fire arg 0"
+
+        }, 2, 3);
+
+        // without facade
+        o1.fire('o:2', 4, 5, 6);
 
 

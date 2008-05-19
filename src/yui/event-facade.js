@@ -117,7 +117,7 @@ YUI.add("event-facade", function(Y) {
      * @param origTarg {HTMLElement} the element the listener was attached to
      * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
      */
-    Y.Event.Facade = function(ev, origTarg, wrapper) {
+    Y.Event.Facade = function(ev, origTarg, wrapper, details) {
 
         // @TODO the document should be the target's owner document
 
@@ -187,18 +187,20 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
 
         /**
-         * The button that was pushed.
-         * @property button
-         * @type int
-         */
-        this.button = e.which || e.button
-
-        /**
          * The button that was pushed.  Same as button.
          * @property which
          * @type int
          */
-        this.which = e.which || e.button
+        this.which = e.which || e.button;
+
+        /**
+         * The event details.  Currently supported for Custom
+         * Events only, where it contains the arguments that
+         * were passed to fire().
+         * @property details
+         * @type Array
+         */
+        this.details = details;
 
         //////////////////////////////////////////////////////
 
@@ -244,6 +246,10 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
         // methods
 
+        /**
+         * Stops the propagation to the next bubble target
+         * @method stopPropagation
+         */
         this.stopPropagation = function() {
             if (e.stopPropagation) {
                 e.stopPropagation();
@@ -253,11 +259,21 @@ YUI.add("event-facade", function(Y) {
             wrapper && wrapper.stopPropagation();
         };
 
+        /**
+         * Stops the propagation to the next bubble target and
+         * prevents any additional listeners from being exectued
+         * on the current target.
+         * @method stopImmediatePropagation
+         */
         this.stopImmediatePropagation = function() {
             this.stopPropagation();
             wrapper && wrapper.stopImmediatePropagation();
         };
 
+        /**
+         * Prevents the event's default behavior
+         * @method preventDefault
+         */
         this.preventDefault = function() {
             if (e.preventDefault) {
                 e.preventDefault();
@@ -267,9 +283,19 @@ YUI.add("event-facade", function(Y) {
             wrapper && wrapper.preventDefault();
         };
 
-        // stop event
-        this.halt = function() {
-            this.stopPropagation();
+        /**
+         * Stops the event propagation and prevents the default
+         * event behavior.
+         * @method halt
+         * @param immediate {boolean} if true additional listeners
+         * on the current target will not be executed
+         */
+        this.halt = function(immediate) {
+            if (immediate) {
+                this.stopImmediatePropagation();
+            } else {
+                this.stopPropagation();
+            }
             this.preventDefault();
         };
 

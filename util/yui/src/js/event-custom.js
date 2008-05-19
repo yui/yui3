@@ -46,15 +46,15 @@ YUI.add("event-custom", function(Y) {
      *                  refer to this object in the callback.  Default value: 
      *                  the window object.  The listener can override this.
      * @param {boolean} silent pass true to prevent the event from writing to
-     *                  the debugsystem
-     * @param {int}     signature the signature that the custom event subscriber
-     *                  will receive. Y.Event.Custom.LIST or 
-     *                  Y.Event.Custom.FLAT.  The default is
-     *                  Y.Event.Custom.FLAT.
+     *                  the debug system
      * @class Event.Custom
      * @constructor
      */
-    Y.CustomEvent = function(type, context, silent, o) {
+    Y.CustomEvent = function(type, o) {
+
+        if (arguments.length > 2) {
+            console.log('CustomEvent sig context and silent flags must be part of the config', 'error', 'Event');
+        }
 
         o = o || {};
 
@@ -73,7 +73,7 @@ YUI.add("event-custom", function(Y) {
          * @property context
          * @type object
          */
-        this.context = context || Y;
+        this.context = Y;
 
         /**
          * By default all custom events are logged in the debug build, set silent
@@ -81,31 +81,7 @@ YUI.add("event-custom", function(Y) {
          * @property silent
          * @type boolean
          */
-        this.silent = silent || (type == "yui:log");
-
-        /**
-         * Custom events support two styles of arguments provided to the event
-         * subscribers.  
-         * <ul>
-         * <li>Y.Event.Custom.LIST: 
-         *   <ul>
-         *   <li>param1: event name</li>
-         *   <li>param2: array of arguments sent to fire</li>
-         *   <li>param3: <optional> a custom object supplied by the subscriber</li>
-         *   </ul>
-         * </li>
-         * <li>Y.Event.Custom.FLAT
-         *   <ul>
-         *   <li>param1: the first argument passed to fire.  If you need to
-         *           pass multiple parameters, use and array or object literal</li>
-         *   <li>param2: <optional> a custom object supplied by the subscriber</li>
-         *   </ul>
-         * </li>
-         * </ul>
-         *   @property signature
-         *   @type int
-         */
-        this.signature = o.signature || Y.CustomEvent.FLAT;
+        this.silent = (type == "yui:log");
 
         /**
          * The subscribers to this event
@@ -132,7 +108,7 @@ YUI.add("event-custom", function(Y) {
          * @type boolean
          * @default false;
          */
-        this.fireOnce = o.fireOnce || false;
+        this.fireOnce = false;
 
         /**
          * Flag for stopPropagation that is modified during fire()
@@ -157,7 +133,7 @@ YUI.add("event-custom", function(Y) {
          * @property host
          * @type Event.Target
          */
-        this.host = o.host;
+        this.host = null;
 
         /**
          * The default function to execute after event listeners
@@ -166,7 +142,13 @@ YUI.add("event-custom", function(Y) {
          * @property defaultFn
          * @type Function
          */
-        this.defaultFn = o.defaultFn;
+        this.defaultFn = null;
+
+        this.cancelable = true;
+
+        this.bubbles = true;
+
+        this.applyConfig(o, true);
 
         this.log("Creating " + this);
 
@@ -190,8 +172,10 @@ YUI.add("event-custom", function(Y) {
              *                                   if an object, that object becomes the
              *                                   the execution context.
              */
-this.subscribeEvent = new Y.CustomEvent(onsubscribeType, this, true);
-
+            this.subscribeEvent = new Y.CustomEvent(onsubscribeType, {
+                    context: this,
+                    silent: true
+                });
         } 
 
 
@@ -204,29 +188,14 @@ this.subscribeEvent = new Y.CustomEvent(onsubscribeType, this, true);
          */
         this.lastError = null;
 
+
     };
 
-    /**
-     * Event.Subscriber listener sigature constant.  The LIST type returns three
-     * parameters: the event type, the array of args passed to fire, and
-     * the optional custom object
-     * @property Y.Event.Custom.LIST
-     * @static
-     * @type int
-     */
-    Y.CustomEvent.LIST = 0;
-
-    /**
-     * Event.Subscriber listener sigature constant.  The FLAT type returns two
-     * parameters: the first argument passed to fire and the optional 
-     * custom object
-     * @property Y.Event.Custom.FLAT
-     * @static
-     * @type int
-     */
-    Y.CustomEvent.FLAT = 1;
-
     Y.CustomEvent.prototype = {
+
+        applyConfig: function(o, force) {
+            Y.mix(this, o, force);
+        },
 
         /**
          * Subscribes the caller to this event
@@ -252,10 +221,12 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             }
 
             // bind context and extra params
-            var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+            // var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
+            // var s = new Y.Subscriber(m);
+            // s.ofn = fn;
 
-            var s = new Y.Subscriber(m);
-            s.ofn = fn;
+            var s = new Y.Subscriber(fn, obj, Y.array(arguments, 2, true));
+
 
             if (this.fireOnce && this.fired) {
                 this.lastError = null;
@@ -313,29 +284,44 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             this.log(this.type + "->" + ": " +  s);
 
-            var context = s.getScope(this.context), ret;
+            var ret;
 
-            if (this.signature == Y.CustomEvent.FLAT) {
+            // try {
+            //     // var context = s.getScope(this.context), ret;
+            //     // ret = s.fn.apply(context, args);
+            //     ret = s.notify(this.context, args);
+            // } catch(e) {
+            //     this.lastError = e;
+            //     this.log(this + " subscriber exception: " + e, "error");
+            // }
+            
+            var wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
+            
+            // emit an Event.Facade if this is that sort of event
+            if (wrap) {
 
-                //try {
-                    ret = s.fn.apply(context, args);
-                // } catch(e) {
-                //    this.lastError = e;
-//this.log(this + " subscriber exception: " + e, "error");
- //               }
+                // @TODO object literal support to fire makes it possible for
+                // config info to be passed if we wish.
+                
+                var ef = new Y.Event.Facade(this);
 
-            } else {
-                try {
-                    ret = s.fn.call(context, this.type, args, s.obj);
-                } catch(ex) {
-                    this.lastError = ex;
-this.log(this + " subscriber exception: " + ex, "error");
+                // update the details field with the arguments
+                ef.details = this.details;
+
+                // if the first argument is an object literal, apply the
+                // properties to the event facade
+                if (args && Y.lang.isObject(args[0], true)) {
+                    Y.mix(ef, args[0]);
                 }
-            }
-            if (false === ret) {
-                this.log("Event cancelled by subscriber");
 
-                //break;
+                a[0] = ef;
+
+            }
+             
+            ret = s.notify(this.context, a);
+
+            if (false === ret || this.stopped) {
+                this.log("Event canceled by subscriber");
                 return false;
             }
 
@@ -392,13 +378,14 @@ this.log(this + " subscriber exception: " + ex, "error");
 
             } else {
 
+                // var subs = this.subscribers.slice(), len=subs.length,
+                var subs = Y.merge(this.subscribers), errors = [],
+                           args=Y.array(arguments, 0, true), i;
+
                 this.fired = true;
                 this.stopped = 0;
                 this.prevented = 0;
-
-                // var subs = this.subscribers.slice(), len=subs.length,
-                var subs = Y.merge(this.subscribers), errors = [],
-                            args=Y.array(arguments, 0, true), i;
+                this.details = args;
 
                 this.log("Firing " + this  + ", " + "args: " + args);
 
@@ -437,9 +424,16 @@ this.log(this + " subscriber exception: " + ex, "error");
 
                 es.logging = (es.lastLogState);
 
+                // execute the default behavior if not prevented
                 // @TODO need context
-                if (this.defaultFn) {
-                    this.defaultFn.apply(this, args);
+                if (this.defaultFn && !this.prevented) {
+                    this.defaultFn.apply(this.host || this, args);
+                }
+
+                // bubble if this is hosted in an event target and propagation has not been stopped
+                if (this.bubbles && this.host && !this.stopped) {
+                    this.log('bubbling ' + this);
+                    ret = this.host.bubble(this);
                 }
 
                 if (es.id === this.id) {
@@ -485,7 +479,6 @@ this.log(this + " subscriber exception: " + ex, "error");
             if (s) {
                 delete s.fn;
                 delete s.obj;
-                delete s.ofn;
                 delete this.subscribers[s.id];
             }
 
@@ -527,20 +520,20 @@ this.log(this + " subscriber exception: " + ex, "error");
 
     /**
      * Stores the subscriber information to be used when the event fires.
-     * @param {Function} fn       The function to execute
+     * @param {Function} fn       The wrapped function to execute
      * @param {Object}   obj      An object to be passed along when the event fires
-     * @param {boolean}  override If true, the obj passed in becomes the execution
-     *                            context of the listener
+     * @param {Array} args        subscribe() additional arguments
+     *
      * @class Event.Subscriber
      * @constructor
      */
-    Y.Subscriber = function(fn, obj, override) {
+    Y.Subscriber = function(fn, obj, args) {
 
         /**
          * The callback that will be execute when the event fires
          * This is wrapped by Y.bind if obj was supplied.
          * @property fn
-         * @type function
+         * @type Function
          */
         this.fn = fn;
 
@@ -548,73 +541,81 @@ this.log(this + " subscriber exception: " + ex, "error");
          * An optional custom object that will passed to the callback when
          * the event fires
          * @property obj
-         * @type object
+         * @type Object
          */
-        this.obj = Y.lang.isUndefined(obj) ? null : obj;
+        this.obj = obj;
 
         /**
-         * The default execution context for the event listener is defined when the
-         * event is created (usually the object which contains the event).
-         * By setting override to true, the execution context becomes the custom
-         * object passed in by the subscriber.  If override is an object, that 
-         * object becomes the context.
-         * @property override
-         * @type boolean|object
+         * Unique subscriber id
+         * @property id
+         * @type String
          */
-        this.override = override;
-
         this.id = Y.stamp(this);
 
         /**
-         * Original function supplied to subscribe to help with unsubscribe 
-         * operations
+         * Optional additional arguments supplied to subscribe().  If present,
+         * these will be appended to the arguments supplied to fire()
+         * @property args
+         * @type Array
          */
-        this.ofn = null;
+        // this.args = args;
 
-    };
-
-    /**
-     * Returns the execution context for this listener.  If override was set to true
-     * the custom obj will be the context.  If override is an object, that is the
-     * context, otherwise the default context will be used.
-     * @method getScope
-     * @param {Object} defaultScope the context to use if this listener does not
-     *                              override it.
-     */
-    Y.Subscriber.prototype.getScope = function(defaultScope) {
-        if (this.override) {
-            if (this.override === true) {
-                return this.obj;
-            } else {
-                return this.override;
-            }
-        }
-        return defaultScope;
-    };
-
-    /**
-     * Returns true if the fn and obj match this objects properties.
-     * Used by the unsubscribe method to match the right subscriber.
-     *
-     * @method contains
-     * @param {Function} fn the function to execute
-     * @param {Object} obj an object to be passed along when the event fires
-     * @return {boolean} true if the supplied arguments match this 
-     *                   subscriber's signature.
-     */
-    Y.Subscriber.prototype.contains = function(fn, obj) {
+        var m = fn;
+        
         if (obj) {
-            return ((this.fn == fn || this.ofn == fn) && this.obj == obj);
-        } else {
-            return (this.fn == fn || this.ofn == fn);
+            var a = (args) ? Y.array(args) : [];
+            a.unshift(fn, obj);
+            m = Y.bind.apply(Y, a);
         }
+        
+        /**
+         * }
+         * fn bound to obj with additional arguments applied via Y.bind
+         * @property wrappedFn
+         * @type Function
+         */
+        this.wrappedFn = m;
+
     };
 
-    /**
-     * @method toString
-     */
-    Y.Subscriber.prototype.toString = function() {
-return "Sub { obj: " + this.obj  + ", override: " + (this.override || "no") + " }";
+    Y.Subscriber.prototype = {
+
+        /**
+         * Executes the subscriber.
+         * @method notify
+         * @param defaultContext The execution context if not overridden
+         * by the subscriber
+         * @param args {Array} Arguments array for the subscriber
+         */
+        notify: function(defaultContext, args) {
+            var c = this.obj || defaultContext;
+            return this.wrappedFn.apply(c, args);
+        },
+
+        /**
+         * Returns true if the fn and obj match this objects properties.
+         * Used by the unsubscribe method to match the right subscriber.
+         *
+         * @method contains
+         * @param {Function} fn the function to execute
+         * @param {Object} obj an object to be passed along when the event fires
+         * @return {boolean} true if the supplied arguments match this 
+         *                   subscriber's signature.
+         */
+        contains: function(fn, obj) {
+            if (obj) {
+                return ((this.fn == fn) && this.obj == obj);
+            } else {
+                return (this.fn == fn);
+            }
+        },
+
+        /**
+         * @method toString
+         */
+        toString: function() {
+            return "Subscriber " + this.id;
+        }
     };
 
 /**

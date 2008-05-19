@@ -73,9 +73,6 @@ that can be subscribed to by one or more independent component.
 
                                                 , 
                                                 silent
-
-                                                , 
-                                                signature
                                     )
                                 </code>
                                 <div class="description">
@@ -101,16 +98,7 @@ the window object.  The listener can override this.
                                                     &lt;boolean&gt; 
                                                     </code>
                                                      pass true to prevent the event from writing to
-the debugsystem
-                                                </dd>
-                                                <dd>
-                                                    <code>signature
-                                                    &lt;int&gt; 
-                                                    </code>
-                                                     the signature that the custom event subscriber
-will receive. Y.Event.Custom.LIST or 
-Y.Event.Custom.FLAT.  The default is
-Y.Event.Custom.FLAT.
+the debug system
                                                 </dd>
                                         </dl>
                                     
@@ -244,38 +232,6 @@ if it is not 0, the default behavior for this event
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_signature">signature</a>
-                                        <code>- int</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Custom events support two styles of arguments provided to the event
-subscribers.  
-<ul>
-<li>Y.Event.Custom.LIST: 
-<ul>
-<li>param1: event name</li>
-<li>param2: array of arguments sent to fire</li>
-<li>param3: <optional> a custom object supplied by the subscriber</li>
-</ul>
-</li>
-<li>Y.Event.Custom.FLAT
-<ul>
-<li>param1: the first argument passed to fire.  If you need to
-pass multiple parameters, use and array or object literal</li>
-<li>param2: <optional> a custom object supplied by the subscriber</li>
-</ul>
-</li>
-</ul>
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
                                     <h4><a name="property_silent">silent</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -330,40 +286,6 @@ to also stop additional subscribers on this target.
                                     <div class="detail">
                                         <div class="description">
                                             The type of event, returned to subscribers when the event fires
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_Y.Event.Custom.FLAT">Y.Event.Custom.FLAT</a>
-                                        <code>- static int</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Event.Subscriber listener sigature constant.  The FLAT type returns two
-parameters: the first argument passed to fire and the optional 
-custom object
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_Y.Event.Custom.LIST">Y.Event.Custom.LIST</a>
-                                        <code>- static int</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Event.Subscriber listener sigature constant.  The LIST type returns three
-parameters: the event type, the array of args passed to fire, and
-the optional custom object
                                         </div>
                                     </div>
      
@@ -891,46 +813,37 @@ the execution context.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_context">context</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_defaultFn">defaultFn</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_fired">fired</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_fireOnce">fireOnce</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_host">host</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_lastError">lastError</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_prevented">prevented</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_signature">signature</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_silent">silent</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_stopped">stopped</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_subscribers">subscribers</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_type">type</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_Y.Event.Custom.FLAT">Y.Event.Custom.FLAT</a>
-                                        <!--<code>&lt;int&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_Y.Event.Custom.LIST">Y.Event.Custom.LIST</a>
-                                        <!--<code>&lt;int&gt;</code>-->
+                                        <!--<code>&lt;string&gt;</code>-->
                                 </li>
                         </ul>
                     </div>

@@ -151,27 +151,29 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onAvailable
                  *
-                 * @param {string||string[]}   p_id the id of the element, or an array
+                 * @param {string||string[]}   id the id of the element, or an array
                  * of ids to look for.
-                 * @param {function} p_fn what to execute when the element is found.
+                 * @param {function} fn what to execute when the element is found.
                  * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_override If set to true, p_fn will execute
+                 *                   a parameter to fn.
+                 * @param {boolean|object}  p_override If set to true, fn will execute
                  *                   in the context of p_obj, if set to an object it
                  *                   will execute in the context of that object
                  * @param checkContent {boolean} check child node readiness (onContentReady)
                  * @static
                  */
-                onAvailable: function(p_id, p_fn, p_obj, p_override, checkContent) {
+                // @TODO fix arguments
+                onAvailable: function(id, fn, p_obj, p_override, checkContent) {
 
-                    var a = (Y.lang.isString(p_id)) ? [p_id] : p_id;
+                    // var a = (Y.lang.isString(id)) ? [id] : id;
+                    var a = Y.array(id);
 
                     for (var i=0; i<a.length; i=i+1) {
-                        _avail.push({id:         a[i], 
-                                           fn:         p_fn, 
-                                           obj:        p_obj, 
-                                           override:   p_override, 
-                                           checkReady: checkContent });
+                        _avail.push({ id:         a[i], 
+                                      fn:         fn, 
+                                      obj:        p_obj, 
+                                      override:   p_override, 
+                                      checkReady: checkContent });
                     }
                     _retryCount = this.POLL_RETRYS;
                     this.startInterval();
@@ -187,18 +189,19 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onContentReady
                  *
-                 * @param {string}   p_id the id of the element to look for.
-                 * @param {function} p_fn what to execute when the element is ready.
+                 * @param {string}   id the id of the element to look for.
+                 * @param {function} fn what to execute when the element is ready.
                  * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_override If set to true, p_fn will execute
-                 *                   in the context of p_obj.  If an object, p_fn will
+                 *                   a parameter to fn.
+                 * @param {boolean|object}  p_override If set to true, fn will execute
+                 *                   in the context of p_obj.  If an object, fn will
                  *                   exectute in the context of that object
                  *
                  * @static
                  */
-                onContentReady: function(p_id, p_fn, p_obj, p_override) {
-                    this.onAvailable(p_id, p_fn, p_obj, p_override, true);
+                // @TODO fix arguments
+                onContentReady: function(id, fn, p_obj, p_override) {
+                    this.onAvailable(id, fn, p_obj, p_override, true);
                 },
 
                 /**
@@ -224,16 +227,13 @@ YUI.add("event-dom", function(Y) {
                  *
                  * @method onDOMReady
                  *
-                 * @param {function} p_fn what to execute when the element is found.
-                 * @param {object}   p_obj an optional object to be passed back as
-                 *                   a parameter to p_fn.
-                 * @param {boolean|object}  p_context If set to true, p_fn will execute
-                 *                   in the context of p_obj, if set to an object it
-                 *                   will execute in the context of that object
+                 * @param {function} fn what to execute when the element is found.
+                 * @optional context execution context
+                 * @optional args 1..n arguments to send to the listener
                  *
                  * @static
                  */
-                onDOMReady: function(p_fn) {
+                onDOMReady: function(fn) {
                     // var ev = Y.Event.DOMReadyEvent;
                     // ev.subscribe.apply(ev, arguments);
                     var a = Y.array(arguments, 0, true);
@@ -281,7 +281,7 @@ YUI.add("event-dom", function(Y) {
                         // Y.log('collection: ' + el);
 
                         var handles=[], h, i, l, proc = function(v, k) {
-// handles.push(this.addListener(el[i], type, fn, obj, override));
+                            // handles.push(this.addListener(el[i], type, fn, obj, override));
                             // Y.log('collection stuff: ' + v);
                             var b = a.slice();
                             b.unshift(v);
@@ -306,6 +306,7 @@ YUI.add("event-dom", function(Y) {
                         if (oEl) {
                             el = oEl;
                         } else {
+                            //
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
                                 // Y.Event.addListener(el, type, fn, obj, override);
@@ -332,8 +333,9 @@ YUI.add("event-dom", function(Y) {
                     if (!ce) {
                         // create CE wrapper
                         ce = Y.publish(key, {
-                            silent: true,
-                            host: this
+                            // silent: true,
+                            // host: this,
+                            bubbles: false
                         });
 
                         // cache the dom event details in the custom event
@@ -390,10 +392,8 @@ YUI.add("event-dom", function(Y) {
                  *  the listener from.
                  * @param {String} type the type of event to remove.
                  * @param {Function} fn the method the event invokes.  If fn is
-                 *  undefined, then all event handlers for the type of event are 
-                 *  removed.
-                 * @return {boolean} true if the unbind was successful, false 
-                 *  otherwise.
+                 *  undefined, then all event handlers for the type of event are *  removed.
+                 * @return {boolean} true if the unbind was successful, false *  otherwise.
                  * @static
                  */
                 removeListener: function(el, type, fn) {
