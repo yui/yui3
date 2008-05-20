@@ -1,6 +1,8 @@
 (function(){
 
     var M = function(Y){
+    
+        var L = Y.Lang;
 
         /**
          * The YUI JavaScript profiler.
@@ -12,10 +14,10 @@
         /**
          * Profiles functions in JavaScript.
          * @namespace Y
-         * @class profiler
+         * @class Profiler
          * @static
          */
-        Y.profiler = {
+        Y.Profiler = {
         
             //-------------------------------------------------------------------------
             // Private Properties
@@ -193,7 +195,7 @@
             
                 //figure out the function name without namespacing
                 var funcName /*:String*/ = (name.indexOf(".") > -1 ? name.substring(name.lastIndexOf(".")+1) : name);
-                if (!Y.lang.isObject(owner)){
+                if (!L.isObject(owner)){
                     owner = eval(name.substring(0, name.lastIndexOf(".")));
                 }
                 
@@ -202,7 +204,7 @@
                 var prototype /*:Object*/ = method.prototype;
                 
                 //see if the method has already been registered
-                if (Y.lang.isFunction(method) && !method.__yuiProfiled){
+                if (L.isFunction(method) && !method.__yuiProfiled){
                     
                     //create a new slot for the original method
                     this._container[name] = method;
@@ -221,7 +223,7 @@
                     };
                     
                     //copy the function properties over
-                    Y.lang.augmentObject(owner[funcName], method);
+                    L.mix(owner[funcName], method);
                     owner[funcName].__yuiProfiled = true;
                     owner[funcName].prototype = prototype;
                     this._container[name].__yuiOwner = owner;
@@ -261,7 +263,7 @@
             registerObject : function (name /*:String*/, object /*:Object*/, recurse /*:Boolean*/) /*:Void*/{
             
                 //get the object
-                object = (Y.lang.isObject(object) ? object : eval(name));
+                object = (L.isObject(object) ? object : eval(name));
             
                 //save the object
                 this._container[name] = object;
@@ -288,7 +290,7 @@
             unregisterConstructor : function(name /*:String*/) /*:Void*/{
                     
                 //see if the method has been registered
-                if (Y.lang.isFunction(this._container[name])){
+                if (L.isFunction(this._container[name])){
                 
                     //get original data
                     //var owner /*:Object*/ = this._container[name].__yuiOwner;
@@ -316,7 +318,7 @@
             unregisterFunction : function(name /*:String*/, unregisterPrototype /*:Boolean*/) /*:Void*/{
                     
                 //see if the method has been registered
-                if (Y.lang.isFunction(this._container[name])){
+                if (L.isFunction(this._container[name])){
                 
                     //check to see if you should unregister the prototype
                     if (unregisterPrototype){
@@ -355,7 +357,7 @@
             unregisterObject : function (name /*:String*/, recurse /*:Boolean*/) /*:Void*/{
             
                 //get the object
-                if (Y.lang.isObject(this._container[name])){            
+                if (L.isObject(this._container[name])){            
                     object = this._container[name];    
                 
                     for (var prop in object) {

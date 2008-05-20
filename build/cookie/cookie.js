@@ -8,7 +8,7 @@
 YUI.add("cookie", function(Y){ 
 
     //shortcuts
-    var L       = Y.lang,
+    var L       = Y.Lang,
         NULL    = null,
         
         //shortcuts to functions
@@ -29,10 +29,10 @@ YUI.add("cookie", function(Y){
     
     /**
      * Cookie utility.
-     * @class cookie
+     * @class Cookie
      * @static
      */
-    Y.cookie = {
+    Y.Cookie = {
                     
         //-------------------------------------------------------------------------
         // Private Methods
@@ -94,7 +94,7 @@ YUI.add("cookie", function(Y){
             
             var text /*:Array*/ = [];
             
-            Y.object.each(hash, function(value, key){
+            Y.Object.each(hash, function(value, key){
                 if (!isFunction(value) && !isUndefined(value)){
                     text.push(encode(key) + "=" + encode(String(value)));
                 }            
@@ -317,7 +317,7 @@ YUI.add("cookie", function(Y){
             var subs = this.getSubs(name);
             
             //delete the indicated subcookie
-            if (isObject(subs) && Y.object.owns(subs, subName)){
+            if (isObject(subs) && Y.Object.owns(subs, subName)){
                 delete subs[subName];
                 
                 //reset the cookie
