@@ -182,8 +182,23 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">defaultFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Specifies whether or not this event&#39;s default function</span>
+<span class="c">         * can be canceled by a subscriber by executing preventDefault() </span>
+<span class="c">         * on the event facade </span>
+<span class="c">         * @property cancelable </span>
+<span class="c">         * @type boolean </span>
+<span class="c">         * @default true</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Specifies whether or not a subscriber can stop the event propagation</span>
+<span class="c">         * via stopPropagation(), stopImmediatePropagation(), or halt()</span>
+<span class="c">         * @property bubbles</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         * @default true</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">applyConfig</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -231,6 +246,13 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Apply configuration properties</span>
+<span class="c">         * @method applyConfig</span>
+<span class="c">         * @param o hash of properties to apply</span>
+<span class="c">         * @param force {boolean} if true, properties that exist on the event </span>
+<span class="c">         * will be overwritten.</span>
+<span class="c">         */</span>
         <span class="nx">applyConfig</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">force</span><span class="o">);</span>
         <span class="o">},</span>
@@ -318,22 +340,18 @@
             <span class="k">return</span> <span class="nx">found</span><span class="o">;</span>
         <span class="o">},</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Notify a single subscriber</span>
+<span class="c">         * @method _notify</span>
+<span class="c">         * @param s {Event.Subscriber} the subscriber</span>
+<span class="c">         * @param args {Array} the arguments array to apply to the listener</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
         <span class="nx">_notify</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span> <span class="o">+</span>  <span class="nx">s</span><span class="o">);</span>
 
-            <span class="k">var</span> <span class="nx">ret</span><span class="o">;</span>
-
-            <span class="c">// try {</span>
-<span class="c"></span>            <span class="c">//     // var context = s.getScope(this.context), ret;</span>
-<span class="c"></span>            <span class="c">//     // ret = s.fn.apply(context, args);</span>
-<span class="c"></span>            <span class="c">//     ret = s.notify(this.context, args);</span>
-<span class="c"></span>            <span class="c">// } catch(e) {</span>
-<span class="c"></span>            <span class="c">//     this.lastError = e;</span>
-<span class="c"></span>            <span class="c">//     this.log(this + &quot; subscriber exception: &quot; + e, &quot;error&quot;);</span>
-<span class="c"></span>            <span class="c">// }</span>
-<span class="c"></span>            
-            <span class="k">var</span> <span class="nx">wrap</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">wrap</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">a</span><span class="o">)</span> <span class="o">:</span> <span class="nx">args</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">ret</span><span class="o">,</span> <span class="nx">wrap</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">,</span> <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">wrap</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">a</span><span class="o">)</span> <span class="o">:</span> <span class="nx">args</span><span class="o">;</span>
             
             <span class="c">// emit an Event.Facade if this is that sort of event</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">wrap</span><span class="o">)</span> <span class="o">{</span>
@@ -366,6 +384,12 @@
             <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">},</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Logger abstraction to centralize the application of the silent flag</span>
+<span class="c">         * @method log</span>
+<span class="c">         * @param msg {string} message to log</span>
+<span class="c">         * @param cat {string} log category</span>
+<span class="c">         */</span>
         <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span> <span class="nx">s</span> <span class="o">=</span>  <span class="nx">es</span> <span class="o">&amp;&amp;</span> <span class="nx">es</span><span class="o">.</span><span class="nx">silent</span><span class="o">;</span>
             <span class="c">// if (!s &amp;&amp; !this.silent) {</span>

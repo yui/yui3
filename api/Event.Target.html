@@ -78,6 +78,21 @@ not be created at all.
 
                                     <hr />
                                     </div>
+                                    <div class="private">
+                                    <h4><a name="property___yui_targets">__yui_targets</a>
+                                        <code>- private {}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Private storage of bubble targets
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
 
 
                             </div>
@@ -98,6 +113,11 @@ not be created at all.
                                         void
                                             <strong>addTarget</strong>
                                            (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -109,6 +129,13 @@ be specified.
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;Event.Target&gt;</code>
+                                                              the target to add
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -198,6 +225,52 @@ arguments to append to the callback's argument list.
                                                         void
                                                     </code></dt>
                                                     <dd>the detach handle</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_bubble">bubble</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong>bubble</strong>
+                                           (
+                                                
+                                                        
+                                                         evt
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Propagate an event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>evt &lt;Event.Custom&gt;</code>
+                                                              the custom event to propagate
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>the aggregated return value from Event.Custom.fire</dd>
                                                 </dl>
              
                                         </div>
@@ -399,6 +472,11 @@ the event.
                                         void
                                             <strong>removeTarget</strong>
                                            (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -408,6 +486,13 @@ the event.
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;Event.Target&gt;</code>
+                                                              the target to remove
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -680,7 +765,10 @@ be removed.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property___yui_events">__yui_events</a>
-                                        <!--<code>&lt;Object[]&gt;</code>-->
+                                        <!--<code>&lt;{}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property___yui_targets">__yui_targets</a>
+                                        <!--<code>&lt;{}&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -696,6 +784,9 @@ be removed.
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_before">before</a>
+                                </li>
+                                <li class=""><!--<code>boolean</code>-->
+                                <a href="#method_bubble">bubble</a>
                                 </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_fire">fire</a>

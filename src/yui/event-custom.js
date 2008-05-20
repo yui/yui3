@@ -144,8 +144,23 @@ YUI.add("event-custom", function(Y) {
          */
         this.defaultFn = null;
 
+        /**
+         * Specifies whether or not this event's default function
+         * can be canceled by a subscriber by executing preventDefault() 
+         * on the event facade 
+         * @property cancelable 
+         * @type boolean 
+         * @default true
+         */
         this.cancelable = true;
 
+        /**
+         * Specifies whether or not a subscriber can stop the event propagation
+         * via stopPropagation(), stopImmediatePropagation(), or halt()
+         * @property bubbles
+         * @type boolean
+         * @default true
+         */
         this.bubbles = true;
 
         this.applyConfig(o, true);
@@ -193,6 +208,13 @@ YUI.add("event-custom", function(Y) {
 
     Y.CustomEvent.prototype = {
 
+        /**
+         * Apply configuration properties
+         * @method applyConfig
+         * @param o hash of properties to apply
+         * @param force {boolean} if true, properties that exist on the event 
+         * will be overwritten.
+         */
         applyConfig: function(o, force) {
             Y.mix(this, o, force);
         },
@@ -280,22 +302,18 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             return found;
         },
 
+        /**
+         * Notify a single subscriber
+         * @method _notify
+         * @param s {Event.Subscriber} the subscriber
+         * @param args {Array} the arguments array to apply to the listener
+         * @private
+         */
         _notify: function(s, args) {
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret;
-
-            // try {
-            //     // var context = s.getScope(this.context), ret;
-            //     // ret = s.fn.apply(context, args);
-            //     ret = s.notify(this.context, args);
-            // } catch(e) {
-            //     this.lastError = e;
-            //     this.log(this + " subscriber exception: " + e, "error");
-            // }
-            
-            var wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
+            var ret, wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
             
             // emit an Event.Facade if this is that sort of event
             if (wrap) {
@@ -328,6 +346,12 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             return true;
         },
 
+        /**
+         * Logger abstraction to centralize the application of the silent flag
+         * @method log
+         * @param msg {string} message to log
+         * @param cat {string} log category
+         */
         log: function(msg, cat) {
             var es = Y.env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {

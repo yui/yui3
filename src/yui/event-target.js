@@ -23,6 +23,14 @@ YUI.add("event-target", function(Y) {
         __yui_events: null,
 
         /**
+         * Private storage of bubble targets
+         * @property __yui_targets
+         * @type {}
+         * @private
+         */
+        __yui_targets: null,
+
+        /**
          * Subscribe to a Event.Custom by event type
          *
          * @method subscribe
@@ -137,32 +145,11 @@ YUI.add("event-target", function(Y) {
                 Y.log("publish() skipped: '"+type+"' exists");
 
                 // update config for the event
-                
-                // ce.context = context;
-
-                // some events are created silent by default, and that
-                // setting needs to be preserved.
-                // if ("silent" in o) {
-                //     ce.silent = silent;
-                // }
-
-                // if ("context" in o) {
-                //     ce.context = context;
-                // }
-
-                // if ("fireOnce" in o) {
-                //     ce.fireOnce = o.fireOnce;
-                // }
-                // ce.host = o.host || ce.host || this;
-                
-                // override config
-                // Y.mix(ce, o, true);
-
                 ce.applyConfig(o, true);
 
             } else {
 
-                // defaults
+                // apply defaults
                 Y.mix(o, {
                     context: this,
                     host: this
@@ -185,6 +172,8 @@ YUI.add("event-target", function(Y) {
          * Registers another Event.Target as a bubble target.  Bubble order
          * is determined by the order registered.  Multiple targets can
          * be specified.
+         * @method addTarget
+         * @param o {Event.Target} the target to add
          */
         addTarget: function(o) {
             this.__yui_targets = this.__yui_targets || {};
@@ -193,6 +182,8 @@ YUI.add("event-target", function(Y) {
 
         /**
          * Removes a bubble target
+         * @method removeTarget
+         * @param o {Event.Target} the target to remove
          */
         removeTarget: function(o) {
             delete this.__yui_targets[Y.stamp(o)];
@@ -224,7 +215,9 @@ YUI.add("event-target", function(Y) {
             // the originalTarget is what the listener was bound to
             ce.originalTarget = this;
 
-            // the target is what started the bubble
+            // the target is what started the bubble.  this will be
+            // null unless set in bubble(), in which case this event
+            // is the target.
             if (!ce.target) {
                 ce.target = this;
             }
@@ -251,23 +244,29 @@ YUI.add("event-target", function(Y) {
             return (e && e[type]);
         },
 
-        bubble: function(current, target) {
+        /**
+         * Propagate an event
+         * @method bubble
+         * @param evt {Event.Custom} the custom event to propagate
+         * @return {boolean} the aggregated return value from Event.Custom.fire
+         */
+        bubble: function(evt) {
 
             var targs = this.__yui_targets, ret = true;
 
-            if (!current.stopped && targs) {
+            if (!evt.stopped && targs) {
                 for (var i in targs) {
                     // @TODO need to provide the event target to the bubble target
 
-                    var t = targs[i], type = current.type,
+                    var t = targs[i], type = evt.type,
                         ce = t.getEvent(type) || t.publish(type);
 
-                    ce.target = current.target;
+                    ce.target = evt.target;
 
-                    ret = ret && ce.fire.apply(ce, current.details);
+                    ret = ret && ce.fire.apply(ce, evt.details);
 
+                    // stopPropagation()
                     if (ce.stopped) {
-                        
                         break;
                     }
                 }
@@ -275,15 +274,6 @@ YUI.add("event-target", function(Y) {
 
             return ret;
         },
-
-        // hasEvent: function(type) {
-        //     if (this.__yui_events) {
-        //         if (this.__yui_events[type]) {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // },
 
         /**
          * Executes the callback before the given event or

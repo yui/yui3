@@ -112,6 +112,45 @@ the debug system
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
+                                    <h4><a name="property_bubbles">bubbles</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Specifies whether or not a subscriber can stop the event propagation
+via stopPropagation(), stopImmediatePropagation(), or halt()
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_cancelable">cancelable</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Specifies whether or not this event's default function
+can be canceled by a subscriber by executing preventDefault() 
+on the event facade
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_context">context</a>
                                         <code>- object</code>
                                     </h4>
@@ -349,6 +388,115 @@ to also stop additional subscribers on this target.
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__notify">_notify</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_notify</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Notify a single subscriber
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>s &lt;Event.Subscriber&gt;</code>
+                                                              the subscriber
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array&gt;</code>
+                                                              the arguments array to apply to the listener
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_applyConfig">applyConfig</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>applyConfig</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         force
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Apply configuration properties
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             hash of properties to apply
+                                                        </dd>
+                                                        <dd>
+                                                            <code>force &lt;boolean&gt;</code>
+                                                              if true, properties that exist on the event 
+will be overwritten.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="">
                                     <h4>
                                         <a name="method_fire">fire</a></h4>
@@ -398,6 +546,60 @@ the handler.
                                                     </code></dt>
                                                     <dd>false if one of the subscribers returned false, 
 true otherwise</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_log">log</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>log</strong>
+                                           (
+                                                
+                                                        
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         cat
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Logger abstraction to centralize the application of the silent flag
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>msg &lt;string&gt;</code>
+                                                              message to log
+                                                        </dd>
+                                                        <dd>
+                                                            <code>cat &lt;string&gt;</code>
+                                                              log category
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -812,6 +1014,12 @@ the execution context.
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_bubbles">bubbles</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_cancelable">cancelable</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_context">context</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
@@ -854,8 +1062,17 @@ the execution context.
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__delete">_delete</a>
                                 </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__notify">_notify</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_applyConfig">applyConfig</a>
+                                </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_fire">fire</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_log">log</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_stopImmediatePropagation">stopImmediatePropagation</a>
