@@ -360,12 +360,12 @@ YUI.add("core", function(Y) {
             return new Date(o);
         }
         
-        //var o2 = (A.test(o)) ? [] : {};
-        var o2 = Y.object(o);
+        var o2 = L.isFunction(o) ? o : Y.object(o);
 
         Y.each(o, function(v, k) {
                       if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                          this[k] = Y.clone(v, f, c);
+                          var nv = L.isFunction(v) ? Y.bind(v, this) : v;
+                          this[k] =  Y.clone(nv, f, c);
                       }
                   }, o2);
 

@@ -20,7 +20,10 @@
         ],
         dat: new Date(),
         fn: function() {
-
+            console.log('fn ' + this.str);
+        },
+        obj: {
+            a: [1]
         },
         //win: window,
         nada: null
@@ -28,7 +31,21 @@
     
     var o2 = Y.clone(o);
 
-    Y.log("clone: " + Y.lang.dump(o2));
+    Y.log("orig: " + Y.lang.dump(o));
+    Y.log("copy: " + Y.lang.dump(o2));
+
+    o.str = 'changed';
+    o.date = new Date(0);
+    // o.obj.a = ['changed'];
+    // o.obj = { changed: 'changed' };
+    // o2.obj = { changed: 'copy' };
+    o.obj.a[0] = 'changed'
+
+    Y.log("orig: " + Y.lang.dump(o));
+    Y.log("copy: " + Y.lang.dump(o2));
+
+    o.fn();
+    o2.fn();
 
 
 })();
