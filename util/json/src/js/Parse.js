@@ -1,11 +1,11 @@
 /**
- * Provides Y.json.parse method to take JSON strings and return native
+ * Provides Y.JSON.parse method to take JSON strings and return native
  * JavaScript objects.
- * @module json
- * @class Y.json
+ * @module JSON
+ * @class Y.JSON
  * @static
  */
-Y.json = Y.json || {};
+Y.JSON = Y.JSON || {};
 
 // All internals kept private for security reasons
 
@@ -94,7 +94,7 @@ var _ESCAPES = /\\["\\\/bfnrtu]/g,
  * @static
  * @public
  */
-Y.json.parse = function (s,reviver) {
+Y.JSON.parse = function (s,reviver) {
     // Ensure valid JSON
     if (typeof s === 'string' && _INVALID.test(s.
                                  replace(_ESCAPES,'@').

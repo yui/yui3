@@ -659,7 +659,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
                         name+
                 '</label>');
 
-        Y.css('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
+        Y.CSS.set('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
             {display: 'none'});
 
         return label;

@@ -1,13 +1,13 @@
 YUI.add('json-parse', function(Y) {
 
 /**
- * Provides Y.json.parse method to take JSON strings and return native
+ * Provides Y.JSON.parse method to take JSON strings and return native
  * JavaScript objects.
- * @module json
- * @class Y.json
+ * @module JSON
+ * @class Y.JSON
  * @static
  */
-Y.json = Y.json || {};
+Y.JSON = Y.JSON || {};
 
 // All internals kept private for security reasons
 
@@ -96,7 +96,7 @@ var _ESCAPES = /\\["\\\/bfnrtu]/g,
  * @static
  * @public
  */
-Y.json.parse = function (s,reviver) {
+Y.JSON.parse = function (s,reviver) {
     // Ensure valid JSON
     if (typeof s === 'string' && _INVALID.test(s.
                                  replace(_ESCAPES,'@').
@@ -116,16 +116,16 @@ Y.json.parse = function (s,reviver) {
 YUI.add('json-stringify', function(Y) {
 
 /**
- * Provides Y.json.stringify method for converting objects to JSON strings.
- * @module json
- * @class Y.json
+ * Provides Y.JSON.stringify method for converting objects to JSON strings.
+ * @module JSON
+ * @class Y.JSON
  * @static
  */
 var isA = Y.lang.isArray;
 
-Y.json = Y.json || {};
+Y.JSON = Y.JSON || {};
 
-Y.mix(Y.json,{
+Y.mix(Y.JSON,{
     /**
      * Regex used to replace special characters in strings for JSON
      * stringification.
@@ -191,8 +191,8 @@ Y.mix(Y.json,{
      */
     stringify : function (o,w,d) {
 
-        var m      = Y.json._CHARS,
-            str_re = Y.json._SPECIAL_CHARS,
+        var m      = Y.JSON._CHARS,
+            str_re = Y.JSON._SPECIAL_CHARS,
             rep    = typeof w === 'function' ? w : null,
             pstack = []; // Processing stack used for cyclical ref protection
 
@@ -216,7 +216,7 @@ Y.mix(Y.json,{
         };
 
         // Use the configured date conversion
-        var _date = Y.json.dateToString;
+        var _date = Y.JSON.dateToString;
     
         // Worker function.  Fork behavior on data type and recurse objects and
         // arrays per the configured depth.

@@ -1,16 +1,14 @@
 /**
- * Provides Y.json.stringify method for converting objects to JSON strings.
- * @module json
- * @class Y.json
+ * Provides Y.JSON.stringify method for converting objects to JSON strings.
+ * @module JSON
+ * @class Y.JSON
  * @static
  */
-YUI.add('json-stringify',function (Y) {
-
 var isA = Y.lang.isArray;
 
-Y.json = Y.json || {};
+Y.JSON = Y.JSON || {};
 
-Y.mix(Y.json,{
+Y.mix(Y.JSON,{
     /**
      * Regex used to replace special characters in strings for JSON
      * stringification.
@@ -76,8 +74,8 @@ Y.mix(Y.json,{
      */
     stringify : function (o,w,d) {
 
-        var m      = Y.json._CHARS,
-            str_re = Y.json._SPECIAL_CHARS,
+        var m      = Y.JSON._CHARS,
+            str_re = Y.JSON._SPECIAL_CHARS,
             rep    = typeof w === 'function' ? w : null,
             pstack = []; // Processing stack used for cyclical ref protection
 
@@ -101,7 +99,7 @@ Y.mix(Y.json,{
         };
 
         // Use the configured date conversion
-        var _date = Y.json.dateToString;
+        var _date = Y.JSON.dateToString;
     
         // Worker function.  Fork behavior on data type and recurse objects and
         // arrays per the configured depth.
@@ -110,7 +108,6 @@ Y.mix(Y.json,{
                 t = typeof o,
                 i,len,j, // array iteration
                 k,v,     // object iteration
-                vt,      // typeof v during iteration
                 a;       // composition array for performance over string concat
 
             // String
@@ -191,5 +188,3 @@ Y.mix(Y.json,{
         return _stringify({'':o},'',d);
     }
 });
-
-},'3.0.0');

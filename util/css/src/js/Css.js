@@ -3,12 +3,13 @@
 NOTES
  * Can't use Y.Node because n.get('sheet') fails because the return type is
    StyleSheet (non-basic type)
- * Style node added to the body does not affect a functional StyleSheet object
-   in Safari.  Must be added to the head element.
+ * Style node must be added to the head element.  Safari does not honor styles
+   applied to StyleSheet objects on style nodes in the body.
  * StyleSheet object is created on the style node when the style node is added
-   to the head element.
+   to the head element in at least Safari.
  * Cannot cache the cssRules collection because Safari replaces it between
    updates.  Must drill to rule from the StyleSheet object every time.
+ * Opera requires that the index be passed with insertRule.
 
 */
 
@@ -74,7 +75,7 @@ _init = function () {
 
         // Transfer rules from placeholder sheet to the StyleSheet
         for (;i<l;++i) {
-            Y.css(rules[i].selectorText, rules[i].style);
+            Y.CSS.set(rules[i].selectorText, rules[i].style);
         }
     }
     catch (e) {
@@ -206,62 +207,60 @@ _reindex = function (i) {
 };
 
 
-// Set up the Y.css namespace as an alias for Y.css.set
-
-/**
- * Set style rule properties. If a rule is not found for the selector
- * text, a new rule is created.
- * @method set
- * @static
- * @param sel {String} css selector for style rules
- * @param props {Object} Object literal of style properties and the desired
- *                       values.  Keys must be in camel cased DOM notation.
- * @return {YUI object} The owning YUI instance
- */
-Y.css = function (sel, props) {
-    var i = ruleIdx[sel];
-    if (i === undefined) {
-        i = sheet[cssRules].length;
-        _add(sel,i);
-    }
-
-    // Verify the index
-    if (sheet[cssRules][i].selectorText != sel) {
-        i = ruleIdx[sel] = _ruleIndex(sel);
-    }
-    if (i !== undefined) {
-        _set(sheet[cssRules][i].style,props);
-    }
-
-    return Y;
-};
-    
-Y.css.set = Y.css;
-
-/**
- * Unset style rule properties or remove a style rule entirely.
- * @method unset
- * @static
- * @param sel {String} css selector for the style rules
- * @param props {String|Array} (optional) unset only this/these properties
- * @return {YUI object} The owning YUI instance
- */
-Y.css.unset = function (sel, props) {
-    var i = ruleIdx[sel];
-
-    // Verify the rule index
-    if (sheet[cssRules][i].selectorText != sel) {
-        i = _ruleIndex(sel);
-    }
-    if (i !== undefined) {
-        if (props) {
-            _unset(sheet[cssRules][i].style,props);
-        } else {
-            sheet[remove](i);
-            delete ruleIdx[sel];
-            _reindex(i);
+Y.CSS = {
+    /**
+     * Set style rule properties. If a rule is not found for the selector
+     * text, a new rule is created.
+     * @method set
+     * @static
+     * @param sel {String} css selector for style rules
+     * @param props {Object} Object literal of style properties and the desired
+     *                       values.  Keys must be in camel cased DOM notation.
+     * @return {YUI object} The owning YUI instance
+     */
+    set : function (sel, props) {
+        var i = ruleIdx[sel];
+        if (i === undefined) {
+            i = sheet[cssRules].length;
+            _add(sel,i);
         }
-    }
 
-    return Y;
+        // Verify the index
+        if (sheet[cssRules][i].selectorText != sel) {
+            i = ruleIdx[sel] = _ruleIndex(sel);
+        }
+        if (i !== undefined) {
+            _set(sheet[cssRules][i].style,props);
+        }
+
+        return Y;
+    },
+
+    /**
+     * Unset style rule properties or remove a style rule entirely.
+     * @method unset
+     * @static
+     * @param sel {String} css selector for the style rules
+     * @param props {String|Array} (optional) unset only this/these properties
+     * @return {YUI object} The owning YUI instance
+     */
+    unset : function (sel, props) {
+        var i = ruleIdx[sel];
+
+        // Verify the rule index
+        if (sheet[cssRules][i].selectorText != sel) {
+            i = _ruleIndex(sel);
+        }
+        if (i !== undefined) {
+            if (props) {
+                _unset(sheet[cssRules][i].style,props);
+            } else {
+                sheet[remove](i);
+                delete ruleIdx[sel];
+                _reindex(i);
+            }
+        }
+
+        return Y;
+    }
 };
