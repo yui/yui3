@@ -14,7 +14,7 @@ YUI.add('attribute', function(Y) {
         this.prevVal = prevVal;
         this.newVal = newVal;
         this.attr = attr;
-        this.subattr = subAttr || null;
+        this.subAttr = subAttr || null;
     };
 
     var _fireBefore = function(e) {
