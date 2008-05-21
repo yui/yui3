@@ -1,10 +1,20 @@
 YUI.add('attribute', function(Y) {
 
+    var DOT = ".",
+        CHANGE = "Change",
+        GET = "get",
+        SET = "set",
+        VALUE = "value",
+        READ_ONLY = "readonly",
+        VALIDATOR = "validator";
+
     // TODO: rip out when Event supports cancel/preventDef
-    var Evt = function(type, prevVal, newVal) {
+    var Evt = function(type, prevVal, newVal, attr, subattr) {
         this.type = type;
         this.prevVal = prevVal;
-        this.newVal = newVal;        
+        this.newVal = newVal;
+        this.attr = attr;
+        this.subattr = subattr || null;
     };
 
     var _fireBefore = function(e) {
@@ -83,11 +93,19 @@ YUI.add('attribute', function(Y) {
          * @param {String} key The attribute whose value will be returned.
          */
         get: function(name) {
-            var conf = this._conf,
-                get = conf.get(name, 'get'),
-                rawVal = conf.get(name, 'value');
 
-            return (get) ? get.call(this, rawVal) : rawVal;
+            var conf = this._conf,
+                path = name.split(DOT),
+                getFn,
+                rawVal,
+                val;
+
+            name = path.shift();
+            getFn = conf.get(name, GET);
+            rawVal = conf.get(name, VALUE);
+            val = (getFn) ? getFn.call(this, rawVal) : rawVal;
+
+            return (path.length > 0) ? this._getSubValue(path, val) : val;
         },
 
         /**
@@ -98,11 +116,19 @@ YUI.add('attribute', function(Y) {
          * @param {Boolean} silent Whether or not to suppress change events
          */
         set: function(name, val) {
-           var type = name + 'Change',
-                conf = this._conf,
-                retVal;
+            var conf = this._conf,
+                fullname = name,
+                path = name.split(DOT),
+                setFn,
+                validatorFn,
+                retVal,
+                currVal,
+                type,
+                e;
 
-            if (conf.get(name, 'readonly')) {
+            name = path.shift();
+
+            if (conf.get(name, READ_ONLY)) {
                 Y.log('set ' + name + 'failed; attribute is readonly', 'error', 'Attribute');
                 return this;
             }
@@ -112,9 +138,20 @@ YUI.add('attribute', function(Y) {
                 //throw new Error('attribute ' + name + ' is undefined');
             }
 
-            var e = new Evt(type, this.get(name), val);
+            currVal = this.get(name);
 
-            //retVal = this.fire('before' + name.charAt(0).toUpperCase() + name.substring(1) + 'Change');
+            if (path.length > 0) {
+               val = this._setSubValue(path, Y.clone(currVal), val);
+               if (val === undefined) {
+                   // Path not valid, don't set anything.
+                   Y.log('set ' + fullname + 'failed; attribute sub path is invalid', 'error', 'Attribute');
+                   return this;
+               }
+            }
+
+            type = name + CHANGE;
+            e = new Evt(type, currVal, val, name, fullname);
+
             retVal = _fireBefore.call(this, e);
 
             /* TODO: allow before to change value? (alternative is cancel then set again)
@@ -124,24 +161,85 @@ YUI.add('attribute', function(Y) {
                                 val = retVal;
                             }
                         }
-            
             */
-            if (!e._cancel && !e._prevent && conf.get(name, 'set')) {
-                retVal = conf.get(name, 'set').call(this, val);
+
+            setFn = conf.get(name, SET);
+            if (!e._cancel && !e._prevent && setFn) {
+                retVal = setFn.call(this, val);
                 if (retVal !== undefined) {
                     Y.log('attribute: ' + name + ' modified by setter', 'info', 'Base');
                     val = retVal; // setter can change value
                 }
             }
 
-            var validator = conf.get(name, 'validator');
-            if (!e._cancel || ( validator && validator.call(this, val) )) {
-                //conf[name] = val;
+            validatorFn = conf.get(name, VALIDATOR);
+            if (!e._cancel || ( validatorFn && validatorFn.call(this, val) )) {
                 conf.add(name, { value: val });
                 this.fire(type, e);
             }
 
             return this;
+        },
+
+        /**
+         * Retrieves the sub value at the provided path,
+         * from the value object provided.
+         * 
+         * @param {Array} path  A path array, specifying the object traversal path 
+         *                      from which to obtain the sub value.
+         * @param {Object} val  The object from which to extract the property value
+         * @return {Any} The value stored in the path or undefined if not found. 
+         *
+         * @private
+         */
+        _getSubValue: function (path, val) {
+            var pl = path.length,
+                i;
+
+            if (pl > 0) {
+                for (i = 0; val !== undefined && i < pl; ++i) {
+                    val = val[path[i]];
+                }
+            }
+
+            return val;
+        },
+
+        /**
+         * Sets the sub value at the provided path on the value object.
+         * Returns the modified value object, or undefined if the path is invalid.
+         *
+         * @param {Array} path  A path array, specifying the object traversal path
+         *                      at which to set the sub value.
+         * @param {Object} val  The object on which to set the sub value.
+         * @param {Any} subval  The sub value to set.
+         * @return {Object}     The modified object, with the new sub value set, or 
+         *                      undefined, if the path was invalid.
+         *
+         * @private
+         */
+        _setSubValue: function(path, val, subval) {
+
+            var leafIdx = path.length-1,
+                i,
+                o;
+
+            if (leafIdx >= 0) {
+                o = val;
+
+                for (i = 0; o !== undefined && i < leafIdx; ++i) {
+                    o = o[path[i]];
+                }
+
+                // TODO: Is it OK to allow new properties to be added?
+                if (o !== undefined /* && o[path[i]] !== undefined */) {
+                    o[path[i]] = subval;
+                } else {
+                    val = undefined;
+                }
+            }
+
+            return val;
         },
 
         /**
@@ -167,7 +265,7 @@ YUI.add('attribute', function(Y) {
             if (atts) {
                 o = Y.clone(atts);
             } else {
-                Y.each(this._conf.get('value'), function(val, att) {
+                Y.each(this._conf.get(VALUE), function(val, att) {
                     o[att] = val; 
                 });
             }
@@ -179,4 +277,3 @@ YUI.add('attribute', function(Y) {
     Y.augment(Y.Attribute, Y.Event.Target);
 
 }, '3.0.0', { requires: ['state'] });
-

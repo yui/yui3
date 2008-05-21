@@ -5,7 +5,6 @@
 
     <script type="text/javascript" src="../build/yui/yui.js"></script>
     <script type="text/javascript" src="../util/yui/src/js/State.js"></script>
-    <script type="text/javascript" src="../build/node/node.js"></script>
     <script type="text/javascript" src="../build/attribute/attribute.js"></script>
     <script type="text/javascript" src="../build/base/base.js"></script>
     <script type="text/javascript" src="../build/widget/widget.js"></script>
@@ -29,24 +28,30 @@
 
     <div class="foo" id="foobar"><em>Widget.Alpha</em></div>
 
+    <div class="foo" id="bar"><em>Widget.Beta</em></div>
+
     <script type="text/javascript">
         (function() {
 
-            var Y = YUI().use("node", "nodeextras", "base", "plugin", "mouseplugin", "widget");
-            
+            var Y = YUI().use("nodeextras", "base", "plugin", "mouseplugin", "widget");
+
             Y.Event.onDOMReady(
                 function() {
+
                     widget = new Y.Widget({ root: 'body > div.foo', width:200});
                     widget.render();
-        
+
                     widget.on('click', function() {
                         Y.log('"widget:click" Custom Event');
                     });
 
-                    Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
-                    Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+                    Y.on('click', Y.bind(widget.show, widget), '#control-show');
+                    Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
 
-                    console.log(Y.Widget.getByNodeId("foobar"));
+                    widget2 = new Y.Widget({ root: 'body > #bar' });
+                    widget2.render();
+
+                    Y.log(Y.Widget.getByNodeId("foobar"));
                 });
         })();
     </script>

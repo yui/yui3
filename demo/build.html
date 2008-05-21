@@ -146,7 +146,7 @@
             }
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], {aggregates:["CLASSNAME"], methods:["methodB"]});
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], {aggregates:["CLASSNAME"], methods:["methodB"], dynamic:true});
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();

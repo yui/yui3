@@ -12,7 +12,7 @@ YUI.add('base', function(Y) {
      * registered Attributes, through the static ATTR property
      *
      * @class Base
-     * @uses YUI.Attribute.Provider
+     * @uses Y.Attribute
      */
     var Base = function() {
         Y.log('constructor called', 'life', 'Base');
@@ -22,141 +22,157 @@ YUI.add('base', function(Y) {
     Base.NAME = 'base';
     Base._instances = {};
 
-    Base.build = function(main, features, config) {
-        var newClass = Base.build._getTemplate(main),
-            key = main.NAME,
-            featureClass,
-            aggregates = [],
+    Base.build = function(main, extensions, cfg) {
+
+        var build = Base.build,
+            builtClass,
+            extClass,
+            aggregates,
             methods,
             method,
-            i,
-            fl,
-            al;
+            dynamic,
+            key = main.NAME;
 
-        features = features || [];
-
-        if (config) {
-            aggregates = config.aggregates;
-            methods = config.methods;
+        if (cfg) {
+            aggregates = cfg.aggregates;
+            methods = cfg.methods;
+            dynamic = cfg.dynamic;
         }
 
-        features.splice(0, 0, main);
-        aggregates.splice(0, 0, "ATTRS", "PLUGINS");
-
-        fl = features.length;
-        al = aggregates.length;
-
-        // Statics
-        for (i = 0; i < fl; i++) {
-            featureClass = features[i];
-            Y.mix(newClass, featureClass, true);
+        if (dynamic) {
+            builtClass = build._template(main);
+            extensions.splice(0, 0, main);
+        } else {
+            builtClass = main;
         }
 
-        // Aggregates - need to reset these after Y.mix(.., .., true).
-        if (aggregates) {
-            for (i = 0; i < al; i++) {
-                var val = aggregates[i];
-                if (O.owns(main, val)) {
-                    newClass[val] = L.isArray(main[val]) ? [] : {};
+        builtClass._build = {
+            id: null,
+            exts : [],
+            dynamic : dynamic
+        };
+
+        aggregates = (aggregates) ? build.AGGREGATES.concat(aggregates) : build.AGGREGATES;
+
+        var el = extensions.length,
+            al = aggregates.length,
+            i;
+
+        if (dynamic) {
+            // Statics
+            for (i = 0; i < el; i++) {
+                extClass = extensions[i];
+                Y.mix(builtClass, extClass, true);
+            }
+
+            // Need to reset aggregates after Y.mix(.., .., true)
+            if (aggregates) {
+                for (i = 0; i < al; i++) {
+                    var val = aggregates[i];
+                    if (O.owns(main, val)) {
+                        builtClass[val] = L.isArray(main[val]) ? [] : {};
+                    }
                 }
             }
         }
 
-        newClass._build = {
-            id : null,
-            f : []
-        };
-
         // Augment/Aggregate
-        for (i = 0; i < fl; i++) {
-            featureClass = features[i];
-            if (aggregates) {
-                Y.aggregate(newClass, featureClass, true, aggregates);
-            }
-            Y.augment(newClass, featureClass, true);
+        for (i = 0; i < el; i++) {
+            extClass = extensions[i];
 
-            newClass._build.f.push(featureClass);
-            key = key + ":" + Y.stamp(featureClass);
+            if (aggregates) {
+                Y.aggregate(builtClass, extClass, true, aggregates);
+            }
+
+            Y.augment(builtClass, extClass, true);
+
+            builtClass._build.exts.push(extClass);
+            key = key + ":" + Y.stamp(extClass);
         }
 
         // Methods
         if (methods) {
             for (i = 0; i < methods.length; i++) {
                 method = methods[i];
-                newClass.prototype[method] = Base.build._wrappedFn(method);
+                builtClass.prototype[method] = build._wrappedFn(method);
             }
         }
 
-        newClass._build.id = key;
-        newClass.NAME = main.NAME;
+        builtClass._build.id = key;
+        builtClass.prototype.hasImpl = build._hasImpl;
 
-        newClass.prototype.hasImpl = Base.build._impl;
-        newClass.prototype.constructor = newClass;
-
-        return newClass;
-    };
-
-    Base.build._getTemplate = function(main) {
-
-        function BuiltClass() {
-            var f = BuiltClass._build.f, l = f.length;
-            for (var i = 0; i < l; i++) {
-                f[i].apply(this, arguments);
-            }
-            return this;
+        if (dynamic) {
+            builtClass.NAME = main.NAME;
+            builtClass.prototype.constructor = builtClass;
         }
 
-        return BuiltClass;
+        return builtClass;
     };
 
-    Base.build._impl = function (featureClass) {
-        if (this.constructor._build) {
+    Y.mix(Base.build, {
 
-            var f = this.constructor._build.f,
-                l = f.length,
-                i;
+        AGGREGATES : ["ATTRS", "PLUGINS"],
 
-            for (i = 0; i < l; i++) {
-                if (f[i] === featureClass) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
+        _template: function(main) {
 
-    Base.build._wrappedFn = function(method) {
-        return function() {
+            function BuiltClass() {
+                var f = BuiltClass._build.exts, 
+                    l = f.length;
     
-            var f = this.constructor._build.f,
-                l = f.length,
-                fn,
-                i,
-                r;
+                for (var i = 0; i < l; i++) {
+                    f[i].apply(this, arguments);
+                }
+                return this;
+            }
+    
+            return BuiltClass;
+        },
 
-            for (i = 0; i < l; i++) {
-                fn = f[i].prototype[method];
-                if (fn) {
-                    // TODO: Can we do anything meaningful with return values?
-                    r = fn.apply(this, arguments);
+        _hasImpl : function(featureClass) {
+            if (this.constructor._build) {
+                var f = this.constructor._build.exts,
+                    l = f.length,
+                    i;
+    
+                for (i = 0; i < l; i++) {
+                    if (f[i] === featureClass) {
+                        return true;
+                    }
                 }
             }
-        };
-    };
+        
+            return false;
+        },
+
+        _wrappedFn : function(method) {
+            return function() {
+        
+                var f = this.constructor._build.exts,
+                    l = f.length,
+                    fn,
+                    i,
+                    r;
+    
+                for (i = 0; i < l; i++) {
+                    fn = f[i].prototype[method];
+                    if (fn) {
+                        // TODO: Can we do anything meaningful with return values?
+                        r = fn.apply(this, arguments);
+                    }
+                }
+            };
+        }
+    });
 
     Base.create = function(main, features, args) {
-        var c = Y.Base.build(main, features),
+        var c = Y.Base.build(main, features, {dynamic:true}),
             cArgs = Y.array(arguments, 2, true);
 
         function F(){}
         F.prototype = c.prototype;
-        // Y.mix(F, c);
 
         return c.apply(new F(), cArgs);
     };
-
-    /* No default attributes for Base */
-    // Base.ATTRS = null;
 
     Base.prototype = {
 
@@ -175,13 +191,13 @@ YUI.add('base', function(Y) {
         init: function(config) {
             Y.log('init called', 'life', 'Base');
 
-            if (this.fire('beforeInit') !== Y.Base.CANCEL) {
+            this.destroyed = false;
+            this.initialized = false;
+
+            if (this.fire('beforeInit') !== Y.CANCEL) {
                 Y.Base._instances[Y.stamp(this)] = this;
 
                 this._before = {};
-
-                this._destroyed = false;
-                this._initialized = false;
                 this._eventHandles = {};
 
                 // Set name to current class, to use for events.
@@ -189,7 +205,7 @@ YUI.add('base', function(Y) {
 
                 // initialize top down ( Base init'd first )
                 this._initHierarchy(config);
-                this._initialized = true;
+                this.initialized = true;
             }
             return this;
         },
@@ -207,11 +223,11 @@ YUI.add('base', function(Y) {
         destroy: function() {
             Y.log('destroy called', 'life', 'Base');
 
-            if (this.fire('beforeDestroy') !== Y.Base.CANCEL) {
+            if (this.fire('beforeDestroy') !== Y.CANCEL) {
 
                  // destruct bottom up ( Base destroyed last )
                 this._destroyHierarchy();
-                this._destroyed = true;
+                this.destroyed = true;
 
                 this.fire('destroy');
             }
@@ -290,17 +306,25 @@ YUI.add('base', function(Y) {
          * @private
          */
         _initHierarchy : function(userConf) {
-            var attributes, 
+            var attributes,
                 att,
-                constructor,
+                constr,
                 classes = this._getClasses();
 
-            for (var i = 0; i < classes.length; i++) {
-                constructor = classes[i];
-                if (constructor.ATTRS) {
-                    // Clone constructor.ATTRS, to a local copy
-                    attributes = Y.merge(constructor.ATTRS);
-                    Y.log('configuring ' + constructor.NAME + 'attributes', 'info', 'Base');
+            for (var ci = 0, cl = classes.length; ci < cl; ci++) {
+
+                constr = classes[ci];
+
+                if (constr._build && constr._build.exts && !constr._build.dynamic) {
+                    for (var ei = 0, el = constr._build.exts.length; ei < el; ei++) {
+                        constr._build.exts[ei].apply(this, arguments);
+                    }
+                }
+
+                if (constr.ATTRS) {
+                    // Clone constr.ATTRS, to a local copy
+                    attributes = Y.merge(constr.ATTRS);
+                    Y.log('configuring ' + constr.NAME + 'attributes', 'info', 'Base');
 
                     for (att in attributes) {
                         if (O.owns(attributes, att)) {
@@ -326,8 +350,8 @@ YUI.add('base', function(Y) {
                     }
                 }
 
-                if (O.owns(constructor.prototype, "initializer")) {
-                    constructor.prototype.initializer.apply(this, arguments);
+                if (O.owns(constr.prototype, "initializer")) {
+                    constr.prototype.initializer.apply(this, arguments);
                 }
             }
         },
@@ -353,7 +377,7 @@ YUI.add('base', function(Y) {
         on: function() { this.subscribe.apply(this, arguments); }, // TODO: get from Event.Target ?
 
         toString: function() {
-            return Base.NAME + "[" /* + this + // */ + "]";
+            return Y.Base.NAME + "[" /* + this + // */ + "]";
         }
     };
 
