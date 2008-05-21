@@ -9,12 +9,12 @@ YUI.add('attribute', function(Y) {
         VALIDATOR = "validator";
 
     // TODO: rip out when Event supports cancel/preventDef
-    var Evt = function(type, prevVal, newVal, attr, subattr) {
+    var Evt = function(type, prevVal, newVal, attr, subAttr) {
         this.type = type;
         this.prevVal = prevVal;
         this.newVal = newVal;
         this.attr = attr;
-        this.subattr = subattr || null;
+        this.subattr = subAttr || null;
     };
 
     var _fireBefore = function(e) {
