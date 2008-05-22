@@ -653,13 +653,17 @@ is executed with.
                                                          c
                                                     
                                                 
+                                                        , 
+                                                         owner
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Deep obj/array copy. Functions are treated as objects.
+                                            Deep obj/array copy.  Functions will are cloned with Y.bind.
 Array-like objects are treated as arrays.
-Other types are returned untouched.  Optionally a
+primitives are returned untouched.  Optionally a
 function can be provided to handle other data types,
 filter keys, validate values, etc.
                                         </div>
@@ -674,13 +678,18 @@ filter keys, validate values, etc.
                                                         </dd>
                                                         <dd>
                                                             <code>f &lt;object&gt;</code>
-                                                             function to apply to each item in a collection
+                                                             optional function to apply to each item in a collection
 it will be executed prior to applying the value to
 the new object.  Return false to prevent the copy.
                                                         </dd>
                                                         <dd>
                                                             <code>c &lt;object&gt;</code>
-                                                             execution context for f
+                                                             optional execution context for f
+                                                        </dd>
+                                                        <dd>
+                                                            <code>owner &lt;object&gt;</code>
+                                                             Owner object passed when clone is iterating an
+object.  Used to set up context for cloned functions.
                                                         </dd>
                                                 </dl>
 

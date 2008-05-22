@@ -376,39 +376,39 @@
 <span class="c"></span>    <span class="o">};</span>
 
     <span class="c">/**</span>
-<span class="c">     * Deep obj/array copy. Functions are treated as objects.</span>
+<span class="c">     * Deep obj/array copy.  Functions will are cloned with Y.bind.</span>
 <span class="c">     * Array-like objects are treated as arrays.</span>
-<span class="c">     * Other types are returned untouched.  Optionally a</span>
+<span class="c">     * primitives are returned untouched.  Optionally a</span>
 <span class="c">     * function can be provided to handle other data types,</span>
 <span class="c">     * filter keys, validate values, etc.</span>
 <span class="c">     *</span>
 <span class="c">     * @method clone</span>
 <span class="c">     * @param o what to clone</span>
-<span class="c">     * @param f function to apply to each item in a collection</span>
+<span class="c">     * @param f optional function to apply to each item in a collection</span>
 <span class="c">     *          it will be executed prior to applying the value to</span>
 <span class="c">     *          the new object.  Return false to prevent the copy.</span>
-<span class="c">     * @param c execution context for f</span>
+<span class="c">     * @param c optional execution context for f</span>
+<span class="c">     * @param owner Owner object passed when clone is iterating an</span>
+<span class="c">     * object.  Used to set up context for cloned functions.</span>
 <span class="c">     * @return {Array|Object} the cloned object</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
         
-        <span class="c">//var o2 = (A.test(o)) ? [] : {};</span>
-<span class="c"></span>        <span class="c">// var o2 = Y.object(o);</span>
-<span class="c"></span>        <span class="c">// var o2 = L.isFunction(o) ? Y.bind(o, o2) : Y.object(o);</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                      <span class="k">if</span> <span class="o">(!</span><span class="nx">f</span> <span class="o">||</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">))</span> <span class="o">{</span>
-                          <span class="k">var</span> <span class="nx">nv</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span> <span class="o">:</span> <span class="nx">v</span><span class="o">;</span>
-                          <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">nv</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
-                      <span class="o">}</span>
-                  <span class="o">},</span> <span class="nx">o2</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">f</span> <span class="o">||</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span> <span class="nx">o2</span><span class="o">);</span>
 
         <span class="k">return</span> <span class="nx">o2</span><span class="o">;</span>
     <span class="o">};</span>

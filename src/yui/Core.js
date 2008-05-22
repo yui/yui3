@@ -338,39 +338,39 @@ YUI.add("core", function(Y) {
     };
 
     /**
-     * Deep obj/array copy. Functions are treated as objects.
+     * Deep obj/array copy.  Functions will are cloned with Y.bind.
      * Array-like objects are treated as arrays.
-     * Other types are returned untouched.  Optionally a
+     * primitives are returned untouched.  Optionally a
      * function can be provided to handle other data types,
      * filter keys, validate values, etc.
      *
      * @method clone
      * @param o what to clone
-     * @param f function to apply to each item in a collection
+     * @param f optional function to apply to each item in a collection
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
-     * @param c execution context for f
+     * @param c optional execution context for f
+     * @param owner Owner object passed when clone is iterating an
+     * object.  Used to set up context for cloned functions.
      * @return {Array|Object} the cloned object
      */
-    Y.clone = function(o, f, c) {
+    Y.clone = function(o, f, c, owner) {
 
         if (!L.isObject(o)) {
             return o;
-        } else if (L.isDate(o)) {
-            return new Date(o);
         }
         
-        //var o2 = (A.test(o)) ? [] : {};
-        // var o2 = Y.object(o);
-        // var o2 = L.isFunction(o) ? Y.bind(o, o2) : Y.object(o);
-        var o2 = L.isFunction(o) ? o : Y.object(o);
+        if (L.isDate(o)) {
+            return new Date(o);
+        }
+
+        var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o);
 
         Y.each(o, function(v, k) {
-                      if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                          var nv = L.isFunction(v) ? Y.bind(v, this) : v;
-                          this[k] =  Y.clone(nv, f, c);
-                      }
-                  }, o2);
+            if (!f || (f.call(c || this, v, k, this, o) !== false)) {
+                this[k] =  Y.clone(v, f, c, this);
+            }
+        }, o2);
 
         return o2;
     };
