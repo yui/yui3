@@ -43,9 +43,9 @@
 <span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="c">// Returns a new object based upon the supplied object</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">like</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
-        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">(</span><span class="nx">like</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">:</span> <span class="nx">o</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
     <span class="o">};</span> 
 

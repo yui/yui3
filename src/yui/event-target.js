@@ -198,8 +198,12 @@ YUI.add("event-target", function(Y) {
          *   <li>The custom object (if any) that was passed into the subscribe() 
          *       method</li>
          *   </ul>
-         * If the custom event has not been explicitly created, it will be
-         * created now with the default config, context to the host object
+         * If the custom event object hasn't been created, then the event hasn't 
+         * been published and it has no subscribers.  For performance sake, we 
+         * immediate exit in this case.  This means the event won't bubble, so 
+         * if the intention is that a bubble target be notified, the event must 
+         * be published on this object first.
+         *
          * @method fire
          * @param type    {string}  the type, or name of the event
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
@@ -210,7 +214,10 @@ YUI.add("event-target", function(Y) {
         fire: function(type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.getEvent(type) || this.publish(type);
+            var ce = this.getEvent(type);
+            if (!ce) {
+                return true;
+            }
 
             // the originalTarget is what the listener was bound to
             ce.originalTarget = this;

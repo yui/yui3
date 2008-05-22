@@ -69,6 +69,20 @@
 
     Y.log(b.str);
 
+    var Y = YUI();                                                                                                                                                        
+    var seed = { foo : { bar : 'bar' } };                                                                                                                                 
+    var clone = Y.clone(seed);                                                                                                                                            
+                                                                                                                                                                          
+    console.log(1,'seed.foo.bar: '  + seed.foo.bar);  // 'bar'                                                                                                            
+    console.log(1,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
+                                                                                                                                                                          
+    seed.foo.bar = 'foo';                                                                                                                                                 
+    console.log(2,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
+    console.log(2,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
+                                                                                                                                                                          
+    delete clone.foo.bar;                                                                                                                                                 
+    console.log(3,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
+    console.log(3,'clone.foo.bar: ' + clone.foo.bar); // 'foo'!     
 
 
 })();

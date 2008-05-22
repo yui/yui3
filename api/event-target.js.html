@@ -235,8 +235,12 @@
 <span class="c">         *   &lt;li&gt;The custom object (if any) that was passed into the subscribe() </span>
 <span class="c">         *       method&lt;/li&gt;</span>
 <span class="c">         *   &lt;/ul&gt;</span>
-<span class="c">         * If the custom event has not been explicitly created, it will be</span>
-<span class="c">         * created now with the default config, context to the host object</span>
+<span class="c">         * If the custom event object hasn&#39;t been created, then the event hasn&#39;t </span>
+<span class="c">         * been published and it has no subscribers.  For performance sake, we </span>
+<span class="c">         * immediate exit in this case.  This means the event won&#39;t bubble, so </span>
+<span class="c">         * if the intention is that a bubble target be notified, the event must </span>
+<span class="c">         * be published on this object first.</span>
+<span class="c">         *</span>
 <span class="c">         * @method fire</span>
 <span class="c">         * @param type    {string}  the type, or name of the event</span>
 <span class="c">         * @param arguments {Object*} an arbitrary set of parameters to pass to </span>
@@ -247,7 +251,10 @@
         <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
 
             <span class="c">// the originalTarget is what the listener was bound to</span>
 <span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>

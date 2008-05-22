@@ -5,9 +5,9 @@
 YUI.add("object", function(Y) {
 
     // Returns a new object based upon the supplied object
-    Y.object = function(o) {
+    Y.object = function(o, like) {
         var F = function() {};
-        F.prototype = o;
+        F.prototype = (like) ? o.constructor.prototype : o;
         return new F();
     }; 
 

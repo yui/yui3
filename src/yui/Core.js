@@ -364,7 +364,7 @@ YUI.add("core", function(Y) {
             return new Date(o);
         }
 
-        var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o);
+        var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, true);
 
         Y.each(o, function(v, k) {
             if (!f || (f.call(c || this, v, k, this, o) !== false)) {

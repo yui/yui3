@@ -310,8 +310,11 @@ following parameters:
 <li>The custom object (if any) that was passed into the subscribe() 
 method</li>
 </ul>
-If the custom event has not been explicitly created, it will be
-created now with the default config, context to the host object
+If the custom event object hasn't been created, then the event hasn't 
+been published and it has no subscribers.  For performance sake, we 
+immediate exit in this case.  This means the event won't bubble, so 
+if the intention is that a bubble target be notified, the event must 
+be published on this object first.
                                         </div>
 
                                         <div class="description">
