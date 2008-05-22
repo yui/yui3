@@ -28,7 +28,8 @@
 
         regex: /foo/,
         //win: window,
-        nada: null
+        nada: null,
+        els: document.getElementsByTagName('head')
     };
     
     var o2 = Y.clone(o);
@@ -84,6 +85,10 @@
     console.log(3,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
     console.log(3,'clone.foo.bar: ' + clone.foo.bar); // 'foo'!     
 
+
+console.log([].constructor.prototype);
+
+console.log(o2.els[0].parentNode);
 
 })();
 

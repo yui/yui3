@@ -4,10 +4,18 @@
  */
 YUI.add("object", function(Y) {
 
-    // Returns a new object based upon the supplied object
-    Y.object = function(o, like) {
+    /**
+     * Returns a new object based upon the supplied object.  By
+     * default the new object's prototype will have all members
+     * on the object.  Optionally, this can be limited to the
+     * supplier's constructor prototype.
+     * @param The supplier object
+     * @param Limit to the supplier's constructor prototype?
+     * @return the new object
+     */
+    Y.object = function(o, limit) {
         var F = function() {};
-        F.prototype = (like) ? o.constructor.prototype : o;
+        F.prototype = (limit) ? o.constructor.prototype : o;
         return new F();
     }; 
 
