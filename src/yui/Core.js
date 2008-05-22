@@ -364,10 +364,19 @@ YUI.add("core", function(Y) {
             return new Date(o);
         }
 
-        // var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, true);
-        // var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o);
-        // var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, !L.isArray(o));
-        var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, !Y.array.test(o));
+        var func = L.isFunction(o);
+
+        if (func && o instanceof RegExp) {
+            return new RegExp(o.source);
+        }
+
+// // source property bleedthrough
+var o2 = (func) ? Y.bind(o, owner) : Y.object(o);
+// // fixed source property bleedthrough for objects, but breaks arrays
+// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, true);
+
+// really didn't want to have to do an array test, but here we go
+// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, !Y.array.test(o));
 
         Y.each(o, function(v, k) {
             if (!f || (f.call(c || this, v, k, this, o) !== false)) {

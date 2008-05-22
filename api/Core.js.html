@@ -402,11 +402,20 @@
             <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="c">// var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, true);</span>
-<span class="c"></span>        <span class="c">// var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o);</span>
-<span class="c"></span>        <span class="c">// var o2 = (L.isFunction(o)) ? Y.bind(o, owner) : Y.object(o, !L.isArray(o));</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">));</span>
+        <span class="k">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
 
+        <span class="k">if</span> <span class="o">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">RegExp</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">source</span><span class="o">);</span>
+        <span class="o">}</span>
+
+<span class="c">// // source property bleedthrough</span>
+<span class="c"></span><span class="k">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">func</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+<span class="c">// // fixed source property bleedthrough for objects, but breaks arrays</span>
+<span class="c">// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, true);</span>
+<span class="c"></span>
+<span class="c">// really didn&#39;t want to have to do an array test, but here we go</span>
+<span class="c">// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, !Y.array.test(o));</span>
+<span class="c"></span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">f</span> <span class="o">||</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>

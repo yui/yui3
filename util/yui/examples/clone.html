@@ -3,12 +3,13 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../build/yui.js"></script>
+<script type="text/javascript" src="../src/js/State.js"></script>
 <script type="text/javascript">
 
 
 (function() {
 
-    var Y = YUI().use('dump'), newobj = {};
+    var Y = YUI().use('dump', 'state'), newobj = {};
 
     var o = {
         str: "str",
@@ -29,7 +30,8 @@
         regex: /foo/,
         //win: window,
         nada: null,
-        els: document.getElementsByTagName('head')
+        els: document.getElementsByTagName('head'),
+        state: new Y.State()
     };
     
     var o2 = Y.clone(o);
@@ -51,16 +53,18 @@
     o2.fn();
 
     // cloned regex literals do not work
-    Y.log("broken regex: " + "i have foo".match(o2.regex));
+    Y.log("fixed regex: " + "i have foo".match(o2.regex));
 
-        o.foo = "NewPropShouldNotBeInO2";
+    o.foo = "NewPropShouldNotBeInO2";
     Y.log(o2.foo);
 
     function A() {
+
     }
 
     A.prototype = {
-        str:"bar"
+        str:"bar",
+        obj: {}
     }
 
     var a = new A();
@@ -70,7 +74,6 @@
 
     Y.log(b.str);
 
-    var Y = YUI();                                                                                                                                                        
     var seed = { foo : { bar : 'bar' } };                                                                                                                                 
     var clone = Y.clone(seed);                                                                                                                                            
                                                                                                                                                                           
@@ -89,6 +92,11 @@
 console.log([].constructor.prototype);
 
 console.log(o2.els[0].parentNode);
+
+console.log(/adam/ instanceof RegExp);
+
+//console.log(o2.state.get('bar'));
+console.log("-" + Y.lang.dump(a.constructor.prototype));
 
 })();
 
