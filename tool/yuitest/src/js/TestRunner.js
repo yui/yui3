@@ -134,8 +134,16 @@
                  */
                 this._root = null;
                 
+                /**
+                 * Indicates if the TestRunner will log events or not.
+                 * @type Boolean
+                 * @property _log
+                 * @private
+                 */
+                this._log = true;
+                
                 //create events
-                /*var events = [
+                var events = [
                     this.TEST_CASE_BEGIN_EVENT,
                     this.TEST_CASE_COMPLETE_EVENT,
                     this.TEST_SUITE_BEGIN_EVENT,
@@ -147,8 +155,8 @@
                     this.BEGIN_EVENT
                 ];
                 for (var i=0; i < events.length; i++){
-                    this.createEvent(events[i], { scope: this });
-                }  */     
+                    this.subscribe(events[i], this._logEvent, this, true);
+                }      
            
             }
             
@@ -215,6 +223,103 @@
                  */        
                 BEGIN_EVENT /*:String*/ : "begin",    
                 
+                //-------------------------------------------------------------------------
+                // Logging-Related Methods
+                //-------------------------------------------------------------------------
+        
+                
+                /**
+                 * Disable logging via Y.log(). Test output will not be visible unless
+                 * TestRunner events are subscribed to.
+                 * @return {Void}
+                 * @method disableLogging
+                 */
+                disableLogging: function(){
+                    this._log = false;
+                },    
+                
+                /**
+                 * Enable logging via Y.log(). Test output is published and can be read via
+                 * logreader.
+                 * @return {Void}
+                 * @method enableLogging
+                 */
+                enableLogging: function(){
+                    this._log = true;
+                },
+                
+                /**
+                 * Logs TestRunner events using Y.log().
+                 * @param {Object} event The event object for the event.
+                 * @return {Void}
+                 * @method _logEvent
+                 * @private
+                 */
+                _logEvent: function(event){
+                    
+                    //data variables
+                    var message /*:String*/ = "";
+                    var messageType /*:String*/ = "";
+                    
+                    switch(event.type){
+                        case this.BEGIN_EVENT:
+                            message = "Testing began at " + (new Date()).toString() + ".";
+                            messageType = "info";
+                            break;
+                            
+                        case this.COMPLETE_EVENT:
+                            message = "Testing completed at " + (new Date()).toString() + ".\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_FAIL_EVENT:
+                            message = event.testName + ": " + event.error.getMessage();
+                            messageType = "fail";
+                            break;
+                            
+                        case this.TEST_IGNORE_EVENT:
+                            message = event.testName + ": ignored.";
+                            messageType = "ignore";
+                            break;
+                            
+                        case this.TEST_PASS_EVENT:
+                            message = event.testName + ": passed.";
+                            messageType = "pass";
+                            break;
+                            
+                        case this.TEST_SUITE_BEGIN_EVENT:
+                            message = "Test suite \"" + event.testSuite.name + "\" started.";
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_SUITE_COMPLETE_EVENT:
+                            message = "Test suite \"" + event.testSuite.name + "\" completed.\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_CASE_BEGIN_EVENT:
+                            message = "Test case \"" + event.testCase.name + "\" started.";
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_CASE_COMPLETE_EVENT:
+                            message = "Test case \"" + event.testCase.name + "\" completed.\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                        default:
+                            message = "Unexpected event " + event.type;
+                            message = "info";
+                    }
+                
+                    //only log if required
+                    if (this._log){
+                        Y.log(message, messageType, "TestRunner");
+                    }
+                },
+
                 //-------------------------------------------------------------------------
                 // Test Tree-Related Methods
                 //-------------------------------------------------------------------------

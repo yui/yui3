@@ -8,7 +8,7 @@
          * an error is thrown.
          *
          * @namespace Y
-         * @class Assert
+         * @class assert
          * @static
          */
         Y.Assert = {

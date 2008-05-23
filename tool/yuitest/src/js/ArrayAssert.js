@@ -2,7 +2,7 @@
 
     var M = function(Y){
     
-        var Assert = Y.Assert;
+        var assert = Y.Assert;
         
         /**
          * The ArrayAssert object provides functions to test JavaScript array objects
@@ -37,7 +37,7 @@
                 }
                 
                 if (!found){
-                    Assert.fail(Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
+                    assert.fail(assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
                 }
             },
         
@@ -87,7 +87,7 @@
                 }
                 
                 if (!found){
-                    Assert.fail(Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
                 }
             },
         
@@ -113,7 +113,7 @@
                 }
                 
                 if (found){
-                    Assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
                 }
             },
         
@@ -163,7 +163,7 @@
                 }
                 
                 if (found){
-                    Assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
                 }
             },
                 
@@ -182,13 +182,13 @@
                 //try to find the value in the array
                 for (var i=0; i < haystack.length; i++){
                     if (haystack[i] === needle){
-                        Assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
+                        assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
                         return;
                     }
                 }
                 
                 //if it makes it here, it wasn't found at all
-                Assert.fail(Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
+                assert.fail(Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
             },
                 
             /**
@@ -210,8 +210,8 @@
                
                 //begin checking values
                 for (var i=0; i < len; i++){
-                    Assert.areEqual(expected[i], actual[i], 
-                        Assert._formatMessage(message, "Values in position " + i + " are not equal."));
+                    assert.areEqual(expected[i], actual[i], 
+                        assert._formatMessage(message, "Values in position " + i + " are not equal."));
                 }
             },
             
@@ -243,7 +243,7 @@
                 //begin checking values
                 for (var i=0; i < len; i++){
                     if (!comparator(expected[i], actual[i])){
-                        throw new Y.Assert.ComparisonFailure(YAHOO.util.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
+                        throw new assert.ComparisonFailure(YAHOO.util.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
                     }
                 }
             },
@@ -257,7 +257,7 @@
              */
             isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
                 if (actual.length > 0){
-                    Assert.fail(Assert._formatMessage(message, "Array should be empty."));
+                    assert.fail(assert._formatMessage(message, "Array should be empty."));
                 }
             },    
             
@@ -270,7 +270,7 @@
              */
             isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
                 if (actual.length === 0){
-                    Assert.fail(Assert._formatMessage(message, "Array should not be empty."));
+                    assert.fail(assert._formatMessage(message, "Array should not be empty."));
                 }
             },    
             
@@ -293,8 +293,8 @@
                 
                 //begin checking values
                 for (var i=0; i < len; i++){
-                    Assert.areSame(expected[i], actual[i], 
-                        Assert._formatMessage(message, "Values in position " + i + " are not the same."));
+                    assert.areSame(expected[i], actual[i], 
+                        assert._formatMessage(message, "Values in position " + i + " are not the same."));
                 }
             },
             
@@ -314,13 +314,13 @@
                 //try to find the value in the array
                 for (var i=haystack.length; i >= 0; i--){
                     if (haystack[i] === needle){
-                        Assert.areEqual(index, i, Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
+                        assert.areEqual(index, i, assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
                         return;
                     }
                 }
                 
                 //if it makes it here, it wasn't found at all
-                Assert.fail(Assert._formatMessage(message, "Value doesn't exist in array."));        
+                assert.fail(assert._formatMessage(message, "Value doesn't exist in array."));        
             }
             
         };

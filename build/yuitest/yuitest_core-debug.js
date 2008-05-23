@@ -343,8 +343,16 @@
                  */
                 this._root = null;
                 
+                /**
+                 * Indicates if the TestRunner will log events or not.
+                 * @type Boolean
+                 * @property _log
+                 * @private
+                 */
+                this._log = true;
+                
                 //create events
-                /*var events = [
+                var events = [
                     this.TEST_CASE_BEGIN_EVENT,
                     this.TEST_CASE_COMPLETE_EVENT,
                     this.TEST_SUITE_BEGIN_EVENT,
@@ -356,8 +364,8 @@
                     this.BEGIN_EVENT
                 ];
                 for (var i=0; i < events.length; i++){
-                    this.createEvent(events[i], { scope: this });
-                }  */     
+                    this.subscribe(events[i], this._logEvent, this, true);
+                }      
            
             }
             
@@ -424,6 +432,103 @@
                  */        
                 BEGIN_EVENT /*:String*/ : "begin",    
                 
+                //-------------------------------------------------------------------------
+                // Logging-Related Methods
+                //-------------------------------------------------------------------------
+        
+                
+                /**
+                 * Disable logging via Y.log(). Test output will not be visible unless
+                 * TestRunner events are subscribed to.
+                 * @return {Void}
+                 * @method disableLogging
+                 */
+                disableLogging: function(){
+                    this._log = false;
+                },    
+                
+                /**
+                 * Enable logging via Y.log(). Test output is published and can be read via
+                 * logreader.
+                 * @return {Void}
+                 * @method enableLogging
+                 */
+                enableLogging: function(){
+                    this._log = true;
+                },
+                
+                /**
+                 * Logs TestRunner events using Y.log().
+                 * @param {Object} event The event object for the event.
+                 * @return {Void}
+                 * @method _logEvent
+                 * @private
+                 */
+                _logEvent: function(event){
+                    
+                    //data variables
+                    var message /*:String*/ = "";
+                    var messageType /*:String*/ = "";
+                    
+                    switch(event.type){
+                        case this.BEGIN_EVENT:
+                            message = "Testing began at " + (new Date()).toString() + ".";
+                            messageType = "info";
+                            break;
+                            
+                        case this.COMPLETE_EVENT:
+                            message = "Testing completed at " + (new Date()).toString() + ".\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_FAIL_EVENT:
+                            message = event.testName + ": " + event.error.getMessage();
+                            messageType = "fail";
+                            break;
+                            
+                        case this.TEST_IGNORE_EVENT:
+                            message = event.testName + ": ignored.";
+                            messageType = "ignore";
+                            break;
+                            
+                        case this.TEST_PASS_EVENT:
+                            message = event.testName + ": passed.";
+                            messageType = "pass";
+                            break;
+                            
+                        case this.TEST_SUITE_BEGIN_EVENT:
+                            message = "Test suite \"" + event.testSuite.name + "\" started.";
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_SUITE_COMPLETE_EVENT:
+                            message = "Test suite \"" + event.testSuite.name + "\" completed.\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_CASE_BEGIN_EVENT:
+                            message = "Test case \"" + event.testCase.name + "\" started.";
+                            messageType = "info";
+                            break;
+                            
+                        case this.TEST_CASE_COMPLETE_EVENT:
+                            message = "Test case \"" + event.testCase.name + "\" completed.\nPassed:" + 
+                                event.results.passed + " Failed:" + event.results.failed + " Total:" + event.results.total;
+                            messageType = "info";
+                            break;
+                        default:
+                            message = "Unexpected event " + event.type;
+                            message = "info";
+                    }
+                
+                    //only log if required
+                    if (this._log){
+                        Y.log(message, messageType, "TestRunner");
+                    }
+                },
+
                 //-------------------------------------------------------------------------
                 // Test Tree-Related Methods
                 //-------------------------------------------------------------------------
@@ -915,7 +1020,7 @@
          * an error is thrown.
          *
          * @namespace Y
-         * @class Assert
+         * @class assert
          * @static
          */
         Y.Assert = {
@@ -1533,7 +1638,7 @@
 
     var M = function(Y){
     
-        var Assert = Y.Assert;
+        var assert = Y.Assert;
         
         /**
          * The ArrayAssert object provides functions to test JavaScript array objects
@@ -1568,7 +1673,7 @@
                 }
                 
                 if (!found){
-                    Assert.fail(Assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
+                    assert.fail(assert._formatMessage(message, "Value " + needle + " (" + (typeof needle) + ") not found in array [" + haystack + "]."));
                 }
             },
         
@@ -1618,7 +1723,7 @@
                 }
                 
                 if (!found){
-                    Assert.fail(Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "No match found in array [" + haystack + "]."));
                 }
             },
         
@@ -1644,7 +1749,7 @@
                 }
                 
                 if (found){
-                    Assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
                 }
             },
         
@@ -1694,7 +1799,7 @@
                 }
                 
                 if (found){
-                    Assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
+                    assert.fail(Assert._formatMessage(message, "Value found in array [" + haystack + "]."));
                 }
             },
                 
@@ -1713,13 +1818,13 @@
                 //try to find the value in the array
                 for (var i=0; i < haystack.length; i++){
                     if (haystack[i] === needle){
-                        Assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
+                        assert.areEqual(index, i, message || "Value exists at index " + i + " but should be at index " + index + ".");
                         return;
                     }
                 }
                 
                 //if it makes it here, it wasn't found at all
-                Assert.fail(Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
+                assert.fail(Assert._formatMessage(message, "Value doesn't exist in array [" + haystack + "]."));
             },
                 
             /**
@@ -1741,8 +1846,8 @@
                
                 //begin checking values
                 for (var i=0; i < len; i++){
-                    Assert.areEqual(expected[i], actual[i], 
-                        Assert._formatMessage(message, "Values in position " + i + " are not equal."));
+                    assert.areEqual(expected[i], actual[i], 
+                        assert._formatMessage(message, "Values in position " + i + " are not equal."));
                 }
             },
             
@@ -1774,7 +1879,7 @@
                 //begin checking values
                 for (var i=0; i < len; i++){
                     if (!comparator(expected[i], actual[i])){
-                        throw new Y.Assert.ComparisonFailure(YAHOO.util.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
+                        throw new assert.ComparisonFailure(YAHOO.util.Assert._formatMessage(message, "Values in position " + i + " are not equivalent."), expected[i], actual[i]);
                     }
                 }
             },
@@ -1788,7 +1893,7 @@
              */
             isEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
                 if (actual.length > 0){
-                    Assert.fail(Assert._formatMessage(message, "Array should be empty."));
+                    assert.fail(assert._formatMessage(message, "Array should be empty."));
                 }
             },    
             
@@ -1801,7 +1906,7 @@
              */
             isNotEmpty : function (actual /*:Array*/, message /*:String*/) /*:Void*/ {        
                 if (actual.length === 0){
-                    Assert.fail(Assert._formatMessage(message, "Array should not be empty."));
+                    assert.fail(assert._formatMessage(message, "Array should not be empty."));
                 }
             },    
             
@@ -1824,8 +1929,8 @@
                 
                 //begin checking values
                 for (var i=0; i < len; i++){
-                    Assert.areSame(expected[i], actual[i], 
-                        Assert._formatMessage(message, "Values in position " + i + " are not the same."));
+                    assert.areSame(expected[i], actual[i], 
+                        assert._formatMessage(message, "Values in position " + i + " are not the same."));
                 }
             },
             
@@ -1845,13 +1950,13 @@
                 //try to find the value in the array
                 for (var i=haystack.length; i >= 0; i--){
                     if (haystack[i] === needle){
-                        Assert.areEqual(index, i, Assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
+                        assert.areEqual(index, i, assert._formatMessage(message, "Value exists at index " + i + " but should be at index " + index + "."));
                         return;
                     }
                 }
                 
                 //if it makes it here, it wasn't found at all
-                Assert.fail(Assert._formatMessage(message, "Value doesn't exist in array."));        
+                assert.fail(assert._formatMessage(message, "Value doesn't exist in array."));        
             }
             
         };
