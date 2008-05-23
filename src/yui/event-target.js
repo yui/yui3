@@ -214,7 +214,10 @@ YUI.add("event-target", function(Y) {
         fire: function(type) {
 
             this.__yui_events = this.__yui_events || {};
-            var ce = this.getEvent(type);
+
+            var t = Y.lang.isString(type) ? type : (type && type.type);
+
+            var ce = this.getEvent(t);
             if (!ce) {
                 return true;
             }

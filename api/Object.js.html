@@ -48,12 +48,12 @@
 <span class="c">     * on the object.  Optionally, this can be limited to the</span>
 <span class="c">     * supplier&#39;s constructor prototype.</span>
 <span class="c">     * @param The supplier object</span>
-<span class="c">     * @param Limit to the supplier&#39;s constructor prototype?</span>
 <span class="c">     * @return the new object</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">limit</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
-        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">(</span><span class="nx">limit</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">:</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="c">// F.prototype = (limit) ? o.constructor.prototype : o;</span>
+<span class="c"></span>        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
     <span class="o">};</span> 
 
@@ -141,7 +141,8 @@
 <span class="c"></span>        <span class="c">// }</span>
 <span class="c"></span>
         <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+            <span class="c">// if ((proto &amp;&amp; !(i in Object.prototype)) || O.owns(o, i)) {</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
@@ -159,7 +160,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
 
-                                <li class=""><a href="module_json.html">json</a></li>
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 

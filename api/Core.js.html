@@ -384,6 +384,14 @@
 <span class="c">     *</span>
 <span class="c">     * @method clone</span>
 <span class="c">     * @param o what to clone</span>
+<span class="c">     * @param safe {boolean} if true, objects will not have prototype</span>
+<span class="c">     * items from the source.  If false, it does.  In this case, the</span>
+<span class="c">     * original is protected, but the clone is not completely immune</span>
+<span class="c">     * from changes to the source object prototype.  Also, cloned prototype</span>
+<span class="c">     * items that are deleted from the clone will result in the value</span>
+<span class="c">     * of the source prototype to be exposed.  If operating on a non-safe</span>
+<span class="c">     * clone, items should be nulled out rather than deleted.</span>
+<span class="c">     * @TODO review</span>
 <span class="c">     * @param f optional function to apply to each item in a collection</span>
 <span class="c">     *          it will be executed prior to applying the value to</span>
 <span class="c">     *          the new object.  Return false to prevent the copy.</span>
@@ -392,7 +400,7 @@
 <span class="c">     * object.  Used to set up context for cloned functions.</span>
 <span class="c">     * @return {Array|Object} the cloned object</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">safe</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
@@ -402,23 +410,20 @@
             <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">o</span><span class="o">),</span> <span class="nx">o2</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">RegExp</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">source</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">func</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">RegExp</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">new</span> <span class="nb">RegExp</span><span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">source</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nx">o2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">safe</span><span class="o">)</span> <span class="o">?</span> <span class="o">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
 
-<span class="c">// // source property bleedthrough</span>
-<span class="c"></span><span class="k">var</span> <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">func</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
-<span class="c">// // fixed source property bleedthrough for objects, but breaks arrays</span>
-<span class="c">// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, true);</span>
-<span class="c"></span>
-<span class="c">// really didn&#39;t want to have to do an array test, but here we go</span>
-<span class="c">// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, !Y.array.test(o));</span>
-<span class="c"></span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">f</span> <span class="o">||</span> <span class="o">(</span><span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span>  <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">safe</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span> <span class="nx">o2</span><span class="o">);</span>
 
@@ -569,7 +574,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
 
-                                <li class=""><a href="module_json.html">json</a></li>
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 

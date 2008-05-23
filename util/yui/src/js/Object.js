@@ -10,12 +10,12 @@ YUI.add("object", function(Y) {
      * on the object.  Optionally, this can be limited to the
      * supplier's constructor prototype.
      * @param The supplier object
-     * @param Limit to the supplier's constructor prototype?
      * @return the new object
      */
-    Y.object = function(o, limit) {
+    Y.object = function(o) {
         var F = function() {};
-        F.prototype = (limit) ? o.constructor.prototype : o;
+        // F.prototype = (limit) ? o.constructor.prototype : o;
+        F.prototype = o;
         return new F();
     }; 
 
@@ -103,6 +103,7 @@ YUI.add("object", function(Y) {
         // }
 
         for (var i in o) {
+            // if ((proto && !(i in Object.prototype)) || O.owns(o, i)) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }

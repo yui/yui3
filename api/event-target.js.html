@@ -251,7 +251,10 @@
         <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+
+            <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
+
+            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
@@ -385,7 +388,7 @@
                         <h4>Modules</h4>
                         <ul class="content">
 
-                                <li class=""><a href="module_json.html">json</a></li>
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 

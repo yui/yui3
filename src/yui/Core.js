@@ -346,6 +346,14 @@ YUI.add("core", function(Y) {
      *
      * @method clone
      * @param o what to clone
+     * @param safe {boolean} if true, objects will not have prototype
+     * items from the source.  If false, it does.  In this case, the
+     * original is protected, but the clone is not completely immune
+     * from changes to the source object prototype.  Also, cloned prototype
+     * items that are deleted from the clone will result in the value
+     * of the source prototype to be exposed.  If operating on a non-safe
+     * clone, items should be nulled out rather than deleted.
+     * @TODO review
      * @param f optional function to apply to each item in a collection
      *          it will be executed prior to applying the value to
      *          the new object.  Return false to prevent the copy.
@@ -354,7 +362,7 @@ YUI.add("core", function(Y) {
      * object.  Used to set up context for cloned functions.
      * @return {Array|Object} the cloned object
      */
-    Y.clone = function(o, f, c, owner) {
+    Y.clone = function(o, safe, f, c, owner) {
 
         if (!L.isObject(o)) {
             return o;
@@ -364,23 +372,20 @@ YUI.add("core", function(Y) {
             return new Date(o);
         }
 
-        var func = L.isFunction(o);
+        var func = L.isFunction(o), o2;
 
-        if (func && o instanceof RegExp) {
-            return new RegExp(o.source);
+        if (func) {
+            if (o instanceof RegExp) {
+                return new RegExp(o.source);
+            }
+            o2 = Y.bind(o, owner);
+        } else {
+            o2 = (safe) ? {} : Y.object(o);
         }
-
-// // source property bleedthrough
-var o2 = (func) ? Y.bind(o, owner) : Y.object(o);
-// // fixed source property bleedthrough for objects, but breaks arrays
-// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, true);
-
-// really didn't want to have to do an array test, but here we go
-// var o2 = (func) ? Y.bind(o, owner) : Y.object(o, !Y.array.test(o));
 
         Y.each(o, function(v, k) {
             if (!f || (f.call(c || this, v, k, this, o) !== false)) {
-                this[k] =  Y.clone(v, f, c, this);
+                this[k] =  Y.clone(v, safe, f, c, this);
             }
         }, o2);
 
