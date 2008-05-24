@@ -348,7 +348,7 @@ YUI.add("core", function(Y) {
      * @param o what to clone
      * @param safe {boolean} if true, objects will not have prototype
      * items from the source.  If false, it does.  In this case, the
-     * original is protected, but the clone is not completely immune
+     * original is initally protected, but the clone is not completely immune
      * from changes to the source object prototype.  Also, cloned prototype
      * items that are deleted from the clone will result in the value
      * of the source prototype to be exposed.  If operating on a non-safe

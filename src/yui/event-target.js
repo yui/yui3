@@ -215,7 +215,8 @@ YUI.add("event-target", function(Y) {
 
             this.__yui_events = this.__yui_events || {};
 
-            var t = Y.lang.isString(type) ? type : (type && type.type);
+            var typeIncluded = Y.lang.isString(type),
+                   t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
             if (!ce) {
@@ -232,7 +233,7 @@ YUI.add("event-target", function(Y) {
                 ce.target = this;
             }
 
-            var a = Y.array(arguments, 1, true);
+            var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
 
             var ret = ce.fire.apply(ce, a);
 

@@ -993,7 +993,7 @@ YUI.add("core", function(Y) {
      * @param o what to clone
      * @param safe {boolean} if true, objects will not have prototype
      * items from the source.  If false, it does.  In this case, the
-     * original is protected, but the clone is not completely immune
+     * original is initally protected, but the clone is not completely immune
      * from changes to the source object prototype.  Also, cloned prototype
      * items that are deleted from the clone will result in the value
      * of the source prototype to be exposed.  If operating on a non-safe
@@ -2894,7 +2894,8 @@ YUI.add("event-target", function(Y) {
 
             this.__yui_events = this.__yui_events || {};
 
-            var t = Y.lang.isString(type) ? type : (type && type.type);
+            var typeIncluded = Y.lang.isString(type),
+                   t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
             if (!ce) {
@@ -2911,7 +2912,7 @@ YUI.add("event-target", function(Y) {
                 ce.target = this;
             }
 
-            var a = Y.array(arguments, 1, true);
+            var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
 
             var ret = ce.fire.apply(ce, a);
 
