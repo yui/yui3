@@ -29,7 +29,8 @@ YUI.add("event-target", function(Y) {
             defaults: {
                 context: this, 
                 host: this,
-                emitFacade: o.emitFacade || false
+                emitFacade: o.emitFacade || false,
+                bubbles: ('bubbles' in o) ? o.bubbles : true
             }
             
         };
@@ -339,7 +340,9 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
     };
 
     // make Y an event target
-    Y.augment(Y, ET);
+    Y.augment(Y, ET, false, false, { 
+        bubbles: false 
+    });
 
 
 }, "3.0.0");

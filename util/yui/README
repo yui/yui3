@@ -390,6 +390,24 @@ Event.Target.fire no longer creates the event if it hasn't been published
     Avoids creating unneeded objects
 
     However, an event that has not been published (which also means it has
-    not been subscribed to) will not bubble.  This may need to be configurable.
+    not been subscribed to) will not bubble.  This may need to be configurable,
+    or changed to allow the bubble.
+
+
+Custom events are queued to make bubble sequence sane
+    
+    event1 fired
+    subscriber to event1 fires event2
+    event1 defaultFn
+    event1 bubble
+    event2 fired
+    event2 defaultFn
+    event2 bubble
+
+    Events are only queued if the are allowed to (canQueue) as it changes the order
+    of operation otherwise (log statements for instance are not queued because
+    it would prevent the correct sequence of messages when operating on bubbling events
+
+
 
 

@@ -53,7 +53,7 @@ YUI.add("event-custom", function(Y) {
     Y.CustomEvent = function(type, o) {
 
         if (arguments.length > 2) {
-            console.log('CustomEvent sig context and silent flags must be part of the config', 'error', 'Event');
+            this.log('CustomEvent sig context and silent flags must be part of the config', 'error', 'Event');
         }
 
         o = o || {};
@@ -75,13 +75,17 @@ YUI.add("event-custom", function(Y) {
          */
         this.context = Y;
 
+        this.logSystem = (type == "yui:log");
+
         /**
          * By default all custom events are logged in the debug build, set silent
          * to true to disable debug outpu for this event.
          * @property silent
          * @type boolean
          */
-        this.silent = (type == "yui:log");
+        this.silent = this.logSystem;
+
+        this.canQueue = !(this.logSystem);
 
         /**
          * The subscribers to this event
@@ -338,7 +342,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
              
             ret = s.notify(this.context, a);
 
-            if (false === ret || this.stopped) {
+            if (false === ret || this.stopped > 1) {
                 this.log("Event canceled by subscriber");
                 return false;
             }
@@ -385,7 +389,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 // es.silent = (es.silent || this.silent);
 
                 // queue this event if next
-                if (this != es.next) {
+                if (this.canQueue && this != es.next) {
                     this.log('queued event ' + this.type + ', ' + this);
                     es.queue.push([this, arguments]);
                     return true;
@@ -496,7 +500,6 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                         '1 or more subscriber errors: ' + errors[0].message, errors);
                 }
             }
-
 
             return (ret !== false);
         },

@@ -66,7 +66,8 @@
             <span class="nx">defaults</span><span class="o">:</span> <span class="o">{</span>
                 <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span> 
                 <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
-                <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span> <span class="o">||</span> <span class="kc">false</span>
+                <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span> <span class="o">||</span> <span class="kc">false</span><span class="o">,</span>
+                <span class="nx">bubbles</span><span class="o">:</span> <span class="o">(</span><span class="s1">&#39;bubbles&#39;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">:</span> <span class="kc">true</span>
             <span class="o">}</span>
             
         <span class="o">};</span>
@@ -376,7 +377,9 @@
     <span class="o">};</span>
 
     <span class="c">// make Y an event target</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">ET</span><span class="o">);</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">ET</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="o">{</span> 
+        <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span> 
+    <span class="o">});</span>
 
 
 <span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>

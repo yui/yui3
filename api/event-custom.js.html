@@ -91,7 +91,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">2</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;CustomEvent sig context and silent flags must be part of the config&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Event&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;CustomEvent sig context and silent flags must be part of the config&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Event&#39;</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
@@ -113,13 +113,17 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">;</span>
 
+        <span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span> <span class="o">=</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;yui:log&quot;</span><span class="o">);</span>
+
         <span class="c">/**</span>
 <span class="c">         * By default all custom events are logged in the debug build, set silent</span>
 <span class="c">         * to true to disable debug outpu for this event.</span>
 <span class="c">         * @property silent</span>
 <span class="c">         * @type boolean</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;yui:log&quot;</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">;</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">canQueue</span> <span class="o">=</span> <span class="o">!(</span><span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">);</span>
 
         <span class="c">/**</span>
 <span class="c">         * The subscribers to this event</span>
@@ -376,7 +380,7 @@
              
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">notify</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Event canceled by subscriber&quot;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
@@ -423,7 +427,7 @@
                 <span class="c">// es.silent = (es.silent || this.silent);</span>
 <span class="c"></span>
                 <span class="c">// queue this event if next</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="o">!=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">next</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">canQueue</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="o">!=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">next</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;queued event &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
                     <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">.</span><span class="nx">push</span><span class="o">([</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">]);</span>
                     <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
@@ -534,7 +538,6 @@
                         <span class="s1">&#39;1 or more subscriber errors: &#39;</span> <span class="o">+</span> <span class="nx">errors</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">message</span><span class="o">,</span> <span class="nx">errors</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-
 
             <span class="k">return</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">);</span>
         <span class="o">},</span>

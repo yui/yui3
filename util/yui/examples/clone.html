@@ -21,7 +21,7 @@
         ],
         dat: new Date(),
         fn: function() {
-            console.log('fn ' + this.str);
+            Y.log('fn ' + this.str);
         },
         obj: {
             a: [1]
@@ -77,26 +77,26 @@
     var seed = { foo : { bar : 'bar' } };                                                                                                                                 
     var clone = Y.clone(seed);                                                                                                                                            
                                                                                                                                                                           
-    console.log(1,'seed.foo.bar: '  + seed.foo.bar);  // 'bar'                                                                                                            
-    console.log(1,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
+    Y.log(1,'seed.foo.bar: '  + seed.foo.bar);  // 'bar'                                                                                                            
+    Y.log(1,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
                                                                                                                                                                           
     seed.foo.bar = 'foo';                                                                                                                                                 
-    console.log(2,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
-    console.log(2,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
+    Y.log(2,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
+    Y.log(2,'clone.foo.bar: ' + clone.foo.bar); // 'bar'                                                                                                            
                                                                                                                                                                           
     delete clone.foo.bar;                                                                                                                                                 
-    console.log(3,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
-    console.log(3,'clone.foo.bar: ' + clone.foo.bar); // 'foo'!     
+    Y.log(3,'seed.foo.bar: '  + seed.foo.bar);  // 'foo'                                                                                                            
+    Y.log(3,'clone.foo.bar: ' + clone.foo.bar); // 'foo'!     
 
 
-console.log([].constructor.prototype);
+Y.log([].constructor.prototype);
 
-console.log(o2.els[0].parentNode);
+Y.log(o2.els[0].parentNode);
 
-console.log(/adam/ instanceof RegExp);
+Y.log(/adam/ instanceof RegExp);
 
-console.log(o2.state.get('bar'));
-console.log("-" + Y.lang.dump(a.constructor.prototype));
+Y.log(o2.state.get('bar'));
+Y.log("-" + Y.lang.dump(a.constructor.prototype));
 
 })();
 
