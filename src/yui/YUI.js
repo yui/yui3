@@ -75,6 +75,9 @@ YUI.prototype = {
             _used: {}
         };
 
+
+        this.constructor = YUI;
+
         var i = YUI.env._idx++;
 
         this.env._yidx = i;

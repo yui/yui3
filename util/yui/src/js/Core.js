@@ -131,7 +131,7 @@ YUI.add("core", function(Y) {
      *        4: object to prototype
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
-     * @return {YUI} the YUI instance
+     * @return the augmented object
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
 
@@ -203,21 +203,90 @@ YUI.add("core", function(Y) {
                 f(r, s);
         }
 
-        return Y;
+        return r;
     };
 
     /**
      * Applies prototype properties from the supplier to the receiver.
+     * The receiver can be a constructor or an instance.
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return {YUI} the YUI instance
+     * @param args {Array | Any} arg or arguments to apply to the supplier
+     * constructor when initializing.
+     * @return the augmented object
      */
-    Y.augment = function(r, s, ov, wl) {
-        return Y.mix(r, s, ov, wl, 1);
+    Y.augment = function(r, s, ov, wl, args) {
+
+        var sProto = s.prototype, newProto = null, construct = s, 
+            a = (args) ? Y.array(args) : [], rProto = r.prototype, 
+            target =  rProto || r, applyConstructor = false;
+
+        // working on a class, so apply constructor infrastructure
+        if (rProto && construct) {
+
+            // console.log('augment will call constructor: ' + construct.FOO);
+
+            // Y.Do.before(r, construct);
+
+            var sequestered = {};
+            newProto = {};
+
+            // sequester all of the functions in the supplier
+            Y.each(sProto, function(v, k) {
+
+                var AUGMENTER = function() {
+
+                    var me = this;
+
+// console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+
+                    // overwrite the prototype with the sequestered functions
+                    // Y.mix(r.prototype, sequestered, true, wl);
+                    Y.mix(me, sequestered, true, wl);
+
+                    // execute constructor
+                    construct.apply(me, a);
+
+                    // execute the sequestered function
+                    sequestered[k].apply(me, arguments);
+                    //me[k].apply(me, arguments);
+                    
+                };
+
+                if (Y.lang.isFunction(v)) {
+
+                    // sequester the function
+                    sequestered[k] = v;
+
+                    // replace the sequestered function with a function that will
+                    // restore all sequestered functions and exectue the constructor.
+                    this[k] = AUGMENTER;
+
+                } else {
+
+                    // Y.log('augment() applying non-function: ' + k);
+
+                    this[k] = v;
+                }
+
+            }, newProto);
+
+        // augmenting an instance, so apply the constructor immediately
+        } else {
+            applyConstructor = true;
+        }
+
+        Y.mix(target, newProto || sProto, ov, wl);
+
+        if (applyConstructor) {
+            s.apply(target, a);
+        }
+
+        return r;
     };
 
     /**
@@ -232,7 +301,7 @@ YUI.add("core", function(Y) {
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return {YUI} the YUI instance
+     * @return the extended object
      */
     Y.aggregate = function(r, s, ov, wl) {
         return Y.mix(r, s, ov, wl, 0, true);
@@ -264,7 +333,7 @@ YUI.add("core", function(Y) {
 
         // If the superclass doesn't have a standard constructor,
         // define one so that Super() works
-        if (sp.constructor == OP.constructor) {
+        if (s != Object && sp.constructor == OP.constructor) {
             sp.constructor=s;
         }
     
@@ -290,7 +359,7 @@ YUI.add("core", function(Y) {
             Y.mix(r, sx, true);
         }
 
-        return Y;
+        return r;
     };
 
     // objects that will use the event system require a unique 
@@ -322,14 +391,6 @@ YUI.add("core", function(Y) {
                 case 2:
                     return A.each(Y.array(o, 0, true), f, c);
                 default:
-
-                    // if (o instanceof Y.NodeList) {
-                    //     // Y.log('found NodeList ' + o.length());
-                    //     for (var i=0, l=o.length(); i<l; i=i+1) {
-                    //         f.call(c || o, o.item(i), i, o);
-                    //     }
-                    //     return Y;
-                    // }
                     return Y.object.each(o, f, c);
             }
         }
@@ -419,25 +480,6 @@ YUI.add("core", function(Y) {
         Y.on("yui:load", m);
         return this;
     };
-
-    /*
-     * Fetch remote content
-     * @method io
-     * @parameter type {string} get, post, script, css
-     * @param c callback for xhr, options for Get
-     */
-    // Y.io = function(type, url, c) {
-    //     switch (type) {
-    //         case 'script':
-    //             return Y.Get.script(url, c);
-    //             break; // get util
-    //         case 'css': 
-    //             return Y.Get.css(url, c);
-    //             break; // get util
-    //         default:
-    //             return Y.io.asyncRequest.apply(Y.io, arguments);
-    //     }
-    // };
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {

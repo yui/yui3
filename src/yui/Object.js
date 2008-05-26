@@ -7,14 +7,12 @@ YUI.add("object", function(Y) {
     /**
      * Returns a new object based upon the supplied object.  By
      * default the new object's prototype will have all members
-     * on the object.  Optionally, this can be limited to the
-     * supplier's constructor prototype.
+     * on the object.
      * @param The supplier object
      * @return the new object
      */
     Y.object = function(o) {
         var F = function() {};
-        // F.prototype = (limit) ? o.constructor.prototype : o;
         F.prototype = o;
         return new F();
     }; 
@@ -52,14 +50,6 @@ YUI.add("object", function(Y) {
                     o.constructor.prototype[p] !== o[p];
         };
 
-    // @todo remove --- 
-    // L.hasOwnProperty = function(o, p) {
-        // Y.log("Y.lang.hasOwnProperty will not be in 3.0.  Use Y.object.owns instead. "  +
-        // "This warning is here because omitting this function will cause silent failure " +
-        // "in browsers the have a hasOwnProperty implementation.");
-        // return O.owns(o, p);
-    // };
-
     /**
      * Returns an array containing the object's keys
      * @method keys
@@ -80,7 +70,7 @@ YUI.add("object", function(Y) {
     /**
      * Executes a function on each item. The function
      * receives the value, the key, and the object
-     * as paramters (in that order).
+     * as parameters (in that order).
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
@@ -89,21 +79,7 @@ YUI.add("object", function(Y) {
     O.each = function (o, f, c) {
         var s = c || Y;
 
-        // hack in NodeList support
-        // if (o.length && o.item) {
-        //     for (var i=0, l=o..get('length'); i<l; i=i+1) {
-        //         f.call(s, o.item(i), i, o);
-        //     }
-        // } else {
-        //     for (var i in o) {
-        //         if (O.owns(o, i)) {
-        //             f.call(s, o[i], i, o);
-        //         }
-        //     }
-        // }
-
         for (var i in o) {
-            // if ((proto && !(i in Object.prototype)) || O.owns(o, i)) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }

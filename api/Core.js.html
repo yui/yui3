@@ -169,7 +169,7 @@
 <span class="c">     *        4: object to prototype</span>
 <span class="c">     * @param merge {boolean} merge objects instead of overwriting/ignoring</span>
 <span class="c">     * Used by Y.aggregate</span>
-<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     * @return the augmented object</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">mode</span><span class="o">,</span> <span class="nx">merge</span><span class="o">)</span> <span class="o">{</span>
 
@@ -241,21 +241,90 @@
 <span class="c"></span>                <span class="nx">f</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
 <span class="c">     * Applies prototype properties from the supplier to the receiver.</span>
+<span class="c">     * The receiver can be a constructor or an instance.</span>
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
 <span class="c">     * @param {Function} s  the object that supplies the properties to augment</span>
 <span class="c">     * @param ov {boolean} if true, properties already on the receiver</span>
 <span class="c">     * will be overwritten if found on the supplier.</span>
 <span class="c">     * @param wl {string[]} a whitelist.  If supplied, only properties in </span>
 <span class="c">     * this list will be applied to the receiver.</span>
-<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     * @param args {Array | Any} arg or arguments to apply to the supplier</span>
+<span class="c">     * constructor when initializing.</span>
+<span class="c">     * @return the augmented object</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">var</span> <span class="nx">sProto</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">newProto</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">construct</span> <span class="o">=</span> <span class="nx">s</span><span class="o">,</span> 
+            <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
+            <span class="nx">target</span> <span class="o">=</span>  <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+        <span class="c">// working on a class, so apply constructor infrastructure</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">rProto</span> <span class="o">&amp;&amp;</span> <span class="nx">construct</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="c">// console.log(&#39;augment will call constructor: &#39; + construct.FOO);</span>
+<span class="c"></span>
+            <span class="c">// Y.Do.before(r, construct);</span>
+<span class="c"></span>
+            <span class="k">var</span> <span class="nx">sequestered</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">newProto</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="c">// sequester all of the functions in the supplier</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">sProto</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="k">var</span> <span class="nx">AUGMENTER</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+                    <span class="k">var</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+
+<span class="c">// console.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing Event.Target&#39;);</span>
+<span class="c"></span>
+                    <span class="c">// overwrite the prototype with the sequestered functions</span>
+<span class="c"></span>                    <span class="c">// Y.mix(r.prototype, sequestered, true, wl);</span>
+<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span> <span class="nx">sequestered</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">wl</span><span class="o">);</span>
+
+                    <span class="c">// execute constructor</span>
+<span class="c"></span>                    <span class="nx">construct</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+
+                    <span class="c">// execute the sequestered function</span>
+<span class="c"></span>                    <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="c">//me[k].apply(me, arguments);</span>
+<span class="c"></span>                    
+                <span class="o">};</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+
+                    <span class="c">// sequester the function</span>
+<span class="c"></span>                    <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+
+                    <span class="c">// replace the sequestered function with a function that will</span>
+<span class="c"></span>                    <span class="c">// restore all sequestered functions and exectue the constructor.</span>
+<span class="c"></span>                    <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">AUGMENTER</span><span class="o">;</span>
+
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                    <span class="c">// Y.log(&#39;augment() applying non-function: &#39; + k);</span>
+<span class="c"></span>
+                    <span class="k">this</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span>
+
+            <span class="o">},</span> <span class="nx">newProto</span><span class="o">);</span>
+
+        <span class="c">// augmenting an instance, so apply the constructor immediately</span>
+<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">newProto</span> <span class="o">||</span> <span class="nx">sProto</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">applyConstructor</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">s</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">target</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -270,7 +339,7 @@
 <span class="c">     * will be overwritten if found on the supplier.</span>
 <span class="c">     * @param wl {string[]} a whitelist.  If supplied, only properties in </span>
 <span class="c">     * this list will be applied to the receiver.</span>
-<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     * @return the extended object</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -302,7 +371,7 @@
 
         <span class="c">// If the superclass doesn&#39;t have a standard constructor,</span>
 <span class="c"></span>        <span class="c">// define one so that Super() works</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">sp</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">OP</span><span class="o">.</span><span class="nx">constructor</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">s</span> <span class="o">!=</span> <span class="nb">Object</span> <span class="o">&amp;&amp;</span> <span class="nx">sp</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">==</span> <span class="nx">OP</span><span class="o">.</span><span class="nx">constructor</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">sp</span><span class="o">.</span><span class="nx">constructor</span><span class="o">=</span><span class="nx">s</span><span class="o">;</span>
         <span class="o">}</span>
     
@@ -328,7 +397,7 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">sx</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
     <span class="o">};</span>
 
     <span class="c">// objects that will use the event system require a unique </span>
@@ -360,15 +429,7 @@
                 <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
                     <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
                 <span class="nx">default</span><span class="o">:</span>
-
-                    <span class="c">// if (o instanceof Y.NodeList) {</span>
-<span class="c"></span>                    <span class="c">//     // Y.log(&#39;found NodeList &#39; + o.length());</span>
-<span class="c"></span>                    <span class="c">//     for (var i=0, l=o.length(); i&lt;l; i=i+1) {</span>
-<span class="c"></span>                    <span class="c">//         f.call(c || o, o.item(i), i, o);</span>
-<span class="c"></span>                    <span class="c">//     }</span>
-<span class="c"></span>                    <span class="c">//     return Y;</span>
-<span class="c"></span>                    <span class="c">// }</span>
-<span class="c"></span>                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
@@ -458,25 +519,6 @@
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">};</span>
 
-    <span class="c">/*</span>
-<span class="c">     * Fetch remote content</span>
-<span class="c">     * @method io</span>
-<span class="c">     * @parameter type {string} get, post, script, css</span>
-<span class="c">     * @param c callback for xhr, options for Get</span>
-<span class="c">     */</span>
-    <span class="c">// Y.io = function(type, url, c) {</span>
-<span class="c"></span>    <span class="c">//     switch (type) {</span>
-<span class="c"></span>    <span class="c">//         case &#39;script&#39;:</span>
-<span class="c"></span>    <span class="c">//             return Y.Get.script(url, c);</span>
-<span class="c"></span>    <span class="c">//             break; // get util</span>
-<span class="c"></span>    <span class="c">//         case &#39;css&#39;: </span>
-<span class="c"></span>    <span class="c">//             return Y.Get.css(url, c);</span>
-<span class="c"></span>    <span class="c">//             break; // get util</span>
-<span class="c"></span>    <span class="c">//         default:</span>
-<span class="c"></span>    <span class="c">//             return Y.io.asyncRequest.apply(Y.io, arguments);</span>
-<span class="c"></span>    <span class="c">//     }</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span>
     <span class="c">// Overload specs: element/selector?/widget?</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>

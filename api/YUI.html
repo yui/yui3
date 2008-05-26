@@ -322,7 +322,7 @@ callback, object (method host), methodName, context, 1-n arguments
                                         
                                         
                                         
-                                        YUI
+                                        void
                                             <strong>aggregate</strong>
                                            (
                                                 
@@ -379,9 +379,9 @@ this list will be applied to the receiver.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        YUI
+                                                        void
                                                     </code></dt>
-                                                    <dd>the YUI instance</dd>
+                                                    <dd>the extended object</dd>
                                                 </dl>
              
                                         </div>
@@ -468,7 +468,7 @@ from the core method to the caller
                                         
                                         
                                         
-                                        YUI
+                                        void
                                             <strong>augment</strong>
                                            (
                                                 
@@ -488,11 +488,16 @@ from the core method to the caller
                                                          wl
                                                     
                                                 
+                                                        , 
+                                                         args
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
                                             Applies prototype properties from the supplier to the receiver.
+The receiver can be a constructor or an instance.
                                         </div>
 
                                         <div class="description">
@@ -517,14 +522,19 @@ will be overwritten if found on the supplier.
                                                               a whitelist.  If supplied, only properties in 
 this list will be applied to the receiver.
                                                         </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array | Any&gt;</code>
+                                                              arg or arguments to apply to the supplier
+constructor when initializing.
+                                                        </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        YUI
+                                                        void
                                                     </code></dt>
-                                                    <dd>the YUI instance</dd>
+                                                    <dd>the augmented object</dd>
                                                 </dl>
              
                                         </div>
@@ -1009,7 +1019,7 @@ copy, use clone.
                                         
                                          static 
                                         
-                                        YUI
+                                        void
                                             <strong>mix</strong>
                                            (
                                                 
@@ -1090,9 +1100,9 @@ Used by Y.aggregate
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        YUI
+                                                        void
                                                     </code></dt>
-                                                    <dd>the YUI instance</dd>
+                                                    <dd>the augmented object</dd>
                                                 </dl>
              
                                         </div>
@@ -1311,7 +1321,7 @@ must be the last parameter.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_after">after</a>
                                 </li>
-                                <li class=""><!--<code>YUI</code>-->
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_aggregate">aggregate</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
@@ -1320,7 +1330,7 @@ must be the last parameter.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_AlterReturn">AlterReturn</a>
                                 </li>
-                                <li class=""><!--<code>YUI</code>-->
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_augment">augment</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
@@ -1347,7 +1357,7 @@ must be the last parameter.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_merge">merge</a>
                                 </li>
-                                <li class=""><!--<code>YUI</code>-->
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_mix">mix</a>
                                 </li>
                                 <li class=""><!--<code>Object</code>-->

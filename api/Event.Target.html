@@ -60,43 +60,6 @@ not be created at all.
                     </div>
 
 
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="private">
-                                    <h4><a name="property___yui_events">__yui_events</a>
-                                        <code>- private Object[]</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Private storage of custom events
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="private">
-                                    <h4><a name="property___yui_targets">__yui_targets</a>
-                                        <code>- private {}</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Private storage of bubble targets
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-
-
-                            </div>
-                        </div>
 
 
                         <div class="section method details">
@@ -304,12 +267,7 @@ arguments to append to the callback's argument list.
                                         <div class="description">
                                             Fire a custom event by name.  The callback functions will be executed
 from the context specified when the event was created, and with the 
-following parameters:
-<ul>
-<li>The first argument fire() was executed with</li>
-<li>The custom object (if any) that was passed into the subscribe() 
-method</li>
-</ul>
+following parameters.
 If the custom event object hasn't been created, then the event hasn't 
 been published and it has no subscribers.  For performance sake, we 
 immediate exit in this case.  This means the event won't bubble, so 
@@ -322,8 +280,9 @@ be published on this object first.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>type &lt;string&gt;</code>
-                                                                  the type, or name of the event
+                                                            <code>type &lt;String|Object&gt;</code>
+                                                              The type of the event, or an object that contains
+a 'type' property.
                                                         </dd>
                                                         <dd>
                                                             <code>arguments &lt;Object*&gt;</code>
@@ -764,17 +723,6 @@ be removed.
                         </ul>
                     </div>
 
-                    <div class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class="private"><a href="#property___yui_events">__yui_events</a>
-                                        <!--<code>&lt;{}&gt;</code>-->
-                                </li>
-                                <li class="private"><a href="#property___yui_targets">__yui_targets</a>
-                                        <!--<code>&lt;{}&gt;</code>-->
-                                </li>
-                        </ul>
-                    </div>
 
                     <div class="module">
                         <h4>Methods</h4>

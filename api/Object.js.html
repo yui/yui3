@@ -45,15 +45,13 @@
     <span class="c">/**</span>
 <span class="c">     * Returns a new object based upon the supplied object.  By</span>
 <span class="c">     * default the new object&#39;s prototype will have all members</span>
-<span class="c">     * on the object.  Optionally, this can be limited to the</span>
-<span class="c">     * supplier&#39;s constructor prototype.</span>
+<span class="c">     * on the object.</span>
 <span class="c">     * @param The supplier object</span>
 <span class="c">     * @return the new object</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
-        <span class="c">// F.prototype = (limit) ? o.constructor.prototype : o;</span>
-<span class="c"></span>        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
     <span class="o">};</span> 
 
@@ -90,14 +88,6 @@
                     <span class="nx">o</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">p</span><span class="o">]</span> <span class="o">!==</span> <span class="nx">o</span><span class="o">[</span><span class="nx">p</span><span class="o">];</span>
         <span class="o">};</span>
 
-    <span class="c">// @todo remove --- </span>
-<span class="c"></span>    <span class="c">// L.hasOwnProperty = function(o, p) {</span>
-<span class="c"></span>        <span class="c">// Y.log(&quot;Y.lang.hasOwnProperty will not be in 3.0.  Use Y.object.owns instead. &quot;  +</span>
-<span class="c"></span>        <span class="c">// &quot;This warning is here because omitting this function will cause silent failure &quot; +</span>
-<span class="c"></span>        <span class="c">// &quot;in browsers the have a hasOwnProperty implementation.&quot;);</span>
-<span class="c"></span>        <span class="c">// return O.owns(o, p);</span>
-<span class="c"></span>    <span class="c">// };</span>
-<span class="c"></span>
     <span class="c">/**</span>
 <span class="c">     * Returns an array containing the object&#39;s keys</span>
 <span class="c">     * @method keys</span>
@@ -118,7 +108,7 @@
     <span class="c">/**</span>
 <span class="c">     * Executes a function on each item. The function</span>
 <span class="c">     * receives the value, the key, and the object</span>
-<span class="c">     * as paramters (in that order).</span>
+<span class="c">     * as parameters (in that order).</span>
 <span class="c">     * @param o the object to iterate</span>
 <span class="c">     * @param f {function} the function to execute</span>
 <span class="c">     * @param c the execution context</span>
@@ -127,22 +117,8 @@
     <span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">;</span>
 
-        <span class="c">// hack in NodeList support</span>
-<span class="c"></span>        <span class="c">// if (o.length &amp;&amp; o.item) {</span>
-<span class="c"></span>        <span class="c">//     for (var i=0, l=o..get(&#39;length&#39;); i&lt;l; i=i+1) {</span>
-<span class="c"></span>        <span class="c">//         f.call(s, o.item(i), i, o);</span>
-<span class="c"></span>        <span class="c">//     }</span>
-<span class="c"></span>        <span class="c">// } else {</span>
-<span class="c"></span>        <span class="c">//     for (var i in o) {</span>
-<span class="c"></span>        <span class="c">//         if (O.owns(o, i)) {</span>
-<span class="c"></span>        <span class="c">//             f.call(s, o[i], i, o);</span>
-<span class="c"></span>        <span class="c">//         }</span>
-<span class="c"></span>        <span class="c">//     }</span>
-<span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>
         <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// if ((proto &amp;&amp; !(i in Object.prototype)) || O.owns(o, i)) {</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>

@@ -532,7 +532,7 @@ YUI.add("event-dom", function(Y) {
 
                         // Just in case DOMReady did not go off for some reason
                         // E._ready();
-                        Y.fire('event:ready');
+                        Y.fire && Y.fire('event:ready');
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the

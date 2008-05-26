@@ -38,6 +38,8 @@
                         </style>
 <div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;event-target&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
+    <span class="nx">SILENT</span> <span class="o">=</span> <span class="o">{</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">:</span> <span class="kc">true</span> <span class="o">}</span>
+
     <span class="c">/**</span>
 <span class="c">     * Event.Target is designed to be used with Y.augment to wrap </span>
 <span class="c">     * Event.Custom in an interface that allows events to be subscribed to </span>
@@ -47,25 +49,33 @@
 <span class="c">     *</span>
 <span class="c">     * @Class Event.Target</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span> <span class="o">};</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">{</span> 
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">// console.log(&#39;Event.Target constructor executed: &#39; + this._yuid);</span>
+<span class="c"></span>
+        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Private storage of custom events</span>
-<span class="c">         * @property __yui_events</span>
-<span class="c">         * @type Object[]</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">__yui_events</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
 
-        <span class="c">/**</span>
-<span class="c">         * Private storage of bubble targets</span>
-<span class="c">         * @property __yui_targets</span>
-<span class="c">         * @type {}</span>
-<span class="c">         * @private</span>
-<span class="c">         */</span>
-        <span class="nx">__yui_targets</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+            <span class="nx">events</span><span class="o">:</span> <span class="o">{},</span>
+
+            <span class="nx">targets</span><span class="o">:</span> <span class="o">{},</span>
+
+            <span class="nx">config</span><span class="o">:</span> <span class="nx">o</span><span class="o">,</span>
+
+            <span class="nx">defaults</span><span class="o">:</span> <span class="o">{</span>
+                <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span> 
+                <span class="nx">host</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
+                <span class="nx">emitFacade</span><span class="o">:</span> <span class="nx">o</span><span class="o">.</span><span class="nx">emitFacade</span> <span class="o">||</span> <span class="kc">false</span>
+            <span class="o">}</span>
+            
+        <span class="o">};</span>
+
+    <span class="o">};</span>
+
+    <span class="k">var</span> <span class="nx">ET</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">;</span>
+
+    <span class="nx">ET</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
         <span class="c">/**</span>
 <span class="c">         * Subscribe to a Event.Custom by event type</span>
@@ -78,9 +88,7 @@
 <span class="c">         */</span>
         <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-
-            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
+            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
                 <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="c">// return ce.subscribe(fn, context, p_override);</span>
@@ -106,13 +114,13 @@
 <span class="c">         */</span>
         <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="c">// If this is a</span>
+            <span class="c">// If this is an event handle, use it to detach</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="o">}</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="k">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">evts</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span>
+
             <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">evts</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
@@ -174,9 +182,7 @@
 <span class="c">         */</span>
         <span class="nx">publish</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-
-            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{},</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span><span class="o">,</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">opts</span> <span class="o">||</span> <span class="o">{},</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">,</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">];</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;publish() skipped: &#39;&quot;</span><span class="o">+</span><span class="nx">type</span><span class="o">+</span><span class="s2">&quot;&#39; exists&quot;</span><span class="o">);</span>
@@ -187,10 +193,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
 
                 <span class="c">// apply defaults</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="nx">context</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
-                    <span class="nx">host</span><span class="o">:</span> <span class="k">this</span>
-                <span class="o">})</span>
+<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">defaults</span><span class="o">);</span>
 
                 <span class="nx">ce</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">CustomEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
 
@@ -213,8 +216,7 @@
 <span class="c">         * @param o {Event.Target} the target to add</span>
 <span class="c">         */</span>
         <span class="nx">addTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span> <span class="o">||</span> <span class="o">{};</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -223,18 +225,14 @@
 <span class="c">         * @param o {Event.Target} the target to remove</span>
 <span class="c">         */</span>
         <span class="nx">removeTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)];</span>
+            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">targets</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">o</span><span class="o">)];</span>
         <span class="o">},</span>
 
        <span class="c">/**</span>
 <span class="c">         * Fire a custom event by name.  The callback functions will be executed</span>
 <span class="c">         * from the context specified when the event was created, and with the </span>
-<span class="c">         * following parameters:</span>
-<span class="c">         *   &lt;ul&gt;</span>
-<span class="c">         *   &lt;li&gt;The first argument fire() was executed with&lt;/li&gt;</span>
-<span class="c">         *   &lt;li&gt;The custom object (if any) that was passed into the subscribe() </span>
-<span class="c">         *       method&lt;/li&gt;</span>
-<span class="c">         *   &lt;/ul&gt;</span>
+<span class="c">         * following parameters.</span>
+<span class="c">         *</span>
 <span class="c">         * If the custom event object hasn&#39;t been created, then the event hasn&#39;t </span>
 <span class="c">         * been published and it has no subscribers.  For performance sake, we </span>
 <span class="c">         * immediate exit in this case.  This means the event won&#39;t bubble, so </span>
@@ -242,36 +240,37 @@
 <span class="c">         * be published on this object first.</span>
 <span class="c">         *</span>
 <span class="c">         * @method fire</span>
-<span class="c">         * @param type    {string}  the type, or name of the event</span>
+<span class="c">         * @param type {String|Object} The type of the event, or an object that contains</span>
+<span class="c">         * a &#39;type&#39; property.</span>
 <span class="c">         * @param arguments {Object*} an arbitrary set of parameters to pass to </span>
-<span class="c">         *                            the handler.</span>
+<span class="c">         * the handler.</span>
 <span class="c">         * @return {boolean} the return value from Event.Custom.fire</span>
 <span class="c">         *                   </span>
 <span class="c">         */</span>
         <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span> <span class="o">||</span> <span class="o">{};</span>
-
             <span class="k">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
-                   <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
 
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
+
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!(</span><span class="nx">type</span> <span class="k">in</span> <span class="nx">SILENT</span><span class="o">))</span> <span class="o">{</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; fire did nothing (not published, no subscribers)&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Event&#39;</span><span class="o">);</span>
+                <span class="o">}</span>
                 <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="c">// the originalTarget is what the listener was bound to</span>
+            <span class="c">// Provide this object&#39;s subscribers the object they are listening to.</span>
 <span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
-            <span class="c">// the target is what started the bubble.  this will be</span>
-<span class="c"></span>            <span class="c">// null unless set in bubble(), in which case this event</span>
-<span class="c"></span>            <span class="c">// is the target.</span>
+            <span class="c">// This this the target unless target is current not null</span>
+<span class="c"></span>            <span class="c">// (set in bubble()).</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">.</span><span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
             <span class="c">// clear target for next fire()</span>
@@ -288,7 +287,7 @@
 <span class="c">         * @return {Event.Target} the custom event or a falsy value</span>
 <span class="c">         */</span>
         <span class="nx">getEvent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_events</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">;</span>
             <span class="k">return</span> <span class="o">(</span><span class="nx">e</span> <span class="o">&amp;&amp;</span> <span class="nx">e</span><span class="o">[</span><span class="nx">type</span><span class="o">]);</span>
         <span class="o">},</span>
 
@@ -300,9 +299,10 @@
 <span class="c">         */</span>
         <span class="nx">bubble</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">evt</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">targs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">__yui_targets</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">targs</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
+
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// @TODO need to provide the event target to the bubble target</span>
 <span class="c"></span>
@@ -313,7 +313,7 @@
 
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
 
-                    <span class="c">// stopPropagation()</span>
+                    <span class="c">// stopPropagation() was called</span>
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">break</span><span class="o">;</span>
                     <span class="o">}</span>
@@ -375,7 +375,9 @@
 
     <span class="o">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">.</span><span class="nx">prototype</span><span class="o">);</span>
+    <span class="c">// make Y an event target</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">ET</span><span class="o">);</span>
+
 
 <span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
 </pre></div>

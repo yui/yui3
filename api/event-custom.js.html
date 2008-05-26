@@ -419,14 +419,24 @@
             <span class="k">var</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">es</span><span class="o">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">silent</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">silent</span><span class="o">);</span>
-                <span class="c">// es.logging = (es.logging || (this.type === &#39;yui:log&#39;));</span>
-<span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+
+                <span class="c">// es.silent = (es.silent || this.silent);</span>
+<span class="c"></span>
+                <span class="c">// queue this event if next</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="o">!=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">next</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;queued event &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">.</span><span class="nx">push</span><span class="o">([</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">]);</span>
+                    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span> <span class="o">=</span> <span class="o">{</span>
                    <span class="c">// id of the first event in the stack</span>
 <span class="c"></span>                   <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">,</span>
+                   <span class="nx">next</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                    <span class="nx">silent</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">silent</span><span class="o">,</span>
-                   <span class="nx">logging</span><span class="o">:</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">)</span>
+                   <span class="nx">logging</span><span class="o">:</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">),</span>
+                   <span class="nx">queue</span><span class="o">:</span> <span class="o">[]</span>
                 <span class="o">};</span>
 
                 <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">;</span>
@@ -494,13 +504,29 @@
 
                 <span class="c">// bubble if this is hosted in an event target and propagation has not been stopped</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;bubbling &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attempting to bubble &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// console.log(&#39;clearing stack: &#39; + es.id + &#39;, &#39; + this);</span>
-<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<span class="c"></span>
+                    <span class="c">// process queued events</span>
+<span class="c"></span>                    <span class="k">var</span> <span class="nx">queue</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">queue</span><span class="o">;</span>
+
+                    <span class="k">while</span> <span class="o">(</span><span class="nx">queue</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="c">// q[0] = the event, q[1] = arguments to fire</span>
+<span class="c"></span>                        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queue</span><span class="o">.</span><span class="nx">pop</span><span class="o">(),</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+
+<span class="c">// console.log(&#39;firing queued event &#39; + ce.type + &#39;, from &#39; + this);</span>
+<span class="c"></span>                    
+                        <span class="c">// set up stack to allow the next item to be processed</span>
+<span class="c"></span>                        <span class="nx">es</span><span class="o">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">;</span>
+
+                        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">q</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+                    <span class="o">}</span>
+
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">errors</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
@@ -550,9 +576,8 @@
 <span class="c">         * @method toString</span>
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-             <span class="k">return</span> <span class="s2">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span> <span class="o">+</span> <span class="s2">&quot;id: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">;</span>
-                  <span class="c">// + &quot;context: &quot; + this.context;</span>
-<span class="c"></span>
+             <span class="k">return</span> <span class="s2">&quot;{ CE &#39;&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s2">&quot;&#39; &quot;</span> <span class="o">+</span> <span class="s2">&quot;id: &quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span>
+                  <span class="s2">&quot;, host: &quot;</span> <span class="o">+</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot; }&quot;</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>

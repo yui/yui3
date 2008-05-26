@@ -570,7 +570,7 @@
 
                         <span class="c">// Just in case DOMReady did not go off for some reason</span>
 <span class="c"></span>                        <span class="c">// E._ready();</span>
-<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;event:ready&#39;</span><span class="o">);</span>
+<span class="c"></span>                        <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;event:ready&#39;</span><span class="o">);</span>
 
                         <span class="c">// Available elements may not have been detected before the</span>
 <span class="c"></span>                        <span class="c">// window load event fires. Try to find them now so that the</span>

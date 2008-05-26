@@ -369,3 +369,27 @@ property names rather than e.details[1]
 
 changed Y.clone signature to include a 'safe' option
 
+Y.augment big change
+
+    When augmenting a class, the augmented class executes the supplier
+    constructor the first time any method from the supplier is invoked.
+
+    When augmenting an instance, the supplier constructor is executed
+    immediately.
+
+    Accepts an optional args argument to apply to the supplier's constructor
+
+    Event.Target now uses this feature to configure the emitFacade attribute
+    globally on an event target.
+
+    Y.mix(obj, Event.Target.prototype) won't work now, but you just need to switch
+    to Y.augment(obj, Event.Target)
+
+Event.Target.fire no longer creates the event if it hasn't been published
+
+    Avoids creating unneeded objects
+
+    However, an event that has not been published (which also means it has
+    not been subscribed to) will not bubble.  This may need to be configurable.
+
+

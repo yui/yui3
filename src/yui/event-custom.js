@@ -381,14 +381,24 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             var es = Y.env._eventstack;
 
             if (es) {
-                es.silent = (es.silent || this.silent);
-                // es.logging = (es.logging || (this.type === 'yui:log'));
+
+                // es.silent = (es.silent || this.silent);
+
+                // queue this event if next
+                if (this != es.next) {
+                    this.log('queued event ' + this.type + ', ' + this);
+                    es.queue.push([this, arguments]);
+                    return true;
+                }
+
             } else {
                 Y.env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
+                   next: this,
                    silent: this.silent,
-                   logging: (this.type === 'yui:log')
+                   logging: (this.type === 'yui:log'),
+                   queue: []
                 };
 
                 es = Y.env._eventstack;
@@ -456,12 +466,28 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // bubble if this is hosted in an event target and propagation has not been stopped
                 if (this.bubbles && this.host && !this.stopped) {
-                    this.log('bubbling ' + this);
+                    this.log('attempting to bubble ' + this);
                     ret = this.host.bubble(this);
                 }
 
                 if (es.id === this.id) {
                     // console.log('clearing stack: ' + es.id + ', ' + this);
+
+                    // process queued events
+                    var queue = Y.env._eventstack.queue;
+
+                    while (queue.length) {
+                        // q[0] = the event, q[1] = arguments to fire
+                        var q = queue.pop(), ce = q[0];
+
+// console.log('firing queued event ' + ce.type + ', from ' + this);
+                    
+                        // set up stack to allow the next item to be processed
+                        es.next = ce;
+
+                        ret = ce.fire.apply(ce, q[1]);
+                    }
+
                     Y.env._eventstack = null;
                 }
 
@@ -512,9 +538,8 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          * @method toString
          */
         toString: function() {
-             return "'" + this.type + "' " + "id: " + this.id;
-                  // + "context: " + this.context;
-
+             return "{ CE '" + this.type + "' " + "id: " + this.id +
+                  ", host: " + (this.host && Y.stamp(this.host) + " }");
         },
 
         /**

@@ -14,7 +14,7 @@
 
 (function() {
 
-    var Y = YUI().use('dump', 'substitute', 'compat');
+    var Y = YUI().use('dump', 'substitute');
 
     Y.on('yui:log', function(msg) {
         var d=document, b=d.body, n=d.createElement("div");
@@ -48,52 +48,86 @@ property names rather than e.details[1]
 
         // o1.addTarget(o3);
 
-    var o1 = new Y.Event.Target(),
-        o2 = new Y.Event.Target(),
-        o3 = new Y.Event.Target();
+    var O = function() {
+        Y.log('O constructor executed');
+    }
 
-        o1.publish('o:1', {
-            defaultFn: function() {
-                Y.log('DEFAULT FN o1');
-            },
+    Y.augment(O, Y.Event.Target, null, null, {
+        emitFacade: true
+    });
 
-            emitFacade: true
-        });
+    // augmented class
+    var o1 = new O();
 
-        o1.addTarget(o2);
+    // event target instance or subclass
+    var o2 = new Y.Event.Target();
+
+    // augmented object
+    var o3 = new Object();
+    Y.augment(o3, Y.Event.Target, null, null, {
+        emitFacade: true
+    });
+
+    o1.publish('o:1', {
+        defaultFn: function() {
+            Y.log('DEFAULT FN o1');
+        } 
+        // , emitFacade: true
+    });
+
+    o1.publish('chain', {
+        defaultFn: function() {
+            Y.log('DEFAULT FN CHAIN');
+        } 
+        // , emitFacade: true
+    });
+
+    o1.addTarget(o2);
 
 
-        o2.addTarget(o3);
+    // o2.addTarget(o3);
 
-        o1.subscribe('o:1', function(e) {
-            Y.log('o1: ' + Y.lang.dump(Y.array(arguments)));
+    o1.subscribe('o:1', function(e) {
+        Y.log('o1, o:1: ' + Y.lang.dump(Y.array(arguments)));
+        this.fire('chain', 1, 2);
+        // e.halt();
+    });
 
-            // e.halt();
-        });
+    o1.subscribe('chain', function(e) {
+        Y.log('o1, chain o1' + Y.lang.dump(Y.array(arguments)));
+    });
 
-        o2.subscribe('o:1', function(e) {
-            Y.log('o1 to o2: ' + Y.lang.dump(Y.array(arguments)));
-        });
+    o2.subscribe('o:1', function(e) {
+        Y.log('o2, o:1 from o1: ' + Y.lang.dump(Y.array(arguments)));
+    });
 
-        o3.subscribe('o:1', function(e) {
-            Y.log('o1 to o3: ' + Y.lang.dump(Y.array(arguments)));
-        });
+    o2.subscribe('chain', function(e) {
+        Y.log('o2, chain from o1: ' + Y.lang.dump(Y.array(arguments)));
+    });
+
+    /*
+
+    o3.subscribe('o:1', function(e) {
+        Y.log('o1 to o3: ' + Y.lang.dump(Y.array(arguments)));
+    });
 
 
-        o3.subscribe('o:2', function(e) {
-            Y.log('o2 to o3: ' + Y.lang.dump(Y.array(arguments)));
-        });
+    o3.subscribe('o:2', function(e) {
+        Y.log('o2 to o3: ' + Y.lang.dump(Y.array(arguments)));
+    });
+    */
 
-        // with facade
-        o1.fire('o:1', {
+    // with facade
+    o1.fire('o:1', {
 
-            foo: 1,
-            bar: "absorbed from fire arg 0"
+        foo: 1,
+        bar: "absorbed from fire arg 0"
 
-        }, 2, 3);
+    }, 2, 3);
 
-        // without facade
-        o1.fire('o:2', 4, 5, 6);
+
+    // without facade
+    //o1.fire('o:2', 4, 5, 6);
 
 })();
 

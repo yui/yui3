@@ -1,6 +1,8 @@
 
 YUI.add("event-target", function(Y) {
 
+    SILENT = { 'yui:log': true }
+
     /**
      * Event.Target is designed to be used with Y.augment to wrap 
      * Event.Custom in an interface that allows events to be subscribed to 
@@ -10,25 +12,33 @@ YUI.add("event-target", function(Y) {
      *
      * @Class Event.Target
      */
-    Y.EventTarget = function() { };
+    Y.EventTarget = function(opts) { 
 
-    Y.EventTarget.prototype = {
+        // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        /**
-         * Private storage of custom events
-         * @property __yui_events
-         * @type Object[]
-         * @private
-         */
-        __yui_events: null,
+        var o = (Y.lang.isObject(opts)) ? opts : {};
 
-        /**
-         * Private storage of bubble targets
-         * @property __yui_targets
-         * @type {}
-         * @private
-         */
-        __yui_targets: null,
+        this._yuievt = {
+
+            events: {},
+
+            targets: {},
+
+            config: o,
+
+            defaults: {
+                context: this, 
+                host: this,
+                emitFacade: o.emitFacade || false
+            }
+            
+        };
+
+    };
+
+    var ET = Y.EventTarget;
+
+    ET.prototype = {
 
         /**
          * Subscribe to a Event.Custom by event type
@@ -41,9 +51,7 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context, p_override) {
 
-            this.__yui_events = this.__yui_events || {};
-
-            var ce = this.__yui_events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type),
                 a = Y.array(arguments, 1, true);
 
             // return ce.subscribe(fn, context, p_override);
@@ -69,13 +77,13 @@ YUI.add("event-target", function(Y) {
          */
         unsubscribe: function(type, fn, context) {
 
-            // If this is a
+            // If this is an event handle, use it to detach
             if (Y.lang.isObject(type) && type.detach) {
                 return type.detach();
             }
 
-            this.__yui_events = this.__yui_events || {};
-            var evts = this.__yui_events;
+            var evts = this._yuievt.events;
+
             if (type) {
                 var ce = evts[type];
                 if (ce) {
@@ -137,9 +145,7 @@ YUI.add("event-target", function(Y) {
          */
         publish: function(type, opts) {
 
-            this.__yui_events = this.__yui_events || {};
-
-            var o = opts || {}, events = this.__yui_events, ce = events[type];
+            var o = opts || {}, events = this._yuievt.events, ce = events[type];
 
             if (ce) {
                 Y.log("publish() skipped: '"+type+"' exists");
@@ -150,10 +156,7 @@ YUI.add("event-target", function(Y) {
             } else {
 
                 // apply defaults
-                Y.mix(o, {
-                    context: this,
-                    host: this
-                })
+                Y.mix(o, this._yuievt.defaults);
 
                 ce = new Y.CustomEvent(type, o);
 
@@ -176,8 +179,7 @@ YUI.add("event-target", function(Y) {
          * @param o {Event.Target} the target to add
          */
         addTarget: function(o) {
-            this.__yui_targets = this.__yui_targets || {};
-            this.__yui_targets[Y.stamp(o)] = o;
+            this._yuievt.targets[Y.stamp(o)] = o;
         },
 
         /**
@@ -186,18 +188,14 @@ YUI.add("event-target", function(Y) {
          * @param o {Event.Target} the target to remove
          */
         removeTarget: function(o) {
-            delete this.__yui_targets[Y.stamp(o)];
+            delete this._yuievt.targets[Y.stamp(o)];
         },
 
        /**
          * Fire a custom event by name.  The callback functions will be executed
          * from the context specified when the event was created, and with the 
-         * following parameters:
-         *   <ul>
-         *   <li>The first argument fire() was executed with</li>
-         *   <li>The custom object (if any) that was passed into the subscribe() 
-         *       method</li>
-         *   </ul>
+         * following parameters.
+         *
          * If the custom event object hasn't been created, then the event hasn't 
          * been published and it has no subscribers.  For performance sake, we 
          * immediate exit in this case.  This means the event won't bubble, so 
@@ -205,36 +203,37 @@ YUI.add("event-target", function(Y) {
          * be published on this object first.
          *
          * @method fire
-         * @param type    {string}  the type, or name of the event
+         * @param type {String|Object} The type of the event, or an object that contains
+         * a 'type' property.
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
-         *                            the handler.
+         * the handler.
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
         fire: function(type) {
 
-            this.__yui_events = this.__yui_events || {};
-
             var typeIncluded = Y.lang.isString(type),
-                   t = (typeIncluded) ? type : (type && type.type);
+                t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
+
             if (!ce) {
+                if (!(type in SILENT)) {
+Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
+                }
                 return true;
             }
 
-            // the originalTarget is what the listener was bound to
+            // Provide this object's subscribers the object they are listening to.
             ce.originalTarget = this;
 
-            // the target is what started the bubble.  this will be
-            // null unless set in bubble(), in which case this event
-            // is the target.
+            // This this the target unless target is current not null
+            // (set in bubble()).
             if (!ce.target) {
                 ce.target = this;
             }
 
             var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
-
             var ret = ce.fire.apply(ce, a);
 
             // clear target for next fire()
@@ -251,7 +250,7 @@ YUI.add("event-target", function(Y) {
          * @return {Event.Target} the custom event or a falsy value
          */
         getEvent: function(type) {
-            var e = this.__yui_events;
+            var e = this._yuievt.events;
             return (e && e[type]);
         },
 
@@ -263,9 +262,10 @@ YUI.add("event-target", function(Y) {
          */
         bubble: function(evt) {
 
-            var targs = this.__yui_targets, ret = true;
+            var targs = this._yuievt.targets, ret = true;
 
             if (!evt.stopped && targs) {
+
                 for (var i in targs) {
                     // @TODO need to provide the event target to the bubble target
 
@@ -276,7 +276,7 @@ YUI.add("event-target", function(Y) {
 
                     ret = ret && ce.fire.apply(ce, evt.details);
 
-                    // stopPropagation()
+                    // stopPropagation() was called
                     if (ce.stopped) {
                         break;
                     }
@@ -338,6 +338,8 @@ YUI.add("event-target", function(Y) {
 
     };
 
-    Y.mix(Y, Y.EventTarget.prototype);
+    // make Y an event target
+    Y.augment(Y, ET);
+
 
 }, "3.0.0");

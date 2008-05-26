@@ -75,6 +75,9 @@ YUI.prototype = {
             _used: {}
         };
 
+
+        this.constructor = YUI;
+
         var i = YUI.env._idx++;
 
         this.env._yidx = i;
@@ -776,7 +779,7 @@ YUI.add("core", function(Y) {
      *        4: object to prototype
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
-     * @return {YUI} the YUI instance
+     * @return the augmented object
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
 
@@ -848,21 +851,90 @@ YUI.add("core", function(Y) {
                 f(r, s);
         }
 
-        return Y;
+        return r;
     };
 
     /**
      * Applies prototype properties from the supplier to the receiver.
+     * The receiver can be a constructor or an instance.
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return {YUI} the YUI instance
+     * @param args {Array | Any} arg or arguments to apply to the supplier
+     * constructor when initializing.
+     * @return the augmented object
      */
-    Y.augment = function(r, s, ov, wl) {
-        return Y.mix(r, s, ov, wl, 1);
+    Y.augment = function(r, s, ov, wl, args) {
+
+        var sProto = s.prototype, newProto = null, construct = s, 
+            a = (args) ? Y.array(args) : [], rProto = r.prototype, 
+            target =  rProto || r, applyConstructor = false;
+
+        // working on a class, so apply constructor infrastructure
+        if (rProto && construct) {
+
+            // console.log('augment will call constructor: ' + construct.FOO);
+
+            // Y.Do.before(r, construct);
+
+            var sequestered = {};
+            newProto = {};
+
+            // sequester all of the functions in the supplier
+            Y.each(sProto, function(v, k) {
+
+                var AUGMENTER = function() {
+
+                    var me = this;
+
+// console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+
+                    // overwrite the prototype with the sequestered functions
+                    // Y.mix(r.prototype, sequestered, true, wl);
+                    Y.mix(me, sequestered, true, wl);
+
+                    // execute constructor
+                    construct.apply(me, a);
+
+                    // execute the sequestered function
+                    sequestered[k].apply(me, arguments);
+                    //me[k].apply(me, arguments);
+                    
+                };
+
+                if (Y.lang.isFunction(v)) {
+
+                    // sequester the function
+                    sequestered[k] = v;
+
+                    // replace the sequestered function with a function that will
+                    // restore all sequestered functions and exectue the constructor.
+                    this[k] = AUGMENTER;
+
+                } else {
+
+                    // Y.log('augment() applying non-function: ' + k);
+
+                    this[k] = v;
+                }
+
+            }, newProto);
+
+        // augmenting an instance, so apply the constructor immediately
+        } else {
+            applyConstructor = true;
+        }
+
+        Y.mix(target, newProto || sProto, ov, wl);
+
+        if (applyConstructor) {
+            s.apply(target, a);
+        }
+
+        return r;
     };
 
     /**
@@ -877,7 +949,7 @@ YUI.add("core", function(Y) {
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return {YUI} the YUI instance
+     * @return the extended object
      */
     Y.aggregate = function(r, s, ov, wl) {
         return Y.mix(r, s, ov, wl, 0, true);
@@ -909,7 +981,7 @@ YUI.add("core", function(Y) {
 
         // If the superclass doesn't have a standard constructor,
         // define one so that Super() works
-        if (sp.constructor == OP.constructor) {
+        if (s != Object && sp.constructor == OP.constructor) {
             sp.constructor=s;
         }
     
@@ -935,7 +1007,7 @@ YUI.add("core", function(Y) {
             Y.mix(r, sx, true);
         }
 
-        return Y;
+        return r;
     };
 
     // objects that will use the event system require a unique 
@@ -967,14 +1039,6 @@ YUI.add("core", function(Y) {
                 case 2:
                     return A.each(Y.array(o, 0, true), f, c);
                 default:
-
-                    // if (o instanceof Y.NodeList) {
-                    //     // Y.log('found NodeList ' + o.length());
-                    //     for (var i=0, l=o.length(); i<l; i=i+1) {
-                    //         f.call(c || o, o.item(i), i, o);
-                    //     }
-                    //     return Y;
-                    // }
                     return Y.object.each(o, f, c);
             }
         }
@@ -1064,25 +1128,6 @@ YUI.add("core", function(Y) {
         Y.on("yui:load", m);
         return this;
     };
-
-    /*
-     * Fetch remote content
-     * @method io
-     * @parameter type {string} get, post, script, css
-     * @param c callback for xhr, options for Get
-     */
-    // Y.io = function(type, url, c) {
-    //     switch (type) {
-    //         case 'script':
-    //             return Y.Get.script(url, c);
-    //             break; // get util
-    //         case 'css': 
-    //             return Y.Get.css(url, c);
-    //             break; // get util
-    //         default:
-    //             return Y.io.asyncRequest.apply(Y.io, arguments);
-    //     }
-    // };
 
     // Overload specs: element/selector?/widget?
     Y.get = function() {
@@ -1179,14 +1224,12 @@ YUI.add("object", function(Y) {
     /**
      * Returns a new object based upon the supplied object.  By
      * default the new object's prototype will have all members
-     * on the object.  Optionally, this can be limited to the
-     * supplier's constructor prototype.
+     * on the object.
      * @param The supplier object
      * @return the new object
      */
     Y.object = function(o) {
         var F = function() {};
-        // F.prototype = (limit) ? o.constructor.prototype : o;
         F.prototype = o;
         return new F();
     }; 
@@ -1224,14 +1267,6 @@ YUI.add("object", function(Y) {
                     o.constructor.prototype[p] !== o[p];
         };
 
-    // @todo remove --- 
-    // L.hasOwnProperty = function(o, p) {
-        // Y.log("Y.lang.hasOwnProperty will not be in 3.0.  Use Y.object.owns instead. "  +
-        // "This warning is here because omitting this function will cause silent failure " +
-        // "in browsers the have a hasOwnProperty implementation.");
-        // return O.owns(o, p);
-    // };
-
     /**
      * Returns an array containing the object's keys
      * @method keys
@@ -1252,7 +1287,7 @@ YUI.add("object", function(Y) {
     /**
      * Executes a function on each item. The function
      * receives the value, the key, and the object
-     * as paramters (in that order).
+     * as parameters (in that order).
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
@@ -1261,21 +1296,7 @@ YUI.add("object", function(Y) {
     O.each = function (o, f, c) {
         var s = c || Y;
 
-        // hack in NodeList support
-        // if (o.length && o.item) {
-        //     for (var i=0, l=o..get('length'); i<l; i=i+1) {
-        //         f.call(s, o.item(i), i, o);
-        //     }
-        // } else {
-        //     for (var i in o) {
-        //         if (O.owns(o, i)) {
-        //             f.call(s, o[i], i, o);
-        //         }
-        //     }
-        // }
-
         for (var i in o) {
-            // if ((proto && !(i in Object.prototype)) || O.owns(o, i)) {
             if (O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
@@ -2321,14 +2342,24 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             var es = Y.env._eventstack;
 
             if (es) {
-                es.silent = (es.silent || this.silent);
-                // es.logging = (es.logging || (this.type === 'yui:log'));
+
+                // es.silent = (es.silent || this.silent);
+
+                // queue this event if next
+                if (this != es.next) {
+                    this.log('queued event ' + this.type + ', ' + this);
+                    es.queue.push([this, arguments]);
+                    return true;
+                }
+
             } else {
                 Y.env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
+                   next: this,
                    silent: this.silent,
-                   logging: (this.type === 'yui:log')
+                   logging: (this.type === 'yui:log'),
+                   queue: []
                 };
 
                 es = Y.env._eventstack;
@@ -2396,12 +2427,28 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // bubble if this is hosted in an event target and propagation has not been stopped
                 if (this.bubbles && this.host && !this.stopped) {
-                    this.log('bubbling ' + this);
+                    this.log('attempting to bubble ' + this);
                     ret = this.host.bubble(this);
                 }
 
                 if (es.id === this.id) {
                     // console.log('clearing stack: ' + es.id + ', ' + this);
+
+                    // process queued events
+                    var queue = Y.env._eventstack.queue;
+
+                    while (queue.length) {
+                        // q[0] = the event, q[1] = arguments to fire
+                        var q = queue.pop(), ce = q[0];
+
+// console.log('firing queued event ' + ce.type + ', from ' + this);
+                    
+                        // set up stack to allow the next item to be processed
+                        es.next = ce;
+
+                        ret = ce.fire.apply(ce, q[1]);
+                    }
+
                     Y.env._eventstack = null;
                 }
 
@@ -2452,9 +2499,8 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          * @method toString
          */
         toString: function() {
-             return "'" + this.type + "' " + "id: " + this.id;
-                  // + "context: " + this.context;
-
+             return "{ CE '" + this.type + "' " + "id: " + this.id +
+                  ", host: " + (this.host && Y.stamp(this.host) + " }");
         },
 
         /**
@@ -2680,6 +2726,8 @@ Y.extend(Y.ChainedError, Error, {
 
 YUI.add("event-target", function(Y) {
 
+    SILENT = { 'yui:log': true }
+
     /**
      * Event.Target is designed to be used with Y.augment to wrap 
      * Event.Custom in an interface that allows events to be subscribed to 
@@ -2689,25 +2737,33 @@ YUI.add("event-target", function(Y) {
      *
      * @Class Event.Target
      */
-    Y.EventTarget = function() { };
+    Y.EventTarget = function(opts) { 
 
-    Y.EventTarget.prototype = {
+        // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        /**
-         * Private storage of custom events
-         * @property __yui_events
-         * @type Object[]
-         * @private
-         */
-        __yui_events: null,
+        var o = (Y.lang.isObject(opts)) ? opts : {};
 
-        /**
-         * Private storage of bubble targets
-         * @property __yui_targets
-         * @type {}
-         * @private
-         */
-        __yui_targets: null,
+        this._yuievt = {
+
+            events: {},
+
+            targets: {},
+
+            config: o,
+
+            defaults: {
+                context: this, 
+                host: this,
+                emitFacade: o.emitFacade || false
+            }
+            
+        };
+
+    };
+
+    var ET = Y.EventTarget;
+
+    ET.prototype = {
 
         /**
          * Subscribe to a Event.Custom by event type
@@ -2720,9 +2776,7 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context, p_override) {
 
-            this.__yui_events = this.__yui_events || {};
-
-            var ce = this.__yui_events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type),
                 a = Y.array(arguments, 1, true);
 
             // return ce.subscribe(fn, context, p_override);
@@ -2748,13 +2802,13 @@ YUI.add("event-target", function(Y) {
          */
         unsubscribe: function(type, fn, context) {
 
-            // If this is a
+            // If this is an event handle, use it to detach
             if (Y.lang.isObject(type) && type.detach) {
                 return type.detach();
             }
 
-            this.__yui_events = this.__yui_events || {};
-            var evts = this.__yui_events;
+            var evts = this._yuievt.events;
+
             if (type) {
                 var ce = evts[type];
                 if (ce) {
@@ -2816,9 +2870,7 @@ YUI.add("event-target", function(Y) {
          */
         publish: function(type, opts) {
 
-            this.__yui_events = this.__yui_events || {};
-
-            var o = opts || {}, events = this.__yui_events, ce = events[type];
+            var o = opts || {}, events = this._yuievt.events, ce = events[type];
 
             if (ce) {
                 Y.log("publish() skipped: '"+type+"' exists");
@@ -2829,10 +2881,7 @@ YUI.add("event-target", function(Y) {
             } else {
 
                 // apply defaults
-                Y.mix(o, {
-                    context: this,
-                    host: this
-                })
+                Y.mix(o, this._yuievt.defaults);
 
                 ce = new Y.CustomEvent(type, o);
 
@@ -2855,8 +2904,7 @@ YUI.add("event-target", function(Y) {
          * @param o {Event.Target} the target to add
          */
         addTarget: function(o) {
-            this.__yui_targets = this.__yui_targets || {};
-            this.__yui_targets[Y.stamp(o)] = o;
+            this._yuievt.targets[Y.stamp(o)] = o;
         },
 
         /**
@@ -2865,18 +2913,14 @@ YUI.add("event-target", function(Y) {
          * @param o {Event.Target} the target to remove
          */
         removeTarget: function(o) {
-            delete this.__yui_targets[Y.stamp(o)];
+            delete this._yuievt.targets[Y.stamp(o)];
         },
 
        /**
          * Fire a custom event by name.  The callback functions will be executed
          * from the context specified when the event was created, and with the 
-         * following parameters:
-         *   <ul>
-         *   <li>The first argument fire() was executed with</li>
-         *   <li>The custom object (if any) that was passed into the subscribe() 
-         *       method</li>
-         *   </ul>
+         * following parameters.
+         *
          * If the custom event object hasn't been created, then the event hasn't 
          * been published and it has no subscribers.  For performance sake, we 
          * immediate exit in this case.  This means the event won't bubble, so 
@@ -2884,36 +2928,37 @@ YUI.add("event-target", function(Y) {
          * be published on this object first.
          *
          * @method fire
-         * @param type    {string}  the type, or name of the event
+         * @param type {String|Object} The type of the event, or an object that contains
+         * a 'type' property.
          * @param arguments {Object*} an arbitrary set of parameters to pass to 
-         *                            the handler.
+         * the handler.
          * @return {boolean} the return value from Event.Custom.fire
          *                   
          */
         fire: function(type) {
 
-            this.__yui_events = this.__yui_events || {};
-
             var typeIncluded = Y.lang.isString(type),
-                   t = (typeIncluded) ? type : (type && type.type);
+                t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
+
             if (!ce) {
+                if (!(type in SILENT)) {
+Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
+                }
                 return true;
             }
 
-            // the originalTarget is what the listener was bound to
+            // Provide this object's subscribers the object they are listening to.
             ce.originalTarget = this;
 
-            // the target is what started the bubble.  this will be
-            // null unless set in bubble(), in which case this event
-            // is the target.
+            // This this the target unless target is current not null
+            // (set in bubble()).
             if (!ce.target) {
                 ce.target = this;
             }
 
             var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
-
             var ret = ce.fire.apply(ce, a);
 
             // clear target for next fire()
@@ -2930,7 +2975,7 @@ YUI.add("event-target", function(Y) {
          * @return {Event.Target} the custom event or a falsy value
          */
         getEvent: function(type) {
-            var e = this.__yui_events;
+            var e = this._yuievt.events;
             return (e && e[type]);
         },
 
@@ -2942,9 +2987,10 @@ YUI.add("event-target", function(Y) {
          */
         bubble: function(evt) {
 
-            var targs = this.__yui_targets, ret = true;
+            var targs = this._yuievt.targets, ret = true;
 
             if (!evt.stopped && targs) {
+
                 for (var i in targs) {
                     // @TODO need to provide the event target to the bubble target
 
@@ -2955,7 +3001,7 @@ YUI.add("event-target", function(Y) {
 
                     ret = ret && ce.fire.apply(ce, evt.details);
 
-                    // stopPropagation()
+                    // stopPropagation() was called
                     if (ce.stopped) {
                         break;
                     }
@@ -3017,7 +3063,9 @@ YUI.add("event-target", function(Y) {
 
     };
 
-    Y.mix(Y, Y.EventTarget.prototype);
+    // make Y an event target
+    Y.augment(Y, ET);
+
 
 }, "3.0.0");
 YUI.add("event-ready", function(Y) {
@@ -3645,7 +3693,7 @@ YUI.add("event-dom", function(Y) {
 
                         // Just in case DOMReady did not go off for some reason
                         // E._ready();
-                        Y.fire('event:ready');
+                        Y.fire && Y.fire('event:ready');
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the
