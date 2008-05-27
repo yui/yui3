@@ -2,18 +2,17 @@
  * The selector module provides helper methods allowing CSS3 Selectors to be used with DOM elements.
  * @module selector
  * @title Selector Utility
- * @namespace Y.util
  * @requires yahoo, dom
  */
 
 YUI.add('selector', function(Y) {
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @namespace Y.util
  * @class Selector
  * @static
  */
 var Selector = function() {};
+
 
 var reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
 
@@ -212,7 +211,7 @@ Selector.prototype = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        //Y.log('query: returning ' + result, 'info', 'Selector');
+        Y.log('query: returning ' + result, 'info', 'Selector');
         return result;
     }
 };
@@ -279,7 +278,6 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (nodes.length) {
         result = rFilter(nodes, token, firstOnly, deDupe); 
     }
-
     clearParentCache();
     return result;
 };
