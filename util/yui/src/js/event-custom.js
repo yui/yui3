@@ -343,7 +343,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             ret = s.notify(this.context, a);
 
             if (false === ret || this.stopped > 1) {
-                this.log("Event canceled by subscriber");
+                this.log("Event canceled by subscriber " + ret + ', ' + this.stopped);
                 return false;
             }
 
@@ -402,6 +402,8 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                    next: this,
                    silent: this.silent,
                    logging: (this.type === 'yui:log'),
+                   stopped: 0,
+                   prevented: 0,
                    queue: []
                 };
 
@@ -421,8 +423,8 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                            args=Y.array(arguments, 0, true), i;
 
                 this.fired = true;
-                this.stopped = 0;
-                this.prevented = 0;
+                this.stopped = es.stopped || 0;
+                this.prevented = es.prevented || 0;
                 this.details = args;
 
                 this.log("Firing " + this  + ", " + "args: " + args);
@@ -453,7 +455,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                             if (this.lastError) {
                                 errors.push(this.lastError);
                             }
-                            if (!ret) {
+                            if (false === ret) {
                                 break;
                             }
                         }
@@ -462,16 +464,17 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 es.logging = (es.lastLogState);
 
+                // bubble if this is hosted in an event target and propagation has not been stopped
+                // @TODO check if we need to worry about defaultFn order
+                if (this.bubbles && this.host && !this.stopped) {
+                    this.log('attempting to bubble ' + this);
+                    ret = this.host.bubble(this);
+                }
+
                 // execute the default behavior if not prevented
                 // @TODO need context
                 if (this.defaultFn && !this.prevented) {
                     this.defaultFn.apply(this.host || this, args);
-                }
-
-                // bubble if this is hosted in an event target and propagation has not been stopped
-                if (this.bubbles && this.host && !this.stopped) {
-                    this.log('attempting to bubble ' + this);
-                    ret = this.host.bubble(this);
                 }
 
                 if (es.id === this.id) {
@@ -551,6 +554,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopPropagation: function() {
             this.stopped = 1;
+            Y.env._eventstack.stopped = 1;
         },
 
         /**
@@ -560,10 +564,12 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopImmediatePropagation: function() {
             this.stopped = 2;
+            Y.env._eventstack.stopped = 2;
         },
 
         preventDefault: function() {
             this.prevented = 1;
+            Y.env._eventstack.prevented = 1;
         }
 
     };

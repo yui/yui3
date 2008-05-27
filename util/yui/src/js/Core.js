@@ -218,6 +218,9 @@ YUI.add("core", function(Y) {
      * @param args {Array | Any} arg or arguments to apply to the supplier
      * constructor when initializing.
      * @return the augmented object
+     *
+     * @todo constructor optional?
+     * @todo understanding what an instance is augmented with
      */
     Y.augment = function(r, s, ov, wl, args) {
 
@@ -235,7 +238,8 @@ YUI.add("core", function(Y) {
             var sequestered = {};
             newProto = {};
 
-            // sequester all of the functions in the supplier
+            // sequester all of the functions in the supplier and replace with
+            // one that will restore all of them.
             Y.each(sProto, function(v, k) {
 
                 var AUGMENTER = function() {
@@ -244,14 +248,14 @@ YUI.add("core", function(Y) {
 
 // console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
-                    // overwrite the prototype with the sequestered functions
+                    // overwrite the prototype with all of the sequestered functions
                     // Y.mix(r.prototype, sequestered, true, wl);
                     Y.mix(me, sequestered, true, wl);
 
-                    // execute constructor
+                    // execute the augmenter constructor
                     construct.apply(me, a);
 
-                    // execute the sequestered function
+                    // execute the original sequestered function
                     sequestered[k].apply(me, arguments);
                     //me[k].apply(me, arguments);
                     

@@ -404,9 +404,9 @@ Custom events are queued to make bubble sequence sane
     event2 defaultFn
     event2 bubble
 
-    Events are only queued if the are allowed to bubble as it changes the order
+    Events are only queued if the are allowed to (canQueue) as it changes the order
     of operation otherwise (log statements for instance are not queued because
-    it would prevent the correct sequence of messages in some cases)
+    it would prevent the correct sequence of messages when operating on bubbling events
 
 
 

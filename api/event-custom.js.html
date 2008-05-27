@@ -381,7 +381,7 @@
             <span class="nx">ret</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">notify</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Event canceled by subscriber&quot;</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Event canceled by subscriber &quot;</span> <span class="o">+</span> <span class="nx">ret</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
 
@@ -440,6 +440,8 @@
                    <span class="nx">next</span><span class="o">:</span> <span class="k">this</span><span class="o">,</span>
                    <span class="nx">silent</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">silent</span><span class="o">,</span>
                    <span class="nx">logging</span><span class="o">:</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s1">&#39;yui:log&#39;</span><span class="o">),</span>
+                   <span class="nx">stopped</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+                   <span class="nx">prevented</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
                    <span class="nx">queue</span><span class="o">:</span> <span class="o">[]</span>
                 <span class="o">};</span>
 
@@ -459,8 +461,8 @@
                            <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">fired</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="o">;</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Firing &quot;</span> <span class="o">+</span> <span class="k">this</span>  <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="s2">&quot;args: &quot;</span> <span class="o">+</span> <span class="nx">args</span><span class="o">);</span>
@@ -491,7 +493,7 @@
                             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">lastError</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">errors</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">lastError</span><span class="o">);</span>
                             <span class="o">}</span>
-                            <span class="k">if</span> <span class="o">(!</span><span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="kc">false</span> <span class="o">===</span> <span class="nx">ret</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="k">break</span><span class="o">;</span>
                             <span class="o">}</span>
                         <span class="o">}</span>
@@ -500,16 +502,17 @@
 
                 <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">lastLogState</span><span class="o">);</span>
 
+                <span class="c">// bubble if this is hosted in an event target and propagation has not been stopped</span>
+<span class="c"></span>                <span class="c">// @TODO check if we need to worry about defaultFn order</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attempting to bubble &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                <span class="o">}</span>
+
                 <span class="c">// execute the default behavior if not prevented</span>
 <span class="c"></span>                <span class="c">// @TODO need context</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">defaultFn</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">prevented</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">defaultFn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
-                <span class="o">}</span>
-
-                <span class="c">// bubble if this is hosted in an event target and propagation has not been stopped</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attempting to bubble &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
@@ -589,6 +592,7 @@
 <span class="c">         */</span>
         <span class="nx">stopPropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -598,10 +602,12 @@
 <span class="c">         */</span>
         <span class="nx">stopImmediatePropagation</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="nx">preventDefault</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
         <span class="o">}</span>
 
     <span class="o">};</span>

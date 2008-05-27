@@ -574,7 +574,7 @@ YUI.add("event-dom", function(Y) {
                 _tryPreloadAttach: function() {
 
                     if (this.locked) {
-                        return false;
+                        return;
                     }
 
                     if (Y.ua.ie) {
@@ -583,7 +583,7 @@ YUI.add("event-dom", function(Y) {
                         // issue.
                         if (!this.DOMReady) {
                             this.startInterval();
-                            return false;
+                            return;
                         }
                     }
 
@@ -662,7 +662,7 @@ YUI.add("event-dom", function(Y) {
 
                     this.locked = false;
 
-                    return true;
+                    return;
 
                 },
 
