@@ -60,7 +60,8 @@ property names rather than e.details[1]
     var o1 = new O();
 
     // event target instance or subclass
-    var o2 = new Y.Event.Target();
+    // var o2 = new Y.Event.Target();
+    var o2 = new O();
 
     // augmented object
     var o3 = new Object();
@@ -106,6 +107,7 @@ property names rather than e.details[1]
 
     o2.subscribe('o:1', function(e) {
         Y.log('o2, o:1 from o1: ' + Y.lang.dump(Y.array(arguments)));
+        e.halt();
     });
 
     o2.subscribe('chain', function(e) {

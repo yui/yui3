@@ -461,8 +461,6 @@
                            <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">fired</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="o">;</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Firing &quot;</span> <span class="o">+</span> <span class="k">this</span>  <span class="o">+</span> <span class="s2">&quot;, &quot;</span> <span class="o">+</span> <span class="s2">&quot;args: &quot;</span> <span class="o">+</span> <span class="nx">args</span><span class="o">);</span>
@@ -508,6 +506,9 @@
                     <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attempting to bubble &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
 
                 <span class="c">// execute the default behavior if not prevented</span>
 <span class="c"></span>                <span class="c">// @TODO need context</span>

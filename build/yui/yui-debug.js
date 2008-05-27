@@ -2388,8 +2388,6 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                            args=Y.array(arguments, 0, true), i;
 
                 this.fired = true;
-                this.stopped = es.stopped || 0;
-                this.prevented = es.prevented || 0;
                 this.details = args;
 
                 this.log("Firing " + this  + ", " + "args: " + args);
@@ -2435,6 +2433,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     this.log('attempting to bubble ' + this);
                     ret = this.host.bubble(this);
                 }
+
+                this.stopped = es.stopped || 0;
+                this.prevented = es.prevented || 0;
 
                 // execute the default behavior if not prevented
                 // @TODO need context
