@@ -85,7 +85,7 @@ YUI.add("event-custom", function(Y) {
          */
         this.silent = this.logSystem;
 
-        this.canQueue = !(this.logSystem);
+        this.queuable = !(this.logSystem);
 
         /**
          * The subscribers to this event
@@ -152,11 +152,11 @@ YUI.add("event-custom", function(Y) {
          * Specifies whether or not this event's default function
          * can be canceled by a subscriber by executing preventDefault() 
          * on the event facade 
-         * @property cancelable 
+         * @property preventable 
          * @type boolean 
          * @default true
          */
-        this.cancelable = true;
+        this.preventable = true;
 
         /**
          * Specifies whether or not a subscriber can stop the event propagation
@@ -386,10 +386,16 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             if (es) {
 
+                // var b = this.bubbles, h = this.host;
+                // if (b && h) {
+                //     b = (h._yuievt.targets.length);
+                // }
+
                 // es.silent = (es.silent || this.silent);
 
-                // queue this event if next
-                if (this.canQueue && this.type != es.next.type) {
+                // queue this event if the current item in the queue bubbles
+                // if (b && this.queuable && this.type != es.next.type) {
+                if (this.queuable && this.type != es.next.type) {
                     this.log('queued event ' + this.type + ', ' + this);
                     es.queue.push([this, arguments]);
                     return true;
@@ -574,8 +580,10 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         },
 
         preventDefault: function() {
-            this.prevented = 1;
-            Y.env._eventstack.prevented = 1;
+            if (this.preventable) {
+                this.prevented = 1;
+                Y.env._eventstack.prevented = 1;
+            }
         }
 
     };

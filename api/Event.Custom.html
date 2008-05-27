@@ -131,26 +131,6 @@ via stopPropagation(), stopImmediatePropagation(), or halt()
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_cancelable">cancelable</a>
-                                        <code>- boolean</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Specifies whether or not this event's default function
-can be canceled by a subscriber by executing preventDefault() 
-on the event facade
-                                        </div>
-                                    </div>
-     
-                                        
-                                    <div class="default">
-                                        Default Value: true
-                                    </div>        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
                                     <h4><a name="property_context">context</a>
                                         <code>- object</code>
                                     </h4>
@@ -250,6 +230,26 @@ caught.  The most recent exception is stored in this property
                                     </div>
      
                                         
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_preventable">preventable</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Specifies whether or not this event's default function
+can be canceled by a subscriber by executing preventDefault() 
+on the event facade
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
 
 
                                     <hr />
@@ -1017,9 +1017,6 @@ the execution context.
                                 <li class=""><a href="#property_bubbles">bubbles</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_cancelable">cancelable</a>
-                                        <!--<code>&lt;string&gt;</code>-->
-                                </li>
                                 <li class=""><a href="#property_context">context</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
@@ -1036,6 +1033,9 @@ the execution context.
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_lastError">lastError</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_preventable">preventable</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_prevented">prevented</a>

@@ -123,7 +123,7 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">canQueue</span> <span class="o">=</span> <span class="o">!(</span><span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">queuable</span> <span class="o">=</span> <span class="o">!(</span><span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">);</span>
 
         <span class="c">/**</span>
 <span class="c">         * The subscribers to this event</span>
@@ -190,11 +190,11 @@
 <span class="c">         * Specifies whether or not this event&#39;s default function</span>
 <span class="c">         * can be canceled by a subscriber by executing preventDefault() </span>
 <span class="c">         * on the event facade </span>
-<span class="c">         * @property cancelable </span>
+<span class="c">         * @property preventable </span>
 <span class="c">         * @type boolean </span>
 <span class="c">         * @default true</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">cancelable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">preventable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * Specifies whether or not a subscriber can stop the event propagation</span>
@@ -424,10 +424,16 @@
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">)</span> <span class="o">{</span>
 
+                <span class="c">// var b = this.bubbles, h = this.host;</span>
+<span class="c"></span>                <span class="c">// if (b &amp;&amp; h) {</span>
+<span class="c"></span>                <span class="c">//     b = (h._yuievt.targets.length);</span>
+<span class="c"></span>                <span class="c">// }</span>
+<span class="c"></span>
                 <span class="c">// es.silent = (es.silent || this.silent);</span>
 <span class="c"></span>
-                <span class="c">// queue this event if next</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">canQueue</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">next</span><span class="o">.</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// queue this event if the current item in the queue bubbles</span>
+<span class="c"></span>                <span class="c">// if (b &amp;&amp; this.queuable &amp;&amp; this.type != es.next.type) {</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">queuable</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">!=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">next</span><span class="o">.</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;queued event &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
                     <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">.</span><span class="nx">push</span><span class="o">([</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">]);</span>
                     <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
@@ -612,8 +618,10 @@
         <span class="o">},</span>
 
         <span class="nx">preventDefault</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">preventable</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="o">}</span>
         <span class="o">}</span>
 
     <span class="o">};</span>
