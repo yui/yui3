@@ -2446,15 +2446,20 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 if (es.id === this.id) {
                     // console.log('clearing stack: ' + es.id + ', ' + this);
 
+                    // reset propragation properties while processing the rest of the queue
+
                     // process queued events
-                    var queue = Y.env._eventstack.queue;
+                    var queue = es.queue;
 
                     while (queue.length) {
                         // q[0] = the event, q[1] = arguments to fire
                         var q = queue.pop(), ce = q[0];
 
 // console.log('firing queued event ' + ce.type + ', from ' + this);
-                    
+//
+                        es.stopped = 0;
+                        es.prevented = 0;
+                        
                         // set up stack to allow the next item to be processed
                         es.next = ce;
 
