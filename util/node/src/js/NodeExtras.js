@@ -10,8 +10,6 @@ YUI.add('nodeextras', function(Y) {
      * @interface NodeExtras
      */
 
-    Y.use('node');
-
     var CLASS_NAME = 'className',
         OFFSET_TOP = 'offsetTop',
         POSITION = 'position',
@@ -22,7 +20,6 @@ YUI.add('nodeextras', function(Y) {
         NODE_TYPE = 'nodeType',
         OFFSET_LEFT = 'offsetLeft',
         GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
-        CONTAINS = 'contains',
         COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition';
 
     var regexCache = {};
@@ -42,15 +39,6 @@ YUI.add('nodeextras', function(Y) {
          */
         'text': function(node) {
             return node.get('innerText') || node.get('textContent') || '';
-        },
-
-        /**
-         * A NodeList containing only HTMLElement child nodes 
-         * @property children
-         * @type NodeList
-         */
-        'children': function(node) {
-            return node.queryAll('> *');
         }
     });
 
@@ -142,7 +130,9 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('previousSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;
@@ -160,27 +150,14 @@ YUI.add('nodeextras', function(Y) {
             while (node) {
                 node = node.get('nextSibling');
                 if ( node && node.get(NODE_TYPE) === 1 ) {
-                    return node;
+                    if (!method || method(node)) {
+                        return node;
+                    }
                 }
             }
             return null;
         },
         
-        /**
-         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
-         * @method contains
-         * @param {String | HTMLElement} needle The possible descendent
-         * @return {Boolean} Whether or not this node is an ancestor of needle
-         */
-        contains: function(node, needle) {
-            needle = Y.Node.get(needle);
-            if (node.hasMethod(CONTAINS))  {
-                return node.invoke(CONTAINS, needle);
-            } else if ( node.hasMethod(COMPARE_DOCUMENT_POSITION) ) { // gecko
-                return !!(node.invoke(COMPARE_DOCUMENT_POSITION, needle) & 16);
-            }
-        },
-
         /**
          * Gets the current position of an element based on page coordinates. 
          * Element must be part of the DOM tree to have page coordinates
@@ -290,4 +267,4 @@ YUI.add('nodeextras', function(Y) {
     
     });
 
-}, '3.0.0');
+}, '3.0.0', { requires: ['node'] });
