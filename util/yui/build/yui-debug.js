@@ -2354,7 +2354,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 // es.silent = (es.silent || this.silent);
 
                 // queue this event if next
-                if (this.canQueue && this != es.next) {
+                if (this.canQueue && this.type != es.next.type) {
                     this.log('queued event ' + this.type + ', ' + this);
                     es.queue.push([this, arguments]);
                     return true;

@@ -70,7 +70,14 @@ property names rather than e.details[1]
 
     o1.publish('o:1', {
         defaultFn: function() {
-            Y.log('DEFAULT FN o1');
+            Y.log('1 DEFAULT FN');
+        } 
+        // , emitFacade: true
+    });
+
+    o2.publish('o:1', {
+        defaultFn: function() {
+            Y.log('2 DEFAULT FN');
         } 
         // , emitFacade: true
     });
