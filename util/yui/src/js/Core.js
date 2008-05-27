@@ -253,16 +253,17 @@ YUI.add("core", function(Y) {
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
-                        if (me[i] === replacements[i]) {
+                        if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
                             me[i] = sequestered[i];
                         }
                     }
 
+                    // apply the constructor
                     construct.apply(me, a);
 
-                    // execute the original sequestered function
+                    // apply the original sequestered function
                     sequestered[k].apply(me, arguments);
-                    
+
                 };
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
