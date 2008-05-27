@@ -883,29 +883,33 @@ YUI.add("core", function(Y) {
 
             // Y.Do.before(r, construct);
 
-            var sequestered = {};
+            var sequestered = {}, replacements = {};
             newProto = {};
 
             // sequester all of the functions in the supplier and replace with
             // one that will restore all of them.
             Y.each(sProto, function(v, k) {
 
-                var AUGMENTER = function() {
+                // var initialized = false;
 
-                    var me = this;
+                replacements[k] = function() {
+
+                    var me = this, ac = arguments.callee;
 
 // console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
-                    // overwrite the prototype with all of the sequestered functions
-                    // Y.mix(r.prototype, sequestered, true, wl);
-                    Y.mix(me, sequestered, true, wl);
+                    // overwrite the prototype with all of the sequestered functions,
+                    // but only if it hasn't been overridden
+                    for (var i in sequestered) {
+                        if (me[i] === replacements[i]) {
+                            me[i] = sequestered[i];
+                        }
+                    }
 
-                    // execute the augmenter constructor
                     construct.apply(me, a);
 
                     // execute the original sequestered function
                     sequestered[k].apply(me, arguments);
-                    //me[k].apply(me, arguments);
                     
                 };
 
@@ -918,7 +922,7 @@ YUI.add("core", function(Y) {
 
                         // replace the sequestered function with a function that will
                         // restore all sequestered functions and exectue the constructor.
-                        this[k] = AUGMENTER;
+                        this[k] = replacements[k];
 
                     } else {
 
