@@ -398,11 +398,11 @@ Custom events are queued to make bubble sequence sane
     
     event1 fired
     subscriber to event1 fires event2
-    event1 defaultFn
     event1 bubble
+    event1 defaultFn
     event2 fired
-    event2 defaultFn
     event2 bubble
+    event2 defaultFn
 
     Events are only queued if the are allowed to (canQueue) as it changes the order
     of operation otherwise (log statements for instance are not queued because

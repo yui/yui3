@@ -261,20 +261,24 @@ YUI.add("core", function(Y) {
                     
                 };
 
-                if (Y.lang.isFunction(v)) {
+                if ((!wl || (k in wl)) && (ov || !(k in this))) {
 
-                    // sequester the function
-                    sequestered[k] = v;
+                    if (Y.lang.isFunction(v)) {
 
-                    // replace the sequestered function with a function that will
-                    // restore all sequestered functions and exectue the constructor.
-                    this[k] = AUGMENTER;
+                        // sequester the function
+                        sequestered[k] = v;
 
-                } else {
+                        // replace the sequestered function with a function that will
+                        // restore all sequestered functions and exectue the constructor.
+                        this[k] = AUGMENTER;
 
-                    // Y.log('augment() applying non-function: ' + k);
+                    } else {
 
-                    this[k] = v;
+                        // Y.log('augment() applying non-function: ' + k);
+
+                        this[k] = v;
+                    }
+
                 }
 
             }, newProto);
