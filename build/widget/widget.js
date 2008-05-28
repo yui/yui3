@@ -234,7 +234,6 @@
 
     YUI.add("plugin", M, "3.0.0");
 })();
-
 (function() {
 
     var M = function(Y) {
@@ -243,11 +242,13 @@
             L = Y.lang;
 
         // String constants
-        var PREFIX = "yui-",
-            HIDDEN = PREFIX + "hidden",
-            DISABLED = PREFIX + "disabled",
-            WIDTH = "width",
-            HEIGHT = "height";
+        var _CSS_CLASS_NAME_PREFIX = "yui-",
+        	_CONTENT_BOX_CSS_CLASS_NAME_SUFFIX = "-content",
+            _HIDDEN_CSS_CLASS_NAME_SUFFIX = "-hidden",
+            _DISABLED_CSS_CLASS_NAME_SUFFIX = "-disabled",
+            _FOCUS_CSS_CLASS_NAME_SUFFIX = "-focus",
+            _WIDTH = "width",
+            _HEIGHT = "height";
 
         // Widget nodeid-to-instance map for now, 1-to-1. 
         // Expand to nodeid-to-arrayofinstances if required.
@@ -260,8 +261,6 @@
          *        lifecycle methods provide by Base</li>
          *    <li>Abstract methods to support consistent MVC structure across 
          *        widgets: renderer, initUI, syncUI</li>
-         *    <li>Event subscriber support when binding listeners for model and ui 
-         *        synchronization: onUI, setUI</li>
          *    <li>Support for common widget attributes, such as id, node, visible, 
          *        disabled, strings</li>
          *    <li>Plugin registration and activation support</li>
@@ -279,9 +278,16 @@
             this.rendered = false;
             this._plugins = {};
 
-            if (!config.root) { // create from template if no root provided
+			var boundingBox;
+
+            if (!config.boundingbox) { // create from template if no bounding box provided
                 config = Y.merge(config);
-                config.root = Y.Node.create(this.constructor.TEMPLATE);
+                
+                boundingBox = Y.Node.create(this.constructor.TEMPLATE);
+                
+                config.boundingbox = boundingBox;
+                config.contentbox = boundingBox.get("firstChild");
+                
             }
 
             Widget.superclass.constructor.apply(this, arguments);
@@ -289,7 +295,7 @@
 
         /**
          * Static property provides a string to identify the class.
-         * Currently used to apply class identifiers to the root node
+         * Currently used to apply class identifiers to the bounding box 
          * and to classify events fired by the widget.
          *
          * @property YUI.Widget.NAME
@@ -298,7 +304,7 @@
          */
         Widget.NAME = "widget";
 
-        Widget.TEMPLATE = ['div'];
+        Widget.TEMPLATE = ["div", ["div"]];
 
         /**
          * Static property used to define the default attribute 
@@ -308,12 +314,21 @@
          * @type {Object}
          */
         Widget.ATTRS = {
-            root: {
+            boundingbox: {
                 // TODO: Write once? Not an attr?
                 set: function(val) {
                     return this._initNode(val);
-                }
+                },
+          		writeOnce: true
             },
+            
+            contentbox: {
+          		writeOnce: true
+            },
+
+			hasfocus: {
+				value: false
+			},
 
             disabled: {
                 value: false
@@ -339,7 +354,7 @@
         };
 
         /**
-         * Obtain Widget instances by root node id.
+         * Obtain Widget instances by bounding box id.
          *
          * @method YUI.Widget.getByNodeId
          * @param id {String} Id used to identify the widget uniquely.
@@ -411,8 +426,8 @@
 
                 // append to parent if provided, or to body if no parent and not in body 
                 parentNode = parentNode || Y.Node.get("body");
-                if (parentNode && !parentNode.contains(this._root)) {
-                    parentNode.appendChild(this._root);
+                if (parentNode && !parentNode.contains(this._boundingBox)) {
+                    parentNode.appendChild(this._boundingBox);
                 }
 
                 if (!this.rendered && this.fire("beforeRender") !== false) {
@@ -472,42 +487,6 @@
              */
             syncUI: function(){},
 
-            /**
-             * Sets the state of an attribute, based on UI state
-             * change. Used to indentify the source of a change as 
-             * UI based, so corresponding onUI listeners are not
-             * invoked (since the UI state is already in sync)
-             * 
-             * @method setUI
-             * @param name {String} attribute name
-             * @param value {Any} attribute value
-             * @param eventCfg {Object|boolean} Event configuration for the
-             * set - silent, source etc. If boolean, true, the set occurs 
-             * silently
-             */
-            setUI: function() {
-                // TODO: Will identify sets with UI sources, once Event 
-                // and AttributeProvider support is in place for event 
-                // data
-                return this.set.apply(this, arguments);
-            },
-
-            /**
-             * Sets up an event listeners specifically to sync UI with
-             * attribute state. These listeners will NOT be invoked if 
-             * the setUI method is used to set the attribute (see setUI)
-             * 
-             * @method onUI
-             * @param type {String} type of event
-             * @param callback {Function} handler for the event
-             */
-            onUI: function() {
-                // TODO: Will identify listeners for UI sources, once 
-                // Event and AttributeProvider support is in place for 
-                // event data
-                return this.on.apply(this, arguments);
-            },
-
             hide: function() {
                 return this.set('visible', false);
             },
@@ -515,6 +494,14 @@
             show: function() {
                 return this.set('visible', true);
             },
+
+			focus: function () {
+				return this.set('hasfocus', true);
+			},
+			
+			blur: function () {
+				return this.set('hasfocus', false);
+			},
 
             enable: function() {
                 return this.set('enabled', true);
@@ -529,7 +516,7 @@
              * AttributeProvider.set, with additional ability 
              * to chain.
              * 
-             * @method setUI
+             * @method set
              * @chain
              */
             set: function() { 
@@ -539,15 +526,15 @@
             },
 
             getNodeAttr: function(attr) {
-                if (this._root) {
-                    return this._root.att(attr);
+                if (this._boundingBox) {
+                    return this._boundingBox.att(attr);
                 }
                 return undefined;
             },
 
             setNodeAttr: function(attr, val) {
-                if (this._root) {
-                    this._root.att(attr, val);
+                if (this._boundingBox) {
+                    this._boundingBox.att(attr, val);
                 }
                 return this;
             },
@@ -688,12 +675,15 @@
              * @protected
              */
             _bindUI: function() {
-
-                this.onUI('visibleChange', this._onVisibleChange);
-                this.onUI('disabledChange', this._onDisabledChange);
-                this.onUI('heightChange', this._onHeightChange);
-                this.onUI('widthChange', this._onWidthChange);
+                this.on('visibleChange', this._onVisibleChange);
+                this.on('disabledChange', this._onDisabledChange);
+                this.on('heightChange', this._onHeightChange);
+                this.on('widthChange', this._onWidthChange);
+				this.on('hasfocusChange', this._onHasFocusChange);
+				this.on("focus", this._onFocus);
+				this.on("blur", this._onBlur);
             },
+
 
             /**
              * Updates the widget UI to reflect the attribute state.
@@ -706,10 +696,11 @@
                 this._uiSetDisabled(this.get('disabled'));
                 this._uiSetHeight(this.get('height'));
                 this._uiSetWidth(this.get('width'));
+				this._uiSetHasFocus(this.get('hasfocus'));
             },
 
             /**
-             * Sets the height on the widget's root element
+             * Sets the height on the widget's bounding box element
              * 
              * @method _uiSetHeight
              * @protected
@@ -719,11 +710,11 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._root.setStyle(HEIGHT, val);
+                this._boundingBox.setStyle(_HEIGHT, val);
             },
 
             /**
-             * Sets the width on the widget's root element
+             * Sets the width on the widget's bounding box element
              *
              * @method _uiSetWidth
              * @protected
@@ -733,7 +724,7 @@
                 if (L.isNumber(val)) {
                     val = val + this.DEF_UNIT;
                 }
-                this._root.setStyle(WIDTH, val);
+                this._boundingBox.setStyle(_WIDTH, val);
             },
 
             /**
@@ -744,10 +735,13 @@
              * @param {boolean} val
              */
             _uiSetVisible: function(val) {
+
+				var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + _HIDDEN_CSS_CLASS_NAME_SUFFIX;
+
                 if (val === true) { 
-                    this._root.removeClass(HIDDEN); 
+                    this._boundingBox.removeClass(sClassName); 
                 } else {
-                    this._root.addClass(HIDDEN); 
+                    this._boundingBox.addClass(sClassName); 
                 }
             },
 
@@ -758,12 +752,44 @@
              * @param {boolean} val
              */
             _uiSetDisabled: function(val) {
+
+				var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + 
+									_DISABLED_CSS_CLASS_NAME_SUFFIX;
+
                 if (val === true) {
-                    this._root.addClass(DISABLED);
+                    this._boundingBox.addClass(sClassName);
                 } else {
-                    this._root.removeClass(DISABLED);
+                    this._boundingBox.removeClass(sClassName);
                 }
             },
+
+            /**
+             * Sets the hasfocus state for the UI
+             * 
+             * @protected
+             * @param {boolean} val
+             * @param {string} src String representing the source that triggered an update to 
+             * the UI.     
+             */
+			_uiSetHasFocus: function(val, src) {
+				
+				var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + 
+									_FOCUS_CSS_CLASS_NAME_SUFFIX;
+
+                if (val === true) {
+                    this._boundingBox.addClass(sClassName);
+                    if (src !== "ui") {
+						this._boundingBox.focus();
+					}
+					
+                } else {
+                    this._boundingBox.removeClass(sClassName);
+                    if (src !== "ui") {
+						this._boundingBox.blur();
+					}
+                }
+			
+			},
 
             /**
              * Initializes widget state based on the node value
@@ -784,33 +810,53 @@
                 }
 
                 // Node not found
-                if (!node) {
-                    throw('node not found');
+                if (node) {
+					this.id = node.get("id");
+					this._boundingBox = node;
+	
+					var contentBox = node.query(":first-child");
+					
+					if (contentBox) {
+						this._contentBox = contentBox;
+						this.set("contentbox", contentBox);
+					}
+					else {
+						throw("node for content box not found");					
+					}
                 }
-
-                this.id = node.get("id");
-                this._root = node;
+                else {
+                    throw("node for bounding box not found");                
+                }
 
                 return node;
             },
 
             /**
-             * Initializes the UI state for the root node. Applies marker
+             * Initializes the UI state for the bounding box. Applies marker
              * classes to identify the widget.
              * 
              * @method _uiInitNode
              * @protected
              */
             _uiInitNode: function() {
-                var classes = this._getClasses(), constructor;
+                var classes = this._getClasses(), 
+                	constructor,
+                	classname;
 
                 // Starting from 1, because we don't need Base (yui-base) marker
                 for (var i = 1; i < classes.length; i++) {
                     constructor = classes[i];
                     if (constructor.NAME) {
-                        this._root.addClass(PREFIX + constructor.NAME.toLowerCase());
+                    
+                    	classname = _CSS_CLASS_NAME_PREFIX + constructor.NAME.toLowerCase();
+                    
+                        this._boundingBox.addClass(classname);
+						this._contentBox.addClass(classname + _CONTENT_BOX_CSS_CLASS_NAME_SUFFIX);
                     }
                 }
+                
+                this._boundingBox.set("tabIndex", 0);
+
             },
 
             /**
@@ -858,6 +904,37 @@
             },
 
             /**
+             * hasfocus attribute UI handler
+             * 
+             * @method _onHasFocusChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+			_onHasFocusChange: function(evt) {
+				this._uiSetHasFocus(evt.newVal, evt.src);
+			},
+
+            /**
+             * focus event UI handler used to sync the state of the Widget with the DOM
+             * 
+             * @method _onFocus
+             * @protected
+             */
+			_onFocus: function () {
+				this.set("hasfocus", true, { src: "ui" });
+			},
+
+            /**
+             * blur event UI handler used to sync the state of the Widget with the DOM
+             * 
+             * @method _onBlur
+             * @protected
+             */			
+			_onBlur: function () {
+				this.set("hasfocus", false, { src: "ui" });
+			},
+
+            /**
              * Generic toString implementation for all widgets.
              * @method toString
              */
@@ -892,7 +969,6 @@
 
     YUI.add("widget", M, "3.0.0");
 })();
-
 (function() {
 
     var M = function(Y) {
@@ -910,7 +986,9 @@
             'mouseover',
             'mouseout',
             'mousemove',
-            'dblclick'
+            'dblclick',
+            'focus',
+            'blur'
         ];
 
         Mouse.NAME = "mouse";
@@ -943,7 +1021,7 @@
             },
 
             _initUI: function() {
-                var root = this.owner._root;
+                var root = this.owner._boundingBox;
                 this._handles = [];
                 for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
                     this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root));
@@ -957,4 +1035,3 @@
 
     YUI.add("mouseplugin", M, "3.0.0");
 })();
-
