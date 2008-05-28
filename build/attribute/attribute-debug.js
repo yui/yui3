@@ -9,20 +9,26 @@ YUI.add('attribute', function(Y) {
         READ_ONLY = "readonly",
         VALIDATOR = "validator";
 
-    function _fireChange(type, currVal, newVal, attrName, strFullPath) {
+    function _fireChange(type, currVal, newVal, attrName, strFullPath, opts) {
         type = type + CHANGE;
 
         // TODO: Publishing temporarily,
         // while we address event bubbling.
         this.publish(type, {queuable:false});
 
-        this.fire({
+        var eData = {
             type: type,
             prevVal: currVal,
             newVal: newVal,
             attrName: attrName,
             subAttrName: strFullPath
-        });
+        };
+
+        if (opts) {
+            Y.mix(eData, opts);
+        }
+
+        this.fire(eData);
     }
 
     /*
@@ -109,8 +115,11 @@ YUI.add('attribute', function(Y) {
          * @method set
          * @param {String} name The name of the attribute
          * @param {Any} value The value to apply to the attribute
+         * @param {Object} Event options. This object will be mixed into
+         * the event facade passed as the first argument to subscribers 
+         * attribute change events
          */
-        set: function(name, val) {
+        set: function(name, val, opts) {
 
             var conf = this._conf,
                 strPath,
@@ -175,9 +184,9 @@ YUI.add('attribute', function(Y) {
             if (!validatorFn || validatorFn.call(this, val)) {
                 conf.add(name, { value: val });
                 if (path) {
-                    _fireChange.call(this, strPath, currVal, val, name, strPath);
+                    _fireChange.call(this, strPath, currVal, val, name, strPath, opts);
                 }
-                _fireChange.call(this, name, currVal, val, name, strPath);
+                _fireChange.call(this, name, currVal, val, name, strPath, opts);
             }
 
             /* } */
@@ -312,20 +321,20 @@ YUI.add('attribute', function(Y) {
                 val = cfg.value;
 
             if (initValues) {
-                if (O.owns(initValues, att)) { 
+                if (O.owns(initValues, att)) {
                     // Simple Attributes
-                    hasVal = true;
+
                     // Not Cloning/Merging user value on purpose. Don't want to clone
                     // references to complex objects [ e.g. a reference to a widget ]
                     // This means the user has to clone anything coming in, if separate
                     // value instances required per base instance
+                    hasVal = true;
                     val = initValues[att];
                 } else {
-
                     // Complex Attributes
+
                     // TODO: Look at perf optimization, can't be doing this for
                     // all values which aren't specified
-
                     /*
                     for (var initAtt in initValues) {
                         if (O.owns(initValues, initAtt)) {
