@@ -7,7 +7,7 @@ YUI.add("object", function(Y) {
     /**
      * Returns a new object based upon the supplied object.  By
      * default the new object's prototype will have all members
-     * on the object.
+     * on the object.tructor prototype.
      * @param The supplier object
      * @return the new object
      */
@@ -70,17 +70,18 @@ YUI.add("object", function(Y) {
     /**
      * Executes a function on each item. The function
      * receives the value, the key, and the object
-     * as parameters (in that order).
+     * as paramters (in that order).
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
+     * @param proto {boolean} include proto
      * @return {YUI} the YUI instance
      */
-    O.each = function (o, f, c) {
+    O.each = function (o, f, c, proto) {
         var s = c || Y;
 
         for (var i in o) {
-            if (O.owns(o, i)) {
+            if (proto || O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
         }

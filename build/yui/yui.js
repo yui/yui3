@@ -890,11 +890,12 @@ YUI.add("core", function(Y) {
             // one that will restore all of them.
             Y.each(sProto, function(v, k) {
 
+
                 // var initialized = false;
 
                 replacements[k] = function() {
 
-                    var me = this, ac = arguments.callee;
+                    var me = this;
 
 // console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
@@ -916,6 +917,8 @@ YUI.add("core", function(Y) {
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
 
+                    // Y.log('augment: ' + k);
+
                     if (Y.lang.isFunction(v)) {
 
                         // sequester the function
@@ -934,7 +937,7 @@ YUI.add("core", function(Y) {
 
                 }
 
-            }, newProto);
+            }, newProto, true);
 
         // augmenting an instance, so apply the constructor immediately
         } else {
@@ -1041,7 +1044,7 @@ YUI.add("core", function(Y) {
         return uid;
     };
 
-    Y.each = function(o, f, c) {
+    Y.each = function(o, f, c, proto) {
 
         if (o.each && o.item) {
             return o.each.call(o, f, c);
@@ -1052,7 +1055,7 @@ YUI.add("core", function(Y) {
                 case 2:
                     return A.each(Y.array(o, 0, true), f, c);
                 default:
-                    return Y.object.each(o, f, c);
+                    return Y.object.each(o, f, c, proto);
             }
         }
 
@@ -1237,7 +1240,7 @@ YUI.add("object", function(Y) {
     /**
      * Returns a new object based upon the supplied object.  By
      * default the new object's prototype will have all members
-     * on the object.
+     * on the object.tructor prototype.
      * @param The supplier object
      * @return the new object
      */
@@ -1300,17 +1303,18 @@ YUI.add("object", function(Y) {
     /**
      * Executes a function on each item. The function
      * receives the value, the key, and the object
-     * as parameters (in that order).
+     * as paramters (in that order).
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
+     * @param proto {boolean} include proto
      * @return {YUI} the YUI instance
      */
-    O.each = function (o, f, c) {
+    O.each = function (o, f, c, proto) {
         var s = c || Y;
 
         for (var i in o) {
-            if (O.owns(o, i)) {
+            if (proto || O.owns(o, i)) {
                 f.call(s, o[i], i, o);
             }
         }

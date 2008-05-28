@@ -45,7 +45,7 @@
     <span class="c">/**</span>
 <span class="c">     * Returns a new object based upon the supplied object.  By</span>
 <span class="c">     * default the new object&#39;s prototype will have all members</span>
-<span class="c">     * on the object.</span>
+<span class="c">     * on the object.tructor prototype.</span>
 <span class="c">     * @param The supplier object</span>
 <span class="c">     * @return the new object</span>
 <span class="c">     */</span>
@@ -108,17 +108,18 @@
     <span class="c">/**</span>
 <span class="c">     * Executes a function on each item. The function</span>
 <span class="c">     * receives the value, the key, and the object</span>
-<span class="c">     * as parameters (in that order).</span>
+<span class="c">     * as paramters (in that order).</span>
 <span class="c">     * @param o the object to iterate</span>
 <span class="c">     * @param f {function} the function to execute</span>
 <span class="c">     * @param c the execution context</span>
+<span class="c">     * @param proto {boolean} include proto</span>
 <span class="c">     * @return {YUI} the YUI instance</span>
 <span class="c">     */</span>
-    <span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">;</span>
 
         <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>

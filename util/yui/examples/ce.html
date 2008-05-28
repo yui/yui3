@@ -48,11 +48,30 @@ property names rather than e.details[1]
 
         // o1.addTarget(o3);
 
+    var Base = function() {
+        Y.log('Base constructor executed');
+        arguments.callee.superclass.constructor.apply(this, arguments);
+    }
+
+    Y.extend(Base, Y.Event.Target, {
+        base: function() {
+            Y.log('all your base...');
+        }
+    });
+
     var O = function() {
         Y.log('O constructor executed');
     }
 
-    Y.augment(O, Y.Event.Target, null, null, {
+    O.prototype = {
+        oOo: function(ok) {
+            Y.log('oOo');
+        }
+    }
+
+
+    Y.augment(O, Base, null, null, {
+    // Y.augment(O, Y.Event.Target, null, null, {
         emitFacade: true
     });
 
@@ -133,6 +152,8 @@ property names rather than e.details[1]
         bar: "absorbed from fire arg 0"
 
     }, 2, 3);
+
+    (o1 && o1['base'] && o1.base());
 
 
     // without facade
