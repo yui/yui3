@@ -740,7 +740,7 @@ YUI.add('node', function(Y) {
 
     // returns HTMLElement
     var getDOMNode = function(node) {
-        if (node && node._yuid) {
+        if (node && !node.nodeType && node._yuid) {
             node = _nodes[node._yuid];
         }
 
@@ -1477,7 +1477,6 @@ YUI.add('node', function(Y) {
             needle = getDOMNode(needle);
             return contains(node, needle);
         }
-
     };
 
     var contains = function(node, needle) {
