@@ -710,6 +710,7 @@ YUI.add('node', function(Y) {
     var _instances = {};
     var _nodes = {};
     var _styles = {};
+    var _restrict = null;
 
     // private factory
     var wrap = function(node) {
@@ -1056,6 +1057,7 @@ YUI.add('node', function(Y) {
         _nodes[Y.stamp(this)] = node;
         _styles[Y.stamp(this)] = node.style;
         //_instances[node.id] = this;
+
     };
 
     var getWinSize = function(node) {
@@ -1209,7 +1211,7 @@ YUI.add('node', function(Y) {
             var root = _nodes[this._yuid];
 
             // contrain to root unless doc
-            if ( root[NODE_TYPE] !== 9 && !this.contains(node)) {
+            if ( root[NODE_TYPE] !== 9 && !this[CONTAINS](node)) {
                 node = null;
             }
 
@@ -1247,9 +1249,15 @@ YUI.add('node', function(Y) {
                 val = GETTERS[prop](this, prop); // passing Node instance
             } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
                 if (Y.lang.isFunction(PROPS_WRAP[prop])) {
-                    val = wrap(PROPS_WRAP[prop](this));
+                    val = PROPS_WRAP[prop](this);
                 } else {
-                    val = wrap(node[prop]);
+                    val = node[prop];
+                }
+
+                if (_restrict && _restrict[this._yuid] && !contains(node, val)) {
+                    val = null; // not allowed to go outside of root node
+                } else {
+                    val = wrap(val);
                 }
             } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
                 val = node[prop];
@@ -1467,20 +1475,25 @@ YUI.add('node', function(Y) {
         contains: function(needle) {
             node = _nodes[this._yuid];
             needle = getDOMNode(needle);
-            var ret = false;
-
-            if (!needle) {
-                ret = false;
-            } else if (node[CONTAINS])  {
-                ret = node[CONTAINS](needle);
-            } else if (node[COMPARE_DOCUMENT_POSITION]) { // gecko
-                if (node === needle || !!(node[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
-                    ret = true;
-                }
-            }
-
-            return ret;
+            return contains(node, needle);
         }
+
+    };
+
+    var contains = function(node, needle) {
+        var ret = false;
+
+        if (!needle || !node) {
+            ret = false;
+        } else if (node[CONTAINS])  {
+            ret = node[CONTAINS](needle);
+        } else if (node[COMPARE_DOCUMENT_POSITION]) { // gecko
+            if (node === needle || !!(node[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
+                ret = true;
+            }
+        }
+
+        return ret;
 
     };
 
@@ -1550,9 +1563,11 @@ YUI.add('node', function(Y) {
      * Use 'document' string to retrieve document Node instance from string
      * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
+     * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes
+     * aren't allowed to traverse outside their DOM tree.
      * @return {Node} A wrapper instance for the supplied object.
      */
-    Node.get = function(node, doc) {
+    Node.get = function(node, doc, isRoot) {
         if (node instanceof Node) {
             return node;
         }
@@ -1573,7 +1588,14 @@ YUI.add('node', function(Y) {
             }
         }
 
-        return wrap(node);
+        node = wrap(node);
+
+        if (isRoot) {
+            _restrict = _restrict || {};
+            _restrict[node._yuid] = node;
+        }
+
+        return node;
     };
 
     /**
