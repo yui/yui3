@@ -1,7 +1,17 @@
     var L = Y.lang,
-        O = Y.object;
+        O = Y.object,
+        SEP = ":";
 
     Y.CANCEL = 'yui:cancel';
+
+    var ETP = Y.EventTarget.prototype;
+
+    function _prefixType(type, owner) {
+        if (type.indexOf(SEP) === -1 && owner.name) {
+           type = owner.name + ":" + type;
+        }
+        return type;
+    }
 
     /**
      * Provides a base class for managed attribute based 
@@ -116,13 +126,13 @@
             function BuiltClass() {
                 var f = BuiltClass._build.exts, 
                     l = f.length;
-    
+
                 for (var i = 0; i < l; i++) {
                     f[i].apply(this, arguments);
                 }
                 return this;
             }
-    
+
             return BuiltClass;
         },
 
@@ -192,14 +202,13 @@
             this.destroyed = false;
             this.initialized = false;
 
+            // Set name to class, to use for events.
+            this.name = this.constructor.NAME;
+
             if (this.fire('beforeInit') !== Y.CANCEL) {
                 Y.Base._instances[Y.stamp(this)] = this;
 
-                this._before = {};
                 this._eventHandles = {};
-
-                // Set name to current class, to use for events.
-                this.name = this.constructor.NAME;
 
                 // initialize top down ( Base init'd first )
                 this._initHierarchy(config);
@@ -304,9 +313,7 @@
          * @private
          */
         _initHierarchy : function(userConf) {
-            var attributes,
-                att,
-                constr,
+            var constr,
                 classes = this._getClasses();
 
             for (var ci = 0, cl = classes.length; ci < cl; ci++) {
@@ -319,34 +326,7 @@
                     }
                 }
 
-                if (constr.ATTRS) {
-                    // Clone constr.ATTRS, to a local copy
-                    attributes = Y.merge(constr.ATTRS);
-                    Y.log('configuring ' + constr.NAME + 'attributes', 'info', 'Base');
-
-                    for (att in attributes) {
-                        if (O.owns(attributes, att)) {
-
-                            var defConf = attributes[att],
-                                // To account for a value of 'undefined'
-                                hasInitValue = ("value" in defConf),
-                                initValue = defConf.value;
-
-                            if (userConf && O.owns(userConf, att)) {
-                                // Not Cloning/Merging user value on purpose. Don't want to clone
-                                // references to complex objects [ e.g. a reference to a widget ]
-                                // This means the user has to clone anything coming in, if separate
-                                // value instances required per base instance
-                                hasInitValue = true;
-                                initValue = userConf[att];
-                            }
-                            this.addAtt(att, defConf);
-                            if (hasInitValue) {
-                                this.set(att, initValue);
-                            }
-                        }
-                    }
-                }
+                this._initAtts(constr.ATTRS, userConf);
 
                 if (O.owns(constr.prototype, "initializer")) {
                     constr.prototype.initializer.apply(this, arguments);
@@ -367,16 +347,63 @@
             }
         },
 
-        before: function(name, fn) { // TODO: get from Event.Target
-            this._before[name] = this._before[name] || [];
-            this._before[name].push(fn);
-        },
-
-        on: function() { this.subscribe.apply(this, arguments); }, // TODO: get from Event.Target ?
-
         toString: function() {
             return Y.Base.NAME + "[" /* + this + // */ + "]";
+        },
+
+        // Y.EventTarget over-rides for name prefix and before support
+        on : function() {
+            return this.subscribe.apply(this, arguments);
+        },
+
+        subscribe : function() {
+            var a = arguments;
+            a[0] = _prefixType(a[0], this);
+            return ETP.subscribe.apply(this, a);
+        },
+
+        fire : function() {
+            var a = arguments;
+            if (L.isString(a[0])) {
+                a[0] = _prefixType(a[0], this);
+            } else if (a[0].type){
+                a[0].type = _prefixType(a[0].type, this);
+            }
+            return ETP.fire.apply(this, a);
+        },
+
+        publish : function() {
+            var a = arguments;
+            a[0] = _prefixType(a[0], this);
+            return ETP.publish.apply(this, a);
         }
+
+        /*
+        ,
+        before : function(type, fn) {
+            this._before = this._before || {};
+
+            var b = this._before;
+            type = _prefixType(type, this);
+            b[type] = b[type] || [];
+            b[type].push(fn);
+        },
+
+        _fireBefore : function(e) {
+            e.type = _prefixType(e.type, this);
+
+            if (this._before && this._before[e.type]) {
+                var sub = this._before[e.type];
+                for (var i = 0, len = sub.length; i < len; ++i) {
+                    if (e._cancel) {
+                        break;
+                    }
+                    sub[i].call(this, e);
+                }
+            }
+        }
+        */
     };
 
-    Y.Base = Base.build(Base, [Y.Attribute]);
+    Y.augment(Base, Y.Attribute);
+    Y.Base = Base;
