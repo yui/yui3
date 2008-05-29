@@ -1248,7 +1248,7 @@ YUI.add('node', function(Y) {
             if (prop in GETTERS) { // use custom getter
                 val = GETTERS[prop](this, prop); // passing Node instance
             } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                if (Y.lang.isFunction(PROPS_WRAP[prop])) {
+                if (Y.Lang.isFunction(PROPS_WRAP[prop])) {
                     val = PROPS_WRAP[prop](this);
                 } else {
                     val = node[prop];

@@ -229,7 +229,7 @@ YUI.add('anim', function(Y) {
 /*
         fx: {
             set: function(fx) {
-                if (Y.lang.isString(fx)) {
+                if (Y.Lang.isString(fx)) {
                     var __fx = [];
                     __fx[0] = fx; 
                     return __fx;
@@ -316,7 +316,7 @@ YUI.add('anim', function(Y) {
         addFX: function(fx) {
             if (typeof fx == 'string') {
                 this._addFX(fx);
-            } else if (Y.lang.isObject(fx)) {
+            } else if (Y.Lang.isObject(fx)) {
                 Y.each(fx, this._addFX, this);
             }
         },
@@ -488,11 +488,11 @@ YUI.add('anim', function(Y) {
             easing = easing || this.get('easing');
             var node = this.get('node');
 
-            if (Y.lang.isFunction(from)) {
+            if (Y.Lang.isFunction(from)) {
                 from = from.call(this, node);
             }
 
-            if (Y.lang.isFunction(to)) {
+            if (Y.Lang.isFunction(to)) {
                 to = to.call(this, node);
             }
 
