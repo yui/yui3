@@ -1463,6 +1463,14 @@ YUI.add('node', function(Y) {
             node = _nodes[this._yuid];
             needle = getDOMNode(needle);
             return contains(node, needle);
+        },
+
+        plug: function(PluginClass, config) {
+            config = config || {};
+            config.owner = this;
+            if (PluginClass && PluginClass.NS) {
+                this[PluginClass.NS] = new PluginClass(config);
+            }
         }
     };
 
@@ -1513,13 +1521,16 @@ YUI.add('node', function(Y) {
             return null; // bad tag error
         }
 
+        var tmpAtt;
         for (var i = 1, len = jsonml.length; i < len; ++i) {
             if (typeof jsonml[i] === 'string' || jsonml[i].push) {
                 html[html.length] = _createHTML(jsonml[i]);
             } else if (typeof jsonml[i] == 'object') {
                 for (var attr in jsonml[i]) {
+                    tmpAtt = (attr != 'className') ? attr : 'class';
+
                     if (jsonml[i].hasOwnProperty(attr)) {
-                        att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                        att[att.length] = ' ' + tmpAtt + '="' + jsonml[i][attr] + '"';
                     }
                 }
             }
@@ -1727,6 +1738,11 @@ YUI.add('node', function(Y) {
             return this;
         },
 
+        /**
+         * Returns the current number of items in the NodeList.
+         * @method size
+         * @return {Int} The number of items in the NodeList. 
+         */
         size: function() {
             return _nodes[this._yuid].length;
         },
