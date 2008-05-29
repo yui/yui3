@@ -67,7 +67,7 @@ YUI.add('nodeextras', function(Y) {
             
             //Y.log('addClass adding ' + className, 'info', 'Node');
             
-            node.set(CLASS_NAME, Y.lang.trim([node.get(CLASS_NAME), className].join(' ')));
+            node.set(CLASS_NAME, Y.Lang.trim([node.get(CLASS_NAME), className].join(' ')));
         },
 
         /**
@@ -84,7 +84,7 @@ YUI.add('nodeextras', function(Y) {
             //Y.log('removeClass removing ' + className, 'info', 'Node');
             
             node.set(CLASS_NAME,
-                    Y.lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
+                    Y.Lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' ')));
 
             if ( node.hasClass(className) ) { // in case of multiple adjacent
@@ -115,7 +115,7 @@ YUI.add('nodeextras', function(Y) {
                 node.replaceClass(oldC, newC);
             }
 
-            node.set(CLASS_NAME, Y.lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
+            node.set(CLASS_NAME, Y.Lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
         },
 
         /**

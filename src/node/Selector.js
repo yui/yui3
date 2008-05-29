@@ -283,7 +283,7 @@ var query = function(selector, root, firstOnly, deDupe) {
 };
 
 var contains = function() {
-    if (document.documentElement.contains && !Y.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+    if (document.documentElement.contains && !Y.UA.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
         return function(needle, haystack) {
             return haystack.contains(needle);
         };
@@ -576,7 +576,7 @@ var tokenize = function(selector) {
     do {
         found = false; // reset after full pass
         for (var re in patterns) {
-                if (!Y.object.owns(patterns, re)) {
+                if (!Y.Object.owns(patterns, re)) {
                     continue;
                 }
                 if (re != 'tag' && re != 'combinator') { // only one allowed
@@ -635,7 +635,7 @@ var replaceShorthand = function(selector) {
         selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
     }
     for (var re in shorthand) {
-        if (!Y.object.owns(shorthand, re)) {
+        if (!Y.Object.owns(shorthand, re)) {
             continue;
         }
         selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
@@ -653,7 +653,7 @@ Selector = new Selector();
 Selector.patterns = patterns;
 Y.Selector = Selector;
 
-if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['class'] = 'className';
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }

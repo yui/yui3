@@ -407,7 +407,7 @@ YUI.add('node', function(Y) {
             width = win.innerWidth,
             root = doc[DOCUMENT_ELEMENT];
     
-        if ( mode && !Y.ua.opera ) { // IE, Gecko
+        if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
                 root = doc.body; 
             }
@@ -587,7 +587,7 @@ YUI.add('node', function(Y) {
             if (prop in GETTERS) { // use custom getter
                 val = GETTERS[prop](this, prop); // passing Node instance
             } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                if (Y.lang.isFunction(PROPS_WRAP[prop])) {
+                if (Y.Lang.isFunction(PROPS_WRAP[prop])) {
                     val = PROPS_WRAP[prop](this);
                 } else {
                     val = node[prop];
@@ -860,7 +860,7 @@ YUI.add('node', function(Y) {
         var html = [];
         var att = [];
 
-        if (Y.lang.isString(jsonml)) { // text node
+        if (Y.Lang.isString(jsonml)) { // text node
             return jsonml;
         }
 
@@ -869,7 +869,7 @@ YUI.add('node', function(Y) {
         }
 
         var tag = jsonml[0];
-        if (!Y.lang.isString(tag)) {
+        if (!Y.Lang.isString(tag)) {
             return null; // bad tag error
         }
 
