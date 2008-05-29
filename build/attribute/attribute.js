@@ -1,6 +1,6 @@
 YUI.add("state", function(Y) {
 
-    var L = Y.lang;
+    var L = Y.Lang;
 
     /**
      * Maintain state for a collection of items.  Individual properties 
@@ -125,7 +125,7 @@ YUI.add("state", function(Y) {
 
 YUI.add('attribute', function(Y) {
 
-    var O = Y.object,
+    var O = Y.Object,
         DOT = ".",
         CHANGE = "Change",
         GET = "get",

@@ -1,7 +1,7 @@
 YUI.add('base', function(Y) {
 
-    var L = Y.lang,
-        O = Y.object,
+    var L = Y.Lang,
+        O = Y.Object,
         SEP = ":";
 
     Y.CANCEL = 'yui:cancel';

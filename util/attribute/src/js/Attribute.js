@@ -1,6 +1,6 @@
 YUI.add('attribute', function(Y) {
 
-    var O = Y.object,
+    var O = Y.Object,
         DOT = ".",
         CHANGE = "Change",
         GET = "get",
