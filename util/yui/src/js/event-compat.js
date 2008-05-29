@@ -7,9 +7,9 @@ YUI.add("event-compat", function(Y) {
          * @property isSafari
          * @private
          * @static
-         * @deprecated use Y.env.ua.webkit
+         * @deprecated use Y.Env.UA.webkit
          */
-        isSafari: Y.ua.webkit,
+        isSafari: Y.UA.webkit,
         
         /**
          * webkit version
@@ -17,9 +17,9 @@ YUI.add("event-compat", function(Y) {
          * @type string
          * @private
          * @static
-         * @deprecated use Y.env.ua.webkit
+         * @deprecated use Y.Env.UA.webkit
          */
-        webkit: Y.ua.webkit,
+        webkit: Y.UA.webkit,
 
         /**
          * Normalized keycodes for webkit/safari
@@ -45,9 +45,9 @@ YUI.add("event-compat", function(Y) {
          * @property isIE
          * @private
          * @static
-         * @deprecated use Y.env.ua.ie
+         * @deprecated use Y.Env.UA.ie
          */
-        isIE: Y.ua.ie,
+        isIE: Y.UA.ie,
 
         /**
          * Returns scrollLeft
@@ -99,7 +99,7 @@ YUI.add("event-compat", function(Y) {
             if (!x && 0 !== x) {
                 x = ev.clientX || 0;
 
-                if ( Y.ua.ie ) {
+                if ( Y.UA.ie ) {
                     x += this._getScrollLeft();
                 }
             }
@@ -118,7 +118,7 @@ YUI.add("event-compat", function(Y) {
             var code = ev.keyCode || ev.charCode || 0;
 
             // webkit normalization
-            if (Y.ua.webkit && (code in Y.Event.webkitKeymap)) {
+            if (Y.UA.webkit && (code in Y.Event.webkitKeymap)) {
                 code = Y.Event.webkitKeymap[code];
             }
             return code;
@@ -136,7 +136,7 @@ YUI.add("event-compat", function(Y) {
             if (!y && 0 !== y) {
                 y = ev.clientY || 0;
 
-                if ( Y.ua.ie ) {
+                if ( Y.UA.ie ) {
                     y += this._getScrollTop();
                 }
             }

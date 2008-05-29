@@ -115,33 +115,33 @@ property names rather than e.details[1]
     // o2.addTarget(o3);
 
     o1.subscribe('o:1', function(e) {
-        Y.log('o1, o:1: ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o1, o:1: ' + Y.Lang.dump(Y.Array(arguments)));
         this.fire('chain', 1, 2);
         // e.halt();
     });
 
     o1.subscribe('chain', function(e) {
-        Y.log('o1, chain o1' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o1, chain o1' + Y.Lang.dump(Y.Array(arguments)));
     });
 
     o2.subscribe('o:1', function(e) {
-        Y.log('o2, o:1 from o1: ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o2, o:1 from o1: ' + Y.Lang.dump(Y.Array(arguments)));
         e.halt();
     });
 
     o2.subscribe('chain', function(e) {
-        Y.log('o2, chain from o1: ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o2, chain from o1: ' + Y.Lang.dump(Y.Array(arguments)));
     });
 
     /*
 
     o3.subscribe('o:1', function(e) {
-        Y.log('o1 to o3: ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o1 to o3: ' + Y.Lang.dump(Y.Array(arguments)));
     });
 
 
     o3.subscribe('o:2', function(e) {
-        Y.log('o2 to o3: ' + Y.lang.dump(Y.array(arguments)));
+        Y.log('o2 to o3: ' + Y.Lang.dump(Y.Array(arguments)));
     });
     */
 

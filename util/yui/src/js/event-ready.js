@@ -4,7 +4,7 @@ YUI.add("event-ready", function(Y) {
         return;
     }
 
-    var env = YUI.env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
+    var env = YUI.Env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
 
     if (!env._ready) {
 
@@ -33,7 +33,7 @@ YUI.add("event-ready", function(Y) {
         // This isolates what appears to be a safe moment to manipulate
         // the DOM prior to when the document's readyState suggests
         // it is safe to do so.
-        if (Y.ua.ie) {
+        if (Y.UA.ie) {
 
             env._dri = setInterval(function() {
                 var n = D.createElement('p');  
@@ -52,7 +52,7 @@ YUI.add("event-ready", function(Y) {
         
         // The document's readyState in Safari currently will
         // change to loaded/complete before images are loaded.
-        } else if (Y.ua.webkit && Y.ua.webkit < 525) {
+        } else if (Y.UA.webkit && Y.UA.webkit < 525) {
 
             env._dri = setInterval(function() {
                 var rs=D.readyState;

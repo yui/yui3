@@ -12,7 +12,7 @@ YUI.add("aop", function(Y) {
         before: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
-                var a = [fn, c].concat(Y.array(arguments, 4, true));
+                var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
             this._inject(BEFORE, f, obj, sFn);
@@ -22,7 +22,7 @@ YUI.add("aop", function(Y) {
         after: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
-                var a = [fn, c].concat(Y.array(arguments, 4, true));
+                var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
             this._inject(AFTER, f, obj, sFn);
@@ -98,7 +98,7 @@ YUI.add("aop", function(Y) {
 
     Y.Do.Method.prototype.exec = function () {
 
-        var args = Y.array(arguments, 0, true), i, ret, newRet;
+        var args = Y.Array(arguments, 0, true), i, ret, newRet;
 
         // for (i=0; i<this.before.length; ++i) {
         for (i in this.before) {

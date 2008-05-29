@@ -43,7 +43,7 @@
 <span class="c"> */</span>
 <span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;array&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">/** </span>
 <span class="c">     * Returns an array:</span>
@@ -62,8 +62,8 @@
 <span class="c">     *   @param al {boolean} if true, it forces the array-like fork.  This</span>
 <span class="c">     *   can be used to avoid multiple array.test calls.</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">al</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">al</span><span class="o">)</span> <span class="o">?</span> <span class="m">2</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">al</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">al</span><span class="o">)</span> <span class="o">?</span> <span class="m">2</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="nx">switch</span> <span class="o">(</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
                 <span class="k">return</span> <span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">;</span>
@@ -74,7 +74,7 @@
         <span class="o">}</span>
     <span class="o">};</span>
 
-    <span class="k">var</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">;</span>
     
     <span class="c">// YUI array utilities.  The current plan is to make a few useful</span>
 <span class="c"></span>    <span class="c">// ones &#39;core&#39;, and to have the rest of the array extras an optional</span>

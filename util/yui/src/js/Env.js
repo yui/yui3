@@ -4,12 +4,12 @@
     var M = function(Y) {
 
         /**
-         * Y.env is used to keep track of what is known about the YUI library and
+         * Y.Env is used to keep track of what is known about the YUI library and
          * the browsing environment
          * @class env
          * @static
          */
-        Y.env = Y.env || {
+        Y.Env = Y.Env || {
 
             /**
              * Keeps the version info for all YUI modules that have reported themselves
@@ -48,8 +48,8 @@
          * @param {String}  name the name of the module (event, slider, etc)
          * @return {Object} The version info
          */
-        Y.env.getVersion = function(name) {
-            return Y.env.modules[name] || null;
+        Y.Env.getVersion = function(name) {
+            return Y.Env.modules[name] || null;
         };
 
     };

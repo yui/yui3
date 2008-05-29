@@ -251,7 +251,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             // var s = new Y.Subscriber(m);
             // s.ofn = fn;
 
-            var s = new Y.Subscriber(fn, obj, Y.array(arguments, 2, true));
+            var s = new Y.Subscriber(fn, obj, Y.Array(arguments, 2, true));
 
 
             if (this.fireOnce && this.fired) {
@@ -294,7 +294,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             var found = false, subs = this.subscribers;
             for (var i in subs) {
-                if (Y.object.owns(subs, i)) {
+                if (Y.Object.owns(subs, i)) {
                     var s = subs[i];
                     if (s && s.contains(fn, obj)) {
                         this._delete(s);
@@ -317,7 +317,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret, wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
+            var ret, wrap = this.emitFacade, a = (wrap) ? Y.Array(a) : args;
             
             // emit an Event.Facade if this is that sort of event
             if (wrap) {
@@ -332,7 +332,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // if the first argument is an object literal, apply the
                 // properties to the event facade
-                if (args && Y.lang.isObject(args[0], true)) {
+                if (args && Y.Lang.isObject(args[0], true)) {
                     Y.mix(ef, args[0]);
                 }
 
@@ -357,7 +357,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          * @param cat {string} log category
          */
         log: function(msg, cat) {
-            var es = Y.env._eventstack, s =  es && es.silent;
+            var es = Y.Env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {
             if (!this.silent) {
                 Y.log(msg, cat || "info", "Event");
@@ -382,7 +382,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         fire: function() {
 
-            var es = Y.env._eventstack;
+            var es = Y.Env._eventstack;
 
             if (es) {
 
@@ -405,7 +405,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             } else {
 
-                Y.env._eventstack = {
+                Y.Env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
                    next: this,
@@ -416,7 +416,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                    queue: []
                 };
 
-                es = Y.env._eventstack;
+                es = Y.Env._eventstack;
             }
 
             var ret = true;
@@ -429,7 +429,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // var subs = this.subscribers.slice(), len=subs.length,
                 var subs = Y.merge(this.subscribers), errors = [],
-                           args=Y.array(arguments, 0, true), i;
+                           args=Y.Array(arguments, 0, true), i;
 
                 this.fired = true;
                 this.details = args;
@@ -440,7 +440,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 es.lastLogState = es.logging;
 
                 for (i in subs) {
-                    if (Y.object.owns(subs, i)) {
+                    if (Y.Object.owns(subs, i)) {
 
                         if (!hasSub) {
 
@@ -516,7 +516,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     ret = ce.fire.apply(ce, q[1]);
                 }
 
-                Y.env._eventstack = null;
+                Y.Env._eventstack = null;
             } 
 
             return (ret !== false);
@@ -530,7 +530,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         unsubscribeAll: function() {
             var subs = this.subscribers, i;
             for (i in subs) {
-                if (Y.object.owns(subs, i)) {
+                if (Y.Object.owns(subs, i)) {
                     this._delete(subs[i]);
                 }
             }
@@ -569,7 +569,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopPropagation: function() {
             this.stopped = 1;
-            Y.env._eventstack.stopped = 1;
+            Y.Env._eventstack.stopped = 1;
         },
 
         /**
@@ -579,13 +579,13 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopImmediatePropagation: function() {
             this.stopped = 2;
-            Y.env._eventstack.stopped = 2;
+            Y.Env._eventstack.stopped = 2;
         },
 
         preventDefault: function() {
             if (this.preventable) {
                 this.prevented = 1;
-                Y.env._eventstack.prevented = 1;
+                Y.Env._eventstack.prevented = 1;
             }
         }
 
@@ -638,7 +638,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         var m = fn;
         
         if (obj) {
-            var a = (args) ? Y.array(args) : [];
+            var a = (args) ? Y.Array(args) : [];
             a.unshift(fn, obj);
             m = Y.bind.apply(Y, a);
         }

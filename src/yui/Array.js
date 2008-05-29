@@ -5,7 +5,7 @@
  */
 YUI.add("array", function(Y) {
 
-    var L = Y.lang, Native = Array.prototype;
+    var L = Y.Lang, Native = Array.prototype;
 
     /** 
      * Returns an array:
@@ -24,8 +24,8 @@ YUI.add("array", function(Y) {
      *   @param al {boolean} if true, it forces the array-like fork.  This
      *   can be used to avoid multiple array.test calls.
      */
-    Y.array = function(o, i, al) {
-        var t = (al) ? 2 : Y.array.test(o);
+    Y.Array = function(o, i, al) {
+        var t = (al) ? 2 : Y.Array.test(o);
         switch (t) {
             case 1:
                 return (i) ? o.slice(o, i) : o;
@@ -36,7 +36,7 @@ YUI.add("array", function(Y) {
         }
     };
 
-    var A = Y.array;
+    var A = Y.Array;
     
     // YUI array utilities.  The current plan is to make a few useful
     // ones 'core', and to have the rest of the array extras an optional

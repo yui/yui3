@@ -5,9 +5,9 @@ YUI.add("lang", function(Y) {
      * Provides the language utilites and extensions used by the library
      * @class lang
      */
-    Y.lang = Y.lang || {};
+    Y.Lang = Y.Lang || {};
 
-    var L = Y.lang, SPLICE="splice", LENGTH="length";
+    var L = Y.Lang, SPLICE="splice", LENGTH="length";
 
         /**
          * Determines whether or not the provided object is an array.

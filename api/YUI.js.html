@@ -105,7 +105,7 @@
 <span class="c"></span>        <span class="c">// before _setup is called.</span>
 <span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">env</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span> <span class="o">=</span> <span class="o">{</span>
             <span class="c">// @todo expand the new module metadata</span>
 <span class="c"></span>            <span class="nx">mods</span><span class="o">:</span> <span class="o">{},</span>
             <span class="nx">_idx</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
@@ -116,10 +116,10 @@
 
         <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">;</span>
 
-        <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">++;</span>
+        <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_idx</span><span class="o">++;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_uidx</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">=</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_uidx</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">guid</span><span class="o">(</span><span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
 
@@ -187,7 +187,7 @@
             <span class="nx">details</span><span class="o">:</span> <span class="nx">details</span> <span class="o">||</span> <span class="o">{}</span>
         <span class="o">};</span>
 
-        <span class="nx">YUI</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">m</span><span class="o">;</span>
+        <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">m</span><span class="o">;</span>
 
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span> <span class="c">// chain support</span>
 <span class="c"></span>    <span class="o">},</span>
@@ -217,12 +217,12 @@
 <span class="c">     */</span>
     <span class="nx">use</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">mods</span><span class="o">=</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
-            <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_used</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">mods</span><span class="o">=</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
+            <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_used</span><span class="o">;</span>
 
         <span class="c">// YUI().use(&#39;*&#39;); // assumes you need everything you&#39;ve included</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">//return Y.use.apply(Y, Y.object.keys(mods));</span>
+            <span class="c">//return Y.use.apply(Y, Y.Object.keys(mods));</span>
 <span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">mods</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="nx">k</span><span class="o">);</span>
             <span class="o">}</span>
@@ -354,7 +354,7 @@
 <span class="c">     */</span>
     <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span>
             <span class="nx">bail</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span> <span class="o">&amp;&amp;</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">);</span>
 
         <span class="c">// suppress log message if the config is off or the event stack</span>
@@ -362,7 +362,7 @@
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">debug</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
 
 
-            <span class="c">// Y.env._lastlog = msg;</span>
+            <span class="c">// Y.Env._lastlog = msg;</span>
 <span class="c"></span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">useConsole</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">console</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
 
@@ -413,7 +413,7 @@
 
     <span class="c">// generate an id that is unique among all YUI instances</span>
 <span class="c"></span>    <span class="nx">guid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">env</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_pre</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="o">(</span><span class="nx">pre</span><span class="o">)</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_pre</span><span class="o">;</span>
         <span class="k">return</span> <span class="nx">p</span> <span class="o">+</span><span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_yidx</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="o">.</span><span class="nx">_uidx</span><span class="o">++;</span>
     <span class="o">}</span>
 <span class="o">};</span>

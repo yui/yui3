@@ -39,7 +39,7 @@
 <div class="highlight" ><pre><span class="c">// requires lang</span>
 <span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;dump&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">L</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">,</span> <span class="nx">OBJ</span><span class="o">=</span><span class="s2">&quot;{...}&quot;</span><span class="o">,</span> <span class="nx">FUN</span><span class="o">=</span><span class="s2">&quot;f(){...}&quot;</span><span class="o">,</span> <span class="nx">COMMA</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">,</span> <span class="nx">ARROW</span><span class="o">=</span><span class="s1">&#39; =&gt; &#39;</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">L</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">OBJ</span><span class="o">=</span><span class="s2">&quot;{...}&quot;</span><span class="o">,</span> <span class="nx">FUN</span><span class="o">=</span><span class="s2">&quot;f(){...}&quot;</span><span class="o">,</span> <span class="nx">COMMA</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">,</span> <span class="nx">ARROW</span><span class="o">=</span><span class="s1">&#39; =&gt; &#39;</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * Returns a simple string representation of the object or array.</span>
@@ -56,7 +56,7 @@
 <span class="c">     * @param d {int} How deep to recurse child objects, default 3</span>
 <span class="c">     * @return {String} the dump result</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">len</span><span class="o">,</span> <span class="nx">s</span> <span class="o">=</span> <span class="o">[];</span>
 
 
@@ -94,7 +94,7 @@
 <span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="s2">&quot;{&quot;</span><span class="o">);</span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">ARROW</span><span class="o">);</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                         <span class="nx">s</span><span class="o">.</span><span class="nx">push</span><span class="o">((</span><span class="nx">d</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">?</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">:</span> <span class="nx">OBJ</span><span class="o">);</span>

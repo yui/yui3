@@ -3,12 +3,12 @@
 // @todo evaulate the implementations
 YUI.add("arrayextras", function(Y) {
 
-    var L = Y.lang, Native = Array.prototype;
+    var L = Y.Lang, Native = Array.prototype;
     
     var Extras = {
 
         contains: function (a, o) {
-            return Y.array.indexOf(a, o) != -1;
+            return Y.Array.indexOf(a, o) != -1;
         },
 
         copy: function (a, o) {
@@ -54,7 +54,7 @@ YUI.add("arrayextras", function(Y) {
         },
 
         insertBefore: function (a, o, o2) {
-            var i = Y.array.indexOf(a, o2);
+            var i = Y.Array.indexOf(a, o2);
             if (i === -1)
                 a.push(o);
             else
@@ -88,7 +88,7 @@ YUI.add("arrayextras", function(Y) {
         },
 
         remove: function (a, o) {
-            var i = Y.array.indexOf(a, o);
+            var i = Y.Array.indexOf(a, o);
             if (i != -1) {
                 a.splice(i, 1);
             }
@@ -108,7 +108,7 @@ YUI.add("arrayextras", function(Y) {
     // map the utility functions to the native array functions if they
     // are available.
     for (var i in Extras) {
-        Y.array[i] = (Native[i]) ? function() {
+        Y.Array[i] = (Native[i]) ? function() {
             Native[i].apply(arguments[0], Native.slice.call(arguments, 1));
         } : Extras[i];
     }

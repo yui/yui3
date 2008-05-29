@@ -60,12 +60,12 @@
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
-                                    <h4><a name="property_children">children</a>
-                                        <code>- NodeList</code>
+                                    <h4><a name="property_CLASS_NAME">CLASS_NAME</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            A NodeList containing only HTMLElement child nodes
+                                            An interface for advanced DOM features.
                                         </div>
                                     </div>
      
@@ -137,52 +137,6 @@
                                                         Boolean | Array
                                                     </code></dt>
                                                     <dd>A pass/fail boolean or array of booleans</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_contains">contains</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong>contains</strong>
-                                           (
-                                                
-                                                        
-                                                         needle
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>needle &lt;String | HTMLElement&gt;</code>
-                                                             The possible descendent
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd>Whether or not this node is an ancestor of needle</dd>
                                                 </dl>
              
                                         </div>
@@ -765,6 +719,40 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_size">size</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Int
+                                            <strong>size</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the current number of items in the NodeList.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Int
+                                                    </code></dt>
+                                                    <dd>The number of items in the NodeList.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -814,7 +802,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_children">children</a>
+                                <li class=""><a href="#property_CLASS_NAME">CLASS_NAME</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_text">text</a>
@@ -828,9 +816,6 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                         <ul class="content">        
                                 <li class=""><!--<code>Boolean | Array</code>-->
                                 <a href="#method_addClass">addClass</a>
-                                </li>
-                                <li class=""><!--<code>Boolean</code>-->
-                                <a href="#method_contains">contains</a>
                                 </li>
                                 <li class=""><!--<code>NodeList</code>-->
                                 <a href="#method_each">each</a>
@@ -867,6 +852,9 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_setXY">setXY</a>
+                                </li>
+                                <li class=""><!--<code>Int</code>-->
+                                <a href="#method_size">size</a>
                                 </li>
                         </ul>
                     </div>

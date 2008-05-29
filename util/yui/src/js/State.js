@@ -1,6 +1,6 @@
 YUI.add("state", function(Y) {
 
-    var L = Y.lang;
+    var L = Y.Lang;
 
     /**
      * Maintain state for a collection of items.  Individual properties 

@@ -1,7 +1,7 @@
 // requires lang, dump
 YUI.add("substitute", function(Y) {
 
-    var L = Y.lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
+    var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
 
     /**
      * Does variable substitution on a string. It scans through the string 

@@ -181,14 +181,14 @@ as paramters (in that order).
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_object">object</a></h4>
+                                        <a name="method_Object">Object</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>object</strong>
+                                            <strong>Object</strong>
                                            (
                                                 
                                                         
@@ -252,7 +252,7 @@ to the object instance.  Returns false if the property is not present
 in the object, or was inherited from the prototype.
 This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
 This 
-There is a discrepancy between Y.object.owns and
+There is a discrepancy between Y.Object.owns and
 Object.prototype.hasOwnProperty when the property is a primitive added to
 both the instance AND prototype with the same value:
 <pre>
@@ -261,7 +261,7 @@ A.prototype.foo = 'foo';
 var a = new A();
 a.foo = 'foo';
 alert(a.hasOwnProperty('foo')); // true
-alert(Y.object.owns(a, 'foo')); // false when using fallback
+alert(Y.Object.owns(a, 'foo')); // false when using fallback
 </pre>
                                         </div>
 
@@ -448,7 +448,7 @@ the key inside of the braces.
                                 <a href="#method_keys">keys</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_object">object</a>
+                                <a href="#method_Object">Object</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_owns">owns</a>

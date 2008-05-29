@@ -48,8 +48,6 @@
 <span class="c">     * @interface NodeExtras</span>
 <span class="c">     */</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">);</span>
-
     <span class="k">var</span> <span class="nx">CLASS_NAME</span> <span class="o">=</span> <span class="s1">&#39;className&#39;</span><span class="o">,</span>
         <span class="nx">OFFSET_TOP</span> <span class="o">=</span> <span class="s1">&#39;offsetTop&#39;</span><span class="o">,</span>
         <span class="nx">POSITION</span> <span class="o">=</span> <span class="s1">&#39;position&#39;</span><span class="o">,</span>
@@ -60,7 +58,6 @@
         <span class="nx">NODE_TYPE</span> <span class="o">=</span> <span class="s1">&#39;nodeType&#39;</span><span class="o">,</span>
         <span class="nx">OFFSET_LEFT</span> <span class="o">=</span> <span class="s1">&#39;offsetLeft&#39;</span><span class="o">,</span>
         <span class="nx">GET_BOUNDING_CLIENT_RECT</span> <span class="o">=</span> <span class="s1">&#39;getBoundingClientRect&#39;</span><span class="o">,</span>
-        <span class="nx">CONTAINS</span> <span class="o">=</span> <span class="s1">&#39;contains&#39;</span><span class="o">,</span>
         <span class="nx">COMPARE_DOCUMENT_POSITION</span> <span class="o">=</span> <span class="s1">&#39;compareDocumentPosition&#39;</span><span class="o">;</span>
 
     <span class="k">var</span> <span class="nx">regexCache</span> <span class="o">=</span> <span class="o">{};</span>
@@ -80,15 +77,6 @@
 <span class="c">         */</span>
         <span class="s1">&#39;text&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;innerText&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;textContent&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * A NodeList containing only HTMLElement child nodes </span>
-<span class="c">         * @property children</span>
-<span class="c">         * @type NodeList</span>
-<span class="c">         */</span>
-        <span class="s1">&#39;children&#39;</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">queryAll</span><span class="o">(</span><span class="s1">&#39;&gt; *&#39;</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">});</span>
 
@@ -209,21 +197,6 @@
         <span class="o">},</span>
         
         <span class="c">/**</span>
-<span class="c">         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.</span>
-<span class="c">         * @method contains</span>
-<span class="c">         * @param {String | HTMLElement} needle The possible descendent</span>
-<span class="c">         * @return {Boolean} Whether or not this node is an ancestor of needle</span>
-<span class="c">         */</span>
-        <span class="nx">contains</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">needle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">needle</span><span class="o">);</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">hasMethod</span><span class="o">(</span><span class="nx">CONTAINS</span><span class="o">))</span>  <span class="o">{</span>
-                <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="nx">CONTAINS</span><span class="o">,</span> <span class="nx">needle</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasMethod</span><span class="o">(</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// gecko</span>
-<span class="c"></span>                <span class="k">return</span> <span class="o">!!(</span><span class="nx">node</span><span class="o">.</span><span class="nx">invoke</span><span class="o">(</span><span class="nx">COMPARE_DOCUMENT_POSITION</span><span class="o">,</span> <span class="nx">needle</span><span class="o">)</span> <span class="o">&amp;</span> <span class="m">16</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
 <span class="c">         * Gets the current position of an element based on page coordinates. </span>
 <span class="c">         * Element must be part of the DOM tree to have page coordinates</span>
 <span class="c">         * (display:none or elements not appended return false).</span>
@@ -332,7 +305,7 @@
     
     <span class="o">});</span>
 
-<span class="o">},</span> <span class="s1">&#39;3.0.0&#39;</span><span class="o">);</span>
+<span class="o">},</span> <span class="s1">&#39;3.0.0&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span> <span class="o">});</span>
 </pre></div>
                     </div>
 			</div>

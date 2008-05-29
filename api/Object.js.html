@@ -49,13 +49,13 @@
 <span class="c">     * @param The supplier object</span>
 <span class="c">     * @return the new object</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
         <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
         <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
     <span class="o">};</span> 
 
-    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">,</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
 
     <span class="c">/**</span>
 <span class="c">     * Determines whether or not the property was added</span>
@@ -63,7 +63,7 @@
 <span class="c">     * in the object, or was inherited from the prototype.</span>
 <span class="c">     * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.</span>
 <span class="c">     * This </span>
-<span class="c">     * There is a discrepancy between Y.object.owns and</span>
+<span class="c">     * There is a discrepancy between Y.Object.owns and</span>
 <span class="c">     * Object.prototype.hasOwnProperty when the property is a primitive added to</span>
 <span class="c">     * both the instance AND prototype with the same value:</span>
 <span class="c">     * &lt;pre&gt;</span>
@@ -72,7 +72,7 @@
 <span class="c">     * var a = new A();</span>
 <span class="c">     * a.foo = &#39;foo&#39;;</span>
 <span class="c">     * alert(a.hasOwnProperty(&#39;foo&#39;)); // true</span>
-<span class="c">     * alert(Y.object.owns(a, &#39;foo&#39;)); // false when using fallback</span>
+<span class="c">     * alert(Y.Object.owns(a, &#39;foo&#39;)); // false when using fallback</span>
 <span class="c">     * &lt;/pre&gt;</span>
 <span class="c">     * @method owns</span>
 <span class="c">     * @param o {any} The object being testing</span>

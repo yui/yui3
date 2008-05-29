@@ -42,7 +42,7 @@
         <span class="k">return</span><span class="o">;</span>
     <span class="o">}</span>
 
-    <span class="k">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">env</span><span class="o">,</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">D</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">POLL_INTERVAL</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">pollInterval</span> <span class="o">||</span> <span class="m">20</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">env</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> <span class="nx">C</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">D</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">POLL_INTERVAL</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">pollInterval</span> <span class="o">||</span> <span class="m">20</span><span class="o">;</span>
 
     <span class="k">if</span> <span class="o">(!</span><span class="nx">env</span><span class="o">.</span><span class="nx">_ready</span><span class="o">)</span> <span class="o">{</span>
 
@@ -71,7 +71,7 @@
 <span class="c"></span>        <span class="c">// This isolates what appears to be a safe moment to manipulate</span>
 <span class="c"></span>        <span class="c">// the DOM prior to when the document&#39;s readyState suggests</span>
 <span class="c"></span>        <span class="c">// it is safe to do so.</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="nx">env</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">D</span><span class="o">.</span><span class="nx">createElement</span><span class="o">(</span><span class="s1">&#39;p&#39;</span><span class="o">);</span>  
@@ -90,7 +90,7 @@
         
         <span class="c">// The document&#39;s readyState in Safari currently will</span>
 <span class="c"></span>        <span class="c">// change to loaded/complete before images are loaded.</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&lt;</span> <span class="m">525</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&lt;</span> <span class="m">525</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="nx">env</span><span class="o">.</span><span class="nx">_dri</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">rs</span><span class="o">=</span><span class="nx">D</span><span class="o">.</span><span class="nx">readyState</span><span class="o">;</span>

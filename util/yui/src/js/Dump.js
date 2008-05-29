@@ -1,7 +1,7 @@
 // requires lang
 YUI.add("dump", function(Y) {
 
-    var L=Y.lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ';
+    var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ';
 
     /**
      * Returns a simple string representation of the object or array.
@@ -18,7 +18,7 @@ YUI.add("dump", function(Y) {
      * @param d {int} How deep to recurse child objects, default 3
      * @return {String} the dump result
      */
-    Y.lang.dump = function(o, d) {
+    L.dump = function(o, d) {
         var i, len, s = [];
 
 
@@ -56,7 +56,7 @@ YUI.add("dump", function(Y) {
         } else {
             s.push("{");
             for (i in o) {
-                if (Y.object.owns(o, i)) {
+                if (Y.Object.owns(o, i)) {
                     s.push(i + ARROW);
                     if (L.isObject(o[i])) {
                         s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);

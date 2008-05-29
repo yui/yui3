@@ -165,8 +165,8 @@ YUI.add("event-dom", function(Y) {
                 // @TODO fix arguments
                 onAvailable: function(id, fn, p_obj, p_override, checkContent) {
 
-                    // var a = (Y.lang.isString(id)) ? [id] : id;
-                    var a = Y.array(id);
+                    // var a = (Y.Lang.isString(id)) ? [id] : id;
+                    var a = Y.Array(id);
 
                     for (var i=0; i<a.length; i=i+1) {
                         _avail.push({ id:         a[i], 
@@ -236,7 +236,7 @@ YUI.add("event-dom", function(Y) {
                 onDOMReady: function(fn) {
                     // var ev = Y.Event.DOMReadyEvent;
                     // ev.subscribe.apply(ev, arguments);
-                    var a = Y.array(arguments, 0, true);
+                    var a = Y.Array(arguments, 0, true);
                     a.unshift('event:ready');
                     Y.on.apply(Y, a);
                 },
@@ -265,9 +265,9 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    // Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
+                    // Y.log('addListener: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
 
-                    var a=Y.array(arguments, 1, true), override = a[3], E = Y.Event;
+                    var a=Y.Array(arguments, 1, true), override = a[3], E = Y.Event;
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
@@ -294,7 +294,7 @@ YUI.add("event-dom", function(Y) {
                         return handles;
 
 
-                    } else if (Y.lang.isString(el)) {
+                    } else if (Y.Lang.isString(el)) {
                         var oEl = Y.get(el);
                         // If the el argument is a string, we assume it is 
                         // actually the id of the element.  If the page is loaded
@@ -310,7 +310,7 @@ YUI.add("event-dom", function(Y) {
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
                                 // Y.Event.addListener(el, type, fn, obj, override);
-                                Y.Event.addListener.apply(Y.Event, Y.array(arguments, 0, true));
+                                Y.Event.addListener.apply(Y.Event, Y.Array(arguments, 0, true));
                             });
 
                             return true;
@@ -356,7 +356,7 @@ YUI.add("event-dom", function(Y) {
 
         
                     // from type, fn, etc to fn, obj, override
-                    a = Y.array(arguments, 2, true);
+                    a = Y.Array(arguments, 2, true);
                     // a = a.shift();
 
                     var context = el;
@@ -571,7 +571,7 @@ YUI.add("event-dom", function(Y) {
                         return;
                     }
 
-                    if (Y.ua.ie) {
+                    if (Y.UA.ie) {
                         // Hold off if DOMReady has not fired and check current
                         // readyState to protect against the IE operation aborted
                         // issue.
@@ -673,7 +673,7 @@ YUI.add("event-dom", function(Y) {
                  * @static
                  */
                 purgeElement: function(el, recurse, type) {
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el,
+                    var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
                         id = Y.stamp(oEl);
                     var lis = this.getListeners(oEl, type), i, len;
                     if (lis) {
@@ -785,7 +785,7 @@ YUI.add("event-dom", function(Y) {
         var E = Y.Event;
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
-        if (Y.ua.ie) {
+        if (Y.UA.ie) {
             Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
@@ -800,7 +800,7 @@ YUI.add("event-dom", function(Y) {
          * @static
          */
         E.attach = function(type, fn, el, data, context) {
-            var a = Y.array(arguments, 0, true),
+            var a = Y.Array(arguments, 0, true),
                 oEl = a.splice(2, 1);
             a.unshift(oEl[0]);
             return E.addListener.apply(E, a);

@@ -6,9 +6,9 @@
 
 <body>
 
-<input id="button1" type="button" value="Button 1" class='button' />
-<input id="button2" type="button" value="Button 2" class='button' />
-<input id="text1" type="text" value="something" class='nothing' />
+<input id="button1" type="button" value="Button 1" class="button" />
+<input id="button2" type="button" value="Button 2" class="button" />
+<input id="text1" type="text" value="something" class="nothing" />
 
 <script>
 
@@ -17,7 +17,7 @@
 
     //var Y = YUI().use('event', 'dom');
     //var Y = YUI().use('node');
-    var Y = YUI().use('dump', 'substitute', 'compat');
+    var Y = YUI().use('dump', 'substitute');
 
     // debugger;
 
@@ -69,7 +69,7 @@
 
     var ret = Y.on('click', function(e) {
         Y.log(this.get('id') + " click event facade: " + e.target);
-    }, 'button2');
+    }, '#button2');
 
     Y.log('ret: ' + Y.lang.dump(ret, 1));
 
@@ -91,9 +91,9 @@
     Y.on('mouseover', function(e) {
         // alert('asdf');
         Y.log(this.id || this.get('id') + " mouseover: " + e.target);
-    // },  Y.Node.queryAll('.button'));
-    },  Y.Selector.query('.button'));
-    // },  ['#button1', '#button2']);
+        // },  Y.Node.queryAll('.button'));
+    //},  Y.Selector.query('.button'));
+    },  ['#button1', '#button2']);
 
     /*
 

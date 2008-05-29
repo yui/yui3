@@ -22,27 +22,27 @@ YUI.add("compat", function(Y) {
     Y.namespace("util", "widget", "example");
 
     // support Y.register
-    Y.mix(Y.env, {
+    Y.mix(Y.Env, {
             modules: [],
             listeners: [],
             getVersion: function(name) {
-                return this.env.modules[name] || null;
+                return this.Env.modules[name] || null;
             }
     });
 
-    Y.env.ua = Y.ua; 
-    var L = Y.lang;
+    Y.Env.ua = Y.UA; 
+    var L = Y.Lang;
 
     // add old lang properties 
     Y.mix(L, {
 
         augmentObject: function(r, s) {
-            var a = arguments, wl = (a.length > 2) ? Y.array(a, 2, true) : null;
+            var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
             return Y.mix(r, s, (wl), wl);
         },
      
         augmentProto: function(r, s) {
-            var a = arguments, wl = (a.length > 2) ? Y.array(a, 2, true) : null;
+            var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
             return Y.bind(Y.prototype, r, s, (wl), wl);
         },
 
@@ -53,7 +53,7 @@ YUI.add("compat", function(Y) {
     }, true);
 
     // IE won't enumerate this
-    L.hasOwnProperty = Y.object.owns;
+    L.hasOwnProperty = Y.Object.owns;
 
     // L.merge = Y.merge;
 
@@ -62,11 +62,11 @@ YUI.add("compat", function(Y) {
     // add register function
     Y.mix(Y, {
         register: function(name, mainClass, data) {
-            var mods = Y.env.modules;
+            var mods = Y.Env.modules;
             if (!mods[name]) {
                 mods[name] = { versions:[], builds:[] };
             }
-            var m=mods[name],v=data.version,b=data.build,ls=Y.env.listeners;
+            var m=mods[name],v=data.version,b=data.build,ls=Y.Env.listeners;
             m.name = name;
             m.version = v;
             m.build = b;
@@ -89,7 +89,7 @@ YUI.add("compat", function(Y) {
 
     // add old load listeners
     if ("undefined" !== typeof YAHOO_config) {
-        var l=YAHOO_config.listener,ls=Y.env.listeners,unique=true,i;
+        var l=YAHOO_config.listener,ls=Y.Env.listeners,unique=true,i;
         if (l) {
             // if YAHOO is loaded multiple times we need to check to see if
             // this is a new config object.  If it is, add the new component

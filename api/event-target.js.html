@@ -53,7 +53,7 @@
 
         <span class="c">// console.log(&#39;Event.Target constructor executed: &#39; + this._yuid);</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
+        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">opts</span><span class="o">))</span> <span class="o">?</span> <span class="nx">opts</span> <span class="o">:</span> <span class="o">{};</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span> <span class="o">=</span> <span class="o">{</span>
 
@@ -90,7 +90,7 @@
         <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
-                <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="c">// return ce.subscribe(fn, context, p_override);</span>
 <span class="c"></span>            <span class="k">return</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
@@ -116,7 +116,7 @@
         <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="c">// If this is an event handle, use it to detach</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
             <span class="o">}</span>
 
@@ -130,7 +130,7 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">evts</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">evts</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">evts</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">evts</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">unsubscribe</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -250,7 +250,7 @@
 <span class="c">         */</span>
         <span class="nx">fire</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
+            <span class="k">var</span> <span class="nx">typeIncluded</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
                 <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="nx">type</span> <span class="o">:</span> <span class="o">(</span><span class="nx">type</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">type</span><span class="o">);</span>
 
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
@@ -271,7 +271,7 @@
                 <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
             <span class="c">// clear target for next fire()</span>
@@ -342,12 +342,12 @@
 <span class="c">         */</span>
         <span class="nx">before</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
             <span class="c">// insert this object as method target</span>
 <span class="c"></span>            <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
 
-            <span class="c">// Y.log(&#39;ET:before- &#39; + Y.lang.dump(a));</span>
+            <span class="c">// Y.log(&#39;ET:before- &#39; + Y.Lang.dump(a));</span>
 <span class="c"></span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
@@ -369,7 +369,7 @@
 <span class="c">         * @return the detach handle</span>
 <span class="c">         */</span>
         <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">}</span>

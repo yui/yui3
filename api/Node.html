@@ -79,7 +79,37 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_cells">cells</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_childNodes">childNodes</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_children">children</a>
                                         <code>- NodeList</code>
                                     </h4>
                                     <div class="detail">
@@ -169,6 +199,21 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_elements">elements</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_firstChild">firstChild</a>
                                         <code>- Node</code>
                                     </h4>
@@ -204,8 +249,22 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Returns a Node instance. 
-Only valid for HTMLElement nodes.
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_options">options</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
                                         </div>
                                     </div>
      
@@ -246,6 +305,66 @@ Only valid for HTMLElement nodes.
                                     </div>
                                     <div class="">
                                     <h4><a name="property_previousSibling">previousSibling</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_rows">rows</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_tBodies">tBodies</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_tFoot">tFoot</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_tHead">tHead</a>
                                         <code>- Node</code>
                                     </h4>
                                     <div class="detail">
@@ -527,6 +646,52 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_contains">contains</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>contains</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>needle &lt;String | HTMLElement&gt;</code>
+                                                             The possible descendent
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not this node is an ancestor of needle</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_create">create</a></h4>
                                     <div class="detail">
                                         <code>
@@ -729,6 +894,10 @@ Use 'document' string to retrieve document Node instance from string</strong>
                                                          doc
                                                     
                                                 
+                                                        , 
+                                                         isRoot
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -747,6 +916,11 @@ Use 'document' string to retrieve document Node instance from string</strong>
                                                         <dd>
                                                             <code>doc &lt;document|Node&gt;</code>
                                                              optional The document containing the node. Defaults to current document.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>isRoot &lt;boolean&gt;</code>
+                                                             optional Whether or not this node should be treated as a root node. Root nodes
+aren't allowed to traverse outside their DOM tree.
                                                         </dd>
                                                 </dl>
 
@@ -1718,7 +1892,13 @@ Only valid on FORM elements
                                 <li class=""><a href="#property_body">body</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_cells">cells</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_childNodes">childNodes</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_children">children</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_docHeight">docHeight</a>
@@ -1736,6 +1916,9 @@ Only valid on FORM elements
                                 <li class=""><a href="#property_docWidth">docWidth</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_elements">elements</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_firstChild">firstChild</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
@@ -1745,6 +1928,9 @@ Only valid on FORM elements
                                 <li class=""><a href="#property_offsetParent">offsetParent</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_options">options</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_ownerDocument">ownerDocument</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
@@ -1752,6 +1938,18 @@ Only valid on FORM elements
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_previousSibling">previousSibling</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_rows">rows</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_tBodies">tBodies</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_tFoot">tFoot</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_tHead">tHead</a>
                                         <!--<code>&lt;String&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_winHeight">winHeight</a>
@@ -1780,6 +1978,9 @@ Only valid on FORM elements
                                 </li>
                                 <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_compareTo">compareTo</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_contains">contains</a>
                                 </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_create">create</a>

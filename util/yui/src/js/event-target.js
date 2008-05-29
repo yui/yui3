@@ -16,7 +16,7 @@ YUI.add("event-target", function(Y) {
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        var o = (Y.lang.isObject(opts)) ? opts : {};
+        var o = (Y.Lang.isObject(opts)) ? opts : {};
 
         this._yuievt = {
 
@@ -53,7 +53,7 @@ YUI.add("event-target", function(Y) {
         subscribe: function(type, fn, context, p_override) {
 
             var ce = this._yuievt.events[type] || this.publish(type),
-                a = Y.array(arguments, 1, true);
+                a = Y.Array(arguments, 1, true);
 
             // return ce.subscribe(fn, context, p_override);
             return ce.subscribe.apply(ce, a);
@@ -79,7 +79,7 @@ YUI.add("event-target", function(Y) {
         unsubscribe: function(type, fn, context) {
 
             // If this is an event handle, use it to detach
-            if (Y.lang.isObject(type) && type.detach) {
+            if (Y.Lang.isObject(type) && type.detach) {
                 return type.detach();
             }
 
@@ -93,7 +93,7 @@ YUI.add("event-target", function(Y) {
             } else {
                 var ret = true;
                 for (var i in evts) {
-                    if (Y.object.owns(evts, i)) {
+                    if (Y.Object.owns(evts, i)) {
                         ret = ret && evts[i].unsubscribe(fn, context);
                     }
                 }
@@ -213,7 +213,7 @@ YUI.add("event-target", function(Y) {
          */
         fire: function(type) {
 
-            var typeIncluded = Y.lang.isString(type),
+            var typeIncluded = Y.Lang.isString(type),
                 t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
@@ -234,7 +234,7 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
                 ce.target = this;
             }
 
-            var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
+            var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             var ret = ce.fire.apply(ce, a);
 
             // clear target for next fire()
@@ -305,12 +305,12 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
          */
         before: function() {
 
-            var a = Y.array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true);
 
             // insert this object as method target
             a.splice(1, 0, this);
 
-            // Y.log('ET:before- ' + Y.lang.dump(a));
+            // Y.log('ET:before- ' + Y.Lang.dump(a));
 
             return Y.before.apply(Y, a);
         },
@@ -332,7 +332,7 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
          * @return the detach handle
          */
         after: function() {
-            var a = Y.array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true);
             a.splice(1, 0, this);
             return Y.after.apply(Y, a);
         }

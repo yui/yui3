@@ -85,7 +85,7 @@ YUI.add("event-facade", function(Y) {
             x = e.pageX, y = e.pageY;
 
         for (var i in whitelist) {
-            if (Y.object.owns(whitelist, i)) {
+            if (Y.Object.owns(whitelist, i)) {
                 this[i] = e[i];
             }
         }

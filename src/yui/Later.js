@@ -1,7 +1,7 @@
 // requires lang
 YUI.add("later", function(Y) {
 
-    var L = Y.lang;
+    var L = Y.Lang;
 
     /**
      * Executes the supplied function in the context of the supplied 

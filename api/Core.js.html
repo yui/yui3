@@ -39,8 +39,8 @@
 <div class="highlight" ><pre><span class="c">// requires lang</span>
 <span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;core&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
-    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">,</span> 
-    <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">,</span>
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> 
+    <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">,</span>
     <span class="nx">OP</span> <span class="o">=</span> <span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
     <span class="nx">IEF</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;toString&quot;</span><span class="o">,</span> <span class="s2">&quot;valueOf&quot;</span><span class="o">],</span> 
     <span class="nx">PROTO</span> <span class="o">=</span> <span class="s1">&#39;prototype&#39;</span><span class="o">,</span>
@@ -57,7 +57,7 @@
 <span class="c">     * @private</span>
 <span class="c">     * @for YUI</span>
 <span class="c">     */</span>
-    <span class="nx">_iefix</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">?</span>
+    <span class="nx">_iefix</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">?</span>
         <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">w</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">a</span><span class="o">=</span><span class="nx">IEF</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">s</span><span class="o">[</span><span class="nx">n</span><span class="o">];</span>
@@ -97,19 +97,19 @@
 <span class="c"></span>
 <span class="c">            //  var args = arguments,</span>
 <span class="c">            //      a = (args.length &gt; 1) ?</span>
-<span class="c">            //              Y.array(args, 1, true) :</span>
+<span class="c">            //              Y.Array(args, 1, true) :</span>
 <span class="c">            //              args.callee.caller[&quot;arguments&quot;],</span>
 <span class="c">            //      s = this.constructor.superclass;</span>
 <span class="c"></span>
 <span class="c">            // var args = arguments, s = this.constructor.superclass, a;</span>
 <span class="c">            // if (args.length &gt; 1) {</span>
-<span class="c">            //     a = Y.array(args, 1, true);</span>
+<span class="c">            //     a = Y.Array(args, 1, true);</span>
 <span class="c">            // } else {</span>
 <span class="c">            //     var c = args.callee.caller;</span>
 <span class="c">            //     a = (c &amp;&amp; &quot;arguments&quot; in c) ? c.arguments : [];</span>
 <span class="c">            // }</span>
 <span class="c"></span>
-<span class="c">            var a = Y.array(arguments, 1, true), s = this.constructor.superclass;</span>
+<span class="c">            var a = Y.Array(arguments, 1, true), s = this.constructor.superclass;</span>
 <span class="c"></span>
 <span class="c">            if (m) {</span>
 <span class="c">                if (m in s) {</span>
@@ -138,7 +138,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="c">// var o={}, a=arguments;</span>
 <span class="c"></span>        <span class="c">// for (var i=0, l=a.length; i&lt;l; i=i+1) {</span>
-<span class="c"></span>        <span class="c">//var a=arguments, o=Y.object(a[0]);</span>
+<span class="c"></span>        <span class="c">//var a=arguments, o=Y.Object(a[0]);</span>
 <span class="c"></span>        <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">o</span><span class="o">={};</span>
         <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
@@ -263,7 +263,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">sProto</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">newProto</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">construct</span> <span class="o">=</span> <span class="nx">s</span><span class="o">,</span> 
-            <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
+            <span class="nx">a</span> <span class="o">=</span> <span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">:</span> <span class="o">[],</span> <span class="nx">rProto</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> 
             <span class="nx">target</span> <span class="o">=</span>  <span class="nx">rProto</span> <span class="o">||</span> <span class="nx">r</span><span class="o">,</span> <span class="nx">applyConstructor</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="c">// working on a class, so apply constructor infrastructure</span>
@@ -292,7 +292,7 @@
                     <span class="c">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c"></span>                    <span class="c">// but only if it hasn&#39;t been overridden</span>
 <span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">sequestered</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">me</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">sequestered</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">me</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">replacements</span><span class="o">[</span><span class="nx">i</span><span class="o">]))</span> <span class="o">{</span>
                             <span class="c">// Y.log(&#39;... restoring &#39; + k);</span>
 <span class="c"></span>                            <span class="nx">me</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">sequestered</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                         <span class="o">}</span>
@@ -310,7 +310,7 @@
 
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;augment: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="o">);</span>
 
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
 
                         <span class="c">// sequester the function</span>
 <span class="c"></span>                        <span class="nx">sequestered</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
@@ -380,7 +380,7 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s2">&quot;extend failed, verify dependencies&quot;</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">sp</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">var</span> <span class="nx">sp</span> <span class="o">=</span> <span class="nx">s</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">rp</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">sp</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
         <span class="nx">r</span><span class="o">.</span><span class="nx">prototype</span><span class="o">=</span><span class="nx">rp</span><span class="o">;</span>
 
         <span class="nx">rp</span><span class="o">.</span><span class="nx">constructor</span><span class="o">=</span><span class="nx">r</span><span class="o">;</span>
@@ -444,13 +444,13 @@
                 <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
                     <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
                 <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nx">A</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
                 <span class="nx">default</span><span class="o">:</span>
-                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 
-        <span class="c">// return Y.object.each(o, f, c);</span>
+        <span class="c">// return Y.Object.each(o, f, c);</span>
 <span class="c"></span>    <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -496,7 +496,7 @@
             <span class="o">}</span>
             <span class="nx">o2</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">owner</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">safe</span><span class="o">)</span> <span class="o">?</span> <span class="o">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="nx">o2</span> <span class="o">=</span> <span class="o">(</span><span class="nx">safe</span><span class="o">)</span> <span class="o">?</span> <span class="o">{}</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
@@ -522,11 +522,11 @@
         <span class="c">// if (!f) {</span>
 <span class="c"></span>            <span class="c">// Y.log(&#39;no f&#39;);</span>
 <span class="c"></span>        <span class="c">// }</span>
-<span class="c"></span>        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>        <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
             <span class="c">// @todo bind args first, or function args first?</span>
-<span class="c"></span>            <span class="c">// return f.apply(c || f, a.concat(Y.array(arguments, 0, true)));</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
+<span class="c"></span>            <span class="c">// return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));</span>
+<span class="c"></span>            <span class="k">return</span> <span class="nx">f</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">c</span> <span class="o">||</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">).</span><span class="nx">concat</span><span class="o">(</span><span class="nx">a</span><span class="o">));</span>
         <span class="o">};</span>
     <span class="o">};</span>
 
@@ -557,7 +557,7 @@
     <span class="o">};</span>
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
         <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
@@ -587,7 +587,7 @@
     <span class="nx">Y</span><span class="o">.</span><span class="nx">before</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
         <span class="c">// method override</span>
 <span class="c"></span>        <span class="c">// callback, object, sMethod</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
 
@@ -609,7 +609,7 @@
 <span class="c">     * @return unsubscribe handle</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">type</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Do</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">}</span>
 

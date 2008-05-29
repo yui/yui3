@@ -1,8 +1,8 @@
 // requires lang
 YUI.add("core", function(Y) {
 
-    var L = Y.lang, 
-    A = Y.array,
+    var L = Y.Lang, 
+    A = Y.Array,
     OP = Object.prototype, 
     IEF = ["toString", "valueOf"], 
     PROTO = 'prototype',
@@ -19,7 +19,7 @@ YUI.add("core", function(Y) {
      * @private
      * @for YUI
      */
-    _iefix = (Y.ua && Y.ua.ie) ?
+    _iefix = (Y.UA && Y.UA.ie) ?
         function(r, s, w) {
             for (var i=0, a=IEF; i<a.length; i=i+1) {
                 var n = a[i], f = s[n];
@@ -59,19 +59,19 @@ YUI.add("core", function(Y) {
 
             //  var args = arguments,
             //      a = (args.length > 1) ?
-            //              Y.array(args, 1, true) :
+            //              Y.Array(args, 1, true) :
             //              args.callee.caller["arguments"],
             //      s = this.constructor.superclass;
 
             // var args = arguments, s = this.constructor.superclass, a;
             // if (args.length > 1) {
-            //     a = Y.array(args, 1, true);
+            //     a = Y.Array(args, 1, true);
             // } else {
             //     var c = args.callee.caller;
             //     a = (c && "arguments" in c) ? c.arguments : [];
             // }
 
-            var a = Y.array(arguments, 1, true), s = this.constructor.superclass;
+            var a = Y.Array(arguments, 1, true), s = this.constructor.superclass;
 
             if (m) {
                 if (m in s) {
@@ -100,7 +100,7 @@ YUI.add("core", function(Y) {
     Y.merge = function() {
         // var o={}, a=arguments;
         // for (var i=0, l=a.length; i<l; i=i+1) {
-        //var a=arguments, o=Y.object(a[0]);
+        //var a=arguments, o=Y.Object(a[0]);
         var a=arguments, o={};
         for (var i=0, l=a.length; i<l; i=i+1) {
             Y.mix(o, a[i], true);
@@ -225,7 +225,7 @@ YUI.add("core", function(Y) {
     Y.augment = function(r, s, ov, wl, args) {
 
         var sProto = s.prototype, newProto = null, construct = s, 
-            a = (args) ? Y.array(args) : [], rProto = r.prototype, 
+            a = (args) ? Y.Array(args) : [], rProto = r.prototype, 
             target =  rProto || r, applyConstructor = false;
 
         // working on a class, so apply constructor infrastructure
@@ -254,7 +254,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
-                        if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
+                        if (Y.Object.owns(sequestered, i) && (me[i] === replacements[i])) {
                             // Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
@@ -272,7 +272,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     Y.log('augment: ' + k);
 
-                    if (Y.lang.isFunction(v)) {
+                    if (Y.Lang.isFunction(v)) {
 
                         // sequester the function
                         sequestered[k] = v;
@@ -342,7 +342,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
             Y.fail("extend failed, verify dependencies");
         }
 
-        var sp = s.prototype, rp=Y.object(sp), i;
+        var sp = s.prototype, rp=Y.Object(sp), i;
         r.prototype=rp;
 
         rp.constructor=r;
@@ -406,13 +406,13 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
                 case 1:
                     return A.each(o, f, c);
                 case 2:
-                    return A.each(Y.array(o, 0, true), f, c);
+                    return A.each(Y.Array(o, 0, true), f, c);
                 default:
-                    return Y.object.each(o, f, c, proto);
+                    return Y.Object.each(o, f, c, proto);
             }
         }
 
-        // return Y.object.each(o, f, c);
+        // return Y.Object.each(o, f, c);
     };
 
     /**
@@ -458,7 +458,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
             }
             o2 = Y.bind(o, owner);
         } else {
-            o2 = (safe) ? {} : Y.object(o);
+            o2 = (safe) ? {} : Y.Object(o);
         }
 
         Y.each(o, function(v, k) {
@@ -484,11 +484,11 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
         // if (!f) {
             // Y.log('no f');
         // }
-        var a = Y.array(arguments, 2, true);
+        var a = Y.Array(arguments, 2, true);
         return function () {
             // @todo bind args first, or function args first?
-            // return f.apply(c || f, a.concat(Y.array(arguments, 0, true)));
-            return f.apply(c || f, Y.array(arguments, 0, true).concat(a));
+            // return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
         };
     };
 
@@ -519,7 +519,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
     };
 
     Y.detach = function(type, f, o) {
-        if (Y.lang.isObject(type) && type.detach) {
+        if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
         } else if (type.indexOf(':') > -1) {
             var cat = type.split(':');
@@ -549,7 +549,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
     Y.before = function(type, f, o) { 
         // method override
         // callback, object, sMethod
-        if (Y.lang.isFunction(type)) {
+        if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         }
 
@@ -571,7 +571,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
      * @return unsubscribe handle
      */
     Y.after = function(type, f, o) {
-        if (Y.lang.isFunction(type)) {
+        if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         }
 

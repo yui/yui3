@@ -67,7 +67,7 @@ YUI.prototype = {
         // before _setup is called.
         this.config = o;
 
-        this.env = {
+        this.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -78,10 +78,10 @@ YUI.prototype = {
 
         this.constructor = YUI;
 
-        var i = YUI.env._idx++;
+        var i = YUI.Env._idx++;
 
-        this.env._yidx = i;
-        this.env._uidx = 0;
+        this.Env._yidx = i;
+        this.Env._uidx = 0;
 
         this.id = this.guid('YUI');
 
@@ -149,7 +149,7 @@ YUI.prototype = {
             details: details || {}
         };
 
-        YUI.env.mods[name] = m;
+        YUI.Env.mods[name] = m;
 
         return this; // chain support
     },
@@ -179,12 +179,12 @@ YUI.prototype = {
      */
     use: function() {
 
-        var a=arguments, l=a.length, mods=YUI.env.mods, 
-            Y = this, used = Y.env._used;
+        var a=arguments, l=a.length, mods=YUI.Env.mods, 
+            Y = this, used = Y.Env._used;
 
         // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
-            //return Y.use.apply(Y, Y.object.keys(mods));
+            //return Y.use.apply(Y, Y.Object.keys(mods));
             for (var k in mods) {
                 Y.use(k);
             }
@@ -316,7 +316,7 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        var Y = this, c = Y.config, es = Y.env._eventstack,
+        var Y = this, c = Y.config, es = Y.Env._eventstack,
             bail = (es && es.logging);
 
         // suppress log message if the config is off or the event stack
@@ -324,7 +324,7 @@ YUI.prototype = {
         if (c.debug && !bail) {
 
 
-            // Y.env._lastlog = msg;
+            // Y.Env._lastlog = msg;
 
             if (c.useConsole && typeof console != 'undefined') {
 
@@ -375,7 +375,7 @@ YUI.prototype = {
 
     // generate an id that is unique among all YUI instances
     guid: function(pre) {
-        var e = this.env, p = (pre) || e._pre;
+        var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
     }
 };
@@ -406,9 +406,9 @@ YUI.add("lang", function(Y) {
      * Provides the language utilites and extensions used by the library
      * @class lang
      */
-    Y.lang = Y.lang || {};
+    Y.Lang = Y.Lang || {};
 
-    var L = Y.lang, SPLICE="splice", LENGTH="length";
+    var L = Y.Lang, SPLICE="splice", LENGTH="length";
 
         /**
          * Determines whether or not the provided object is an array.
@@ -543,7 +543,7 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
  */
 YUI.add("array", function(Y) {
 
-    var L = Y.lang, Native = Array.prototype;
+    var L = Y.Lang, Native = Array.prototype;
 
     /** 
      * Returns an array:
@@ -562,8 +562,8 @@ YUI.add("array", function(Y) {
      *   @param al {boolean} if true, it forces the array-like fork.  This
      *   can be used to avoid multiple array.test calls.
      */
-    Y.array = function(o, i, al) {
-        var t = (al) ? 2 : Y.array.test(o);
+    Y.Array = function(o, i, al) {
+        var t = (al) ? 2 : Y.Array.test(o);
         switch (t) {
             case 1:
                 return (i) ? o.slice(o, i) : o;
@@ -574,7 +574,7 @@ YUI.add("array", function(Y) {
         }
     };
 
-    var A = Y.array;
+    var A = Y.Array;
     
     // YUI array utilities.  The current plan is to make a few useful
     // ones 'core', and to have the rest of the array extras an optional
@@ -649,8 +649,8 @@ YUI.add("array", function(Y) {
 // requires lang
 YUI.add("core", function(Y) {
 
-    var L = Y.lang, 
-    A = Y.array,
+    var L = Y.Lang, 
+    A = Y.Array,
     OP = Object.prototype, 
     IEF = ["toString", "valueOf"], 
     PROTO = 'prototype',
@@ -667,7 +667,7 @@ YUI.add("core", function(Y) {
      * @private
      * @for YUI
      */
-    _iefix = (Y.ua && Y.ua.ie) ?
+    _iefix = (Y.UA && Y.UA.ie) ?
         function(r, s, w) {
             for (var i=0, a=IEF; i<a.length; i=i+1) {
                 var n = a[i], f = s[n];
@@ -707,19 +707,19 @@ YUI.add("core", function(Y) {
 
             //  var args = arguments,
             //      a = (args.length > 1) ?
-            //              Y.array(args, 1, true) :
+            //              Y.Array(args, 1, true) :
             //              args.callee.caller["arguments"],
             //      s = this.constructor.superclass;
 
             // var args = arguments, s = this.constructor.superclass, a;
             // if (args.length > 1) {
-            //     a = Y.array(args, 1, true);
+            //     a = Y.Array(args, 1, true);
             // } else {
             //     var c = args.callee.caller;
             //     a = (c && "arguments" in c) ? c.arguments : [];
             // }
 
-            var a = Y.array(arguments, 1, true), s = this.constructor.superclass;
+            var a = Y.Array(arguments, 1, true), s = this.constructor.superclass;
 
             if (m) {
                 if (m in s) {
@@ -748,7 +748,7 @@ YUI.add("core", function(Y) {
     Y.merge = function() {
         // var o={}, a=arguments;
         // for (var i=0, l=a.length; i<l; i=i+1) {
-        //var a=arguments, o=Y.object(a[0]);
+        //var a=arguments, o=Y.Object(a[0]);
         var a=arguments, o={};
         for (var i=0, l=a.length; i<l; i=i+1) {
             Y.mix(o, a[i], true);
@@ -873,7 +873,7 @@ YUI.add("core", function(Y) {
     Y.augment = function(r, s, ov, wl, args) {
 
         var sProto = s.prototype, newProto = null, construct = s, 
-            a = (args) ? Y.array(args) : [], rProto = r.prototype, 
+            a = (args) ? Y.Array(args) : [], rProto = r.prototype, 
             target =  rProto || r, applyConstructor = false;
 
         // working on a class, so apply constructor infrastructure
@@ -902,7 +902,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
-                        if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
+                        if (Y.Object.owns(sequestered, i) && (me[i] === replacements[i])) {
                             // Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
@@ -920,7 +920,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     Y.log('augment: ' + k);
 
-                    if (Y.lang.isFunction(v)) {
+                    if (Y.Lang.isFunction(v)) {
 
                         // sequester the function
                         sequestered[k] = v;
@@ -990,7 +990,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
             Y.fail("extend failed, verify dependencies");
         }
 
-        var sp = s.prototype, rp=Y.object(sp), i;
+        var sp = s.prototype, rp=Y.Object(sp), i;
         r.prototype=rp;
 
         rp.constructor=r;
@@ -1054,13 +1054,13 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
                 case 1:
                     return A.each(o, f, c);
                 case 2:
-                    return A.each(Y.array(o, 0, true), f, c);
+                    return A.each(Y.Array(o, 0, true), f, c);
                 default:
-                    return Y.object.each(o, f, c, proto);
+                    return Y.Object.each(o, f, c, proto);
             }
         }
 
-        // return Y.object.each(o, f, c);
+        // return Y.Object.each(o, f, c);
     };
 
     /**
@@ -1106,7 +1106,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
             }
             o2 = Y.bind(o, owner);
         } else {
-            o2 = (safe) ? {} : Y.object(o);
+            o2 = (safe) ? {} : Y.Object(o);
         }
 
         Y.each(o, function(v, k) {
@@ -1132,11 +1132,11 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
         // if (!f) {
             // Y.log('no f');
         // }
-        var a = Y.array(arguments, 2, true);
+        var a = Y.Array(arguments, 2, true);
         return function () {
             // @todo bind args first, or function args first?
-            // return f.apply(c || f, a.concat(Y.array(arguments, 0, true)));
-            return f.apply(c || f, Y.array(arguments, 0, true).concat(a));
+            // return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
         };
     };
 
@@ -1167,7 +1167,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
     };
 
     Y.detach = function(type, f, o) {
-        if (Y.lang.isObject(type) && type.detach) {
+        if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
         } else if (type.indexOf(':') > -1) {
             var cat = type.split(':');
@@ -1197,7 +1197,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
     Y.before = function(type, f, o) { 
         // method override
         // callback, object, sMethod
-        if (Y.lang.isFunction(type)) {
+        if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
         }
 
@@ -1219,7 +1219,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
      * @return unsubscribe handle
      */
     Y.after = function(type, f, o) {
-        if (Y.lang.isFunction(type)) {
+        if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
         }
 
@@ -1245,13 +1245,13 @@ YUI.add("object", function(Y) {
      * @param The supplier object
      * @return the new object
      */
-    Y.object = function(o) {
+    Y.Object = function(o) {
         var F = function() {};
         F.prototype = o;
         return new F();
     }; 
 
-    var O = Y.object, L = Y.lang;
+    var O = Y.Object, L = Y.Lang;
 
     /**
      * Determines whether or not the property was added
@@ -1259,7 +1259,7 @@ YUI.add("object", function(Y) {
      * in the object, or was inherited from the prototype.
      * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
      * This 
-     * There is a discrepancy between Y.object.owns and
+     * There is a discrepancy between Y.Object.owns and
      * Object.prototype.hasOwnProperty when the property is a primitive added to
      * both the instance AND prototype with the same value:
      * <pre>
@@ -1268,7 +1268,7 @@ YUI.add("object", function(Y) {
      * var a = new A();
      * a.foo = 'foo';
      * alert(a.hasOwnProperty('foo')); // true
-     * alert(Y.object.owns(a, 'foo')); // false when using fallback
+     * alert(Y.Object.owns(a, 'foo')); // false when using fallback
      * </pre>
      * @method owns
      * @param o {any} The object being testing
@@ -1328,7 +1328,7 @@ YUI.add("ua", function(Y) {
      * Browser/platform detection
      * @class ua
      */
-    Y.ua = function() {
+    Y.UA = function() {
 
         var o={
 
@@ -1452,7 +1452,7 @@ YUI.add("ua", function(Y) {
 // requires lang
 YUI.add("dump", function(Y) {
 
-    var L=Y.lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ';
+    var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ';
 
     /**
      * Returns a simple string representation of the object or array.
@@ -1469,7 +1469,7 @@ YUI.add("dump", function(Y) {
      * @param d {int} How deep to recurse child objects, default 3
      * @return {String} the dump result
      */
-    Y.lang.dump = function(o, d) {
+    L.dump = function(o, d) {
         var i, len, s = [];
 
 
@@ -1507,7 +1507,7 @@ YUI.add("dump", function(Y) {
         } else {
             s.push("{");
             for (i in o) {
-                if (Y.object.owns(o, i)) {
+                if (Y.Object.owns(o, i)) {
                     s.push(i + ARROW);
                     if (L.isObject(o[i])) {
                         s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);
@@ -1529,7 +1529,7 @@ YUI.add("dump", function(Y) {
 // requires lang, dump
 YUI.add("substitute", function(Y) {
 
-    var L = Y.lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
+    var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
 
     /**
      * Does variable substitution on a string. It scans through the string 
@@ -1629,7 +1629,7 @@ YUI.add("substitute", function(Y) {
 // requires lang
 YUI.add("later", function(Y) {
 
-    var L = Y.lang;
+    var L = Y.Lang;
 
     /**
      * Executes the supplied function in the context of the supplied 
@@ -1710,27 +1710,27 @@ YUI.add("compat", function(Y) {
     Y.namespace("util", "widget", "example");
 
     // support Y.register
-    Y.mix(Y.env, {
+    Y.mix(Y.Env, {
             modules: [],
             listeners: [],
             getVersion: function(name) {
-                return this.env.modules[name] || null;
+                return this.Env.modules[name] || null;
             }
     });
 
-    Y.env.ua = Y.ua; 
-    var L = Y.lang;
+    Y.Env.ua = Y.UA; 
+    var L = Y.Lang;
 
     // add old lang properties 
     Y.mix(L, {
 
         augmentObject: function(r, s) {
-            var a = arguments, wl = (a.length > 2) ? Y.array(a, 2, true) : null;
+            var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
             return Y.mix(r, s, (wl), wl);
         },
      
         augmentProto: function(r, s) {
-            var a = arguments, wl = (a.length > 2) ? Y.array(a, 2, true) : null;
+            var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
             return Y.bind(Y.prototype, r, s, (wl), wl);
         },
 
@@ -1741,7 +1741,7 @@ YUI.add("compat", function(Y) {
     }, true);
 
     // IE won't enumerate this
-    L.hasOwnProperty = Y.object.owns;
+    L.hasOwnProperty = Y.Object.owns;
 
     // L.merge = Y.merge;
 
@@ -1750,11 +1750,11 @@ YUI.add("compat", function(Y) {
     // add register function
     Y.mix(Y, {
         register: function(name, mainClass, data) {
-            var mods = Y.env.modules;
+            var mods = Y.Env.modules;
             if (!mods[name]) {
                 mods[name] = { versions:[], builds:[] };
             }
-            var m=mods[name],v=data.version,b=data.build,ls=Y.env.listeners;
+            var m=mods[name],v=data.version,b=data.build,ls=Y.Env.listeners;
             m.name = name;
             m.version = v;
             m.build = b;
@@ -1777,7 +1777,7 @@ YUI.add("compat", function(Y) {
 
     // add old load listeners
     if ("undefined" !== typeof YAHOO_config) {
-        var l=YAHOO_config.listener,ls=Y.env.listeners,unique=true,i;
+        var l=YAHOO_config.listener,ls=Y.Env.listeners,unique=true,i;
         if (l) {
             // if YAHOO is loaded multiple times we need to check to see if
             // this is a new config object.  If it is, add the new component
@@ -1814,7 +1814,7 @@ YUI.add("aop", function(Y) {
         before: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
-                var a = [fn, c].concat(Y.array(arguments, 4, true));
+                var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
             this._inject(BEFORE, f, obj, sFn);
@@ -1824,7 +1824,7 @@ YUI.add("aop", function(Y) {
         after: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
-                var a = [fn, c].concat(Y.array(arguments, 4, true));
+                var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
             this._inject(AFTER, f, obj, sFn);
@@ -1900,7 +1900,7 @@ YUI.add("aop", function(Y) {
 
     Y.Do.Method.prototype.exec = function () {
 
-        var args = Y.array(arguments, 0, true), i, ret, newRet;
+        var args = Y.Array(arguments, 0, true), i, ret, newRet;
 
         // for (i=0; i<this.before.length; ++i) {
         for (i in this.before) {
@@ -2230,7 +2230,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             // var s = new Y.Subscriber(m);
             // s.ofn = fn;
 
-            var s = new Y.Subscriber(fn, obj, Y.array(arguments, 2, true));
+            var s = new Y.Subscriber(fn, obj, Y.Array(arguments, 2, true));
 
 
             if (this.fireOnce && this.fired) {
@@ -2273,7 +2273,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             var found = false, subs = this.subscribers;
             for (var i in subs) {
-                if (Y.object.owns(subs, i)) {
+                if (Y.Object.owns(subs, i)) {
                     var s = subs[i];
                     if (s && s.contains(fn, obj)) {
                         this._delete(s);
@@ -2296,7 +2296,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret, wrap = this.emitFacade, a = (wrap) ? Y.array(a) : args;
+            var ret, wrap = this.emitFacade, a = (wrap) ? Y.Array(a) : args;
             
             // emit an Event.Facade if this is that sort of event
             if (wrap) {
@@ -2311,7 +2311,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // if the first argument is an object literal, apply the
                 // properties to the event facade
-                if (args && Y.lang.isObject(args[0], true)) {
+                if (args && Y.Lang.isObject(args[0], true)) {
                     Y.mix(ef, args[0]);
                 }
 
@@ -2336,7 +2336,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          * @param cat {string} log category
          */
         log: function(msg, cat) {
-            var es = Y.env._eventstack, s =  es && es.silent;
+            var es = Y.Env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {
             if (!this.silent) {
                 Y.log(msg, cat || "info", "Event");
@@ -2361,7 +2361,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         fire: function() {
 
-            var es = Y.env._eventstack;
+            var es = Y.Env._eventstack;
 
             if (es) {
 
@@ -2384,7 +2384,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             } else {
 
-                Y.env._eventstack = {
+                Y.Env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
                    next: this,
@@ -2395,7 +2395,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                    queue: []
                 };
 
-                es = Y.env._eventstack;
+                es = Y.Env._eventstack;
             }
 
             var ret = true;
@@ -2408,7 +2408,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
                 // var subs = this.subscribers.slice(), len=subs.length,
                 var subs = Y.merge(this.subscribers), errors = [],
-                           args=Y.array(arguments, 0, true), i;
+                           args=Y.Array(arguments, 0, true), i;
 
                 this.fired = true;
                 this.details = args;
@@ -2419,7 +2419,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 es.lastLogState = es.logging;
 
                 for (i in subs) {
-                    if (Y.object.owns(subs, i)) {
+                    if (Y.Object.owns(subs, i)) {
 
                         if (!hasSub) {
 
@@ -2495,7 +2495,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     ret = ce.fire.apply(ce, q[1]);
                 }
 
-                Y.env._eventstack = null;
+                Y.Env._eventstack = null;
             } 
 
             return (ret !== false);
@@ -2509,7 +2509,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         unsubscribeAll: function() {
             var subs = this.subscribers, i;
             for (i in subs) {
-                if (Y.object.owns(subs, i)) {
+                if (Y.Object.owns(subs, i)) {
                     this._delete(subs[i]);
                 }
             }
@@ -2548,7 +2548,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopPropagation: function() {
             this.stopped = 1;
-            Y.env._eventstack.stopped = 1;
+            Y.Env._eventstack.stopped = 1;
         },
 
         /**
@@ -2558,13 +2558,13 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          */
         stopImmediatePropagation: function() {
             this.stopped = 2;
-            Y.env._eventstack.stopped = 2;
+            Y.Env._eventstack.stopped = 2;
         },
 
         preventDefault: function() {
             if (this.preventable) {
                 this.prevented = 1;
-                Y.env._eventstack.prevented = 1;
+                Y.Env._eventstack.prevented = 1;
             }
         }
 
@@ -2617,7 +2617,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         var m = fn;
         
         if (obj) {
-            var a = (args) ? Y.array(args) : [];
+            var a = (args) ? Y.Array(args) : [];
             a.unshift(fn, obj);
             m = Y.bind.apply(Y, a);
         }
@@ -2785,7 +2785,7 @@ YUI.add("event-target", function(Y) {
 
         // console.log('Event.Target constructor executed: ' + this._yuid);
 
-        var o = (Y.lang.isObject(opts)) ? opts : {};
+        var o = (Y.Lang.isObject(opts)) ? opts : {};
 
         this._yuievt = {
 
@@ -2822,7 +2822,7 @@ YUI.add("event-target", function(Y) {
         subscribe: function(type, fn, context, p_override) {
 
             var ce = this._yuievt.events[type] || this.publish(type),
-                a = Y.array(arguments, 1, true);
+                a = Y.Array(arguments, 1, true);
 
             // return ce.subscribe(fn, context, p_override);
             return ce.subscribe.apply(ce, a);
@@ -2848,7 +2848,7 @@ YUI.add("event-target", function(Y) {
         unsubscribe: function(type, fn, context) {
 
             // If this is an event handle, use it to detach
-            if (Y.lang.isObject(type) && type.detach) {
+            if (Y.Lang.isObject(type) && type.detach) {
                 return type.detach();
             }
 
@@ -2862,7 +2862,7 @@ YUI.add("event-target", function(Y) {
             } else {
                 var ret = true;
                 for (var i in evts) {
-                    if (Y.object.owns(evts, i)) {
+                    if (Y.Object.owns(evts, i)) {
                         ret = ret && evts[i].unsubscribe(fn, context);
                     }
                 }
@@ -2982,7 +2982,7 @@ YUI.add("event-target", function(Y) {
          */
         fire: function(type) {
 
-            var typeIncluded = Y.lang.isString(type),
+            var typeIncluded = Y.Lang.isString(type),
                 t = (typeIncluded) ? type : (type && type.type);
 
             var ce = this.getEvent(t);
@@ -3003,7 +3003,7 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
                 ce.target = this;
             }
 
-            var a = Y.array(arguments, (typeIncluded) ? 1 : 0, true);
+            var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             var ret = ce.fire.apply(ce, a);
 
             // clear target for next fire()
@@ -3074,12 +3074,12 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
          */
         before: function() {
 
-            var a = Y.array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true);
 
             // insert this object as method target
             a.splice(1, 0, this);
 
-            // Y.log('ET:before- ' + Y.lang.dump(a));
+            // Y.log('ET:before- ' + Y.Lang.dump(a));
 
             return Y.before.apply(Y, a);
         },
@@ -3101,7 +3101,7 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
          * @return the detach handle
          */
         after: function() {
-            var a = Y.array(arguments, 0, true);
+            var a = Y.Array(arguments, 0, true);
             a.splice(1, 0, this);
             return Y.after.apply(Y, a);
         }
@@ -3121,7 +3121,7 @@ YUI.add("event-ready", function(Y) {
         return;
     }
 
-    var env = YUI.env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
+    var env = YUI.Env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
 
     if (!env._ready) {
 
@@ -3150,7 +3150,7 @@ YUI.add("event-ready", function(Y) {
         // This isolates what appears to be a safe moment to manipulate
         // the DOM prior to when the document's readyState suggests
         // it is safe to do so.
-        if (Y.ua.ie) {
+        if (Y.UA.ie) {
 
             env._dri = setInterval(function() {
                 var n = D.createElement('p');  
@@ -3169,7 +3169,7 @@ YUI.add("event-ready", function(Y) {
         
         // The document's readyState in Safari currently will
         // change to loaded/complete before images are loaded.
-        } else if (Y.ua.webkit && Y.ua.webkit < 525) {
+        } else if (Y.UA.webkit && Y.UA.webkit < 525) {
 
             env._dri = setInterval(function() {
                 var rs=D.readyState;
@@ -3373,8 +3373,8 @@ YUI.add("event-dom", function(Y) {
                 // @TODO fix arguments
                 onAvailable: function(id, fn, p_obj, p_override, checkContent) {
 
-                    // var a = (Y.lang.isString(id)) ? [id] : id;
-                    var a = Y.array(id);
+                    // var a = (Y.Lang.isString(id)) ? [id] : id;
+                    var a = Y.Array(id);
 
                     for (var i=0; i<a.length; i=i+1) {
                         _avail.push({ id:         a[i], 
@@ -3444,7 +3444,7 @@ YUI.add("event-dom", function(Y) {
                 onDOMReady: function(fn) {
                     // var ev = Y.Event.DOMReadyEvent;
                     // ev.subscribe.apply(ev, arguments);
-                    var a = Y.array(arguments, 0, true);
+                    var a = Y.Array(arguments, 0, true);
                     a.unshift('event:ready');
                     Y.on.apply(Y, a);
                 },
@@ -3473,9 +3473,9 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    // Y.log('addListener: ' + Y.lang.dump(Y.array(arguments, 0, true), 1));
+                    // Y.log('addListener: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
 
-                    var a=Y.array(arguments, 1, true), override = a[3], E = Y.Event;
+                    var a=Y.Array(arguments, 1, true), override = a[3], E = Y.Event;
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
@@ -3502,7 +3502,7 @@ YUI.add("event-dom", function(Y) {
                         return handles;
 
 
-                    } else if (Y.lang.isString(el)) {
+                    } else if (Y.Lang.isString(el)) {
                         var oEl = Y.get(el);
                         // If the el argument is a string, we assume it is 
                         // actually the id of the element.  If the page is loaded
@@ -3518,7 +3518,7 @@ YUI.add("event-dom", function(Y) {
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
                                 // Y.Event.addListener(el, type, fn, obj, override);
-                                Y.Event.addListener.apply(Y.Event, Y.array(arguments, 0, true));
+                                Y.Event.addListener.apply(Y.Event, Y.Array(arguments, 0, true));
                             });
 
                             return true;
@@ -3564,7 +3564,7 @@ YUI.add("event-dom", function(Y) {
 
         
                     // from type, fn, etc to fn, obj, override
-                    a = Y.array(arguments, 2, true);
+                    a = Y.Array(arguments, 2, true);
                     // a = a.shift();
 
                     var context = el;
@@ -3779,7 +3779,7 @@ YUI.add("event-dom", function(Y) {
                         return;
                     }
 
-                    if (Y.ua.ie) {
+                    if (Y.UA.ie) {
                         // Hold off if DOMReady has not fired and check current
                         // readyState to protect against the IE operation aborted
                         // issue.
@@ -3881,7 +3881,7 @@ YUI.add("event-dom", function(Y) {
                  * @static
                  */
                 purgeElement: function(el, recurse, type) {
-                    var oEl = (Y.lang.isString(el)) ? Y.get(el) : el,
+                    var oEl = (Y.Lang.isString(el)) ? Y.get(el) : el,
                         id = Y.stamp(oEl);
                     var lis = this.getListeners(oEl, type), i, len;
                     if (lis) {
@@ -3993,7 +3993,7 @@ YUI.add("event-dom", function(Y) {
         var E = Y.Event;
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
-        if (Y.ua.ie) {
+        if (Y.UA.ie) {
             Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
@@ -4008,7 +4008,7 @@ YUI.add("event-dom", function(Y) {
          * @static
          */
         E.attach = function(type, fn, el, data, context) {
-            var a = Y.array(arguments, 0, true),
+            var a = Y.Array(arguments, 0, true),
                 oEl = a.splice(2, 1);
             a.unshift(oEl[0]);
             return E.addListener.apply(E, a);
@@ -4074,7 +4074,7 @@ YUI.add("event-facade", function(Y) {
     };
 
     */
-    var ua = Y.ua,
+    var ua = Y.UA,
 
         /**
          * webkit key remapping required for Safari < 3.1
@@ -4153,7 +4153,7 @@ YUI.add("event-facade", function(Y) {
 
         // copy all primitives
         for (var i in e) {
-            if (!Y.lang.isObject(e[i])) {
+            if (!Y.Lang.isObject(e[i])) {
                 this[i] = e[i];
             }
         }
@@ -4550,7 +4550,7 @@ Selector.prototype = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        Y.log('query: returning ' + result, 'info', 'Selector');
+        Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
         return result;
     }
 };
@@ -4622,7 +4622,7 @@ var query = function(selector, root, firstOnly, deDupe) {
 };
 
 var contains = function() {
-    if (document.documentElement.contains && !Y.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+    if (document.documentElement.contains && !Y.UA.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
         return function(needle, haystack) {
             return haystack.contains(needle);
         };
@@ -4915,7 +4915,7 @@ var tokenize = function(selector) {
     do {
         found = false; // reset after full pass
         for (var re in patterns) {
-                if (!Y.object.owns(patterns, re)) {
+                if (!Y.Object.owns(patterns, re)) {
                     continue;
                 }
                 if (re != 'tag' && re != 'combinator') { // only one allowed
@@ -4974,7 +4974,7 @@ var replaceShorthand = function(selector) {
         selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
     }
     for (var re in shorthand) {
-        if (!Y.object.owns(shorthand, re)) {
+        if (!Y.Object.owns(shorthand, re)) {
             continue;
         }
         selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
@@ -4992,7 +4992,7 @@ Selector = new Selector();
 Selector.patterns = patterns;
 Y.Selector = Selector;
 
-if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['class'] = 'className';
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
@@ -5407,7 +5407,7 @@ YUI.add('node', function(Y) {
             width = win.innerWidth,
             root = doc[DOCUMENT_ELEMENT];
     
-        if ( mode && !Y.ua.opera ) { // IE, Gecko
+        if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
                 root = doc.body; 
             }
@@ -5815,6 +5815,14 @@ YUI.add('node', function(Y) {
             node = _nodes[this._yuid];
             needle = getDOMNode(needle);
             return contains(node, needle);
+        },
+
+        plug: function(PluginClass, config) {
+            config = config || {};
+            config.owner = this;
+            if (PluginClass && PluginClass.NS) {
+                this[PluginClass.NS] = new PluginClass(config);
+            }
         }
     };
 
@@ -5852,7 +5860,7 @@ YUI.add('node', function(Y) {
         var html = [];
         var att = [];
 
-        if (Y.lang.isString(jsonml)) { // text node
+        if (Y.Lang.isString(jsonml)) { // text node
             return jsonml;
         }
 
@@ -5861,17 +5869,20 @@ YUI.add('node', function(Y) {
         }
 
         var tag = jsonml[0];
-        if (!Y.lang.isString(tag)) {
+        if (!Y.Lang.isString(tag)) {
             return null; // bad tag error
         }
 
+        var tmpAtt;
         for (var i = 1, len = jsonml.length; i < len; ++i) {
             if (typeof jsonml[i] === 'string' || jsonml[i].push) {
                 html[html.length] = _createHTML(jsonml[i]);
             } else if (typeof jsonml[i] == 'object') {
                 for (var attr in jsonml[i]) {
+                    tmpAtt = (attr != 'className') ? attr : 'class';
+
                     if (jsonml[i].hasOwnProperty(attr)) {
-                        att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                        att[att.length] = ' ' + tmpAtt + '="' + jsonml[i][attr] + '"';
                     }
                 }
             }
@@ -6038,6 +6049,7 @@ YUI.add('node', function(Y) {
          */
         get: function(name) {
             if (name == 'length') {
+                Y.log('the length property is deprecated; use size()', 'warn', 'NodeList');
                 return _nodes[this._yuid].length;
             }
             var nodes = _nodes[this._yuid];
@@ -6079,6 +6091,11 @@ YUI.add('node', function(Y) {
             return this;
         },
 
+        /**
+         * Returns the current number of items in the NodeList.
+         * @method size
+         * @return {Int} The number of items in the NodeList. 
+         */
         size: function() {
             return _nodes[this._yuid].length;
         },
@@ -6162,7 +6179,7 @@ YUI.add('nodeextras', function(Y) {
             
             //Y.log('addClass adding ' + className, 'info', 'Node');
             
-            node.set(CLASS_NAME, Y.lang.trim([node.get(CLASS_NAME), className].join(' ')));
+            node.set(CLASS_NAME, Y.Lang.trim([node.get(CLASS_NAME), className].join(' ')));
         },
 
         /**
@@ -6179,7 +6196,7 @@ YUI.add('nodeextras', function(Y) {
             //Y.log('removeClass removing ' + className, 'info', 'Node');
             
             node.set(CLASS_NAME,
-                    Y.lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
+                    Y.Lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' ')));
 
             if ( node.hasClass(className) ) { // in case of multiple adjacent
@@ -6210,7 +6227,7 @@ YUI.add('nodeextras', function(Y) {
                 node.replaceClass(oldC, newC);
             }
 
-            node.set(CLASS_NAME, Y.lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
+            node.set(CLASS_NAME, Y.Lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
         },
 
         /**
@@ -6366,8 +6383,8 @@ YUI.add('nodeextras', function(Y) {
 
 YUI.add("get", function(Y) {
     
-        var ua=Y.ua, 
-        L=Y.lang;
+        var ua=Y.UA, 
+        L=Y.Lang;
 
 /*
  * Provides a mechanism to fetch remote resources and
@@ -6432,7 +6449,7 @@ Y.Get = function() {
         var w = win || window, d=w.document, n=d.createElement(type);
 
         for (var i in attr) {
-            if (attr[i] && Y.object.owns(attr, i)) {
+            if (attr[i] && Y.Object.owns(attr, i)) {
                 n.setAttribute(i, attr[i]);
             }
         }

@@ -1,8 +1,8 @@
 
 YUI.add("get", function(Y) {
     
-        var ua=Y.ua, 
-        L=Y.lang;
+        var ua=Y.UA, 
+        L=Y.Lang;
 
 /*
  * Provides a mechanism to fetch remote resources and
@@ -67,7 +67,7 @@ Y.Get = function() {
         var w = win || window, d=w.document, n=d.createElement(type);
 
         for (var i in attr) {
-            if (attr[i] && Y.object.owns(attr, i)) {
+            if (attr[i] && Y.Object.owns(attr, i)) {
                 n.setAttribute(i, attr[i]);
             }
         }

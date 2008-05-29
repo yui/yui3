@@ -47,7 +47,7 @@ YUI.add("event-facade", function(Y) {
     };
 
     */
-    var ua = Y.ua,
+    var ua = Y.UA,
 
         /**
          * webkit key remapping required for Safari < 3.1
@@ -126,7 +126,7 @@ YUI.add("event-facade", function(Y) {
 
         // copy all primitives
         for (var i in e) {
-            if (!Y.lang.isObject(e[i])) {
+            if (!Y.Lang.isObject(e[i])) {
                 this[i] = e[i];
             }
         }

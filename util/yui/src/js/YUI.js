@@ -67,7 +67,7 @@ YUI.prototype = {
         // before _setup is called.
         this.config = o;
 
-        this.env = {
+        this.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
@@ -78,10 +78,10 @@ YUI.prototype = {
 
         this.constructor = YUI;
 
-        var i = YUI.env._idx++;
+        var i = YUI.Env._idx++;
 
-        this.env._yidx = i;
-        this.env._uidx = 0;
+        this.Env._yidx = i;
+        this.Env._uidx = 0;
 
         this.id = this.guid('YUI');
 
@@ -149,7 +149,7 @@ YUI.prototype = {
             details: details || {}
         };
 
-        YUI.env.mods[name] = m;
+        YUI.Env.mods[name] = m;
 
         return this; // chain support
     },
@@ -179,12 +179,12 @@ YUI.prototype = {
      */
     use: function() {
 
-        var a=arguments, l=a.length, mods=YUI.env.mods, 
-            Y = this, used = Y.env._used;
+        var a=arguments, l=a.length, mods=YUI.Env.mods, 
+            Y = this, used = Y.Env._used;
 
         // YUI().use('*'); // assumes you need everything you've included
         if (a[0] === "*") {
-            //return Y.use.apply(Y, Y.object.keys(mods));
+            //return Y.use.apply(Y, Y.Object.keys(mods));
             for (var k in mods) {
                 Y.use(k);
             }
@@ -316,7 +316,7 @@ YUI.prototype = {
      */
     log: function(msg, cat, src) {
 
-        var Y = this, c = Y.config, es = Y.env._eventstack,
+        var Y = this, c = Y.config, es = Y.Env._eventstack,
             bail = (es && es.logging);
 
         // suppress log message if the config is off or the event stack
@@ -324,7 +324,7 @@ YUI.prototype = {
         if (c.debug && !bail) {
 
 
-            // Y.env._lastlog = msg;
+            // Y.Env._lastlog = msg;
 
             if (c.useConsole && typeof console != 'undefined') {
 
@@ -375,7 +375,7 @@ YUI.prototype = {
 
     // generate an id that is unique among all YUI instances
     guid: function(pre) {
-        var e = this.env, p = (pre) || e._pre;
+        var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
     }
 };
