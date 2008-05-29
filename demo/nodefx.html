@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-<title>FIXME</title>
+<title>NodeFX Plugin</title>
 <script type="text/javascript" src="../build/yui/yui.js"></script>
 <script type="text/javascript" src="../build/node/node.js"></script>
 
@@ -32,17 +32,14 @@
 (function() {
     var Y = YUI().use('nodeextras', 'nodefxplugin');
 
-    Y.on('click', function(e) {
-        alert('click');
-    }, '#foo');
-
-    Y.Node.ENFORCE_ROOT = true;
-
     var node = Y.Node.get('#foo', null, true);
     node.plug(Y.Plugin.NodeFX);
 
     node.fx.setAtts({
         from: {
+            left: 0,
+            top: 0,
+
             width: function(node) {
                 return node.get('offsetWidth');
             },
@@ -53,6 +50,14 @@
         },
 
         to: {
+            top: function(node) {
+                return node.get('offsetHeight') / 4;
+            },
+            
+            left: function(node) {
+                return node.get('offsetWidth') / 4;
+            },
+            
             width: 0,
             height: 0
         }
