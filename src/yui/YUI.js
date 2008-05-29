@@ -356,15 +356,7 @@ YUI.prototype = {
             // category filters are not used to suppress the log event
             // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
-        } else {
-
-       }
-
-            var d=document, b=d.body, n=d.createElement("div");
-                if (b) {
-                    n.appendChild(d.createTextNode(msg));
-                    b.appendChild(n);
-                }
+        }
 
         return Y;
     },

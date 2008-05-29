@@ -356,15 +356,7 @@ YUI.prototype = {
             // category filters are not used to suppress the log event
             // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
-        } else {
-
-       }
-
-            var d=document, b=d.body, n=d.createElement("div");
-                if (b) {
-                    n.appendChild(d.createTextNode(msg));
-                    b.appendChild(n);
-                }
+        }
 
         return Y;
     },
@@ -911,7 +903,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
                         if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
-                            Y.log('... restoring ' + k);
+                            // Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
                     }
@@ -926,7 +918,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
 
-                    // Y.log('augment: ' + k);
+                    Y.log('augment: ' + k);
 
                     if (Y.lang.isFunction(v)) {
 
