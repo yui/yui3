@@ -211,7 +211,7 @@ Selector.prototype = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        Y.log('query: returning ' + result, 'info', 'Selector');
+        Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
         return result;
     }
 };
