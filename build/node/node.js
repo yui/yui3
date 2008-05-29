@@ -1652,7 +1652,6 @@ YUI.add('node', function(Y) {
                 for (var i = 0, len = nodes.length; i < len; ++i) {
                     updateTmp(nodes[i]);
                     ret = node[method].apply(node, arguments);
-console.log(node, ret, node === ret);
                     if (ret !== node) {
                         a[i] = ret;
                     }
