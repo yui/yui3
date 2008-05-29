@@ -1,3 +1,7 @@
+/**
+ * Animation Utility.
+ * @module animation
+ */
 YUI.add('anim', function(Y) {
     /**
      * Handles animation _queueing and threading.
