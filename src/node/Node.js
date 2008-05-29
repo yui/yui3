@@ -39,18 +39,31 @@ YUI.add('node', function(Y) {
         COMPAT_MODE = 'compatMode',
         PARENT_NODE = 'parentNode',
         SCROLL_TOP = 'scrollTop',
-        SCROLL_LEFT = 'scrollLeft';
+        SCROLL_LEFT = 'scrollLeft',
+        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+        CONTAINS = 'contains';
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
     var Selector = Y.Selector;
+    var _instances = {};
     var _nodes = {};
     var _styles = {};
+    var _restrict = null;
 
     // private factory
     var wrap = function(node) {
         var ret = null;
+
         if (node && NODE_TYPE in node) {
+/*
+            var instance = _instances[node.id];
+            if (instance) {
+                if (node === _nodes[instance._yuid]) {
+                    ret = instance; // reuse existing Nodes if nodes match
+                }
+            }
+*/
             ret = new Node(node);
         } else if (node && ('item' in node || 'push' in node) && 'length' in node) {
             ret = new NodeList(node);
@@ -59,11 +72,14 @@ YUI.add('node', function(Y) {
         return ret;
     };
 
+    var getDoc = function(node) {
+        node = _nodes[node._yuid];
+        return (node[NODE_TYPE] === 9) ? node : node[OWNER_DOCUMENT];
+    };
+
     // returns HTMLElement
     var getDOMNode = function(node) {
-        if (node[NODE_TYPE]) {
-            return node;
-        } else if (node._yuid) {
+        if (node && !node.nodeType && node._yuid) {
             node = _nodes[node._yuid];
         }
 
@@ -119,6 +135,28 @@ YUI.add('node', function(Y) {
         'childNodes': BASE_NODE,
 
         /**
+         * Returns a NodeList instance. 
+         * @property children
+         * @type NodeList
+         */
+        'children': function(node) {
+            node = _nodes[node._yuid];
+            var children = node.children;
+
+            if (children === undefined) {
+                var childNodes = node.childNodes;
+                children = [];
+
+                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                    if (childNodes[i].tagName) {
+                        children[children.length] = childNodes[i];
+                    }
+                }
+            }
+            return children;
+        },
+
+        /**
          * Returns a Node instance. 
          * @property firstChild
          * @type Node
@@ -155,14 +193,10 @@ YUI.add('node', function(Y) {
 
         /**
          * Returns a Node instance. 
-         * Only valid for HTMLElement nodes.
          * @property offsetParent
          * @type Node
          */
         'offsetParent': ELEMENT_NODE,
-
-        // form
-        'elements': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
@@ -176,8 +210,59 @@ YUI.add('node', function(Y) {
          * @property body
          * @type Node
          */
-        'body': DOCUMENT_NODE
+        'body': DOCUMENT_NODE,
 
+        // form
+        /**
+         * Returns a NodeList instance. 
+         * @property elements
+         * @type NodeList
+         */
+        'elements': ELEMENT_NODE,
+
+        /**
+         * Returns a NodeList instance. 
+         * @property options
+         * @type NodeList
+         */
+        'options': ELEMENT_NODE,
+
+
+        // table
+        /**
+         * Returns a NodeList instance. 
+         * @property rows
+         * @type NodeList
+         */
+        'rows': ELEMENT_NODE,
+
+        /**
+         * Returns a NodeList instance. 
+         * @property cells
+         * @type NodeList
+         */
+        'cells': ELEMENT_NODE,
+
+        /**
+         * Returns a Node instance. 
+         * @property tHead
+         * @type Node
+         */
+        'tHead': ELEMENT_NODE,
+
+        /**
+         * Returns a Node instance. 
+         * @property tFoot
+         * @type Node
+         */
+        'tFoot': ELEMENT_NODE,
+
+        /**
+         * Returns a NodeList instance. 
+         * @property tBodies
+         * @type NodeList
+         */
+        'tBodies': ELEMENT_NODE
     };
 
     var METHODS = {
@@ -295,9 +380,7 @@ YUI.add('node', function(Y) {
     };
 
     var METHODS_INVOKE = {
-        'getBoundingClientRect': true,
-        'contains': true,
-        'compareDocumentPosition': true
+        'getBoundingClientRect': true
     };
 
     var Node = function(node) {
@@ -305,13 +388,19 @@ YUI.add('node', function(Y) {
             Y.log('invalid node:' + node, 'error', 'Node');
             return null;
         }
+
+        if (!node.id) {
+            //node.id = Y.guid();
+        }
+
         _nodes[Y.stamp(this)] = node;
         _styles[Y.stamp(this)] = node.style;
+        //_instances[node.id] = this;
+
     };
 
     var getWinSize = function(node) {
-        node = _nodes[node._yuid];
-        var doc = (node[NODE_TYPE] == DOCUMENT_NODE) ? node : node[OWNER_DOCUMENT],
+        var doc = getDoc(node),
             win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
             mode = doc[COMPAT_MODE],
             height = win.innerHeight,
@@ -329,8 +418,7 @@ YUI.add('node', function(Y) {
     };
 
     var getDocSize = function(node) {
-        node = _nodes[node._yuid];
-        var doc = (node[NODE_TYPE] == DOCUMENT_NODE) ? node : node[OWNER_DOCUMENT],
+        var doc = getDoc(node),
             root = doc[DOCUMENT_ELEMENT];
 
         if (doc[COMPAT_MODE] != 'CSS1Compat') {
@@ -393,8 +481,8 @@ YUI.add('node', function(Y) {
          * @type Number
          */
         'docScrollX':  function(node) {
-            var doc = _nodes[node._yuid][OWNER_DOCUMENT];
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+            var doc = getDoc(node);
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
         },
 
         /**
@@ -403,8 +491,8 @@ YUI.add('node', function(Y) {
          * @type Number
          */
         'docScrollY':  function(node) {
-            var doc = _nodes[node._yuid][OWNER_DOCUMENT];
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+            var doc = getDoc(node);
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
         }
     };
 
@@ -457,6 +545,18 @@ YUI.add('node', function(Y) {
     };
 
     Node.prototype = {
+        getById: function(id) {
+            var node = getDoc(this).getElementById(id);
+            var root = _nodes[this._yuid];
+
+            // contrain to root unless doc
+            if ( root[NODE_TYPE] !== 9 && !this[CONTAINS](node)) {
+                node = null;
+            }
+
+            return wrap(node);
+        },
+
         /**
          * Set the value of the property/attribute on the HTMLElement bound to this Node.
          * Only strings/numbers/booleans are passed through unless a SETTER exists.
@@ -484,10 +584,20 @@ YUI.add('node', function(Y) {
         get: function(prop) {
             var val;
             var node = _nodes[this._yuid];
-            if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                val = wrap(node[prop]);
-            } else if (GETTERS[prop]) { // use custom getter
+            if (prop in GETTERS) { // use custom getter
                 val = GETTERS[prop](this, prop); // passing Node instance
+            } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
+                if (Y.lang.isFunction(PROPS_WRAP[prop])) {
+                    val = PROPS_WRAP[prop](this);
+                } else {
+                    val = node[prop];
+                }
+
+                if (_restrict && _restrict[this._yuid] && !contains(node, val)) {
+                    val = null; // not allowed to go outside of root node
+                } else {
+                    val = wrap(val);
+                }
             } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
                 val = node[prop];
             }
@@ -496,13 +606,13 @@ YUI.add('node', function(Y) {
 
         invoke: function(method, a, b, c, d, e) {
             if (a) { // first 2 may be Node instances or strings
-                a = (a[NODE_NAME]) ? a : getDOMNode(a);
+                a = (a[NODE_TYPE]) ? a : getDOMNode(a);
                 if (b) {
-                    b = (b[NODE_NAME]) ? b : getDOMNode(b);
+                    b = (b[NODE_TYPE]) ? b : getDOMNode(b);
                 }
             }
-           var  node = _nodes[this._yuid];
-            if (METHODS_INVOKE[method] && node[method]) {
+            var node = _nodes[this._yuid];
+            if (node && METHODS_INVOKE[method] && node[method]) {
                 return node[method](a, b, c, d, e);
             }
             return null;
@@ -521,7 +631,8 @@ YUI.add('node', function(Y) {
         //normalize: function() {},
         //isSupported: function(feature, version) {},
         toString: function() {
-            return this.get('id') || this.get(NODE_NAME);
+            var node = _nodes[this._yuid] || {};
+            return node.id || node[NODE_NAME] || 'undefined node';
         },
 
         /**
@@ -532,7 +643,7 @@ YUI.add('node', function(Y) {
          * @return {Node} A Node instance for the matching HTMLElement.
          */
         query: function(selector) {
-            return new Node(Selector.query(selector, _nodes[this._yuid], true));
+            return wrap(Selector.query(selector, _nodes[this._yuid], true));
         },
 
         /**
@@ -543,7 +654,7 @@ YUI.add('node', function(Y) {
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
          */
         queryAll: function(selector) {
-            return new NodeList(Selector.query(selector, _nodes[this._yuid]));
+            return wrap(Selector.query(selector, _nodes[this._yuid]));
         },
 
         /**
@@ -614,7 +725,7 @@ YUI.add('node', function(Y) {
          * @return {Boolean} True if the nodes match, false if they do not. 
          */
         compareTo: function(refNode) {
-            refNode = refNode[NODE_NAME] ? refNode : _nodes[refNode._yuid];
+            refNode = refNode[NODE_TYPE] ? refNode : _nodes[refNode._yuid];
             return _nodes[this._yuid] === refNode;
         },
 
@@ -692,7 +803,44 @@ YUI.add('node', function(Y) {
          */
         create: function(html) {
             return Y.Node.create(html);
+        },
+
+        /**
+         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+         * @method contains
+         * @param {String | HTMLElement} needle The possible descendent
+         * @return {Boolean} Whether or not this node is an ancestor of needle
+         */
+        contains: function(needle) {
+            node = _nodes[this._yuid];
+            needle = getDOMNode(needle);
+            return contains(node, needle);
+        },
+
+        plug: function(PluginClass, config) {
+            config = config || {};
+            config.owner = this;
+            if (PluginClass && PluginClass.NS) {
+                this[PluginClass.NS] = new PluginClass(config);
+            }
         }
+    };
+
+    var contains = function(node, needle) {
+        var ret = false;
+
+        if (!needle || !node) {
+            ret = false;
+        } else if (node[CONTAINS])  {
+            ret = node[CONTAINS](needle);
+        } else if (node[COMPARE_DOCUMENT_POSITION]) { // gecko
+            if (node === needle || !!(node[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
+                ret = true;
+            }
+        }
+
+        return ret;
+
     };
 
     var slice = [].slice;
@@ -725,13 +873,16 @@ YUI.add('node', function(Y) {
             return null; // bad tag error
         }
 
+        var tmpAtt;
         for (var i = 1, len = jsonml.length; i < len; ++i) {
             if (typeof jsonml[i] === 'string' || jsonml[i].push) {
                 html[html.length] = _createHTML(jsonml[i]);
             } else if (typeof jsonml[i] == 'object') {
                 for (var attr in jsonml[i]) {
+                    tmpAtt = (attr != 'className') ? attr : 'class';
+
                     if (jsonml[i].hasOwnProperty(attr)) {
-                        att[att.length] = ' ' + attr + '="' + jsonml[i][attr] + '"';
+                        att[att.length] = ' ' + tmpAtt + '="' + jsonml[i][attr] + '"';
                     }
                 }
             }
@@ -746,12 +897,12 @@ YUI.add('node', function(Y) {
      * @param {String | Array} jsonml HTML string or jsonml
      */
     Node.create = function(jsonml) {
-        return new Node(_createNode(jsonml));
+        return wrap(_createNode(jsonml));
     };
 
-    Node.byId = function(id, doc) {
+    Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
-        return doc.getElementById(id);
+        return wrap(doc.getElementById(id));
     };
 
     /**
@@ -761,9 +912,11 @@ YUI.add('node', function(Y) {
      * Use 'document' string to retrieve document Node instance from string
      * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
+     * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes
+     * aren't allowed to traverse outside their DOM tree.
      * @return {Node} A wrapper instance for the supplied object.
      */
-    Node.get = function(node, doc) {
+    Node.get = function(node, doc, isRoot) {
         if (node instanceof Node) {
             return node;
         }
@@ -784,7 +937,14 @@ YUI.add('node', function(Y) {
             }
         }
 
-        return wrap(node);
+        node = wrap(node);
+
+        if (isRoot) {
+            _restrict = _restrict || {};
+            _restrict[node._yuid] = node;
+        }
+
+        return node;
     };
 
     /**
@@ -822,18 +982,24 @@ YUI.add('node', function(Y) {
         _nodes[Y.stamp(this)] = nodes;
     };
 
+    // used to call Node methods against NodeList nodes
+    var _tmpNode = Node.create('<div></div>');
+
     NodeList.prototype = {};
+
     Y.each(Node.prototype, function(fn, method) {
         var ret;
         var a = [];
         NodeList.prototype[method] = function() {
             var nodes = _nodes[this._yuid];
-            var node = new Node(Y.doc.config.createElement('div'));
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[node._yuid] = nodes[i];
-                ret = node[method].apply(node, arguments);
-                if (ret !== undefined) {
-                    a[i] = ret;
+            var node = _tmpNode;
+            if (typeof method == 'function') {
+                for (var i = 0, len = nodes.length; i < len; ++i) {
+                    _nodes[node._yuid] = nodes[i];
+                    ret = node[method].apply(node, arguments);
+                    if (ret !== undefined) {
+                        a[i] = ret;
+                    }
                 }
             }
 
@@ -864,8 +1030,10 @@ YUI.add('node', function(Y) {
          */
         set: function(name, val) {
             var nodes = _nodes[this._yuid];
+            var node = _tmpNode;
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                Node.set(nodes[i], name, val);
+                _nodes[node._yuid] = nodes[i];
+                node.set(name, val);
             }
 
             return this;
@@ -881,12 +1049,14 @@ YUI.add('node', function(Y) {
          */
         get: function(name) {
             if (name == 'length') {
+                Y.log('the length property is deprecated; use size()', 'warn', 'NodeList');
                 return _nodes[this._yuid].length;
             }
             var nodes = _nodes[this._yuid];
+            var node = _tmpNode;
             var ret = [];
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                ret[i] = Node.get(nodes[i], name);
+                ret[i] = node.get(name);
             }
 
             return ret;
@@ -900,7 +1070,7 @@ YUI.add('node', function(Y) {
          * @see Selector
          */
         filter: function(selector) {
-            return new NodeList(Selector.filter(_nodes[this._yuid], selector));
+            return wrap(Selector.filter(_nodes[this._yuid], selector));
         },
 
         /**
@@ -913,13 +1083,28 @@ YUI.add('node', function(Y) {
         each: function(fn, context) {
             context = context || this;
             var nodes = _nodes[this._yuid];
-            var node = new Node(Y.config.doc.createElement('div')); // reusing single instance for each node
+            var node = _tmpNode; // reusing single instance for each node
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 _nodes[node._yuid] = nodes[i]; // remap Node instance to current node
                 fn.call(context, node, i, this);
             }
             return this;
+        },
+
+        /**
+         * Returns the current number of items in the NodeList.
+         * @method size
+         * @return {Int} The number of items in the NodeList. 
+         */
+        size: function() {
+            return _nodes[this._yuid].length;
+        },
+
+        toString: function() {
+            var node = _nodes[this._yuid] || [];
+            return 'NodeList (' + node.length + ' items)';
         }
+
     }, true);
 
     Y.Node = Node;
