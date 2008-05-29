@@ -86,7 +86,7 @@ YUI.add("io", function (Y) {
 	};
 
 	function _purge(id) {
-		if (Y.lang.isNumber(id)) {
+		if (Y.Lang.isNumber(id)) {
 			for (var i = 0; i < _q.length; i++) {
 				if (_q[i].id === id) {
 					_q.splice(i, 1);
@@ -101,7 +101,7 @@ YUI.add("io", function (Y) {
 	function _io(uri, c, id) {
 		// Create transaction object
 
-		var o = _create(Y.lang.isNumber(id) ? id : null);
+		var o = _create(Y.Lang.isNumber(id) ? id : null);
 		var m = (c && c.method) ? c.method.toUpperCase() : 'GET';
 		var d = (c && c.data) ? c.data : null;
 
@@ -185,7 +185,7 @@ YUI.add("io", function (Y) {
 	function _create(i, t) {
 
 		var o = {};
-		o.id = Y.lang.isNumber(i) ? i : _id();
+		o.id = Y.Lang.isNumber(i) ? i : _id();
 		o.c = _transport(t);
 
 		return o;
@@ -361,7 +361,7 @@ YUI.add("io", function (Y) {
 					case 'select-multiple':
 						for (var j = 0; j < e.options.length; j++) {
 							if (e.options[j].selected) {
-								if (Y.ua.ie) {
+								if (Y.UA.ie) {
 									str += eUC(n) + '=' + eUC(e.options[j].attributes['value'].specified ? e.options[j].value : e.options[j].text) + '&';
 								}
 								else {
