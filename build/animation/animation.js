@@ -305,7 +305,7 @@ YUI.add('anim', function(Y) {
     };
 */
 
-    var RE_UNITS = /^(-?\d*\.?\d*)+(em|ex|px|in|cm|mm|pt|pc|%)*$/;
+    Anim.RE_UNITS = /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/;
 
     var proto = {
 /*
@@ -384,7 +384,6 @@ YUI.add('anim', function(Y) {
         },
 
         _end: function() {
-            console.log('end called', 'info', 'Anim');
             var elapsed = this.get(ELAPSED_TIME);
             _setPrivate(this, IS_ANIMATED, false);
             _setPrivate(this, START_TIME, null);
@@ -461,6 +460,7 @@ YUI.add('anim', function(Y) {
 
             this._attr = {};
 
+/*
             this._initFX();
             Y.each(fx, function(v, n) { // to is required TODO: by
                 var effect = _fx[v] || {};
@@ -472,7 +472,7 @@ YUI.add('anim', function(Y) {
                     }, this);
                 }
             }, this);
-
+*/
             Y.each(to, function(v, n) { // to is required TODO: by
                 attr[n] = this._initAttr(n, from[n], to[n]);
             }, this);
@@ -496,12 +496,13 @@ YUI.add('anim', function(Y) {
             }
 
             // TODO: allow mixed units? (e.g. from: width:50%, to: width:10em)
-            var mFrom = RE_UNITS.exec(from);
-            var mTo = RE_UNITS.exec(to);
+            var mFrom = Anim.RE_UNITS.exec(from);
+            var mTo = Anim.RE_UNITS.exec(to);
 
             var begin = mFrom[1],
                 end = mTo[1],
                 unit = mTo[2] || mFrom[2] || ''; // one might be zero TODO: mixed units
+
 
             if (!unit && Anim.RE_DEFAULT_UNIT.test(n)) {
                 unit = Anim.DEFAULT_UNIT;
@@ -514,8 +515,8 @@ YUI.add('anim', function(Y) {
                 f: easing,
                 u: unit
             };
-        },
-
+        }
+/*
         _initFX: function() {
             var fx = this.get('fx') || {};
             Y.each(fx, function(v, n) {
@@ -535,12 +536,13 @@ YUI.add('anim', function(Y) {
             }, this);
 
         }
+*/
     };
 
 
     Y.extend(Anim, Y.Base, proto);
     Y.Anim = Anim;
-}, '3.0.0', { requires: ['base', 'easing', 'nodefxplugin'] });
+}, '3.0.0', { requires: ['base', 'easing'] });
 /*
 TERMS OF USE - EASING EQUATIONS
 Open source under the BSD License.

@@ -27,24 +27,84 @@ YUI.add('anim', function(Y) {
         }
     };
 
+
+    /**
+     * Provides an API for animating objects.
+     * Usage:
+     * <pre>
+     *  var anim = new Anim({
+     *      node: '#foo',
+     *
+     *      from: {
+     *          opacity: 0
+     *      },
+     *
+     *      to: {
+     *          height: 200,
+     *
+     *          width: function(node) {
+     *              return node.get('offsetHeight') / 2;
+     *          },
+     *
+     *          opacity: 1
+     *       },
+     *
+     *       easing: Y.Easing.easeOut
+     *  });
+     *   
+     *  anim.run(); 
+     * </pre>
+     *
+     * @class Anim
+     */
     var Anim = function() {
         Anim.superclass.constructor.apply(this, arguments);
     };
 
     Anim.NAME = 'anim';
 
+    /**
+     * Regex of properties that should use the default unit.
+     *
+     * @property RE_DEFAULT_UNIT
+     * @static
+     */
     Anim.RE_DEFAULT_UNIT = /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i;
+
+    /**
+     * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
+     *
+     * @property DEFAULT_UNIT
+     * @static
+     */
     Anim.DEFAULT_UNIT = 'px';
 
+    /**
+     * The default setter to use when setting object properties.
+     *
+     * @property DEFAULT_SETTER
+     * @static
+     */
     Anim.DEFAULT_SETTER = function(prop, val, u) {
         this.get(NODE).setStyle(prop, val + u);
     };
 
+    /**
+     * The default getter to use when getting object properties.
+     *
+     * @property DEFAULT_GETTER
+     * @static
+     */
     Anim.DEFAULT_GETTER = function(prop) {
         return this.get(NODE).getStyle(prop);
     };
 
     Anim.ATTRS = {
+        /**
+         * The object to be animated.
+         * @attribute node
+         * @type Node
+         */
         node: {
             set: function(node) {
                 return Y.Node.get(node);
@@ -74,6 +134,9 @@ YUI.add('anim', function(Y) {
 
         /**
          * The starting values for the animated properties. 
+         * Fields may be strings, numbers, or functions.
+         * If a function is used, the return value becomes the from value.
+         * If no from value is specified, the DEFAULT_GETTER will be used. 
          * @attribute from
          * @type Object
          */
@@ -83,6 +146,7 @@ YUI.add('anim', function(Y) {
 
         /**
          * The ending values for the animated properties. 
+         * Fields may be strings, numbers, or functions.
          * @attribute to
          * @type Object
          */
@@ -145,10 +209,20 @@ YUI.add('anim', function(Y) {
             readonly: true
         },
 
+        /**
+         * How iterations of the animation should behave. 
+         * Possible values are "normal" and "alternate".
+         * Normal will repeat the animation, alternate will reverse on every other pass.
+         *
+         * @attribute direction
+         * @type String
+         * @default "normal"
+         */
         direction: {
             value: 'normal' // | alternate (fwd on odd, rev on even per spec)
-        },
+        }
 
+/*
         fx: {
             set: function(fx) {
                 if (Y.lang.isString(fx)) {
@@ -159,6 +233,7 @@ YUI.add('anim', function(Y) {
                 return fx;
             }
         }
+*/
     };
 
     /**
@@ -210,14 +285,15 @@ YUI.add('anim', function(Y) {
         var anim;
 
         for (var i = 0, len = _queue.length; i < len; ++i) {
-            var anim = _queue[i];
+            anim = _queue[i];
             if ( anim && anim.get(IS_ANIMATED)) {
                 anim._runFrame();
-                //anim.fire(TWEEN);
+                anim.fire(TWEEN);
             }
         }
     };
 
+/*
     Anim.addFX = function(name, config) {
         if (typeof name == 'string') {
             _fx[name] = config;
@@ -227,10 +303,12 @@ YUI.add('anim', function(Y) {
             });
         }
     };
+*/
 
-    var RE_UNITS = /^(-?\d*\.?\d*)+(em|ex|px|in|cm|mm|pt|pc|%)*$/;
+    Anim.RE_UNITS = /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/;
 
     var proto = {
+/*
         addFX: function(fx) {
             if (typeof fx == 'string') {
                 this._addFX(fx);
@@ -243,7 +321,7 @@ YUI.add('anim', function(Y) {
             this._fx = this._fx || {};
             this._fx[fx] = fx;
         },
-
+*/
         /**
          * Starts or resumes an animation.
          * @param {Number|String} elapsed optional Millisecond or
@@ -256,12 +334,23 @@ YUI.add('anim', function(Y) {
             }
         },
 
+        /**
+         * Pauses the animation and
+         * freezes it in its current state and time.
+         * Calling run() will continue where it left off.
+         * @method pause
+         */    
         pause: function() {
             if (this.get(IS_ANIMATED)) {
                 this._pause();
             }
         },
 
+        /**
+         * Stops the animation and resets its state.
+         * Calling run() will restart from the beginning.
+         * @method stop
+         */    
         stop: function() {
             if (this.get(IS_ANIMATED) || this.get(ELAPSED_TIME)) { // end if paused
                 this._end();
@@ -295,7 +384,6 @@ YUI.add('anim', function(Y) {
         },
 
         _end: function() {
-            console.log('end called', 'info', 'Anim');
             var elapsed = this.get(ELAPSED_TIME);
             _setPrivate(this, IS_ANIMATED, false);
             _setPrivate(this, START_TIME, null);
@@ -373,6 +461,7 @@ YUI.add('anim', function(Y) {
 
             this._attr = {};
 
+/*
             this._initFX();
             Y.each(fx, function(v, n) { // to is required TODO: by
                 var effect = _fx[v] || {};
@@ -384,7 +473,7 @@ YUI.add('anim', function(Y) {
                     }, this);
                 }
             }, this);
-
+*/
             Y.each(to, function(v, n) { // to is required TODO: by
                 attr[n] = this._initAttr(n, from[n], to[n]);
             }, this);
@@ -408,12 +497,13 @@ YUI.add('anim', function(Y) {
             }
 
             // TODO: allow mixed units? (e.g. from: width:50%, to: width:10em)
-            var mFrom = RE_UNITS.exec(from);
-            var mTo = RE_UNITS.exec(to);
+            var mFrom = Anim.RE_UNITS.exec(from);
+            var mTo = Anim.RE_UNITS.exec(to);
 
             var begin = mFrom[1],
                 end = mTo[1],
                 unit = mTo[2] || mFrom[2] || ''; // one might be zero TODO: mixed units
+
 
             if (!unit && Anim.RE_DEFAULT_UNIT.test(n)) {
                 unit = Anim.DEFAULT_UNIT;
@@ -426,8 +516,8 @@ YUI.add('anim', function(Y) {
                 f: easing,
                 u: unit
             };
-        },
-
+        }
+/*
         _initFX: function() {
             var fx = this.get('fx') || {};
             Y.each(fx, function(v, n) {
@@ -447,9 +537,10 @@ YUI.add('anim', function(Y) {
             }, this);
 
         }
+*/
     };
 
 
     Y.extend(Anim, Y.Base, proto);
     Y.Anim = Anim;
-}, '3.0.0', { requires: ['base'] });
+}, '3.0.0', { requires: ['base', 'easing'] });
