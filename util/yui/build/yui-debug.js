@@ -243,7 +243,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    Y.log('attaching ' + r[i], 'info', 'YUI');
+                    // Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -356,7 +356,15 @@ YUI.prototype = {
             // category filters are not used to suppress the log event
             // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
-        }
+        } else {
+
+       }
+
+            var d=document, b=d.body, n=d.createElement("div");
+                if (b) {
+                    n.appendChild(d.createTextNode(msg));
+                    b.appendChild(n);
+                }
 
         return Y;
     },
@@ -879,7 +887,7 @@ YUI.add("core", function(Y) {
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
 
-            // console.log('augment will call constructor: ' + construct.FOO);
+            // Y.log('augment will call constructor:');
 
             // Y.Do.before(r, construct);
 
@@ -897,12 +905,13 @@ YUI.add("core", function(Y) {
 
                     var me = this;
 
-// console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
                         if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
+                            Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
                     }
@@ -2374,12 +2383,15 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 // queue this event if the current item in the queue bubbles
                 // if (b && this.queuable && this.type != es.next.type) {
                 if (this.queuable && this.type != es.next.type) {
-                    this.log('queued event ' + this.type + ', ' + this);
+
+                    this.log('queue ' + this.type + ', ' + this);
+
                     es.queue.push([this, arguments]);
                     return true;
                 }
 
             } else {
+
                 Y.env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
@@ -2462,37 +2474,37 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     this.defaultFn.apply(this.host || this, args);
                 }
 
-                if (es.id === this.id) {
-                    // console.log('clearing stack: ' + es.id + ', ' + this);
-
-                    // reset propragation properties while processing the rest of the queue
-
-                    // process queued events
-                    var queue = es.queue;
-
-                    while (queue.length) {
-                        // q[0] = the event, q[1] = arguments to fire
-                        var q = queue.pop(), ce = q[0];
-
-// console.log('firing queued event ' + ce.type + ', from ' + this);
-//
-                        es.stopped = 0;
-                        es.prevented = 0;
-                        
-                        // set up stack to allow the next item to be processed
-                        es.next = ce;
-
-                        ret = ce.fire.apply(ce, q[1]);
-                    }
-
-                    Y.env._eventstack = null;
-                }
 
                 if (errors.length) {
                     throw new Y.ChainedError(this.type + ': ' + 
                         '1 or more subscriber errors: ' + errors[0].message, errors);
                 }
             }
+
+            if (es.id === this.id) {
+                // console.log('clearing stack: ' + es.id + ', ' + this);
+
+                // reset propragation properties while processing the rest of the queue
+
+                // process queued events
+                var queue = es.queue;
+
+                while (queue.length) {
+                    // q[0] = the event, q[1] = arguments to fire
+                    var q = queue.pop(), ce = q[0];
+
+            // Y.log('firing queued event ' + ce.type + ', from ' + this);
+                    es.stopped = 0;
+                    es.prevented = 0;
+                    
+                    // set up stack to allow the next item to be processed
+                    es.next = ce;
+
+                    ret = ce.fire.apply(ce, q[1]);
+                }
+
+                Y.env._eventstack = null;
+            } 
 
             return (ret !== false);
         },
@@ -2766,7 +2778,7 @@ Y.extend(Y.ChainedError, Error, {
 
 YUI.add("event-target", function(Y) {
 
-    SILENT = { 'yui:log': true }
+    var SILENT = { 'yui:log': true };
 
     /**
      * Event.Target is designed to be used with Y.augment to wrap 
@@ -3531,12 +3543,12 @@ YUI.add("event-dom", function(Y) {
                     // the custom event key is the uid for the element + type
 
                     var ek = Y.stamp(el), key = 'event:' + ek + type,
-                        ce = _wrappers[key];
+                        cewrapper = _wrappers[key];
 
 
-                    if (!ce) {
+                    if (!cewrapper) {
                         // create CE wrapper
-                        ce = Y.publish(key, {
+                        cewrapper = Y.publish(key, {
                             silent: true,
                             // host: this,
                             bubbles: false
@@ -3544,18 +3556,18 @@ YUI.add("event-dom", function(Y) {
 
                         // cache the dom event details in the custom event
                         // for later removeListener calls
-                        ce.el = el;
-                        ce.type = type;
-                        ce.fn = function(e) {
-                            ce.fire(Y.Event.getEvent(e, el));
+                        cewrapper.el = el;
+                        cewrapper.type = type;
+                        cewrapper.fn = function(e) {
+                            cewrapper.fire(Y.Event.getEvent(e, el));
                         };
 
-                        _wrappers[key] = ce;
+                        _wrappers[key] = cewrapper;
                         _el_events[ek] = _el_events[ek] || {};
-                        _el_events[ek][key] = ce;
+                        _el_events[ek][key] = cewrapper;
 
                         // attach a listener that fires the custom event
-                        this.nativeAdd(el, type, ce.fn, false);
+                        this.nativeAdd(el, type, cewrapper.fn, false);
                     }
 
         
@@ -3574,14 +3586,8 @@ YUI.add("event-dom", function(Y) {
 
                     a[1] = context;
 
-                    // Y.log('DOM event f: ' + a[0]);
-                    // Y.log('dom event ce sub: ' + Y.lang.dump(a));
-
-                    // var m = a[1] ? Y.bind.apply(context, a) : fn;
-                    // return ce.subscribe(m);
-
                     // set context to element if not specified
-                    return ce.subscribe.apply(ce, a);
+                    return cewrapper.subscribe.apply(cewrapper, a);
 
 
                 },
@@ -3996,7 +4002,7 @@ YUI.add("event-dom", function(Y) {
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
         if (Y.ua.ie) {
-            Y.on('event:ready', E._tryPreloadAttach, E, true);
+            Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
         E.Custom = Y.CustomEvent;
@@ -4285,7 +4291,9 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.cancelBubble = true;
             }
-            wrapper && wrapper.stopPropagation();
+            if (wrapper) {
+                wrapper.stopPropagation();
+            }
         };
 
         /**
@@ -4296,7 +4304,11 @@ YUI.add("event-facade", function(Y) {
          */
         this.stopImmediatePropagation = function() {
             this.stopPropagation();
-            wrapper && wrapper.stopImmediatePropagation();
+
+            if (wrapper) {
+                wrapper.stopImmediatePropagation();
+            }
+
         };
 
         /**
@@ -4309,7 +4321,9 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.returnValue = false;
             }
-            wrapper && wrapper.preventDefault();
+            if (wrapper) {
+                wrapper.preventDefault();
+            }
         };
 
         /**

@@ -243,7 +243,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    Y.log('attaching ' + r[i], 'info', 'YUI');
+                    // Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -356,7 +356,15 @@ YUI.prototype = {
             // category filters are not used to suppress the log event
             // so that the data can be stored and displayed later.
             Y.fire && Y.fire('yui:log', msg, cat, src);
-        }
+        } else {
+
+       }
+
+            var d=document, b=d.body, n=d.createElement("div");
+                if (b) {
+                    n.appendChild(d.createTextNode(msg));
+                    b.appendChild(n);
+                }
 
         return Y;
     },

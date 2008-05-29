@@ -256,7 +256,9 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.cancelBubble = true;
             }
-            wrapper && wrapper.stopPropagation();
+            if (wrapper) {
+                wrapper.stopPropagation();
+            }
         };
 
         /**
@@ -267,7 +269,11 @@ YUI.add("event-facade", function(Y) {
          */
         this.stopImmediatePropagation = function() {
             this.stopPropagation();
-            wrapper && wrapper.stopImmediatePropagation();
+
+            if (wrapper) {
+                wrapper.stopImmediatePropagation();
+            }
+
         };
 
         /**
@@ -280,7 +286,9 @@ YUI.add("event-facade", function(Y) {
             } else {
                 e.returnValue = false;
             }
-            wrapper && wrapper.preventDefault();
+            if (wrapper) {
+                wrapper.preventDefault();
+            }
         };
 
         /**

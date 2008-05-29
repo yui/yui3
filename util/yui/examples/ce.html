@@ -17,13 +17,16 @@
     var Y = YUI().use('dump', 'substitute');
 
     Y.on('yui:log', function(msg) {
+        /*
         var d=document, b=d.body, n=d.createElement("div");
         if (b) {
             n.appendChild(d.createTextNode(msg));
             b.appendChild(n);
         }
+        */
 
     });
+
 
 /*
 
@@ -158,6 +161,7 @@ property names rather than e.details[1]
 
     // without facade
     //o1.fire('o:2', 4, 5, 6);
+
 
 })();
 

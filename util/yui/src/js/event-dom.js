@@ -327,12 +327,12 @@ YUI.add("event-dom", function(Y) {
                     // the custom event key is the uid for the element + type
 
                     var ek = Y.stamp(el), key = 'event:' + ek + type,
-                        ce = _wrappers[key];
+                        cewrapper = _wrappers[key];
 
 
-                    if (!ce) {
+                    if (!cewrapper) {
                         // create CE wrapper
-                        ce = Y.publish(key, {
+                        cewrapper = Y.publish(key, {
                             silent: true,
                             // host: this,
                             bubbles: false
@@ -340,18 +340,18 @@ YUI.add("event-dom", function(Y) {
 
                         // cache the dom event details in the custom event
                         // for later removeListener calls
-                        ce.el = el;
-                        ce.type = type;
-                        ce.fn = function(e) {
-                            ce.fire(Y.Event.getEvent(e, el));
+                        cewrapper.el = el;
+                        cewrapper.type = type;
+                        cewrapper.fn = function(e) {
+                            cewrapper.fire(Y.Event.getEvent(e, el));
                         };
 
-                        _wrappers[key] = ce;
+                        _wrappers[key] = cewrapper;
                         _el_events[ek] = _el_events[ek] || {};
-                        _el_events[ek][key] = ce;
+                        _el_events[ek][key] = cewrapper;
 
                         // attach a listener that fires the custom event
-                        this.nativeAdd(el, type, ce.fn, false);
+                        this.nativeAdd(el, type, cewrapper.fn, false);
                     }
 
         
@@ -370,14 +370,8 @@ YUI.add("event-dom", function(Y) {
 
                     a[1] = context;
 
-                    // Y.log('DOM event f: ' + a[0]);
-                    // Y.log('dom event ce sub: ' + Y.lang.dump(a));
-
-                    // var m = a[1] ? Y.bind.apply(context, a) : fn;
-                    // return ce.subscribe(m);
-
                     // set context to element if not specified
-                    return ce.subscribe.apply(ce, a);
+                    return cewrapper.subscribe.apply(cewrapper, a);
 
 
                 },
@@ -792,7 +786,7 @@ YUI.add("event-dom", function(Y) {
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
         if (Y.ua.ie) {
-            Y.on('event:ready', E._tryPreloadAttach, E, true);
+            Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
         E.Custom = Y.CustomEvent;

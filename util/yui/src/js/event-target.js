@@ -1,7 +1,7 @@
 
 YUI.add("event-target", function(Y) {
 
-    SILENT = { 'yui:log': true }
+    var SILENT = { 'yui:log': true };
 
     /**
      * Event.Target is designed to be used with Y.augment to wrap 

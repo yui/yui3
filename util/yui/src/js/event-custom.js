@@ -396,12 +396,15 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 // queue this event if the current item in the queue bubbles
                 // if (b && this.queuable && this.type != es.next.type) {
                 if (this.queuable && this.type != es.next.type) {
-                    this.log('queued event ' + this.type + ', ' + this);
+
+                    this.log('queue ' + this.type + ', ' + this);
+
                     es.queue.push([this, arguments]);
                     return true;
                 }
 
             } else {
+
                 Y.env._eventstack = {
                    // id of the first event in the stack
                    id: this.id,
@@ -484,37 +487,37 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     this.defaultFn.apply(this.host || this, args);
                 }
 
-                if (es.id === this.id) {
-                    // console.log('clearing stack: ' + es.id + ', ' + this);
-
-                    // reset propragation properties while processing the rest of the queue
-
-                    // process queued events
-                    var queue = es.queue;
-
-                    while (queue.length) {
-                        // q[0] = the event, q[1] = arguments to fire
-                        var q = queue.pop(), ce = q[0];
-
-// console.log('firing queued event ' + ce.type + ', from ' + this);
-//
-                        es.stopped = 0;
-                        es.prevented = 0;
-                        
-                        // set up stack to allow the next item to be processed
-                        es.next = ce;
-
-                        ret = ce.fire.apply(ce, q[1]);
-                    }
-
-                    Y.env._eventstack = null;
-                }
 
                 if (errors.length) {
                     throw new Y.ChainedError(this.type + ': ' + 
                         '1 or more subscriber errors: ' + errors[0].message, errors);
                 }
             }
+
+            if (es.id === this.id) {
+                // console.log('clearing stack: ' + es.id + ', ' + this);
+
+                // reset propragation properties while processing the rest of the queue
+
+                // process queued events
+                var queue = es.queue;
+
+                while (queue.length) {
+                    // q[0] = the event, q[1] = arguments to fire
+                    var q = queue.pop(), ce = q[0];
+
+            // Y.log('firing queued event ' + ce.type + ', from ' + this);
+                    es.stopped = 0;
+                    es.prevented = 0;
+                    
+                    // set up stack to allow the next item to be processed
+                    es.next = ce;
+
+                    ret = ce.fire.apply(ce, q[1]);
+                }
+
+                Y.env._eventstack = null;
+            } 
 
             return (ret !== false);
         },

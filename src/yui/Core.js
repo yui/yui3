@@ -231,7 +231,7 @@ YUI.add("core", function(Y) {
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
 
-            // console.log('augment will call constructor: ' + construct.FOO);
+            // Y.log('augment will call constructor:');
 
             // Y.Do.before(r, construct);
 
@@ -249,12 +249,13 @@ YUI.add("core", function(Y) {
 
                     var me = this;
 
-// console.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
                         if (Y.object.owns(sequestered, i) && (me[i] === replacements[i])) {
+                            Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
                     }

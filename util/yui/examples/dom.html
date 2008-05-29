@@ -19,19 +19,30 @@
     //var Y = YUI().use('node');
     var Y = YUI().use('dump', 'substitute', 'compat');
 
+    // debugger;
+
+    // alert('starting JS');
+
+    Y.log('asdf');
+
+    Y.on('event:ready', function() {
+        Y.log('on ready');
+    });
+
     Y.on('click', function(e) {
+
         Y.log('document click');
 
     }, document);
 
-    Y.on('yui:log', function(msg) {
-        var d=document, b=d.body, n=d.createElement("div");
-        if (b) {
-            n.appendChild(d.createTextNode(msg));
-            b.appendChild(n);
-        }
+    // Y.on('yui:log', function(msg) {
+    //     var d=document, b=d.body, n=d.createElement("div");
+    //     if (b) {
+    //         n.appendChild(d.createTextNode(msg));
+    //         b.appendChild(n);
+    //     }
 
-    });
+    // });
 
     Y.Event.onDOMReady(function() {
         Y.log("onDOMReady fired");
@@ -49,7 +60,7 @@
     var h =Y.on('click', f, el);
 
     Y.on('click', function(e) {
-        console.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
+        Y.log("SUB2, " + this.get('id') + " click event facade: " + e.target);
         h.detach();
         // Y.detach('click', f, el);
         // Y.Event.purgeElement(this);
@@ -104,21 +115,21 @@
 
     // test failure
     obj.subscribe('foo', function() {
-        console.info(notdefined);
+        Y.info(notdefined);
     });
 
     obj.subscribe('foo', function() {
-        console.info(notdefined);
+        Y.info(notdefined);
     });
 
     obj.subscribe('foo', function() {
-        console.info('foo fired anyway!');
+        Y.info('foo fired anyway!');
     });
 
     try {
         obj.fire('foo');
     } catch(e) {
-        console.warn('fire() error: ' + Y.lang.dump(e.errors));
+        Y.warn('fire() error: ' + Y.lang.dump(e.errors));
     }
     */
 
