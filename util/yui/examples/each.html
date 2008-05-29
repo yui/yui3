@@ -33,13 +33,13 @@
 
 
     Y.each(o, function(v, k) {
-                      Y.log("Each: " + k + ": " + Y.lang.dump(v) + " ~ " + Y.lang.dump(this));
+                      Y.log("Each: " + k + ": " + Y.Lang.dump(v) + " ~ " + Y.Lang.dump(this));
                       Y.log("same? " + (this === newobj));
                       this[k] = v;
                       this.asdf = "asdf";
               }, newobj);
 
-    Y.log("each: " + Y.lang.dump(newobj));
+    Y.log("each: " + Y.Lang.dump(newobj));
 
     var o1 = {
         a: "a",
@@ -67,7 +67,7 @@
 
     Y.aggregate(o1, o2);
 
-    Y.log("aggregate: " + Y.lang.dump(o1));
+    Y.log("aggregate: " + Y.Lang.dump(o1));
 })();
 
 </script>

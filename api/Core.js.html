@@ -287,8 +287,8 @@
 
                     <span class="k">var</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
-<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;sequestered function &quot;&#39;</span> <span class="o">+</span> <span class="nx">k</span> <span class="o">+</span> <span class="s1">&#39;&quot; executed.  Initializing Event.Target&#39;</span><span class="o">);</span>
-
+<span class="c">// Y.log(&#39;sequestered function &quot;&#39; + k + &#39;&quot; executed.  Initializing Event.Target&#39;);</span>
+<span class="c"></span>
                     <span class="c">// overwrite the prototype with all of the sequestered functions,</span>
 <span class="c"></span>                    <span class="c">// but only if it hasn&#39;t been overridden</span>
 <span class="c"></span>                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">sequestered</span><span class="o">)</span> <span class="o">{</span>
@@ -308,8 +308,8 @@
 
                 <span class="k">if</span> <span class="o">((!</span><span class="nx">wl</span> <span class="o">||</span> <span class="o">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">wl</span><span class="o">))</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">k</span> <span class="k">in</span> <span class="k">this</span><span class="o">)))</span> <span class="o">{</span>
 
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;augment: &#39;</span> <span class="o">+</span> <span class="nx">k</span><span class="o">);</span>
-
+                    <span class="c">// Y.log(&#39;augment: &#39; + k);</span>
+<span class="c"></span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
 
                         <span class="c">// sequester the function</span>

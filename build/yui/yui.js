@@ -897,7 +897,7 @@ YUI.add("core", function(Y) {
 
                     var me = this;
 
-Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
+// Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
@@ -918,7 +918,7 @@ Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
 
-                    Y.log('augment: ' + k);
+                    // Y.log('augment: ' + k);
 
                     if (Y.Lang.isFunction(v)) {
 

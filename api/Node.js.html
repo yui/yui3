@@ -445,7 +445,7 @@
             <span class="nx">width</span> <span class="o">=</span> <span class="nx">win</span><span class="o">.</span><span class="nx">innerWidth</span><span class="o">,</span>
             <span class="nx">root</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">DOCUMENT_ELEMENT</span><span class="o">];</span>
     
-        <span class="k">if</span> <span class="o">(</span> <span class="nx">mode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">opera</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// IE, Gecko</span>
+        <span class="k">if</span> <span class="o">(</span> <span class="nx">mode</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// IE, Gecko</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">mode</span> <span class="o">!=</span> <span class="s1">&#39;CSS1Compat&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// Quirks</span>
 <span class="c"></span>                <span class="nx">root</span> <span class="o">=</span> <span class="nx">doc</span><span class="o">.</span><span class="nx">body</span><span class="o">;</span> 
             <span class="o">}</span>
@@ -625,7 +625,7 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">GETTERS</span><span class="o">)</span> <span class="o">{</span> <span class="c">// use custom getter</span>
 <span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">GETTERS</span><span class="o">[</span><span class="nx">prop</span><span class="o">](</span><span class="k">this</span><span class="o">,</span> <span class="nx">prop</span><span class="o">);</span> <span class="c">// passing Node instance</span>
 <span class="c"></span>            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">prop</span> <span class="k">in</span> <span class="nx">PROPS_WRAP</span><span class="o">)</span> <span class="o">{</span> <span class="c">// wrap DOM object (HTMLElement, HTMLCollection, Document)</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">PROPS_WRAP</span><span class="o">[</span><span class="nx">prop</span><span class="o">]))</span> <span class="o">{</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">PROPS_WRAP</span><span class="o">[</span><span class="nx">prop</span><span class="o">]))</span> <span class="o">{</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">PROPS_WRAP</span><span class="o">[</span><span class="nx">prop</span><span class="o">](</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">prop</span><span class="o">];</span>
@@ -898,7 +898,7 @@
         <span class="k">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="o">[];</span>
         <span class="k">var</span> <span class="nx">att</span> <span class="o">=</span> <span class="o">[];</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">))</span> <span class="o">{</span> <span class="c">// text node</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">))</span> <span class="o">{</span> <span class="c">// text node</span>
 <span class="c"></span>            <span class="k">return</span> <span class="nx">jsonml</span><span class="o">;</span>
         <span class="o">}</span>
 
@@ -907,7 +907,7 @@
 <span class="c"></span>        <span class="o">}</span>
 
         <span class="k">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">jsonml</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">tag</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">tag</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">return</span> <span class="kc">null</span><span class="o">;</span> <span class="c">// bad tag error</span>
 <span class="c"></span>        <span class="o">}</span>
 

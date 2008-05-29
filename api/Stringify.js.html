@@ -39,10 +39,10 @@
 <div class="highlight" ><pre><span class="c">/**</span>
 <span class="c"> * Provides Y.JSON.stringify method for converting objects to JSON strings.</span>
 <span class="c"> * @module JSON</span>
-<span class="c"> * @class Y.JSON</span>
+<span class="c"> * @class JSON</span>
 <span class="c"> * @static</span>
 <span class="c"> */</span>
-<span class="k">var</span> <span class="nx">isA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">;</span>
+<span class="k">var</span> <span class="nx">isA</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isArray</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">JSON</span> <span class="o">||</span> <span class="o">{};</span>
 
@@ -197,7 +197,7 @@
                     <span class="c">// Object</span>
 <span class="c"></span>                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                         <span class="c">// If whitelist provided, take only those keys</span>
-<span class="c"></span>                        <span class="nx">k</span> <span class="o">=</span> <span class="nx">isA</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">w</span><span class="o">||</span><span class="nx">o</span><span class="o">);</span>
+<span class="c"></span>                        <span class="nx">k</span> <span class="o">=</span> <span class="nx">isA</span><span class="o">(</span><span class="nx">w</span><span class="o">)</span> <span class="o">?</span> <span class="nx">w</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">keys</span><span class="o">(</span><span class="nx">w</span><span class="o">||</span><span class="nx">o</span><span class="o">);</span>
 
                         <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">j</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                             <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
@@ -252,7 +252,7 @@
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Y.JSON.html">Y.JSON</a></li>
+                                <li class=""><a href="JSON.html">JSON</a></li>
                         </ul>
                     </div>
 

@@ -105,7 +105,7 @@
             
             <span class="c">//Y.log(&#39;addClass adding &#39; + className, &#39;info&#39;, &#39;Node&#39;);</span>
 <span class="c"></span>            
-            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">([</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">),</span> <span class="nx">className</span><span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39; &#39;</span><span class="o">)));</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">([</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">),</span> <span class="nx">className</span><span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39; &#39;</span><span class="o">)));</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -122,7 +122,7 @@
             <span class="c">//Y.log(&#39;removeClass removing &#39; + className, &#39;info&#39;, &#39;Node&#39;);</span>
 <span class="c"></span>            
             <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">,</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="nx">getRegExp</span><span class="o">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">).</span><span class="nx">replace</span><span class="o">(</span><span class="nx">getRegExp</span><span class="o">(</span><span class="s1">&#39;(?:^|\\s+)&#39;</span> <span class="o">+</span>
                             <span class="nx">className</span> <span class="o">+</span> <span class="s1">&#39;(?:\\s+|$)&#39;</span><span class="o">),</span> <span class="s1">&#39; &#39;</span><span class="o">)));</span>
 
             <span class="k">if</span> <span class="o">(</span> <span class="nx">node</span><span class="o">.</span><span class="nx">hasClass</span><span class="o">(</span><span class="nx">className</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span> <span class="c">// in case of multiple adjacent</span>
@@ -153,7 +153,7 @@
 <span class="c"></span>                <span class="nx">node</span><span class="o">.</span><span class="nx">replaceClass</span><span class="o">(</span><span class="nx">oldC</span><span class="o">,</span> <span class="nx">newC</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">)));</span> <span class="c">// remove any trailing spaces</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">trim</span><span class="o">(</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">CLASS_NAME</span><span class="o">)));</span> <span class="c">// remove any trailing spaces</span>
 <span class="c"></span>        <span class="o">},</span>
 
         <span class="c">/**</span>

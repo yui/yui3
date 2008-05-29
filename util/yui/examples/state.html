@@ -39,33 +39,33 @@ YUI({logInclude: {'Example': true}}).use('dump', 'state', function(Y) {
     configs.add('myprop', o);
     
     // show all attributes for this item
-    Y.log("myprop: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // show a single attribute for this item
     Y.log("myprop.str: " + configs.get('myprop', 'str'), 'info', 'Example');
 
     // remove one or more attribute from the item (hash)
     configs.remove('myprop', {fn: true});
-    Y.log("myprop-fn: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop-fn: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // remove an attribute from the item (str)
     configs.remove('myprop', 'dat');
-    Y.log("myprop-dat: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop-dat: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // remove one or more attributes from the item (array)
     configs.remove('myprop', ['nada']);
-    Y.log("myprop-nada: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop-nada: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
     
     // add an attribute to an existing prop
     configs.add('myprop', {nada:null});
-    Y.log("myprop+nada: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop+nada: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
 
     // delete a property
     configs.remove('myprop');
-    Y.log("myprop deleted: " + Y.lang.dump(configs.get('myprop')), 'info', 'Example');
+    Y.log("myprop deleted: " + Y.Lang.dump(configs.get('myprop')), 'info', 'Example');
 
     var o2 = Y.clone(o);
-    // Y.log("clone: " + Y.lang.dump(o2));
+    // Y.log("clone: " + Y.Lang.dump(o2));
 
     configs.add('myprop', o2);
 
@@ -74,7 +74,7 @@ YUI({logInclude: {'Example': true}}).use('dump', 'state', function(Y) {
         nada: null
     });
 
-    Y.log("myprop list: " + Y.lang.dump(configs.list()), 'info', 'Example');
+    Y.log("myprop list: " + Y.Lang.dump(configs.list()), 'info', 'Example');
 
 
             var Y = YUI();

@@ -71,13 +71,13 @@
         Y.log(this.get('id') + " click event facade: " + e.target);
     }, '#button2');
 
-    Y.log('ret: ' + Y.lang.dump(ret, 1));
+    Y.log('ret: ' + Y.Lang.dump(ret, 1));
 
 
     /*
     var buts = Y.Node.queryAll('.button');
 
-    Y.log('queryAll buttons: ' + Y.lang.dump(buts.get('length')));
+    Y.log('queryAll buttons: ' + Y.Lang.dump(buts.get('length')));
 
     buts.each(function(v, k) {
         Y.log('blah: ' + v);
@@ -129,7 +129,7 @@
     try {
         obj.fire('foo');
     } catch(e) {
-        Y.warn('fire() error: ' + Y.lang.dump(e.errors));
+        Y.warn('fire() error: ' + Y.Lang.dump(e.errors));
     }
     */
 

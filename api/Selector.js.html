@@ -321,7 +321,7 @@
 <span class="o">};</span>
 
 <span class="k">var</span> <span class="nx">contains</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">contains</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&lt;</span> <span class="m">422</span><span class="o">)</span>  <span class="o">{</span> <span class="c">// IE &amp; Opera, Safari &lt; 3 contains is broken</span>
+    <span class="k">if</span> <span class="o">(</span><span class="nb">document</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">contains</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&lt;</span> <span class="m">422</span><span class="o">)</span>  <span class="o">{</span> <span class="c">// IE &amp; Opera, Safari &lt; 3 contains is broken</span>
 <span class="c"></span>        <span class="k">return</span> <span class="k">function</span><span class="o">(</span><span class="nx">needle</span><span class="o">,</span> <span class="nx">haystack</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">haystack</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">needle</span><span class="o">);</span>
         <span class="o">};</span>
@@ -614,7 +614,7 @@
     <span class="k">do</span> <span class="o">{</span>
         <span class="nx">found</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span> <span class="c">// reset after full pass</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">re</span> <span class="k">in</span> <span class="nx">patterns</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">patterns</span><span class="o">,</span> <span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">patterns</span><span class="o">,</span> <span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">continue</span><span class="o">;</span>
                 <span class="o">}</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">re</span> <span class="o">!=</span> <span class="s1">&#39;tag&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">re</span> <span class="o">!=</span> <span class="s1">&#39;combinator&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="c">// only one allowed</span>
@@ -673,7 +673,7 @@
         <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">patterns</span><span class="o">.</span><span class="nx">attributes</span><span class="o">,</span> <span class="s1">&#39;REPLACED_ATTRIBUTE&#39;</span><span class="o">);</span>
     <span class="o">}</span>
     <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">re</span> <span class="k">in</span> <span class="nx">shorthand</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">shorthand</span><span class="o">,</span> <span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">shorthand</span><span class="o">,</span> <span class="nx">re</span><span class="o">))</span> <span class="o">{</span>
             <span class="k">continue</span><span class="o">;</span>
         <span class="o">}</span>
         <span class="nx">selector</span> <span class="o">=</span> <span class="nx">selector</span><span class="o">.</span><span class="nx">replace</span><span class="o">(</span><span class="nx">getRegExp</span><span class="o">(</span><span class="nx">re</span><span class="o">,</span> <span class="s1">&#39;gi&#39;</span><span class="o">),</span> <span class="nx">shorthand</span><span class="o">[</span><span class="nx">re</span><span class="o">]);</span>
@@ -691,7 +691,7 @@
 <span class="nx">Selector</span><span class="o">.</span><span class="nx">patterns</span> <span class="o">=</span> <span class="nx">patterns</span><span class="o">;</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">;</span>
 
-<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span> <span class="c">// rewrite class for IE (others use getAttribute(&#39;class&#39;)</span>
+<span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span> <span class="c">// rewrite class for IE (others use getAttribute(&#39;class&#39;)</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">attrAliases</span><span class="o">[</span><span class="s1">&#39;class&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;className&#39;</span><span class="o">;</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">attrAliases</span><span class="o">[</span><span class="s1">&#39;for&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;htmlFor&#39;</span><span class="o">;</span>
 <span class="o">}</span>

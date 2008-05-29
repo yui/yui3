@@ -19,8 +19,8 @@
     var obj = new Y.Event.Target();
 
     Y.on('yui:log', function() {
-        console.log('LOG NOTIFICATION (console): ' + Y.lang.dump(Y.array(arguments)));
-        Y.log('log NOTIFICATION (Y.log): ' + Y.lang.dump(Y.array(arguments)));
+        console.log('LOG NOTIFICATION (console): ' + Y.Lang.dump(Y.array(arguments)));
+        Y.log('log NOTIFICATION (Y.log): ' + Y.Lang.dump(Y.array(arguments)));
     });
 
     Y.Event.onDOMReady(function() {
@@ -59,7 +59,7 @@
         console.info('subscriber 1 executed: ' + Y.array(arguments));
     });
 
-    Y.log('h: ' + Y.lang.dump(h));
+    Y.log('h: ' + Y.Lang.dump(h));
 
     Y.log('sub 1 should execute');
     obj.fire('foo', 1);
@@ -104,7 +104,7 @@
     try {
         obj.fire('foo');
     } catch(e) {
-        console.warn('fire() error: ' + Y.lang.dump(e.errors));
+        console.warn('fire() error: ' + Y.Lang.dump(e.errors));
     }
     */
 

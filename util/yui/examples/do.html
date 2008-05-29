@@ -18,18 +18,18 @@ function TestObj(name) {
 }
 
 TestObj.prototype.printName = function () {
-    Y.log('TestObj ' + this.name + " 'printName' " + Y.lang.dump(Y.array(arguments)));
+    Y.log('TestObj ' + this.name + " 'printName' " + Y.Lang.dump(Y.array(arguments)));
     return true;
 };
 
 function bef(msg, obj, a3) {
     // Y.log(this.name + " before " + msg);
     // Y.log("before " + msg + ", scope: " + obj.testProp);
-    //Y.log(arguments.length + ": before " + msg + ", obj: " + Y.lang.dump(obj));
-    // Y.log(Y.lang.dump(a3));
+    //Y.log(arguments.length + ": before " + msg + ", obj: " + Y.Lang.dump(obj));
+    // Y.log(Y.Lang.dump(a3));
 
-    Y.log('bef: ' + Y.lang.dump(Y.array(arguments)));
-    // Y.log('bef: ' + Y.lang.dump(arguments));
+    Y.log('bef: ' + Y.Lang.dump(Y.array(arguments)));
+    // Y.log('bef: ' + Y.Lang.dump(arguments));
 
 }
 
@@ -50,8 +50,8 @@ function causeError(msg, obj) {
 function aft(msg, ret, obj) {
     // Y.log(this.name + " after " + msg);
     // Y.log("after " + msg + ", scope: " + obj.testProp);
-    Y.log('after: ' + Y.lang.dump(Y.array(arguments)));
-    // Y.log('after: ' + Y.lang.dump(arguments));
+    Y.log('after: ' + Y.Lang.dump(Y.array(arguments)));
+    // Y.log('after: ' + Y.Lang.dump(arguments));
 }
 
 function alterReturn(msg, ret, obj) {
@@ -99,20 +99,20 @@ Y.augment(TestObj, Y.Event.Target);
 
 
 function bef2(msg, obj, a3) {
-    Y.log('bef2: ' + Y.lang.dump(Y.array(arguments)));
-    // alert('bef: ' + Y.lang.dump(Y.array(arguments)));
+    Y.log('bef2: ' + Y.Lang.dump(Y.array(arguments)));
+    // alert('bef: ' + Y.Lang.dump(Y.array(arguments)));
 }
 
 function bef3(msg, obj, a3) {
-    Y.log('bef3: ' + Y.lang.dump(Y.array(arguments)));
+    Y.log('bef3: ' + Y.Lang.dump(Y.array(arguments)));
 }
 
 function aft2(msg, obj, a3) {
-    Y.log('aft2: ' + Y.lang.dump(Y.array(arguments)));
+    Y.log('aft2: ' + Y.Lang.dump(Y.array(arguments)));
 }
 
 function aft3(msg, obj, a3) {
-    Y.log('aft3: ' + Y.lang.dump(Y.array(arguments)));
+    Y.log('aft3: ' + Y.Lang.dump(Y.array(arguments)));
 }
 
 obj.before(bef2, "printName", obj, 1, 2, 3);
