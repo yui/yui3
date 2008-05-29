@@ -1,10 +1,10 @@
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
  * @module JSON
- * @class Y.JSON
+ * @class JSON
  * @static
  */
-var isA = Y.lang.isArray;
+var isA = Y.Lang.isArray;
 
 Y.JSON = Y.JSON || {};
 
@@ -159,7 +159,7 @@ Y.mix(Y.JSON,{
                     // Object
                     } else {
                         // If whitelist provided, take only those keys
-                        k = isA(w) ? w : Y.object.keys(w||o);
+                        k = isA(w) ? w : Y.Object.keys(w||o);
 
                         for (i = 0, j = 0, len = k.length; i < len; ++i) {
                             if (typeof k[i] === 'string') {

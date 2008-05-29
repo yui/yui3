@@ -4,7 +4,7 @@ YUI.add('json-parse', function(Y) {
  * Provides Y.JSON.parse method to take JSON strings and return native
  * JavaScript objects.
  * @module JSON
- * @class Y.JSON
+ * @class JSON
  * @static
  */
 Y.JSON = Y.JSON || {};
@@ -70,7 +70,7 @@ var _ESCAPES = /\\["\\\/bfnrtu]/g,
             var k,v,value = o[key];
             if (value && typeof value === 'object') {
                 for (k in value) {
-                    if (Y.object.owns(value,k)) {
+                    if (Y.Object.owns(value,k)) {
                         v = walk(value, k);
                         if (v === undefined) {
                             delete value[k];
@@ -118,10 +118,10 @@ YUI.add('json-stringify', function(Y) {
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
  * @module JSON
- * @class Y.JSON
+ * @class JSON
  * @static
  */
-var isA = Y.lang.isArray;
+var isA = Y.Lang.isArray;
 
 Y.JSON = Y.JSON || {};
 
@@ -276,7 +276,7 @@ Y.mix(Y.JSON,{
                     // Object
                     } else {
                         // If whitelist provided, take only those keys
-                        k = isA(w) ? w : Y.object.keys(w||o);
+                        k = isA(w) ? w : Y.Object.keys(w||o);
 
                         for (i = 0, j = 0, len = k.length; i < len; ++i) {
                             if (typeof k[i] === 'string') {
