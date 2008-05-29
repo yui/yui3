@@ -273,10 +273,10 @@ YUI.add('nodeextras', function(Y) {
 
                     } else {
                         //Fix FIXED position -- add scrollbars
-                        if (Y.UA.opera || Y.UA.gecko) {
+                        if (Y.UA.opera) {
                             xy[0] -= node.get('docScrollX');
                             xy[1] -= node.get('docScrollY');
-                        } else if (Y.UA.webkit) {
+                        } else if (Y.UA.webkit || Y.UA.gecko) {
                             xy[0] += node.get('docScrollX');
                             xy[1] += node.get('docScrollY');
                         }
