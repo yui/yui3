@@ -119,6 +119,19 @@ YUI.add('nodeextras', function(Y) {
         },
 
         /**
+         * If the className exists on the node it is removed, if it doesn't exist it is added.
+         * @method toggleClass  
+         * @param {String} className the class name to be toggled
+         */
+        toggleClass: function(node, className) {
+            if (node.hasClass(className)) {
+                node.removeClass(className);
+            } else {
+                node.addClass(className);
+            }
+        },        
+
+        /**
          * Returns the previous sibling that is an HTMLElement. 
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method previous
@@ -170,25 +183,69 @@ YUI.add('nodeextras', function(Y) {
         getXY: function() {
             if (Y.Node.get('document').get('documentElement').hasMethod(GET_BOUNDING_CLIENT_RECT)) {
                 return function(node) {
-                    var scrollLeft = node.get('docScrollX');
-                        scrollTop = node.get('docScrollY');
+                    var scrollLeft = node.get('docScrollX'),
+                        scrollTop = node.get('docScrollY'),
                         box = node.invoke(GET_BOUNDING_CLIENT_RECT),
-                        xy = [box[LEFT], box[TOP]];
+                        //Round the numbers so we get sane data back
+                        xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
 
-                    if ((scrollTop || scrollLeft) && node.getStyle(POSITION) != FIXED) { // no scroll accounting for fixed
+                        if (Y.UA.ie) {
+                            var off1 = 2, off2 = 2,
+                            mode = Y.Node.get('document').get('compatMode'),
+                            bLeft = Y.Node.get('document').get('documentElement').getStyle('borderLeftWidth'),
+                            bTop = Y.Node.get('document').get('documentElement').getStyle('borderTopWidth');
+                            if (Y.UA.ie === 6) {
+                                if (mode !== 'BackCompat') {
+                                    off1 = 0;
+                                    off2 = 0;
+                                }
+                            }
+                            
+                            if ((mode == 'BackCompat')) {
+                                if (bLeft !== 'medium') {
+                                    off1 = parseInt(bLeft, 10);
+                                }
+                                if (bTop !== 'medium') {
+                                    off2 = parseInt(bTop, 10);
+                                }
+                            }
+                            
+                            xy[0] -= off1;
+                            xy[1] -= off2;
+                        }
+                    if ((scrollTop || scrollLeft)) {
                         xy[0] += scrollLeft;
                         xy[1] += scrollTop;
                     }
-                    return xy;
+                    return xy;                   
                 };
             } else {
                 return function(node) { // manually calculate by crawling up offsetParents
-                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)];
+                    //Calculate the Top and Left border sizes (assumes pixels)
+                    var calcBorders = function(node, xy2) {
+                        var t = parseInt(node.getStyle('borderTopWidth'), 10) || 0,
+                            l = parseInt(node.getStyle('borderLeftWidth'), 10) || 0;
+                        if (Y.UA.gecko) {
+                            if (getRegExp('/^t(able|d|h)$/', 'i').test(node.get('tagName'))) {
+                                t = 0;
+                                l = 0;
+                            }
+                        }
+                        xy2[0] += l;
+                        xy2[1] += t;
+                        return xy2;
+                    };
 
-                    var parentNode = node;
+                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)],
+                    parentNode = node,
+                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
+
                     while (parentNode = parentNode.get('offsetParent')) {
                         xy[0] += parentNode.get(OFFSET_LEFT);
                         xy[1] += parentNode.get(OFFSET_TOP);
+                        if (bCheck) {
+                            xy = calcBorders(parentNode, xy);
+                        }
                     }
 
                     // account for any scrolled ancestors
@@ -200,14 +257,35 @@ YUI.add('nodeextras', function(Y) {
                             scrollTop = parentNode.get('scrollTop');
                             scrollLeft = parentNode.get('scrollLeft');
 
+                            //Firefox does something funky with borders when overflow is not visible.
+                            if (Y.UA.gecko && (parentNode.getStyle('overflow') !== 'visible')) {
+	                            xy = calcBorders(parentNode, xy);
+                            }
+                            
+
                             if (scrollTop || scrollLeft) {
                                 xy[0] -= scrollLeft;
                                 xy[1] -= scrollTop;
                             }
                         }
+                        xy[0] += node.get('docScrollX');
+                        xy[1] += node.get('docScrollY');
 
+                    } else {
+                        //Fix FIXED position -- add scrollbars
+                        if (Y.UA.opera || Y.UA.gecko) {
+                            xy[0] -= node.get('docScrollX');
+                            xy[1] -= node.get('docScrollY');
+                        } else if (Y.UA.webkit) {
+                            xy[0] += node.get('docScrollX');
+                            xy[1] += node.get('docScrollY');
+                        }
                     }
-                    return xy;
+                    //Round the numbers so we get sane data back
+                    xy[0] = Math.floor(xy[0]);
+                    xy[1] = Math.floor(xy[1]);
+
+                    return xy;                
                 };
             }
         }(),// NOTE: Executing for loadtime branching
