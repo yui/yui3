@@ -67,7 +67,10 @@ _init = function () {
         if (sheet.insertRule) {
             cssRules = 'cssRules';
             remove = 'deleteRule';
-            _add = function (sel,idx) { sheet.insertRule(sel+' {}',idx); };
+            _add = function (sel,idx) {
+                sheet.insertRule(sel+' {}',idx);
+                ruleIdx[sel] = idx;
+            };
         }
 
         // TODO: this should be pulled outside this try block to avoid
@@ -128,8 +131,9 @@ remove = 'removeRule';
  * insertRule(selAndCssText, index).  This is redefined in _init if needed.
  * @private
  */
-_add = function (sel) {
+_add = function (sel,i) {
     sheet.addRule(sel, '{clip:auto}');
+    ruleIdx[sel] = i;
 };
 
 /**
@@ -139,16 +143,27 @@ _add = function (sel) {
  * @private
  */
 _set = function (style,props) {
+    props = Y.clone(props);
+    var p, owns = Y.Object.owns;
+
     // TODO: move to load-time fork
-    if ('opacity' in props && 'filter' in style) {
-        props = Y.clone(props);
+    if ('opacity' in props && !('opacity' in style)) {
         props.filter = 'alpha(opacity='+(props.opacity * 100)+')';
-        delete props.filter;
+        delete props.opacity;
+    }
+    if ('cssFloat' in props || 'styleFloat' in props) {
+        if ('cssFloat' in style) {
+            props.cssFloat = props.cssFloat || props.styleFloat;
+            delete props.styleFloat;
+        } else {
+            props.styleFloat = props.styleFloat || props.cssFloat;
+            delete props.cssFloat;
+        }
     }
 
-    for (var k in props) {
-        if (Y.object.owns(props,k)) {
-            style[k] = props[k];
+    for (p in props) {
+        if (owns(props,p) && p in style) { // FF2 hasOwnProp false for styles
+            style[p] = props[p];
         }
     }
 };
@@ -160,17 +175,20 @@ _set = function (style,props) {
  * @private
  */
 _unset = function (style,prop) {
-    var p;
+    var i, p;
 
-    prop = Y.array(prop);
+    prop = Y.Array(prop);
 
-    for (var i = prop.length - 1; i >= 0; ++i) {
+    for (i = prop.length - 1; i >= 0; --i) {
         p = prop[i];
         // TODO: move to load-time fork
-        if (p == 'opacity' && 'filter' in style) {
+        if (p === 'opacity' && !('opacity' in style)) {
             p = 'filter';
+        } else if (p === 'cssFloat' || p === 'styleFloat') {
+            p = 'cssFloat' in style ? 'cssFloat' : 'styleFloat';
         }
-        if (Y.object.owns(style,p)) {
+
+        if (p in style) {
             style[p] = ''; // TODO: verify this works for each prop
         }
     }
@@ -185,11 +203,13 @@ _unset = function (style,prop) {
 _ruleIndex = function (sel) {
     var rules = sheet[cssRules],
         i = rules.length - 1;
+
     for (;i>=0;--i) {
         if (rules[i].selectorText == sel) {
             return i;
         }
     }
+
     return undefined;
 };
 
@@ -248,7 +268,7 @@ Y.CSS = {
         var i = ruleIdx[sel];
 
         // Verify the rule index
-        if (sheet[cssRules][i].selectorText != sel) {
+        if (i === undefined || sheet[cssRules][i].selectorText != sel) {
             i = _ruleIndex(sel);
         }
         if (i !== undefined) {

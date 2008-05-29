@@ -42,7 +42,8 @@
             <div class="bar"></div>
         </div>
     </div>
-    <input type="button" name="go" id="go" value="go">
+    <input type="button" name="set" id="set" value="set">
+    <input type="button" name="unset" id="unset" value="unset">
 
     <script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/yui/yui.js"></script>
     <script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/css/css.js"></script>
@@ -51,9 +52,15 @@
         Y.on('click',function (e) {
             Y.CSS.set('.foo', {
                 width: '4em',
-                background: '#a55'
+                background: '#000',
+                cssFloat: 'right',
+                opacity : .5
             });
-        },'#go');
+        },'#set');
+
+        Y.on('click',function (e) {
+            Y.CSS.unset('.foo', ['width','background','cssFloat','opacity']);
+        },'#unset');
     });
     </script>
     <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
