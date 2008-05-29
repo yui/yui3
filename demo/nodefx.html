@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>FIXME</title>
+<script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/node/node.js"></script>
+
+<script type="text/javascript" src="../util/yui/src/js/State.js"></script>
+<script type="text/javascript" src="../build/attribute/attribute.js"></script>
+<script type="text/javascript" src="../build/base/base.js"></script>
+<script type="text/javascript" src="../build/animation/animation.js"></script>
+
+<style type="text/css">
+    #foo {
+        background:#ccc;
+        width:100px;
+        position:relative;
+        overflow:hidden;
+    }
+</style>
+</head>
+<body>
+    <div id="foo" class="foo">test
+
+        <ul id="bar">
+            <li>test1</li>
+            <li>test2</li>
+            <li>test3</li>
+            <li>test4</li>
+        </ul>
+</div>
+<script type="text/javascript">
+(function() {
+    var Y = YUI().use('nodeextras', 'nodefxplugin');
+
+    Y.on('click', function(e) {
+        alert('click');
+    }, '#foo');
+
+    Y.Node.ENFORCE_ROOT = true;
+
+    var node = Y.Node.get('#foo', null, true);
+    node.plug(Y.Plugin.NodeFX);
+
+    node.fx.setAtts({
+        from: {
+            width: function(node) {
+                return node.get('offsetWidth');
+            },
+            
+            height: function(node) {
+                return node.get('offsetHeight');
+            }
+        },
+
+        to: {
+            width: 0,
+            height: 0
+        }
+    });
+
+    node.fx.run();
+
+})();
+</script>
+</body>
+</html>
