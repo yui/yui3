@@ -37,7 +37,7 @@
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     border: none;
     border-left: 2px groove #ccc;
-    font-size: inherit;
+    font-size: 100%;
     height: 2em;
     position: absolute;
     right: 0;

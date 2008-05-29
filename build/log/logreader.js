@@ -95,7 +95,7 @@ Y.mix(Y.log.Reader, {
 
         printTimeout : {
             value:100,
-            validator : Y.lang.isNumber
+            validator : Y.Lang.isNumber
         },
 
         consoleLimit : {value:500},
@@ -136,46 +136,6 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _timeout : null,
 
     buffer : null,
-
-    // Override default AttributeProvider methods to handle object values
-    get : function (attr) {
-        var path = attr.split('.'),
-            att  = path[0],
-            i = 1, l = path.length - 1,
-            v = Y.log.Reader.superclass.get.call(this,att);
-
-        if (l) {
-            for (;v !== undefined && i<l;++i) {
-                v = v[path[i]];
-            }
-
-            return v === undefined ? undefined : v[path[i]];
-        }
-
-        return v;
-    },
-    set : function (attr,val,silent) {
-        var path = attr.split('.'),
-            att  = path[0],
-            i = 1, l = path.length - 1,
-            v = l ? Y.clone(this.get(att)) : val,
-            o;
-
-        if (l) {
-            o = v;
-            for (;o !== undefined && i<l;++i) {
-                o = o[path[i]];
-            }
-
-            if (o === undefined) {
-                return this;
-            }
-
-            o[path[i]] = val;
-        }
-
-        return Y.log.Reader.superclass.set.call(this,att,v,silent);
-    },
 
     initializer : function (cfg) {
         this.buffer    = [];
@@ -307,7 +267,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Add the category entryType checks
         entryTypes = this.get('entryTypes.category');
         for (t in entryTypes) {
-            if (Y.object.owns(entryTypes,t)) {
+            if (Y.Object.owns(entryTypes,t)) {
                 this._catChecks.appendChild(
                     this._createEntryType(C.CATEGORY,t));
             }
@@ -316,7 +276,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Add the source entryType checks
         entryTypes = this.get('entryTypes.source');
         for (t in entryTypes) {
-            if (Y.object.owns(entryTypes,t)) {
+            if (Y.Object.owns(entryTypes,t)) {
                 this._srcChecks.appendChild(
                     this._createEntryType(C.SOURCE,t));
             }
@@ -554,7 +514,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         var templates = this.get('templates'),
             t = templates[m.category] || templates[this.get('defaultTemplate')],
-            n = Y.Node.create(Y.lang.substitute(t,m));
+            n = Y.Node.create(Y.Lang.substitute(t,m));
 
         n.addClass(this._filterClass(m.category));
         n.addClass(this._filterClass(m.source));
@@ -604,8 +564,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     hideEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
         for (t in entryTypes) {
-            if (Y.object.owns(entryTypes,t) &&
-                Y.object.owns(entryTypes[t],name)) {
+            if (Y.Object.owns(entryTypes,t) &&
+                Y.Object.owns(entryTypes[t],name)) {
                 this.set('entryTypes.'+t+'.'+name, false);
             }
         }
@@ -614,8 +574,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     showEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
         for (t in entryTypes) {
-            if (Y.object.owns(entryTypes,t) &&
-                Y.object.owns(entryTypes[t],name)) {
+            if (Y.Object.owns(entryTypes,t) &&
+                Y.Object.owns(entryTypes[t],name)) {
                 this.set('entryTypes.'+t+'.'+name, true);
             }
         }
@@ -670,8 +630,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     _handleEntryTypesChange : function (e) {
-        // HACK: until set passes payload, we have to manually determine
-        // what changed.
+        // We have to determine all terminal paths that have changed in case
+        // a branch node in the obj structure was changed.
 
         // Build a list of paths to compare against the previous value
         var C = Y.log.Reader.CLASSES,
@@ -681,7 +641,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 function drill(o,p) {
                     if (typeof o === 'object') {
                         for (var k in o) {
-                            if (Y.object.owns(o,k)) {
+                            if (Y.Object.owns(o,k)) {
                                 drill(o[k],p.concat(k));
                             }
                         }
@@ -740,4 +700,4 @@ Y.extend(Y.log.Reader,Y.Widget,{
 });
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['css']});
