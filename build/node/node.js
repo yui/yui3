@@ -278,7 +278,7 @@ var query = function(selector, root, firstOnly, deDupe) {
 };
 
 var contains = function() {
-    if (document.documentElement.contains && !Y.ua.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
+    if (document.documentElement.contains && !Y.UA.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
         return function(needle, haystack) {
             return haystack.contains(needle);
         };
@@ -569,7 +569,7 @@ var tokenize = function(selector) {
     do {
         found = false; // reset after full pass
         for (var re in patterns) {
-                if (!Y.object.owns(patterns, re)) {
+                if (!Y.Object.owns(patterns, re)) {
                     continue;
                 }
                 if (re != 'tag' && re != 'combinator') { // only one allowed
@@ -628,7 +628,7 @@ var replaceShorthand = function(selector) {
         selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
     }
     for (var re in shorthand) {
-        if (!Y.object.owns(shorthand, re)) {
+        if (!Y.Object.owns(shorthand, re)) {
             continue;
         }
         selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
@@ -646,7 +646,7 @@ Selector = new Selector();
 Selector.patterns = patterns;
 Y.Selector = Selector;
 
-if (Y.ua.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['class'] = 'className';
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
@@ -1060,7 +1060,7 @@ YUI.add('node', function(Y) {
             width = win.innerWidth,
             root = doc[DOCUMENT_ELEMENT];
     
-        if ( mode && !Y.ua.opera ) { // IE, Gecko
+        if ( mode && !Y.UA.opera ) { // IE, Gecko
             if (mode != 'CSS1Compat') { // Quirks
                 root = doc.body; 
             }
@@ -1508,7 +1508,7 @@ YUI.add('node', function(Y) {
         var html = [];
         var att = [];
 
-        if (Y.lang.isString(jsonml)) { // text node
+        if (Y.Lang.isString(jsonml)) { // text node
             return jsonml;
         }
 
@@ -1517,7 +1517,7 @@ YUI.add('node', function(Y) {
         }
 
         var tag = jsonml[0];
-        if (!Y.lang.isString(tag)) {
+        if (!Y.Lang.isString(tag)) {
             return null; // bad tag error
         }
 
@@ -1825,7 +1825,7 @@ YUI.add('nodeextras', function(Y) {
             }
             
             
-            node.set(CLASS_NAME, Y.lang.trim([node.get(CLASS_NAME), className].join(' ')));
+            node.set(CLASS_NAME, Y.Lang.trim([node.get(CLASS_NAME), className].join(' ')));
         },
 
         /**
@@ -1841,7 +1841,7 @@ YUI.add('nodeextras', function(Y) {
 
             
             node.set(CLASS_NAME,
-                    Y.lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
+                    Y.Lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
                             className + '(?:\\s+|$)'), ' ')));
 
             if ( node.hasClass(className) ) { // in case of multiple adjacent
@@ -1871,7 +1871,7 @@ YUI.add('nodeextras', function(Y) {
                 node.replaceClass(oldC, newC);
             }
 
-            node.set(CLASS_NAME, Y.lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
+            node.set(CLASS_NAME, Y.Lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
         },
 
         /**
