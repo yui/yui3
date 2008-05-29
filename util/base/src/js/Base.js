@@ -30,6 +30,7 @@
     Base.NAME = 'base';
     Base._instances = {};
 
+    // TODO, Work in progress
     Base.build = function(main, extensions, cfg) {
 
         var build = Base.build,
@@ -172,6 +173,7 @@
         }
     });
 
+    // TODO - Work in progress
     Base.create = function(main, features, args) {
         var c = Y.Base.build(main, features, {dynamic:true}),
             cArgs = Y.array(arguments, 2, true);
@@ -193,7 +195,6 @@
          * 
          * @method init
          * @final
-         * @chain
          * @param {Object} config Configuration properties for the object
          */
         init: function(config) {
@@ -224,7 +225,6 @@
          * Provides beforeDestroy and destroy lifecycle events
          * 
          * @method destroy
-         * @chain
          * @final
          */
         destroy: function() {
@@ -243,14 +243,16 @@
 
         /**
          * Utility methods, to register and unregister listeners in 
-         * named sets. These will save the handles for the listeners,
-         * keyed by the set name.
+         * named categories. This will save the handles for the listeners,
+         * keyed by the category name.
+         *
+         * TODO: Work in progress
          * 
-         * @param {Object} category
+         * @param {String} category
          * @param {Object} listeners
-         * @param {Object} replace
+         * @param {Boolean} replace
          */
-        // TODO:DEPENDENCY - Event handles and possibly handle bubbling use case
+        // TODO - work in progress
         attachListeners: function(category, listeners, replace) {
             var e = this._eventHandles, 
                     handles;
@@ -276,6 +278,16 @@
             }
         },
 
+        /**
+         * Detach the given category of listeners, attached
+         * using attachListeners
+         *
+         * TODO: Work in progress
+         * 
+         * @param {String} category
+         *
+         */
+        // TODO - Work in progress
         detachListeners: function(category) {
             var e = this._eventHandles;
             var handles = e[category];
@@ -310,6 +322,11 @@
         },
 
         /**
+         * Initialize the class hierarchy rooted at this base class.
+         * 
+         * @method _initHierarchy
+         * @param {Object} userConf Config hash containing
+         * attribute name/value pairs
          * @private
          */
         _initHierarchy : function(userConf) {
@@ -335,6 +352,9 @@
         },
 
         /**
+         * Destroy the class hierarchy rooted at this base class.
+         * 
+         * @method _destroyHierarchy
          * @private
          */
         _destroyHierarchy : function() {

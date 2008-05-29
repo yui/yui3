@@ -177,7 +177,8 @@ YUI.add('attribute', function(Y) {
 
     /**
      * Manages attributes
-     * @class Att
+     * 
+     * @class Attribute
      * @uses EventTarget
      */
     Y.Attribute = function() {
@@ -382,12 +383,13 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Sets multiple attribute values.
-         * @method setAttributes
-         * @param {Object} atts  A hash of attributes: values
+         * 
+         * @method setAtts
+         * @param {Object} atts  A hash of attributes: name/value pairs
          */
         setAtts: function(atts) {
             for (var att in atts) {
-                if ( Y.object.owns(atts, att) ) {
+                if ( O.owns(atts, att) ) {
                     this.set(att, atts[att]);
                 }
             }
@@ -395,8 +397,9 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Gets multiple attribute values.
-         * @method setAttributes
-         * @param {Object} atts  A hash of attributes: values
+         * 
+         * @method getAtts
+         * @return {Object} A hash of attributes: name/values pairs
          */
         getAtts: function(atts) {
             var o = {};
@@ -437,6 +440,17 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
+         * Set the initial value of the given attribute from
+         * either the default configuration provided, or the 
+         * over-ridden value if it exists in the initValues 
+         * hash provided.
+         *
+         * @param {String} att Attribute name
+         * @param {Object} cfg Default attribute configuration
+         * object literal
+         * @param {Object} initial attribute values
+         *
+         * @method _initAttValue
          * @private
          */
         _initAttValue : function(att, cfg, initValues) {
