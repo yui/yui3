@@ -53,7 +53,7 @@ YUI.add('attribute', function(Y) {
     /**
      * Manages attributes
      * @class Att
-     * @uses YUI.EventTarget
+     * @uses EventTarget
      */
     Y.Attribute = function() {
         this._conf = this._conf || new Y.State();

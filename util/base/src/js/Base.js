@@ -14,13 +14,13 @@
     }
 
     /**
-     * Provides a base class for managed attribute based 
+     * Provides a base class for managed attribute based
      * objects, which automates chaining of init and destroy
-     * lifecycle methods and automatic instantiation of 
+     * lifecycle methods and automatic instantiation of
      * registered Attributes, through the static ATTR property
      *
      * @class Base
-     * @uses Y.Attribute
+     * @uses Attribute
      */
     var Base = function() {
         Y.log('constructor called', 'life', 'Base');
@@ -290,7 +290,7 @@
 
         /**
          * Returns the top down class heirarchy for this object,
-         * with YUI.Base being the first class in the array
+         * with Base being the first class in the array
          * 
          * @protected
          * @return {Array} array of classes
