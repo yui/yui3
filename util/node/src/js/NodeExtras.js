@@ -310,6 +310,7 @@ YUI.add('nodeextras', function(Y) {
             }
 
             var currentXY = node.getXY();
+
             if (currentXY === false) { // has to be part of doc to have xy
                 YAHOO.log('xy failed: node not available', 'error', 'Node');
                 return false; 
@@ -322,11 +323,11 @@ YUI.add('nodeextras', function(Y) {
                 delta[1] = (pos == RELATIVE) ? 0 : node.get(OFFSET_TOP);
             } 
 
-            if (pos[0] !== null) {
+            if (xy[0] !== null) {
                 node.setStyle(LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
             }
 
-            if (pos[1] !== null) {
+            if (xy[1] !== null) {
                 node.setStyle(TOP, xy[1] - currentXY[1] + delta[1] + 'px');
             }
           
