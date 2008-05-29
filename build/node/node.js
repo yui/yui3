@@ -1177,22 +1177,33 @@ YUI.add('node', function(Y) {
                 return ret;
             };
 
-            NodeList.prototype[name] = function(a, b, c, d, e) {
-                var ret = [];
-                this.each(function(node) {
-                    ret.push(node[name](a, b, c, d, e));
-                });
-                if (!ret.length) {
-                    ret = this;
-                }
-                return ret;
-            };
-            
+            addNodeListMethod(name);
+
+
         } else { // assume object
             Y.each(name, function(fn, name) {
                 Node.methods(name, fn);
             });
         }
+    };
+
+    var addNodeListMethod = function(name) {
+        NodeList.prototype[name] = function() {
+            var a = [],
+                nodes = _nodes[this._yuid],
+                node = _tmpNode,
+                ret;
+
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                updateTmp(nodes[i]);
+                ret = node[name].apply(node, arguments);
+                if (ret !== node) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
     };
 
     Node.prototype = {
@@ -1640,25 +1651,9 @@ YUI.add('node', function(Y) {
 
     NodeList.prototype = {};
 
-    Y.each(Node.prototype, function(fn, method) {
-        var a,
-            node = _tmpNode,
-            ret;
-
-        if (typeof Node.prototype[method]== 'function') {
-            NodeList.prototype[method] = function() {
-                a = [];
-                var nodes = _nodes[this._yuid];
-                for (var i = 0, len = nodes.length; i < len; ++i) {
-                    updateTmp(nodes[i]);
-                    ret = node[method].apply(node, arguments);
-                    if (ret !== node) {
-                        a[i] = ret;
-                    }
-                }
-
-                return a.length ? a : this;
-            };
+    Y.each(Node.prototype, function(fn, name) {
+        if (typeof Node.prototype[name] == 'function') {
+            addNodeListMethod(name);
         }
     });
 
@@ -2036,10 +2031,10 @@ YUI.add('nodeextras', function(Y) {
 
                     } else {
                         //Fix FIXED position -- add scrollbars
-                        if (Y.UA.opera || Y.UA.gecko) {
+                        if (Y.UA.opera) {
                             xy[0] -= node.get('docScrollX');
                             xy[1] -= node.get('docScrollY');
-                        } else if (Y.UA.webkit) {
+                        } else if (Y.UA.webkit || Y.UA.gecko) {
                             xy[0] += node.get('docScrollX');
                             xy[1] += node.get('docScrollY');
                         }
