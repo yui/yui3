@@ -19,8 +19,8 @@
     var obj = new Y.Event.Target();
 
     Y.on('yui:log', function() {
-        console.log('LOG NOTIFICATION (console): ' + Y.Lang.dump(Y.array(arguments)));
-        Y.log('log NOTIFICATION (Y.log): ' + Y.Lang.dump(Y.array(arguments)));
+        console.log('LOG NOTIFICATION (console): ' + Y.Lang.dump(Y.Array(arguments)));
+        Y.log('log NOTIFICATION (Y.log): ' + Y.Lang.dump(Y.Array(arguments)));
     });
 
     Y.Event.onDOMReady(function() {
@@ -46,7 +46,7 @@
     // }, Y.Node.getElementsByClassName('button'));
 
     Y.on('TEST:EVENT', function() {
-        Y.log('test event subscriber success: ' + Y.array(arguments));
+        Y.log('test event subscriber success: ' + Y.Array(arguments));
     });
 
     Y.fire('TEST:EVENT', 1, 2);
@@ -56,7 +56,7 @@
     Y.fire('asdf', 1);
 
     var h = obj.subscribe('foo', function() {
-        console.info('subscriber 1 executed: ' + Y.array(arguments));
+        console.info('subscriber 1 executed: ' + Y.Array(arguments));
     });
 
     Y.log('h: ' + Y.Lang.dump(h));
@@ -70,7 +70,7 @@
     obj.fire('foo', 2);
 
     var h = obj.subscribe('foo', function() {
-        console.info('subscriber 2 executed: ' + Y.array(arguments));
+        console.info('subscriber 2 executed: ' + Y.Array(arguments));
     });
 
     Y.log('sub 2 should execute');

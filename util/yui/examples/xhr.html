@@ -51,7 +51,7 @@ var div = Y.get('#container');
 
 var handleSuccess = function(id, o){
 
-	Y.log("The success handler was called.  tId: " + Y.Lang.dump(Y.array(arguments)) + ".", "info", "example");
+	Y.log("The success handler was called.  tId: " + Y.Lang.dump(Y.Array(arguments)) + ".", "info", "example");
 	
 	if(o.responseText !== undefined){
 		div.innerHTML = "<li>Transaction id: " + o.tId + "</li>";
@@ -93,7 +93,7 @@ function makeRequest(){
 }
 
 Y.on('io:success', function() {
-    Y.log('global: ' + Y.Lang.dump(Y.array(arguments)));
+    Y.log('global: ' + Y.Lang.dump(Y.Array(arguments)));
 });;
 
 Y.log("As you interact with this example, relevant steps in the process will be logged here.", "info", "example");
