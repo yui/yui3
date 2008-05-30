@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: yui  Event.Subscriber   (YUI Library)</title>
+	<title>API: selector  Selector   (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,11 +13,11 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>yui&nbsp; <span class="subtitle">3.00pre</span></h3>
+        <h3>Selector Utility&nbsp; <span class="subtitle">3.00pre</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_yui.html">yui</a>
-                 &gt; Event.Subscriber 
+            &gt; <a href="./module_selector.html">selector</a>
+                 &gt; Selector 
                 
             </p>
 
@@ -35,9 +35,9 @@
                     <h2>
                         
 
+                        <code>static</code>
                         
-                        
-                            Class <b>Event.Subscriber</b>
+                            Class <b>Selector</b>
                         <span class="extends">
                         </span>
 
@@ -52,68 +52,21 @@
   
 
                     <div class="summary description">
-                        Stores the subscriber information to be used when the event fires.
+                        Provides helper methods for collecting and filtering DOM elements.
                     </div>
 
-                        <div class="section constructor details">
-                        <h3 id="constructor">Constructor</h3>
-                        <div class="content">
-                            <div class="detail">
-                                <strong>Event.Subscriber</strong>
-                                <code>
-                                    (
-  
-                                        
-                                                
-                                                fn
-
-                                                , 
-                                                obj
-
-                                                , 
-                                                args
-                                    )
-                                </code>
-                                <div class="description">
-                                        <dl>
-                                            <dt>Parameters:</dt>
-                                                <dd>
-                                                    <code>fn
-                                                    &lt;Function&gt; 
-                                                    </code>
-                                                           The wrapped function to execute
-                                                </dd>
-                                                <dd>
-                                                    <code>obj
-                                                    &lt;Object&gt; 
-                                                    </code>
-                                                          An object to be passed along when the event fires
-                                                </dd>
-                                                <dd>
-                                                    <code>args
-                                                    &lt;Array&gt; 
-                                                    </code>
-                                                            subscribe() additional arguments
-                                                </dd>
-                                        </dl>
-                                    
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
-                                    <h4><a name="property_args">args</a>
-                                        <code>- Array</code>
+                                    <h4><a name="property_attrAliases">attrAliases</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Optional additional arguments supplied to subscribe().  If present,
-these will be appended to the arguments supplied to fire()
+                                            Mapping of attributes to aliases, normally to work around HTMLAttributes
+that conflict with JS reserved words.
                                         </div>
                                     </div>
      
@@ -123,13 +76,31 @@ these will be appended to the arguments supplied to fire()
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_fn">fn</a>
-                                        <code>- Function</code>
+                                    <h4><a name="property_document">document</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            The callback that will be execute when the event fires
-This is wrapped by Y.bind if obj was supplied.
+                                            Default document for use queries
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: window.document
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_operators">operators</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            List of operators and corresponding boolean functions. 
+These functions are passed the attribute and the current node's value of the attribute.
                                         </div>
                                     </div>
      
@@ -139,12 +110,13 @@ This is wrapped by Y.bind if obj was supplied.
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_id">id</a>
-                                        <code>- String</code>
+                                    <h4><a name="property_pseudos">pseudos</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Unique subscriber id
+                                            List of pseudo-classes and corresponding boolean functions. 
+These functions are called with the current node, and any value that was parsed with the pseudo regex.
                                         </div>
                                     </div>
      
@@ -154,29 +126,12 @@ This is wrapped by Y.bind if obj was supplied.
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_obj">obj</a>
-                                        <code>- Object</code>
+                                    <h4><a name="property_shorthand">shorthand</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            An optional custom object that will passed to the callback when
-the event fires
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_wrappedFn">wrappedFn</a>
-                                        <code>- Function</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            }
-fn bound to obj with additional arguments applied via Y.bind
+                                            Mapping of shorthand tokens to corresponding attribute selector
                                         </div>
                                     </div>
      
@@ -196,30 +151,29 @@ fn bound to obj with additional arguments applied via Y.bind
                             <div class="content">
                                     <div class="">
                                     <h4>
-                                        <a name="method_contains">contains</a></h4>
+                                        <a name="method_filter">filter</a></h4>
                                     <div class="detail">
                                         <code>
                                         
+                                         static 
                                         
-                                        
-                                        boolean
-                                            <strong>contains</strong>
+                                        array
+                                            <strong>filter</strong>
                                            (
                                                 
                                                         
-                                                         fn
+                                                         nodes
                                                     
                                                 
                                                         , 
-                                                         obj
+                                                         selector
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Returns true if the fn and obj match this objects properties.
-Used by the unsubscribe method to match the right subscriber.
+                                            Filters a set of nodes based on a given CSS selector.
                                         </div>
 
                                         <div class="description">
@@ -227,12 +181,128 @@ Used by the unsubscribe method to match the right subscriber.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                             the function to execute
+                                                            <code>nodes &lt;array&gt;</code>
+                                                             A set of nodes/ids to filter.
                                                         </dd>
                                                         <dd>
-                                                            <code>obj &lt;Object&gt;</code>
-                                                             an object to be passed along when the event fires
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The selector used to test each node.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        array
+                                                    </code></dt>
+                                                    <dd>An array of nodes from the supplied array that match the given selector.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_query">query</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        Array
+                                            <strong>query</strong>
+                                           (
+                                                
+                                                        
+                                                         selector
+                                                    
+                                                
+                                                        , 
+                                                         root
+                                                    
+                                                
+                                                        , 
+                                                         firstOnly
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves a set of nodes based on a given CSS selector.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The CSS Selector to test the node against.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>root &lt;HTMLElement | String&gt;</code>
+                                                             optional An id or HTMLElement to start the query from. Defaults to Selector.document.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>firstOnly &lt;Boolean&gt;</code>
+                                                             optional Whether or not to return only the first match.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>An array of nodes that match the given selector.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_test">test</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        boolean
+                                            <strong>test</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         selector
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Test if the supplied node matches the supplied selector.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLElement | String&gt;</code>
+                                                             An id or node reference to the HTMLElement being tested.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The CSS Selector to test the node against.
                                                         </dd>
                                                 </dl>
 
@@ -241,8 +311,7 @@ Used by the unsubscribe method to match the right subscriber.
                                                     <code>
                                                         boolean
                                                     </code></dt>
-                                                    <dd>true if the supplied arguments match this 
-subscriber's signature.</dd>
+                                                    <dd>Whether or not the node matches the selector.</dd>
                                                 </dl>
              
                                         </div>
@@ -252,75 +321,21 @@ subscriber's signature.</dd>
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_notify">notify</a></h4>
+                                        <a name="method_tokenize">tokenize</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>notify</strong>
-                                           (
-                                                
-                                                        
-                                                         defaultContext
-                                                    
-                                                
-                                                        , 
-                                                         args
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executes the subscriber.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>defaultContext &lt;object&gt;</code>
-                                                             The execution context if not overridden
-by the subscriber
-                                                        </dd>
-                                                        <dd>
-                                                            <code>args &lt;Array&gt;</code>
-                                                              Arguments array for the subscriber
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_toString">toString</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>toString</strong>
+                                            <strong>tokenize</strong>
                                            (
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            
+                                            Break selector into token units per simple selector.
+Combinator is attached to left-hand selector.
                                         </div>
 
                                         <div class="description">
@@ -365,72 +380,37 @@ by the subscriber
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class="selected"><a href="module_selector.html">selector</a></li>
 
-                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="array.html">array</a></li>
-                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
-                                <li class=""><a href="Event.html">Event</a></li>
-                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
-                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
-                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
-                                <li class="selected"><a href="Event.Subscriber.html">Event.Subscriber</a></li>
-                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
-                                <li class=""><a href="Get.html">Get</a></li>
-                                <li class=""><a href="lang.html">lang</a></li>
-                                <li class=""><a href="object.html">object</a></li>
-                                <li class=""><a href="ua.html">ua</a></li>
-                                <li class=""><a href="YUI.html">YUI</a></li>
+                                <li class="selected"><a href="Selector.html">Selector</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
-                        <h4>Files</h4>
-                        <ul class="content">        
-                                <li class=""><a href="Array.js.html">Array.js</a></li>
-                                <li class=""><a href="Compat.js.html">Compat.js</a></li>
-                                <li class=""><a href="Core.js.html">Core.js</a></li>
-                                <li class=""><a href="Do.js.html">Do.js</a></li>
-                                <li class=""><a href="Dump.js.html">Dump.js</a></li>
-                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
-                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
-                                <li class=""><a href="event-facade.js.html">event-facade.js</a></li>
-                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
-                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
-                                <li class=""><a href="Get.js.html">Get.js</a></li>
-                                <li class=""><a href="Init.js.html">Init.js</a></li>
-                                <li class=""><a href="Lang.js.html">Lang.js</a></li>
-                                <li class=""><a href="Later.js.html">Later.js</a></li>
-                                <li class=""><a href="Object.js.html">Object.js</a></li>
-                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
-                                <li class=""><a href="UA.js.html">UA.js</a></li>
-                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
-                        </ul>
-                    </div>
 
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_args">args</a>
-                                        <!--<code>&lt;Function&gt;</code>-->
+                                <li class=""><a href="#property_attrAliases">attrAliases</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_fn">fn</a>
-                                        <!--<code>&lt;Function&gt;</code>-->
+                                <li class=""><a href="#property_document">document</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_id">id</a>
-                                        <!--<code>&lt;Function&gt;</code>-->
+                                <li class=""><a href="#property_operators">operators</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_obj">obj</a>
-                                        <!--<code>&lt;Function&gt;</code>-->
+                                <li class=""><a href="#property_pseudos">pseudos</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_wrappedFn">wrappedFn</a>
-                                        <!--<code>&lt;Function&gt;</code>-->
+                                <li class=""><a href="#property_shorthand">shorthand</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -438,14 +418,17 @@ by the subscriber
                     <div class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><!--<code>array</code>-->
+                                <a href="#method_filter">filter</a>
+                                </li>
+                                <li class=""><!--<code>Array</code>-->
+                                <a href="#method_query">query</a>
+                                </li>
                                 <li class=""><!--<code>boolean</code>-->
-                                <a href="#method_contains">contains</a>
+                                <a href="#method_test">test</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_notify">notify</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_toString">toString</a>
+                                <a href="#method_tokenize">tokenize</a>
                                 </li>
                         </ul>
                     </div>
