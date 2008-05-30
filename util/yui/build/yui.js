@@ -5526,22 +5526,33 @@ YUI.add('node', function(Y) {
                 return ret;
             };
 
-            NodeList.prototype[name] = function(a, b, c, d, e) {
-                var ret = [];
-                this.each(function(node) {
-                    ret.push(node[name](a, b, c, d, e));
-                });
-                if (!ret.length) {
-                    ret = this;
-                }
-                return ret;
-            };
-            
+            addNodeListMethod(name);
+
+
         } else { // assume object
             Y.each(name, function(fn, name) {
                 Node.methods(name, fn);
             });
         }
+    };
+
+    var addNodeListMethod = function(name) {
+        NodeList.prototype[name] = function() {
+            var a = [],
+                nodes = _nodes[this._yuid],
+                node = _tmpNode,
+                ret;
+
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                updateTmp(nodes[i]);
+                ret = node[name].apply(node, arguments);
+                if (ret !== node) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
     };
 
     Node.prototype = {
@@ -5676,7 +5687,7 @@ YUI.add('node', function(Y) {
          */
         getStyle: function(attr) {
             var style = _styles[this._yuid];
-            var val = style[attr];
+            var val = style ? style[attr] : undefined;
             if (val === '') { // TODO: is empty string sufficient?
                 var node = _nodes[this._yuid];
                 var view = node[OWNER_DOCUMENT][DEFAULT_VIEW];
@@ -5701,7 +5712,8 @@ YUI.add('node', function(Y) {
          */
         setStyle: function(attr, val) {
             Y.log('setting style ' + attr + ' to ' + val, 'info', 'Node');
-             _styles[this._yuid][attr] = val;
+            _styles[this._yuid][attr] = val;
+            //_nodes[this._yuid].style[attr] = val;
             return this;
         },
 
@@ -5984,27 +5996,17 @@ YUI.add('node', function(Y) {
 
     // used to call Node methods against NodeList nodes
     var _tmpNode = Node.create('<div></div>');
+    var updateTmp = function(node) {
+        _nodes[_tmpNode._yuid] = node;
+        _styles[_tmpNode._yuid] = node.style;
+    };
 
     NodeList.prototype = {};
 
-    Y.each(Node.prototype, function(fn, method) {
-        var ret;
-        var a = [];
-        NodeList.prototype[method] = function() {
-            var nodes = _nodes[this._yuid];
-            var node = _tmpNode;
-            if (typeof method == 'function') {
-                for (var i = 0, len = nodes.length; i < len; ++i) {
-                    _nodes[node._yuid] = nodes[i];
-                    ret = node[method].apply(node, arguments);
-                    if (ret !== undefined) {
-                        a[i] = ret;
-                    }
-                }
-            }
-
-            return a.length ? a : this;
-        };
+    Y.each(Node.prototype, function(fn, name) {
+        if (typeof Node.prototype[name] == 'function') {
+            addNodeListMethod(name);
+        }
     });
 
     Y.mix(NodeList.prototype, {
@@ -6231,6 +6233,19 @@ YUI.add('nodeextras', function(Y) {
         },
 
         /**
+         * If the className exists on the node it is removed, if it doesn't exist it is added.
+         * @method toggleClass  
+         * @param {String} className the class name to be toggled
+         */
+        toggleClass: function(node, className) {
+            if (node.hasClass(className)) {
+                node.removeClass(className);
+            } else {
+                node.addClass(className);
+            }
+        },        
+
+        /**
          * Returns the previous sibling that is an HTMLElement. 
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method previous
@@ -6282,25 +6297,69 @@ YUI.add('nodeextras', function(Y) {
         getXY: function() {
             if (Y.Node.get('document').get('documentElement').hasMethod(GET_BOUNDING_CLIENT_RECT)) {
                 return function(node) {
-                    var scrollLeft = node.get('docScrollX');
-                        scrollTop = node.get('docScrollY');
+                    var scrollLeft = node.get('docScrollX'),
+                        scrollTop = node.get('docScrollY'),
                         box = node.invoke(GET_BOUNDING_CLIENT_RECT),
-                        xy = [box[LEFT], box[TOP]];
+                        //Round the numbers so we get sane data back
+                        xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
 
-                    if ((scrollTop || scrollLeft) && node.getStyle(POSITION) != FIXED) { // no scroll accounting for fixed
+                        if (Y.UA.ie) {
+                            var off1 = 2, off2 = 2,
+                            mode = Y.Node.get('document').get('compatMode'),
+                            bLeft = Y.Node.get('document').get('documentElement').getStyle('borderLeftWidth'),
+                            bTop = Y.Node.get('document').get('documentElement').getStyle('borderTopWidth');
+                            if (Y.UA.ie === 6) {
+                                if (mode !== 'BackCompat') {
+                                    off1 = 0;
+                                    off2 = 0;
+                                }
+                            }
+                            
+                            if ((mode == 'BackCompat')) {
+                                if (bLeft !== 'medium') {
+                                    off1 = parseInt(bLeft, 10);
+                                }
+                                if (bTop !== 'medium') {
+                                    off2 = parseInt(bTop, 10);
+                                }
+                            }
+                            
+                            xy[0] -= off1;
+                            xy[1] -= off2;
+                        }
+                    if ((scrollTop || scrollLeft)) {
                         xy[0] += scrollLeft;
                         xy[1] += scrollTop;
                     }
-                    return xy;
+                    return xy;                   
                 };
             } else {
                 return function(node) { // manually calculate by crawling up offsetParents
-                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)];
+                    //Calculate the Top and Left border sizes (assumes pixels)
+                    var calcBorders = function(node, xy2) {
+                        var t = parseInt(node.getStyle('borderTopWidth'), 10) || 0,
+                            l = parseInt(node.getStyle('borderLeftWidth'), 10) || 0;
+                        if (Y.UA.gecko) {
+                            if (getRegExp('/^t(able|d|h)$/', 'i').test(node.get('tagName'))) {
+                                t = 0;
+                                l = 0;
+                            }
+                        }
+                        xy2[0] += l;
+                        xy2[1] += t;
+                        return xy2;
+                    };
 
-                    var parentNode = node;
+                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)],
+                    parentNode = node,
+                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
+
                     while (parentNode = parentNode.get('offsetParent')) {
                         xy[0] += parentNode.get(OFFSET_LEFT);
                         xy[1] += parentNode.get(OFFSET_TOP);
+                        if (bCheck) {
+                            xy = calcBorders(parentNode, xy);
+                        }
                     }
 
                     // account for any scrolled ancestors
@@ -6312,14 +6371,35 @@ YUI.add('nodeextras', function(Y) {
                             scrollTop = parentNode.get('scrollTop');
                             scrollLeft = parentNode.get('scrollLeft');
 
+                            //Firefox does something funky with borders when overflow is not visible.
+                            if (Y.UA.gecko && (parentNode.getStyle('overflow') !== 'visible')) {
+	                            xy = calcBorders(parentNode, xy);
+                            }
+                            
+
                             if (scrollTop || scrollLeft) {
                                 xy[0] -= scrollLeft;
                                 xy[1] -= scrollTop;
                             }
                         }
+                        xy[0] += node.get('docScrollX');
+                        xy[1] += node.get('docScrollY');
 
+                    } else {
+                        //Fix FIXED position -- add scrollbars
+                        if (Y.UA.opera) {
+                            xy[0] -= node.get('docScrollX');
+                            xy[1] -= node.get('docScrollY');
+                        } else if (Y.UA.webkit || Y.UA.gecko) {
+                            xy[0] += node.get('docScrollX');
+                            xy[1] += node.get('docScrollY');
+                        }
                     }
-                    return xy;
+                    //Round the numbers so we get sane data back
+                    xy[0] = Math.floor(xy[0]);
+                    xy[1] = Math.floor(xy[1]);
+
+                    return xy;                
                 };
             }
         }(),// NOTE: Executing for loadtime branching
@@ -6344,6 +6424,7 @@ YUI.add('nodeextras', function(Y) {
             }
 
             var currentXY = node.getXY();
+
             if (currentXY === false) { // has to be part of doc to have xy
                 YAHOO.log('xy failed: node not available', 'error', 'Node');
                 return false; 
@@ -6356,11 +6437,11 @@ YUI.add('nodeextras', function(Y) {
                 delta[1] = (pos == RELATIVE) ? 0 : node.get(OFFSET_TOP);
             } 
 
-            if (pos[0] !== null) {
+            if (xy[0] !== null) {
                 node.setStyle(LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
             }
 
-            if (pos[1] !== null) {
+            if (xy[1] !== null) {
                 node.setStyle(TOP, xy[1] - currentXY[1] + delta[1] + 'px');
             }
           
