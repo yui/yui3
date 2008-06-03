@@ -7,14 +7,14 @@
         /**
          * Returns test results formatted as a JSON string. Requires JSON utility.
          * @param {Object} result The results object created by TestRunner.
-         * @return {String} An XML-formatted string of results.
-         * @namespace YAHOO.tool.TestFormat
+         * @return {String} A JSON-formatted string of results.
+         * @namespace Y.Test.Format
          * @method JSON
          * @static
          */
         Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
             //TODO: Implement
-            //return YAHOO.lang.JSON.stringify(results);
+            return Y.JSON.stringify(results);
         };
         
         /**
@@ -27,7 +27,7 @@
          */
         Y.Test.Format.XML = function(results /*:Object*/) /*:String*/ {
         
-            var l = Y.lang;
+            var l = Y.Lang;
             var xml /*:String*/ = "<" + results.type + " name=\"" + results.name.replace(/"/g, "&quot;").replace(/'/g, "&apos;") + "\"";
             
             if (results.type == "test"){
@@ -35,7 +35,7 @@
             } else {
                 xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
                 for (var prop in results) {
-                    if (Y.object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
+                    if (Y.Object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
                         xml += arguments.callee(results[prop]);
                     }
                 }        

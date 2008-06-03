@@ -29,8 +29,8 @@
              */
             _formatMessage : function (customMessage /*:String*/, defaultMessage /*:String*/) /*:String*/ {
                 var message = customMessage;
-                if (Y.lang.isString(customMessage) && customMessage.length > 0){
-                    return Y.lang.substitute(customMessage, { message: defaultMessage });
+                if (Y.Lang.isString(customMessage) && customMessage.length > 0){
+                    return Y.Lang.substitute(customMessage, { message: defaultMessage });
                 } else {
                     return defaultMessage;
                 }        
@@ -187,7 +187,7 @@
              * @static
              */
             isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (Y.lang.isNull(actual)) {
+                if (Y.Lang.isNull(actual)) {
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
                 }
             },
@@ -201,7 +201,7 @@
              * @static
              */
             isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (Y.lang.isUndefined(actual)) {
+                if (Y.Lang.isUndefined(actual)) {
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
                 }
             },
@@ -215,7 +215,7 @@
              * @static
              */
             isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isNull(actual)) {
+                if (!Y.Lang.isNull(actual)) {
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
                 }
             },
@@ -229,7 +229,7 @@
              * @static
              */
             isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isUndefined(actual)) {
+                if (!Y.Lang.isUndefined(actual)) {
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
                 }
             },    
@@ -246,7 +246,7 @@
              * @static
              */
             isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isArray(actual)){
+                if (!Y.Lang.isArray(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
                 }    
             },
@@ -259,7 +259,7 @@
              * @static
              */
             isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isBoolean(actual)){
+                if (!Y.Lang.isBoolean(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
                 }    
             },
@@ -272,7 +272,7 @@
              * @static
              */
             isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isFunction(actual)){
+                if (!Y.Lang.isFunction(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
                 }    
             },
@@ -301,7 +301,7 @@
              * @static
              */
             isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isNumber(actual)){
+                if (!Y.Lang.isNumber(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
                 }    
             },    
@@ -314,7 +314,7 @@
              * @static
              */
             isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isObject(actual)){
+                if (!Y.Lang.isObject(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
                 }
             },
@@ -327,7 +327,7 @@
              * @static
              */
             isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isString(actual)){
+                if (!Y.Lang.isString(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
                 }
             },

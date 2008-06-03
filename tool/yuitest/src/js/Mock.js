@@ -1,6 +1,7 @@
 YUI.add("mock", function(Y){
 
-    var L = Y.lang;
+    var L = Y.Lang,
+        O = Y.Object;
 
     /**
      * Creates a new mock object.
@@ -15,14 +16,14 @@ YUI.add("mock", function(Y){
         
         //try to create mock that keeps prototype chain intact
         try {
-            mock = Y.object(template);
+            mock = O(template);
         } catch (ex) {
             mock = {};
             Y.log("Couldn't create mock with prototype.", "warn", "Mock");
         }
         
         //create new versions of the methods so that they don't actually do anything
-        Y.object.each(template, function(name){
+        O.each(template, function(name){
             if (L.isFunction(template[name])){
                 mock[name] = function(){
                     Y.Assert.fail("Method " + name + "() was called but was not expected to be.");
@@ -58,10 +59,7 @@ YUI.add("mock", function(Y){
             expectation.actualCallCount = 0;
                 
             //process arguments
-            Y.array.each(args, function(arg, i, array){
-                //array[i] = function(value){
-                //    Y.Assert.areSame(arg, value, "Argument " + i + " of " + name + " is incorrect."); 
-                //};
+            Y.Array.each(args, function(arg, i, array){
                 if (!(array[i] instanceof Y.Mock.Value)){
                     array[i] = Y.Mock.Value(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + "() is incorrect.");
                 }
@@ -103,7 +101,7 @@ YUI.add("mock", function(Y){
     };
 
     Y.Mock.verify = function(mock /*:Object*/){    
-        Y.object.each(mock.__expectations, function(expectation){
+        O.each(mock.__expectations, function(expectation){
             if (expectation.method) {
                 Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
             } else if (expectation.property){
@@ -112,8 +110,8 @@ YUI.add("mock", function(Y){
         });    
     };
 
-    Y.Mock.Value = Y.Mock.Expectation = function(method, args, message){
-        if (this instanceof Y.Mock.Expectation){
+    Y.Mock.Value = function(method, args, message){
+        if (this instanceof Y.Mock.Value){
             this.verify = function(value){
                 args = [].concat(args);
                 args.push(value);
@@ -130,5 +128,6 @@ YUI.add("mock", function(Y){
     Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber,[]);
     Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString,[]);
     Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
+    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);    
 
 }, "3.0.0");

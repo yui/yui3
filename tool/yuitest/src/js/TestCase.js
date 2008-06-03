@@ -4,6 +4,7 @@
     var M = function(Y) {
     
         Y.namespace("Test");
+        var L = Y.Lang;
         
         /**
          * Test case containing various tests to run.
@@ -28,7 +29,7 @@
             }    
             
             //check for a valid name
-            if (!Y.lang.isString(this.name)){
+            if (!L.isString(this.name)){
                 /**
                  * Name for the test case.
                  */
@@ -62,12 +63,12 @@
              */
             wait : function (segment /*:Function*/, delay /*:int*/) /*:Void*/{
                 var args = arguments;
-                if (Y.lang.isFunction(args[0])){
+                if (L.isFunction(args[0])){
                     throw new Y.Test.Wait(args[0], args[1]);
                 } else {
                     throw new Y.Test.Wait(function(){
                         Y.Assert.fail("Timeout: wait() called but resume() never called.");
-                    }, (Y.lang.isNumber(args[0]) ? args[0] : 10000));
+                    }, (L.isNumber(args[0]) ? args[0] : 10000));
                 }
             },
         
@@ -109,15 +110,14 @@
              * @type Function
              * @property segment
              */
-            this.segment /*:Function*/ = (Y.lang.isFunction(segment) ? segment : null);
+            this.segment /*:Function*/ = (L.isFunction(segment) ? segment : null);
         
             /**
              * The delay before running the segment of code.
              * @type int
              * @property delay
              */
-            this.delay /*:int*/ = (Y.lang.isNumber(delay) ? delay : 0);
-        
+            this.delay /*:int*/ = (L.isNumber(delay) ? delay : 0);        
         };
     };
     

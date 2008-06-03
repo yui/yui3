@@ -28,9 +28,9 @@
             this.items /*:Array*/ = [];
         
             //initialize the properties
-            if (Y.lang.isString(data)){
+            if (Y.Lang.isString(data)){
                 this.name = data;
-            } else if (Y.lang.isObject(data)){
+            } else if (Y.Lang.isObject(data)){
                 Y.mix(this, data, true);
             }
         

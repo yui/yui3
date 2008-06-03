@@ -4,6 +4,7 @@
     var M = function(Y) {
     
         Y.namespace("Test");
+        var L = Y.Lang;
         
         /**
          * Test case containing various tests to run.
@@ -28,7 +29,7 @@
             }    
             
             //check for a valid name
-            if (!Y.lang.isString(this.name)){
+            if (!L.isString(this.name)){
                 /**
                  * Name for the test case.
                  */
@@ -62,12 +63,12 @@
              */
             wait : function (segment /*:Function*/, delay /*:int*/) /*:Void*/{
                 var args = arguments;
-                if (Y.lang.isFunction(args[0])){
+                if (L.isFunction(args[0])){
                     throw new Y.Test.Wait(args[0], args[1]);
                 } else {
                     throw new Y.Test.Wait(function(){
                         Y.Assert.fail("Timeout: wait() called but resume() never called.");
-                    }, (Y.lang.isNumber(args[0]) ? args[0] : 10000));
+                    }, (L.isNumber(args[0]) ? args[0] : 10000));
                 }
             },
         
@@ -109,15 +110,14 @@
              * @type Function
              * @property segment
              */
-            this.segment /*:Function*/ = (Y.lang.isFunction(segment) ? segment : null);
+            this.segment /*:Function*/ = (L.isFunction(segment) ? segment : null);
         
             /**
              * The delay before running the segment of code.
              * @type int
              * @property delay
              */
-            this.delay /*:int*/ = (Y.lang.isNumber(delay) ? delay : 0);
-        
+            this.delay /*:int*/ = (L.isNumber(delay) ? delay : 0);        
         };
     };
     
@@ -154,9 +154,9 @@
             this.items /*:Array*/ = [];
         
             //initialize the properties
-            if (Y.lang.isString(data)){
+            if (Y.Lang.isString(data)){
                 this.name = data;
-            } else if (Y.lang.isObject(data)){
+            } else if (Y.Lang.isObject(data)){
                 Y.mix(this, data, true);
             }
         
@@ -549,7 +549,7 @@
                     
                     //iterate over the items in the test case
                     for (var prop in testCase){
-                        if (prop.indexOf("test") === 0 && Y.lang.isFunction(testCase[prop])){
+                        if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
                             node.appendChild(prop);
                         }
                     }
@@ -618,7 +618,7 @@
                  * @private
                  */
                 _handleTestObjectComplete : function (node /*:TestNode*/) /*:Void*/ {
-                    if (Y.lang.isObject(node.testObject)){
+                    if (Y.Lang.isObject(node.testObject)){
                         node.parent.results.passed += node.results.passed;
                         node.parent.results.failed += node.results.failed;
                         node.parent.results.total += node.results.total;                
@@ -692,7 +692,7 @@
                         var testObject = node.testObject;
                         
                         //figure out what to do
-                        if (Y.lang.isObject(testObject)){
+                        if (Y.Lang.isObject(testObject)){
                             if (testObject instanceof Y.Test.Suite){
                                 this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
                                 testObject.setUp();
@@ -776,8 +776,8 @@
                             }
                         } else if (thrown instanceof Y.Test.Wait){
                         
-                            if (Y.lang.isFunction(thrown.segment)){
-                                if (Y.lang.isNumber(thrown.delay)){
+                            if (Y.Lang.isFunction(thrown.segment)){
+                                if (Y.Lang.isNumber(thrown.delay)){
                                 
                                     //some environments don't support setTimeout
                                     if (typeof setTimeout != "undefined"){
@@ -799,14 +799,14 @@
                                 failed = true;
                             } else {
                                 //check to see what type of data we have
-                                if (Y.lang.isString(shouldError)){
+                                if (Y.Lang.isString(shouldError)){
                                     
                                     //if it's a string, check the error message
                                     if (thrown.message != shouldError){
                                         error = new YAHOO.util.UnexpectedError(thrown);
                                         failed = true;                                    
                                     }
-                                } else if (Y.lang.isFunction(shouldError)){
+                                } else if (Y.Lang.isFunction(shouldError)){
                                 
                                     //if it's a function, see if the error is an instance of it
                                     if (!(thrown instanceof shouldError)){
@@ -814,7 +814,7 @@
                                         failed = true;
                                     }
                                 
-                                } else if (Y.lang.isObject(shouldError)){
+                                } else if (Y.Lang.isObject(shouldError)){
                                 
                                     //if it's an object, check the instance and message
                                     if (!(thrown instanceof shouldError.constructor) || 
@@ -1041,8 +1041,8 @@
              */
             _formatMessage : function (customMessage /*:String*/, defaultMessage /*:String*/) /*:String*/ {
                 var message = customMessage;
-                if (Y.lang.isString(customMessage) && customMessage.length > 0){
-                    return Y.lang.substitute(customMessage, { message: defaultMessage });
+                if (Y.Lang.isString(customMessage) && customMessage.length > 0){
+                    return Y.Lang.substitute(customMessage, { message: defaultMessage });
                 } else {
                     return defaultMessage;
                 }        
@@ -1199,7 +1199,7 @@
              * @static
              */
             isNotNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (Y.lang.isNull(actual)) {
+                if (Y.Lang.isNull(actual)) {
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Values should not be null."), null);
                 }
             },
@@ -1213,7 +1213,7 @@
              * @static
              */
             isNotUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (Y.lang.isUndefined(actual)) {
+                if (Y.Lang.isUndefined(actual)) {
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should not be undefined."), undefined);
                 }
             },
@@ -1227,7 +1227,7 @@
              * @static
              */
             isNull : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isNull(actual)) {
+                if (!Y.Lang.isNull(actual)) {
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be null."), null, actual);
                 }
             },
@@ -1241,7 +1241,7 @@
              * @static
              */
             isUndefined : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isUndefined(actual)) {
+                if (!Y.Lang.isUndefined(actual)) {
                     throw new Y.Assert.ComparisonFailure(Y.Assert._formatMessage(message, "Value should be undefined."), undefined, actual);
                 }
             },    
@@ -1258,7 +1258,7 @@
              * @static
              */
             isArray : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isArray(actual)){
+                if (!Y.Lang.isArray(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an array."), actual);
                 }    
             },
@@ -1271,7 +1271,7 @@
              * @static
              */
             isBoolean : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isBoolean(actual)){
+                if (!Y.Lang.isBoolean(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a Boolean."), actual);
                 }    
             },
@@ -1284,7 +1284,7 @@
              * @static
              */
             isFunction : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isFunction(actual)){
+                if (!Y.Lang.isFunction(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a function."), actual);
                 }    
             },
@@ -1313,7 +1313,7 @@
              * @static
              */
             isNumber : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isNumber(actual)){
+                if (!Y.Lang.isNumber(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a number."), actual);
                 }    
             },    
@@ -1326,7 +1326,7 @@
              * @static
              */
             isObject : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isObject(actual)){
+                if (!Y.Lang.isObject(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be an object."), actual);
                 }
             },
@@ -1339,7 +1339,7 @@
              * @static
              */
             isString : function (actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.lang.isString(actual)){
+                if (!Y.Lang.isString(actual)){
                     throw new Y.Assert.UnexpectedValue(Y.Assert._formatMessage(message, "Value should be a string."), actual);
                 }
             },
@@ -1644,7 +1644,7 @@
          * The ArrayAssert object provides functions to test JavaScript array objects
          * for a variety of cases.
          *
-         * @namespace YAHOO.util
+         * @namespace Y
          * @class ArrayAssert
          * @static
          */
@@ -1969,7 +1969,8 @@
 
     var M = function(Y){
     
-        var Assert = Y.Assert;
+        var Assert = Y.Assert,
+            O = Y.Object;
 
         /**
          * The ObjectAssert object provides functions to test JavaScript objects
@@ -1982,7 +1983,7 @@
         Y.ObjectAssert = {
         
             areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(expected, function(value, name){
+                O.each(expected, function(value, name){
                     Y.Assert.areEqual(expected[name], actual[name], Y.Assert._formatMessage(message, "Values should be equal for property " + name));
                 });            
             },
@@ -2010,7 +2011,7 @@
              * @static
              */    
             hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(refObject, function(value, name){
+                O.each(refObject, function(value, name){
                     if (!(name in object)){
                         Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object."));
                     }    
@@ -2026,7 +2027,7 @@
              * @static
              */    
             owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.object.owns(object, propertyName)){
+                if (!O.owns(object, propertyName)){
                     Assert.fail(Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
                 }     
             },
@@ -2040,8 +2041,8 @@
              * @static
              */    
             ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(refObject, function(value, name){
-                    if (!Y.object.owns(object, name)){
+                O.each(refObject, function(value, name){
+                    if (!O.owns(object, name)){
                         Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
                     }     
                 });
@@ -2469,14 +2470,14 @@
         /**
          * Returns test results formatted as a JSON string. Requires JSON utility.
          * @param {Object} result The results object created by TestRunner.
-         * @return {String} An XML-formatted string of results.
-         * @namespace YAHOO.tool.TestFormat
+         * @return {String} A JSON-formatted string of results.
+         * @namespace Y.Test.Format
          * @method JSON
          * @static
          */
         Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
             //TODO: Implement
-            //return YAHOO.lang.JSON.stringify(results);
+            return Y.JSON.stringify(results);
         };
         
         /**
@@ -2489,7 +2490,7 @@
          */
         Y.Test.Format.XML = function(results /*:Object*/) /*:String*/ {
         
-            var l = Y.lang;
+            var l = Y.Lang;
             var xml /*:String*/ = "<" + results.type + " name=\"" + results.name.replace(/"/g, "&quot;").replace(/'/g, "&apos;") + "\"";
             
             if (results.type == "test"){
@@ -2497,7 +2498,7 @@
             } else {
                 xml += " passed=\"" + results.passed + "\" failed=\"" + results.failed + "\" ignored=\"" + results.ignored + "\" total=\"" + results.total + "\">";
                 for (var prop in results) {
-                    if (Y.object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
+                    if (Y.Object.owns(results, prop) && l.isObject(results[prop]) && !l.isArray(results[prop])){
                         xml += arguments.callee(results[prop]);
                     }
                 }        
@@ -2631,7 +2632,7 @@
                     document.body.appendChild(this._form);
                 
                     //IE won't let you assign a name using the DOM, must do it the hacky way
-                    if (Y.ua.ie){
+                    if (Y.UA.ie){
                         this._iframe = document.createElement("<iframe name=\"yuiTestTarget\" />");
                     } else {
                         this._iframe = document.createElement("iframe");
@@ -2662,7 +2663,7 @@
         
                 //add fields to the form
                 for (var prop in this._fields){
-                    if (Y.object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
+                    if (Y.Object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
                         input = document.createElement("input");
                         input.type = "hidden";
                         input.name = prop;
@@ -2690,7 +2691,8 @@
 
 YUI.add("mock", function(Y){
 
-    var L = Y.lang;
+    var L = Y.Lang,
+        O = Y.Object;
 
     /**
      * Creates a new mock object.
@@ -2705,14 +2707,14 @@ YUI.add("mock", function(Y){
         
         //try to create mock that keeps prototype chain intact
         try {
-            mock = Y.object(template);
+            mock = O(template);
         } catch (ex) {
             mock = {};
             Y.log("Couldn't create mock with prototype.", "warn", "Mock");
         }
         
         //create new versions of the methods so that they don't actually do anything
-        Y.object.each(template, function(name){
+        O.each(template, function(name){
             if (L.isFunction(template[name])){
                 mock[name] = function(){
                     Y.Assert.fail("Method " + name + "() was called but was not expected to be.");
@@ -2748,10 +2750,7 @@ YUI.add("mock", function(Y){
             expectation.actualCallCount = 0;
                 
             //process arguments
-            Y.array.each(args, function(arg, i, array){
-                //array[i] = function(value){
-                //    Y.Assert.areSame(arg, value, "Argument " + i + " of " + name + " is incorrect."); 
-                //};
+            Y.Array.each(args, function(arg, i, array){
                 if (!(array[i] instanceof Y.Mock.Value)){
                     array[i] = Y.Mock.Value(Y.Assert.areSame, [arg], "Argument " + i + " of " + name + "() is incorrect.");
                 }
@@ -2793,7 +2792,7 @@ YUI.add("mock", function(Y){
     };
 
     Y.Mock.verify = function(mock /*:Object*/){    
-        Y.object.each(mock.__expectations, function(expectation){
+        O.each(mock.__expectations, function(expectation){
             if (expectation.method) {
                 Y.Assert.areEqual(expectation.callCount, expectation.actualCallCount, "Method " + expectation.method + "() wasn't called the expected number of times.");
             } else if (expectation.property){
@@ -2802,8 +2801,8 @@ YUI.add("mock", function(Y){
         });    
     };
 
-    Y.Mock.Value = Y.Mock.Expectation = function(method, args, message){
-        if (this instanceof Y.Mock.Expectation){
+    Y.Mock.Value = function(method, args, message){
+        if (this instanceof Y.Mock.Value){
             this.verify = function(value){
                 args = [].concat(args);
                 args.push(value);
@@ -2820,6 +2819,7 @@ YUI.add("mock", function(Y){
     Y.Mock.Value.Number = Y.Mock.Value(Y.Assert.isNumber,[]);
     Y.Mock.Value.String = Y.Mock.Value(Y.Assert.isString,[]);
     Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
+    Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);    
 
 }, "3.0.0");
 

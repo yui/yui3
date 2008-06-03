@@ -340,7 +340,7 @@
                     
                     //iterate over the items in the test case
                     for (var prop in testCase){
-                        if (prop.indexOf("test") === 0 && Y.lang.isFunction(testCase[prop])){
+                        if (prop.indexOf("test") === 0 && Y.Lang.isFunction(testCase[prop])){
                             node.appendChild(prop);
                         }
                     }
@@ -409,7 +409,7 @@
                  * @private
                  */
                 _handleTestObjectComplete : function (node /*:TestNode*/) /*:Void*/ {
-                    if (Y.lang.isObject(node.testObject)){
+                    if (Y.Lang.isObject(node.testObject)){
                         node.parent.results.passed += node.results.passed;
                         node.parent.results.failed += node.results.failed;
                         node.parent.results.total += node.results.total;                
@@ -483,7 +483,7 @@
                         var testObject = node.testObject;
                         
                         //figure out what to do
-                        if (Y.lang.isObject(testObject)){
+                        if (Y.Lang.isObject(testObject)){
                             if (testObject instanceof Y.Test.Suite){
                                 this.fire(this.TEST_SUITE_BEGIN_EVENT, { testSuite: testObject });
                                 testObject.setUp();
@@ -567,8 +567,8 @@
                             }
                         } else if (thrown instanceof Y.Test.Wait){
                         
-                            if (Y.lang.isFunction(thrown.segment)){
-                                if (Y.lang.isNumber(thrown.delay)){
+                            if (Y.Lang.isFunction(thrown.segment)){
+                                if (Y.Lang.isNumber(thrown.delay)){
                                 
                                     //some environments don't support setTimeout
                                     if (typeof setTimeout != "undefined"){
@@ -590,14 +590,14 @@
                                 failed = true;
                             } else {
                                 //check to see what type of data we have
-                                if (Y.lang.isString(shouldError)){
+                                if (Y.Lang.isString(shouldError)){
                                     
                                     //if it's a string, check the error message
                                     if (thrown.message != shouldError){
                                         error = new YAHOO.util.UnexpectedError(thrown);
                                         failed = true;                                    
                                     }
-                                } else if (Y.lang.isFunction(shouldError)){
+                                } else if (Y.Lang.isFunction(shouldError)){
                                 
                                     //if it's a function, see if the error is an instance of it
                                     if (!(thrown instanceof shouldError)){
@@ -605,7 +605,7 @@
                                         failed = true;
                                     }
                                 
-                                } else if (Y.lang.isObject(shouldError)){
+                                } else if (Y.Lang.isObject(shouldError)){
                                 
                                     //if it's an object, check the instance and message
                                     if (!(thrown instanceof shouldError.constructor) || 

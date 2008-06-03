@@ -115,7 +115,7 @@
                     document.body.appendChild(this._form);
                 
                     //IE won't let you assign a name using the DOM, must do it the hacky way
-                    if (Y.ua.ie){
+                    if (Y.UA.ie){
                         this._iframe = document.createElement("<iframe name=\"yuiTestTarget\" />");
                     } else {
                         this._iframe = document.createElement("iframe");
@@ -146,7 +146,7 @@
         
                 //add fields to the form
                 for (var prop in this._fields){
-                    if (Y.object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
+                    if (Y.Object.owns(this._fields, prop) && typeof this._fields[prop] != "function"){
                         input = document.createElement("input");
                         input.type = "hidden";
                         input.name = prop;

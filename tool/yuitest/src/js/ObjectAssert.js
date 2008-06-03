@@ -2,7 +2,8 @@
 
     var M = function(Y){
     
-        var Assert = Y.Assert;
+        var Assert = Y.Assert,
+            O = Y.Object;
 
         /**
          * The ObjectAssert object provides functions to test JavaScript objects
@@ -15,7 +16,7 @@
         Y.ObjectAssert = {
         
             areEqual: function(expected /*:Object*/, actual /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(expected, function(value, name){
+                O.each(expected, function(value, name){
                     Y.Assert.areEqual(expected[name], actual[name], Y.Assert._formatMessage(message, "Values should be equal for property " + name));
                 });            
             },
@@ -43,7 +44,7 @@
              * @static
              */    
             hasAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(refObject, function(value, name){
+                O.each(refObject, function(value, name){
                     if (!(name in object)){
                         Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object."));
                     }    
@@ -59,7 +60,7 @@
              * @static
              */    
             owns : function (propertyName /*:String*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                if (!Y.object.owns(object, propertyName)){
+                if (!O.owns(object, propertyName)){
                     Assert.fail(Assert._formatMessage(message, "Property '" + propertyName + "' not found on object instance."));
                 }     
             },
@@ -73,8 +74,8 @@
              * @static
              */    
             ownsAll : function (refObject /*:Object*/, object /*:Object*/, message /*:String*/) /*:Void*/ {
-                Y.object.each(refObject, function(value, name){
-                    if (!Y.object.owns(object, name)){
+                O.each(refObject, function(value, name){
+                    if (!O.owns(object, name)){
                         Assert.fail(Assert._formatMessage(message, "Property '" + name + "' not found on object instance."));
                     }     
                 });
