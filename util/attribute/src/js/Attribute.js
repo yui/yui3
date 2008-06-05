@@ -31,28 +31,9 @@ YUI.add('attribute', function(Y) {
         this.fire(eData);
     }
 
-    /*
-    var Evt = function(cfg) {
-        Y.mix(this, cfg, true);
-    };
-
-    Evt.prototype = {
-        _prevent: false,
-        _cancel: false,
-
-        stopImmediatePropagation: function() {
-            this._cancel = true;
-        },
-
-        preventDefault: function() {
-            this._prevent = true;
-        }
-    };
-    */
-
     /**
      * Manages attributes
-     * 
+     *
      * @class Attribute
      * @uses EventTarget
      */
@@ -158,20 +139,6 @@ YUI.add('attribute', function(Y) {
                }
             }
 
-            /*
-            e = new Evt({
-                type: name + CHANGE,
-                prevVal: currVal,
-                newVal: val,
-                attrName: name,
-                subAttrName: strPath
-            });
-
-            this._fireBefore.call(this, e);
-
-            if (!e._prevent) {
-            */
-
             setFn = conf.get(name, SET);
             if (setFn) {
                 retVal = setFn.call(this, val);
@@ -189,8 +156,6 @@ YUI.add('attribute', function(Y) {
                 }
                 _fireChange.call(this, name, currVal, val, name, strPath, opts);
             }
-
-            /* } */
 
             return this;
         },
@@ -302,16 +267,51 @@ YUI.add('attribute', function(Y) {
             if (cfg) {
                 var att,
                     attCfg,
+                    values,
                     atts = Y.merge(cfg);
+
+                values = this._splitAttrValues(initValues);
 
                 for (att in atts) {
                     if (O.owns(atts, att)) {
                         attCfg = atts[att];
                         this.addAtt(att, attCfg);
-                        this._initAttValue(att, attCfg, initValues);
+                        this._initAttValue(att, attCfg, values);
                     }
                 }
             }
+        },
+
+        /**
+         * Splits out regular from complex attribute intialization
+         * values
+         *
+         * @method _splitAttrValues
+         * @private
+         */
+        _splitAttrValues: function(valueHash) {
+            var vals = {},
+                subvals = {},
+                path,
+                attr,
+                v;
+
+            for (var k in valueHash) {
+                if (O.owns(valueHash, k)) {
+                    if (k.indexOf(DOT) !== -1) {
+                        path = k.split(DOT);
+                        attr = path.shift();
+                        v = subvals[attr] = subvals[attr] || [];
+                        v[v.length] = {
+                            path : path, 
+                            value: valueHash[k]
+                        };
+                    } else {
+                        vals[k] = valueHash[k];
+                    }
+                }
+            }
+            return [vals, subvals];
         },
 
         /**
@@ -323,45 +323,35 @@ YUI.add('attribute', function(Y) {
          * @param {String} att Attribute name
          * @param {Object} cfg Default attribute configuration
          * object literal
-         * @param {Object} initial attribute values
+         * @param {Array} initial attribute values. Index 1 contains
+         * top level attributes, Index 0 contains subvalues
          *
          * @method _initAttValue
          * @private
          */
         _initAttValue : function(att, cfg, initValues) {
 
-            // Using 'in' to account for a value of 'undefined'
             var hasVal = ("value" in cfg),
-                val = cfg.value;
+                val = cfg.value,
+                i, l, path, subval, subvals;
 
             if (initValues) {
-                if (O.owns(initValues, att)) {
-                    // Simple Attributes
-
-                    // Not Cloning/Merging user value on purpose. Don't want to clone
-                    // references to complex objects [ e.g. a reference to a widget ]
-                    // This means the user has to clone anything coming in, if separate
-                    // value instances required per base instance
+                // Simple Attributes
+                if (O.owns(initValues[0], att)) {
                     hasVal = true;
-                    val = initValues[att];
-                } else {
-                    // Complex Attributes
+                    val = initValues[0][att];
+                } 
 
-                    // TODO: Look at perf optimization, can't be doing this for
-                    // all values which aren't specified
-                    /*
-                    for (var initAtt in initValues) {
-                        if (O.owns(initValues, initAtt)) {
-                            var path = initAtt.split(DOT);
-                            initAtt = path.shift();
-                            if (att === initAtt) {
-                                hasValue = true;
-                                val = this._setSubValue(path, val, initValues[initAtt]);
-                                // Don't break, to account for multiple sub values
-                            }
-                        }
+                // Complex Attributes
+                if (O.owns(initValues[1], att)){
+                    subvals = initValues[1][att];
+                    hasVal = true;
+
+                    for (i = 0, l = subvals.length; i < l; ++i) {
+                        path = subvals[i].path;
+                        subval = subvals[i].value;
+                        val = this._setSubValue(path, val, subval);
                     }
-                    */
                 }
             }
 
