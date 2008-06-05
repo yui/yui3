@@ -389,7 +389,7 @@ YUI.add('attribute', function(Y) {
                     values,
                     atts = Y.merge(cfg);
 
-                values = this._splitAttrValues(initValues);
+                values = this._splitAttVals(initValues);
 
                 for (att in atts) {
                     if (O.owns(atts, att)) {
@@ -408,7 +408,7 @@ YUI.add('attribute', function(Y) {
          * @method _splitAttrValues
          * @private
          */
-        _splitAttrValues: function(valueHash) {
+        _splitAttVals: function(valueHash) {
             var vals = {},
                 subvals = {},
                 path,
@@ -430,7 +430,7 @@ YUI.add('attribute', function(Y) {
                     }
                 }
             }
-            return [vals, subvals];
+            return { simple:vals, complex:subvals };
         },
 
         /**
@@ -442,8 +442,7 @@ YUI.add('attribute', function(Y) {
          * @param {String} att Attribute name
          * @param {Object} cfg Default attribute configuration
          * object literal
-         * @param {Array} initial attribute values. Index 1 contains
-         * top level attributes, Index 0 contains subvalues
+         * @param {Object} Initial attribute values.
          *
          * @method _initAttValue
          * @private
@@ -452,18 +451,26 @@ YUI.add('attribute', function(Y) {
 
             var hasVal = ("value" in cfg),
                 val = cfg.value,
-                i, l, path, subval, subvals;
+                simple, 
+                complex,
+                i, 
+                l, 
+                path, 
+                subval, 
+                subvals;
 
             if (initValues) {
                 // Simple Attributes
-                if (O.owns(initValues[0], att)) {
+                simple = initValues.simple;
+                if (simple && O.owns(simple, att)) {
                     hasVal = true;
-                    val = initValues[0][att];
-                } 
+                    val = simple[att];
+                }
 
                 // Complex Attributes
-                if (O.owns(initValues[1], att)){
-                    subvals = initValues[1][att];
+                complex = initValues.complex;
+                if (complex && O.owns(complex, att)) {
+                    subvals = complex[att];
                     hasVal = true;
 
                     for (i = 0, l = subvals.length; i < l; ++i) {
