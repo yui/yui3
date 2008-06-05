@@ -25,7 +25,6 @@ YUI.add('base', function(Y) {
      * @uses Attribute
      */
     var Base = function() {
-        Y.log('constructor called', 'life', 'Base');
         this.init.apply(this, arguments);
     };
 
@@ -200,7 +199,6 @@ YUI.add('base', function(Y) {
          * @param {Object} config Configuration properties for the object
          */
         init: function(config) {
-            Y.log('init called', 'life', 'Base');
 
             this.destroyed = false;
             this.initialized = false;
@@ -230,7 +228,6 @@ YUI.add('base', function(Y) {
          * @final
          */
         destroy: function() {
-            Y.log('destroy called', 'life', 'Base');
 
             if (this.fire('beforeDestroy') !== Y.CANCEL) {
 
