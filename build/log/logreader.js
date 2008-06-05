@@ -320,7 +320,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // (collapse, expand, active, clear, categories, sources)
         // move to queryAll(..).on('click',..)
         var controls = this._root.queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
-            i = controls.get('length') - 1;
+            i = controls.size() - 1;
             
         for (;i>=0;--i) {
             controls.item(i).on('click',Y.bind(this._handleControlClick,this));
@@ -368,7 +368,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // TODO: this should be this._head.queryAll(..).set('checked',!!b)
         var checks = this._foot.queryAll(
                         'input[type=checkbox].'+Y.log.Reader.CLASSES.ACTIVE),
-            i = checks.get('length') - 1;
+            i = checks.size() - 1;
 
         for (;i>=0;--i) {
             checks.item(i).set('checked',!!b);
@@ -544,11 +544,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _trimOldEntries : function (max) {
         if (this._console) {
             var entries = this._console.get('childNodes'),
-                i = entries.get('length') - ((max|0)||this.get('consoleLimit'));
+                i = entries.size() - ((max|0)||this.get('consoleLimit'));
 
             if (i > 0) {
                 if (this.get('newestOnTop')) {
-                    for (var l = entries.get('length'); i<l; i++) {
+                    for (var l = entries.size(); i<l; i++) {
                         this._console.removeChild(entries.item(i));
                     }
                 } else {
@@ -585,7 +585,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // TODO: should be this._foot.queryAll(..).set('checked',checked)
         var checks = this._foot.queryAll('input[type=checkbox].'+
                         this._filterClass(name)),
-            i = checks.get('length') - 1;
+            i = checks.size() - 1;
 
         for (;i>=0;--i) {
             checks.item(i).set('checked',checked);
