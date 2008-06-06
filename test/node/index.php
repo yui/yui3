@@ -26,6 +26,12 @@ if (!$_GET['quirks']) {
             opacity: .5;
             filter: alpha(opacity=50);
         }
+
+        span.node {
+            height:auto;
+            width:auto;
+        }
+
         .nodeOver {
             position: relative;
             background-color: yellow;
@@ -44,17 +50,27 @@ if (!$_GET['quirks']) {
         .nodeOver-tr {
             background-color: green;
         }
-        #abs1, #abs2, #abs3 {
+        #abs1, #abs2, #abs3, #abs4 {
             position: absolute;
             top: 200px;
             left: 200px;
         }
-        #rel1, #rel2, #rel3 {
+        #rel1, #rel2, #rel3, #rel4 {
             position: relative;
             top: 100px;
             left: 100px;
         }
-        #play1, #play2, #play3 {
+        span.rel {
+            position: relative;
+            top:150px;
+            left:150px;
+        }
+        span.abs {
+            position: absolute;
+            top:250px;
+            left:250px;
+        }
+        #play1, #play2, #play3, #play4 {
             position: relative;
             height: 400px;
             width: 400px;
@@ -63,30 +79,35 @@ if (!$_GET['quirks']) {
             margin: 10px;
         }
 
-        #play2, #play3 {
+        #play2, #play3, #play4 {
             overflow: auto;
         }
-        #play2 .wrap, #play3 .wrap {
+
+        #play2 .wrap, #play3 .wrap, #play4 .wrap {
             height: 700px;
         }
-        #play3 {
+
+        #play3, #play4 {
             position: static;
         }
+
         #runner {
             clear: both;
         }
+
         #fixed {
             position: fixed;
             top: 0px;
             left: 800px;
         }
+
         #results {
             border: 1px solid black;
             background-color: #ccc;
             width: 200px;
             float: left;
         }
-	</style>
+    </style>
 </head>
 <body>
 <h1 id="h1-1">Positioning Tests</h1>
@@ -105,14 +126,29 @@ if (!$_GET['quirks']) {
         <div id="static3" class="node">S3</div>
         <div id="abs3" class="node">A3</div>
         <div id="rel3" class="node">R3</div>
+        Lorem ipsum dolor sit amet, <span id="p2-is" class="node st">P2 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
+        Morbi non dolor. <span  id="p2-ir" class="node rel">P2 Rel Inline</span> Donec ut est <span id="p2-ia" class="node abs">P2 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
     </div>
 </div>
+
 <div id="play3">
     <div class="wrap">
         <div id="static4" class="node">S4</div>
     </div>
 </div>
+
+<div id="play4">
+    <div class="wrap">
+        <div id="static5" class="node">S5</div>
+        <div id="abs4" class="node">A4</div>
+        <div id="rel4" class="node">R4</div>
+        Lorem ipsum dolor sit amet, <span id="p4-is" class="node st">P4 Static Inline</span> consectetuer adipiscing elit. Morbi sed mauris in magna tincidunt sodales. Etiam dolor. Aenean non justo. Sed nec diam sed lacus pretium luctus. Vivamus felis tortor, cursus vitae, malesuada in, pharetra vel, arcu. Aliquam erat volutpat. Suspendisse potenti. Maecenas in ipsum ac nisl congue congue. Cras a nibh. Praesent non est. 
+        Morbi non dolor. <span id="p4-ir" class="node rel">P4 Rel Inline</span> Donec ut est <span id="p4-ia" class="node abs">P4 Abs Inline</span> vitae quam hendrerit tincidunt. Cras non tellus at lectus luctus ultricies. Nullam bibendum leo quis purus. Curabitur cursus tempus elit. Donec fringilla pede in leo. Morbi dapibus vestibulum enim. Phasellus non mi vel nunc luctus lacinia. Phasellus quis urna. Pellentesque dolor risus, fermentum et, molestie tempus, cursus eget, nisl. 
+    </div>
+</div>
+
 <div id="fixed" class="node">Fixed</div>
+
 <table border="1" width="300" id="table1">
     <thead>
         <tr id="tr1">
