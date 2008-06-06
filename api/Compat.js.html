@@ -59,8 +59,14 @@
     <span class="c">// add old namespaces</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s2">&quot;util&quot;</span><span class="o">,</span> <span class="s2">&quot;widget&quot;</span><span class="o">,</span> <span class="s2">&quot;example&quot;</span><span class="o">);</span>
 
+
+    <span class="c">// case/location change</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">ua</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">;</span> 
+
     <span class="c">// support Y.register</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">,</span> <span class="o">{</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">,</span> <span class="o">{</span>
             <span class="nx">modules</span><span class="o">:</span> <span class="o">[],</span>
             <span class="nx">listeners</span><span class="o">:</span> <span class="o">[],</span>
             <span class="nx">getVersion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -68,12 +74,7 @@
             <span class="o">}</span>
     <span class="o">});</span>
 
-    <span class="c">// case/location change</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">;</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">env</span><span class="o">.</span><span class="nx">ua</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">;</span> 
-
-    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">lang</span><span class="o">;</span>
 
     <span class="c">// add old lang properties </span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">L</span><span class="o">,</span> <span class="o">{</span>

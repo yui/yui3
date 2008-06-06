@@ -21,8 +21,14 @@ YUI.add("compat", function(Y) {
     // add old namespaces
     Y.namespace("util", "widget", "example");
 
+
+    // case/location change
+    Y.env = (Y.env) ? Y.mix(Y.env, Y.Env) : Y.Env;
+    Y.lang = (Y.lang) ? Y.mix(Y.lang, Y.Lang) : Y.Lang;
+    Y.env.ua = Y.UA; 
+
     // support Y.register
-    Y.mix(Y.Env, {
+    Y.mix(Y.env, {
             modules: [],
             listeners: [],
             getVersion: function(name) {
@@ -30,12 +36,7 @@ YUI.add("compat", function(Y) {
             }
     });
 
-    // case/location change
-    Y.env = Y.Env;
-    Y.lang = Y.Lang;
-    Y.env.ua = Y.UA; 
-
-    var L = Y.Lang;
+    var L = Y.lang;
 
     // add old lang properties 
     Y.mix(L, {
