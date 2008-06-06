@@ -2,7 +2,7 @@
 <html debug="true">
 <head>
 <title>YUI 3.0</title>
-<script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../build/yui-debug.js"></script>
 
 <body>
 
@@ -14,7 +14,7 @@
 
 (function() {
 
-    var Y = YUI().use('dump', 'substitute');
+    var Y = YUI().use('dump', 'substitute', 'compat');
 
     Y.on('yui:log', function(msg) {
         var d=document, b=d.body, n=d.createElement("div");

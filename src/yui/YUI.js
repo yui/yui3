@@ -243,7 +243,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    // Y.log('attaching ' + r[i], 'info', 'YUI');
+                    Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }

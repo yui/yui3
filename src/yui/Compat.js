@@ -30,7 +30,11 @@ YUI.add("compat", function(Y) {
             }
     });
 
-    Y.Env.ua = Y.UA; 
+    // case/location change
+    Y.env = Y.Env;
+    Y.lang = Y.Lang;
+    Y.env.ua = Y.UA; 
+
     var L = Y.Lang;
 
     // add old lang properties 

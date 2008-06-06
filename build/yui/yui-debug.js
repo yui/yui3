@@ -243,7 +243,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    // Y.log('attaching ' + r[i], 'info', 'YUI');
+                    Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -1718,7 +1718,11 @@ YUI.add("compat", function(Y) {
             }
     });
 
-    Y.Env.ua = Y.UA; 
+    // case/location change
+    Y.env = Y.Env;
+    Y.lang = Y.Lang;
+    Y.env.ua = Y.UA; 
+
     var L = Y.Lang;
 
     // add old lang properties 
