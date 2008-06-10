@@ -13,7 +13,9 @@ YUI.add("mouseplugin", function(Y) {
         'mouseover',
         'mouseout',
         'mousemove',
-        'dblclick'
+        'dblclick',
+        'focus',
+        'blur'
     ];
 
     Mouse.NAME = "mouse";
@@ -46,10 +48,10 @@ YUI.add("mouseplugin", function(Y) {
         },
 
         _initUI: function() {
-            var root = this.owner._root;
+            var boundingBox = this.owner._boundingBox;
             this._handles = [];
             for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
-                this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root));
+                this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), boundingBox));
             }
         }
     };
