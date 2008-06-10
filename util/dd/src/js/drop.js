@@ -65,7 +65,14 @@ YUI.add('dd-drop', function(Y) {
 
             this.addTarget(Y.DD.DDM);
             
-        },       
+        },
+        /**
+        * @private
+        * @method _setPadding
+        * @description Handler for the config atrtibute padding
+        * @param {String} padding A CSS type string for setting the padding on the Target: '2', '2 3', '5 1 0 4', etc..
+        * @return Object
+        */
         _setPadding: function(padding) {
             var p = padding.split(' '),
             g = {
@@ -96,11 +103,51 @@ YUI.add('dd-drop', function(Y) {
             }
             return g;
         },
+        /**
+        * @private
+        * @property _active
+        * @description Is the target active and ready to be used..
+        * @type Boolean
+        */
         _active: null,
+        /**
+        * @private
+        * @property _valid
+        * @description Flag for determining if the target is valid in this operation.
+        * @type Boolean
+        */
         _valid: null,
+        /**
+        * @private
+        * @property _groups
+        * @description The groups this target belongs to.
+        * @type Array
+        */
         _groups: null,
+        /**
+        * @property shim
+        * @description Node reference to the targets shim
+        * @type {Object}
+        */
         shim: null,
+        /**
+        * @property region
+        * @description A region object associated with this target, used for checking regions while dragging.
+        * @type Object
+        */
         region: null,
+        /**
+        * @property overTarget
+        * @description This flag is tripped when a drag element is over this target.
+        * @type Boolean
+        */
+        overTarget: null,
+        /**
+        * @method inGroup
+        * @description Check if this target is in one of the supplied groups.
+        * @param {Array} groups The groups to check against
+        * @return Boolean
+        */
         inGroup: function(groups) {
             this._valid = false;
             var ret = false;
@@ -112,10 +159,20 @@ YUI.add('dd-drop', function(Y) {
             }, this);
             return ret;
         },
+        /**
+        * @private
+        * @method initializer
+        * @description Private lifecycle method
+        */
         initializer: function() {
             this._createEvents();
             this.addTarget(Y.DD.DDM);
         },
+        /**
+        * @private
+        * @method deactivateShim
+        * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
+        */
         deactivateShim: function() {
             this.get('node').removeClass('dd-drop-active-valid');
             this.get('node').removeClass('dd-drop-active-invalid');
@@ -124,7 +181,12 @@ YUI.add('dd-drop', function(Y) {
             this._active = false;
             this.overTarget = false;
         },
-        activateShim: function(xy, hw) {
+        /**
+        * @private
+        * @method activateShim
+        * @description Activates the shim and adds some interaction CSS classes
+        */
+        activateShim: function() {
             if (this.get('node') === Y.DD.DDM.activeDrag.get('node')) {
                 return false;
             }
@@ -132,11 +194,17 @@ YUI.add('dd-drop', function(Y) {
             if (this.inGroup(Y.DD.DDM.activeDrag.get('groups')) && this.get('node').isVisible()) {
                 this.get('node').addClass('dd-drop-active-valid');
                 Y.DD.DDM.addValid(this);
-                this._activateShim();
+                this._active = false;
+                this.overTarget = false;
+                this.sizeShim();
             } else {
                 this.get('node').addClass('dd-drop-active-invalid');
             }
         },
+        /**
+        * @method sizeShim
+        * @description Positions and sizes the shim with the raw data from the node, this can be used to programatically adjust the Targets shim for Animation..
+        */
         sizeShim: function() {
             var nh = this.get('node').get('offsetHeight'),
                 nw = this.get('node').get('offsetWidth'),
@@ -183,16 +251,21 @@ YUI.add('dd-drop', function(Y) {
             //Report position to DDM
             Y.DD.DDM.syncTarget(this, xy);
         },
-        _activateShim: function() {
-            this._active = false;
-            this.overTarget = false;
-            this.sizeShim();
-        },
+        /**
+        * @private
+        * @method move
+        * @description This method is called from the DDM when a Drag element is moved.
+        * @param force Force the over target check (used when initialized)
+        */
         move: function(force) {
             this._active = true;
             this._handleTargetOver(force);
         },
-        overTarget: null,
+        /**
+        * @private
+        * @method createShim
+        * @description Creates the Target shim and adds it to the DDM's playground..
+        */
         createShim: function() {
             var s = Y.Node.create(['div', { id: this.get('node').get('id') + '_shim' }]);
             s.setStyles({
@@ -210,6 +283,12 @@ YUI.add('dd-drop', function(Y) {
             s.on('mouseover', this._handleOver, this, true);
             s.on('mouseout', this._handleOut, this, true);
         },
+        /**
+        * @private
+        * @method _handleOverTarget
+        * @description This handles the over target call made from this object or from the DDM
+        * @param force Force a check on initialization
+        */
         _handleTargetOver: function(force) {
             if (Y.DD.DDM.isCursorOverTarget(this)) {
                 this.get('node').addClass('dd-drop-over');
@@ -228,6 +307,11 @@ YUI.add('dd-drop', function(Y) {
                 this._handleOut();
             }
         },
+        /**
+        * @private
+        * @method _handleOver
+        * @description Handles the mouseover DOM event on the Target Shim
+        */
         _handleOver: function() {
             if (!this.overTarget && this._active) {
                 Y.DD.DDM._handleTargetOver(this);
@@ -235,6 +319,11 @@ YUI.add('dd-drop', function(Y) {
                 this._active = true;
             }
         },
+        /**
+        * @private
+        * @method _handleOut
+        * @description Handles the mouseout DOM event on the Target Shim
+        */
         _handleOut: function() {
             if (!Y.DD.DDM.isCursorOverTarget(this)) {
                 if (this.overTarget) {
@@ -248,6 +337,11 @@ YUI.add('dd-drop', function(Y) {
                 }
             }
         },
+        /**
+        * @method toString
+        * @description Simple toString method.
+        * @return {String}
+        */
         toString: function() {
             return 'Drop (#' + this.get('node').get('id') + ')';
         }

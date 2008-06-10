@@ -11,10 +11,38 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @constructor
      */    
     Y.mix(Y.DD.DDM, {
+        /**
+        * @private
+        * @property oldMode
+        * @description Placeholder for the mode when the drag object changes it..
+        * @type Number
+        */
         oldMode: 0,
+        /**
+        * @property mode
+        * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict (not implemented yet)
+        * @type Number
+        */
         mode: 0,
+        /**
+        * @property POINT
+        * @description Default for assigning mode property
+        * @type Number
+        */
         POINT: 0,
+        /**
+        * @property INTERSECT
+        * @description Default for assigning mode property
+        * @type Number
+        */
         INTERSECT: 1,
+        /**
+        * @property STRICT
+        * @description Default for assigning mode property (not used in this release)
+        * @type Number
+        */
+        //TODO Strict Checking, is the entire element inside the target?
+        STRICT: 2,
         /**
         * @private
         * @property _start
@@ -81,10 +109,10 @@ YUI.add('dd-ddm-drop', function(Y) {
         _handleTargetOver: function(drop, force) {
             if (!this.deltaDrop) {
                 this.deltaDrop = drop;
-                Y.each(this.validDrops, function(v, k) {
-                    v._handleTargetOver.call(v, force);
-                }, this);
             }
+            Y.each(this.validDrops, function(v, k) {
+                v._handleTargetOver.call(v, force);
+            }, this);
         },
         /**
         * @method isCursorOverTarget
@@ -191,7 +219,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Object or Array} 
         */
         getBestMatch: function(drops, all) {
-            var biggest = null, area = 0, out = [];
+            var biggest = null, area = 0;
 
             Y.each(drops, function(v, k) {
                 var inter = this.activeDrag.get('dragNode').intersect(v.get('node'));
@@ -201,12 +229,17 @@ YUI.add('dd-ddm-drop', function(Y) {
                     if (inter.area > area) {
                         area = inter.area;
                         biggest = v;
-                    } else {
-                        out[out.length] = v;
                     }
                 }
             }, this);
             if (all) {
+                var out = [];
+                //TODO Sort the others in numeric order by area covered..
+                Y.each(drops, function(v, k) {
+                    if (v !== biggest) {
+                        out[out.length] = v;
+                    }
+                }, this);
                 return [biggest, out];
             } else {
                 return biggest;
