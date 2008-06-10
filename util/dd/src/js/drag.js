@@ -3,60 +3,249 @@
 * @module dd-drag
 */
 YUI.add('dd-drag', function(Y) {
-    var Event = Y.Event;
     /**
      * 3.x DragDrop
      * @class Drag
      * @namespace DD
-     * @extends Base
+     * @extends base
      * @constructor
      */
+     //TODO Add before Events??
     
     var Drag = function() {
         Drag.superclass.constructor.apply(this, arguments);
 
         Y.DD.DDM.regDrag(this);
     };
-    Drag.NAME = 'Drag';
+    Drag.NAME = 'drag';
 
     Drag.ATTRS = {
+        /**
+        * @attribute node
+        * @description Y.Node instanace to use as the element to initiate a drag operation
+        * @type Node
+        */
         node: {
             set: function(node) {
                 return Y.Node.get(node);
             }
         },
-        dragEl: {
+        /**
+        * @attribute dragNode
+        * @description Y.Node instanace to use as the draggable element, defaults to node
+        * @type Node
+        */
+        dragNode: {
             set: function(node) {
                 return Y.Node.get(node);
             }
         },
-        offsetEl: {
+        /**
+        * @attribute offsetNode
+        * @description Offset the drag element by the difference in cursor position: default true
+        * @type Boolean
+        */
+        offsetNode: {
             value: true
         },
+        /**
+        * @attribute clickPixelThresh
+        * @description The number of pixels to move to start a drag operation, default is 3.
+        * @type Number
+        */
         clickPixelThresh: {
             value: Y.DD.DDM.clickPixelThresh
         },
+        /**
+        * @attribute clickTimeThresh
+        * @description The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+        * @type Number
+        */
         clickTimeThresh: {
             value: Y.DD.DDM.clickTimeThresh
         },
+        /**
+        * @attribute lock
+        * @description Set to lock this drag element so that it can't be dragged: default false.
+        * @type Boolean
+        */
         lock: {
             value: false
         },
+        /**
+        * @attribute data
+        * @description A payload holder to store arbitrary data about this drag object, can be used to store any value.
+        * @type Mixed
+        */
         data: {
             value: false
         },
+        /**
+        * @attribute move
+        * @description If this is false, the drag element will not move with the cursor: default true. Can be used to "resize" the element.
+        * @type Boolean
+        */
         move: {
             value: true
         },
+        /**
+        * @attribute useShim
+        * @description Use the protective shim on all drag operations: default true. Only works with dd-ddm, not dd-ddm-base.
+        * @type Boolean
+        */
+        useShim: {
+            value: true
+        },
+        /**
+        * @attribute activeHandle
+        * @description This config option is set by Drag to inform you of which handle fired the drag event (in the case that there are several handles): default false.
+        * @type Node
+        */
         activeHandle: {
             value: false
         },
+        /**
+        * @attribute primaryButtonOnly
+        * @description By default a drag operation will only begin if the mousedown occurred with the primary mouse button. Setting this to false will allow for all mousedown events to trigger a drag.
+        * @type Boolean
+        */
         primaryButtonOnly: {
             value: true
+        },
+        /**
+        * @attribute dragging
+        * @description This attribute is not meant to be used by the implementor, it is meant to be used as an Event tracker so you can listen for it to change.
+        * @type Boolean
+        */
+        dragging: {
+            value: false
+        },
+        /**
+        * @attribute target
+        * @description This attribute only works if the dd-drop module is active. It will make this node a drop target as well as draggable
+        * @type Boolean
+        */
+        target: {
+            value: false,
+            set: function(config) {
+                this._handleTarget(config);
+            }
+        },
+        /**
+        * @attribute dragMode
+        * @description This attribute only works if the dd-drop module is active. It will make this node a drop target as well as draggable
+        * @type Boolean
+        */
+        dragMode: {
+            value: 'default',
+            set: function(mode) {
+                switch (mode) {
+                    case 'point':
+                        return 0;
+                    case 'intersect':
+                        return 1;
+                    case 'default':
+                        return -1;
+                }
+                return 'default';
+            }
+        },
+        /**
+        * @attribute groups
+        * @description Array of groups to add this drag into.
+        * @type Array
+        */
+        groups: {
+            value: ['default'],
+            set: function(g) {
+                this._groups = {};
+                Y.each(g, function(v, k) {
+                    this._groups[v] = true;
+                }, this);
+            }
         }
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * @property target
+        * @description This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
+        * @type {Object}
+        */
+        target: null,
+        /**
+        * @private
+        * @method _handleTarget
+        * @description Attribute handler for the target config attribute.
+        * @param {Boolean/Object}
+        * @return {Boolean/Object}
+        */
+        _handleTarget: function(config) {
+            if (Y.DD.Drop) {
+                if (config === false) {
+                    if (this.target) {
+                        Y.DD.DDM.unregTarget(this.target);
+                        this.target = null;
+                    }
+                    return false;
+                } else {
+                    if (!Y.Lang.isObject(config)) {
+                        config = {};
+                    }
+                    config.node = this.get('node');
+                    this.target = new Y.DD.Drop(config);
+                }
+            } else {
+                return false;
+            }
+        },
+        /**
+        * @private
+        * @property _groups
+        * @description Storage Array for the groups this drag belongs to.
+        * @type {Array}
+        */
+        _groups: null,
+        /**
+        * @private
+        * @method _createEvents
+        * @description This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
+        */
+        _createEvents: function() {
+            
+            this.publish('drag:mouseDown', {
+                defaultFn: this._handleMouseDown,
+                emitFacade: true
+            });
+
+            var ev = [
+                'drag:afterMouseDown',
+                'drag:removeHandle',
+                'drag:addHandle',
+                'drag:removeInvalid',
+                'drag:addInvalid',
+                'drag:start',
+                'drag:end',
+                'drag:drag'
+            ];
+
+            Y.each(ev, function(v, k) {
+                this.publish(v, {
+                    emitFacade: true,
+                    preventable: false
+                });
+            }, this);
+
+            this.addTarget(Y.DD.DDM);
+            
+        },
+        /**
+        * @private
+        * @property _ev_md
+        * @description A private reference to the mousedown DOM event
+        * @type {Event}
+        */
+        _ev_md: null,
         /**
         * @private
         * @property _handles
@@ -71,13 +260,6 @@ YUI.add('dd-drag', function(Y) {
         * @type {Array}
         */
         _invalids: null,
-        /**
-        * @private
-        * @property _dragging
-        * @description Private flag to determine if we are currently dragging this element
-        * @type {Boolean}
-        */
-        _dragging: null,
         /**
         * @private
         * @property _dragThreshMet
@@ -112,11 +294,11 @@ YUI.add('dd-drag', function(Y) {
         */
         startXY: null,
         /**
-        * @property currentXY
+        * @property nodeXY
         * @description The initial element position
         * @type {Array}
         */
-        currentXY: null,
+        nodeXY: null,
         /**
         * @property lastXY
         * @description The position of the element as it's moving (for offset calculations)
@@ -124,15 +306,56 @@ YUI.add('dd-drag', function(Y) {
         */
         lastXY: null,
         /**
+        * @property mouseXY
+        * @description The XY coords of the mousemove
+        * @type {Array}
+        */
+        mouseXY: null,
+        /**
         * @private
         * @method _handleMouseUp
         * @description Handler for the mouseup DOM event
         * @param {Event}
         */
         _handleMouseUp: function(ev) {
+            this._fixIEMouseUp();
             if (Y.DD.DDM.activeDrag) {
                 Y.DD.DDM.end();
             }
+        },
+        /** 
+        * @private
+        * @method _ieSelectFix
+        * @description The function we use as the onselectstart handler when we start a drag in Internet Explorer
+        */
+        _ieSelectFix: function() {
+            return false;
+        },
+        /** 
+        * @private
+        * @property _ieSelectBack
+        * @description We will hold a copy of the current "onselectstart" method on this property, and reset it after we are done using it.
+        */
+        _ieSelectBack: null,
+        _fixIEMouseDown: function() {
+            if (Y.UA.ie) {
+                this._ieSelectBack = document.body.onselectstart;
+                document.body.onselectstart = this._ieSelectFix;
+            }           
+        },
+        _fixIEMouseUp: function() {
+            if (Y.UA.ie) {
+                document.body.onselectstart = this._ieSelectBack;
+            }           
+        },
+        /**
+        * @private
+        * @method _handleMouseDownEvent
+        * @description Handler for the mousedown DOM event
+        * @param {Event}
+        */
+        _handleMouseDownEvent: function(ev) {
+            this.fire('drag:mouseDown', { ev: ev });
         },
         /**
         * @private
@@ -140,19 +363,20 @@ YUI.add('dd-drag', function(Y) {
         * @description Handler for the mousedown DOM event
         * @param {Event}
         */
-        _handleMouseDown: function(ev) {
+        _handleMouseDown: function(e) {
+            var ev = e.ev;
             Y.log('_handleMouseDown', 'info', 'dd-drag');
             this._dragThreshMet = false;
-
-            var button = ev.which || ev.button;
+            this._ev_md = ev;
             
-            if (this.get('primaryButtonOnly') && button > 1) {
+            if (this.get('primaryButtonOnly') && ev.button > 1) {
                 Y.log('Mousedown was not produced by the primary button', 'warn', 'dd-drag');
                 return false;
             }
             if (this.validClick(ev)) {
+                this._fixIEMouseDown();
                 ev.halt();
-                this._setStartPosition(ev);
+                this._setStartPosition([ev.pageX, ev.pageY]);
 
                 Y.DD.DDM.activeDrag = this;
 
@@ -161,7 +385,7 @@ YUI.add('dd-drag', function(Y) {
                     self._timeoutCheck.call(self);
                 }, this.get('clickTimeThresh'));
             }
-
+            this.fire('drag:afterMouseDown', { ev: ev });
         },
         /**
         * @method validClick
@@ -176,7 +400,7 @@ YUI.add('dd-drag', function(Y) {
             if (this._handles) {
                 Y.log('validClick: We have handles', 'info', 'dd-drag');
                 Y.each(this._handles, function(i, n) {
-                    if (Y.lang.isString(n)) {
+                    if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
                         if (tar.test(n + ', ' + n + ' *')) {
                             Y.log('Valid Selector found: ' + n, 'info', 'dd-drag');
@@ -195,7 +419,7 @@ YUI.add('dd-drag', function(Y) {
                 Y.log('validClick: Check invalid selectors', 'info', 'dd-drag');
                 if (this._invalids) {
                     Y.each(this._invalids, function(i, n) {
-                        if (Y.lang.isString(n)) {
+                        if (Y.Lang.isString(n)) {
                             //Am I this or am I inside this
                             if (tar.test(n + ', ' + n + ' *')) {
                                 Y.log('Invalid Selector found: (' + (n + ', ' + n + ' *') + ')', 'warn', 'dd-drag');
@@ -223,16 +447,16 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method _setStartPosition
         * @description Sets the current position of the Element and calculates the offset
-        * @param {Event}
+        * @param {Array} xy The XY coords to set the position to.
         */
-        _setStartPosition: function(ev) {
-            this.startXY = [ev.clientX, ev.clientY];
+        _setStartPosition: function(xy) {
+            this.startXY = xy;
 
-            this.currentXY = this.get('node').getXY();
-            this.lastXY = this.currentXY;
+            this.nodeXY = this.get('node').getXY();
+            this.lastXY = this.nodeXY;
 
-            if (this.get('offsetEl')) {
-                this.deltaXY = [(this.startXY[0] - this.currentXY[0]), (this.startXY[1] - this.currentXY[1])];
+            if (this.get('offsetNode')) {
+                this.deltaXY = [(this.startXY[0] - this.nodeXY[0]), (this.startXY[1] - this.nodeXY[1])];
             } else {
                 this.deltaXY = [0, 0];
             }
@@ -248,6 +472,7 @@ YUI.add('dd-drag', function(Y) {
                 this._fromTimeout = true;
                 this._dragThreshMet = true;
                 this.start();
+                this.moveNode([this._ev_md.pageX, this._ev_md.pageY], true);
             }
         },
         /**
@@ -259,6 +484,7 @@ YUI.add('dd-drag', function(Y) {
         removeHandle: function(str) {
             if (this._handles[str]) {
                 delete this._handles[str];
+                this.fire('drag:removeHandle', { handle: str });
             }
             return this;
         },
@@ -272,8 +498,9 @@ YUI.add('dd-drag', function(Y) {
             if (!this._handles) {
                 this._handles = {};
             }
-            if (Y.lang.isString(str)) {
+            if (Y.Lang.isString(str)) {
                 this._handles[str] = true;
+                this.fire('drag:addHandle', { handle: str });
             }
             return this;
         },
@@ -286,6 +513,7 @@ YUI.add('dd-drag', function(Y) {
         removeInvalid: function(str) {
             if (this._invalids[str]) {
                 delete this._handles[str];
+                this.fire('drag:removeInvalid', { handle: str });
             }
             return this;
         },
@@ -296,8 +524,9 @@ YUI.add('dd-drag', function(Y) {
         * @return {Self}
         */
         addInvalid: function(str) {
-            if (Y.lang.isString(str)) {
+            if (Y.Lang.isString(str)) {
                 this._invalids[str] = true;
+                this.fire('drag:addInvalid', { handle: str });
             } else {
                 Y.log('Selector needs to be a string..');
             }
@@ -310,10 +539,15 @@ YUI.add('dd-drag', function(Y) {
         */
         initializer: function() {
             this._invalids = {};
-            
-            this.set('dragEl', this.get('node'));
 
-            this.get('node').on('mousedown', this._handleMouseDown, this, true);
+            this._createEvents();
+            
+            if (!this.get('dragNode')) {
+                this.set('dragNode', this.get('node'));
+            }
+            
+            this.get('node').addClass('yui-draggable');
+            this.get('node').on('mousedown', this._handleMouseDownEvent, this, true);
             this.get('node').on('mouseup', this._handleMouseUp, this, true);
             this._dragThreshMet = false;
         },
@@ -324,11 +558,12 @@ YUI.add('dd-drag', function(Y) {
         */
         start: function() {
             if (!this.get('lock')) {
-                this._dragging = true;
+                this.set('dragging', true);
                 Y.DD.DDM.start(this.deltaXY, [this.get('node').get('offsetHeight'), this.get('node').get('offsetWidth')]);
                 Y.log('startDrag', 'info', 'dd-drag');
                 this.get('node').addClass('yui-dd-dragging');
                 this.fire('drag:start');
+                this.get('dragNode').on('mouseup', this._handleMouseUp, this, true);
             }
         },
         /**
@@ -340,53 +575,59 @@ YUI.add('dd-drag', function(Y) {
             clearTimeout(this._clickTimeout);
             this._dragThreshMet = false;
             this._fromTimeout = false;
-            if (!this.get('lock') && this._dragging) {
+            if (!this.get('lock') && this.get('dragging')) {
                 Y.log('endDrag', 'info', 'dd-drag');
                 this.fire('drag:end');
             }
             this.get('node').removeClass('yui-dd-dragging');
-            this._dragging = false;
+            this.set('dragging', false);
             this.deltaXY = [0, 0];
+            this.get('dragNode').detach('mouseup', this._handleMouseUp, this, true);
         },
         /**
         * @private
         * @method _align
         * @description Calculates the offsets and set's the XY that the element will move to.
-        * @param {Event} ev The mousemove DOM event.
+        * @param {Array} xy The xy coords to align with.
         * @return Array
         * @type {Array}
         */
-        _align: function(ev) {
-            var eXY = [ev.clientX, ev.clientY],
-                xy = [eXY[0] - this.deltaXY[0], eXY[1] - this.deltaXY[1]];
-            return xy;
+        _align: function(xy) {
+            return [xy[0] - this.deltaXY[0], xy[1] - this.deltaXY[1]];
         },
         /**
         * @private
         * @method move
         * @description This method performs the actual element move.
-        * @param {Event} ev The mousemove Event
+        * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.
+        * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
-        moveEl: function(ev) {
-            var xy = this._align(ev), diffXY = [], diffXY2 = [];
-            if (this.get('move')) {
-                this.get('dragEl').setXY(xy);
-            }
+        moveNode: function(eXY, noFire) {
+            var xy = this._align(eXY), diffXY = [], diffXY2 = [];
+
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
-            diffXY2[0] = (xy[0] - this.currentXY[0]);
-            diffXY2[1] = (xy[1] - this.currentXY[1]);
+            diffXY2[0] = (xy[0] - this.nodeXY[0]);
+            diffXY2[1] = (xy[1] - this.nodeXY[1]);
+
+            if (this.get('move')) {
+                //this.get('dragNode').setXY(xy);
+                Y.DD.DDM.setXY(this.get('dragNode'), diffXY);
+            }
+
             //TODO
-            var startXY = this.currentXY;
-            this.fire('drag:drag', {
-                info: {
-                    start: startXY,
-                    xy: xy,
-                    delta: diffXY,
-                    offset: diffXY2
-                } 
-            });
+            var startXY = this.nodeXY;
+            if (!noFire) {
+                this.fire('drag:drag', {
+                    info: {
+                        start: startXY,
+                        xy: xy,
+                        delta: diffXY,
+                        offset: diffXY2
+                    } 
+                });
+            }
             
             this.lastXY = xy;
         },
@@ -401,22 +642,22 @@ YUI.add('dd-drag', function(Y) {
                 Y.log('Drag Locked', 'warn', 'dd-drag');
                 return false;
             } else {
-
+                this.mouseXY = [ev.pageX, ev.pageY];
                 if (!this._dragThreshMet) {
-                        var diffX = Math.abs(this.startXY[0] - ev.clientX);
-                        var diffY = Math.abs(this.startXY[1] - ev.clientY);
+                        var diffX = Math.abs(this.startXY[0] - ev.pageX);
+                        var diffY = Math.abs(this.startXY[1] - ev.pageY);
                         //Y.log("diffX: " + diffX + "diffY: " + diffY, 'info', 'dd-drag');
                         if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                             Y.log("pixel threshold met", "info", "dd-drag");
                             this._dragThreshMet = true;
                             this.start();
-                            this.moveEl(ev);
+                            this.moveNode([ev.pageX, ev.pageY]);
                         }
                 
                 } else {
                     clearTimeout(this._clickTimeout);
                     //Y.log('drag', 'info', 'dd-drag');
-                    this.moveEl(ev);
+                    this.moveNode([ev.pageX, ev.pageY]);
                 }
             }
         },
@@ -428,7 +669,7 @@ YUI.add('dd-drag', function(Y) {
         */
         destructor: function() {
             Y.DD.DDM.unregDrag(this);
-            this.get('node').detach('mousedown', this._handleMouseDown, this, true);
+            this.get('node').detach('mousedown', this._handleMouseDownEvent, this, true);
             this.get('node').detach('mouseup', this._handleMouseUp, this, true);
         },
         /**
@@ -437,7 +678,7 @@ YUI.add('dd-drag', function(Y) {
         * @return String name for the object
         */
         toString: function() {
-            return Drag.NAME + ' #' + this.get('node').get('id');
+            return 'Drag (#' + this.get('node').get('id') + ')';
         }
     });
     Y.namespace('DD');    
