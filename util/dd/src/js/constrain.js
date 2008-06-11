@@ -105,12 +105,10 @@ YUI.add('dd-constrain', function(Y) {
         getRegion: function(inc) {
             var r = {};
             if (this.get('constrain2node')) {
-                //r = this._getNodeRegion(this.get('constrain2node'));
                 r = this.get('constrain2node').getRegion();
             } else if (this.get('constrain2region')) {
                 r = this.get('constrain2region');
             } else if (this.get('constrain2view')) {
-                //r = this._getVPRegion();
                 r = this.get('node').get('viewportRegion');
             } else {
                 return false;

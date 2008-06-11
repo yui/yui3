@@ -14,6 +14,8 @@ YUI.add('dd-drag', function(Y) {
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
+        OFFSET_HEIGHT = 'offsetHeight',
+        OFFSET_WIDTH = 'offsetWidth',        
         MOUSE_UP = 'mouseup',
         MOUSE_DOWN = 'mousedown',
         EV_MOUSE_DOWN = 'drag:mouseDown',
@@ -88,7 +90,14 @@ YUI.add('dd-drag', function(Y) {
         * @type Boolean
         */
         lock: {
-            value: false
+            value: false,
+            set: function(lock) {
+                if (lock) {
+                    this.get(NODE).addClass('yui-dd-locked');
+                } else {
+                    this.get(NODE).removeClass('yui-dd-locked');
+                }
+            },
         },
         /**
         * @attribute data
@@ -162,6 +171,8 @@ YUI.add('dd-drag', function(Y) {
                         return 0;
                     case 'intersect':
                         return 1;
+                    case 'strict':
+                        return 2;
                     case 'default':
                         return -1;
                 }
@@ -246,7 +257,7 @@ YUI.add('dd-drag', function(Y) {
                 EV_END,
                 EV_DRAG
             ];
-
+            
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
@@ -329,6 +340,12 @@ YUI.add('dd-drag', function(Y) {
         * @type {Array}
         */
         mouseXY: null,
+        /**
+        * @property region
+        * @description A region object associated with this drag, used for checking regions while dragging.
+        * @type Object
+        */
+        region: null,       
         /**
         * @private
         * @method _handleMouseUp
@@ -577,11 +594,23 @@ YUI.add('dd-drag', function(Y) {
         start: function() {
             if (!this.get('lock')) {
                 this.set('dragging', true);
-                DDM.start(this.deltaXY, [this.get(NODE).get('offsetHeight'), this.get(NODE).get('offsetWidth')]);
+                DDM.start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 //Y.log('startDrag', 'info', 'dd-drag');
                 this.get(NODE).addClass('yui-dd-dragging');
                 this.fire(EV_START);
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+                
+                var xy = this.nodeXY;
+                this.region = {
+                    '0': xy[0], 
+                    '1': xy[1],
+                    area: 0,
+                    top: xy[1],
+                    right: xy[0] + this.get(NODE).get(OFFSET_WIDTH),
+                    bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
+                    left: xy[0]
+                };
+                
             }
         },
         /**
@@ -632,6 +661,16 @@ YUI.add('dd-drag', function(Y) {
             if (this.get('move')) {
                 DDM.setXY(this.get(DRAG_NODE), diffXY);
             }
+
+            this.region = {
+                '0': xy[0], 
+                '1': xy[1],
+                area: 0,
+                top: xy[1],
+                right: xy[0] + this.get(NODE).get(OFFSET_WIDTH),
+                bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
+                left: xy[0]
+            };
 
             //TODO
             var startXY = this.nodeXY;

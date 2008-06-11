@@ -212,6 +212,24 @@ YUI.add('dd-ddm-base', function(Y) {
                 }
             }
             return g;
+        },
+        /**
+        * @method getDrag
+        * @description Get a valid Drag instance back from a Node or a selector string, false otherwise
+        * @param {String/Object} node The Node instance or Selector string to check for a valid Drag Object
+        * @return {Object}
+        */
+        getDrag: function(node) {
+            var drag = false,
+                n = Y.Node.get(node);
+            if (n instanceof Y.Node) {
+                Y.each(this.drags, function(v, k) {
+                    if (n.compareTo(v.get('node'))) {
+                        drag = v;
+                    }
+                });
+            }
+            return drag;
         }
     });
 

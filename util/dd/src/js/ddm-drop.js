@@ -98,21 +98,25 @@ YUI.add('dd-ddm-drop', function(Y) {
             return this;
         },
         /**
-        * @method isCursorOverTarget
-        * @description Check to see if the mouseXY is in the region of the shim of the Drop Target
+        * @method isOverTarget
+        * @description Check to see if the Drag element is over the target, method varies on current mode
         * @param {Object} drop The drop to check against
         * @return {Boolean}
         */
-        isCursorOverTarget: function(drop) {
+        isOverTarget: function(drop) {
             if (Y.Lang.isObject(this.activeDrag) && drop) {
                 var xy = this.activeDrag.mouseXY;
                 if (xy) {
-                    return drop.shim.intersect({
-                        top: xy[1],
-                        bottom: xy[1],
-                        left: xy[0], 
-                        right: xy[0]
-                    }, drop.region).inRegion;
+                    if (this.mode == this.STRICT) {
+                        return this.activeDrag.get('dragNode').inRegion(drop.region, true, this.activeDrag.region);
+                    } else {
+                        return drop.shim.intersect({
+                            top: xy[1],
+                            bottom: xy[1],
+                            left: xy[0], 
+                            right: xy[0]
+                        }, drop.region).inRegion;
+                    }
                     
                 } else {
                     return false;
@@ -337,6 +341,24 @@ YUI.add('dd-ddm-drop', function(Y) {
             }
             this.hash.x[rx][this.hash.x[rx].length] = tar;
             this.hash.y[ry][this.hash.y[ry].length] = tar;
+        },
+        /**
+        * @method getDrop
+        * @description Get a valid Drop instance back from a Node or a selector string, false otherwise
+        * @param {String/Object} node The Node instance or Selector string to check for a valid Drop Object
+        * @return {Object}
+        */
+        getDrop: function(node) {
+            var drop = false,
+                n = Y.Node.get(node);
+            if (n instanceof Y.Node) {
+                Y.each(this.tars, function(v, k) {
+                    if (n.compareTo(v.get('node'))) {
+                        drop = v;
+                    }
+                });
+            }
+            return drop;
         }
     }, true);
     
