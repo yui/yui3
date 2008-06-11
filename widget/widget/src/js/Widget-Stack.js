@@ -7,8 +7,8 @@
  */
 YUI.add("widget-stack", function(Y) {
 
-    var Lang = Y.lang,
-        UA = Y.ua,
+    var Lang = Y.Lang,
+        UA = Y.UA,
         Node = Y.Node,
 
         ZINDEX = "zindex",

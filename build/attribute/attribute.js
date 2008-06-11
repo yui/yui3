@@ -131,8 +131,66 @@ YUI.add('attribute', function(Y) {
         GET = "get",
         SET = "set",
         VALUE = "value",
+        CLONE = "clone",
         READ_ONLY = "readonly",
         VALIDATOR = "validator";
+
+    /**
+     * Manages attributes
+     *
+     * @class Attribute
+     * @uses EventTarget
+     */
+    function Attribute() {
+        this._conf = this._conf || new Y.State();
+    }
+
+    /**
+     * @property Attribute.CLONE
+     * @static
+     * @final
+     * @type {Object}
+     *
+     * Constants for clone formats supported by Attribute
+     * 
+     * By default attribute values returned by the get method
+     * are not cloned. However setting the attribute's "clone"
+     * property to:
+     * 
+     * <dl>
+     *     <dt>Attribute.CLONE.DEEP</dt>
+     *     <dd>Will result in a deep cloned value being returned
+     *        (using Y.clone). This can be expensive for complex
+     *        objects.
+     *     </dd>
+     *     <dt>Attribute.CLONE.SHALLOW</dt>
+     *     <dd>Will result in a shallow cloned value being returned
+     *        (using Y.merge).
+     *     </dd>
+     *     <dt>Attribute.CLONE.IMMUTABLE</dt>
+     *     <dd>Will result in a deep cloned value being returned
+     *         when using the get method. Additionally users will
+     *         not be able to set sub values of the attribute 
+     *         using the complex attribute notation (obj.set("x.y.z, 5)).
+     *         However the value of the attribute can be changed, making
+     *         it different from a READONLY attribute.
+     *     </dd>
+     *     <dt>Attribute.CLONE.NONE</dt>
+     *     <dd>
+     *         The value will not be cloned, resulting in a reference
+     *         to the stored value being passed back, if the value is an object.
+     *         This is the default behavior.
+     *     </dd>
+     * </dl>
+     */
+    Attribute.CLONE = {
+        NONE : 0,
+        DEEP : 1,
+        SHALLOW : 2,
+        IMMUTABLE: 3
+    };
+
+    var CLONE_ENUM = Attribute.CLONE;
 
     function _fireChange(type, currVal, newVal, attrName, strFullPath, opts) {
         type = type + CHANGE;
@@ -156,17 +214,20 @@ YUI.add('attribute', function(Y) {
         this.fire(eData);
     }
 
-    /**
-     * Manages attributes
-     *
-     * @class Attribute
-     * @uses EventTarget
-     */
-    Y.Attribute = function() {
-        this._conf = this._conf || new Y.State();
-    };
+    function _clone(val, type) {
+        switch(type) {
+            case CLONE_ENUM.SHALLOW:
+                val = Y.merge(val);
+                break;
+            case CLONE_ENUM.DEEP:
+            case CLONE_ENUM.IMMUTABLE:
+                val = Y.clone(val);
+                break;
+        }
+        return val;
+    }
 
-    Y.Attribute.prototype = {
+    Attribute.prototype = {
         /**
          * Adds an attribute.
          * @method add
@@ -200,7 +261,7 @@ YUI.add('attribute', function(Y) {
             var conf = this._conf,
                 path,
                 getFn,
-                rawVal,
+                clone,
                 val;
 
             if (name.indexOf(DOT) !== -1) {
@@ -208,11 +269,15 @@ YUI.add('attribute', function(Y) {
                 name = path.shift();
             }
 
+            val = conf.get(name, VALUE);
             getFn = conf.get(name, GET);
-            rawVal = conf.get(name, VALUE);
-            val = (getFn) ? getFn.call(this, rawVal) : rawVal;
+            clone = conf.get(name, CLONE);
 
-            return (path) ? this._getSubValue(path, val) : val;
+            val = (clone) ? _clone(val, clone) : val;
+            val = (getFn) ? getFn.call(this, val) : val;
+            val = (path) ? this._getSubValue(path, val) : val;
+
+            return val;
         },
 
         /**
@@ -240,6 +305,10 @@ YUI.add('attribute', function(Y) {
                 strPath = name;
                 path = name.split(DOT);
                 name = path.shift();
+            }
+
+            if (path && conf.get(name, CLONE) === CLONE_ENUM.IMMUTABLE) {
+                return this;
             }
 
             if (conf.get(name, READ_ONLY)) {
@@ -356,7 +425,7 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Gets multiple attribute values.
-         * 
+         *
          * @method getAtts
          * @return {Object} A hash of attributes: name/values pairs
          */
@@ -402,8 +471,8 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Splits out regular from complex attribute intialization
-         * values
+         * Utility to split out regular attribute values
+         * from complex attribute values
          *
          * @method _splitAttrValues
          * @private
@@ -451,12 +520,12 @@ YUI.add('attribute', function(Y) {
 
             var hasVal = ("value" in cfg),
                 val = cfg.value,
-                simple, 
+                simple,
                 complex,
-                i, 
-                l, 
-                path, 
-                subval, 
+                i,
+                l,
+                path,
+                subval,
                 subvals;
 
             if (initValues) {
@@ -470,9 +539,8 @@ YUI.add('attribute', function(Y) {
                 // Complex Attributes
                 complex = initValues.complex;
                 if (complex && O.owns(complex, att)) {
-                    subvals = complex[att];
                     hasVal = true;
-
+                    subvals = complex[att];
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
                         subval = subvals[i].value;
@@ -487,9 +555,11 @@ YUI.add('attribute', function(Y) {
         }
     };
 
-    Y.augment(Y.Attribute, Y.EventTarget, null, null, {
+    Y.augment(Attribute, Y.EventTarget, null, null, {
         emitFacade: true
     });
+
+    Y.Attribute = Attribute;
 
 }, '3.0.0', { requires: ['state'] });
 

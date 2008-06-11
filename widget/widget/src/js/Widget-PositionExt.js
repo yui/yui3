@@ -8,7 +8,7 @@
 
 YUI.add("widget-position-extras", function(Y) {
 
-        var Lang = Y.lang,
+        var Lang = Y.Lang,
             Node = Y.Node,
 
             VISIBLE = "visible",

@@ -8,7 +8,7 @@
 
 YUI.add("widget-position", function(Y) {
 
-        var Lang = Y.lang,
+        var Lang = Y.Lang,
 
             POSITION = "position",
             X_COORD = "x",
