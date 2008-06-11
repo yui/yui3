@@ -9,7 +9,13 @@ YUI.add('dd-constrain', function(Y) {
      * @namespace DD
      * @extends Drag
      * @constructor
-     */    
+     */
+
+    var DRAG_NODE = 'dragNode',
+        OFFSET_HEIGHT = 'offsetHeight',
+        OFFSET_WIDTH = 'offsetWidth';
+
+
     var C = function() {
         C.superclass.constructor.apply(this, arguments);
 
@@ -67,7 +73,7 @@ YUI.add('dd-constrain', function(Y) {
         gutter: {
             value: '0',
             set: function(gutter) {
-                return this._setGutter(gutter);
+                return Y.DD.DDM.cssSizestoObject(gutter);
             }
         },
         constrain2node: {
@@ -91,75 +97,6 @@ YUI.add('dd-constrain', function(Y) {
 
     Y.extend(C, Y.DD.Drag, {
         /**
-        * @private
-        * @method _setGutter
-        * @description Helper method to use to set the gutter from the attribute setter.
-        * @param {String} gutter CSS style string for gutter: '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
-        * @return {Object} The gutter config option.
-        */
-        _setGutter: function(gutter) {
-            var p = gutter.split(' '),
-            g = {
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0
-            };
-            if (p.length) {
-                g.top = parseInt(p[0], 10);
-                if (p[1]) {
-                    g.right = parseInt(p[1], 10);
-                } else {
-                    g.right = g.top;
-                }
-                if (p[2]) {
-                    g.bottom = parseInt(p[2], 10);
-                } else {
-                    g.bottom = g.top;
-                }
-                if (p[3]) {
-                    g.left = parseInt(p[3], 10);
-                } else if (p[1]) {
-                    g.left = g.right;
-                } else {
-                    g.left = g.top;
-                }
-            }
-            return g;
-        },
-        /**
-        * @private
-        * @method _getVPRegion
-        * @description Get's a region object for the viewport, contains: top, right, bottom, left
-        * @return {Object}
-        */
-        _getVPRegion: function() {
-            var node = Y.Node.get('body'),
-            r = {
-                top: node.get('docScrollY'),
-                right: node.get('winWidth') - node.get('docScrollX'),
-                bottom: (node.get('docScrollY') - node.get('winHeight')),
-                left: node.get('docScrollX')
-                
-            };
-            return r;
-        },
-        /**
-        * @private
-        * @method _getNodeRegion
-        * @description Get's a region object for the specified Node, contains: top, right, bottom, left
-        * @return {Object}
-        */
-        _getNodeRegion: function(el) {
-            var x = el.getXY();
-            return {
-                top: x[1],
-                right: x[0] + el.get('offsetWidth'),
-                bottom: x[1] + el.get('offsetHeight'),
-                left: x[0]
-            };
-        },
-        /**
         * @method getRegion
         * @description Get the active region: viewport, node, custom region
         * @param {Boolean} inc Include the node's height and width
@@ -168,11 +105,13 @@ YUI.add('dd-constrain', function(Y) {
         getRegion: function(inc) {
             var r = {};
             if (this.get('constrain2node')) {
-                r = this._getNodeRegion(this.get('constrain2node'));
+                //r = this._getNodeRegion(this.get('constrain2node'));
+                r = this.get('constrain2node').getRegion();
             } else if (this.get('constrain2region')) {
                 r = this.get('constrain2region');
             } else if (this.get('constrain2view')) {
-                r = this._getVPRegion();
+                //r = this._getVPRegion();
+                r = this.get('node').get('viewportRegion');
             } else {
                 return false;
             }
@@ -185,8 +124,8 @@ YUI.add('dd-constrain', function(Y) {
                 }
             });
             if (inc) {
-                var oh = this.get('dragNode').get('offsetHeight'),
-                    ow = this.get('dragNode').get('offsetWidth');
+                var oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                    ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
                 r.right = r.right - ow;
                 r.bottom = r.bottom - oh;
             }
@@ -202,8 +141,8 @@ YUI.add('dd-constrain', function(Y) {
         _checkRegion: function(_xy) {
             var oxy = _xy,
                 r = this.getRegion(),
-                oh = this.get('dragNode').get('offsetHeight'),
-                ow = this.get('dragNode').get('offsetWidth');
+                oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
+                ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
 
             if (r.top > oxy[1]) {
                 oxy[1] = r.top;
@@ -228,7 +167,7 @@ YUI.add('dd-constrain', function(Y) {
         * @return {Boolean} True if the XY is inside the region, false otherwise.
         */
         inRegion: function(xy) {
-            xy = xy || this.get('dragNode').getXY();
+            xy = xy || this.get(DRAG_NODE).getXY();
 
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
@@ -360,14 +299,6 @@ YUI.add('dd-constrain', function(Y) {
 
             return xy;
         },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return C.NAME + ' #' + this.get('node').get('id');
-        }
     });
     Y.DD.DragConstrained = C;
 

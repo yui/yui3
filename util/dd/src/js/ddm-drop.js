@@ -11,6 +11,17 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @constructor
      */    
     Y.mix(Y.DD.DDM, {
+        _activeShims: {},
+        _hasActiveShim: function() {
+            var ret = false;
+            Y.each(this._activeShims, function(v, k) {
+                if (k) {
+                    ret = true;
+                }
+            }, this);
+
+            return ret;
+        },
         /**
         * @private
         * @property oldMode
@@ -44,24 +55,11 @@ YUI.add('dd-ddm-drop', function(Y) {
         //TODO Strict Checking, is the entire element inside the target?
         STRICT: 2,
         /**
-        * @private
-        * @property _start
-        * @description Flag to tell us we are good to start targeting nodes
-        * @type {Booelan}
-        */
-        _start: false,
-        /**
         * @property activeDrop
         * @description A reference to the active Drop Target
         * @type {Object}
         */
         activeDrop: null,
-        /**
-        * @property deltaDrop
-        * @description A reference to the first Drop Target we encounter
-        * @type {Object}
-        */
-        deltaDrop: null,
         /**
         * @property validDrops
         * @description An array of the valid Drop Targets for this interaction.
@@ -98,21 +96,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         addValid: function(drop) {
             this.validDrops[this.validDrops.length] = drop;
             return this;
-        },
-        /**
-        * @private
-        * @method _handleTargetOver
-        * @description If there is a deltaDrop, this method execs _handleTargetOver on all valid Drop Targets
-        * @param {Object} drop A Drop Target
-        * @param {Boolean} force Force it to run the first time.
-        */
-        _handleTargetOver: function(drop, force) {
-            if (!this.deltaDrop) {
-                this.deltaDrop = drop;
-            }
-            Y.each(this.validDrops, function(v, k) {
-                v._handleTargetOver.call(v, force);
-            }, this);
         },
         /**
         * @method isCursorOverTarget
@@ -172,7 +155,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         clearCache: function() {
             this.validDrops = [];
             this.otherDrops = {};
-            this.deltaDrop = null;
             this.hash.x = {};
             this.hash.y = {};
         },
@@ -208,7 +190,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                 v.activateShim.apply(v, []);
                 
             }, this);
-            this.dropMove(true);
+            this._handleTargetOver();
             
         },
         /**
@@ -252,8 +234,8 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _deactivateTargets: function() {
             var other = [];
-            this._start = false;
-            if (this.activeDrag && this.activeDrop && this.otherDrops[this.activeDrop]) {
+            
+            if (this.activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
                 if (!this.mode) {
                     other = this.otherDrops;
                     delete other[this.activeDrop];
@@ -269,6 +251,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
             }
+            
             this.activeDrop = null;
 
             Y.each(this.tars, function(v, k) {
@@ -283,21 +266,25 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @param {Boolean} force Optional force at start.
         */
         dropMove: function(force) {
-            if (this.deltaDrop || force) {
-                this._start = false;
-                Y.each(this.validDrops, function(v, k) {
-                    v.move.call(v, force);
-                }, this);
+            if (this._hasActiveShim()) {
+                //Y.log('We have an active shim, check targets', 'info', 'dd-ddm');
+                this._handleTargetOver();
             } else {
-                if (!this._start) {
-                    this._start = true;
-                    Y.each(this.validDrops, function(v, k) {
-                        v._active = true;
-                        v._handleOver.call(v, force);
-                    }, this);
-                    this.deltaDrop = null;
-                }
+                Y.each(this.otherDrops, function(v, k) {
+                    v._handleOut.apply(v, []);
+                });
             }
+        },
+        /**
+        * @private
+        * @method _handleTargetOver
+        * @description This method execs _handleTargetOver on all valid Drop Targets
+        * @param {Boolean} force Force it to run the first time.
+        */
+        _handleTargetOver: function() {
+            Y.each(this.validDrops, function(v, k) {
+                v._handleTargetOver.call(v);
+            }, this);
         },
         /**
         * @private

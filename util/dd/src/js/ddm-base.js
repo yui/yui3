@@ -176,6 +176,42 @@ YUI.add('dd-ddm-base', function(Y) {
             
             node.setStyle('top', (xy[1] + t) + 'px');
             node.setStyle('left', (xy[0] + l) + 'px');
+        },
+        /**
+        * @method cssSizestoObject
+        * @description Helper method to use to set the gutter from the attribute setter.
+        * @param {String} gutter CSS style string for gutter: '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
+        * @return {Object} The gutter Object Literal.
+        */
+        cssSizestoObject: function(gutter) {
+            var p = gutter.split(' '),
+            g = {
+                top: 0,
+                bottom: 0,
+                right: 0,
+                left: 0
+            };
+            if (p.length) {
+                g.top = parseInt(p[0], 10);
+                if (p[1]) {
+                    g.right = parseInt(p[1], 10);
+                } else {
+                    g.right = g.top;
+                }
+                if (p[2]) {
+                    g.bottom = parseInt(p[2], 10);
+                } else {
+                    g.bottom = g.top;
+                }
+                if (p[3]) {
+                    g.left = parseInt(p[3], 10);
+                } else if (p[1]) {
+                    g.left = g.right;
+                } else {
+                    g.left = g.top;
+                }
+            }
+            return g;
         }
     });
 
