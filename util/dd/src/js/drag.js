@@ -740,4 +740,4 @@ YUI.add('dd-drag', function(Y) {
     Y.namespace('DD');    
     Y.DD.Drag = Drag;
 
-}, '3.0.0', { requires: ['node', 'nodeextras', 'base', 'dd-ddm-base'] });
+}, '3.0.0', { requires: ['node', 'nodeextras', 'node-region', 'base', 'dd-ddm-base'] });

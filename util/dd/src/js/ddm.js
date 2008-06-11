@@ -53,6 +53,7 @@ YUI.add('dd-ddm', function(Y) {
         * @description Activates the shim
         */
         pg_activate: function() {
+            this.pg_size();
             this.pg.setStyles({
                 top: 0,
                 left: 0,
@@ -60,7 +61,6 @@ YUI.add('dd-ddm', function(Y) {
                 opacity: ((this._debugShim) ? '.5' : '0'),
                 filter: 'alpha(opacity=' + ((this._debugShim) ? '50' : '0') + ')'
             });
-            this.pg_size();
         },
         /**
         * @private
@@ -69,9 +69,12 @@ YUI.add('dd-ddm', function(Y) {
         */
         pg_size: function() {
             if (this.activeDrag) {
+                var b = Y.Node.get('body'),
+                h = b.get('docHeight'),
+                w = b.get('docWidth');
                 this.pg.setStyles({
-                    height: this.pg.get('docHeight') + 'px',
-                    width: this.pg.get('docWidth') + 'px'
+                    height: h + 'px',
+                    width: w + 'px'
                 });
             }
         },
@@ -84,11 +87,15 @@ YUI.add('dd-ddm', function(Y) {
             var pg = Y.Node.create(['div']),
             bd = Y.Node.get('body');
             pg.setStyles({
+                top: '0',
+                left: '0',
                 position: 'absolute',
                 zIndex: '9999',
                 opacity: '0',
                 backgroundColor: 'red',
-                display: 'none'
+                display: 'none',
+                height: '5px',
+                width: '5px'
             });
             if (bd.get('firstChild')) {
                 bd.insertBefore(pg, bd.get('firstChild'));

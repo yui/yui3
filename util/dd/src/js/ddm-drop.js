@@ -37,19 +37,19 @@ YUI.add('dd-ddm-drop', function(Y) {
         mode: 0,
         /**
         * @property POINT
-        * @description Default for assigning mode property
+        * @description In point mode, a Drop is targeted by the cursor being over the Target
         * @type Number
         */
         POINT: 0,
         /**
         * @property INTERSECT
-        * @description Default for assigning mode property
+        * @description In intersect mode, a Drop is targeted by "part" of the drag node being over the Target
         * @type Number
         */
         INTERSECT: 1,
         /**
         * @property STRICT
-        * @description Default for assigning mode property
+        * @description In strict mode, a Drop is targeted by the "entire" drag node being over the Target
         * @type Number
         */
         STRICT: 2,
