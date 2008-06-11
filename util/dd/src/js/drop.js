@@ -230,8 +230,6 @@ YUI.add('dd-drop', function(Y) {
                 bottom: xy[1] + nh,
                 left: xy[0]
             };
-            //Report position to DDM
-            DDM.syncTarget(this, xy);
         },
         /**
         * @private

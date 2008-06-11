@@ -109,10 +109,11 @@ YUI.add('node-region', function(Y) {
          * Check if any part of this node is in the viewport
          * @method inViewportRegion
          * $param {Boolean} all Should all of the node be inside the region
+         * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
          * @return {Boolean} True if in region, false if not.
          */
-        inViewportRegion: function(node, all) {
-            return node.inRegion(node.get('viewportRegion'), all);
+        inViewportRegion: function(node, all, altRegion) {
+            return node.inRegion(node.get('viewportRegion'), all, altRegion);
                 
         }
 

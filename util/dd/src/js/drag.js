@@ -97,7 +97,7 @@ YUI.add('dd-drag', function(Y) {
                 } else {
                     this.get(NODE).removeClass('yui-dd-locked');
                 }
-            },
+            }
         },
         /**
         * @attribute data
@@ -486,7 +486,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _setStartPosition: function(xy) {
             this.startXY = xy;
-
+            
             this.nodeXY = this.get(NODE).getXY();
             this.lastXY = this.nodeXY;
 

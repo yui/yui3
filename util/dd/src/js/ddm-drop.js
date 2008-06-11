@@ -31,7 +31,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         oldMode: 0,
         /**
         * @property mode
-        * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict (not implemented yet)
+        * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict
         * @type Number
         */
         mode: 0,
@@ -49,11 +49,16 @@ YUI.add('dd-ddm-drop', function(Y) {
         INTERSECT: 1,
         /**
         * @property STRICT
-        * @description Default for assigning mode property (not used in this release)
+        * @description Default for assigning mode property
         * @type Number
         */
-        //TODO Strict Checking, is the entire element inside the target?
         STRICT: 2,
+        /**
+        * @property useHash
+        * @description Should we only check targets that are in the viewport on drags (for performance), default: true
+        * @type {Boolean}
+        */
+        useHash: true,
         /**
         * @property activeDrop
         * @description A reference to the active Drop Target
@@ -78,15 +83,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @type {Array}
         */
         tars: [],
-        /**
-        * @property hash
-        * @description A lookup hash to limit our searches for overlapping Drop Targets
-        * @type {Object}
-        */
-        hash: {
-            x: {},
-            y: {}
-        },
         /**
         * @method addValid
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
@@ -125,32 +121,6 @@ YUI.add('dd-ddm-drop', function(Y) {
                 return false;
             }
         },
-        /*
-        lookup: function(xy) {
-            var oX = this.rnd(xy[0]),
-                oY = this.rnd(xy[1]),
-                out = [], ids = {};
-
-            if (this.hash.x[oX]) {
-                for (var i in this.hash.x[oX]) {
-                    if (!ids[this.hash.x[oX][i]]) {
-                        out[out.length] = this.hash.x[oX][i];
-                        ids[this.hash.x[oX][i]] = true;
-                    }
-                }
-            }
-            if (this.hash.y[oY]) {
-                for (var i in this.hash.y[oY]) {
-                    if (!ids[this.hash.y[oY][i]]) {
-                        out[out.length] = this.hash.y[oY][i];
-                        ids[this.hash.y[oY][i]] = true;
-                    }
-                }
-            }
-            return this.validDrops;
-                
-        },
-        */
         /**
         * @private
         * @method clearCache
@@ -159,8 +129,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         clearCache: function() {
             this.validDrops = [];
             this.otherDrops = {};
-            this.hash.x = {};
-            this.hash.y = {};
         },
         /**
         * @private
@@ -281,12 +249,33 @@ YUI.add('dd-ddm-drop', function(Y) {
         },
         /**
         * @private
+        * @method lookup
+        * @description Filters the list of Drops down to those in the viewport.
+        * @return {Array} The valid Drop Targets that are in the viewport.
+        */
+        lookup: function() {
+            if (!this.useHash) {
+                return this.validDrops;
+            }
+            var drops = [];
+            //Only scan drop shims that are in the Viewport
+            Y.each(this.validDrops, function(v, k) {
+                if (v.shim.inViewportRegion(false, v.region)) {
+                    drops[drops.length] = v;
+                }
+            });
+            return drops;
+                
+        },
+        /**
+        * @private
         * @method _handleTargetOver
         * @description This method execs _handleTargetOver on all valid Drop Targets
         * @param {Boolean} force Force it to run the first time.
         */
         _handleTargetOver: function() {
-            Y.each(this.validDrops, function(v, k) {
+            var drops = this.lookup();
+            Y.each(drops, function(v, k) {
                 v._handleTargetOver.call(v);
             }, this);
         },
@@ -312,7 +301,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                     tars[tars.length] = v;
                 }
             }, this);
-            this.tars = v;
+            this.tars = tars;
         },
         /**
         * @method rnd
@@ -322,25 +311,6 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         rnd: function(n) {
             return (Math.round(n / 100) * 100);
-        },
-        /**
-        * @private
-        * @method syncTarget
-        * @description This method addes a hash to the lookup hash table
-        * @param {Object} The node to place into the hash
-        * @param {Array} An Array of XY coords to place in to the hash table.
-        */
-        syncTarget: function(tar, xy) {
-            var rx = this.rnd(xy[0]),
-                ry = this.rnd(xy[1]);
-            if (!Y.Lang.isArray(this.hash.x[rx])) {
-                this.hash.x[rx] = [];
-            }
-            if (!Y.Lang.isArray(this.hash.y[ry])) {
-                this.hash.y[ry] = [];
-            }
-            this.hash.x[rx][this.hash.x[rx].length] = tar;
-            this.hash.y[ry][this.hash.y[ry].length] = tar;
         },
         /**
         * @method getDrop

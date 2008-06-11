@@ -170,7 +170,7 @@ YUI.add('dd-constrain', function(Y) {
             var _xy = this._checkRegion([xy[0], xy[1]]),
                 inside = false;
                 if ((xy[0] === _xy[0]) && (xy[1] === _xy[1])) {
-                    inside = true
+                    inside = true;
                 }
             return inside;
         },
@@ -296,7 +296,7 @@ YUI.add('dd-constrain', function(Y) {
                 }
 
             return xy;
-        },
+        }
     });
     Y.DD.DragConstrained = C;
 
