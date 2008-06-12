@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="YuiBuild" default="local">
-
+<project name="YuiBase" default="local">
     <description>Component Build File</description>
 
-    <dirname property="buildfile.dir" file="${ant.file}" />
     <property environment="env" />
-    <property name="srcdir" value="../../" />
-    <property name="builddir" value="${env.YUI_BUILD_DIR}" />
-    
-    <property file="${buildfile.dir}/build.properties" />
 
-    <import file="${builddir}/buildproperties.xml" description="Shared Build Properties - tools, build paths etc." />
-    <import file="${builddir}/targetlib.xml" description="Component Build Targets" />
+    <property file="build.properties" />
+    <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
 
-    <target name="examples" description="Component Specific Over-ride">
-        <echo>DOES NOT DO ANYTHING CURRENTLY</echo>
+    <!-- TEMP HACK: Until state gets a build/finds a home -->
+    <target name="register" description="Setup temp area for Button CSS" depends="YuiModuleTargets.register">
+        <concat destfile="${component.builddir}/${component.basefilename}.js" append="true">
+            <filelist dir="${srcdir}/util/yui/src/js" files="State.js" />
+        </concat>
+        <concat destfile="${component.builddir}/${component.basefilename}-debug.js" append="true">
+            <filelist dir="${srcdir}/util/yui/src/js" files="State.js" />
+        </concat>
     </target>
-
-    <macrodef name="registerversion">
-        <attribute name="module" />
-        <attribute name="classname" />
-        <attribute name="file" />
-        <sequential>
-        </sequential>
-    </macrodef>
-
 </project>
-

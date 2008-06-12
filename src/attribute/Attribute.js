@@ -1,5 +1,3 @@
-YUI.add('attribute', function(Y) {
-
     var O = Y.Object,
         DOT = ".",
         CHANGE = "Change",
@@ -174,9 +172,7 @@ YUI.add('attribute', function(Y) {
                 setFn,
                 validatorFn,
                 retVal,
-                currVal,
-                eData,
-                e;
+                currVal;
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -185,7 +181,7 @@ YUI.add('attribute', function(Y) {
             }
 
             if (path && conf.get(name, CLONE) === CLONE_ENUM.IMMUTABLE) {
-                Y.log('set ' + name + ' failed; Attribute is IMMUTABLE, so cannot set sub value', 'info', 'Attribute');
+                Y.log('set ' + name + ' failed; Attribute is IMMUTABLE. Setting a sub value is not permitted', 'info', 'Attribute');
                 return this;
             }
 
@@ -331,7 +327,7 @@ YUI.add('attribute', function(Y) {
          * @param {Object} cfg Attribute configuration object literal
          * @param {Object} initValues Name/Value hash of initial values to apply
          *
-         * @private
+         * @protected
          */
         _initAtts : function(cfg, initValues) {
             if (cfg) {
@@ -442,5 +438,3 @@ YUI.add('attribute', function(Y) {
     });
 
     Y.Attribute = Attribute;
-
-}, '3.0.0', { requires: ['state'] });
