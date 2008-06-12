@@ -8,7 +8,7 @@
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
 
     <!-- TEMP HACK: Until state gets a build/finds a home -->
-    <target name="register" description="Setup temp area for Button CSS" depends="YuiModuleTargets.register">
+    <target name="register" description="Attribute State Combo" depends="YuiModuleTargets.register">
         <concat destfile="${component.builddir}/${component.basefilename}.js" append="true">
             <filelist dir="${srcdir}/util/yui/src/js" files="State.js" />
         </concat>
