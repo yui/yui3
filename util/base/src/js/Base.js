@@ -176,7 +176,7 @@
     // TODO - Work in progress
     Base.create = function(main, features, args) {
         var c = Y.Base.build(main, features, {dynamic:true}),
-            cArgs = Y.array(arguments, 2, true);
+            cArgs = Y.Array(arguments, 2, true);
 
         function F(){}
         F.prototype = c.prototype;
