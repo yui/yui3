@@ -1,10 +1,7 @@
-/**
-* 3.x DragDrop Manager
-* @module dd-ddm
-*/
 YUI.add('dd-ddm', function(Y) {
     /**
      * 3.x DragDrop Manager - Shim support
+     * @module dd-ddm
      * @class DDM
      * @namespace DD
      * @extends Base

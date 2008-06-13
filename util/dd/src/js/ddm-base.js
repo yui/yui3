@@ -1,11 +1,7 @@
-/**
-* 3.x DragDrop Manager
-* @module dd-ddm-base
-*/
-YUI.add('dd-ddm-base', function(Y) {
     /**
      * 3.x DragDrop Manager - Base
      * @class DDM
+     * @module dd-ddm-base
      * @namespace DD
      * @extends base
      * @extends event-target
@@ -239,4 +235,3 @@ YUI.add('dd-ddm-base', function(Y) {
     Y.DD.DDM = DDMBase;
     Y.DD.DDM.init();
 
-}, '3.0.0', {requires: ['node', 'nodeextras', 'base']});

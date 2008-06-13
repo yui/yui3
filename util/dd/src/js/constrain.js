@@ -1,12 +1,9 @@
-/**
-* 3.x DragDrop
-* @module dd-constrain
-*/
 YUI.add('dd-constrain', function(Y) {
     /**
      * 3.x DragDrop
      * @class DragConstained
      * @namespace DD
+     * @module dd-constrain
      * @extends Drag
      * @constructor
      */

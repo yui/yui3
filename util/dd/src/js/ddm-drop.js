@@ -1,11 +1,8 @@
-/**
-* 3.x DragDrop Manager
-* @module dd-ddm-drop
-*/
 YUI.add('dd-ddm-drop', function(Y) {
     /**
      * 3.x DragDrop Manager - Drop support
      * @class DDM
+     * @module dd-ddm-drop
      * @namespace DD
      * @extends Base
      * @constructor

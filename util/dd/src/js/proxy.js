@@ -1,11 +1,8 @@
-/**
-* 3.x DragDrop Proxy
-* @module dd-proxy
-*/
 YUI.add('dd-proxy', function(Y) {
     /**
      * 3.x DragDrop
      * @class Proxy
+     * @module dd-proxy
      * @namespace DD
      * @extends Drag
      * @constructor

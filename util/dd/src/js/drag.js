@@ -1,11 +1,7 @@
-/**
-* 3.x DragDrop
-* @module dd-drag
-*/
-YUI.add('dd-drag', function(Y) {
     /**
      * 3.x DragDrop
      * @class Drag
+     * @module dd-drag
      * @namespace DD
      * @extends base
      * @constructor
@@ -740,4 +736,3 @@ YUI.add('dd-drag', function(Y) {
     Y.namespace('DD');    
     Y.DD.Drag = Drag;
 
-}, '3.0.0', { requires: ['node', 'nodeextras', 'node-region', 'base', 'dd-ddm-base'] });

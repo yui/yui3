@@ -1,8 +1,12 @@
 YUI.add('dd-drop', function(Y) {
     /**
-    * Basic template for utilities that consume Nodes 
-    * @class Sample
-    */
+     * 3.x DragDrop
+     * @class Drop
+     * @module dd-drop
+     * @namespace DD
+     * @extends base
+     * @constructor
+     */
 
     var NODE = 'node',
         DDM = Y.DD.DDM,
@@ -145,7 +149,6 @@ YUI.add('dd-drop', function(Y) {
         */
         initializer: function() {
             this._createEvents();
-            this.addTarget(DDM);
         },
         /**
         * @private
