@@ -308,6 +308,7 @@ Y1.on('event:ready', function() {
 var Y = new YUI(yConfig2).use('node-region', 'dd-dragdrop-all');
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 Y.on('event:ready', function() {
+    Y.DD.DDM.useHash = false;
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
 
