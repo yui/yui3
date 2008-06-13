@@ -35,7 +35,9 @@ YUI.add("mouseplugin", function(Y) {
         },
 
         handler: function(evt) {
-            this.owner.fire(evt.type, evt);
+        	if (!this.owner.get("disabled")) {
+            	this.owner.fire(evt.type, evt);
+            }
         },
 
         destructor: function() {
