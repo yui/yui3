@@ -1176,6 +1176,7 @@ YUI.add('dd-proxy', function(Y) {
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
+                    zIndex: '999',
                     border: this.get('borderStyle')
                 });
 
@@ -1185,7 +1186,7 @@ YUI.add('dd-proxy', function(Y) {
                     bd.appendChild(p);
                 }
                 p.set('id', Y.stamp(p));
-                p.addClass('dd-proxy');
+                p.addClass('yui-dd-proxy');
                 DDM._proxy = p;
             }
         },
