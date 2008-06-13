@@ -723,4 +723,4 @@ YUI.add('dd-drag', function(Y) {
     Y.DD.Drag = Drag;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});

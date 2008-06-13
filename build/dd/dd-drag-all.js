@@ -239,7 +239,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node', 'nodeextras', 'base']});
+}, '@VERSION@' ,{requires:['node', 'nodeextras', 'base'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
     /**
@@ -354,7 +354,7 @@ YUI.add('dd-ddm', function(Y) {
     Y.DD.DDM._createPG();    
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-drag', function(Y) {
 
     /**
@@ -1080,7 +1080,7 @@ YUI.add('dd-drag', function(Y) {
     Y.DD.Drag = Drag;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
     /**
@@ -1250,7 +1250,7 @@ YUI.add('dd-proxy', function(Y) {
     Y.DD.Drag = Proxy;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
 YUI.add('dd-constrain', function(Y) {
 
     /**
@@ -1600,7 +1600,7 @@ YUI.add('dd-constrain', function(Y) {
     Y.DD.Drag = C;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
        /**
@@ -1628,7 +1628,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy']});
 
 
 YUI.add('dd-drag-all', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin']});

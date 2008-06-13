@@ -331,4 +331,4 @@ YUI.add('dd-ddm-drop', function(Y) {
     }, true);
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});

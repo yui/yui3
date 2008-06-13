@@ -112,4 +112,4 @@ YUI.add('dd-ddm', function(Y) {
     Y.DD.DDM._createPG();    
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});

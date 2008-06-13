@@ -350,4 +350,4 @@ YUI.add('dd-constrain', function(Y) {
     Y.DD.Drag = C;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});

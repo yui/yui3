@@ -1,5 +1,7 @@
 DragDrop 3.x
 
+Constraining to Viewport will not currently work, pending Node checkins
+
 Source Files:
     ddm-base.js         ==> Base DragDrop Manager
     ddm.js              ==> Adds shim support

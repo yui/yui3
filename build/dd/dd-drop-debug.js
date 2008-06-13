@@ -177,7 +177,8 @@ YUI.add('dd-drop', function(Y) {
                 return false;
             }
             
-            if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
+            //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) { //TODO
+            if (this.inGroup(DDM.activeDrag.get('groups'))) {
                 this.get(NODE).addClass('dd-drop-active-valid');
                 DDM.addValid(this);
                 this._active = false;
@@ -329,4 +330,4 @@ YUI.add('dd-drop', function(Y) {
     Y.DD.Drop = Drop;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop'], skinnable:false});

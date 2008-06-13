@@ -167,4 +167,4 @@ YUI.add('dd-proxy', function(Y) {
     Y.DD.Drag = Proxy;
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});

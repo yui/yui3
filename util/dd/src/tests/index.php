@@ -166,7 +166,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             top: -61px;
             left: -10px;
         }
-        .dd-proxy {
+        .yui-dd-proxy {
             background-color: red;
         }
 	</style>
@@ -427,7 +427,7 @@ Y.on('event:ready', function() {
     //}).addHandle('h2').addInvalid('h2.two');
     }).addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
     dd3.on('drag:drophit', function(e) {
-        console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
+        Y.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
     });
     /*
     dd3.on('drag:start', function(args) {
@@ -490,9 +490,9 @@ Y.on('event:ready', function() {
             //Y.log('drop:exit :: ', this.get('node').get('id'));
         });
         drop.on('drop:hit', function(e) {
-            console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
+            Y.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
             if (e.drag.get('data')) {
-                console.log('Payload: ', e.drag.get('data'));
+                Y.log('Payload: ', e.drag.get('data'));
             }
         });
         
