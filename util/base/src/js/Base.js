@@ -93,7 +93,8 @@
                 Y.aggregate(builtClass, extClass, true, aggregates);
             }
 
-            Y.augment(builtClass, extClass, true);
+            // Old augment
+            Y.mix(builtClass, extClass, true, null, 1);
 
             builtClass._build.exts.push(extClass);
             key = key + ":" + Y.stamp(extClass);
