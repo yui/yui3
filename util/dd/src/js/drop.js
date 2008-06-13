@@ -1,4 +1,3 @@
-YUI.add('dd-drop', function(Y) {
     /**
      * 3.x DragDrop
      * @class Drop
@@ -326,5 +325,3 @@ YUI.add('dd-drop', function(Y) {
     });
 
     Y.DD.Drop = Drop;
-
-}, '3.0.0', { requires: ['dd-ddm-drop', 'dd-drag'] });

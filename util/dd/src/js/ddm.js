@@ -1,4 +1,3 @@
-YUI.add('dd-ddm', function(Y) {
     /**
      * 3.x DragDrop Manager - Shim support
      * @module dd-ddm
@@ -109,5 +108,3 @@ YUI.add('dd-ddm', function(Y) {
     }, true);
 
     Y.DD.DDM._createPG();    
-
-}, '3.0.0', {requires: ['dd-ddm-base']});

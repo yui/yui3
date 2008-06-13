@@ -1,4 +1,3 @@
-YUI.add('dd-proxy', function(Y) {
     /**
      * 3.x DragDrop
      * @class Proxy
@@ -7,52 +6,89 @@ YUI.add('dd-proxy', function(Y) {
      * @extends Drag
      * @constructor
      */
+    var DDM = Y.DD.DDM,
+        NODE = 'node',
+        DRAG_NODE = 'dragNode',
+        FIRST_CHILD = 'firstChild',
+        PROXY = 'proxy';
+     
 
     var Proxy = function() {
         Proxy.superclass.constructor.apply(this, arguments);
 
     };
-    Proxy.NAME = 'DDProxy';
 
     Proxy.ATTRS = {
+        /**
+        * @attribute moveOnEnd
+        * @description Move the original node at the end of the drag. Default: true
+        * @type Boolean
+        */
         moveOnEnd: {
             value: true
         },
+        /**
+        * @attribute resizeFrame
+        * @description Make the Proxy node assume the size of the original node. Default: true
+        * @type Boolean
+        */
         resizeFrame: {
             value: true
         },
+        /**
+        * @attribute proxy
+        * @description Make this Draggable instance a Proxy instance. Default: false
+        * @type Boolean
+        */
+        proxy: {
+            writeOnce: true,
+            value: false
+        },        
+        /**
+        * @attribute positionProxy
+        * @description Make the Proxy node appear in the same place as the original node. Default: true
+        * @type Boolean
+        */
         positionProxy: {
             value: true
+        },
+        /**
+        * @attribute borderStyle
+        * @description The default border style for the border of the proxy. Default: 1px solid #808080
+        * @type Boolean
+        */
+        borderStyle: {
+            value: '1px solid #808080'
         }
     };
 
-    Y.extend(Proxy, Y.DD.Drag, {
+    var proto = {
         /**
         * @private
         * @method _createFrame
         * @description Create the proxy element if it doesn't already exist and set the DD.DDM._proxy value
         */
         _createFrame: function() {
-            if (!Y.DD.DDM._proxy) {
-                Y.DD.DDM._proxy = true;
+            if (!DDM._proxy) {
+                DDM._proxy = true;
                 var p = Y.Node.create(['div']),
                 bd = Y.Node.get('body');
 
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
-                    backgroundColor: 'red',
-                    border: '1px solid #808080'
+                    zIndex: '999',
+                    border: this.get('borderStyle')
                 });
 
-                if (bd.get('firstChild')) {
-                    bd.insertBefore(p, bd.get('firstChild'));
+                if (bd.get(FIRST_CHILD)) {
+                    bd.insertBefore(p, bd.get(FIRST_CHILD));
                 } else {
                     bd.appendChild(p);
                 }
                 p.set('id', Y.stamp(p));
-                p.addClass('dd-proxy');
-                Y.DD.DDM._proxy = p;
+                p.addClass('yui-dd-proxy');
+                DDM._proxy = p;
             }
         },
         /**
@@ -62,22 +98,23 @@ YUI.add('dd-proxy', function(Y) {
         * If positionProxy is set to true (default) it will position the proxy element in the same location as the Drag Element.
         */
         _setFrame: function() {
-            var n = this.get('node');
+            var n = this.get(NODE);
             if (this.get('resizeFrame')) {
-                Y.DD.DDM._proxy.setStyles({
+                DDM._proxy.setStyles({
                     height: n.get('clientHeight') + 'px',
                     width: n.get('clientWidth') + 'px'
                 });
             }
-            this.get('dragNode').setStyles({
+            this.get(DRAG_NODE).setStyles({
                 visibility: 'hidden',
-                display: 'block'
+                display: 'block',
+                border: this.get('borderStyle')
             });
 
             if (this.get('positionProxy')) {
-                this.get('dragNode').setXY(this.nodeXY);
+                this.get(DRAG_NODE).setXY(this.nodeXY);
             }
-            this.get('dragNode').setStyle('visibility', 'visible');
+            this.get(DRAG_NODE).setStyle('visibility', 'visible');
         },
         /**
         * @private
@@ -85,7 +122,9 @@ YUI.add('dd-proxy', function(Y) {
         * @description Lifecycle method
         */
         initializer: function() {
-            this._createFrame();
+            if (this.get(PROXY)) {
+                this._createFrame();
+            }
         },
         /**
         * @private
@@ -94,12 +133,16 @@ YUI.add('dd-proxy', function(Y) {
         */       
         start: function() {
             if (!this.get('lock')) {
-                if (this.get('dragNode').compareTo(this.get('node'))) {
-                    this.set('dragNode', Y.DD.DDM._proxy);
+                if (this.get(PROXY)) {
+                    if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
+                        this.set(DRAG_NODE, DDM._proxy);
+                    }
                 }
             }
             Proxy.superclass.start.apply(this);
-            this._setFrame();
+            if (this.get(PROXY)) {
+                this._setFrame();
+            }
         },
         /**
         * @private
@@ -107,21 +150,16 @@ YUI.add('dd-proxy', function(Y) {
         * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
         */        
         end: function() {
-            if (this.get('moveOnEnd')) {
-                this.get('node').setXY(this.lastXY);
+            if (this.get(PROXY)) {
+                if (this.get('moveOnEnd')) {
+                    this.get(NODE).setXY(this.lastXY);
+                }
+                this.get(DRAG_NODE).setStyle('display', 'none');
             }
-            this.get('dragNode').setStyle('display', 'none');
             Proxy.superclass.end.apply(this);
-        },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return Proxy.NAME + ' #' + this.get('node').get('id');
         }
-    });
-    Y.DD.Proxy = Proxy;
-
-}, '3.0.0', { requires: ['dd-drag'] });
+    };
+    //Extend DD.Drag
+    Y.extend(Proxy, Y.DD.Drag, proto);
+    //Set this new class as DD.Drag for other extensions
+    Y.DD.Drag = Proxy;

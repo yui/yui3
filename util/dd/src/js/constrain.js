@@ -1,4 +1,3 @@
-YUI.add('dd-constrain', function(Y) {
     /**
      * 3.x DragDrop
      * @class DragConstained
@@ -17,32 +16,65 @@ YUI.add('dd-constrain', function(Y) {
         C.superclass.constructor.apply(this, arguments);
 
     };
-    C.NAME = 'DragConstrained';
     
 
     C.ATTRS = {
+        /**
+        * @attribute stickX
+        * @description Stick the drag movement to the X-Axis. Default: false
+        * @type Boolean
+        */        
         stickX: {
             value: false
         },
+        /**
+        * @attribute stickY
+        * @description Stick the drag movement to the Y-Axis
+        * @type Boolean
+        */        
         stickY: {
             value: false
         },
+        /**
+        * @attribute tickX
+        * @description The X tick offset the drag node should snap to on each drag move. False for no ticks. Default: false
+        * @type Number/false
+        */        
         tickX: {
             value: false
         },
+        /**
+        * @attribute tickY
+        * @description The Y tick offset the drag node should snap to on each drag move. False for no ticks. Default: false
+        * @type Number/false
+        */        
         tickY: {
             value: false
         },
+        /**
+        * @attribute tickXArray
+        * @description An array of page coordinates to use as X ticks for drag movement.
+        * @type Array
+        */
         tickXArray: {
             value: false
         },
+        /**
+        * @attribute tickYArray
+        * @description An array of page coordinates to use as Y ticks for drag movement.
+        * @type Array
+        */
         tickYArray: {
             value: false
         },
+        /**
+        * @attribute constrain2region
+        * @description An Object Literal containing a valid region (top, right, bottom, left) of page positions to constrain the drag node to.
+        * @type Object
+        */
         constrain2region: {
             value: false,
             get: function(r) {
-                //TODO
                 if (Y.Lang.isObject(r)) {
                     var o = {};
                     Y.mix(o, r);
@@ -67,12 +99,22 @@ YUI.add('dd-constrain', function(Y) {
                 }
             }
         },
+        /**
+        * @attribute gutter
+        * @description CSS style string for the gutter of a region (supports negative values): '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)        
+        * @type String
+        */
         gutter: {
             value: '0',
             set: function(gutter) {
                 return Y.DD.DDM.cssSizestoObject(gutter);
             }
         },
+        /**
+        * @attribute constrain2node
+        * @description Will attempt to constrain the drag node to the bounderies of this node.
+        * @type Object
+        */
         constrain2node: {
             value: false,
             set: function(n) {
@@ -87,12 +129,17 @@ YUI.add('dd-constrain', function(Y) {
                 return false;
             }
         },
+        /**
+        * @attribute constrain2view
+        * @description Will attempt to constrain the drag node to the bounderies of the viewport region.
+        * @type Object
+        */
         constrain2view: {
             value: false
         }
     };
 
-    Y.extend(C, Y.DD.Drag, {
+    var proto = {
         /**
         * @method getRegion
         * @description Get the active region: viewport, node, custom region
@@ -294,7 +341,8 @@ YUI.add('dd-constrain', function(Y) {
 
             return xy;
         }
-    });
-    Y.DD.DragConstrained = C;
-
-}, '3.0.0', { requires: ['dd-drag'] });
+    };
+    //Extend DD.Drag
+    Y.extend(C, Y.DD.Drag, proto);
+    //Set this to DD.Drag for other extensions
+    Y.DD.Drag = C;

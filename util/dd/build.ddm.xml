@@ -2,7 +2,7 @@
 <project name="YUI" default="local">
     <property environment="env" />
 
-    <property file="build.properties" />
+    <property file="build.ddm.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

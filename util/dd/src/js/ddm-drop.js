@@ -1,4 +1,3 @@
-YUI.add('dd-ddm-drop', function(Y) {
     /**
      * 3.x DragDrop Manager - Drop support
      * @class DDM
@@ -328,7 +327,3 @@ YUI.add('dd-ddm-drop', function(Y) {
             return drop;
         }
     }, true);
-    
-
-
-}, '3.0.0', {requires: ['dd-ddm']});

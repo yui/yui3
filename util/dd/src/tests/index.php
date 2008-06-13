@@ -166,6 +166,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             top: -61px;
             left: -10px;
         }
+        .dd-proxy {
+            background-color: red;
+        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -210,39 +213,36 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <script type="text/javascript" src="../js/node-region.js?bust=<?php echo(mktime()); ?>"></script>
 
 
-    <script type="text/javascript" src="../js/ddm-base.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/ddm.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/ddm-drop.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/drag.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/drop.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/proxy.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="../js/constrain.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js?bust=<?php echo(mktime()); ?>"></script>
 
 <script type="text/javascript">
 var yConfig = {
+    
     logExclude: {
-        'YUI': true,
+        //'YUI': true,
         Event: true,
         Base: true,
         Attribute: true,
         augment: true
     } 
+    
 };
 var yConfig2 = {};
 YUI().mix(yConfig2, yConfig);
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-var Y1 = new YUI(yConfig).use('node-region', 'dd-ddm', 'dd-drag', 'dd-constrain', 'dd-proxy');
+var Y1 = new YUI(yConfig).use('node-region', 'dd-ddm', 'dd-proxy', 'dd-constrain');
 
 Y1.on('event:ready', function() {
 
     //Y1.DD.DDM._debugShim = true;
 
-    dd4 = new Y1.DD.DragConstrained({
+    dd4 = new Y1.DD.Drag({
         node: '#drag4',
         useShim: false,
-        //tickX: 25,
-        //tickY: 25,
+        proxy: true,
+        tickX: 25,
+        tickY: 25,
         //tickXArray: [10, 133, 245, 333, 388, 455, 488, 546, 667, 798, 892],
         //tickXArray: [133, 245, 333, 455, 488, 546, 667, 798, 892],
         //tickYArray: [249, 339, 459, 479, 579],
@@ -273,13 +273,15 @@ Y1.on('event:ready', function() {
     //}).addInvalid('strong.no');
     */
 
-    dd5 = new Y1.DD.Proxy({
+    dd5 = new Y1.DD.Drag({
         node: '#drag5',
+        proxy: true,
         moveOnEnd: false
     }).addInvalid('strong.no');
     //dd4.setHandle('#drag4Handle', true);
 
-    dd6 = new Y1.DD.Proxy({
+    dd6 = new Y1.DD.Drag({
+        proxy: true,
         node: '#drag6',
         resizeFrame: false,
         offsetNode: false
@@ -291,7 +293,8 @@ Y1.on('event:ready', function() {
             backgroundColor: 'blue'
         }).set('innerHTML', 'Dragging Me!!')
     });
-    dd7 = new Y1.DD.Proxy({
+    dd7 = new Y1.DD.Drag({
+        proxy: true,
         node: '#drag7',
         resizeFrame: false,
         offsetNode: false,
@@ -302,7 +305,7 @@ Y1.on('event:ready', function() {
 
 });
 
-var Y = new YUI(yConfig2).use('node-region', 'dd-drop', 'dd-scroll');
+var Y = new YUI(yConfig2).use('node-region', 'dd-dragdrop-all');
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 Y.on('event:ready', function() {
     //Y.DD.DDM._debugShim = true;
@@ -497,67 +500,6 @@ Y.on('event:ready', function() {
         
   
 });
-
-
-/* {{{ OLD DD Code
-(function() {
-    var Dom = YAHOO.util.Dom,
-        Event = YAHOO.util.Event;
-
-    Event.onDOMReady(function() {
-        var dd = new YAHOO.Drag('drag');
-        var dd2 = new YAHOO.Drag('drag2');
-        var dd3 = new YAHOO.Drop('anim_drop');
-
-        new YAHOO.Drop('fixed');
-
-        var b = Dom.get('play');
-        for (var i = 0; i < <?php echo($count); ?>; i++) {
-            el = document.createElement('div');
-            el.id = Dom.generateId();
-            el.className = 'drop';
-            el.innerHTML = 'Drop on Me';
-            b.appendChild(el);
-            new YAHOO.Drop(el);
-        }
-
-        <?php
-        if ($_GET['anim']) {
-        ?>
-        var anim = new YAHOO.util.Anim('anim_drop', {
-            left: {
-                from: 0,
-                to: 700
-            }
-        }, 10);
-        anim.onTween.subscribe(function() {
-            dd3.activateShim();
-        });
-        anim.onComplete.subscribe(function() {
-            //Loop animation
-            if (!dd3.overTarget) {
-                anim.attributes.left.from = 0;
-                anim.animate();
-            }
-        });
-        anim.animate();
-        dd3.onDragOver = function() {
-            //mimic a pause..
-            anim.attributes.left.from = parseInt(dd3.el.style.left, 10);
-            anim.stop();
-        };
-        dd3.onDragOut = function() {
-            anim.animate();
-        };
-        <?php
-        }
-        ?>
-    });
-
-
-})();
-}}} */
 </script>
 </body>
 </html>
-<?php @include_once($_SERVER["DOCUMENT_ROOT"]."/wp-content/plugins/shortstat/inc.stats.php"); ?>
