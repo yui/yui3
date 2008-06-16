@@ -127,7 +127,7 @@ property names rather than e.details[1]
         // Y.log('o1, o:1: ' + Y.Lang.dump(Y.Array(arguments)));
         Y.log('o1, o:1: ');
         this.fire('chain', 1, 2);
-        // e.halt();
+        e.halt();
     });
 
     o1.after('o:1', function(e) {

@@ -2206,9 +2206,9 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
         },
 
         /**
-         * Listen for this event.  The supplied callback is executed after any listeners
-         * added with the subscribe method, and after the default function has executed
-         * (if defined for this event).
+         * Listen for this event after the normal subscribers have been notified and
+         * the default behavior has been applied.  If a normal subscriber prevents the 
+         * default behavior, it also prevents after listeners from firing.
          * @method after
          * @param {Function} fn        The function to execute
          * @param {Object}   obj       An object to be passed along when the event fires
@@ -2430,27 +2430,29 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                     this.defaultFn.apply(this.host || this, args);
                 }
 
+                // process after listeners.  If the default behavior was
+                // prevented, the after events don't fire.
+                if (!this.prevented) {
+                    subs = Y.merge(this.afters);
+                    for (i in subs) {
+                        if (Y.Object.owns(subs, i)) {
 
-                // process after listeners
-                subs = Y.merge(this.afters);
-                for (i in subs) {
-                    if (Y.Object.owns(subs, i)) {
+                            if (!hasSub) {
+                                es.logging = (es.logging || (this.type === 'yui:log'));
+                                hasSub = true;
+                            }
 
-                        if (!hasSub) {
-                            es.logging = (es.logging || (this.type === 'yui:log'));
-                            hasSub = true;
-                        }
+                            // stopImmediatePropagation
+                            if (this.stopped == 2) {
+                                break;
+                            }
 
-                        // stopImmediatePropagation
-                        if (this.stopped == 2) {
-                            break;
-                        }
-
-                        s = subs[i];
-                        if (s && s.fn) {
-                            ret = this._notify(s, args);
-                            if (false === ret) {
-                                this.stopped = 2;
+                            s = subs[i];
+                            if (s && s.fn) {
+                                ret = this._notify(s, args);
+                                if (false === ret) {
+                                    this.stopped = 2;
+                                }
                             }
                         }
                     }
@@ -2823,7 +2825,7 @@ YUI.add("event-target", function(Y) {
             var o = opts || {}, events = this._yuievt.events, ce = events[type];
 
             if (ce) {
-                Y.log("publish() skipped: '"+type+"' exists");
+                Y.log("publish() skipped: '"+type+"' exists", 'info', 'Event');
 
                 // update config for the event
                 ce.applyConfig(o, true);
@@ -4041,8 +4043,8 @@ YUI.add("event-facade", function(Y) {
             y = e.clientY || 0;
 
             if (ua.ie) {
-                x += b.scrollLeft;
-                y += b.scrollTop;
+                x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
+                y += Math.max(d.documentElement.scrollTop, b.scrollTop);
             }
         }
 

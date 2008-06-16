@@ -138,8 +138,8 @@ YUI.add("event-facade", function(Y) {
             y = e.clientY || 0;
 
             if (ua.ie) {
-                x += b.scrollLeft;
-                y += b.scrollTop;
+                x += Math.max(d.documentElement.scrollLeft, b.scrollLeft);
+                y += Math.max(d.documentElement.scrollTop, b.scrollTop);
             }
         }
 

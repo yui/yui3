@@ -176,8 +176,8 @@
             <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">clientY</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">x</span> <span class="o">+=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollLeft</span><span class="o">;</span>
-                <span class="nx">y</span> <span class="o">+=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollTop</span><span class="o">;</span>
+                <span class="nx">x</span> <span class="o">+=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">scrollLeft</span><span class="o">,</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollLeft</span><span class="o">);</span>
+                <span class="nx">y</span> <span class="o">+=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">scrollTop</span><span class="o">,</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollTop</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
 

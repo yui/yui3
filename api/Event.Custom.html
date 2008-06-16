@@ -500,9 +500,9 @@ stopPropagation or stopImmediatePropagation
                                         </code>
                                         
                                         <div class="description">
-                                            Listen for this event.  The supplied callback is executed after any listeners
-added with the subscribe method, and after the default function has executed
-(if defined for this event).
+                                            Listen for this event after the normal subscribers have been notified and
+the default behavior has been applied.  If a normal subscriber prevents the 
+default behavior, it also prevents after listeners from firing.
                                         </div>
 
                                         <div class="description">

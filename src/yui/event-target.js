@@ -147,7 +147,7 @@ YUI.add("event-target", function(Y) {
             var o = opts || {}, events = this._yuievt.events, ce = events[type];
 
             if (ce) {
-                Y.log("publish() skipped: '"+type+"' exists");
+                Y.log("publish() skipped: '"+type+"' exists", 'info', 'Event');
 
                 // update config for the event
                 ce.applyConfig(o, true);
