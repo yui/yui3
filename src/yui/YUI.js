@@ -323,9 +323,6 @@ YUI.prototype = {
         // or the event call stack contains a consumer of the yui:log event
         if (c.debug && !bail) {
 
-
-            // Y.Env._lastlog = msg;
-
             if (c.useConsole && typeof console != 'undefined') {
 
                 // apply source filters

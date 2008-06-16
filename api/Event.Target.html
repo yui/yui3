@@ -124,70 +124,61 @@ be specified.
                                         void
                                             <strong>after</strong>
                                            (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Executes the callback after the given event or
-method hosted on this object.
-The signature differs based upon the type of
-item that is being wrapped.
-Custom Event: type, callback, context, 1-n additional arguments
-to append to the callback's argument list.
-Method: callback, object, methodName, context, 1-n additional 
-arguments to append to the callback's argument list.
+                                            Subscribe to a custom event hosted by this object.  The
+supplied callback will execute after any listeners add
+via the subscribe method, and after the default function,
+if configured for the event, has executed.
                                         </div>
 
                                         <div class="description">
 
-
                                                 <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>the detach handle</dd>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                                   The type of the event
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                              The callback
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;object&gt;</code>
+                                                             The execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             1..n params to supply to the callback
+                                                        </dd>
                                                 </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_before">before</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>before</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executes the callback before the given event or
-method hosted on this object.
-The signature differs based upon the type of
-item that is being wrapped.
-Custom Event: type, callback, context, 1-n additional arguments
-to append to the callback's argument list.
-Method: callback, object, methodName, context, 1-n additional 
-arguments to append to the callback's argument list.
-                                        </div>
-
-                                        <div class="description">
-
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
                                                         void
                                                     </code></dt>
-                                                    <dd>the detach handle</dd>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -493,11 +484,15 @@ the event.
                                                          context
                                                     
                                                 
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Subscribe to a Event.Custom by event type
+                                            Subscribe to a custom event hosted by this object
                                         </div>
 
                                         <div class="description">
@@ -506,16 +501,19 @@ the event.
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>type &lt;string&gt;</code>
-                                                                   The type, or name of the event
+                                                                   The type of the event
                                                         </dd>
                                                         <dd>
-                                                            <code>fn &lt;function&gt;</code>
-                                                                   The function to exectute when the event fires
+                                                            <code>fn &lt;Function&gt;</code>
+                                                              The callback
                                                         </dd>
                                                         <dd>
-                                                            <code>context &lt;Object&gt;</code>
-                                                                An object to be passed along when the event 
-fires
+                                                            <code>context &lt;object&gt;</code>
+                                                             The execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             1..n params to supply to the callback
                                                         </dd>
                                                 </dl>
 
@@ -686,7 +684,6 @@ be removed.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="array.html">array</a></li>
-                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
                                 <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
@@ -734,9 +731,6 @@ be removed.
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_after">after</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_before">before</a>
                                 </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_bubble">bubble</a>

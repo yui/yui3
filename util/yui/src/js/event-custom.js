@@ -1,6 +1,7 @@
 YUI.add("event-custom", function(Y) {
 
-    var onsubscribeType = "_event:onsub";
+    var onsubscribeType = "_event:onsub",
+        AFTER = 'after';
 
     /**
      * Return value from all subscribe operations
@@ -13,6 +14,7 @@ YUI.add("event-custom", function(Y) {
         if (!evt || !sub) {
             return null;
         }
+
         /**
          * The custom event
          * @type Event.Custom
@@ -53,7 +55,7 @@ YUI.add("event-custom", function(Y) {
     Y.CustomEvent = function(type, o) {
 
         if (arguments.length > 2) {
-            this.log('CustomEvent sig context and silent flags must be part of the config', 'error', 'Event');
+this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
         }
 
         o = o || {};
@@ -93,6 +95,14 @@ YUI.add("event-custom", function(Y) {
          * @type Event.Subscriber{}
          */
         this.subscribers = {};
+
+
+        /**
+         * 'After' subscribers
+         * @property afters
+         * @type Event.Subscriber{}
+         */
+        this.afters = {};
 
         /**
          * This event has fired if true
@@ -149,6 +159,22 @@ YUI.add("event-custom", function(Y) {
         this.defaultFn = null;
 
         /**
+         * The function to execute if a subscriber calls
+         * stopPropagation or stopImmediatePropagation
+         * @property stoppedFn
+         * @type Function
+         */
+        this.stoppedFn = null;
+
+        /**
+         * The function to execute if a subscriber calls
+         * preventDefault
+         * @property preventedFn
+         * @type Function
+         */
+        this.preventedFn = null;
+
+        /**
          * Specifies whether or not this event's default function
          * can be canceled by a subscriber by executing preventDefault() 
          * on the event facade 
@@ -197,17 +223,6 @@ YUI.add("event-custom", function(Y) {
                 });
         } 
 
-
-        /**
-         * In order to make it possible to execute the rest of the subscriber
-         * stack when one thows an exception, the subscribers exceptions are
-         * caught.  The most recent exception is stored in this property
-         * @property lastError
-         * @type Error
-         */
-        this.lastError = null;
-
-
     };
 
     Y.CustomEvent.prototype = {
@@ -223,50 +238,59 @@ YUI.add("event-custom", function(Y) {
             Y.mix(this, o, force);
         },
 
-        /**
-         * Subscribes the caller to this event
-         * @method subscribe
-         * @param {Function} fn        The function to execute
-         * @param {Object}   obj       An object to be passed along when the event 
-         *                             fires
-         * @param {boolean|Object}  override If true, the obj passed in becomes 
-         *                                   the execution context of the listener.
-         *                                   if an object, that object becomes the
-         *                                   the execution context.
-         * @return unsubscribe handle
-         */
-        subscribe: function(fn, obj) {
+
+        _subscribe: function(fn, obj, args, when) {
 
             if (!fn) {
-throw new Error("Invalid callback for CE: '" + this.type + "'");
+                Y.fail("Invalid callback for CE: " + this.type);
             }
 
             var se = this.subscribeEvent;
             if (se) {
-                se.fire.apply(se, arguments);
+                se.fire.apply(se, args);
             }
 
-            // bind context and extra params
-            // var m = (obj) ? Y.bind.apply(obj, arguments) : fn;
-            // var s = new Y.Subscriber(m);
-            // s.ofn = fn;
-
-            var s = new Y.Subscriber(fn, obj, Y.Array(arguments, 2, true));
+            var s = new Y.Subscriber(fn, obj, args, when);
 
 
             if (this.fireOnce && this.fired) {
-                this.lastError = null;
                 this._notify(s);
-
-                if (this.lastError) {
-                    throw this.lastError;
-                }
             }
 
-            this.subscribers[s.id] = s;
+            if (when == AFTER) {
+                this.afters[s.id] = s;
+            } else {
+                this.subscribers[s.id] = s;
+            }
 
             return new Y.EventHandle(this, s);
 
+        },
+
+        /**
+         * Listen for this event
+         * @method subscribe
+         * @param {Function} fn        The function to execute
+         * @param {Object}   obj       An object to be passed along when the event fires
+         * @param args* 1..n params to provide to the listener
+         * @return {Event.Handle} unsubscribe handle
+         */
+        subscribe: function(fn, obj) {
+            return this._subscribe(fn, obj, Y.Array(arguments, 2, true));
+        },
+
+        /**
+         * Listen for this event.  The supplied callback is executed after any listeners
+         * added with the subscribe method, and after the default function has executed
+         * (if defined for this event).
+         * @method after
+         * @param {Function} fn        The function to execute
+         * @param {Object}   obj       An object to be passed along when the event fires
+         * @param args* 1..n params to provide to the listener
+         * @return {Event.Handle} unsubscribe handle
+         */
+        after: function(fn, obj) {
+            return this._subscribe(fn, obj, Y.Array(arguments, 2, true), AFTER);
         },
 
         /**
@@ -317,7 +341,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret, wrap = this.emitFacade, a = (wrap) ? Y.Array(a) : args;
+            var ret, wrap = this.emitFacade, a = Y.Array(args);
             
             // emit an Event.Facade if this is that sort of event
             if (wrap) {
@@ -428,7 +452,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             } else {
 
                 // var subs = this.subscribers.slice(), len=subs.length,
-                var subs = Y.merge(this.subscribers), errors = [],
+                var subs = Y.merge(this.subscribers), s,
                            args=Y.Array(arguments, 0, true), i;
 
                 this.fired = true;
@@ -443,10 +467,7 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                     if (Y.Object.owns(subs, i)) {
 
                         if (!hasSub) {
-
                             es.logging = (es.logging || (this.type === 'yui:log'));
-                            // es.logging = (this.type === 'yui:log');
-
                             hasSub = true;
                         }
 
@@ -455,15 +476,11 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                             break;
                         }
 
-                        var s = subs[i];
+                        s = subs[i];
                         if (s && s.fn) {
-                            this.lastError = null;
                             ret = this._notify(s, args);
-                            if (this.lastError) {
-                                errors.push(this.lastError);
-                            }
                             if (false === ret) {
-                                break;
+                                this.stopped = 2;
                             }
                         }
                     }
@@ -488,9 +505,29 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
                 }
 
 
-                if (errors.length) {
-                    throw new Y.ChainedError(this.type + ': ' + 
-                        '1 or more subscriber errors: ' + errors[0].message, errors);
+                // process after listeners
+                subs = Y.merge(this.afters);
+                for (i in subs) {
+                    if (Y.Object.owns(subs, i)) {
+
+                        if (!hasSub) {
+                            es.logging = (es.logging || (this.type === 'yui:log'));
+                            hasSub = true;
+                        }
+
+                        // stopImmediatePropagation
+                        if (this.stopped == 2) {
+                            break;
+                        }
+
+                        s = subs[i];
+                        if (s && s.fn) {
+                            ret = this._notify(s, args);
+                            if (false === ret) {
+                                this.stopped = 2;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -570,6 +607,9 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         stopPropagation: function() {
             this.stopped = 1;
             Y.Env._eventstack.stopped = 1;
+            if (this.stoppedFn) {
+                this.stoppedFn.call(this.host || this, this);
+            }
         },
 
         /**
@@ -580,12 +620,18 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
         stopImmediatePropagation: function() {
             this.stopped = 2;
             Y.Env._eventstack.stopped = 2;
+            if (this.stoppedFn) {
+                this.stoppedFn.call(this.host || this, this);
+            }
         },
 
         preventDefault: function() {
             if (this.preventable) {
                 this.prevented = 1;
                 Y.Env._eventstack.prevented = 1;
+            }
+            if (this.preventedFn) {
+                this.preventedFn.call(this.host || this, this);
             }
         }
 
@@ -663,8 +709,15 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
          * @param args {Array} Arguments array for the subscriber
          */
         notify: function(defaultContext, args) {
-            var c = this.obj || defaultContext;
-            return this.wrappedFn.apply(c, args);
+            var c = this.obj || defaultContext, ret = true;
+
+            try {
+                ret = this.wrappedFn.apply(c, args);
+            } catch(e) {
+                Y.fail(this + ' failed: ' + e.message, e);
+            }
+
+            return ret;
         },
 
         /**
@@ -692,99 +745,5 @@ throw new Error("Invalid callback for CE: '" + this.type + "'");
             return "Subscriber " + this.id;
         }
     };
-
-/**
- * ChainedErrors wrap one or more exceptions thrown by a subprocess.
- *
- * @class ChainedError
- * @extends Error
- * @constructor
- * @param message {String} The message to display when the error occurs.
- * @param errors {Error[]} an array containing the wrapped exceptions
- */ 
-Y.ChainedError = function (message, errors){
-
-    arguments.callee.superclass.constructor.call(this, message);
-    
-    /*
-     * Error message. Must be duplicated to ensure browser receives it.
-     * @type String
-     * @property message
-     */
-    this.message = message;
-    
-    /**
-     * The name of the error that occurred.
-     * @type String
-     * @property name
-     */
-    this.name = "ChainedError";
-
-    /**
-     * The list of wrapped exception objects
-     * @type Error[]
-     * @property errors
-     */
-    this.errors = errors || [];
-
-    /**
-     * Pointer to the current exception
-     * @type int
-     * @property index
-     * @default 0
-     */
-    this.index = 0;
-};
-
-Y.extend(Y.ChainedError, Error, {
-
-    /**
-     * Returns a fully formatted error message.
-     * @method getMessage
-     * @return {String} A string describing the error.
-     */
-    getMessage: function () {
-        return this.message;
-    },
-    
-    /**
-     * Returns a string representation of the error.
-     * @method toString
-     * @return {String} A string representation of the error.
-     */
-    toString: function () {
-        return this.name + ": " + this.getMessage();
-    },
-    
-    /**
-     * Returns a primitive value version of the error. Same as toString().
-     * @method valueOf
-     * @return {String} A primitive value version of the error.
-     */
-    valueOf: function () {
-        return this.toString();
-    },
-
-    /**
-     * Returns the next exception object this instance wraps
-     * @method next
-     * @return {Error} the error that was thrown by the subsystem.
-     */
-    next: function() {
-        var e = this.errors[this.index] || null;
-        this.index++;
-        return e;
-    },
-
-    /**
-     * Append an error object
-     * @method add
-     * @param e {Error} the error object to append
-     */
-    add: function(e) {
-        this.errors.push(e);
-    }
-
-});
 
 }, "3.0.0");

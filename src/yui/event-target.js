@@ -42,20 +42,18 @@ YUI.add("event-target", function(Y) {
     ET.prototype = {
 
         /**
-         * Subscribe to a Event.Custom by event type
-         *
+         * Subscribe to a custom event hosted by this object
          * @method subscribe
-         * @param type    {string}   The type, or name of the event
-         * @param fn      {function} The function to exectute when the event fires
-         * @param context {Object}   An object to be passed along when the event 
-         *                            fires
+         * @param type    {string}   The type of the event
+         * @param fn {Function} The callback
+         * @param context The execution context
+         * @param args* 1..n params to supply to the callback
          */
-        subscribe: function(type, fn, context, p_override) {
+        subscribe: function(type, fn, context) {
 
             var ce = this._yuievt.events[type] || this.publish(type),
                 a = Y.Array(arguments, 1, true);
 
-            // return ce.subscribe(fn, context, p_override);
             return ce.subscribe.apply(ce, a);
 
         },
@@ -268,18 +266,20 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
             if (!evt.stopped && targs) {
 
                 for (var i in targs) {
-                    // @TODO need to provide the event target to the bubble target
+                    if (Y.Object.owns(targs, i)) {
+                        // @TODO need to provide the event target to the bubble target
 
-                    var t = targs[i], type = evt.type,
-                        ce = t.getEvent(type) || t.publish(type);
+                        var t = targs[i], type = evt.type,
+                            ce = t.getEvent(type) || t.publish(type);
 
-                    ce.target = evt.target;
+                        ce.target = evt.target;
 
-                    ret = ret && ce.fire.apply(ce, evt.details);
+                        ret = ret && ce.fire.apply(ce, evt.details);
 
-                    // stopPropagation() was called
-                    if (ce.stopped) {
-                        break;
+                        // stopPropagation() was called
+                        if (ce.stopped) {
+                            break;
+                        }
                     }
                 }
             }
@@ -288,53 +288,22 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
         },
 
         /**
-         * Executes the callback before the given event or
-         * method hosted on this object.
-         *
-         * The signature differs based upon the type of
-         * item that is being wrapped.
-         *
-         * Custom Event: type, callback, context, 1-n additional arguments
-         * to append to the callback's argument list.
-         *
-         * Method: callback, object, methodName, context, 1-n additional 
-         * arguments to append to the callback's argument list.
-         *
-         * @method before
-         * @return the detach handle
-         */
-        before: function() {
-
-            var a = Y.Array(arguments, 0, true);
-
-            // insert this object as method target
-            a.splice(1, 0, this);
-
-            // Y.log('ET:before- ' + Y.Lang.dump(a));
-
-            return Y.before.apply(Y, a);
-        },
-
-        /**
-         * Executes the callback after the given event or
-         * method hosted on this object.
-         *
-         * The signature differs based upon the type of
-         * item that is being wrapped.
-         *
-         * Custom Event: type, callback, context, 1-n additional arguments
-         * to append to the callback's argument list.
-         *
-         * Method: callback, object, methodName, context, 1-n additional 
-         * arguments to append to the callback's argument list.
-         *
+         * Subscribe to a custom event hosted by this object.  The
+         * supplied callback will execute after any listeners add
+         * via the subscribe method, and after the default function,
+         * if configured for the event, has executed.
          * @method after
-         * @return the detach handle
+         * @param type    {string}   The type of the event
+         * @param fn {Function} The callback
+         * @param context The execution context
+         * @param args* 1..n params to supply to the callback
          */
-        after: function() {
-            var a = Y.Array(arguments, 0, true);
-            a.splice(1, 0, this);
-            return Y.after.apply(Y, a);
+        after: function(type, fn) {
+            var ce = this._yuievt.events[type] || this.publish(type),
+                a = Y.Array(arguments, 1, true);
+
+            return ce.after.apply(ce, a);
+
         }
 
     };

@@ -79,21 +79,19 @@
     <span class="nx">ET</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
 
         <span class="c">/**</span>
-<span class="c">         * Subscribe to a Event.Custom by event type</span>
-<span class="c">         *</span>
+<span class="c">         * Subscribe to a custom event hosted by this object</span>
 <span class="c">         * @method subscribe</span>
-<span class="c">         * @param type    {string}   The type, or name of the event</span>
-<span class="c">         * @param fn      {function} The function to exectute when the event fires</span>
-<span class="c">         * @param context {Object}   An object to be passed along when the event </span>
-<span class="c">         *                            fires</span>
+<span class="c">         * @param type    {string}   The type of the event</span>
+<span class="c">         * @param fn {Function} The callback</span>
+<span class="c">         * @param context The execution context</span>
+<span class="c">         * @param args* 1..n params to supply to the callback</span>
 <span class="c">         */</span>
-        <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">,</span> <span class="nx">p_override</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
                 <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
-            <span class="c">// return ce.subscribe(fn, context, p_override);</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
         <span class="o">},</span>
 
@@ -305,18 +303,20 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// @TODO need to provide the event target to the bubble target</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">targs</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="c">// @TODO need to provide the event target to the bubble target</span>
 <span class="c"></span>
-                    <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
-                        <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+                        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
+                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
 
-                    <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
 
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
+                        <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
 
-                    <span class="c">// stopPropagation() was called</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">break</span><span class="o">;</span>
+                        <span class="c">// stopPropagation() was called</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">ce</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">break</span><span class="o">;</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
@@ -325,53 +325,22 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Executes the callback before the given event or</span>
-<span class="c">         * method hosted on this object.</span>
-<span class="c">         *</span>
-<span class="c">         * The signature differs based upon the type of</span>
-<span class="c">         * item that is being wrapped.</span>
-<span class="c">         *</span>
-<span class="c">         * Custom Event: type, callback, context, 1-n additional arguments</span>
-<span class="c">         * to append to the callback&#39;s argument list.</span>
-<span class="c">         *</span>
-<span class="c">         * Method: callback, object, methodName, context, 1-n additional </span>
-<span class="c">         * arguments to append to the callback&#39;s argument list.</span>
-<span class="c">         *</span>
-<span class="c">         * @method before</span>
-<span class="c">         * @return the detach handle</span>
-<span class="c">         */</span>
-        <span class="nx">before</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-
-            <span class="c">// insert this object as method target</span>
-<span class="c"></span>            <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-
-            <span class="c">// Y.log(&#39;ET:before- &#39; + Y.Lang.dump(a));</span>
-<span class="c"></span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">before</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Executes the callback after the given event or</span>
-<span class="c">         * method hosted on this object.</span>
-<span class="c">         *</span>
-<span class="c">         * The signature differs based upon the type of</span>
-<span class="c">         * item that is being wrapped.</span>
-<span class="c">         *</span>
-<span class="c">         * Custom Event: type, callback, context, 1-n additional arguments</span>
-<span class="c">         * to append to the callback&#39;s argument list.</span>
-<span class="c">         *</span>
-<span class="c">         * Method: callback, object, methodName, context, 1-n additional </span>
-<span class="c">         * arguments to append to the callback&#39;s argument list.</span>
-<span class="c">         *</span>
+<span class="c">         * Subscribe to a custom event hosted by this object.  The</span>
+<span class="c">         * supplied callback will execute after any listeners add</span>
+<span class="c">         * via the subscribe method, and after the default function,</span>
+<span class="c">         * if configured for the event, has executed.</span>
 <span class="c">         * @method after</span>
-<span class="c">         * @return the detach handle</span>
+<span class="c">         * @param type    {string}   The type of the event</span>
+<span class="c">         * @param fn {Function} The callback</span>
+<span class="c">         * @param context The execution context</span>
+<span class="c">         * @param args* 1..n params to supply to the callback</span>
 <span class="c">         */</span>
-        <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">a</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">1</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
-            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="nx">after</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuievt</span><span class="o">.</span><span class="nx">events</span><span class="o">[</span><span class="nx">type</span><span class="o">]</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span>
+                <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">1</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+
         <span class="o">}</span>
 
     <span class="o">};</span>
@@ -412,7 +381,6 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="array.html">array</a></li>
-                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
                                 <li class=""><a href="Event.Facade.html">Event.Facade</a></li>

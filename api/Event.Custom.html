@@ -112,6 +112,21 @@ the debug system
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
+                                    <h4><a name="property_afters">afters</a>
+                                        <code>- Event.Subscriber{}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            'After' subscribers
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_bubbles">bubbles</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -218,23 +233,6 @@ to enable event bubbling
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_lastError">lastError</a>
-                                        <code>- Error</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            In order to make it possible to execute the rest of the subscriber
-stack when one thows an exception, the subscribers exceptions are
-caught.  The most recent exception is stored in this property
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
                                     <h4><a name="property_preventable">preventable</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -271,6 +269,22 @@ if it is not 0, the default behavior for this event
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_preventedFn">preventedFn</a>
+                                        <code>- Function</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The function to execute if a subscriber calls
+preventDefault
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_silent">silent</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -295,6 +309,22 @@ to true to disable debug outpu for this event.
                                             Flag for stopPropagation that is modified during fire()
 1 means to stop propagation to bubble targets.  2 means
 to also stop additional subscribers on this target.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_stoppedFn">stoppedFn</a>
+                                        <code>- Function</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The function to execute if a subscriber calls
+stopPropagation or stopImmediatePropagation
                                         </div>
                                     </div>
      
@@ -435,6 +465,70 @@ to also stop additional subscribers on this target.
                                                         void
                                                     </code></dt>
                                                     <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_after">after</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Event.Handle
+                                            <strong>after</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         obj
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Listen for this event.  The supplied callback is executed after any listeners
+added with the subscribe method, and after the default function has executed
+(if defined for this event).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                                    The function to execute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>obj &lt;Object&gt;</code>
+                                                                   An object to be passed along when the event fires
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             1..n params to provide to the listener
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Event.Handle
+                                                    </code></dt>
+                                                    <dd>unsubscribe handle</dd>
                                                 </dl>
              
                                         </div>
@@ -684,7 +778,7 @@ subscribers on the current target from executing.
                                         
                                         
                                         
-                                        void
+                                        Event.Handle
                                             <strong>subscribe</strong>
                                            (
                                                 
@@ -697,14 +791,14 @@ subscribers on the current target from executing.
                                                     
                                                 
                                                         , 
-                                                         override
+                                                         args*
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Subscribes the caller to this event
+                                            Listen for this event
                                         </div>
 
                                         <div class="description">
@@ -717,22 +811,18 @@ subscribers on the current target from executing.
                                                         </dd>
                                                         <dd>
                                                             <code>obj &lt;Object&gt;</code>
-                                                                   An object to be passed along when the event 
-fires
+                                                                   An object to be passed along when the event fires
                                                         </dd>
                                                         <dd>
-                                                            <code>override &lt;boolean|Object&gt;</code>
-                                                             If true, the obj passed in becomes 
-the execution context of the listener.
-if an object, that object becomes the
-the execution context.
+                                                            <code>args* &lt;object&gt;</code>
+                                                             1..n params to provide to the listener
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Event.Handle
                                                     </code></dt>
                                                     <dd>unsubscribe handle</dd>
                                                 </dl>
@@ -974,7 +1064,6 @@ the execution context.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="array.html">array</a></li>
-                                <li class=""><a href="ChainedError.html">ChainedError</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class="selected"><a href="Event.Custom.html">Event.Custom</a></li>
                                 <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
@@ -1016,6 +1105,9 @@ the execution context.
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_afters">afters</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_bubbles">bubbles</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
@@ -1034,19 +1126,22 @@ the execution context.
                                 <li class=""><a href="#property_host">host</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_lastError">lastError</a>
-                                        <!--<code>&lt;string&gt;</code>-->
-                                </li>
                                 <li class=""><a href="#property_preventable">preventable</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_prevented">prevented</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_preventedFn">preventedFn</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_silent">silent</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_stopped">stopped</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_stoppedFn">stoppedFn</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_subscribers">subscribers</a>
@@ -1067,6 +1162,9 @@ the execution context.
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__notify">_notify</a>
                                 </li>
+                                <li class=""><!--<code>Event.Handle</code>-->
+                                <a href="#method_after">after</a>
+                                </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_applyConfig">applyConfig</a>
                                 </li>
@@ -1082,7 +1180,7 @@ the execution context.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_stopPropagation">stopPropagation</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>Event.Handle</code>-->
                                 <a href="#method_subscribe">subscribe</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->

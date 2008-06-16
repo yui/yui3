@@ -413,3 +413,10 @@ Custom events are queued to make bubble sequence sane
 cancelable -> preventable
 canQueue -> queuable
 
+
+-------------------------
+
+Removed ChainedError
+Custom event errors now invoke Y.fail, which can be configured to throw the error or log
+Removed Event.Target.before
+Implemented Event.Target.after

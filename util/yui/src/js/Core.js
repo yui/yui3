@@ -32,61 +32,6 @@ YUI.add("core", function(Y) {
         } : function() {};
    
 
-    // var Ext = function() { };
-    // Ext.prototype = {
-        /*
-         * Execute a superclass method or constructor
-         * @method Super
-         * @param m {string} method name to execute.  If falsy, the 
-         * constructor is executed. 
-         * @param {String*} arguments 1-n arguments to apply.
-         *
-         * @todo the caller args don't seem to be avail in all browsers
-         * (Opera) ... find another approach or abandon that aspect of
-         * the helper method.
-         *
-         * Super(); -- not supported
-         *
-         * Super(null, arg1, arg2);
-         *
-         * Super('methodname'); -- not supported
-         *
-         * Super('methodname', arg1, arg2);
-         *
-         */
-        /*
-        Super: function(m) {
-
-            //  var args = arguments,
-            //      a = (args.length > 1) ?
-            //              Y.Array(args, 1, true) :
-            //              args.callee.caller["arguments"],
-            //      s = this.constructor.superclass;
-
-            // var args = arguments, s = this.constructor.superclass, a;
-            // if (args.length > 1) {
-            //     a = Y.Array(args, 1, true);
-            // } else {
-            //     var c = args.callee.caller;
-            //     a = (c && "arguments" in c) ? c.arguments : [];
-            // }
-
-            var a = Y.Array(arguments, 1, true), s = this.constructor.superclass;
-
-            if (m) {
-                if (m in s) {
-                    s[m].apply(this, a);
-                } else {
-                    Y.fail(m + " super method not found");
-                }
-            } else {
-                s.constructor.apply(this, a);
-            }
-        }
-    };
-
-    */
-
     /**
      * Returns a new object containing all of the properties of
      * all the supplied objects.  The properties from later objects
