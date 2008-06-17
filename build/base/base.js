@@ -330,8 +330,7 @@ YUI.add('base', function(Y) {
 
         // Y.EventTarget over-rides for name prefix and before support
         on : function() {
-            this.subscribe.apply(this, arguments);
-            return this;
+            return this.subscribe.apply(this, arguments);
         },
 
         subscribe : function() {
