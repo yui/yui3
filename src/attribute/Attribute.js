@@ -1,4 +1,5 @@
     var O = Y.Object,
+
         DOT = ".",
         CHANGE = "Change",
         GET = "get",
@@ -6,7 +7,9 @@
         VALUE = "value",
         CLONE = "clone",
         READ_ONLY = "readonly",
-        VALIDATOR = "validator";
+        VALIDATOR = "validator",
+
+        CLONE_ENUM;
 
     /**
      * Manages attributes
@@ -24,13 +27,14 @@
      * @static
      * @final
      * @type {Object}
-     *
+     * <p>
      * Constants for clone formats supported by Attribute
-     * 
+     * </p>
+     * <p>
      * By default attribute values returned by the get method
      * are not cloned. However setting the attribute's "clone"
      * property to:
-     * 
+     * </p>
      * <dl>
      *     <dt>Attribute.CLONE.DEEP</dt>
      *     <dd>Will result in a deep cloned value being returned
@@ -64,14 +68,14 @@
         IMMUTABLE: 3
     };
 
-    var CLONE_ENUM = Attribute.CLONE;
+    CLONE_ENUM = Attribute.CLONE;
 
-    function _fireChange(type, currVal, newVal, attrName, strFullPath, opts) {
+    function _fireChange(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
         type = type + CHANGE;
 
         // TODO: Publishing temporarily,
         // while we address event bubbling.
-        this.publish(type, {queuable:false});
+        this.publish(type, {queuable:false, defaultFn:this._defAttrSet});
 
         var eData = {
             type: type,
@@ -106,7 +110,7 @@
          * Adds an attribute.
          * @method add
          * @param {String} name The attribute key
-         * @param {Object} val (optional) The attribute value
+         * @param {Object} val (optional) The attribute configuration
          */
         addAtt: function(name, hash) {
             Y.log('adding attribute: ' + name, 'info', 'Attribute');
@@ -169,9 +173,6 @@
             var conf = this._conf,
                 strPath,
                 path,
-                setFn,
-                validatorFn,
-                retVal,
                 currVal;
 
             if (name.indexOf(DOT) !== -1) {
@@ -205,7 +206,30 @@
                }
             }
 
-            setFn = conf.get(name, SET);
+            /*
+            if (path) {
+                _fireChange.call(this, strPath, currVal, val, name, strPath, defaultFn, opts);
+            }
+            */
+            _fireChange.call(this, name, currVal, val, name, strPath, opts);
+
+            return this;
+        },
+
+        /**
+         * Default handler implementation for set events
+         *
+         * @private
+         * @param {EventFacade} CustomEvent Facade
+         */
+        _defAttrSet : function(e) {
+            var conf = this._conf,
+                name = e.attrName,
+                val = e.newVal,
+                retVal,
+                valFn  = conf.get(name, VALIDATOR),
+                setFn = conf.get(name, SET);
+
             if (setFn) {
                 retVal = setFn.call(this, val);
                 if (retVal !== undefined) {
@@ -214,16 +238,9 @@
                 }
             }
 
-            validatorFn = conf.get(name, VALIDATOR);
-            if (!validatorFn || validatorFn.call(this, val)) {
+            if (!valFn || valFn.call(this, val)) {
                 conf.add(name, { value: val });
-                if (path) {
-                    _fireChange.call(this, strPath, currVal, val, name, strPath, opts);
-                }
-                _fireChange.call(this, name, currVal, val, name, strPath, opts);
             }
-
-            return this;
         },
 
         /**
@@ -316,7 +333,6 @@
                     o[att] = val; 
                 });
             }
-
             return o;
         },
 

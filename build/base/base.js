@@ -25,6 +25,12 @@ YUI.add('base', function(Y) {
      * @uses Attribute
      */
     var Base = function() {
+
+        // Hack: Augment doesn't seem to be invoking the constructor without this.
+        // Calling getEvent(which is a method not over-ridden by Base) causes
+        // Y.augment supercedes replacement to kick in
+        this.getEvent("init");
+
         this.init.apply(this, arguments);
     };
 
@@ -177,7 +183,7 @@ YUI.add('base', function(Y) {
 
     // TODO - Work in progress
     Base.create = function(main, features, args) {
-        var c = Y.Base.build(main, features, {dynamic:true}),
+        var c = Base.build(main, features, {dynamic:true}),
             cArgs = Y.Array(arguments, 2, true);
 
         function F(){}
@@ -207,97 +213,49 @@ YUI.add('base', function(Y) {
             // Set name to class, to use for events.
             this.name = this.constructor.NAME;
 
-            if (this.fire('beforeInit') !== Y.CANCEL) {
-                Y.Base._instances[Y.stamp(this)] = this;
-
-                this._eventHandles = {};
-
-                // initialize top down ( Base init'd first )
-                this._initHierarchy(config);
-                this.initialized = true;
-            }
+            this.publish("init", {
+                defaultFn:this._defInitFn
+            });
+            this.fire("init", config);
             return this;
         },
 
         /**
-         * Init lifecycle method, invoked during 
+         * Init lifecycle method, invoked during
          * construction.
-         * 
+         *
          * Provides beforeDestroy and destroy lifecycle events
-         * 
+         *
          * @method destroy
          * @final
          */
         destroy: function() {
-
-            if (this.fire('beforeDestroy') !== Y.CANCEL) {
-
-                 // destruct bottom up ( Base destroyed last )
-                this._destroyHierarchy();
-                this.destroyed = true;
-
-                this.fire('destroy');
-            }
+            this.publish("destroy", {
+                defaultFn: this._defDestroyFn
+            });
+            this.fire("destroy");
             return this;
         },
 
         /**
-         * Utility methods, to register and unregister listeners in 
-         * named categories. This will save the handles for the listeners,
-         * keyed by the category name.
-         *
-         * TODO: Work in progress
-         * 
-         * @param {String} category
-         * @param {Object} listeners
-         * @param {Boolean} replace
+         * @method _defInitFn
+         * @private
          */
-        // TODO - work in progress
-        attachListeners: function(category, listeners, replace) {
-            var e = this._eventHandles, 
-                    handles;
+        _defInitFn : function(config) {
+            Base._instances[Y.stamp(this)] = this;
+            this._eventHandles = {};
 
-            if (!e[category]) {
-                e[category] = handles = [];
-
-                // Not using Y.bind, to avoid the extra call/apply wrapper
-                Y.each(listeners, function(value, key, object) {
-                    if (key.indexOf(":") !== -1) {
-                        // TODO: Say if we want to listen for "button:click" in editor (event bubbling)?
-                        handles[handles.length] = Y.on(key, value);
-                    } else {
-                        handles[handles.length] = this.on(key, value);
-                    }
-                }, this);
-
-            } else {
-                if (replace) {
-                    this.detachListeners(category);
-                    this.attachListeners(category, listeners);
-                }
-            }
+            this._initHierarchy(config);
+            this.initialized = true;
         },
 
         /**
-         * Detach the given category of listeners, attached
-         * using attachListeners
-         *
-         * TODO: Work in progress
-         * 
-         * @param {String} category
-         *
+         * @method _defDestroyFn
+         * @private
          */
-        // TODO - Work in progress
-        detachListeners: function(category) {
-            var e = this._eventHandles;
-            var handles = e[category];
-            if (handles) {
-                var l = handles.length;
-                for (var h = 0; h < l; h++) {
-                    h.detach();
-                }
-                delete e[category];
-            }
+        _defDestroyFn : function() {
+            this._destroyHierarchy();
+            this.destroyed = true;
         },
 
         /**
@@ -334,7 +292,6 @@ YUI.add('base', function(Y) {
                 classes = this._getClasses();
 
             for (var ci = 0, cl = classes.length; ci < cl; ci++) {
-
                 constr = classes[ci];
 
                 if (constr._build && constr._build.exts && !constr._build.dynamic) {
@@ -373,7 +330,8 @@ YUI.add('base', function(Y) {
 
         // Y.EventTarget over-rides for name prefix and before support
         on : function() {
-            return this.subscribe.apply(this, arguments);
+            this.subscribe.apply(this, arguments);
+            return this;
         },
 
         subscribe : function() {
@@ -396,33 +354,13 @@ YUI.add('base', function(Y) {
             var a = arguments;
             a[0] = _prefixType(a[0], this);
             return ETP.publish.apply(this, a);
-        }
-
-        /*
-        ,
-        before : function(type, fn) {
-            this._before = this._before || {};
-
-            var b = this._before;
-            type = _prefixType(type, this);
-            b[type] = b[type] || [];
-            b[type].push(fn);
         },
 
-        _fireBefore : function(e) {
-            e.type = _prefixType(e.type, this);
-
-            if (this._before && this._before[e.type]) {
-                var sub = this._before[e.type];
-                for (var i = 0, len = sub.length; i < len; ++i) {
-                    if (e._cancel) {
-                        break;
-                    }
-                    sub[i].call(this, e);
-                }
-            }
+        after : function() {
+            var a = arguments;
+            a[0] = _prefixType(a[0], this);
+            return ETP.after.apply(this, a);
         }
-        */
     };
 
     Y.augment(Base, Y.Attribute);

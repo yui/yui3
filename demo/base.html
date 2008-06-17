@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Base.build</title>
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../util/yui/src/js/State.js"></script>
+    <script type="text/javascript" src="../build/attribute/attribute.js"></script>
+    <script type="text/javascript" src="../build/base/base.js"></script>
+
+    <script type="text/javascript">
+    (function() {
+        var Y = YUI().use("dump", "base");
+
+        // ----- Main Class -----
+
+        function ClassOne(config) {
+            ClassOne.superclass.constructor.apply(this, arguments);
+        }
+
+        ClassOne.NAME = "main";
+
+        ClassOne.ATTRS = {
+            mainA : {
+                value: "mainA"
+            },
+
+            mainB : {
+                value: "mainB"
+            }
+        };
+
+        Y.extend(ClassOne, Y.Base, {
+            methodA : function() {
+                Y.log("ClassOne called - Attr value:" + this.get("mainA"));
+            },
+
+            methodB : function() {
+                Y.log("ClassOne methodB called - Attr value:" + this.get("mainB"));
+            },
+
+            initializer : function() {
+                Y.log("ClassOne initializer");
+            }
+        });
+
+        function ClassTwo(config) {
+            ClassTwo.superclass.constructor.apply(this, arguments);
+        }
+
+        ClassTwo.NAME = "classTwo";
+        
+        ClassTwo.ATTRS = {
+            mainC : {
+                value : {
+                    "c1": {
+                        "c11" : 5
+                    },
+                    "c2" : "Bar",
+                    "c3" : {
+                        "c31" : [1,2,3]
+                    }
+                }
+            }
+        };
+
+        Y.extend(ClassTwo, ClassOne, {
+            methodC : function() {
+                Y.log("ClassTwo methodC called - Attr value:" + this.get("mainA"));
+            },
+
+            methodD : function() {
+                Y.log("Main methodB called - Attr value:" + this.get("mainB"));
+            },
+
+            initializer : function() {
+                Y.log("ClassTwo initializer");
+            }
+        });
+
+        x = new ClassTwo({
+            "mainC.c1.c11" : 7,
+            "mainA" : "newMainA",
+            "mainB" : "newMainB"
+        });
+
+        x.methodA();
+        x.methodC();
+
+        /*
+        x.on("mainC.c1.c11Change", function(e) {
+            Y.log("SubValue Change:" + e.newVal.c1.c11, "warn");
+        });
+        */
+
+        x.on("mainCChange", function(e) {
+            Y.log("Main Value Change:" + e.newVal.c1.c11, "warn");
+        });
+
+        x.set("mainC",  {
+            "c1": {
+                "c11" : 12
+            },
+            "c2" : "Bar",
+            "c3" : {
+                "c31" : [1,2,3]
+            }
+        });
+
+        x.on("destroy", function() {
+            Y.log("On Destroy");
+        });
+
+        x.after("destroy", function() {
+            Y.log("After Destroy");
+        });
+        
+        x.destroy();
+    })();
+    </script>
+</head>
+<body>
+</body>
+</html>
