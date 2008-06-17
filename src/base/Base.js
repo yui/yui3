@@ -17,7 +17,7 @@
      * Provides a base class for managed attribute based
      * objects, which automates chaining of init and destroy
      * lifecycle methods and automatic instantiation of
-     * registered Attributes, through the static ATTR property
+     * registered Attributes, through the static ATTRS property
      *
      * @class Base
      * @uses Attribute
@@ -29,13 +29,12 @@
         // Calling getEvent(which is a method not over-ridden by Base) causes
         // Y.augment supercedes replacement to kick in
         this.getEvent("init");
-
         this.init.apply(this, arguments);
     };
-
     Base.NAME = 'base';
-    Base._instances = {};
 
+    var _instances = {};
+    
     // TODO, Work in progress
     Base.build = function(main, extensions, cfg) {
 
@@ -243,9 +242,7 @@
          * @private
          */
         _defInitFn : function(config) {
-            Base._instances[Y.stamp(this)] = this;
-            this._eventHandles = {};
-
+            _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
             this.initialized = true;
         },
@@ -256,6 +253,7 @@
          */
         _defDestroyFn : function() {
             this._destroyHierarchy();
+            delete _instances[this._yuid];
             this.destroyed = true;
         },
 
