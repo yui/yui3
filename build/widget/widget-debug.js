@@ -234,664 +234,745 @@ YUI.add("plugin", function(Y) {
     Y.Plugin = Plugin;
 }, "3.0.0");
 
+(function() {
 
-YUI.add("widget", function(Y) {
+    var M = function(Y) {
 
-    var P = Y.Plugin,
-        L = Y.Lang;
+        var P = Y.Plugin,
+            L = Y.Lang;
 
-    // String constants
-    var PREFIX = "yui-",
-        HIDDEN = PREFIX + "hidden",
-        DISABLED = PREFIX + "disabled",
-        WIDTH = "width",
-        HEIGHT = "height";
+        // String constants
+        var _CSS_CLASS_NAME_PREFIX = "yui-",
+            _CONTENT_BOX_CSS_CLASS_NAME_SUFFIX = "-content",
+            _HIDDEN_CSS_CLASS_NAME_SUFFIX = "-hidden",
+            _DISABLED_CSS_CLASS_NAME_SUFFIX = "-disabled",
+            _FOCUS_CSS_CLASS_NAME_SUFFIX = "-focus",
+            _WIDTH = "width",
+            _HEIGHT = "height";
 
-    // Widget nodeid-to-instance map for now, 1-to-1. 
-    // Expand to nodeid-to-arrayofinstances if required.
-    var _instances = {};
-
-    /**
-     * A base class for widgets, providing:
-     * <ul>
-     *    <li>The render lifecycle method, in addition to the init and destroy 
-     *        lifecycle methods provide by Base</li>
-     *    <li>Abstract methods to support consistent MVC structure across 
-     *        widgets: renderer, initUI, syncUI</li>
-     *    <li>Event subscriber support when binding listeners for model and ui 
-     *        synchronization: onUI, setUI</li>
-     *    <li>Support for common widget attributes, such as id, node, visible, 
-     *        disabled, strings</li>
-     *    <li>Plugin registration and activation support</li>
-     * </ul>
-     *
-     * @param config {Object} Object literal specifying widget configuration 
-     * properties (may container both attribute and non attribute configuration).
-     * 
-     * @class YUI.Widget
-     * @extends YUI.Base
-     */
-    function Widget(config) {
-        Y.log('constructor called', 'life', 'Widget');
-
-        this.uid = Y.guid("widget");
-        this.rendered = false;
-        this._plugins = {};
-
-        if (!config.root) { // create from template if no root provided
-            config = Y.merge(config);
-            config.root = Y.Node.create(this.constructor.TEMPLATE);
-        }
-
-        Widget.superclass.constructor.apply(this, arguments);
-    }
-
-    /**
-     * Static property provides a string to identify the class.
-     * Currently used to apply class identifiers to the root node
-     * and to classify events fired by the widget.
-     *
-     * @property YUI.Widget.NAME
-     * @type {String}
-     * @static
-     */
-    Widget.NAME = "widget";
-
-    Widget.TEMPLATE = ['div'];
-
-    /**
-     * Static property used to define the default attribute 
-     * configuration for the Widget.
-     * 
-     * @property YUI.Widget.ATTRS
-     * @type {Object}
-     */
-    Widget.ATTRS = {
-        root: {
-            // TODO: Write once? Not an attr?
-            set: function(val) {
-                return this._initNode(val);
-            }
-        },
-
-        disabled: {
-            value: false
-        },
-
-        visible: {
-            value: true
-        },
-
-        height: {
-            // Default to not set on element style
-            value:""
-        },
-
-        width: {
-            // Default to not set on element style
-            value:""
-        },
-
-        strings: {
-            // Widget UI strings go here
-        }
-    };
-
-    /**
-     * Obtain Widget instances by root node id.
-     *
-     * @method YUI.Widget.getByNodeId
-     * @param id {String} Id used to identify the widget uniquely.
-     * @return {Widget} Widget instance
-     */
-    Widget.getByNodeId = function(id) {
-        return _instances[id];
-    };
-
-    var proto = {
+        // Widget nodeid-to-instance map for now, 1-to-1. 
+        // Expand to nodeid-to-arrayofinstances if required.
+        var _instances = {};
 
         /**
-         * Initializer lifecycle implementation for the Widget class.
-         * 
-         * Base.init will invoke all prototype.initializer methods, for the
-         * class hierarchy (starting from Base), after all attributes have 
-         * been configured.
-         * 
-         * @param  config {Object} Configuration obejct literal for the widget
-         */
-        initializer: function(config) {
-            Y.log('initializer called', 'life', 'Widget');
-
-            this._initPlugins(config);
-
-            if (this.id) {
-                _instances[this.id] = this;
-            }
-        },
-
-        /**
-         * Descructor lifecycle implementation for the Widget class.
-         * 
-         * Base.destroy will invoke all prototype.destructor methods, for the
-         * class hierarchy (starting from the lowest sub-class).
+         * A base class for widgets, providing:
+         * <ul>
+         *    <li>The render lifecycle method, in addition to the init and destroy 
+         *        lifecycle methods provide by Base</li>
+         *    <li>Abstract methods to support consistent MVC structure across 
+         *        widgets: renderer, initUI, syncUI</li>
+         *    <li>Support for common widget attributes, such as id, node, visible, 
+         *        disabled, strings</li>
+         *    <li>Plugin registration and activation support</li>
+         * </ul>
          *
+         * @param config {Object} Object literal specifying widget configuration 
+         * properties (may container both attribute and non attribute configuration).
+         * 
+         * @class YUI.Widget
+         * @extends YUI.Base
          */
-        destructor: function() {
-            Y.log('destructor called', 'life', 'Widget');
+        function Widget(config) {
+            Y.log('constructor called', 'life', 'Widget');
 
-            this._destroyPlugins();
+            this.uid = Y.guid("widget");
+            this.rendered = false;
+            this._plugins = {};
 
-            if (this.id) {
-                delete _instances[this.id];
+            var boundingBox;
+
+            if (!config.boundingbox) { // create from template if no bounding box provided
+                config = Y.merge(config);
+                
+                boundingBox = Y.Node.create(this.constructor.TEMPLATE);
+                
+                config.boundingbox = boundingBox;
+                config.contentbox = boundingBox.get("firstChild");
+                
             }
-        },
+
+            Widget.superclass.constructor.apply(this, arguments);
+        }
 
         /**
-         * Establishes the initial DOM for the widget. Invoking this
-         * method will lead to the creating of all DOM elements for
-         * the widget (or the manipulation of existing DOM elements 
-         * for the progressive enhancement use case).
-         * <p>
-         * This method should only be invoked once for an initialized
-         * widget.
-         * </p>
-         * <p>
-         * It delegates to the widget specific renderer method to do
-         * the actual work.
-         * </p>
-         * 
-         * @method render
-         * @public
-         * @chain
-         * @final 
+         * Static property provides a string to identify the class.
+         * Currently used to apply class identifiers to the bounding box 
+         * and to classify events fired by the widget.
+         *
+         * @property YUI.Widget.NAME
+         * @type {String}
+         * @static
          */
-        render: function(parentNode) {
-            if (this.destroyed) {
-                throw('render failed; widget has been destroyed');
+        Widget.NAME = "widget";
+
+        Widget.TEMPLATE = ["div", ["div"]];
+
+        /**
+         * Static property used to define the default attribute 
+         * configuration for the Widget.
+         * 
+         * @property YUI.Widget.ATTRS
+         * @type {Object}
+         */
+        Widget.ATTRS = {
+            boundingbox: {
+                // TODO: Write once? Not an attr?
+                set: function(val) {
+                    return this._initNode(val);
+                },
+                writeOnce: true
+            },
+            
+            contentbox: {
+                writeOnce: true
+            },
+
+            hasfocus: {
+                value: false
+            },
+
+            disabled: {
+                value: false
+            },
+
+            visible: {
+                value: true
+            },
+
+            height: {
+                // Default to not set on element style
+                value:""
+            },
+
+            width: {
+                // Default to not set on element style
+                value:""
+            },
+
+            strings: {
+                // Widget UI strings go here
             }
+        };
 
-            // append to parent if provided, or to body if no parent and not in body 
-            parentNode = parentNode || Y.Node.get("body");
-            if (parentNode && !parentNode.contains(this._root)) {
-                parentNode.appendChild(this._root);
-            }
+        /**
+         * Obtain Widget instances by bounding box id.
+         *
+         * @method YUI.Widget.getByNodeId
+         * @param id {String} Id used to identify the widget uniquely.
+         * @return {Widget} Widget instance
+         */
+        Widget.getByNodeId = function(id) {
+            return _instances[id];
+        };
 
-            if (!this.rendered && this.fire("beforeRender") !== false) {
-                this._uiInitNode();
+        var proto = {
 
-                this._bindUI();
-                this._syncUI();
+            /**
+             * Initializer lifecycle implementation for the Widget class.
+             * 
+             * Base.init will invoke all prototype.initializer methods, for the
+             * class hierarchy (starting from Base), after all attributes have 
+             * been configured.
+             * 
+             * @param  config {Object} Configuration obejct literal for the widget
+             */
+            initializer: function(config) {
+                Y.log('initializer called', 'life', 'Widget');
 
-                if (this.renderer) {
-                    this.renderer();
+                this._initPlugins(config);
+
+                if (this.id) {
+                    _instances[this.id] = this;
+                }
+            },
+
+            /**
+             * Descructor lifecycle implementation for the Widget class.
+             * 
+             * Base.destroy will invoke all prototype.destructor methods, for the
+             * class hierarchy (starting from the lowest sub-class).
+             *
+             */
+            destructor: function() {
+                Y.log('destructor called', 'life', 'Widget');
+
+                this._destroyPlugins();
+
+                if (this.id) {
+                    delete _instances[this.id];
+                }
+            },
+
+            /**
+             * Establishes the initial DOM for the widget. Invoking this
+             * method will lead to the creating of all DOM elements for
+             * the widget (or the manipulation of existing DOM elements 
+             * for the progressive enhancement use case).
+             * <p>
+             * This method should only be invoked once for an initialized
+             * widget.
+             * </p>
+             * <p>
+             * It delegates to the widget specific renderer method to do
+             * the actual work.
+             * </p>
+             * 
+             * @method render
+             * @public
+             * @chain
+             * @final 
+             */
+            render: function(parentNode) {
+                if (this.destroyed) {
+                    throw('render failed; widget has been destroyed');
                 }
 
-                this.rendered = true;
-                this.fire("render");
-            }
+                // append to parent if provided, or to body if no parent and not in body 
+                parentNode = parentNode || Y.Node.get("body");
+                if (parentNode && !parentNode.contains(this._boundingBox)) {
+                    parentNode.appendChild(this._boundingBox);
+                }
 
-            return this;
-        },
+                if (!this.rendered && this.fire("beforeRender") !== false) {
+                    this._uiInitNode();
 
-        /** 
-         * Creates DOM (or manipulates DOM for progressive enhancement)
-         * This method is invoked by render() and is not chained 
-         * automatically for the class hierarchy (like initializer, destructor) 
-         * so it should be chained manually for subclasses if required.
-         * 
-         * @method renderer
-         */
-        renderer: function() {},
+                    this._bindUI();
+                    this._syncUI();
 
-        /**
-         * Configures/Setsup listeners to bind Widget State to UI/DOM
-         * 
-         * This method is not called by framework and is not chained 
-         * automatically for the class hierarchy.
-         * 
-         * @method bindUI
-         */
-        bindUI: function(){},
-
-        /**
-         * Adds nodes to the DOM 
-         * 
-         * This method is not called by framework and is not chained 
-         * automatically for the class hierarchy.
-         * 
-         * @method renderUI
-         */
-        renderUI: function(){},
-
-        /**
-         * Refreshes the rendered UI, based on Widget State
-         * 
-         * This method is not called by framework and is not chained
-         * automatically for the class hierarchy.
-         * 
-         * @method syncUI
-         */
-        syncUI: function(){},
-
-        /**
-         * Sets the state of an attribute, based on UI state
-         * change. Used to indentify the source of a change as 
-         * UI based, so corresponding onUI listeners are not
-         * invoked (since the UI state is already in sync)
-         * 
-         * @method setUI
-         * @param name {String} attribute name
-         * @param value {Any} attribute value
-         * @param eventCfg {Object|boolean} Event configuration for the
-         * set - silent, source etc. If boolean, true, the set occurs 
-         * silently
-         */
-        setUI: function() {
-            // TODO: Will identify sets with UI sources, once Event 
-            // and AttributeProvider support is in place for event 
-            // data
-            return this.set.apply(this, arguments);
-        },
-
-        /**
-         * Sets up an event listeners specifically to sync UI with
-         * attribute state. These listeners will NOT be invoked if 
-         * the setUI method is used to set the attribute (see setUI)
-         * 
-         * @method onUI
-         * @param type {String} type of event
-         * @param callback {Function} handler for the event
-         */
-        onUI: function() {
-            // TODO: Will identify listeners for UI sources, once 
-            // Event and AttributeProvider support is in place for 
-            // event data
-            return this.on.apply(this, arguments);
-        },
-
-        hide: function() {
-            return this.set('visible', false);
-        },
-
-        show: function() {
-            return this.set('visible', true);
-        },
-
-        enable: function() {
-            return this.set('enabled', true);
-        },
-
-        disable: function() {
-            return this.set('disabled', false);
-        },
-
-        /**
-         * Sets the state of an attribute. Wrapper for
-         * AttributeProvider.set, with additional ability 
-         * to chain.
-         * 
-         * @method setUI
-         * @chain
-         */
-        set: function() { 
-            // extend to chain set calls
-            Y.Attribute.prototype.set.apply(this, arguments);
-            return this;
-        },
-
-        getNodeAttr: function(attr) {
-            if (this._root) {
-                return this._root.att(attr);
-            }
-            return undefined;
-        },
-
-        setNodeAttr: function(attr, val) {
-            if (this._root) {
-                this._root.att(attr, val);
-            }
-            return this;
-        },
-
-        /**
-         * Register and instantiate a plugin with the Widget.
-         * 
-         * @param p {String | Object |Array} Accepts the registered 
-         * namespace for the Plugin or an object literal with an "fn" property
-         * specifying the Plugin class and a "cfg" property specifying
-         * the configuration for the Plugin.
-         * <p>
-         * Additionally an Array can also be passed in, with either String or 
-         * Object literal elements, allowing for multiple plugin registration in 
-         * a single call
-         * </p>
-         * @method plug
-         * @chain
-         * @public
-         */
-        plug: function(p) {
-            if (p) {
-                if (L.isArray(p)) {
-                    var ln = p.length;
-                    for (var i = 0; i < ln; i++) {
-                        this.plug(p[i]);
+                    if (this.renderer) {
+                        this.renderer();
                     }
-                } else if (L.isFunction(p)) {
-                    this._plug(p);
-                } else {
-                    this._plug(p.fn, p.cfg);
-                }
-            }
-            return this;
-        },
 
-        /**
-         * Unregister and destroy a plugin already instantiated with the Widget.
-         * 
-         * @method unplug
-         * @param {String} ns The namespace key for the Plugin
-         * @chain
-         * @public
-         */
-        unplug: function(ns) {
-            if (ns) {
-                this._unplug(ns);
-            } else {
-                for (ns in this._plugins) {
+                    this.rendered = true;
+                    this.fire("render");
+                }
+
+                return this;
+            },
+
+            /** 
+             * Creates DOM (or manipulates DOM for progressive enhancement)
+             * This method is invoked by render() and is not chained 
+             * automatically for the class hierarchy (like initializer, destructor) 
+             * so it should be chained manually for subclasses if required.
+             * 
+             * @method renderer
+             */
+            renderer: function() {},
+
+            /**
+             * Configures/Setsup listeners to bind Widget State to UI/DOM
+             * 
+             * This method is not called by framework and is not chained 
+             * automatically for the class hierarchy.
+             * 
+             * @method bindUI
+             */
+            bindUI: function(){},
+
+            /**
+             * Adds nodes to the DOM 
+             * 
+             * This method is not called by framework and is not chained 
+             * automatically for the class hierarchy.
+             * 
+             * @method renderUI
+             */
+            renderUI: function(){},
+
+            /**
+             * Refreshes the rendered UI, based on Widget State
+             * 
+             * This method is not called by framework and is not chained
+             * automatically for the class hierarchy.
+             * 
+             * @method syncUI
+             */
+            syncUI: function(){},
+
+            hide: function() {
+                return this.set('visible', false);
+            },
+
+            show: function() {
+                return this.set('visible', true);
+            },
+
+            focus: function () {
+                return this.set('hasfocus', true);
+            },
+            
+            blur: function () {
+                return this.set('hasfocus', false);
+            },
+
+            enable: function() {
+                return this.set('enabled', true);
+            },
+
+            disable: function() {
+                return this.set('disabled', false);
+            },
+
+            /**
+             * Sets the state of an attribute. Wrapper for
+             * AttributeProvider.set, with additional ability 
+             * to chain.
+             * 
+             * @method set
+             * @chain
+             */
+            set: function() { 
+                // extend to chain set calls
+                Y.Attribute.prototype.set.apply(this, arguments);
+                return this;
+            },
+
+            getNodeAttr: function(attr) {
+                if (this._boundingBox) {
+                    return this._boundingBox.att(attr);
+                }
+                return undefined;
+            },
+
+            setNodeAttr: function(attr, val) {
+                if (this._boundingBox) {
+                    this._boundingBox.att(attr, val);
+                }
+                return this;
+            },
+
+            /**
+             * Register and instantiate a plugin with the Widget.
+             * 
+             * @param p {String | Object |Array} Accepts the registered 
+             * namespace for the Plugin or an object literal with an "fn" property
+             * specifying the Plugin class and a "cfg" property specifying
+             * the configuration for the Plugin.
+             * <p>
+             * Additionally an Array can also be passed in, with either String or 
+             * Object literal elements, allowing for multiple plugin registration in 
+             * a single call
+             * </p>
+             * @method plug
+             * @chain
+             * @public
+             */
+            plug: function(p) {
+                if (p) {
+                    if (L.isArray(p)) {
+                        var ln = p.length;
+                        for (var i = 0; i < ln; i++) {
+                            this.plug(p[i]);
+                        }
+                    } else if (L.isFunction(p)) {
+                        this._plug(p);
+                    } else {
+                        this._plug(p.fn, p.cfg);
+                    }
+                }
+                return this;
+            },
+
+            /**
+             * Unregister and destroy a plugin already instantiated with the Widget.
+             * 
+             * @method unplug
+             * @param {String} ns The namespace key for the Plugin
+             * @chain
+             * @public
+             */
+            unplug: function(ns) {
+                if (ns) {
                     this._unplug(ns);
-                }
-            }
-            return this;
-        },
-
-        /**
-         * Determines if a plugin has been registered and instantiated 
-         * for this widget.
-         * 
-         * @method hasPlugin
-         * @public
-         * @return {Boolean} returns true, if the plugin has been applied
-         * to this widget.
-         */
-        hasPlugin : function(ns) {
-            return (this._plugins[ns] && this[ns]);
-        },
-
-        /**
-         * @private
-         */
-        _initPlugins: function(config) {
-
-            // Class Configuration
-            var classes = this._getClasses(), constructor;
-            for (var i = 0; i < classes.length; i++) {
-                constructor = classes[i];
-                if (constructor.PLUGINS) {
-                    this.plug(constructor.PLUGINS);
-                }
-            }
-
-            // User Configuration
-            if (config && config.plugins) {
-                this.plug(config.plugins);
-            }
-        },
-
-        /**
-         * @private
-         */
-        _destroyPlugins: function() {
-            this._unplug();
-        },
-
-        /**
-         * @private
-         */
-        _plug: function(PluginClass, config) {
-            if (PluginClass && PluginClass.NS) {
-                var ns = PluginClass.NS;
-
-                config = config || {};
-                config.owner = this;
-
-                if (this.hasPlugin(ns)) {
-                    // Update config
-                    // this[ns].setAttributeConfigs(config, false);
-                    this[ns].setAtts(config);
                 } else {
-                    // Create new instance
-                    this[ns] = new PluginClass(config);
-                    this._plugins[ns] = PluginClass;
+                    for (ns in this._plugins) {
+                        this._unplug(ns);
+                    }
                 }
-            }
-        },
+                return this;
+            },
 
-        /**
-         * @private
-         */
-        _unplug : function(ns) {
-            if (ns) {
-                if (this[ns]) {
-                    this[ns].destroy();
-                    delete this[ns];
+            /**
+             * Determines if a plugin has been registered and instantiated 
+             * for this widget.
+             * 
+             * @method hasPlugin
+             * @public
+             * @return {Boolean} returns true, if the plugin has been applied
+             * to this widget.
+             */
+            hasPlugin : function(ns) {
+                return (this._plugins[ns] && this[ns]);
+            },
+
+            /**
+             * @private
+             */
+            _initPlugins: function(config) {
+
+                // Class Configuration
+                var classes = this._getClasses(), constructor;
+                for (var i = 0; i < classes.length; i++) {
+                    constructor = classes[i];
+                    if (constructor.PLUGINS) {
+                        this.plug(constructor.PLUGINS);
+                    }
                 }
-                if (this._plugins[ns]) {
-                    delete this._plugins[ns];
+
+                // User Configuration
+                if (config && config.plugins) {
+                    this.plug(config.plugins);
                 }
-            }
-        },
+            },
 
-        /**
-         * Sets up listeners to synchronize UI state to attribute
-         * state.
-         *
-         * @method _bindUI
-         * @protected
-         */
-        _bindUI: function() {
+            /**
+             * @private
+             */
+            _destroyPlugins: function() {
+                this._unplug();
+            },
 
-            this.onUI('visibleChange', this._onVisibleChange);
-            this.onUI('disabledChange', this._onDisabledChange);
-            this.onUI('heightChange', this._onHeightChange);
-            this.onUI('widthChange', this._onWidthChange);
-        },
+            /**
+             * @private
+             */
+            _plug: function(PluginClass, config) {
+                if (PluginClass && PluginClass.NS) {
+                    var ns = PluginClass.NS;
 
-        /**
-         * Updates the widget UI to reflect the attribute state.
-         * 
-         * @method _syncUI
-         * @protected
-         */
-        _syncUI: function() {
-            this._uiSetVisible(this.get('visible'));
-            this._uiSetDisabled(this.get('disabled'));
-            this._uiSetHeight(this.get('height'));
-            this._uiSetWidth(this.get('width'));
-        },
+                    config = config || {};
+                    config.owner = this;
 
-        /**
-         * Sets the height on the widget's root element
-         * 
-         * @method _uiSetHeight
-         * @protected
-         * @param {String | Number} val
-         */
-        _uiSetHeight: function(val) {
-            if (L.isNumber(val)) {
-                val = val + this.DEF_UNIT;
-            }
-            this._root.setStyle(HEIGHT, val);
-        },
-
-        /**
-         * Sets the width on the widget's root element
-         *
-         * @method _uiSetWidth
-         * @protected
-         * @param {String | Number} val
-         */
-        _uiSetWidth: function(val) {
-            if (L.isNumber(val)) {
-                val = val + this.DEF_UNIT;
-            }
-            this._root.setStyle(WIDTH, val);
-        },
-
-        /**
-         * Sets the visible state for the UI
-         * 
-         * @method _uiSetVisible
-         * @protected
-         * @param {boolean} val
-         */
-        _uiSetVisible: function(val) {
-            if (val === true) { 
-                this._root.removeClass(HIDDEN); 
-            } else {
-                this._root.addClass(HIDDEN); 
-            }
-        },
-
-        /**
-         * Sets the disabled state for the UI
-         * 
-         * @protected
-         * @param {boolean} val
-         */
-        _uiSetDisabled: function(val) {
-            if (val === true) {
-                this._root.addClass(DISABLED);
-            } else {
-                this._root.removeClass(DISABLED);
-            }
-        },
-
-        /**
-         * Initializes widget state based on the node value
-         * provided, which maybe an instance of Y.Node, or a selector
-         * string
-         * 
-         * @method _initNode
-         * @protected
-         * @param {Node | String} node An instance of Y.Node, 
-         * representing the widget's bounding box, or a selector
-         * string which can be used to retrieve it. 
-         */
-        _initNode: function(node) {
-            // TODO: Looking at the node impl, this should 
-            // also take care of id generation, if an id doesn't exist
-            if (L.isString(node)) {
-                node = Y.Node.get(node);
-            }
-
-            // Node not found
-            if (!node) {
-                throw('node not found');
-            }
-
-            this.id = node.get("id");
-            this._root = node;
-
-            return node;
-        },
-
-        /**
-         * Initializes the UI state for the root node. Applies marker
-         * classes to identify the widget.
-         * 
-         * @method _uiInitNode
-         * @protected
-         */
-        _uiInitNode: function() {
-            var classes = this._getClasses(), constructor;
-
-            // Starting from 1, because we don't need Base (yui-base) marker
-            for (var i = 1; i < classes.length; i++) {
-                constructor = classes[i];
-                if (constructor.NAME) {
-                    this._root.addClass(PREFIX + constructor.NAME.toLowerCase());
+                    if (this.hasPlugin(ns)) {
+                        // Update config
+                        // this[ns].setAttributeConfigs(config, false);
+                        this[ns].setAtts(config);
+                    } else {
+                        // Create new instance
+                        this[ns] = new PluginClass(config);
+                        this._plugins[ns] = PluginClass;
+                    }
                 }
-            }
-        },
+            },
+
+            /**
+             * @private
+             */
+            _unplug : function(ns) {
+                if (ns) {
+                    if (this[ns]) {
+                        this[ns].destroy();
+                        delete this[ns];
+                    }
+                    if (this._plugins[ns]) {
+                        delete this._plugins[ns];
+                    }
+                }
+            },
+
+            /**
+             * Sets up listeners to synchronize UI state to attribute
+             * state.
+             *
+             * @method _bindUI
+             * @protected
+             */
+            _bindUI: function() {
+                this.on('visibleChange', this._onVisibleChange);
+                this.on('disabledChange', this._onDisabledChange);
+                this.on('heightChange', this._onHeightChange);
+                this.on('widthChange', this._onWidthChange);
+                this.on('hasfocusChange', this._onHasFocusChange);
+                this.on("focus", this._onFocus);
+                this.on("blur", this._onBlur);
+            },
+
+
+            /**
+             * Updates the widget UI to reflect the attribute state.
+             * 
+             * @method _syncUI
+             * @protected
+             */
+            _syncUI: function() {
+                this._uiSetVisible(this.get('visible'));
+                this._uiSetDisabled(this.get('disabled'));
+                this._uiSetHeight(this.get('height'));
+                this._uiSetWidth(this.get('width'));
+                this._uiSetHasFocus(this.get('hasfocus'));
+            },
+
+            /**
+             * Sets the height on the widget's bounding box element
+             * 
+             * @method _uiSetHeight
+             * @protected
+             * @param {String | Number} val
+             */
+            _uiSetHeight: function(val) {
+                if (L.isNumber(val)) {
+                    val = val + this.DEF_UNIT;
+                }
+                this._boundingBox.setStyle(_HEIGHT, val);
+            },
+
+            /**
+             * Sets the width on the widget's bounding box element
+             *
+             * @method _uiSetWidth
+             * @protected
+             * @param {String | Number} val
+             */
+            _uiSetWidth: function(val) {
+                if (L.isNumber(val)) {
+                    val = val + this.DEF_UNIT;
+                }
+                this._boundingBox.setStyle(_WIDTH, val);
+            },
+
+            /**
+             * Sets the visible state for the UI
+             * 
+             * @method _uiSetVisible
+             * @protected
+             * @param {boolean} val
+             */
+            _uiSetVisible: function(val) {
+
+                var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + 
+                                    _HIDDEN_CSS_CLASS_NAME_SUFFIX;
+
+                if (val === true) { 
+                    this._boundingBox.removeClass(sClassName); 
+                } else {
+                    this._boundingBox.addClass(sClassName); 
+                }
+            },
+
+            /**
+             * Sets the disabled state for the UI
+             * 
+             * @protected
+             * @param {boolean} val
+             */
+            _uiSetDisabled: function(val) {
+
+                var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + 
+                                    _DISABLED_CSS_CLASS_NAME_SUFFIX;
+
+                if (val === true) {
+                    this._boundingBox.addClass(sClassName);
+                } else {
+                    this._boundingBox.removeClass(sClassName);
+                }
+            },
+
+            /**
+             * Sets the hasfocus state for the UI
+             * 
+             * @protected
+             * @param {boolean} val
+             * @param {string} src String representing the source that triggered an update to 
+             * the UI.     
+             */
+            _uiSetHasFocus: function(val, src) {
+                
+                var sClassName = _CSS_CLASS_NAME_PREFIX + this.constructor.NAME.toLowerCase() + 
+                                    _FOCUS_CSS_CLASS_NAME_SUFFIX;
+
+                if (val === true) {
+                    this._boundingBox.addClass(sClassName);
+                    if (src !== "ui") {
+                        this._boundingBox.focus();
+                    }
+                    
+                } else {
+                    this._boundingBox.removeClass(sClassName);
+                    if (src !== "ui") {
+                        this._boundingBox.blur();
+                    }
+                }
+            
+            },
+
+            /**
+             * Initializes widget state based on the node value
+             * provided, which maybe an instance of Y.Node, or a selector
+             * string
+             * 
+             * @method _initNode
+             * @protected
+             * @param {Node | String} node An instance of Y.Node, 
+             * representing the widget's bounding box, or a selector
+             * string which can be used to retrieve it. 
+             */
+            _initNode: function(node) {
+                // TODO: Looking at the node impl, this should 
+                // also take care of id generation, if an id doesn't exist
+                if (L.isString(node)) {
+                    node = Y.Node.get(node);
+                }
+
+                // Node not found
+                if (node) {
+                    this.id = node.get("id");
+                    this._boundingBox = node;
+    
+                    var contentBox = node.query(":first-child");
+                    
+                    if (contentBox) {
+                        this._contentBox = contentBox;
+                        this.set("contentbox", contentBox);
+                    }
+                    else {
+                        throw("node for content box not found");					
+                    }
+                }
+                else {
+                    throw("node for bounding box not found");                
+                }
+
+                return node;
+            },
+
+            /**
+             * Initializes the UI state for the bounding box. Applies marker
+             * classes to identify the widget.
+             * 
+             * @method _uiInitNode
+             * @protected
+             */
+            _uiInitNode: function() {
+                var classes = this._getClasses(), 
+                    constructor,
+                    classname;
+
+                // Starting from 1, because we don't need Base (yui-base) marker
+                for (var i = 1; i < classes.length; i++) {
+                    constructor = classes[i];
+                    if (constructor.NAME) {
+                    
+                        classname = _CSS_CLASS_NAME_PREFIX + constructor.NAME.toLowerCase();
+                    
+                        this._boundingBox.addClass(classname);
+                        this._contentBox.addClass(classname + _CONTENT_BOX_CSS_CLASS_NAME_SUFFIX);
+                    }
+                }
+                
+                this._boundingBox.set("tabIndex", 0);
+
+            },
+
+            /**
+             * Visible attribute UI handler
+             * 
+             * @method _onVisibleChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onVisibleChange: function(evt) {
+                this._uiSetVisible(evt.newVal);
+            },
+
+            /**
+             * Disabled attribute UI handler
+             * 
+             * @method _onDisabledChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onDisabledChange: function(evt) {
+                this._uiSetDisabled(evt.newVal);
+            },
+            
+            /**
+             * Height attribute UI handler
+             * 
+             * @method _onHeightChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onHeightChange: function(evt) {
+                this._uiSetHeight(evt.newVal);
+            },
+
+            /**
+             * Width attribute UI handler
+             * 
+             * @method _onWidthChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onWidthChange: function(evt) {
+                this._uiSetWidth(evt.newVal);
+            },
+
+            /**
+             * hasfocus attribute UI handler
+             * 
+             * @method _onHasFocusChange
+             * @protected
+             * @param {Object} evt Event object literal passed by AttributeProvider
+             */
+            _onHasFocusChange: function(evt) {
+                this._uiSetHasFocus(evt.newVal, evt.src);
+            },
+
+            /**
+             * focus event UI handler used to sync the state of the Widget with the DOM
+             * 
+             * @method _onFocus
+             * @protected
+             */
+            _onFocus: function () {
+                this.set("hasfocus", true, { src: "ui" });
+            },
+
+            /**
+             * blur event UI handler used to sync the state of the Widget with the DOM
+             * 
+             * @method _onBlur
+             * @protected
+             */			
+            _onBlur: function () {
+                this.set("hasfocus", false, { src: "ui" });
+            },
+
+            /**
+             * Generic toString implementation for all widgets.
+             * @method toString
+             */
+            toString: function() {
+                return this.constructor.NAME + "[" + this.id + "]";
+            },
+
+            /**
+             * Default unit to use for style values
+             */
+            DEF_UNIT : "px"
+
+        };
 
         /**
-         * Visible attribute UI handler
+         * Static registration of default plugins for the class.
          * 
-         * @method _onVisibleChange
-         * @protected
-         * @param {Object} evt Event object literal passed by AttributeProvider
+         * @property Y.Widget.PLUGINS
+         * @static
          */
-        _onVisibleChange: function(evt) {
-            this._uiSetVisible(evt.newVal);
-        },
+        Widget.PLUGINS = [
+            // Placeholder for Widget Class Default plugins
+            Y.Plugin.Mouse
+            // - OR -
+            // Instantiate a new plugin with or configure an existing plugin
+            // { fn:Y.Plugin.Mouse, cfg:mousecfg }
+        ];
 
-        /**
-         * Disabled attribute UI handler
-         * 
-         * @method _onDisabledChange
-         * @protected
-         * @param {Object} evt Event object literal passed by AttributeProvider
-         */
-        _onDisabledChange: function(evt) {
-            this._uiSetDisabled(evt.newVal);
-        },
-        
-        /**
-         * Height attribute UI handler
-         * 
-         * @method _onHeightChange
-         * @protected
-         * @param {Object} evt Event object literal passed by AttributeProvider
-         */
-        _onHeightChange: function(evt) {
-            this._uiSetHeight(evt.newVal);
-        },
-
-        /**
-         * Width attribute UI handler
-         * 
-         * @method _onWidthChange
-         * @protected
-         * @param {Object} evt Event object literal passed by AttributeProvider
-         */
-        _onWidthChange: function(evt) {
-            this._uiSetWidth(evt.newVal);
-        },
-
-        /**
-         * Generic toString implementation for all widgets.
-         * @method toString
-         */
-        toString: function() {
-            return this.constructor.NAME + "[" + this.id + "]";
-        },
-
-        /**
-         * Default unit to use for style values
-         */
-        DEF_UNIT : "px"
-
+        Y.extend(Widget, Y.Base, proto);
+        Y.Widget = Widget;
     };
 
-    /**
-     * Static registration of default plugins for the class.
-     * 
-     * @property Y.Widget.PLUGINS
-     * @static
-     */
-    Widget.PLUGINS = [
-        // Placeholder for Widget Class Default plugins
-        Y.Plugin.Mouse
-        // - OR -
-        // Instantiate a new plugin with or configure an existing plugin
-        // { fn:Y.Plugin.Mouse, cfg:mousecfg }
-    ];
-
-    Y.extend(Widget, Y.Base, proto);
-    Y.Widget = Widget;
-}, "3.0.0");
-
-
+    YUI.add("widget", M, "3.0.0");
+})();
 YUI.add("mouseplugin", function(Y) {
 
     var P = Y.Plugin;
@@ -907,7 +988,9 @@ YUI.add("mouseplugin", function(Y) {
         'mouseover',
         'mouseout',
         'mousemove',
-        'dblclick'
+        'dblclick',
+        'focus',
+        'blur'
     ];
 
     Mouse.NAME = "mouse";
@@ -927,7 +1010,9 @@ YUI.add("mouseplugin", function(Y) {
         },
 
         handler: function(evt) {
-            this.owner.fire(evt.type, evt);
+        	if (!this.owner.get("disabled")) {
+            	this.owner.fire(evt.type, evt);
+            }
         },
 
         destructor: function() {
@@ -940,10 +1025,10 @@ YUI.add("mouseplugin", function(Y) {
         },
 
         _initUI: function() {
-            var root = this.owner._root;
+            var boundingBox = this.owner._boundingBox;
             this._handles = [];
             for (var i = 0, len = Mouse.EVENTS.length; i < len; ++i) {
-                this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), root));
+                this._handles.push(Y.on(Mouse.EVENTS[i], Y.bind(this.handler, this), boundingBox));
             }
         }
     };
@@ -952,5 +1037,4 @@ YUI.add("mouseplugin", function(Y) {
     P.Mouse = Mouse;
 
 }, "3.0.0");
-
 
