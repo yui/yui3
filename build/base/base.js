@@ -36,7 +36,6 @@ YUI.add('base', function(Y) {
 
     var _instances = {};
     
-    // TODO, Work in progress
     Base.build = function(main, extensions, cfg) {
 
         var build = Base.build,
@@ -180,7 +179,6 @@ YUI.add('base', function(Y) {
         }
     });
 
-    // TODO - Work in progress
     Base.create = function(main, features, args) {
         var c = Base.build(main, features, {dynamic:true}),
             cArgs = Y.Array(arguments, 2, true);
@@ -213,6 +211,7 @@ YUI.add('base', function(Y) {
             this.name = this.constructor.NAME;
 
             this.publish("init", {
+                queuable:false,
                 defaultFn:this._defInitFn
             });
             this.fire("init", config);
@@ -230,6 +229,7 @@ YUI.add('base', function(Y) {
          */
         destroy: function() {
             this.publish("destroy", {
+                queuable:false,
                 defaultFn: this._defDestroyFn
             });
             this.fire("destroy");

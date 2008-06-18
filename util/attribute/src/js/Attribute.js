@@ -206,11 +206,6 @@
                }
             }
 
-            /*
-            if (path) {
-                _fireChange.call(this, strPath, currVal, val, name, strPath, defaultFn, opts);
-            }
-            */
             _fireChange.call(this, name, currVal, val, name, strPath, opts);
 
             return this;
@@ -241,6 +236,8 @@
             if (!valFn || valFn.call(this, val)) {
                 conf.add(name, { value: val });
             }
+
+            e.newVal = val;
         },
 
         /**

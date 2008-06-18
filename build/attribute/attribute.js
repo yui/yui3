@@ -202,11 +202,6 @@ YUI.add('attribute', function(Y) {
                }
             }
 
-            /*
-            if (path) {
-                _fireChange.call(this, strPath, currVal, val, name, strPath, defaultFn, opts);
-            }
-            */
             _fireChange.call(this, name, currVal, val, name, strPath, opts);
 
             return this;
@@ -236,6 +231,8 @@ YUI.add('attribute', function(Y) {
             if (!valFn || valFn.call(this, val)) {
                 conf.add(name, { value: val });
             }
+
+            e.newVal = val;
         },
 
         /**
@@ -452,7 +449,7 @@ YUI.add('attribute', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event', 'state']});
+}, '@VERSION@' ,{requires:['event-target', 'state']});
 YUI.add("state", function(Y) {
 
     var L = Y.Lang;
