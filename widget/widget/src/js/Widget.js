@@ -12,7 +12,7 @@ YUI.add("widget", function(Y) {
 		_ENABLED = "enabled",
 		_DISABLED = "disabled",
 		_FOCUS = "focus",
-		_HAS_FOCUS = "hasfocus",
+		_HAS_FOCUS = "hasFocus",
 		_WIDTH = "width",
 		_HEIGHT = "height",
 		_UI = "ui",
@@ -51,13 +51,13 @@ YUI.add("widget", function(Y) {
 
 		var boundingBox;
 
-		if (!config.boundingbox) { // create from template if no bounding box provided
+		if (!config.boundingBox) { // create from template if no bounding box provided
 			config = Y.merge(config);
 			
 			boundingBox = Y.Node.create(this.constructor.TEMPLATE);
 			
-			config.boundingbox = boundingBox;
-			config.contentbox = boundingBox.get("firstChild");
+			config.boundingBox = boundingBox;
+			config.contentBox = boundingBox.get("firstChild");
 			
 		}
 
@@ -94,13 +94,13 @@ YUI.add("widget", function(Y) {
 	Widget.ATTRS = {
 
 		/**
-		* @attribute boundingbox
+		* @attribute boundingBox
 		* @description The outermost DOM node for the Widget, used for sizing and positioning 
 		* of a Widget as well as a containing element for any decorator elements used 
 		* for skinning.
 		* @type YUI.Node
 		*/
-		boundingbox: {
+		boundingBox: {
 			set: function(val) {
 				return this._initNode(val);
 			},
@@ -108,23 +108,23 @@ YUI.add("widget", function(Y) {
 		},
 
 		/**
-		* @attribute contentbox
+		* @attribute contentBox
 		* @description A DOM node that is a direct descendent of a Widget's bounding box that 
 		* houses its content.
 		* @type YUI.Node
 		*/            
-		contentbox: {
+		contentBox: {
 			writeOnce: true
 		},
 
 
 		/**
-		* @attribute hasfocus
+		* @attribute hasFocus
 		* @description Boolean indicating if the Widget has focus.
 		* @default false
 		* @type Boolean
 		*/
-		hasfocus: {
+		hasFocus: {
 			value: false
 		},
 
@@ -209,7 +209,7 @@ YUI.add("widget", function(Y) {
 		initializer: function(config) {
 			Y.log('initializer called', 'life', 'Widget');
 
-			this._cssClassName = this.get("cssprefix") + this.constructor.NAME.toLowerCase();
+			this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
 
 			this._initPlugins(config);
 
@@ -340,7 +340,7 @@ YUI.add("widget", function(Y) {
 
 		/**
 		* @method focus
-		* @description Causes the Widget to receive the focus by setting the "hasfocus" 
+		* @description Causes the Widget to receive the focus by setting the "hasFocus" 
 		* attribute to "true".
 		*/
 		focus: function () {
@@ -349,7 +349,7 @@ YUI.add("widget", function(Y) {
 
 		/**
 		* @method blur
-		* @description Causes the Widget to lose focus by setting the "hasfocus" attribute 
+		* @description Causes the Widget to lose focus by setting the "hasFocus" attribute 
 		* to "false"
 		*/            
 		blur: function () {
@@ -525,6 +525,7 @@ YUI.add("widget", function(Y) {
 			}
 		},
 
+
 		/**
 		 * @private
 		 */
@@ -542,15 +543,6 @@ YUI.add("widget", function(Y) {
 
 
 		/**
-		 * The CSS class name for the widget
-		 *
-		 * @property _cssClassName
-		 * @protected
-		 */            
-		_cssClassName: null,
-
-
-		/**
 		 * Sets up listeners to synchronize UI state to attribute
 		 * state.
 		 *
@@ -562,9 +554,9 @@ YUI.add("widget", function(Y) {
 			this.on('disabledChange', this._onDisabledChange);
 			this.on('heightChange', this._onHeightChange);
 			this.on('widthChange', this._onWidthChange);
-			this.on('hasfocusChange', this._onHasFocusChange);
-			this.on(_FOCUS, this._onFocus);
-			this.on("blur", this._onBlur);
+			this.on('hasFocusChange', this._onHasFocusChange);
+			this._boundingBox.on(_FOCUS, Y.bind(this._onFocus, this));
+			this._boundingBox.on("blur", Y.bind(this._onBlur, this));
 		},
 
 
@@ -619,7 +611,7 @@ YUI.add("widget", function(Y) {
 		 */
 		_uiSetVisible: function(val) {
 
-			var sClassName = this.getClassNameForState(_HIDDEN);
+			var sClassName = this.getClassName(_HIDDEN);
 
 			if (val === true) { 
 				this._boundingBox.removeClass(sClassName); 
@@ -636,7 +628,7 @@ YUI.add("widget", function(Y) {
 		 */
 		_uiSetDisabled: function(val) {
 
-			var sClassName = this.getClassNameForState(_DISABLED);
+			var sClassName = this.getClassName(_DISABLED);
 
 			if (val === true) {
 				this._boundingBox.addClass(sClassName);
@@ -646,7 +638,7 @@ YUI.add("widget", function(Y) {
 		},
 
 		/**
-		 * Sets the hasfocus state for the UI
+		 * Sets the hasFocus state for the UI
 		 * 
 		 * @protected
 		 * @param {boolean} val
@@ -655,7 +647,7 @@ YUI.add("widget", function(Y) {
 		 */
 		_uiSetHasFocus: function(val, src) {
 			
-			var sClassName = this.getClassNameForState(_FOCUS);
+			var sClassName = this.getClassName(_FOCUS);
 
 			if (val === true) {
 				this._boundingBox.addClass(sClassName);
@@ -699,7 +691,7 @@ YUI.add("widget", function(Y) {
 				
 				if (contentBox) {
 					this._contentBox = contentBox;
-					this.set("contentbox", contentBox);
+					this.set("contentBox", contentBox);
 				}
 				else {
 					throw("node for content box not found");					
@@ -729,7 +721,7 @@ YUI.add("widget", function(Y) {
 				constructor = classes[i];
 				if (constructor.NAME) {
 				
-					classname = this._cssClassName;
+					classname = this._className;
 				
 					this._boundingBox.addClass(classname);
 					this._contentBox.addClass(classname + _HYPHEN + _CONTENT);
@@ -785,7 +777,7 @@ YUI.add("widget", function(Y) {
 		},
 
 		/**
-		 * hasfocus attribute UI handler
+		 * hasFocus attribute UI handler
 		 * 
 		 * @method _onHasFocusChange
 		 * @protected
@@ -838,7 +830,7 @@ YUI.add("widget", function(Y) {
 	 */
 	Widget.PLUGINS = [
 		// Placeholder for Widget Class Default plugins
-		Y.Plugin.Mouse
+
 		// - OR -
 		// Instantiate a new plugin with or configure an existing plugin
 		// { fn:Y.Plugin.Mouse, cfg:mousecfg }
@@ -846,9 +838,9 @@ YUI.add("widget", function(Y) {
 
 	Y.extend(Widget, Y.Base, proto);
 
-	Y.augment(Widget, Y.CSSStateManager);
+	Y.augment(Widget, Y.ClassNameManager);
 
-	Y.aggregate(Widget, Y.CSSStateManager);
+	Y.aggregate(Widget, Y.ClassNameManager);
 
 	Y.Widget = Widget;
 
