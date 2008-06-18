@@ -323,10 +323,10 @@ YUI.add('base', function(Y) {
         },
 
         toString: function() {
-            return Y.Base.NAME + "[" /* + this + // */ + "]";
+            return Y.Base.NAME + "[" + this._yuid + "]";
         },
 
-        // Y.EventTarget over-rides for name prefix and before support
+        // Y.EventTarget over-rides for name prefix support
         on : function() {
             return this.subscribe.apply(this, arguments);
         },
