@@ -9,16 +9,23 @@
     <script type="text/javascript" src="../build/base/base.js"></script>
     <script type="text/javascript" src="../build/widget/widget.js"></script>
 
-    <style>
+    <style type="text/css">
         .foo {
             background:#ccc;
             height:100px;
             overflow:hidden;
         }
 
-        .yui-hidden {
+        .yui-widget-hidden {
             visibility:hidden;
         }
+
+        .yui-widget-focus {
+        
+			background-color: yellow;
+        
+        }
+        
     </style>
 </head>
 <body class="yui-skin-sam">
@@ -26,33 +33,41 @@
     <button id="control-show" type="button">show</button>
     <button id="control-hide" type="button">hide</button>
 
-    <div class="foo" id="foobar"><em>Widget.Alpha</em></div>
+    <div class="foo" id="foobar"><div class="yui-widget-content">Widget.Alpha</div></div>
 
-    <div class="foo" id="bar"><em>Widget.Beta</em></div>
+    <div class="foo" id="bar"><div class="yui-widget-content">Widget.Beta</div></div>
+
+	<div id="widget-3-container"></div>
 
     <script type="text/javascript">
         (function() {
 
-            var Y = YUI().use("nodeextras", "base", "plugin", "mouseplugin", "widget");
+            var Y = YUI().use("nodeextras", "base", "plugin", "classnamemanager", "widget");
 
-            Y.Event.onDOMReady(
-                function() {
+			Y.Event.onDOMReady(function () {
 
-                    widget = new Y.Widget({ root: 'body > div.foo', width:200});
-                    widget.render();
+				widget = new Y.Widget({ boundingBox: 'body > div.foo', width: 200 });
+				widget.render();
+	
+	
+				widget.on('click', function(e) {
+					Y.log('"widget:focus" Custom Event');
+				});
+	
+				Y.on('click', Y.bind(widget.show, widget), '#control-show');
+				Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
+	
+	
+				widget2 = new Y.Widget({ boundingBox: 'body > #bar' });
+				widget2.render();
+	
+				Y.log(Y.Widget.getByNodeId("foobar"));
+	
+				widget3 = new Y.Widget({ width: 200 });
+				widget3.render(Y.Node.get("#widget-3-container"));
+			
+			});
 
-                    widget.on('click', function() {
-                        Y.log('"widget:click" Custom Event');
-                    });
-
-                    Y.on('click', Y.bind(widget.show, widget), '#control-show');
-                    Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
-
-                    widget2 = new Y.Widget({ root: 'body > #bar' });
-                    widget2.render();
-
-                    Y.log(Y.Widget.getByNodeId("foobar"));
-                });
         })();
     </script>
 </body>
