@@ -3,6 +3,7 @@
 <head>
 <title>NodeFX Plugin</title>
 <script type="text/javascript" src="../build/yui/yui.js"></script>
+<script type="text/javascript" src="../build/dom/dom.js"></script>
 <script type="text/javascript" src="../build/node/node.js"></script>
 
 <script type="text/javascript" src="../build/attribute/attribute.js"></script>
@@ -39,6 +40,7 @@
         from: {
             left: 0,
             top: 0,
+            opacity: 1,
 
             width: function(node) {
                 return node.get('offsetWidth');
@@ -50,6 +52,7 @@
         },
 
         to: {
+            opacity: 0,
             top: function(node) {
                 return node.get('offsetHeight') / 4;
             },
