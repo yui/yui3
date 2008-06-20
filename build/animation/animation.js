@@ -83,14 +83,39 @@ YUI.add('anim', function(Y) {
      */
     Anim.DEFAULT_UNIT = 'px';
 
+    Anim.SETTERS = {
+        xy: function(node, prop, xy) {
+            return node.setXY(xy);
+        }
+    };
+
+    Anim.GETTERS = {
+        xy: function(node) {
+            return node.getXY();
+        }
+    };
+
+    Anim.TRANSITIONS = {
+        xy: function(from, to, elapsed, duration, fn) {
+            return [
+                fn(elapsed, Number(from[0]), Number(to[0]) - Number(from[0]), duration),
+                fn(elapsed, Number(from[1]), Number(to[1]) - Number(from[1]), duration),
+            ];
+        }
+    };
+
+    Anim.DEFAULT_TRANSITION = function(from, to, elapsed, duration, fn) {
+        return fn(elapsed, Number(from), Number(to) - Number(from), duration);
+    };
+
     /**
      * The default setter to use when setting object properties.
      *
      * @property DEFAULT_SETTER
      * @static
      */
-    Anim.DEFAULT_SETTER = function(prop, val, u) {
-        this.get(NODE).setStyle(prop, val + u);
+    Anim.DEFAULT_SETTER = function(node, prop, val, u) {
+        node.setStyle(prop, val + u);
     };
 
     /**
@@ -99,8 +124,8 @@ YUI.add('anim', function(Y) {
      * @property DEFAULT_GETTER
      * @static
      */
-    Anim.DEFAULT_GETTER = function(prop) {
-        return this.get(NODE).getStyle(prop);
+    Anim.DEFAULT_GETTER = function(node, prop) {
+        return node.getStyle(prop);
     };
 
     Anim.ATTRS = {
@@ -400,16 +425,21 @@ YUI.add('anim', function(Y) {
             var t = new Date() - this.get(START_TIME),
                 d = this.get('duration') * 1000,
                 attr = this._attr,
-                setter = Anim.DEFAULT_SETTER;
+                transition,
+                setter,
+                val;
                 
             for (var i in attr) {
+                transition = Anim.TRANSITIONS[i] || Anim.DEFAULT_TRANSITION;
+                setter = Anim.SETTERS[i] || Anim.DEFAULT_SETTER;
                 if (t < d) {
                     if (attr.hasOwnProperty(i)) {
-                        setter.call(this, i, attr[i].f(t, attr[i].b, attr[i].e - attr[i].b, d), attr[i].u); 
+                        val = transition(attr[i].b, attr[i].e, t, d, attr[i].f); 
                     }
                 } else { // set to final value
-                    setter.call(this, i, attr[i].e, attr[i].u); 
+                    val = attr[i].e; 
                 }
+                setter(this.get('node'), i, val, attr[i].u);
             }
 
             var elapsed = Number(this.get(ELAPSED_TIME) + t);
@@ -496,26 +526,25 @@ YUI.add('anim', function(Y) {
             }
 
             if (from === undefined) {
-                from = Anim.DEFAULT_GETTER.call(this, n); // TODO: unset onEnd?
+                var getter = Anim.GETTERS[n] || Anim.DEFAULT_GETTER;
+                from = getter(this.get('node'), n); // TODO: unset onEnd?
             }
 
             // TODO: allow mixed units? (e.g. from: width:50%, to: width:10em)
             var mFrom = Anim.RE_UNITS.exec(from);
             var mTo = Anim.RE_UNITS.exec(to);
 
-            var begin = mFrom[1],
-                end = mTo[1],
-                unit = mTo[2] || mFrom[2] || ''; // one might be zero TODO: mixed units
-
+            var begin = mFrom ? mFrom[1] : from,
+                end = mTo ? mTo[1] : to,
+                unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
             if (!unit && Anim.RE_DEFAULT_UNIT.test(n)) {
                 unit = Anim.DEFAULT_UNIT;
             }
 
             return {
-                b: Number(begin),
-                e: Number(end),
-                c: end - begin,
+                b: begin,
+                e: end,
                 f: easing,
                 u: unit
             };
