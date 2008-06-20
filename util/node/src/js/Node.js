@@ -38,6 +38,8 @@ YUI.add('node', function(Y) {
         NODE_TYPE = 'nodeType',
         COMPAT_MODE = 'compatMode',
         PARENT_NODE = 'parentNode',
+        PREVIOUS_SIBLING = 'previousSibling',
+        NEXT_SIBLING = 'nextSibling',
         SCROLL_TOP = 'scrollTop',
         SCROLL_LEFT = 'scrollLeft',
         COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
@@ -50,6 +52,8 @@ YUI.add('node', function(Y) {
     var _nodes = {};
     var _styles = {};
     var _restrict = null;
+
+    var slice = [].slice;
 
     // private factory
     var wrap = function(node) {
@@ -70,6 +74,14 @@ YUI.add('node', function(Y) {
         }
 
         return ret;
+    };
+
+    var wrapFn = function(node, fn) {
+        if (fn) {
+            return function() {
+                return fn(node);
+            }();
+        }
     };
 
     var getDoc = function(node) {
@@ -118,8 +130,8 @@ YUI.add('node', function(Y) {
         _nodes[this._yuid][method](a, b, c, d, e);
         return this;
     };
-    var PROPS_WRAP = {
 
+    var PROPS_WRAP = {
         /**
          * Returns a Node instance. 
          * @property parentNode
@@ -389,9 +401,11 @@ YUI.add('node', function(Y) {
             return null;
         }
 
+/*
         if (!node.id) {
-            //node.id = Y.guid();
+            node.id = Y.guid();
         }
+*/
 
         _nodes[Y.stamp(this)] = node;
         _styles[Y.stamp(this)] = node.style;
@@ -399,100 +413,15 @@ YUI.add('node', function(Y) {
 
     };
 
-    var getWinSize = function(node) {
-        var doc = getDoc(node),
-            win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
-            mode = doc[COMPAT_MODE],
-            height = win.innerHeight,
-            width = win.innerWidth,
-            root = doc[DOCUMENT_ELEMENT];
-    
-        if ( mode && !Y.UA.opera ) { // IE, Gecko
-            if (mode != 'CSS1Compat') { // Quirks
-                root = doc.body; 
-            }
-            height = root.clientHeight;
-            width = root.clientWidth;
-        }
-        return { 'height': height, 'width': width }; 
-    };
-
-    var getDocSize = function(node) {
-        var doc = getDoc(node),
-            root = doc[DOCUMENT_ELEMENT];
-
-        if (doc[COMPAT_MODE] != 'CSS1Compat') {
-            root = doc.body;
-        }
-
-        return {
-            'height': root.scrollHeight,
-            'width': root.scrollWidth
-        }
-    };
-
     var SETTERS = {};
     var GETTERS = {
         /**
-         * Returns the inner height of the viewport (exludes scrollbar). 
-         * @property winHeight
+         * Normalizes nodeInnerText and textContent. 
+         * @property text
          * @type String
          */
-        'winHeight': function(node) {
-            var h = getWinSize(node).height;
-            Y.log('GETTERS:winHeight returning ' + h, 'info', 'Node');
-            return h;
-        },
-
-        /**
-         * Returns the inner width of the viewport (exludes scrollbar). 
-         * @property winWidth
-         * @type String
-         */
-        'winWidth': function(node) {
-            var w = getWinSize(node).width;
-            Y.log('GETTERS:winWidth returning ' + w, 'info', 'Node');
-            return w;
-        },
-
-        /**
-         * Document height 
-         * @property docHeight
-         * @type Number
-         */
-        'docHeight':  function(node) {
-            var h = getDocSize(node).height;
-            return Math.max(h, getWinSize(node).height);
-        },
-
-        /**
-         * Document width 
-         * @property docWidth
-         * @type Number
-         */
-        'docWidth':  function(node) {
-            var w = getDocSize(node).width;
-            return Math.max(w, getWinSize(node).width);
-        },
-
-        /**
-         * Amount page has been scroll vertically 
-         * @property docScrollX
-         * @type Number
-         */
-        'docScrollX':  function(node) {
-            var doc = getDoc(node);
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
-        },
-
-        /**
-         * Amount page has been scroll horizontally 
-         * @property docScrollY
-         * @type Number
-         */
-        'docScrollY':  function(node) {
-            var doc = getDoc(node);
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        'text': function(node) {
+            return node.get('innerText') || node.get('textContent') || '';
         }
     };
 
@@ -508,7 +437,7 @@ YUI.add('node', function(Y) {
 
     Node.getters = function(prop, fn) {
         if (typeof prop == 'string') {
-            return GETTERS[prop] = fn;
+            GETTERS[prop] = fn;
         } else { // assume object
             Y.each(prop, function(fn, prop) {
                 Node.getters(prop, fn);
@@ -526,22 +455,64 @@ YUI.add('node', function(Y) {
                 return ret;
             };
 
-            NodeList.prototype[name] = function(a, b, c, d, e) {
-                var ret = [];
-                this.each(function(node) {
-                    ret.push(node[name](a, b, c, d, e));
-                });
-                if (!ret.length) {
-                    ret = this;
-                }
-                return ret;
-            };
-            
+            addNodeListMethod(name);
+
+
         } else { // assume object
             Y.each(name, function(fn, name) {
                 Node.methods(name, fn);
             });
         }
+    };
+
+    var addNodeListMethod = function(name) {
+        NodeList.prototype[name] = function() {
+            var a = [],
+                nodes = _nodes[this._yuid],
+                node = _tmpNode,
+                ret;
+
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                updateTmp(nodes[i]);
+                ret = node[name].apply(node, arguments);
+                if (ret !== node) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
+    };
+
+    Node.getDOMNode = function(node) {
+        var ret;
+
+        if (node.nodeType) {
+            ret = node;
+        } else if (typeof node === 'string') {
+            ret = Selector.query(node, null, true);
+        } else {
+            ret = _nodes[node._yuid];
+        }
+        return ret || null;
+    };
+
+    Node.wrapDOMMethod = function(name) {
+        return function() {
+            var args = slice.call(arguments);
+            args.unshift(Y.Node.getDOMNode(args.shift()));
+            return Y.DOM[name].apply(Y.DOM, args);
+        };
+
+    };
+
+    Node.addDOMMethods = function(methods) {
+        var add = {}; 
+        Y.each(methods, function(v, n) {
+            add[v] = Y.Node.wrapDOMMethod(v);
+        });
+
+        Y.Node.methods(add);
     };
 
     Node.prototype = {
@@ -593,7 +564,7 @@ YUI.add('node', function(Y) {
                     val = node[prop];
                 }
 
-                if (_restrict && _restrict[this._yuid] && !contains(node, val)) {
+                if (_restrict && _restrict[this._yuid] && !Y.DOM.contains(node, val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
                     val = wrap(val);
@@ -675,22 +646,17 @@ YUI.add('node', function(Y) {
          * @return {String} The current value of the style property for the element.
          */
         getStyle: function(attr) {
-            var style = _styles[this._yuid];
-            var val = style[attr];
-            if (val === '') { // TODO: is empty string sufficient?
-                var node = _nodes[this._yuid];
-                var view = node[OWNER_DOCUMENT][DEFAULT_VIEW];
-                if (view && view.getComputedStyle) {
-                    val = view.getComputedStyle(node, '')[attr];
-                } else if (node.currentStyle) {
-                    val =  node.currentStyle[attr];
-                }
-            }
+            return Y.DOM.getStyle(_nodes[this._yuid], attr);
+        },
 
-            if (val === undefined) {
-                val = ''; // TODO: more robust
-            }
-            return val;
+        /**
+         * Retrieves the computed value for the given style attribute.
+         * @method getComputedStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The computed value of the style property for the element.
+         */
+        getComputedStyle: function(attr) {
+            return Y.DOM.getComputedStyle(_nodes[this._yuid], attr);
         },
 
         /**
@@ -700,8 +666,7 @@ YUI.add('node', function(Y) {
          * @param {String|Number} val The value. 
          */
         setStyle: function(attr, val) {
-            Y.log('setting style ' + attr + ' to ' + val, 'info', 'Node');
-             _styles[this._yuid][attr] = val;
+            Y.DOM.setStyle(_nodes[this._yuid], attr, val);
             return this;
         },
 
@@ -732,22 +697,37 @@ YUI.add('node', function(Y) {
        /*
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
-         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
+         * @param {Function} fn - A boolean method for testing elements which receives the element as its only argument.
          * @return {Node} The matching Node instance or null if not found
          */
-        ancestor: function(test) {
-            var node = this;
-            while (node = node.get(PARENT_NODE)) { // NOTE: assignment
-                if ( test(node) ) {
-                    Y.log('ancestor returning ' + node, 'info', 'Node');
-                    return node;
-                }
-            } 
-
-            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
-            return null;
+        ancestor: function(fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
         },
 
+        /**
+         * Returns the previous sibling that is an HTMLElement. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method previous
+         * @param {Function} fn A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Node} Node instance or null if not found
+         */
+        previous: function(fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)));
+        }, 
+
+        /**
+         * Returns the next HTMLElement sibling that passes the boolean method. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method next
+         * @param {Function} fn A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Object} HTMLElement or null if not found
+         */
+        next: function(node, fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
+        },
+        
        /*
          * Attaches a handler for the given DOM event.
          * @method attach
@@ -757,8 +737,8 @@ YUI.add('node', function(Y) {
          */
 
         attach: function(type, fn, arg) {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(_nodes[this._yuid]);
+            var args = slice.call(arguments, 0);
+            args.unshift(this);
             return Y.Event.addListener.apply(Y.Event, args);
         },
 
@@ -786,7 +766,7 @@ YUI.add('node', function(Y) {
          * @param {Function} fn The handler to call when the event fires 
          */
         detach: function(type, fn) {
-            var args = [].slice.call(arguments, 0);
+            var args = slice.call(arguments, 0);
             args.unshift(_nodes[this._yuid]);
             return Y.Event.removeListener.apply(Y.Event, args);
         },
@@ -812,9 +792,7 @@ YUI.add('node', function(Y) {
          * @return {Boolean} Whether or not this node is an ancestor of needle
          */
         contains: function(needle) {
-            node = _nodes[this._yuid];
-            needle = getDOMNode(needle);
-            return contains(node, needle);
+            return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
         },
 
         plug: function(PluginClass, config) {
@@ -823,27 +801,17 @@ YUI.add('node', function(Y) {
             if (PluginClass && PluginClass.NS) {
                 this[PluginClass.NS] = new PluginClass(config);
             }
-        }
-    };
+        },
 
-    var contains = function(node, needle) {
-        var ret = false;
-
-        if (!needle || !node) {
-            ret = false;
-        } else if (node[CONTAINS])  {
-            ret = node[CONTAINS](needle);
-        } else if (node[COMPARE_DOCUMENT_POSITION]) { // gecko
-            if (node === needle || !!(node[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
-                ret = true;
+        inDoc: function(doc) {
+            var node = _nodes[this._yuid];
+            doc = (doc) ? getDoc(doc) : node.ownerDocument;
+            if (doc.documentElement) {
+                return Y.DOM.contains(doc.documentElement, node);
             }
         }
-
-        return ret;
-
     };
 
-    var slice = [].slice;
     Y.each(METHODS, function(fn, method) {
         Node.prototype[method] = function() {
             return fn.apply(this, [method].concat(slice.call(arguments)));
@@ -984,27 +952,17 @@ YUI.add('node', function(Y) {
 
     // used to call Node methods against NodeList nodes
     var _tmpNode = Node.create('<div></div>');
+    var updateTmp = function(node) {
+        _nodes[_tmpNode._yuid] = node;
+        _styles[_tmpNode._yuid] = node.style;
+    };
 
     NodeList.prototype = {};
 
-    Y.each(Node.prototype, function(fn, method) {
-        var ret;
-        var a = [];
-        NodeList.prototype[method] = function() {
-            var nodes = _nodes[this._yuid];
-            var node = _tmpNode;
-            if (typeof method == 'function') {
-                for (var i = 0, len = nodes.length; i < len; ++i) {
-                    _nodes[node._yuid] = nodes[i];
-                    ret = node[method].apply(node, arguments);
-                    if (ret !== undefined) {
-                        a[i] = ret;
-                    }
-                }
-            }
-
-            return a.length ? a : this;
-        };
+    Y.each(Node.prototype, function(fn, name) {
+        if (typeof Node.prototype[name] == 'function') {
+            addNodeListMethod(name);
+        }
     });
 
     Y.mix(NodeList.prototype, {
@@ -1109,4 +1067,4 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0', { requires: ['selector'] });
+}, '3.0.0', { requires: ['dom', 'selector', 'style'] });
