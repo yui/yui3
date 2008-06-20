@@ -1,665 +1,4 @@
 /**
- * The selector module provides helper methods allowing CSS3 Selectors to be used with DOM elements.
- * @module selector
- * @title Selector Utility
- * @requires yahoo, dom
- */
-
-YUI.add('selector', function(Y) {
-/**
- * Provides helper methods for collecting and filtering DOM elements.
- * @class Selector
- * @static
- */
-var Selector = function() {};
-
-
-var reNth = /^(?:([-]?\d*)(n){1}|(odd|even)$)*([-+]?\d*)$/;
-
-Selector.prototype = {
-    /**
-     * Default document for use queries 
-     * @property document
-     * @type object
-     * @default window.document
-     */
-    document: Y.config.doc,
-    /**
-     * Mapping of attributes to aliases, normally to work around HTMLAttributes
-     * that conflict with JS reserved words.
-     * @property attrAliases
-     * @type object
-     */
-    attrAliases: {
-    },
-
-    /**
-     * Mapping of shorthand tokens to corresponding attribute selector 
-     * @property shorthand
-     * @type object
-     */
-    shorthand: {
-        //'(?:(?:[^\\)\\]\\s*>+~,]+)(?:-?[_a-z]+[-\\w]))+#(-?[_a-z]+[-\\w]*)': '[id=$1]',
-        '\\#(-?[_a-z]+[-\\w]*)': '[id=$1]',
-        '\\.(-?[_a-z]+[-\\w]*)': '[class~=$1]'
-    },
-
-    /**
-     * List of operators and corresponding boolean functions. 
-     * These functions are passed the attribute and the current node's value of the attribute.
-     * @property operators
-     * @type object
-     */
-    operators: {
-        '=': function(attr, val) { return attr === val; }, // Equality
-        '!=': function(attr, val) { return attr !== val; }, // Inequality
-        '~=': function(attr, val) { // Match one of space seperated words 
-            var s = ' ';
-            return (s + attr + s).indexOf((s + val + s)) > -1;
-        },
-        '|=': function(attr, val) { return getRegExp('^' + val + '[-]?').test(attr); }, // Match start with value followed by optional hyphen
-        '^=': function(attr, val) { return attr.indexOf(val) === 0; }, // Match starts with value
-        '$=': function(attr, val) { return attr.lastIndexOf(val) === attr.length - val.length; }, // Match ends with value
-        '*=': function(attr, val) { return attr.indexOf(val) > -1; }, // Match contains value as substring 
-        '': function(attr, val) { return attr; } // Just test for existence of attribute
-    },
-
-    /**
-     * List of pseudo-classes and corresponding boolean functions. 
-     * These functions are called with the current node, and any value that was parsed with the pseudo regex.
-     * @property pseudos
-     * @type object
-     */
-    pseudos: {
-        'root': function(node) {
-            return node === node.ownerDocument.documentElement;
-        },
-
-        'nth-child': function(node, val) {
-            return getNth(node, val);
-        },
-
-        'nth-last-child': function(node, val) {
-            return getNth(node, val, null, true);
-        },
-
-        'nth-of-type': function(node, val) {
-            return getNth(node, val, node.tagName);
-        },
-         
-        'nth-last-of-type': function(node, val) {
-            return getNth(node, val, node.tagName, true);
-        },
-         
-        'first-child': function(node) {
-            return getChildren(node.parentNode)[0] === node;
-        },
-
-        'last-child': function(node) {
-            var children = getChildren(node.parentNode);
-            return children[children.length - 1] === node;
-        },
-
-        'first-of-type': function(node, val) {
-            return getChildren(node.parentNode, node.tagName.toLowerCase())[0];
-        },
-         
-        'last-of-type': function(node, val) {
-            var children = getChildren(node.parentNode, node.tagName.toLowerCase());
-            return children[children.length - 1];
-        },
-         
-        'only-child': function(node) {
-            var children = getChildren(node.parentNode);
-            return children.length === 1 && children[0] === node;
-        },
-
-        'only-of-type': function(node) {
-            return getChildren(node.parentNode, node.tagName.toLowerCase()).length === 1;
-        },
-
-        'empty': function(node) {
-            return node.childNodes.length === 0;
-        },
-
-        'not': function(node, simple) {
-            return !Selector.test(node, simple);
-        },
-
-        'contains': function(node, str) {
-            var text = node.innerText || node.textContent || '';
-            return text.indexOf(str) > -1;
-        },
-        'checked': function(node) {
-            return node.checked === true;
-        }
-    },
-
-    /**
-     * Test if the supplied node matches the supplied selector.
-     * @method test
-     *
-     * @param {HTMLElement | String} node An id or node reference to the HTMLElement being tested.
-     * @param {string} selector The CSS Selector to test the node against.
-     * @return{boolean} Whether or not the node matches the selector.
-     * @static
-    
-     */
-    test: function(node, selector) {
-        node = Selector.document.getElementById(node) || node;
-
-        if (!node) {
-            return false;
-        }
-
-        var groups = selector ? selector.split(',') : [];
-        if (groups.length) {
-            for (var i = 0, len = groups.length; i < len; ++i) {
-                if ( rTestNode(node, groups[i]) ) { // passes if ANY group matches
-                    return true;
-                }
-            }
-            return false;
-        }
-        return rTestNode(node, selector);
-    },
-
-    /**
-     * Filters a set of nodes based on a given CSS selector. 
-     * @method filter
-     *
-     * @param {array} nodes A set of nodes/ids to filter. 
-     * @param {string} selector The selector used to test each node.
-     * @return{array} An array of nodes from the supplied array that match the given selector.
-     * @static
-     */
-    filter: function(nodes, selector) {
-        nodes = nodes || [];
-
-        var node,
-            result = [],
-            tokens = tokenize(selector);
-
-        if (!nodes.item) { // if not HTMLCollection, handle arrays of ids and/or nodes
-            Y.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                if (!nodes[i].tagName) { // tagName limits to HTMLElements 
-                    node = Selector.document.getElementById(nodes[i]);
-                    if (node) { // skip IDs that return null 
-                        nodes[i] = node;
-                    } else {
-                        Y.log('filter: skipping invalid node', 'warn', 'Selector');
-                    }
-                }
-            }
-        }
-        result = rFilter(nodes, tokenize(selector)[0]);
-        clearParentCache();
-        Y.log('filter: returning:' + result.length, 'info', 'Selector');
-        return result;
-    },
-
-    /**
-     * Retrieves a set of nodes based on a given CSS selector. 
-     * @method query
-     *
-     * @param {string} selector The CSS Selector to test the node against.
-     * @param {HTMLElement | String} root optional An id or HTMLElement to start the query from. Defaults to Selector.document.
-     * @param {Boolean} firstOnly optional Whether or not to return only the first match.
-     * @return {Array} An array of nodes that match the given selector.
-     * @static
-     */
-    query: function(selector, root, firstOnly) {
-        var result = query(selector, root, firstOnly);
-        Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
-        return result;
-    }
-};
-
-var query = function(selector, root, firstOnly, deDupe) {
-    var result =  (firstOnly) ? null : [];
-    if (!selector) {
-        return result;
-    }
-
-    var groups = selector.split(','); // TODO: handle comma in attribute/pseudo
-
-    if (groups.length > 1) {
-        var found;
-        for (var i = 0, len = groups.length; i < len; ++i) {
-            found = arguments.callee(groups[i], root, firstOnly, true);
-            result = firstOnly ? found : result.concat(found); 
-        }
-        clearFoundCache();
-        return result;
-    }
-
-    if (root && !root.nodeName) { // assume ID
-        root = Selector.document.getElementById(root);
-        if (!root) {
-            Y.log('invalid root node provided', 'warn', 'Selector');
-            return result;
-        }
-    }
-
-    root = root || Selector.document;
-    var tokens = tokenize(selector);
-    var idToken = tokens[getIdTokenIndex(tokens)],
-        nodes = [],
-        node,
-        id,
-        token = tokens.pop() || {};
-        
-    if (idToken) {
-        id = getId(idToken.attributes);
-    }
-
-    // use id shortcut when possible
-    if (id) {
-        node = Selector.document.getElementById(id);
-
-        if (node && (root.nodeName == '#document' || contains(node, root))) {
-            if ( rTestNode(node, null, idToken) ) {
-                if (idToken === token) {
-                    nodes = [node]; // simple selector
-                } else {
-                    root = node; // start from here
-                }
-            }
-        } else {
-            return result;
-        }
-    }
-
-    if (root && !nodes.length) {
-        nodes = root.getElementsByTagName(token.tag);
-    }
-
-    if (nodes.length) {
-        result = rFilter(nodes, token, firstOnly, deDupe); 
-    }
-    clearParentCache();
-    return result;
-};
-
-var contains = function() {
-    if (document.documentElement.contains && !Y.UA.webkit < 422)  { // IE & Opera, Safari < 3 contains is broken
-        return function(needle, haystack) {
-            return haystack.contains(needle);
-        };
-    } else if ( document.documentElement.compareDocumentPosition ) { // gecko
-        return function(needle, haystack) {
-            return !!(haystack.compareDocumentPosition(needle) & 16);
-        };
-    } else  { // Safari < 3
-        return function(needle, haystack) {
-            var parent = needle.parentNode;
-            while (parent) {
-                if (needle === parent) {
-                    return true;
-                }
-                parent = parent.parentNode;
-            } 
-            return false;
-        }; 
-    }
-}();
-
-var rFilter = function(nodes, token, firstOnly, deDupe) {
-    var result = firstOnly ? null : [];
-
-    for (var i = 0, len = nodes.length; i < len; i++) {
-        if (! rTestNode(nodes[i], '', token, deDupe)) {
-            continue;
-        }
-
-        if (firstOnly) {
-            return nodes[i];
-        }
-        if (deDupe) {
-            if (nodes[i]._found) {
-                continue;
-            }
-            nodes[i]._found = true;
-            foundCache[foundCache.length] = nodes[i];
-        }
-
-        result[result.length] = nodes[i];
-    }
-
-    return result;
-};
-
-var rTestNode = function(node, selector, token, deDupe) {
-    token = token || tokenize(selector).pop() || {};
-
-    if (!node.tagName ||
-        (token.tag !== '*' && node.tagName.toUpperCase() !== token.tag) ||
-        (deDupe && node._found) ) {
-        return false;
-    }
-
-    if (token.attributes.length) {
-        var attribute;
-        for (var i = 0, len = token.attributes.length; i < len; ++i) {
-            attribute = node.getAttribute(token.attributes[i][0], 2);
-            if (attribute === undefined) {
-                return false;
-            }
-            if ( Selector.operators[token.attributes[i][1]] &&
-                    !Selector.operators[token.attributes[i][1]](attribute, token.attributes[i][2])) {
-                return false;
-            }
-        }
-    }
-
-    if (token.pseudos.length) {
-        for (var i = 0, len = token.pseudos.length; i < len; ++i) {
-            if (Selector.pseudos[token.pseudos[i][0]] &&
-                    !Selector.pseudos[token.pseudos[i][0]](node, token.pseudos[i][1])) {
-                return false;
-            }
-        }
-    }
-
-    return (token.previous && token.previous.combinator !== ',') ?
-            combinators[token.previous.combinator](node, token) :
-            true;
-};
-
-
-var foundCache = [];
-var parentCache = [];
-var regexCache = {};
-
-var clearFoundCache = function() {
-    Y.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
-    for (var i = 0, len = foundCache.length; i < len; ++i) {
-        try { // IE no like delete
-            delete foundCache[i]._found;
-        } catch(e) {
-            foundCache[i].removeAttribute('_found');
-        }
-    }
-    foundCache = [];
-    Y.log('getBySelector: done clearing foundCache');
-};
-
-var clearParentCache = function() {
-    if (!document.documentElement.children) { // caching children lookups for gecko
-        return function() {
-            for (var i = 0, len = parentCache.length; i < len; ++i) {
-                delete parentCache[i]._children;
-            }
-            parentCache = [];
-        };
-    } else return function() {}; // do nothing
-}();
-
-var getRegExp = function(str, flags) {
-    flags = flags || '';
-    if (!regexCache[str + flags]) {
-        regexCache[str + flags] = new RegExp(str, flags);
-    }
-    return regexCache[str + flags];
-};
-
-var combinators = {
-    ' ': function(node, token) {
-        while (node = node.parentNode) {
-            if (rTestNode(node, '', token.previous)) {
-                return true;
-            }
-        }  
-        return false;
-    },
-
-    '>': function(node, token) {
-        return rTestNode(node.parentNode, null, token.previous);
-    },
-    '+': function(node, token) {
-        var sib = node.previousSibling;
-        while (sib && sib.nodeType !== 1) {
-            sib = sib.previousSibling;
-        }
-
-        if (sib && rTestNode(sib, null, token.previous)) {
-            return true; 
-        }
-        return false;
-    },
-
-    '~': function(node, token) {
-        var sib = node.previousSibling;
-        while (sib) {
-            if (sib.nodeType === 1 && rTestNode(sib, null, token.previous)) {
-                return true;
-            }
-            sib = sib.previousSibling;
-        }
-
-        return false;
-    }
-};
-
-var getChildren = function() {
-    if (document.documentElement.children) { // document for capability test
-        return function(node, tag) {
-            return (tag) ? node.children.tags(tag) : node.children || [];
-        };
-    } else {
-        return function(node, tag) {
-            if (node._children) {
-                return node._children;
-            }
-            var children = [],
-                childNodes = node.childNodes;
-
-            for (var i = 0, len = childNodes.length; i < len; ++i) {
-                if (childNodes[i].tagName) {
-                    if (!tag || childNodes[i].tagName.toLowerCase() === tag) {
-                        children[children.length] = childNodes[i];
-                    }
-                }
-            }
-            node._children = children;
-            parentCache[parentCache.length] = node;
-            return children;
-        };
-    }
-}();
-
-/*
-    an+b = get every _a_th node starting at the _b_th
-    0n+b = no repeat ("0" and "n" may both be omitted (together) , e.g. "0n+1" or "1", not "0+1"), return only the _b_th element
-    1n+b =  get every element starting from b ("1" may may be omitted, e.g. "1n+0" or "n+0" or "n")
-    an+0 = get every _a_th element, "0" may be omitted 
-*/
-var getNth = function(node, expr, tag, reverse) {
-    if (tag) tag = tag.toLowerCase();
-    reNth.test(expr);
-    var a = parseInt(RegExp.$1, 10), // include every _a_ elements (zero means no repeat, just first _a_)
-        n = RegExp.$2, // "n"
-        oddeven = RegExp.$3, // "odd" or "even"
-        b = parseInt(RegExp.$4, 10) || 0, // start scan from element _b_
-        result = [];
-
-    var siblings = getChildren(node.parentNode, tag);
-
-    if (oddeven) {
-        a = 2; // always every other
-        op = '+';
-        n = 'n';
-        b = (oddeven === 'odd') ? 1 : 0;
-    } else if ( isNaN(a) ) {
-        a = (n) ? 1 : 0; // start from the first or no repeat
-    }
-
-    if (a === 0) { // just the first
-        if (reverse) {
-            b = siblings.length - b + 1; 
-        }
-
-        if (siblings[b - 1] === node) {
-            return true;
-        } else {
-            return false;
-        }
-
-    } else if (a < 0) {
-        reverse = !!reverse;
-        a = Math.abs(a);
-    }
-
-    if (!reverse) {
-        for (var i = b - 1, len = siblings.length; i < len; i += a) {
-            if ( i >= 0 && siblings[i] === node ) {
-                return true;
-            }
-        }
-    } else {
-        for (var i = siblings.length - b, len = siblings.length; i >= 0; i -= a) {
-            if ( i < len && siblings[i] === node ) {
-                return true;
-            }
-        }
-    }
-    return false;
-};
-
-var getId = function(attr) {
-    for (var i = 0, len = attr.length; i < len; ++i) {
-        if (attr[i][0] == 'id' && attr[i][1] === '=') {
-            return attr[i][2];
-        }
-    }
-};
-
-var getIdTokenIndex = function(tokens) {
-    for (var i = 0, len = tokens.length; i < len; ++i) {
-        if (getId(tokens[i].attributes)) {
-            return i;
-        }
-    }
-    return -1;
-};
-
-var patterns = {
-    tag: /^((?:-?[_a-z]+[\w-]*)|\*)/i,
-    attributes: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^\]]*?)['"]?\]/i,
-    //attributes: /^\[([a-z]+\w*)+([~\|\^\$\*!=]=?)?['"]?([^'"\]]*)['"]?\]*/i,
-    pseudos: /^:([-\w]+)(?:\(['"]?(.+)['"]?\))*/i,
-    combinator: /^\s*([>+~]|\s)\s*/
-};
-
-/**
-    Break selector into token units per simple selector.
-    Combinator is attached to left-hand selector.
- */
-var tokenize = function(selector) {
-    var token = {},     // one token per simple selector (left selector holds combinator)
-        tokens = [],    // array of tokens
-        id,             // unique id for the simple selector (if found)
-        found = false,  // whether or not any matches were found this pass
-        match;          // the regex match
-
-    selector = replaceShorthand(selector); // convert ID and CLASS shortcuts to attributes
-
-    /*
-        Search for selector patterns, store, and strip them from the selector string
-        until no patterns match (invalid selector) or we run out of chars.
-
-        Multiple attributes and pseudos are allowed, in any order.
-        for example:
-            'form:first-child[type=button]:not(button)[lang|=en]'
-    */
-    do {
-        found = false; // reset after full pass
-        for (var re in patterns) {
-                if (!Y.Object.owns(patterns, re)) {
-                    continue;
-                }
-                if (re != 'tag' && re != 'combinator') { // only one allowed
-                    token[re] = token[re] || [];
-                }
-            if (match = patterns[re].exec(selector)) { // note assignment
-                found = true;
-                if (re != 'tag' && re != 'combinator') { // only one allowed
-                    //token[re] = token[re] || [];
-
-                    // capture ID for fast path to element
-                    if (re === 'attributes' && match[1] === 'id') {
-                        token.id = match[3];
-                    }
-
-                    token[re].push(match.slice(1));
-                } else { // single selector (tag, combinator)
-                    token[re] = match[1];
-                }
-                selector = selector.replace(match[0], ''); // strip current match from selector
-                if (re === 'combinator' || !selector.length) { // next token or done
-                    token.attributes = fixAttributes(token.attributes);
-                    token.pseudos = token.pseudos || [];
-                    token.tag = token.tag ? token.tag.toUpperCase() : '*';
-                    tokens.push(token);
-
-                    token = { // prep next token
-                        previous: token
-                    };
-                }
-            }
-        }
-    } while (found);
-
-    return tokens;
-};
-
-var fixAttributes = function(attr) {
-    var aliases = Selector.attrAliases;
-    attr = attr || [];
-    for (var i = 0, len = attr.length; i < len; ++i) {
-        if (aliases[attr[i][0]]) { // convert reserved words, etc
-            attr[i][0] = aliases[attr[i][0]];
-        }
-        if (!attr[i][1]) { // use exists operator
-            attr[i][1] = '';
-        }
-    }
-    return attr;
-};
-
-var replaceShorthand = function(selector) {
-    var shorthand = Selector.shorthand;
-    var attrs = selector.match(patterns.attributes); // pull attributes to avoid false pos on "." and "#"
-    if (attrs) {
-        selector = selector.replace(patterns.attributes, 'REPLACED_ATTRIBUTE');
-    }
-    for (var re in shorthand) {
-        if (!Y.Object.owns(shorthand, re)) {
-            continue;
-        }
-        selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
-    }
-
-    if (attrs) {
-        for (var i = 0, len = attrs.length; i < len; ++i) {
-            selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
-        }
-    }
-    return selector;
-};
-
-Selector = new Selector();
-Selector.patterns = patterns;
-Y.Selector = Selector;
-
-if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
-    Y.Selector.attrAliases['class'] = 'className';
-    Y.Selector.attrAliases['for'] = 'htmlFor';
-}
-
-}, '3.0.0');
-/**
  * DOM Abstractions.
  * @module node
  */
@@ -699,6 +38,8 @@ YUI.add('node', function(Y) {
         NODE_TYPE = 'nodeType',
         COMPAT_MODE = 'compatMode',
         PARENT_NODE = 'parentNode',
+        PREVIOUS_SIBLING = 'previousSibling',
+        NEXT_SIBLING = 'nextSibling',
         SCROLL_TOP = 'scrollTop',
         SCROLL_LEFT = 'scrollLeft',
         COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
@@ -711,6 +52,8 @@ YUI.add('node', function(Y) {
     var _nodes = {};
     var _styles = {};
     var _restrict = null;
+
+    var slice = [].slice;
 
     // private factory
     var wrap = function(node) {
@@ -731,6 +74,14 @@ YUI.add('node', function(Y) {
         }
 
         return ret;
+    };
+
+    var wrapFn = function(node, fn) {
+        if (fn) {
+            return function() {
+                return fn(node);
+            }();
+        }
     };
 
     var getDoc = function(node) {
@@ -779,8 +130,8 @@ YUI.add('node', function(Y) {
         _nodes[this._yuid][method](a, b, c, d, e);
         return this;
     };
-    var PROPS_WRAP = {
 
+    var PROPS_WRAP = {
         /**
          * Returns a Node instance. 
          * @property parentNode
@@ -1062,100 +413,15 @@ YUI.add('node', function(Y) {
 
     };
 
-    var getWinSize = function(node) {
-        var doc = getDoc(node),
-            win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
-            mode = doc[COMPAT_MODE],
-            height = win.innerHeight,
-            width = win.innerWidth,
-            root = doc[DOCUMENT_ELEMENT];
-    
-        if ( mode && !Y.UA.opera ) { // IE, Gecko
-            if (mode != 'CSS1Compat') { // Quirks
-                root = doc.body; 
-            }
-            height = root.clientHeight;
-            width = root.clientWidth;
-        }
-        return { 'height': height, 'width': width }; 
-    };
-
-    var getDocSize = function(node) {
-        var doc = getDoc(node),
-            root = doc[DOCUMENT_ELEMENT];
-
-        if (doc[COMPAT_MODE] != 'CSS1Compat') {
-            root = doc.body;
-        }
-
-        return {
-            'height': root.scrollHeight,
-            'width': root.scrollWidth
-        }
-    };
-
     var SETTERS = {};
     var GETTERS = {
         /**
-         * Returns the inner height of the viewport (exludes scrollbar). 
-         * @property winHeight
+         * Normalizes nodeInnerText and textContent. 
+         * @property text
          * @type String
          */
-        'winHeight': function(node) {
-            var h = getWinSize(node).height;
-            Y.log('GETTERS:winHeight returning ' + h, 'info', 'Node');
-            return h;
-        },
-
-        /**
-         * Returns the inner width of the viewport (exludes scrollbar). 
-         * @property winWidth
-         * @type String
-         */
-        'winWidth': function(node) {
-            var w = getWinSize(node).width;
-            Y.log('GETTERS:winWidth returning ' + w, 'info', 'Node');
-            return w;
-        },
-
-        /**
-         * Document height 
-         * @property docHeight
-         * @type Number
-         */
-        'docHeight':  function(node) {
-            var h = getDocSize(node).height;
-            return Math.max(h, getWinSize(node).height);
-        },
-
-        /**
-         * Document width 
-         * @property docWidth
-         * @type Number
-         */
-        'docWidth':  function(node) {
-            var w = getDocSize(node).width;
-            return Math.max(w, getWinSize(node).width);
-        },
-
-        /**
-         * Amount page has been scroll vertically 
-         * @property docScrollX
-         * @type Number
-         */
-        'docScrollX':  function(node) {
-            var doc = getDoc(node);
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
-        },
-
-        /**
-         * Amount page has been scroll horizontally 
-         * @property docScrollY
-         * @type Number
-         */
-        'docScrollY':  function(node) {
-            var doc = getDoc(node);
-            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        'text': function(node) {
+            return node.get('innerText') || node.get('textContent') || '';
         }
     };
 
@@ -1171,7 +437,7 @@ YUI.add('node', function(Y) {
 
     Node.getters = function(prop, fn) {
         if (typeof prop == 'string') {
-            return GETTERS[prop] = fn;
+            GETTERS[prop] = fn;
         } else { // assume object
             Y.each(prop, function(fn, prop) {
                 Node.getters(prop, fn);
@@ -1216,6 +482,37 @@ YUI.add('node', function(Y) {
 
             return a.length ? a : this;
         };
+    };
+
+    Node.getDOMNode = function(node) {
+        var ret;
+
+        if (node.nodeType) {
+            ret = node;
+        } else if (typeof node === 'string') {
+            ret = Selector.query(node, null, true);
+        } else {
+            ret = _nodes[node._yuid];
+        }
+        return ret || null;
+    };
+
+    Node.wrapDOMMethod = function(name) {
+        return function() {
+            var args = slice.call(arguments);
+            args.unshift(Y.Node.getDOMNode(args.shift()));
+            return Y.DOM[name].apply(Y.DOM, args);
+        };
+
+    };
+
+    Node.addDOMMethods = function(methods) {
+        var add = {}; 
+        Y.each(methods, function(v, n) {
+            add[v] = Y.Node.wrapDOMMethod(v);
+        });
+
+        Y.Node.methods(add);
     };
 
     Node.prototype = {
@@ -1267,7 +564,7 @@ YUI.add('node', function(Y) {
                     val = node[prop];
                 }
 
-                if (_restrict && _restrict[this._yuid] && !contains(node, val)) {
+                if (_restrict && _restrict[this._yuid] && !Y.DOM.contains(node, val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
                     val = wrap(val);
@@ -1349,7 +646,17 @@ YUI.add('node', function(Y) {
          * @return {String} The current value of the style property for the element.
          */
         getStyle: function(attr) {
-            return Y.Style.get(_nodes[this._yuid], attr);
+            return Y.DOM.getStyle(_nodes[this._yuid], attr);
+        },
+
+        /**
+         * Retrieves the computed value for the given style attribute.
+         * @method getComputedStyle
+         * @param {String} attr The style attribute to retrieve. 
+         * @return {String} The computed value of the style property for the element.
+         */
+        getComputedStyle: function(attr) {
+            return Y.DOM.getComputedStyle(_nodes[this._yuid], attr);
         },
 
         /**
@@ -1359,7 +666,7 @@ YUI.add('node', function(Y) {
          * @param {String|Number} val The value. 
          */
         setStyle: function(attr, val) {
-            Y.Style.set(_nodes[this._yuid], attr, val);
+            Y.DOM.setStyle(_nodes[this._yuid], attr, val);
             return this;
         },
 
@@ -1390,22 +697,37 @@ YUI.add('node', function(Y) {
        /*
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
-         * @param {Function} method - A boolean method for testing elements which receives the element as its only argument.
+         * @param {Function} fn - A boolean method for testing elements which receives the element as its only argument.
          * @return {Node} The matching Node instance or null if not found
          */
-        ancestor: function(test) {
-            var node = this;
-            while (node = node.get(PARENT_NODE)) { // NOTE: assignment
-                if ( test(node) ) {
-                    Y.log('ancestor returning ' + node, 'info', 'Node');
-                    return node;
-                }
-            } 
-
-            Y.log('ancestor returning null (no ancestor passed test)', 'error', 'Node');
-            return null;
+        ancestor: function(fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
         },
 
+        /**
+         * Returns the previous sibling that is an HTMLElement. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method previous
+         * @param {Function} fn A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Node} Node instance or null if not found
+         */
+        previous: function(fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)));
+        }, 
+
+        /**
+         * Returns the next HTMLElement sibling that passes the boolean method. 
+         * Returns the nearest HTMLElement sibling if no method provided.
+         * @method next
+         * @param {Function} fn A boolean function used to test siblings
+         * that receives the sibling node being tested as its only argument
+         * @return {Object} HTMLElement or null if not found
+         */
+        next: function(node, fn) {
+            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
+        },
+        
        /*
          * Attaches a handler for the given DOM event.
          * @method attach
@@ -1415,8 +737,8 @@ YUI.add('node', function(Y) {
          */
 
         attach: function(type, fn, arg) {
-            var args = [].slice.call(arguments, 0);
-            args.unshift(_nodes[this._yuid]);
+            var args = slice.call(arguments, 0);
+            args.unshift(this);
             return Y.Event.addListener.apply(Y.Event, args);
         },
 
@@ -1444,7 +766,7 @@ YUI.add('node', function(Y) {
          * @param {Function} fn The handler to call when the event fires 
          */
         detach: function(type, fn) {
-            var args = [].slice.call(arguments, 0);
+            var args = slice.call(arguments, 0);
             args.unshift(_nodes[this._yuid]);
             return Y.Event.removeListener.apply(Y.Event, args);
         },
@@ -1470,9 +792,7 @@ YUI.add('node', function(Y) {
          * @return {Boolean} Whether or not this node is an ancestor of needle
          */
         contains: function(needle) {
-            node = _nodes[this._yuid];
-            needle = getDOMNode(needle);
-            return contains(node, needle);
+            return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
         },
 
         plug: function(PluginClass, config) {
@@ -1481,43 +801,17 @@ YUI.add('node', function(Y) {
             if (PluginClass && PluginClass.NS) {
                 this[PluginClass.NS] = new PluginClass(config);
             }
+        },
+
+        inDoc: function(doc) {
+            var node = _nodes[this._yuid];
+            doc = (doc) ? getDoc(doc) : node.ownerDocument;
+            if (doc.documentElement) {
+                return Y.DOM.contains(doc.documentElement, node);
+            }
         }
     };
 
-    var contains = function(node, needle) {
-        var ret = false;
-
-        if (!needle || !node) {
-            ret = false;
-        } else if (node[CONTAINS])  {
-            if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fails if not an ELEMENT_NODE
-                ret = node[CONTAINS](needle);
-            } else {
-                ret = crawlContains(node, needle); 
-            }
-        } else if (node[COMPARE_DOCUMENT_POSITION]) { // gecko
-            if (node === needle || !!(node[COMPARE_DOCUMENT_POSITION](needle) & 16)) { 
-                ret = true;
-            }
-        } else {
-            ret = crawlContains(node, needle);
-        }
-
-        return ret;
-
-    };
-
-    var crawlContains = function(node, needle) {
-        while (needle) {
-            if (node === needle) {
-                return true;
-            }
-            needle = needle.parentNode;
-        }
-        return false;
-    };
-
-    var slice = [].slice;
     Y.each(METHODS, function(fn, method) {
         Node.prototype[method] = function() {
             return fn.apply(this, [method].concat(slice.call(arguments)));
@@ -1773,105 +1067,83 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0', { requires: ['selector', 'style'] });
-YUI.add('style', function(Y) {
+}, '3.0.0', { requires: ['dom', 'selector', 'style'] });
+/**
+ * Extended interface for Node
+ * @interface nodescreen
+ */
 
-    var OWNER_DOCUMENT = 'ownerDocument',
-        DEFAULT_VIEW = 'defaultView';
+YUI.add('nodescreen', function(Y) {
 
-    var _alias = {};
+    /**
+     * An interface for Node positioning.
+     * @interface nodescreen
+     */
 
-    if (document.documentElement.style.cssFloat !== undefined) {
-        _alias['float'] = 'cssFloat';
-    } else if (document.documentElement.style.styleFloat !== undefined) {
-        _alias['float'] = 'styleFloat';
-    }
+    var ATTR = ['winWidth', 'winHeight', 'docWidth', 'docHeight', 'docScrollX', 'docScrollY'];
 
-    // use alpha filter for IE opacity
-    if (document.documentElement.style.opacity === undefined &&
-            document.documentElement.filters) {
-        _alias['opacity'] = {
-            get: function(node) {
-                var val = 100;
-                try { // will error if no DXImageTransform
-                    val = node.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+    Y.each(ATTR, function(v, n) {
+        Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
+    });
 
-                } catch(e) {
-                    try { // make sure its in the document
-                        val = node.filters('alpha').opacity;
-                    } catch(e) {
-                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'Style');
-                    }
-                }
-                return val / 100;
-            },
+    Y.Node.addDOMMethods(['getXY', 'setXY']);
 
-            set: function(node, val) {
-                if (typeof node.style.filter == 'string') { // in case not appended
-                    node.style.filter = 'alpha(opacity=' + val * 100 + ')';
-                    
-                    if (!node.currentStyle || !node.currentStyle.hasLayout) {
-                        node.style.zoom = 1; // needs layout 
-                    }
-                }
-            }
-        }
-    }
+}, '3.0.0', { requires: ['node', 'domscreen'] });
+/**
+ * Extended Node interface for managing classNames.
+ * @module nodeclassname
+ */
 
+YUI.add('nodeclassname', function(Y) {
 
-    var Style = {
-        set: function(node, att, val) {
-            if (node.style) {
-                if (_alias[att]) {
-                    if (_alias[att].set) {
-                        _alias[att].set(node, val);
-                        return; // NOTE: return
-                    } else {
-                        att = _alias[att];
-                    }
-                }
-                node.style[att] = val; 
-            }
-        },
+    /**
+     * An interface for manipulating className strings.
+     * @interface NodeClassName
+     */
+    Y.Node.addDOMMethods([
+        /**
+         * Determines whether an HTMLElement has the given className.
+         * @method hasClass
+         * @param {String} className the class name to search for
+         * @return {Boolean | Array} A boolean value or array of boolean values
+         */
+        'hasClass',
 
-        get: function(node, att) {
-            var style = node.style;
-            if (_alias[att]) {
-                if (_alias[att].get) {
-                    return _alias[att].get(node); // NOTE: return
-                } else {
-                    att = _alias[att];
-                }
-            }
+        /**
+         * Adds a class name to a given element or collection of elements.
+         * @method addClass         
+         * @param {String} className the class name to add to the class attribute
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        'addClass',
 
-            var val = style ? style[att] : undefined;
-            if (val === '') { // TODO: is empty string sufficient?
-                val = Y.Style.getComputed(node, att);
-            }
+        /**
+         * Removes a class name from a given element or collection of elements.
+         * @method removeClass         
+         * @param {String} className the class name to remove from the class attribute
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        'removeClass',
 
-            return val;
-        },
+        /**
+         * Replace a class with another class for a given element or collection of elements.
+         * If no oldClassName is present, the newClassName is simply added.
+         * @method replaceClass  
+         * @param {String} oldClassName the class name to be replaced
+         * @param {String} newClassName the class name that will be replacing the old class name
+         * @return {Boolean | Array} A pass/fail boolean or array of booleans
+         */
+        'replaceClass',
 
-        getComputed: function(node, att) {
-            var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
-                val;
+        /**
+         * If the className exists on the node it is removed, if it doesn't exist it is added.
+         * @method toggleClass  
+         * @param {String} className the class name to be toggled
+         */
+        'toggleClass'
+    ]);
 
-            if (view && view.getComputedStyle) {
-                val = view.getComputedStyle(node, '')[att];
-            } else if (node.currentStyle) {
-                val =  node.currentStyle[att];
-            }
-
-            if (val === undefined) {
-                val = ''; // TODO: more robust
-            }
-
-            return val;
-        }
-   };
-
-    Y.Style = Style;
-}, '3.0.0');
+}, '3.0.0', { requires: ['node', 'domclassname'] });
 /**
  * Extended interface for Node
  * @module nodeextras
@@ -1884,340 +1156,42 @@ YUI.add('nodeextras', function(Y) {
      * @interface NodeExtras
      */
 
-    var CLASS_NAME = 'className',
-        OFFSET_TOP = 'offsetTop',
-        POSITION = 'position',
-        FIXED = 'fixed',
-        RELATIVE = 'relative',
-        LEFT = 'left',
-        TOP = 'top',
-        NODE_TYPE = 'nodeType',
-        OFFSET_LEFT = 'offsetLeft',
-        GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
-        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition';
+}, '3.0.0', { requires: ['node', 'nodeclassname', 'nodescreen', 'noderegion'] });
+/**
+ * Extended Node interface for managing classNames.
+ * @module nodeclassname
+ */
 
-    var regexCache = {};
-    var getRegExp = function(str, flags) {
-        flags = flags || '';
-        if (!regexCache[str + flags]) {
-            regexCache[str + flags] = new RegExp(str, flags);
-        }
-        return regexCache[str + flags];
-    };
+YUI.add('noderegion', function(Y) {
 
-    Y.Node.getters({
-        /**
-         * Normalizes nodeInnerText and textContent. 
-         * @property text
-         * @type String
-         */
-        'text': function(node) {
-            return node.get('innerText') || node.get('textContent') || '';
-        }
+    /**
+     * A Region interface for Node.
+     * @interface NodeRegion
+     */
+
+    var ATTR = ['region', 'viewportRegion'],
+        getNode = Y.Node.getDOMNode;
+
+    Y.each(ATTR, function(v, n) {
+        Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
     });
 
+    Y.Node.addDOMMethods([
+        'inViewportRegion'
+    ]);
+
+    // these need special treatment to extract 2nd node arg
     Y.Node.methods({
-        /**
-         * Determines whether an HTMLElement has the given className.
-         * @method hasClass
-         * @param {String} className the class name to search for
-         * @return {Boolean | Array} A boolean value or array of boolean values
-         */
-        hasClass: function(node, className) {
-            var re = getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
-            return re.test(node.get(CLASS_NAME));
+        intersect: function(node1, node2, altRegion) {
+            return Y.DOM.intersect(getNode(node1), getNode(node2), altRegion); 
         },
 
-        /**
-         * Adds a class name to a given element or collection of elements.
-         * @method addClass         
-         * @param {String} className the class name to add to the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        addClass: function(node, className) {
-            if (node.hasClass(className)) {
-                return; // already present
+        inRegion: function(node1, node2, all, altRegion) {
+            if (node2 instanceof Y.Node) { // might be a region object
+                node2 = getNode(node2);
             }
-            
-            //Y.log('addClass adding ' + className, 'info', 'Node');
-            
-            node.set(CLASS_NAME, Y.Lang.trim([node.get(CLASS_NAME), className].join(' ')));
-        },
-
-        /**
-         * Removes a class name from a given element or collection of elements.
-         * @method removeClass         
-         * @param {String} className the class name to remove from the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        removeClass: function(node, className) {
-            if (!className || !node.hasClass(className)) {
-                return; // not present
-            }                 
-
-            //Y.log('removeClass removing ' + className, 'info', 'Node');
-            
-            node.set(CLASS_NAME,
-                    Y.Lang.trim(node.get(CLASS_NAME).replace(getRegExp('(?:^|\\s+)' +
-                            className + '(?:\\s+|$)'), ' ')));
-
-            if ( node.hasClass(className) ) { // in case of multiple adjacent
-                node.removeClass(className);
-            }
-        },
-
-        /**
-         * Replace a class with another class for a given element or collection of elements.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        replaceClass: function(node, newC, oldC) {
-            //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
-        
-            if ( !node.hasClass(oldC) ) {
-                node.addClass(newC); // just add it if nothing to replace
-                return; // NOTE: return
-            }
-        
-            var re = getRegExp('(?:^|\\s+)' + oldC + '(?:\\s+|$)');
-            node.set(CLASS_NAME, node.get(CLASS_NAME).replace(re, ' ' + newC + ' '));
-
-            if ( node.hasClass(oldC) ) { // in case of multiple adjacent
-                node.replaceClass(oldC, newC);
-            }
-
-            node.set(CLASS_NAME, Y.Lang.trim(node.get(CLASS_NAME))); // remove any trailing spaces
-        },
-
-        /**
-         * If the className exists on the node it is removed, if it doesn't exist it is added.
-         * @method toggleClass  
-         * @param {String} className the class name to be toggled
-         */
-        toggleClass: function(node, className) {
-            if (node.hasClass(className)) {
-                node.removeClass(className);
-            } else {
-                node.addClass(className);
-            }
-        },        
-
-        /**
-         * Returns the previous sibling that is an HTMLElement. 
-         * Returns the nearest HTMLElement sibling if no method provided.
-         * @method previous
-         * @param {Function} method A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument
-         * @return {Node} Node instance or null if not found
-         */
-        previous: function(node, method) {
-            while (node) {
-                node = node.get('previousSibling');
-                if ( node && node.get(NODE_TYPE) === 1 ) {
-                    if (!method || method(node)) {
-                        return node;
-                    }
-                }
-            }
-            return null;
-        }, 
-
-        /**
-         * Returns the next HTMLElement sibling that passes the boolean method. 
-         * Returns the nearest HTMLElement sibling if no method provided.
-         * @method next
-         * @param {Function} method A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument
-         * @return {Object} HTMLElement or null if not found
-         */
-        next: function(node, method) {
-            while (node) {
-                node = node.get('nextSibling');
-                if ( node && node.get(NODE_TYPE) === 1 ) {
-                    if (!method || method(node)) {
-                        return node;
-                    }
-                }
-            }
-            return null;
-        },
-        
-        /**
-         * Gets the current position of an element based on page coordinates. 
-         * Element must be part of the DOM tree to have page coordinates
-         * (display:none or elements not appended return false).
-         * @method getXY
-         * @return {Array} The XY position of the element
-
-         TODO: test inDocument/display
-         */
-        getXY: function() {
-            if (Y.Node.get('document').get('documentElement').hasMethod(GET_BOUNDING_CLIENT_RECT)) {
-                return function(node) {
-                    var scrollLeft = node.get('docScrollX'),
-                        scrollTop = node.get('docScrollY'),
-                        box = node.invoke(GET_BOUNDING_CLIENT_RECT),
-                        //Round the numbers so we get sane data back
-                        xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
-
-                        if (Y.UA.ie) {
-                            var off1 = 2, off2 = 2,
-                            mode = Y.Node.get('document').get('compatMode'),
-                            bLeft = Y.Node.get('document').get('documentElement').getStyle('borderLeftWidth'),
-                            bTop = Y.Node.get('document').get('documentElement').getStyle('borderTopWidth');
-                            if (Y.UA.ie === 6) {
-                                if (mode !== 'BackCompat') {
-                                    off1 = 0;
-                                    off2 = 0;
-                                }
-                            }
-                            
-                            if ((mode == 'BackCompat')) {
-                                if (bLeft !== 'medium') {
-                                    off1 = parseInt(bLeft, 10);
-                                }
-                                if (bTop !== 'medium') {
-                                    off2 = parseInt(bTop, 10);
-                                }
-                            }
-                            
-                            xy[0] -= off1;
-                            xy[1] -= off2;
-                        }
-                    if ((scrollTop || scrollLeft)) {
-                        xy[0] += scrollLeft;
-                        xy[1] += scrollTop;
-                    }
-                    return xy;                   
-                };
-            } else {
-                return function(node) { // manually calculate by crawling up offsetParents
-                    //Calculate the Top and Left border sizes (assumes pixels)
-                    var calcBorders = function(node, xy2) {
-                        var t = parseInt(node.getStyle('borderTopWidth'), 10) || 0,
-                            l = parseInt(node.getStyle('borderLeftWidth'), 10) || 0;
-                        if (Y.UA.gecko) {
-                            if (getRegExp('/^t(able|d|h)$/', 'i').test(node.get('tagName'))) {
-                                t = 0;
-                                l = 0;
-                            }
-                        }
-                        xy2[0] += l;
-                        xy2[1] += t;
-                        return xy2;
-                    };
-
-                    var xy = [node.get(OFFSET_LEFT), node.get(OFFSET_TOP)],
-                    parentNode = node,
-                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
-
-                    while (parentNode = parentNode.get('offsetParent')) {
-                        xy[0] += parentNode.get(OFFSET_LEFT);
-                        xy[1] += parentNode.get(OFFSET_TOP);
-                        if (bCheck) {
-                            xy = calcBorders(parentNode, xy);
-                        }
-                    }
-
-                    // account for any scrolled ancestors
-                    if (node.getStyle(POSITION) != FIXED) {
-                        parentNode = node;
-                        var scrollTop, scrollLeft;
-
-                        while (parentNode = parentNode.get('parentNode')) {
-                            scrollTop = parentNode.get('scrollTop');
-                            scrollLeft = parentNode.get('scrollLeft');
-
-                            //Firefox does something funky with borders when overflow is not visible.
-                            if (Y.UA.gecko && (parentNode.getStyle('overflow') !== 'visible')) {
-	                            xy = calcBorders(parentNode, xy);
-                            }
-                            
-
-                            if (scrollTop || scrollLeft) {
-                                xy[0] -= scrollLeft;
-                                xy[1] -= scrollTop;
-                            }
-                        }
-                        xy[0] += node.get('docScrollX');
-                        xy[1] += node.get('docScrollY');
-
-                    } else {
-                        //Fix FIXED position -- add scrollbars
-                        if (Y.UA.opera) {
-                            xy[0] -= node.get('docScrollX');
-                            xy[1] -= node.get('docScrollY');
-                        } else if (Y.UA.webkit || Y.UA.gecko) {
-                            xy[0] += node.get('docScrollX');
-                            xy[1] += node.get('docScrollY');
-                        }
-                    }
-                    //Round the numbers so we get sane data back
-                    xy[0] = Math.floor(xy[0]);
-                    xy[1] = Math.floor(xy[1]);
-
-                    return xy;                
-                };
-            }
-        }(),// NOTE: Executing for loadtime branching
-
-        /**
-         * Set the position of an html element in page coordinates, regardless of how the element is positioned.
-         * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-         * @method setXY
-         * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
-         * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
-         */
-        setXY: function(node, xy, noRetry) {
-            var pos = node.getStyle(POSITION),
-                delta = [ // assuming pixels; if not we will have to retry
-                    parseInt( node.getStyle(LEFT), 10 ),
-                    parseInt( node.getStyle(TOP), 10 )
-                ];
-        
-            if (pos == 'static') { // default to relative
-                pos = RELATIVE;
-                node.setStyle(POSITION, RELATIVE);
-            }
-
-            var currentXY = node.getXY();
-
-            if (currentXY === false) { // has to be part of doc to have xy
-                YAHOO.log('xy failed: node not available', 'error', 'Node');
-                return false; 
-            }
-            
-            if ( isNaN(delta[0]) ) {// in case of 'auto'
-                delta[0] = (pos == RELATIVE) ? 0 : node.get(OFFSET_LEFT);
-            } 
-            if ( isNaN(delta[1]) ) { // in case of 'auto'
-                delta[1] = (pos == RELATIVE) ? 0 : node.get(OFFSET_TOP);
-            } 
-
-            if (xy[0] !== null) {
-                node.setStyle(LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
-            }
-
-            if (xy[1] !== null) {
-                node.setStyle(TOP, xy[1] - currentXY[1] + delta[1] + 'px');
-            }
-          
-            if (!noRetry) {
-                var newXY = node.getXY();
-
-                // if retry is true, try one more time if we miss 
-               if ( (xy[0] !== null && newXY[0] != xy[0]) || 
-                    (xy[1] !== null && newXY[1] != xy[1]) ) {
-                   node.setXY(xy, true);
-               }
-            }        
-
-            Y.log('setXY setting position to ' + xy, 'info', 'Node');
+            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
         }
-    
     });
 
-}, '3.0.0', { requires: ['node'] });
+}, '3.0.0', { requires: ['node', 'screen', 'region'] });
