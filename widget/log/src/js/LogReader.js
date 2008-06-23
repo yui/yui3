@@ -9,6 +9,8 @@ Y.mix(Y.log.Reader, {
 
     PLUGINS : [],
 
+    TEMPLATE : Y.Widget.TEMPLATE,
+
     CLASSES : {
         CONTAINER   : 'yui-log',
         HD          : 'yui-log-hd',
@@ -203,9 +205,9 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     renderUI : function () {
         if (!this.rendered) {
-            this._root.innerHTML = '';
+            this._contentBox.innerHTML = '';
 
-            this._root.addClass(Y.log.Reader.CLASSES.CONTAINER);
+            this._contentBox.addClass(Y.log.Reader.CLASSES.CONTAINER);
 
             this._renderHead();
             this._renderConsole();
@@ -230,11 +232,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         this._title = this._head.query('h4');
 
-        this._root.insertBefore(this._head,this._root.get('firstChild')||null);
+        this._contentBox.insertBefore(this._head,this._contentBox.get('firstChild')||null);
     },
 
     _renderConsole : function () {
-        this._console = this._root.insertBefore(
+        this._console = this._contentBox.insertBefore(
             Y.Node.create('<div class="'+Y.log.Reader.CLASSES.CONSOLE+'"></div>'),
             this._foot || null);
     },
@@ -280,7 +282,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
             }
         }
 
-        this._root.appendChild(this._foot);
+        this._contentBox.appendChild(this._foot);
     },
 
     syncUI : function () {
@@ -317,7 +319,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // UI control click events
         // (collapse, expand, active, clear, categories, sources)
         // move to queryAll(..).on('click',..)
-        var controls = this._root.queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
+        var controls = this._contentBox.queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
             i = controls.size() - 1;
             
         for (;i>=0;--i) {
@@ -325,13 +327,13 @@ Y.extend(Y.log.Reader,Y.Widget,{
         }
         
         // Attribute changes
-        this.on('titleChange',         Y.bind(this._setTitle,this));
-        this.on('activeChange',        Y.bind(this._setActive,this));
-        this.on('collapsedChange',     Y.bind(this._setCollapsed,this));
-        this.on('consoleLimitChange',  Y.bind(this._setConsoleLimit,this));
-        this.on('footerEnabledChange', Y.bind(this._setFooterEnabled,this));
+        this.after('titleChange',         Y.bind(this._setTitle,this));
+        this.after('activeChange',        Y.bind(this._setActive,this));
+        this.after('collapsedChange',     Y.bind(this._setCollapsed,this));
+        this.after('consoleLimitChange',  Y.bind(this._setConsoleLimit,this));
+        this.after('footerEnabledChange', Y.bind(this._setFooterEnabled,this));
         // HACK: will point to this._setEntryType or something like that
-        this.on('entryTypesChange',    Y.bind(this._handleEntryTypesChange,this));
+        this.after('entryTypesChange',    Y.bind(this._handleEntryTypesChange,this));
     },
 
     _handleControlClick : function (e) {
@@ -383,7 +385,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _setCollapsed : function (b) {
         b = typeof b == 'object' ? b.newVal : b;
 
-        this._root[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
+        this._contentBox[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
     },
 
     _setConsoleLimit : function (v) {
@@ -471,6 +473,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     printBuffer: function () {
+        // Called from timeout, so calls to Y.log will not be caught by the
+        // recursion protection in event.  Turn off logging while printing.
+        var debug = Y.debug;
+        Y.debug = false;
+
         if (this.get('active') && this.rendered) {
             clearTimeout(this._timeout);
             this._timeout = null;
@@ -486,6 +493,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 this._trimOldEntries();
             }
         }
+
+        Y.debug = debug;
     },
 
     printLogEntry : function (m) {
@@ -594,11 +603,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     _filterEntries : function (name,on) {
         // add or remove the filter class from the root node
-        this._root[on?'addClass':'removeClass'](this._filterClass(name,true));
+        this._contentBox[on?'addClass':'removeClass'](this._filterClass(name,true));
     },
 
     _setFooterEnabled : function (show) {
-        this._root[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
+        this._contentBox[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
     },
 
     createCategory : function (name, show) {
