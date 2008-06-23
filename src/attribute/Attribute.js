@@ -1,3 +1,8 @@
+    /**
+     * Managed Attribute Provider
+     * @module attribute
+     */
+
     var O = Y.Object,
 
         DOT = ".",
@@ -12,13 +17,21 @@
         CLONE_ENUM;
 
     /**
-     * Manages attributes
-     *
+     * Attribute provides managed attribute support. 
+     * <p>
+     * The class is designed to be augmented onto a host class, 
+     * and allows the host to support get/set methods for attributes,
+     * initial configuration support and attribute change events.
+     * </p>
+     * <p>Attributes added to the host can be defined as read-only,
+     * clonable, with a default setter and validation support.
+     * </p>
      * @class Attribute
      * @uses EventTarget
      */
     function Attribute() {
         this._conf = this._conf || new Y.State();
+        Attribute.superclass.constructor.apply(this, arguments);
         Y.log('att constructor called', 'info', 'Attribute');
     }
 
@@ -92,6 +105,18 @@
         this.fire(eData);
     }
 
+    /**
+     * Clone utility method, which will 
+     * clone the provided value using YUI's 
+     * merge, or clone utilities based
+     * on the clone type provided.
+     * 
+     * @see Attribute.CLONE
+     * @method _clone
+     * @private 
+     * @param {Object} val
+     * @param {Object} type
+     */
     function _clone(val, type) {
         switch(type) {
             case CLONE_ENUM.SHALLOW:
@@ -105,9 +130,10 @@
         return val;
     }
 
-    Attribute.prototype = {
+    var proto = {
         /**
          * Adds an attribute.
+         *
          * @method add
          * @param {String} name The attribute key
          * @param {Object} val (optional) The attribute configuration
@@ -446,8 +472,6 @@
         }
     };
 
-    Y.augment(Attribute, Y.EventTarget, null, null, {
-        emitFacade: true
-    });
+    Y.extend(Attribute, Y.EventTarget, proto);
 
     Y.Attribute = Attribute;
