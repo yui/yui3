@@ -209,7 +209,7 @@ YUI.add("core", function(Y) {
                     construct.apply(me, a);
 
                     // apply the original sequestered function
-                    sequestered[k].apply(me, arguments);
+                    return sequestered[k].apply(me, arguments);
 
                 };
 
