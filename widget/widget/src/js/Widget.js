@@ -53,7 +53,7 @@ YUI.add("widget", function(Y) {
 		if (!config.boundingBox) { // create from template if no bounding box provided
 			config = Y.merge(config);
 			
-			boundingBox = Y.Node.create(this.constructor.TEMPLATE);
+			boundingBox = Y.Node.create(this.constructor.TEMPLATE || Widget.TEMPLATE);
 			
 			config.boundingBox = boundingBox;
 			config.contentBox = boundingBox.get("firstChild");
@@ -252,10 +252,16 @@ YUI.add("widget", function(Y) {
 		 * @public
 		 * @chain
 		 * @final 
+		 * @param  parentNode {Object | String} Object representing a YUI.Node instance or a string 
+		 * representing a CSS selector used to retrieve a YUI.Node reference.
 		 */
 		render: function(parentNode) {
 			if (this.destroyed) {
 				throw('render failed; widget has been destroyed');
+			}
+
+			if (Lang.isString(parentNode)) {
+				parentNode = Y.Node.get(parentNode);
 			}
 
 			// append to parent if provided, or to body if no parent and not in body 
@@ -686,7 +692,7 @@ YUI.add("widget", function(Y) {
 				this.id = node.get("id");
 				this._boundingBox = node;
 
-				var contentBox = node.query(":first-child");
+				var contentBox = node.get("firstChild");
 				
 				if (contentBox) {
 					this._contentBox = contentBox;
