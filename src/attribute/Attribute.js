@@ -31,7 +31,6 @@
      */
     function Attribute() {
         this._conf = this._conf || new Y.State();
-        Attribute.superclass.constructor.apply(this, arguments);
         Y.log('att constructor called', 'info', 'Attribute');
     }
 
@@ -130,7 +129,7 @@
         return val;
     }
 
-    var proto = {
+    Attribute.prototype = {
         /**
          * Adds an attribute.
          *
@@ -472,6 +471,8 @@
         }
     };
 
-    Y.extend(Attribute, Y.EventTarget, proto);
+    Y.augment(Attribute, Y.EventTarget, null, null, {
+        emitFacade: true
+    });
 
     Y.Attribute = Attribute;

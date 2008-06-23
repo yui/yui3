@@ -1,3 +1,10 @@
+    /**
+     * Base class support for objects requiring
+     * managed attributes and acting as event targets
+     * 
+     * @module base
+     */
+
     var L = Y.Lang,
         O = Y.Object,
         SEP = ":";
