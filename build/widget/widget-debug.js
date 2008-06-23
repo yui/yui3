@@ -1033,7 +1033,7 @@ YUI.add("widget", function(Y) {
 				this.id = node.get("id");
 				this._boundingBox = node;
 
-				var contentBox = node.query(":first-child");
+				var contentBox = node.get("firstChild");
 				
 				if (contentBox) {
 					this._contentBox = contentBox;
