@@ -260,7 +260,7 @@ YUI.add("widget", function(Y) {
 				throw('render failed; widget has been destroyed');
 			}
 
-			if (Lang.isString(parentNode)) {
+			if (L.isString(parentNode)) {
 				parentNode = Y.Node.get(parentNode);
 			}
 
