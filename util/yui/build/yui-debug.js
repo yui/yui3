@@ -642,6 +642,27 @@ YUI.add("array", function(Y) {
 
         return o;
     };
+
+
+    /**
+     * Returns the index of the first item in the array
+     * that contains the specified value, -1 if the
+     * value isn't found.
+     * @method indexOf
+     * @param a {Array} the array to search
+     * @param val the value to search for
+     * @return the index of the item that contains the value or -1
+     */
+    A.indexOf = function(a, val) {
+        for (var i=0; i<a.length; i=i+1) {
+            if (a[i] === val) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+
 }, "3.0.0");
 // requires lang
 YUI.add("core", function(Y) {
@@ -2516,7 +2537,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 delete s.fn;
                 delete s.obj;
                 delete this.subscribers[s.id];
-                delete this.after[s.id];
+                delete this.afters[s.id];
             }
 
         },

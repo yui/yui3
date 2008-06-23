@@ -1,4 +1,4 @@
-YAHOO.env.classMap = {"Node": "node", "YUI": "yui", "Anim": "animation", "NodeList": "node", "lang": "yui", "Get": "yui", "Event.Handle": "yui", "array": "yui", "object": "yui", "Event.Subscriber": "yui", "Event.Target": "yui", "Event.Facade": "yui", "JSON": "JSON", "Y.Easing": "animation", "Selector": "selector", "ua": "yui", "Event": "yui", "Event.Custom": "yui"};
+YAHOO.env.classMap = {"NodeList": "node", "YUI": "yui", "array": "yui", "Node": "node", "DD.Proxy": "dd-proxy", "Anim": "animation", "Get": "yui", "DD.DDM": "dd-ddm-drop", "Selector": "selector", "JSON": "JSON", "DD.DragConstained": "dd-constrain", "DD.Drop": "dd-drop", "Event.Custom": "yui", "Event.Target": "yui", "DD.Drag": "dd-drag", "Event.Handle": "yui", "object": "yui", "Event.Facade": "yui", "Plugin.DragPlugin": "dd-plugin", "lang": "yui", "Event.Subscriber": "yui", "Y.Easing": "animation", "ua": "yui", "Event": "yui"};
 
 YAHOO.env.resolveClass = function(className) {
     var a=className.split('.'), ns=YAHOO.env.classMap;

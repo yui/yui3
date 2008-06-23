@@ -590,7 +590,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 delete s.fn;
                 delete s.obj;
                 delete this.subscribers[s.id];
-                delete this.after[s.id];
+                delete this.afters[s.id];
             }
 
         },
