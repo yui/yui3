@@ -1,0 +1,3561 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: dddrag  Drag   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>dddrag&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dddrag.html">dddrag</a>
+                 &gt; Drag 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>Drag</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                        <dl class="subclasses">
+                            <dt>Known Subclasses:</dd>
+                            <dd>
+                                    <a href="DD.Proxy.html">DD.Proxy</a>
+                                    <a href="DD.DragConstained.html">DD.DragConstained</a>
+                            </dd>
+                       </dl>
+                
+  
+
+                    <div class="summary description">
+                        This class provides the ability to drag a Node.
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__clickTimeout">_clickTimeout</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Holder for the setTimeout call
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__dragThreshMet">_dragThreshMet</a>
+                                        <code>- private Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Private flag to see if the drag threshhold was met
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__ev_md">_ev_md</a>
+                                        <code>- private Event</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private reference to the mousedown DOM event
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__fromTimeout">_fromTimeout</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag to determine if the drag operation came from a timeout
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__groups">_groups</a>
+                                        <code>- private {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Storage Array for the groups this drag belongs to.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__handles">_handles</a>
+                                        <code>- private Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the valid drag handles
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__ieSelectBack">_ieSelectBack</a>
+                                        <code>- private object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            We will hold a copy of the current "onselectstart" method on this property, and reset it after we are done using it.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__invalids">_invalids</a>
+                                        <code>- private Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the invalid selector strings
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_deltaXY">deltaXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The offset of the mouse position to the element's position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_lastXY">lastXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The position of the element as it's moving (for offset calculations)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_mouseXY">mouseXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The XY coords of the mousemove
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_nodeXY">nodeXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The initial element position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_region">region</a>
+                                        <code>- Object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A region object associated with this drag, used for checking regions while dragging.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_startXY">startXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The initial mouse position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_target">target</a>
+                                        <code>- {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__align">_align</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_align</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Calculates the offsets and set's the XY that the element will move to.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             The xy coords to align with.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>Array</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__createEvents">_createEvents</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_createEvents</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fixIEMouseDown">_fixIEMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseDown</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the onselectstart listner on the document to the _ieSelectFix property
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fixIEMouseUp">_fixIEMouseUp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseUp</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the _ieSelectFix property back to the onselectstart listner on the document.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseDown">_handleMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseDown</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mousedown DOM event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                              the event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseDownEvent">_handleMouseDownEvent</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseDownEvent</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mousedown DOM event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                              the event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseUp">_handleMouseUp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseUp</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mouseup DOM event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                              the event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleTarget">_handleTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Boolean/Object
+                                            <strong>_handleTarget</strong>
+                                           (
+                                                
+                                                        
+                                                         blah
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Attribute handler for the target config attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>blah &lt;Boolean/Object&gt;</code>
+                                                              blah
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean/Object
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ieSelectFix">_ieSelectFix</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_ieSelectFix</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            The function we use as the onselectstart handler when we start a drag in Internet Explorer
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__move">_move</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_move</strong>
+                                           (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fired from DragDropMgr (DDM) on mousemove.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The mousemove DOM event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__moveNode">_moveNode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_moveNode</strong>
+                                           (
+                                                
+                                                        
+                                                         eXY
+                                                    
+                                                
+                                                        , 
+                                                         noFire
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method performs the actual element move.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eXY &lt;Array&gt;</code>
+                                                             The XY to move the element to, usually comes from the mousemove DOM event.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>noFire &lt;Boolean&gt;</code>
+                                                             If true, the drag:drag event will not fire.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setStartPosition">_setStartPosition</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_setStartPosition</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets the current position of the Element and calculates the offset
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             The XY coords to set the position to.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__timeoutCheck">_timeoutCheck</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_timeoutCheck</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            The method passed to setTimeout to determine if the clickTimeThreshold was met.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addHandle">addHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addHandle</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector to test for a valid handle. Must be a child of the element.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addInvalid">addInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addInvalid</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a selector string to test the handle against. If the test passes the drag operation will not continue.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector to test against to determine if this is an invalid drag handle.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Self
+                                            <strong>destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Lifecycle destructor, unreg the drag from the DDM and remove listeners
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_end">end</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>end</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Ends the drag operation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_initializer">initializer</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>initializer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Internal init handler
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeHandle">removeHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeHandle</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove a Selector added by addHandle
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector for the handle to be removed.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeInvalid">removeInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeInvalid</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove an invalid handle added by addInvalid
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The invalid handle to remove from the internal list.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_start">start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>start</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Starts the drag operation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_toString">toString</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>toString</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            General toString method for logging
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>String name for the object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_validClick">validClick</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>validClick</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                              the event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_activeHandleChange">activeHandleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>activeHandleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'activeHandle' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_adamdragmouseDown">adamdragmouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>adamdragmouseDown</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;Event&gt;</code>
+                                                              the mousedown event object
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_animComplete">animComplete</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>animComplete</strong>
+
+                                            (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            When animation is enabled, this event fires when the animation
+completes
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;YAHOO.widget.Node&gt;</code>
+                                                             the node that is expanding/collapsing
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             the type of animation ("expand" or "collapse")
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeActiveHandleChange">beforeActiveHandleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeActiveHandleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'activeHandle' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeClickPixelThreshChange">beforeClickPixelThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeClickPixelThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'clickPixelThresh' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeClickTimeThreshChange">beforeClickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeClickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'clickTimeThresh' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDataChange">beforeDataChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDataChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'data' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDraggingChange">beforeDraggingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDraggingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'dragging' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDragModeChange">beforeDragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'dragMode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDragNodeChange">beforeDragNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDragNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'dragNode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeGroupsChange">beforeGroupsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeGroupsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'groups' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeLockChange">beforeLockChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeLockChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'lock' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeMoveChange">beforeMoveChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeMoveChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'move' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeNodeChange">beforeNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'node' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeOffsetNodeChange">beforeOffsetNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeOffsetNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'offsetNode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforePrimaryButtonOnlyChange">beforePrimaryButtonOnlyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforePrimaryButtonOnlyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'primaryButtonOnly' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTargetChange">beforeTargetChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTargetChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'target' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeUseShimChange">beforeUseShimChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeUseShimChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'useShim' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickPixelThreshChange">clickPixelThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickPixelThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickPixelThresh' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickTimeThreshChange">clickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickTimeThresh' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dataChange">dataChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dataChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'data' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:addHandle">drag:addHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:addHandle</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after a handle is added.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:addInvalid">drag:addInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:addInvalid</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after an invalid selector is added.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:afterMouseDown">drag:afterMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:afterMouseDown</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after the mousedown event has been cleared.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:drag">drag:drag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:drag</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires every mousemove during a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:drophit">drag:drophit</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:drophit</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:dropmiss">drag:dropmiss</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:dropmiss</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:end">drag:end</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:end</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires at the end of a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:enter">drag:enter</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:enter</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node enters a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:exit">drag:exit</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:exit</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node exits a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:over">drag:over</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:over</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is over a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:removeHandle">drag:removeHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:removeHandle</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after a handle is removed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:removeInvalid">drag:removeInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:removeInvalid</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after an invalid selector is removed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:start">drag:start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:start</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires at the start of a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_draggingChange">draggingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>draggingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragging' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragModeChange">dragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragMode' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragNodeChange">dragNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragNode' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_groupsChange">groupsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>groupsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'groups' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_lockChange">lockChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>lockChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'lock' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_moveChange">moveChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>moveChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'move' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_nodeChange">nodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>nodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'node' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_offsetNodeChange">offsetNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>offsetNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'offsetNode' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_primaryButtonOnlyChange">primaryButtonOnlyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>primaryButtonOnlyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'primaryButtonOnly' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_targetChange">targetChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>targetChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'target' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_useShimChange">useShimChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>useShimChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'useShim' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="config_activeHandle">activeHandle</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This config option is set by Drag to inform you of which handle fired the drag event (in the case that there are several handles): default false.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickPixelThresh">clickPixelThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of pixels to move to start a drag operation, default is 3.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickTimeThresh">clickTimeThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_data">data</a>
+                                        <code>- Mixed</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A payload holder to store arbitrary data about this drag object, can be used to store any value.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragging">dragging</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute is not meant to be used by the implementor, it is meant to be used as an Event tracker so you can listen for it to change.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragMode">dragMode</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module is active. It will make this node a drop target as well as draggable
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragNode">dragNode</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Y.Node instanace to use as the draggable element, defaults to node
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_groups">groups</a>
+                                        <code>- Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Array of groups to add this drag into.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_lock">lock</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Set to lock this drag element so that it can't be dragged: default false.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_move">move</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            If this is false, the drag element will not move with the cursor: default true. Can be used to "resize" the element.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_node">node</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Y.Node instanace to use as the element to initiate a drag operation
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_offsetNode">offsetNode</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Offset the drag element by the difference in cursor position: default true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_primaryButtonOnly">primaryButtonOnly</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            By default a drag operation will only begin if the mousedown occurred with the primary mouse button. Setting this to false will allow for all mousedown events to trigger a drag.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_target">target</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_useShim">useShim</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Use the protective shim on all drag operations: default true. Only works with dd-ddm, not dd-ddm-base.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_animation.html">animation</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
+
+                                <li class=""><a href="module_dd-ddm.html">dd-ddm</a></li>
+
+                                <li class=""><a href="module_dd-ddm-base.html">dd-ddm-base</a></li>
+
+                                <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
+
+                                <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
+
+                                <li class="selected"><a href="module_dddrag.html">dddrag</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Drag.html">Drag</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="drag.js.html">drag.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__clickTimeout">_clickTimeout</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__dragThreshMet">_dragThreshMet</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__ev_md">_ev_md</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__fromTimeout">_fromTimeout</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__groups">_groups</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__handles">_handles</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__ieSelectBack">_ieSelectBack</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__invalids">_invalids</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_deltaXY">deltaXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_lastXY">lastXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_mouseXY">mouseXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_nodeXY">nodeXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_region">region</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_startXY">startXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_target">target</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__align">_align</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__createEvents">_createEvents</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseDown">_fixIEMouseDown</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseUp">_fixIEMouseUp</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseDown">_handleMouseDown</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseDownEvent">_handleMouseDownEvent</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseUp">_handleMouseUp</a>
+                                </li>
+                                <li class="private"><!--<code>Boolean/Object</code>-->
+                                <a href="#method__handleTarget">_handleTarget</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ieSelectFix">_ieSelectFix</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__move">_move</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__moveNode">_moveNode</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setStartPosition">_setStartPosition</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__timeoutCheck">_timeoutCheck</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addHandle">addHandle</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addInvalid">addInvalid</a>
+                                </li>
+                                <li class="private"><!--<code>Self</code>-->
+                                <a href="#method_destructor">destructor</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_end">end</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_initializer">initializer</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeHandle">removeHandle</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeInvalid">removeInvalid</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_start">start</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_toString">toString</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_validClick">validClick</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_activeHandleChange">activeHandleChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_adamdragmouseDown">adamdragmouseDown</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_animComplete">animComplete</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeActiveHandleChange">beforeActiveHandleChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeClickPixelThreshChange">beforeClickPixelThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeClickTimeThreshChange">beforeClickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDataChange">beforeDataChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDraggingChange">beforeDraggingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDragModeChange">beforeDragModeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDragNodeChange">beforeDragNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeGroupsChange">beforeGroupsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeLockChange">beforeLockChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeMoveChange">beforeMoveChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeNodeChange">beforeNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeOffsetNodeChange">beforeOffsetNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforePrimaryButtonOnlyChange">beforePrimaryButtonOnlyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTargetChange">beforeTargetChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeUseShimChange">beforeUseShimChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickPixelThreshChange">clickPixelThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickTimeThreshChange">clickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dataChange">dataChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:addHandle">drag:addHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:addInvalid">drag:addInvalid</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:afterMouseDown">drag:afterMouseDown</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:drag">drag:drag</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:drophit">drag:drophit</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:dropmiss">drag:dropmiss</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:end">drag:end</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:enter">drag:enter</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:exit">drag:exit</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:over">drag:over</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:removeHandle">drag:removeHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:removeInvalid">drag:removeInvalid</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:start">drag:start</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_draggingChange">draggingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragModeChange">dragModeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragNodeChange">dragNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_groupsChange">groupsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_lockChange">lockChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_moveChange">moveChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_nodeChange">nodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_offsetNodeChange">offsetNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_primaryButtonOnlyChange">primaryButtonOnlyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_targetChange">targetChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_useShimChange">useShimChange</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#config_activeHandle">activeHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickPixelThresh">clickPixelThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickTimeThresh">clickTimeThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_data">data</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragging">dragging</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragMode">dragMode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragNode">dragNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_groups">groups</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_lock">lock</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_move">move</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_node">node</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_offsetNode">offsetNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_primaryButtonOnly">primaryButtonOnly</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_target">target</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_useShim">useShim</a>
+                                </li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>
