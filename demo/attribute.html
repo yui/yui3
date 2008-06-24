@@ -56,7 +56,10 @@
             },
 
             E : {
-                value : {foo:"bar"}
+                value : {foo:"bar"},
+                set: function(val) {
+                    val.foo += "Modified";
+                }
             }
         };
 

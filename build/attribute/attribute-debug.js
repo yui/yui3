@@ -1,5 +1,10 @@
 YUI.add('attribute', function(Y) {
 
+    /**
+     * Managed Attribute Provider
+     * @module attribute
+     */
+
     var O = Y.Object,
 
         DOT = ".",
@@ -14,8 +19,23 @@ YUI.add('attribute', function(Y) {
         CLONE_ENUM;
 
     /**
-     * Manages attributes
-     *
+     * Attribute provides managed attribute support. 
+     * <p>
+     * The class is designed to be augmented onto a host class, 
+     * and allows the host to support get/set methods for attributes,
+     * initial configuration support and attribute change events.
+     * </p>
+     * <p>Attributes added to the host can be</p>
+     * <ul>
+     *     <li>Defined as read-only</li>
+     *     <li>Defined with a setter function, which can be used to manipulate 
+     *     values passed to the set method, before they are stored.</li>
+     *     <li>Defined with a validator function, to validate values before allowing a set</li>
+     *     <li>Defined with a getter function, which can be used to manipulate stored values,
+     *     before they are returned by the get method.</li>
+     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes)</li>
+     * </ul>
+     * 
      * @class Attribute
      * @uses EventTarget
      */
@@ -94,6 +114,18 @@ YUI.add('attribute', function(Y) {
         this.fire(eData);
     }
 
+    /**
+     * Clone utility method, which will 
+     * clone the provided value using YUI's 
+     * merge, or clone utilities based
+     * on the clone type provided.
+     * 
+     * @see Attribute.CLONE
+     * @method _clone
+     * @private 
+     * @param {Object} val
+     * @param {Object} type
+     */
     function _clone(val, type) {
         switch(type) {
             case CLONE_ENUM.SHALLOW:
@@ -110,9 +142,36 @@ YUI.add('attribute', function(Y) {
     Attribute.prototype = {
         /**
          * Adds an attribute.
+         * <p>
+         * The hash argument object literal supports the following optional properties:
+         * </p>
+         * <dl>
+         *    <dt>value {Any}</dt>
+         *    <dd>The initial value to set on the attribute</dd>
+         *    <dt>readonly {Boolean}</dt>
+         *    <dd>Whether or not the attribute is read only. Attributes having readonly set to true
+         *        cannot be set by invoking the set method</dd>
+         *    <dt>set {Function}</dt>
+         *    <dd>The setter function to be invoked (within the context of the host object) before 
+         *        the attribute is stored by a call to the set method. The value returned by the 
+         *        set function will be the finally stored value.</dd>
+         *    <dt>get {Function}</dt>
+         *    <dd>The getter function to be invoked (within the context of the host object) before
+         *    the stored values is returned to a user invoking the get method for the attribute.
+         *    The value returned by the get function is the final value which will be returned to the 
+         *    user when they invoke get.</dd>
+         *    <dt>validator {Function}</dt>
+         *    <dd>The validator function which is invoked prior to setting the stored value. Returning
+         *    false from the validator function will prevent the value from being stored</dd>
+         *    <dt>clone {Number}</dt>
+         *    <dd>If and how the value returned by a call to the get method, should be de-referenced from
+         *    the stored value. By default values are not cloned, and hence a call to get will return
+         *    a reference to the stored value. See Attribute.CLONE for more details about the clone 
+         *    options available</dd>
+         * </dl>
          * @method add
          * @param {String} name The attribute key
-         * @param {Object} val (optional) The attribute configuration
+         * @param {Object} hash (optional) An object literal specifying the configuration for the attribute.
          */
         addAtt: function(name, hash) {
             Y.log('adding attribute: ' + name, 'info', 'Attribute');
@@ -163,12 +222,13 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Sets the value of an attribute.
+         * 
          * @method set
          * @param {String} name The name of the attribute
          * @param {Any} value The value to apply to the attribute
          * @param {Object} Event options. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
-         * attribute change events
+         * to attribute change events
          */
         set: function(name, val, opts) {
 
