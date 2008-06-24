@@ -94,7 +94,7 @@
         type = type + CHANGE;
 
         // TODO: Publishing temporarily, while we address event bubbling/queuing
-        this.publish(type, {queuable:false, defaultFn:this._defAttrSet});
+        this.publish(type, {queuable:false, defaultFn:this._defAttSet});
 
         var eData = {
             type: type,
@@ -225,7 +225,7 @@
 
             val = (clone) ? _clone(val, clone) : val;
             val = (getFn) ? getFn.call(this, val) : val;
-            val = (path) ? this._getSubValue(path, val) : val;
+            val = (path) ? this._getSubAttVal(path, val) : val;
 
             return val;
         },
@@ -276,7 +276,7 @@
             currVal = this.get(name);
 
             if (path) {
-               val = this._setSubValue(path, Y.clone(currVal), val);
+               val = this._setSubAttVal(path, Y.clone(currVal), val);
                if (val === undefined) {
                    // Path not valid, don't set anything.
                    Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'Attribute');
@@ -292,11 +292,11 @@
         /**
          * Default handler implementation for set events
          * 
-         * @method _defAttrSet
+         * @method _defAttSet
          * @private
          * @param {EventFacade} CustomEvent Facade
          */
-        _defAttrSet : function(e) {
+        _defAttSet : function(e) {
             var conf = this._conf,
                 name = e.attrName,
                 val = e.newVal,
@@ -323,7 +323,7 @@
          * Retrieves the sub value at the provided path,
          * from the value object provided.
          *
-         * @method _getSubValue
+         * @method _getSubAttVal
          * @private
          * 
          * @param {Array} path  A path array, specifying the object traversal path
@@ -331,7 +331,7 @@
          * @param {Object} val  The object from which to extract the property value
          * @return {Any} The value stored in the path or undefined if not found.
          */
-        _getSubValue: function (path, val) {
+        _getSubAttVal: function (path, val) {
             var pl = path.length,
                 i;
 
@@ -348,7 +348,7 @@
          * Sets the sub value at the provided path on the value object.
          * Returns the modified value object, or undefined if the path is invalid.
          *
-         * @method _setSubValue
+         * @method _setSubAttVal
          * @private
          * 
          * @param {Array} path  A path array, specifying the object traversal path
@@ -358,7 +358,7 @@
          * @return {Object}     The modified object, with the new sub value set, or 
          *                      undefined, if the path was invalid.
          */
-        _setSubValue: function(path, val, subval) {
+        _setSubAttVal: function(path, val, subval) {
 
             var leafIdx = path.length-1,
                 i,
@@ -435,7 +435,7 @@
                 for (att in atts) {
                     if (O.owns(atts, att)) {
                         attCfg = atts[att];
-                        attCfg.value = this._initAttValue(att, attCfg, values);
+                        attCfg.value = this._initAttVal(att, attCfg, values);
                         this.addAtt(att, attCfg);
                     }
                 }
@@ -485,10 +485,10 @@
          * object literal
          * @param {Object} Initial attribute values.
          *
-         * @method _initAttValue
+         * @method _initAttVal
          * @private
          */
-        _initAttValue : function(att, cfg, initValues) {
+        _initAttVal : function(att, cfg, initValues) {
 
             var hasVal = (VALUE in cfg),
                 val = cfg.value,
@@ -516,7 +516,7 @@
                     for (i = 0, l = subvals.length; i < l; ++i) {
                         path = subvals[i].path;
                         subval = subvals[i].value;
-                        val = this._setSubValue(path, val, subval);
+                        val = this._setSubAttVal(path, val, subval);
                     }
                 }
             }
