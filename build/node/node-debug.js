@@ -1183,7 +1183,10 @@ YUI.add('noderegion', function(Y) {
     // these need special treatment to extract 2nd node arg
     Y.Node.methods({
         intersect: function(node1, node2, altRegion) {
-            return Y.DOM.intersect(getNode(node1), getNode(node2), altRegion); 
+            if (node2 instanceof Y.Node) { // might be a region object
+                node2 = getNode(node2);
+            }
+            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
         },
 
         inRegion: function(node1, node2, all, altRegion) {
