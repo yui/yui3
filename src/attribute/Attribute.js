@@ -23,17 +23,17 @@
      * and allows the host to support get/set methods for attributes,
      * initial configuration support and attribute change events.
      * </p>
-     * <p>Attributes added to the host can be</p>
+     * <p>Attributes added to the host can:</p>
      * <ul>
-     *     <li>Defined as read-only</li>
-     *     <li>Defined with a setter function, which can be used to manipulate 
-     *     values passed to the set method, before they are stored.</li>
-     *     <li>Defined with a validator function, to validate values before allowing a set</li>
-     *     <li>Defined with a getter function, which can be used to manipulate stored values,
-     *     before they are returned by the get method.</li>
-     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes)</li>
+     *     <li>Be defined as read-only.</li>
+     *     <li>Be defined with a set function, which can be used to manipulate
+     *     values passed to Attribute's set method, before they are stored.</li>
+     *     <li>Be defined with a validator function, to validate values before they are stored.</li>
+     *     <li>Be defined with a get function, which can be used to manipulate stored values,
+     *     before they are returned by Attribute's get method.</li>
+     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
      * </ul>
-     * 
+     *
      * @class Attribute
      * @uses EventTarget
      */
