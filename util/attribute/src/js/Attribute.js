@@ -140,7 +140,7 @@
         /**
          * Adds an attribute.
          * <p>
-         * The hash argument object literal supports the following optional properties:
+         * The config argument object literal supports the following optional properties:
          * </p>
          * <dl>
          *    <dt>value {Any}</dt>
@@ -168,11 +168,22 @@
          * </dl>
          * @method add
          * @param {String} name The attribute key
-         * @param {Object} hash (optional) An object literal specifying the configuration for the attribute.
+         * @param {Object} config (optional) An object literal specifying the configuration for the attribute.
          */
-        addAtt: function(name, hash) {
+        addAtt: function(name, config) {
             Y.log('adding attribute: ' + name, 'info', 'Attribute');
-            this._conf.add(name, hash);
+            var value, hasValue = (VALUE in config);
+
+            if(hasValue) {
+                value = config.value;
+                delete config.value;
+            }
+
+            this._conf.add(name, config);
+
+            if (hasValue) {
+                this.set(name, value);
+            }
         },
 
         /**
@@ -236,9 +247,11 @@
         set: function(name, val, opts) {
 
             var conf = this._conf,
+                data = conf.data,
                 strPath,
                 path,
-                currVal;
+                currVal,
+                initialSet = (!data.value || !(name in data.value));
 
             if (name.indexOf(DOT) !== -1) {
                 strPath = name;
@@ -251,7 +264,7 @@
                 return this;
             }
 
-            if (conf.get(name, READ_ONLY)) {
+            if (!initialSet && conf.get(name, READ_ONLY)) {
                 Y.log('set ' + name + ' failed; Attribute is readonly', 'info', 'Attribute');
                 return this;
             }
@@ -422,8 +435,8 @@
                 for (att in atts) {
                     if (O.owns(atts, att)) {
                         attCfg = atts[att];
+                        attCfg.value = this._initAttValue(att, attCfg, values);
                         this.addAtt(att, attCfg);
-                        this._initAttValue(att, attCfg, values);
                     }
                 }
             }
@@ -508,9 +521,7 @@
                 }
             }
 
-            if (hasVal) {
-                this.set(att, val);
-            }
+            return val;
         }
     };
 
