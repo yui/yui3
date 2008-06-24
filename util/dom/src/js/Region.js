@@ -68,7 +68,7 @@ YUI.add('region', function(Y) {
                 area: ((off.bottom - off.top) * (off.right - off.left)),
                 yoff: ((off.bottom - off.top)),
                 xoff: (off.right - off.left),
-                inRegion: Y.DOM.inRegion(node, false, altRegion)
+                inRegion: Y.DOM.inRegion(node, node2, false, altRegion)
             };
             
         },
