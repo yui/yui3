@@ -1,0 +1,587 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: attribute   Attribute.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>attribute&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_attribute.html">attribute</a>
+                
+                 &gt; Attribute.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * Managed Attribute Provider</span>
+<span class="c">     * @module attribute</span>
+<span class="c">     */</span>
+
+    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span>
+
+        <span class="nx">DOT</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">,</span>
+        <span class="nx">CHANGE</span> <span class="o">=</span> <span class="s2">&quot;Change&quot;</span><span class="o">,</span>
+        <span class="nx">GET</span> <span class="o">=</span> <span class="s2">&quot;get&quot;</span><span class="o">,</span>
+        <span class="nx">SET</span> <span class="o">=</span> <span class="s2">&quot;set&quot;</span><span class="o">,</span>
+        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
+        <span class="nx">CLONE</span> <span class="o">=</span> <span class="s2">&quot;clone&quot;</span><span class="o">,</span>
+        <span class="nx">READ_ONLY</span> <span class="o">=</span> <span class="s2">&quot;readonly&quot;</span><span class="o">,</span>
+        <span class="nx">VALIDATOR</span> <span class="o">=</span> <span class="s2">&quot;validator&quot;</span><span class="o">,</span>
+
+        <span class="nx">CLONE_ENUM</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Attribute provides managed attribute support. </span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * The class is designed to be augmented onto a host class, </span>
+<span class="c">     * and allows the host to support get/set methods for attributes,</span>
+<span class="c">     * initial configuration support and attribute change events.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;Attributes added to the host can be defined as read-only,</span>
+<span class="c">     * clonable, with a default setter and validation support.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * @class Attribute</span>
+<span class="c">     * @uses EventTarget</span>
+<span class="c">     */</span>
+    <span class="k">function</span> <span class="nx">Attribute</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">State</span><span class="o">();</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;att constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * @property Attribute.CLONE</span>
+<span class="c">     * @static</span>
+<span class="c">     * @final</span>
+<span class="c">     * @type {Object}</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Constants for clone formats supported by Attribute</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * By default attribute values returned by the get method</span>
+<span class="c">     * are not cloned. However setting the attribute&#39;s &quot;clone&quot;</span>
+<span class="c">     * property to:</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     *     &lt;dt&gt;Attribute.CLONE.DEEP&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;Will result in a deep cloned value being returned</span>
+<span class="c">     *        (using Y.clone). This can be expensive for complex</span>
+<span class="c">     *        objects.</span>
+<span class="c">     *     &lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;Attribute.CLONE.SHALLOW&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;Will result in a shallow cloned value being returned</span>
+<span class="c">     *        (using Y.merge).</span>
+<span class="c">     *     &lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;Attribute.CLONE.IMMUTABLE&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;Will result in a deep cloned value being returned</span>
+<span class="c">     *         when using the get method. Additionally users will</span>
+<span class="c">     *         not be able to set sub values of the attribute </span>
+<span class="c">     *         using the complex attribute notation (obj.set(&quot;x.y.z, 5)).</span>
+<span class="c">     *         However the value of the attribute can be changed, making</span>
+<span class="c">     *         it different from a READONLY attribute.</span>
+<span class="c">     *     &lt;/dd&gt;</span>
+<span class="c">     *     &lt;dt&gt;Attribute.CLONE.NONE&lt;/dt&gt;</span>
+<span class="c">     *     &lt;dd&gt;</span>
+<span class="c">     *         The value will not be cloned, resulting in a reference</span>
+<span class="c">     *         to the stored value being passed back, if the value is an object.</span>
+<span class="c">     *         This is the default behavior.</span>
+<span class="c">     *     &lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     */</span>
+    <span class="nx">Attribute</span><span class="o">.</span><span class="nx">CLONE</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">NONE</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+        <span class="nx">DEEP</span> <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="nx">SHALLOW</span> <span class="o">:</span> <span class="m">2</span><span class="o">,</span>
+        <span class="nx">IMMUTABLE</span><span class="o">:</span> <span class="m">3</span>
+    <span class="o">};</span>
+
+    <span class="nx">CLONE_ENUM</span> <span class="o">=</span> <span class="nx">Attribute</span><span class="o">.</span><span class="nx">CLONE</span><span class="o">;</span>
+
+    <span class="k">function</span> <span class="nx">_fireChange</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
+
+        <span class="c">// TODO: Publishing temporarily,</span>
+<span class="c"></span>        <span class="c">// while we address event bubbling.</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttrSet</span><span class="o">});</span>
+
+        <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
+            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">currVal</span><span class="o">,</span>
+            <span class="nx">newVal</span><span class="o">:</span> <span class="nx">newVal</span><span class="o">,</span>
+            <span class="nx">attrName</span><span class="o">:</span> <span class="nx">attrName</span><span class="o">,</span>
+            <span class="nx">subAttrName</span><span class="o">:</span> <span class="nx">strFullPath</span>
+        <span class="o">};</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">eData</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eData</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Clone utility method, which will </span>
+<span class="c">     * clone the provided value using YUI&#39;s </span>
+<span class="c">     * merge, or clone utilities based</span>
+<span class="c">     * on the clone type provided.</span>
+<span class="c">     * </span>
+<span class="c">     * @see Attribute.CLONE</span>
+<span class="c">     * @method _clone</span>
+<span class="c">     * @private </span>
+<span class="c">     * @param {Object} val</span>
+<span class="c">     * @param {Object} type</span>
+<span class="c">     */</span>
+    <span class="k">function</span> <span class="nx">_clone</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">switch</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">SHALLOW</span><span class="o">:</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                <span class="k">break</span><span class="o">;</span>
+            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">DEEP</span><span class="o">:</span>
+            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">IMMUTABLE</span><span class="o">:</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                <span class="k">break</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Adds an attribute.</span>
+<span class="c">         *</span>
+<span class="c">         * @method add</span>
+<span class="c">         * @param {String} name The attribute key</span>
+<span class="c">         * @param {Object} val (optional) The attribute configuration</span>
+<span class="c">         */</span>
+        <span class="nx">addAtt</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">hash</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;adding attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">hash</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Removes an attribute.</span>
+<span class="c">         * @method remove</span>
+<span class="c">         * @param {String} name The attribute key</span>
+<span class="c">         */</span>
+        <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns the current value of the attribute. If the attribute</span>
+<span class="c">         * has been configured with a &#39;get&#39; handler, this method will delegate</span>
+<span class="c">         * to the &#39;get&#39; handler to obtain the value of the attribute.</span>
+<span class="c">         * The &#39;get&#39; handler will be passed the current value of the attribute </span>
+<span class="c">         * as the only argument.</span>
+<span class="c">         * @method get</span>
+<span class="c">         * @param {String} key The attribute whose value will be returned.</span>
+<span class="c">         */</span>
+        <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+                <span class="nx">path</span><span class="o">,</span>
+                <span class="nx">getFn</span><span class="o">,</span>
+                <span class="nx">clone</span><span class="o">,</span>
+                <span class="nx">val</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="nx">val</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
+            <span class="nx">getFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GET</span><span class="o">);</span>
+            <span class="nx">clone</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">CLONE</span><span class="o">);</span>
+
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">clone</span><span class="o">)</span> <span class="o">?</span> <span class="nx">_clone</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">clone</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getSubValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+
+            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Sets the value of an attribute.</span>
+<span class="c">         * @method set</span>
+<span class="c">         * @param {String} name The name of the attribute</span>
+<span class="c">         * @param {Any} value The value to apply to the attribute</span>
+<span class="c">         * @param {Object} Event options. This object will be mixed into</span>
+<span class="c">         * the event facade passed as the first argument to subscribers </span>
+<span class="c">         * attribute change events</span>
+<span class="c">         */</span>
+        <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+                <span class="nx">strPath</span><span class="o">,</span>
+                <span class="nx">path</span><span class="o">,</span>
+                <span class="nx">currVal</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">name</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">strPath</span> <span class="o">=</span> <span class="nx">name</span><span class="o">;</span>
+                <span class="nx">path</span> <span class="o">=</span> <span class="nx">name</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span> <span class="o">&amp;&amp;</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">CLONE</span><span class="o">)</span> <span class="o">===</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">IMMUTABLE</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; failed; Attribute is IMMUTABLE. Setting a sub value is not permitted&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">READ_ONLY</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; failed; Attribute is readonly&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Set called with unconfigured attribute. Adding a new attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="nx">currVal</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">{</span>
+               <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setSubValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">currVal</span><span class="o">),</span> <span class="nx">val</span><span class="o">);</span>
+               <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                   <span class="c">// Path not valid, don&#39;t set anything.</span>
+<span class="c"></span>                   <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;set &#39;</span> <span class="o">+</span> <span class="nx">strPath</span> <span class="o">+</span> <span class="s1">&#39;failed; attribute sub path is invalid&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+                   <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+               <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="nx">_fireChange</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Default handler implementation for set events</span>
+<span class="c">         *</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {EventFacade} CustomEvent Facade</span>
+<span class="c">         */</span>
+        <span class="nx">_defAttrSet</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">conf</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">,</span>
+                <span class="nx">name</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">attrName</span><span class="o">,</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span><span class="o">,</span>
+                <span class="nx">retVal</span><span class="o">,</span>
+                <span class="nx">valFn</span>  <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALIDATOR</span><span class="o">),</span>
+                <span class="nx">setFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">SET</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">setFn</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">retVal</span> <span class="o">=</span> <span class="nx">setFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">retVal</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; modified by setter&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">retVal</span><span class="o">;</span> <span class="c">// setter can change value</span>
+<span class="c"></span>                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">valFn</span> <span class="o">||</span> <span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="o">{</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">val</span> <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Retrieves the sub value at the provided path,</span>
+<span class="c">         * from the value object provided.</span>
+<span class="c">         *</span>
+<span class="c">         * @param {Array} path  A path array, specifying the object traversal path</span>
+<span class="c">         *                      from which to obtain the sub value.</span>
+<span class="c">         * @param {Object} val  The object from which to extract the property value</span>
+<span class="c">         * @return {Any} The value stored in the path or undefined if not found.</span>
+<span class="c">         *</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_getSubValue</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">pl</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">pl</span> <span class="o">&gt;</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">val</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pl</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Sets the sub value at the provided path on the value object.</span>
+<span class="c">         * Returns the modified value object, or undefined if the path is invalid.</span>
+<span class="c">         *</span>
+<span class="c">         * @param {Array} path  A path array, specifying the object traversal path</span>
+<span class="c">         *                      at which to set the sub value.</span>
+<span class="c">         * @param {Object} val  The object on which to set the sub value.</span>
+<span class="c">         * @param {Any} subval  The sub value to set.</span>
+<span class="c">         * @return {Object}     The modified object, with the new sub value set, or </span>
+<span class="c">         *                      undefined, if the path was invalid.</span>
+<span class="c">         *</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_setSubValue</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">subval</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">leafIdx</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span>
+                <span class="nx">o</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">leafIdx</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">o</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
+
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">o</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">leafIdx</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
+                <span class="o">}</span>
+
+                <span class="c">// Not preventing new properties from being added</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">!==</span> <span class="kc">undefined</span> <span class="c">/* &amp;&amp; o[path[i]] !== undefined */</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">o</span><span class="o">[</span><span class="nx">path</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="nx">subval</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="kc">undefined</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Sets multiple attribute values.</span>
+<span class="c">         * </span>
+<span class="c">         * @method setAtts</span>
+<span class="c">         * @param {Object} atts  A hash of attributes: name/value pairs</span>
+<span class="c">         */</span>
+        <span class="nx">setAtts</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">att</span> <span class="k">in</span> <span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span> <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">atts</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">atts</span><span class="o">[</span><span class="nx">att</span><span class="o">]);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Gets multiple attribute values.</span>
+<span class="c">         *</span>
+<span class="c">         * @method getAtts</span>
+<span class="c">         * @return {Object} A hash of attributes: name/values pairs</span>
+<span class="c">         */</span>
+        <span class="nx">getAtts</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">o</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">atts</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">VALUE</span><span class="o">),</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">o</span><span class="o">[</span><span class="nx">att</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span> 
+                <span class="o">});</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Configures attributes, and sets initial values</span>
+<span class="c">         *</span>
+<span class="c">         * @method _initAtts</span>
+<span class="c">         * @param {Object} cfg Attribute configuration object literal</span>
+<span class="c">         * @param {Object} initValues Name/Value hash of initial values to apply</span>
+<span class="c">         *</span>
+<span class="c">         * @protected</span>
+<span class="c">         */</span>
+        <span class="nx">_initAtts</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">cfg</span><span class="o">,</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">att</span><span class="o">,</span>
+                    <span class="nx">attCfg</span><span class="o">,</span>
+                    <span class="nx">values</span><span class="o">,</span>
+                    <span class="nx">atts</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">cfg</span><span class="o">);</span>
+
+                <span class="nx">values</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_splitAttVals</span><span class="o">(</span><span class="nx">initValues</span><span class="o">);</span>
+
+                <span class="k">for</span> <span class="o">(</span><span class="nx">att</span> <span class="k">in</span> <span class="nx">atts</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">atts</span><span class="o">,</span> <span class="nx">att</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">attCfg</span> <span class="o">=</span> <span class="nx">atts</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">addAtt</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">attCfg</span><span class="o">);</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">_initAttValue</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">attCfg</span><span class="o">,</span> <span class="nx">values</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Utility to split out regular attribute values</span>
+<span class="c">         * from complex attribute values</span>
+<span class="c">         *</span>
+<span class="c">         * @method _splitAttrValues</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_splitAttVals</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">valueHash</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">vals</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">subvals</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">path</span><span class="o">,</span>
+                <span class="nx">attr</span><span class="o">,</span>
+                <span class="nx">v</span><span class="o">;</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">valueHash</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">valueHash</span><span class="o">,</span> <span class="nx">k</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">k</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DOT</span><span class="o">)</span> <span class="o">!==</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="nx">DOT</span><span class="o">);</span>
+                        <span class="nx">attr</span> <span class="o">=</span> <span class="nx">path</span><span class="o">.</span><span class="nx">shift</span><span class="o">();</span>
+                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">attr</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
+                        <span class="nx">v</span><span class="o">[</span><span class="nx">v</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span>
+                            <span class="nx">path</span> <span class="o">:</span> <span class="nx">path</span><span class="o">,</span> 
+                            <span class="nx">value</span><span class="o">:</span> <span class="nx">valueHash</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span>
+                        <span class="o">};</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">vals</span><span class="o">[</span><span class="nx">k</span><span class="o">]</span> <span class="o">=</span> <span class="nx">valueHash</span><span class="o">[</span><span class="nx">k</span><span class="o">];</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="o">{</span> <span class="nx">simple</span><span class="o">:</span><span class="nx">vals</span><span class="o">,</span> <span class="nx">complex</span><span class="o">:</span><span class="nx">subvals</span> <span class="o">};</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Set the initial value of the given attribute from</span>
+<span class="c">         * either the default configuration provided, or the </span>
+<span class="c">         * over-ridden value if it exists in the initValues </span>
+<span class="c">         * hash provided.</span>
+<span class="c">         *</span>
+<span class="c">         * @param {String} att Attribute name</span>
+<span class="c">         * @param {Object} cfg Default attribute configuration</span>
+<span class="c">         * object literal</span>
+<span class="c">         * @param {Object} Initial attribute values.</span>
+<span class="c">         *</span>
+<span class="c">         * @method _initAttValue</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">_initAttValue</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">,</span> <span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">hasVal</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;value&quot;</span> <span class="k">in</span> <span class="nx">cfg</span><span class="o">),</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">value</span><span class="o">,</span>
+                <span class="nx">simple</span><span class="o">,</span>
+                <span class="nx">complex</span><span class="o">,</span>
+                <span class="nx">i</span><span class="o">,</span>
+                <span class="nx">l</span><span class="o">,</span>
+                <span class="nx">path</span><span class="o">,</span>
+                <span class="nx">subval</span><span class="o">,</span>
+                <span class="nx">subvals</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">initValues</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Simple Attributes</span>
+<span class="c"></span>                <span class="nx">simple</span> <span class="o">=</span> <span class="nx">initValues</span><span class="o">.</span><span class="nx">simple</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">simple</span> <span class="o">&amp;&amp;</span> <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">simple</span><span class="o">,</span> <span class="nx">att</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">hasVal</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">simple</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
+                <span class="o">}</span>
+
+                <span class="c">// Complex Attributes</span>
+<span class="c"></span>                <span class="nx">complex</span> <span class="o">=</span> <span class="nx">initValues</span><span class="o">.</span><span class="nx">complex</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">complex</span> <span class="o">&amp;&amp;</span> <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">complex</span><span class="o">,</span> <span class="nx">att</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">hasVal</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="nx">subvals</span> <span class="o">=</span> <span class="nx">complex</span><span class="o">[</span><span class="nx">att</span><span class="o">];</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">path</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">path</span><span class="o">;</span>
+                        <span class="nx">subval</span> <span class="o">=</span> <span class="nx">subvals</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">value</span><span class="o">;</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_setSubValue</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">subval</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">hasVal</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">val</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Attribute</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="o">});</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span> <span class="o">=</span> <span class="nx">Attribute</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_animation.html">animation</a></li>
+
+                                <li class="selected"><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
+
+                                <li class=""><a href="module_dd-ddm.html">dd-ddm</a></li>
+
+                                <li class=""><a href="module_dd-ddm-base.html">dd-ddm-base</a></li>
+
+                                <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
+
+                                <li class=""><a href="module_dd-drag.html">dd-drag</a></li>
+
+                                <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_selector.html">selector</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Attribute.html">Attribute</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="Attribute.js.html">Attribute.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: node  NodeList   (YUI Library)</title>
+	<title>API: attribute  Attribute   (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,11 +13,11 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>node&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>attribute&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_node.html">node</a>
-                 &gt; NodeList 
+            &gt; <a href="./module_attribute.html">attribute</a>
+                 &gt; Attribute 
                 
             </p>
 
@@ -37,11 +37,15 @@
 
                         
                         
-                            Class <b>NodeList</b>
+                            Class <b>Attribute</b>
                         <span class="extends">
                         </span>
 
                         <span class="extends">
+                          - uses 
+                            
+                                <a href="EventTarget.html">EventTarget</a>
+                            
                         </span>
                         
                         </code>
@@ -52,7 +56,15 @@
   
 
                     <div class="summary description">
-                        A wrapper for interacting with DOM elements
+                        Attribute provides managed attribute support. 
+<p>
+The class is designed to be augmented onto a host class, 
+and allows the host to support get/set methods for attributes,
+initial configuration support and attribute change events.
+</p>
+<p>Attributes added to the host can be defined as read-only,
+clonable, with a default setter and validation support.
+</p>
                     </div>
 
 
@@ -60,27 +72,45 @@
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
-                                    <h4><a name="property_CLASS_NAME">CLASS_NAME</a>
-                                        <code>- object</code>
+                                    <h4><a name="property_Attribute.CLONE">Attribute.CLONE</a>
+                                        <code>- static final {Object}
+<p>
+Constants for clone formats supported by Attribute
+</p>
+<p>
+By default attribute values returned by the get method
+are not cloned. However setting the attribute's "clone"
+property to:
+</p>
+<dl>
+<dt>Attribute.CLONE.DEEP</dt>
+<dd>Will result in a deep cloned value being returned
+(using Y.clone). This can be expensive for complex
+objects.
+</dd>
+<dt>Attribute.CLONE.SHALLOW</dt>
+<dd>Will result in a shallow cloned value being returned
+(using Y.merge).
+</dd>
+<dt>Attribute.CLONE.IMMUTABLE</dt>
+<dd>Will result in a deep cloned value being returned
+when using the get method. Additionally users will
+not be able to set sub values of the attribute 
+using the complex attribute notation (obj.set("x.y.z, 5)).
+However the value of the attribute can be changed, making
+it different from a READONLY attribute.
+</dd>
+<dt>Attribute.CLONE.NONE</dt>
+<dd>
+The value will not be cloned, resulting in a reference
+to the stored value being passed back, if the value is an object.
+This is the default behavior.
+</dd>
+</dl></code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            An interface for advanced DOM features.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_text">text</a>
-                                        <code>- String</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Normalizes nodeInnerText and textContent.
+                                            
                                         </div>
                                     </div>
      
@@ -98,27 +128,34 @@
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
-                                    <div class="">
+                                    <div class="private">
                                     <h4>
-                                        <a name="method_addClass">addClass</a></h4>
+                                        <a name="method__clone">_clone</a></h4>
                                     <div class="detail">
                                         <code>
+                                         private 
                                         
                                         
-                                        
-                                        Boolean | Array
-                                            <strong>addClass</strong>
+                                        void
+                                            <strong>_clone</strong>
                                            (
                                                 
                                                         
-                                                         className
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         type
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Adds a class name to a given element or collection of elements.
+                                            Clone utility method, which will 
+clone the provided value using YUI's 
+merge, or clone utilities based
+on the clone type provided.
                                         </div>
 
                                         <div class="description">
@@ -126,17 +163,343 @@
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>className &lt;String&gt;</code>
-                                                             the class name to add to the class attribute
+                                                            <code>val &lt;Object&gt;</code>
+                                                            
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;Object&gt;</code>
+                                                            
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Boolean | Array
+                                                        void
                                                     </code></dt>
-                                                    <dd>A pass/fail boolean or array of booleans</dd>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__defAttrSet">_defAttrSet</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_defAttrSet</strong>
+                                           (
+                                                
+                                                        
+                                                         CustomEvent
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Default handler implementation for set events
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>CustomEvent &lt;EventFacade&gt;</code>
+                                                             Facade
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__getSubValue">_getSubValue</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong>_getSubValue</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves the sub value at the provided path,
+from the value object provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>path &lt;Array&gt;</code>
+                                                              A path array, specifying the object traversal path
+from which to obtain the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;Object&gt;</code>
+                                                              The object from which to extract the property value
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Any
+                                                    </code></dt>
+                                                    <dd>The value stored in the path or undefined if not found.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected">
+                                    <h4>
+                                        <a name="method__initAtts">_initAtts</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong>_initAtts</strong>
+                                           (
+                                                
+                                                        
+                                                         cfg
+                                                    
+                                                
+                                                        , 
+                                                         initValues
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Configures attributes, and sets initial values
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>cfg &lt;Object&gt;</code>
+                                                             Attribute configuration object literal
+                                                        </dd>
+                                                        <dd>
+                                                            <code>initValues &lt;Object&gt;</code>
+                                                             Name/Value hash of initial values to apply
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__initAttValue">_initAttValue</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_initAttValue</strong>
+                                           (
+                                                
+                                                        
+                                                         att
+                                                    
+                                                
+                                                        , 
+                                                         cfg
+                                                    
+                                                
+                                                        , 
+                                                         Initial
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the initial value of the given attribute from
+either the default configuration provided, or the 
+over-ridden value if it exists in the initValues 
+hash provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>att &lt;String&gt;</code>
+                                                             Attribute name
+                                                        </dd>
+                                                        <dd>
+                                                            <code>cfg &lt;Object&gt;</code>
+                                                             Default attribute configuration
+object literal
+                                                        </dd>
+                                                        <dd>
+                                                            <code>Initial &lt;Object&gt;</code>
+                                                             attribute values.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setSubValue">_setSubValue</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong>_setSubValue</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         subval
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets the sub value at the provided path on the value object.
+Returns the modified value object, or undefined if the path is invalid.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>path &lt;Array&gt;</code>
+                                                              A path array, specifying the object traversal path
+at which to set the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;Object&gt;</code>
+                                                              The object on which to set the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>subval &lt;Any&gt;</code>
+                                                              The sub value to set.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>The modified object, with the new sub value set, or 
+undefined, if the path was invalid.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__splitAttrValues">_splitAttrValues</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_splitAttrValues</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Utility to split out regular attribute values
+from complex attribute values
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -146,25 +509,29 @@
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_each">each</a></h4>
+                                        <a name="method_add">add</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        NodeList
-                                            <strong>each</strong>
+                                        void
+                                            <strong>add</strong>
                                            (
                                                 
                                                         
-                                                         fn
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         val
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Applies the given function to each Node in the NodeList.
+                                            Adds an attribute.
                                         </div>
 
                                         <div class="description">
@@ -172,63 +539,21 @@
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>fn &lt;Function&gt;</code>
-                                                             The function to apply
+                                                            <code>name &lt;String&gt;</code>
+                                                             The attribute key
                                                         </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        NodeList
-                                                    </code></dt>
-                                                    <dd>NodeList containing the updated collection</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_filter">filter</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        NodeList
-                                            <strong>filter</strong>
-                                           (
-                                                
-                                                        
-                                                         selector
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Filters the NodeList instance down to only nodes matching the given selector.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>selector &lt;String&gt;</code>
-                                                             The selector to filter against
+                                                            <code>val &lt;Object&gt;</code>
+                                                             (optional) The attribute configuration
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        NodeList
+                                                        void
                                                     </code></dt>
-                                                    <dd>NodeList containing the updated collection</dd>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -244,20 +569,23 @@
                                         
                                         
                                         
-                                        Array
+                                        void
                                             <strong>get</strong>
                                            (
                                                 
                                                         
-                                                         prop
+                                                         key
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Get the value of the property/attribute for each of the HTMLElements bound to this NodeList.
-Only strings/numbers/booleans are passed through unless a GETTER exists.
+                                            Returns the current value of the attribute. If the attribute
+has been configured with a 'get' handler, this method will delegate
+to the 'get' handler to obtain the value of the attribute.
+The 'get' handler will be passed the current value of the attribute 
+as the only argument.
                                         </div>
 
                                         <div class="description">
@@ -265,17 +593,17 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>prop &lt;String&gt;</code>
-                                                             Property to get
+                                                            <code>key &lt;String&gt;</code>
+                                                             The attribute whose value will be returned.
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Array
+                                                        void
                                                     </code></dt>
-                                                    <dd>Array containing the current values mapped to the Node indexes</dd>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -285,174 +613,31 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_getXY">getXY</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array
-                                            <strong>getXY</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Gets the current position of an element based on page coordinates. 
-Element must be part of the DOM tree to have page coordinates
-(display:none or elements not appended return false).
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Array
-                                                    </code></dt>
-                                                    <dd>The XY position of the element
-TODO: test inDocument/display</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_hasClass">hasClass</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean | Array
-                                            <strong>hasClass</strong>
-                                           (
-                                                
-                                                        
-                                                         className
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Determines whether an HTMLElement has the given className.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>className &lt;String&gt;</code>
-                                                             the class name to search for
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Boolean | Array
-                                                    </code></dt>
-                                                    <dd>A boolean value or array of boolean values</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_item">item</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Node
-                                            <strong>item</strong>
-                                           (
-                                                
-                                                        
-                                                         index
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Retrieves the Node instance at the given index.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>index &lt;Number&gt;</code>
-                                                             The index of the target Node.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Node
-                                                    </code></dt>
-                                                    <dd>The Node instance at the given index.</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_next">next</a></h4>
+                                        <a name="method_getAtts">getAtts</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         Object
-                                            <strong>next</strong>
+                                            <strong>getAtts</strong>
                                            (
-                                                
-                                                        
-                                                         method
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Returns the next HTMLElement sibling that passes the boolean method. 
-Returns the nearest HTMLElement sibling if no method provided.
+                                            Gets multiple attribute values.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>method &lt;Function&gt;</code>
-                                                             A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
                                                         Object
                                                     </code></dt>
-                                                    <dd>HTMLElement or null if not found</dd>
+                                                    <dd>A hash of attributes: name/values pairs</dd>
                                                 </dl>
              
                                         </div>
@@ -462,26 +647,25 @@ that receives the sibling node being tested as its only argument
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_previous">previous</a></h4>
+                                        <a name="method_remove">remove</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        Node
-                                            <strong>previous</strong>
+                                        void
+                                            <strong>remove</strong>
                                            (
                                                 
                                                         
-                                                         method
+                                                         name
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Returns the previous sibling that is an HTMLElement. 
-Returns the nearest HTMLElement sibling if no method provided.
+                                            Removes an attribute.
                                         </div>
 
                                         <div class="description">
@@ -489,119 +673,17 @@ Returns the nearest HTMLElement sibling if no method provided.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>method &lt;Function&gt;</code>
-                                                             A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
+                                                            <code>name &lt;String&gt;</code>
+                                                             The attribute key
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Node
+                                                        void
                                                     </code></dt>
-                                                    <dd>Node instance or null if not found</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_removeClass">removeClass</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean | Array
-                                            <strong>removeClass</strong>
-                                           (
-                                                
-                                                        
-                                                         className
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Removes a class name from a given element or collection of elements.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>className &lt;String&gt;</code>
-                                                             the class name to remove from the class attribute
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Boolean | Array
-                                                    </code></dt>
-                                                    <dd>A pass/fail boolean or array of booleans</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_replaceClass">replaceClass</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean | Array
-                                            <strong>replaceClass</strong>
-                                           (
-                                                
-                                                        
-                                                         oldClassName
-                                                    
-                                                
-                                                        , 
-                                                         newClassName
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Replace a class with another class for a given element or collection of elements.
-If no oldClassName is present, the newClassName is simply added.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>oldClassName &lt;String&gt;</code>
-                                                             the class name to be replaced
-                                                        </dd>
-                                                        <dd>
-                                                            <code>newClassName &lt;String&gt;</code>
-                                                             the class name that will be replacing the old class name
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Boolean | Array
-                                                    </code></dt>
-                                                    <dd>A pass/fail boolean or array of booleans</dd>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -622,19 +704,22 @@ If no oldClassName is present, the newClassName is simply added.
                                            (
                                                 
                                                         
-                                                         prop
+                                                         name
                                                     
                                                 
                                                         , 
-                                                         val
+                                                         value
+                                                    
+                                                
+                                                        , 
+                                                         Event
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Set the value of the property/attribute on all HTMLElements bound to this NodeList.
-Only strings/numbers/booleans are passed through unless a SETTER exists.
+                                            Sets the value of an attribute.
                                         </div>
 
                                         <div class="description">
@@ -642,12 +727,18 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>prop &lt;String&gt;</code>
-                                                             Property to set
+                                                            <code>name &lt;String&gt;</code>
+                                                             The name of the attribute
                                                         </dd>
                                                         <dd>
-                                                            <code>val &lt;any&gt;</code>
-                                                             Value to apply to the given property
+                                                            <code>value &lt;Any&gt;</code>
+                                                             The value to apply to the attribute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>Event &lt;Object&gt;</code>
+                                                             options. This object will be mixed into
+the event facade passed as the first argument to subscribers 
+attribute change events
                                                         </dd>
                                                 </dl>
 
@@ -666,30 +757,25 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_setXY">setXY</a></h4>
+                                        <a name="method_setAtts">setAtts</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>setXY</strong>
+                                            <strong>setAtts</strong>
                                            (
                                                 
                                                         
-                                                         xy
-                                                    
-                                                
-                                                        , 
-                                                         noRetry
+                                                         atts
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Set the position of an html element in page coordinates, regardless of how the element is positioned.
-The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                            Sets multiple attribute values.
                                         </div>
 
                                         <div class="description">
@@ -697,12 +783,8 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>xy &lt;Array&gt;</code>
-                                                             Contains X & Y values for new position (coordinates are page-based)
-                                                        </dd>
-                                                        <dd>
-                                                            <code>noRetry &lt;Boolean&gt;</code>
-                                                             By default we try and set the position a second time if the first fails
+                                                            <code>atts &lt;Object&gt;</code>
+                                                              A hash of attributes: name/value pairs
                                                         </dd>
                                                 </dl>
 
@@ -712,40 +794,6 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                                         void
                                                     </code></dt>
                                                     <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_size">size</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Int
-                                            <strong>size</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns the current number of items in the NodeList.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Int
-                                                    </code></dt>
-                                                    <dd>The number of items in the NodeList.</dd>
                                                 </dl>
              
                                         </div>
@@ -773,7 +821,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 
                                 <li class=""><a href="module_animation.html">animation</a></li>
 
-                                <li class=""><a href="module_attribute.html">attribute</a></li>
+                                <li class="selected"><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
 
@@ -793,7 +841,7 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
-                                <li class="selected"><a href="module_node.html">node</a></li>
+                                <li class=""><a href="module_node.html">node</a></li>
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
@@ -806,27 +854,55 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Node.html">Node</a></li>
-                                <li class="selected"><a href="NodeList.html">NodeList</a></li>
+                                <li class="selected"><a href="Attribute.html">Attribute</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Node.js.html">Node.js</a></li>
-                                <li class=""><a href="NodeExtras.js.html">NodeExtras.js</a></li>
+                                <li class=""><a href="Attribute.js.html">Attribute.js</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_CLASS_NAME">CLASS_NAME</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_text">text</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                <li class=""><a href="#property_Attribute.CLONE">Attribute.CLONE</a>
+                                        <!--<code>&lt;{Object}
+<p>
+Constants for clone formats supported by Attribute
+</p>
+<p>
+By default attribute values returned by the get method
+are not cloned. However setting the attribute's "clone"
+property to:
+</p>
+<dl>
+<dt>Attribute.CLONE.DEEP</dt>
+<dd>Will result in a deep cloned value being returned
+(using Y.clone). This can be expensive for complex
+objects.
+</dd>
+<dt>Attribute.CLONE.SHALLOW</dt>
+<dd>Will result in a shallow cloned value being returned
+(using Y.merge).
+</dd>
+<dt>Attribute.CLONE.IMMUTABLE</dt>
+<dd>Will result in a deep cloned value being returned
+when using the get method. Additionally users will
+not be able to set sub values of the attribute 
+using the complex attribute notation (obj.set("x.y.z, 5)).
+However the value of the attribute can be changed, making
+it different from a READONLY attribute.
+</dd>
+<dt>Attribute.CLONE.NONE</dt>
+<dd>
+The value will not be cloned, resulting in a reference
+to the stored value being passed back, if the value is an object.
+This is the default behavior.
+</dd>
+</dl>&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -834,47 +910,44 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                     <div class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
-                                <li class=""><!--<code>Boolean | Array</code>-->
-                                <a href="#method_addClass">addClass</a>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__clone">_clone</a>
                                 </li>
-                                <li class=""><!--<code>NodeList</code>-->
-                                <a href="#method_each">each</a>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__defAttrSet">_defAttrSet</a>
                                 </li>
-                                <li class=""><!--<code>NodeList</code>-->
-                                <a href="#method_filter">filter</a>
+                                <li class="private"><!--<code>Any</code>-->
+                                <a href="#method__getSubValue">_getSubValue</a>
                                 </li>
-                                <li class=""><!--<code>Array</code>-->
+                                <li class="protected"><!--<code>void</code>-->
+                                <a href="#method__initAtts">_initAtts</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__initAttValue">_initAttValue</a>
+                                </li>
+                                <li class="private"><!--<code>Object</code>-->
+                                <a href="#method__setSubValue">_setSubValue</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__splitAttrValues">_splitAttrValues</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_add">add</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_get">get</a>
                                 </li>
-                                <li class=""><!--<code>Array</code>-->
-                                <a href="#method_getXY">getXY</a>
-                                </li>
-                                <li class=""><!--<code>Boolean | Array</code>-->
-                                <a href="#method_hasClass">hasClass</a>
-                                </li>
-                                <li class=""><!--<code>Node</code>-->
-                                <a href="#method_item">item</a>
-                                </li>
                                 <li class=""><!--<code>Object</code>-->
-                                <a href="#method_next">next</a>
+                                <a href="#method_getAtts">getAtts</a>
                                 </li>
-                                <li class=""><!--<code>Node</code>-->
-                                <a href="#method_previous">previous</a>
-                                </li>
-                                <li class=""><!--<code>Boolean | Array</code>-->
-                                <a href="#method_removeClass">removeClass</a>
-                                </li>
-                                <li class=""><!--<code>Boolean | Array</code>-->
-                                <a href="#method_replaceClass">replaceClass</a>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_remove">remove</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_set">set</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_setXY">setXY</a>
-                                </li>
-                                <li class=""><!--<code>Int</code>-->
-                                <a href="#method_size">size</a>
+                                <a href="#method_setAtts">setAtts</a>
                                 </li>
                         </ul>
                     </div>
