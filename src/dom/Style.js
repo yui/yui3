@@ -1,165 +1,218 @@
+YUI.add('style', function(Y) {
 
-(function() {
+    var OWNER_DOCUMENT = 'ownerDocument',
+        DEFAULT_VIEW = 'defaultView',
+        PX = 'px';
 
-    var M = function(Y) {
+    var _alias = {};
 
-        var getStyle,           // for load time browser branching
-            setStyle,           // ditto
-            propertyCache = {}, // for faster hyphen converts
-            document = Y.config.doc;     // cache for faster lookups
-        
-        // brower detection
-        var isOpera = Y.ua.opera,
-            isSafari = Y.ua.webkit, 
-            isGecko = Y.ua.gecko,
-            isIE = Y.ua.ie; 
-        
-        // regex cache
-        var patterns = {
-            HYPHEN: /(-[a-z])/i // to normalize get/setStyle
-        };
+    if (document.documentElement.style.cssFloat !== undefined) {
+        _alias['float'] = 'cssFloat';
+    } else if (document.documentElement.style.styleFloat !== undefined) {
+        _alias['float'] = 'styleFloat';
+    }
 
-        var toCamel = function(property) {
-            if ( !patterns.HYPHEN.test(property) ) {
-                return property; // no hyphens
-            }
-            
-            if (propertyCache[property]) { // already converted
-                return propertyCache[property];
-            }
-           
-            var converted = property;
-     
-            while( patterns.HYPHEN.exec(converted) ) {
-                converted = converted.replace(RegExp.$1,
-                        RegExp.$1.substr(1).toUpperCase());
-            }
-            
-            propertyCache[property] = converted;
-            return converted;
-            //return property.replace(/-([a-z])/gi, function(m0, m1) {return m1.toUpperCase()}) // cant use function as 2nd arg yet due to safari bug
-        };
-        
-        // branching at load instead of runtime
-        if (document.defaultView && document.defaultView.getComputedStyle) { // W3C DOM method
-            getStyle = function(el, property) {
-                var value = null;
-                
-                if (property == 'float') { // fix reserved word
-                    property = 'cssFloat';
+    // use alpha filter for IE opacity
+    if (document.documentElement.style.opacity === undefined &&
+            document.documentElement.filters) {
+        _alias['opacity'] = {
+            get: function(node) {
+                var val = 100;
+                try { // will error if no DXImageTransform
+                    val = node.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+
+                } catch(e) {
+                    try { // make sure its in the document
+                        val = node.filters('alpha').opacity;
+                    } catch(e) {
+                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
+                    }
                 }
+                return val / 100;
+            },
 
-                var computed = document.defaultView.getComputedStyle(el, '');
-                if (computed) { // test computed before touching for safari
-                    value = computed[toCamel(property)];
+            set: function(node, val, style) {
+                if (typeof style.filter == 'string') { // in case not appended
+                    style.filter = 'alpha(opacity=' + val * 100 + ')';
+                    
+                    if (!node.currentStyle || !node.currentStyle.hasLayout) {
+                        style.zoom = 1; // needs layout 
+                    }
                 }
-                
-                return el.style[property] || value;
-            };
-        } else if (document.documentElement.currentStyle && isIE) { // IE method
-            getStyle = function(el, property) {                         
-                switch( toCamel(property) ) {
-                    case 'opacity' :// IE opacity uses filter
-                        var val = 100;
-                        try { // will error if no DXImageTransform
-                            val = el.filters['DXImageTransform.Microsoft.Alpha'].opacity;
-
-                        } catch(e) {
-                            try { // make sure its in the document
-                                val = el.filters('alpha').opacity;
-                            } catch(e) {
-                                Y.log('getStyle: IE filter failed',
-                                        'error', 'Dom');
-                            }
-                        }
-                        return val / 100;
-                    case 'float': // fix reserved word
-                        property = 'styleFloat'; // fall through
-                    default: 
-                        // test currentStyle before touching
-                        var value = el.currentStyle ? el.currentStyle[property] : null;
-                        return ( el.style[property] || value );
-                }
-            };
-        } else { // default to inline only
-            getStyle = function(el, property) { return el.style[property]; };
+            }
         }
-        
-        if (isIE) {
-            setStyle = function(el, property, val) {
-                switch (property) {
-                    case 'opacity':
-                        if ( Y.lang.isString(el.style.filter) ) { // in case not appended
-                            el.style.filter = 'alpha(opacity=' + val * 100 + ')';
-                            
-                            if (!el.currentStyle || !el.currentStyle.hasLayout) {
-                                el.style.zoom = 1; // when no layout or cant tell
-                            }
-                        }
-                        break;
-                    case 'float':
-                        property = 'styleFloat';
-                    default:
-                    el.style[property] = val;
+    }
+
+
+    Y.mix(Y.DOM, {
+        setStyle: function(node, att, val) {
+            var style = node.style;
+            if (style) {
+                if (_alias[att]) {
+                    if (_alias[att].set) {
+                        _alias[att].set(node, val, style);
+                        return; // NOTE: return
+                    } else {
+                        att = _alias[att];
+                    }
                 }
-            };
-        } else {
-            setStyle = function(el, property, val) {
-                if (property == 'float') {
-                    property = 'cssFloat';
+                node.style[att] = val; 
+            }
+        },
+
+        getStyle: function(node, att) {
+            var style = node.style;
+            if (_alias[att]) {
+                if (style && _alias[att].get) {
+                    return _alias[att].get(node, att, style); // NOTE: return
+                } else {
+                    att = _alias[att];
                 }
-                el.style[property] = val;
-            };
+            }
+
+            var val = style ? style[att] : undefined;
+            if (val === '') { // TODO: is empty string sufficient?
+                val = Y.DOM.getComputedStyle(node, att);
+            }
+
+            return val;
+        },
+
+        getComputedStyle: function(node, att) {
+            var view = node[OWNER_DOCUMENT][DEFAULT_VIEW];
+            return view.getComputedStyle(node, '')[att];
+        }
+   });
+
+    // IE getComputedStyle
+    // TODO: unit-less lineHeight (e.g. 1.22)
+    var re_compute = /[a-z]*(?:height|width|top|bottom|left|right|fontSize|color|visibility)/i,
+        re_size = /^width|height$/,
+        re_color = /color$/i,
+        re_rgb = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+        re_hex = /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
+        re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
+
+    var getIEComputedStyle = function(el, property) {
+        var value = '',
+            current = el.currentStyle[property],
+            match = re_compute.exec(property);
+
+        if (!match || current.indexOf(PX) > -1) { // no need to convert
+            value = current;
+        } else if (match && computed[match[0]]) { // use compute function
+            value = computed[match[0]](el, property);
+        } else if (re_unit.test(current)) { // convert to pixel
+            value = getPixel(el, property);
         }
 
-        Y.Dom.getStyle = function(el, property) {
-            property = toCamel(property);
-            
-            var f = function(element) {
-                return getStyle(element, property);
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        };
-        
-         Y.Dom.setStyle = function(el, property, val) {
-            property = toCamel(property);
-            
-            var f = function(element) {
-                setStyle(element, property, val);
-                Y.log('setStyle setting ' + property + ' to ' + val, 'info', 'Dom');
-                
-            };
-            
-            Y.Dom.batch(el, f, Y.Dom, true);
-        };
-
-        
-        /**
-         * Provides helper methods for styling DOM elements.
-         * @namespace YAHOO.util
-         * @class Style
-         */
-        Y.Style = {
-            /**
-             * Normalizes currentStyle and ComputedStyle.
-             * @method get
-             * @param {String | HTMLElement |Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-             * @param {String} property The style property whose value is returned.
-             * @return {String | Array} The current value of the style property for the element(s).
-             */
-            get: Y.Dom.getStyle,
-            /**
-             * Wrapper for setting style properties of HTMLElements.  Normalizes "opacity" across modern browsers.
-             * @method set
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-             * @param {String} property The style property to be set.
-             * @param {String} val The value to apply to the given property.
-             */
-            set: Y.Dom.setStyle
-        };
+        return value;
     };
 
-    YUI.add("style", M, "3.0.0");
+    var getPixelLayout = function(el, prop) {
+        var current = el.currentStyle[prop],                        // value of "width", "top", etc.
+            capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
+            offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
+            pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
+            value = '';
 
-})();
+        if (current == 'auto') {
+            var actual = el[offset]; // offsetHeight/Top etc.
+            if (actual === undefined) { // likely "right" or "bottom"
+                val = 0;
+            }
+
+            value = actual;
+            if (re_size.test(prop)) { // account for box model diff 
+                el.style[prop] = actual; 
+                if (el[offset] > actual) {
+                    // the difference is padding + border (works in Standards & Quirks modes)
+                    value = actual - (el[offset] - actual);
+                }
+                el.style[prop] = 'auto'; // revert to auto
+            }
+        } else { // convert units to px
+            if (!el.style[pixel] && !el.style[prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
+                el.style[prop] = current;              // no style.pixelWidth if no style.width
+            }
+            value = el.style[pixel];
+        }
+        return value + PX;
+    };
+
+    var getPixelBorder = function(el, property) {
+        // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
+        // clientTop/Left = borderWidth
+        var value = null;
+        if (!el.currentStyle.hasLayout) {
+            el.style.zoom = 1; // need layout to measure client
+        }
+
+        switch(property) {
+            case 'borderTopWidth':
+                value = el.clientTop;
+                break;
+            case 'borderBottomWidth':
+                value = el.offsetHeight - el.clientHeight - el.clientTop;
+                break;
+            case 'borderLeftWidth':
+                value = el.clientLeft;
+                break;
+            case 'borderRightWidth':
+                value = el.offsetWidth - el.clientWidth - el.clientLeft;
+                break;
+        }
+        return value + PX;
+    };
+
+    var getPixel = function(node, att) {
+        // use pixelRight to convert to px
+        var val = null,
+            styleRight = node.currentStyle.right,
+            current = node.currentStyle[att];
+
+        node.style.right = current;
+        val = node.style.pixelRight;
+        node.style.right = styleRight; // revert
+
+        return val + PX;
+    };
+
+    var getPixelMargin = function(node, att) {
+        if (node.currentStyle[att] == 'auto') {
+            val = 0 + PX;
+        } else {
+            val = getPixel(node, att);
+        }
+        return val;
+    };
+
+    var getVisibility = function(node, att) {
+        var current;
+        while ( (current = node.currentStyle) && current[att] == 'inherit') { // NOTE: assignment in test
+            node = node.parentNode;
+        }
+        return (current) ? current[att] : 'visible';
+    };
+
+    var computed = {
+        width: getPixelLayout,
+        height: getPixelLayout,
+        borderTopWidth: getPixelBorder,
+        borderRightWidth: getPixelBorder,
+        borderBottomWidth: getPixelBorder,
+        borderLeftWidth: getPixelBorder,
+        marginTop: getPixelMargin,
+        marginRight: getPixelMargin,
+        marginBottom: getPixelMargin,
+        marginLeft: getPixelMargin,
+        visibility: getVisibility
+        //fontSize: getPixelFont,
+        //color: getComputedColor
+    };
+
+
+    if (!window.getComputedStyle) {
+        Y.DOM.getComputedStyle = getIEComputedStyle; 
+    }
+}, '3.0.0', { requires: ['dom'] });

@@ -1,366 +1,306 @@
-(function() {
+/**
+ * Extended interface for DOM
+ * @module domposition
+ */
 
-    var M = function(Y) {
+YUI.add('screen', function(Y) {
 
-        var Dom = Y.Dom,
-            document = Y.config.doc;     // cache for faster lookups
-        
-        // brower detection
-        var isOpera = Y.ua.opera,
-            isSafari = Y.ua.webkit, 
-            isGecko = Y.ua.gecko,
-            isIE = Y.ua.ie; 
-        
-        // regex cache
-        var patterns = {
-            ROOT_TAG: /^body|html$/i // body for quirks mode, html for standards
-        };
+    /**
+     * An interface for advanced DOM features.
+     * @interface DOMScreen
+     */
 
-        var getXY = function() {
-            if (document.documentElement.getBoundingClientRect) { // IE
-                return function(el) {
-                    var box = el.getBoundingClientRect();
+    var OFFSET_TOP = 'offsetTop',
+        OWNER_DOCUMENT = 'ownerDocument',
+        COMPAT_MODE = 'compatMode',
+        DEFAULT_VIEW = 'defaultView',
+        PARENT_WINDOW = 'parentWindow',
+        OFFSET_LEFT = 'offsetLeft',
+        OFFSET_PARENT = 'offsetParent',
+        DOCUMENT_ELEMENT = 'documentElement',
+        POSITION = 'position',
+        FIXED = 'fixed',
+        RELATIVE = 'relative',
+        LEFT = 'left',
+        TOP = 'top',
+        SCROLL_LEFT = 'scrollLeft',
+        SCROLL_TOP = 'scrollTop',
+        NODE_TYPE = 'nodeType',
+        GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
+        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
+        RE_TABLE = /^t(able|d|h)$/i,
+        getNode = Y.Node.getDOMNode;
 
-                    var rootNode = el.ownerDocument;
-                    return [box.left + Y.Dom.getDocumentScrollLeft(rootNode), box.top +
-                            Y.Dom.getDocumentScrollTop(rootNode)];
-                };
-            } else {
-                return function(el) { // manually calculate by crawling up offsetParents
-                    var pos = [el.offsetLeft, el.offsetTop];
-                    var parentNode = el.offsetParent;
-
-                    // safari: subtract body offsets if el is abs (or any offsetParent), unless body is offsetParent
-                    var accountForBody = (isSafari &&
-                            Y.Dom.getStyle(el, 'position') == 'absolute' &&
-                            el.offsetParent == el.ownerDocument.body);
-
-                    if (parentNode != el) {
-                        while (parentNode) {
-                            pos[0] += parentNode.offsetLeft;
-                            pos[1] += parentNode.offsetTop;
-                            if (!accountForBody && isSafari && 
-                                    Y.Dom.getStyle(parentNode,'position') == 'absolute' ) { 
-                                accountForBody = true;
-                            }
-                            parentNode = parentNode.offsetParent;
-                        }
-                    }
-
-                    if (accountForBody) { //safari doubles in this case
-                        pos[0] -= el.ownerDocument.body.offsetLeft;
-                        pos[1] -= el.ownerDocument.body.offsetTop;
-                    } 
-                    parentNode = el.parentNode;
-
-                    // account for any scrolled ancestors
-                    while ( parentNode.tagName && !patterns.ROOT_TAG.test(parentNode.tagName) ) 
-                    {
-                       // work around opera inline/table scrollLeft/Top bug
-                       if (Y.Dom.getStyle(parentNode, 'display').search(/^inline|table-row.*$/i)) { 
-                            pos[0] -= parentNode.scrollLeft;
-                            pos[1] -= parentNode.scrollTop;
-                        }
-                        
-                        parentNode = parentNode.parentNode; 
-                    }
-
-                    return pos;
-                };
-            }
-        }(); // NOTE: Executing for loadtime branching
-
-        Dom.getXY = function(el) {
-            var f = function(el) {
-                // has to be part of document to have pageXY
-                if ( (el.parentNode === null || el.offsetParent === null ||
-                        this.getStyle(el, 'display') == 'none') && el != el.ownerDocument.body) {
-                    Y.log('getXY failed: element not available', 'error', 'Dom');
-                    return false;
-                }
-                
-                Y.log('getXY returning ' + getXY(el), 'info', 'Dom');
-                return getXY(el);
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        };
-            
-        Dom.getX = function(el) {
-            var f = function(el) {
-                return Y.Dom.getXY(el)[0];
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        };
-            
-        Dom.getY = function(el) {
-            var f = function(el) {
-                return Y.Dom.getXY(el)[1];
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        };
-            
-        Dom.setXY = function(el, pos, noRetry) {
-            var f = function(el) {
-                var style_pos = this.getStyle(el, 'position');
-                if (style_pos == 'static') { // default to relative
-                    this.setStyle(el, 'position', 'relative');
-                    style_pos = 'relative';
-                }
-
-                var pageXY = this.getXY(el);
-                if (pageXY === false) { // has to be part of doc to have pageXY
-                    Y.log('setXY failed: element not available', 'error', 'Dom');
-                    return false; 
-                }
-                
-                var delta = [ // assuming pixels; if not we will have to retry
-                    parseInt( this.getStyle(el, 'left'), 10 ),
-                    parseInt( this.getStyle(el, 'top'), 10 )
-                ];
-            
-                if ( isNaN(delta[0]) ) {// in case of 'auto'
-                    delta[0] = (style_pos == 'relative') ? 0 : el.offsetLeft;
-                } 
-                if ( isNaN(delta[1]) ) { // in case of 'auto'
-                    delta[1] = (style_pos == 'relative') ? 0 : el.offsetTop;
-                } 
-        
-                if (pos[0] !== null) { el.style.left = pos[0] - pageXY[0] + delta[0] + 'px'; }
-                if (pos[1] !== null) { el.style.top = pos[1] - pageXY[1] + delta[1] + 'px'; }
-              
-                if (!noRetry) {
-                    var newXY = this.getXY(el);
-
-                    // if retry is true, try one more time if we miss 
-                   if ( (pos[0] !== null && newXY[0] != pos[0]) || 
-                        (pos[1] !== null && newXY[1] != pos[1]) ) {
-                       this.setXY(el, pos, true);
-                   }
-                }        
-        
-                Y.log('setXY setting position to ' + pos, 'info', 'Dom');
-            };
-            
-            Y.Dom.batch(el, f, Y.Dom, true);
-        };
-            
-        Dom.setX = function(el, x) {
-            Y.Dom.setXY(el, [x, null]);
-        };
-        
-        Dom.setY = function(el, y) {
-            Y.Dom.setXY(el, [null, y]);
-        };
-            
-        Dom.getRegion = function(el) {
-            var f = function(el) {
-                if ( (el.parentNode === null || el.offsetParent === null ||
-                        this.getStyle(el, 'display') == 'none') && el != document.body) {
-                    Y.log('getRegion failed: element not available', 'error', 'Dom');
-                    return false;
-                }
-
-                var region = Y.Region.getRegion(el);
-                Y.log('getRegion returning ' + region, 'info', 'Dom');
-                return region;
-            };
-            
-            return Y.Dom.batch(el, f, Y.Dom, true);
-        };
-            
-        /**
-         * Returns the width of the client (viewport).
-         * @method getClientWidth
-         * @deprecated Now using getViewportWidth.  This interface left intact for back compat.
-         * @return {Int} The width of the viewable area of the page.
-         */
-        Dom.getClientWidth = function() {
-            return Y.Dom.getViewportWidth();
-        };
-        
-        /**
-         * Returns the height of the client (viewport).
-         * @method getClientHeight
-         * @deprecated Now using getViewportHeight.  This interface left intact for back compat.
-         * @return {Int} The height of the viewable area of the page.
-         */
-        Dom.getClientHeight = function() {
-            return Y.Dom.getViewportHeight();
-        };
-        
-        Dom.getDocumentHeight = function() {
-            var scrollHeight = (document.compatMode != 'CSS1Compat') ? document.body.scrollHeight : document.documentElement.scrollHeight;
-
-            var h = Math.max(scrollHeight, Y.Dom.getViewportHeight());
-            Y.log('getDocumentHeight returning ' + h, 'info', 'Dom');
-            return h;
-        };
-        
-        Dom.getDocumentWidth = function() {
-            var scrollWidth = (document.compatMode != 'CSS1Compat') ? document.body.scrollWidth : document.documentElement.scrollWidth;
-            var w = Math.max(scrollWidth, Y.Dom.getViewportWidth());
-            Y.log('getDocumentWidth returning ' + w, 'info', 'Dom');
-            return w;
-        };
-
-        Dom.getViewportHeight = function() {
-            var height = self.innerHeight; // Safari, Opera
-            var mode = document.compatMode;
-        
-            if ( (mode || isIE) && !isOpera ) { // IE, Gecko
-                height = (mode == 'CSS1Compat') ?
-                        document.documentElement.clientHeight : // Standards
-                        document.body.clientHeight; // Quirks
-            }
-        
-            Y.log('getViewportHeight returning ' + height, 'info', 'Dom');
-            return height;
-        };
-        
-        Dom.getViewportWidth = function() {
-            var width = self.innerWidth;  // Safari
-            var mode = document.compatMode;
-            
-            if (mode || isIE) { // IE, Gecko, Opera
-                width = (mode == 'CSS1Compat') ?
-                        document.documentElement.clientWidth : // Standards
-                        document.body.clientWidth; // Quirks
-            }
-            Y.log('getViewportWidth returning ' + width, 'info', 'Dom');
-            return width;
-        };
-     
-        Dom.getDocumentScrollLeft = function(doc) {
-            doc = doc || document;
-            return Math.max(doc.documentElement.scrollLeft, doc.body.scrollLeft);
-        };
-
-        Dom.getDocumentScrollTop = function(doc) {
-            doc = doc || document;
-            return Math.max(doc.documentElement.scrollTop, doc.body.scrollTop);
-        };
-
-        /**
-         * Creates a Region based on the viewport relative to the document. 
-         * @method getClientRegion
-         * @return {Region} A Region object representing the viewport which accounts for document scroll
-         */
-        Dom.getClientRegion = function() {
-            var t = Y.Dom.getDocumentScrollTop(),
-                l = Y.Dom.getDocumentScrollLeft(),
-                r = Y.Dom.getViewportWidth() + l,
-                b = Y.Dom.getViewportHeight() + t;
-
-            return new Y.Region(t, r, b, l);
-        };
-        
-
-        /**
-         * Provides helper methods for positioning and managing viewport 
-         * @namespace YAHOO.util
-         * @class Screen
-         */
-        Y.Screen = {
-            /**
-             * Set the position of an html element in page coordinates, regardless of how the element is positioned.
-             * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method setXY
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-             * @param {Array} pos Contains X & Y values for new position (coordinates are page-based)
-             * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
-             */
-            setXY: Y.Dom.setXY,
-            /**
-             * Gets the current position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method getXY
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-             * @return {Array} The XY position of the element(s)
-             */
-            getXY: Y.Dom.getXY,
-            /**
-             * Set the X position of an html element in page coordinates, regardless of how the element is positioned.
-             * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method setX
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-             * @param {Int} x The value to use as the X coordinate for the element(s).
-             */
-            setX: Y.Dom.setX,
-            /**
-             * Gets the current X position of an element based on page coordinates.  The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method getX
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-             * @return {Number | Array} The X position of the element(s)
-             */
-            getX: Y.Dom.getX,
-            /**
-             * Set the Y position of an html element in page coordinates, regardless of how the element is positioned.
-             * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method setY
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-             * @param {Int} x To use as the Y coordinate for the element(s).
-             */
-            setY: Y.Dom.setY,
-            /**
-             * Gets the current Y position of an element based on page coordinates.  Element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-             * @method getY
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements
-             * @return {Number | Array} The Y position of the element(s)
-             */
-            getY: Y.Dom.getY,
-            /**
-             * Returns the region position of the given element.
-             * The element must be part of the DOM tree to have a region (display:none or elements not appended return false).
-             * @method getRegion
-             * @param {String | HTMLElement | Array} el Accepts a string to use as an ID, an actual DOM reference, or an Array of IDs and/or HTMLElements.
-             * @return {Region | Array} A Region or array of Region instances containing "top, left, bottom, right" member data.
-             */
-            getRegion: Y.Dom.getRegion,
-            getClientRegion: Y.Dom.getClientRegion,
-            /**
-             * Returns the current height of the viewport.
-             * @method getViewportWidth
-             * @return {Int} The height of the viewable area of the page (excludes scrollbars).
-             */
-            getViewportWidth: Y.Dom.getViewportWidth,
-            /**
-             * Returns the current height of the viewport.
-             * @method getViewportHeight
-             * @return {Int} The height of the viewable area of the page (excludes scrollbars).
-             */
-            getViewportHeight: Y.Dom.getViewportHeight,
-            /**
-             * Returns the width of the document.
-             * @method getDocumentWidth
-             * @return {Int} The width of the actual document (which includes the body and its margin).
-             */
-            getDocumentWidth: Y.Dom.getDocumentWidth,
-            /**
-             * Returns the height of the document.
-             * @method getDocumentHeight
-             * @return {Int} The height of the actual document (which includes the body and its margin).
-             */
-            getDocumentHeight: Y.Dom.getDocumentHeight,
-            /**
-             * Returns the top scroll value of the document 
-             * @method getDocumentScrollTop
-             * @param {HTMLDocument} document (optional) The document to get the scroll value of
-             * @return {Int}  The amount that the document is scrolled to the top
-             */
-            getDocumentScrollTop: Y.Dom.getDocumentScrollTop,
-            /**
-             * Returns the left scroll value of the document 
-             * @method getDocumentScrollLeft
-             * @param {HTMLDocument} document (optional) The document to get the scroll value of
-             * @return {Int}  The amount that the document is scrolled to the left
-             */
-            getDocumentScrollLeft: Y.Dom.getDocumentScrollLeft
-        };
-
+    var getDoc = function(node) {
+        node = node || {};
+        return (node[NODE_TYPE] === 9) ? node : node[OWNER_DOCUMENT] || Y.config.doc;
     };
 
-    YUI.add("screen", M, "3.0.0");
+    var getWinSize = function(node) {
+        var doc = getDoc(),
+            win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
+            mode = doc[COMPAT_MODE],
+            height = win.innerHeight,
+            width = win.innerWidth,
+            root = doc[DOCUMENT_ELEMENT];
+    
+        if ( mode && !Y.UA.opera ) { // IE, Gecko
+            if (mode != 'CSS1Compat') { // Quirks
+                root = doc.body; 
+            }
+            height = root.clientHeight;
+            width = root.clientWidth;
+        }
+        return { 'height': height, 'width': width }; 
+    };
 
-})();
+    var getDocSize = function(node) {
+        var doc = getDoc(),
+            root = doc[DOCUMENT_ELEMENT];
+
+        if (doc[COMPAT_MODE] != 'CSS1Compat') {
+            root = doc.body;
+        }
+
+        return {
+            'height': root.scrollHeight,
+            'width': root.scrollWidth
+        }
+    };
+
+    Y.mix(Y.DOM, {
+
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @method winHeight
+         */
+        winHeight: function(node) {
+            var h = getWinSize(node).height;
+            Y.log('winHeight returning ' + h, 'info', 'DOM');
+            return h;
+        },
+
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @method winWidth
+         */
+        winWidth: function(node) {
+            var w = getWinSize(node).width;
+            Y.log('winWidth returning ' + w, 'info', 'DOM');
+            return w;
+        },
+
+        /**
+         * Document height 
+         * @method docHeight
+         */
+        docHeight:  function(node) {
+            var h = getDocSize(node).height;
+            return Math.max(h, getWinSize(node).height);
+        },
+
+        /**
+         * Document width 
+         * @method docWidth
+         */
+        docWidth:  function(node) {
+            var w = getDocSize(node).width;
+            return Math.max(w, getWinSize(node).width);
+        },
+
+        /**
+         * Amount page has been scroll vertically 
+         * @method docScrollX
+         */
+        docScrollX: function(node) {
+            var doc = getDoc();
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_LEFT], doc.body[SCROLL_LEFT]);
+        },
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @method docScrollY
+         */
+        docScrollY:  function(node) {
+            var doc = getDoc();
+            return Math.max(doc[DOCUMENT_ELEMENT][SCROLL_TOP], doc.body[SCROLL_TOP]);
+        },
+
+        /**
+         * Gets the current position of an element based on page coordinates. 
+         * Element must be part of the DOM tree to have page coordinates
+         * (display:none or elements not appended return false).
+         * @method getXY
+         * @return {Array} The XY position of the element
+
+         TODO: test inDocument/display
+         */
+        getXY: function() {
+            if (document.documentElement[GET_BOUNDING_CLIENT_RECT]) {
+                return function(node) {
+                    var scrollLeft = Y.DOM.docScrollX(node),
+                        scrollTop = Y.DOM.docScrollY(node),
+                        box = node[GET_BOUNDING_CLIENT_RECT](),
+                        doc = node.ownerDocument,
+                        //Round the numbers so we get sane data back
+                        xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
+
+                        if (Y.UA.ie) {
+                            var off1 = 2, off2 = 2,
+                            mode = doc.compatMode,
+                            bLeft = Y.DOM.getComputedStyle(doc[DOCUMENT_ELEMENT], 'borderLeftWidth'),
+                            bTop = Y.DOM.getComputedStyle(doc[DOCUMENT_ELEMENT], 'borderTopWidth');
+
+                            if (Y.UA.ie === 6) {
+                                if (mode !== 'BackCompat') {
+                                    off1 = 0;
+                                    off2 = 0;
+                                }
+                            }
+                            
+                            if ((mode == 'BackCompat')) {
+                                if (bLeft !== 'medium') {
+                                    off1 = parseInt(bLeft, 10);
+                                }
+                                if (bTop !== 'medium') {
+                                    off2 = parseInt(bTop, 10);
+                                }
+                            }
+                            
+                            xy[0] -= off1;
+                            xy[1] -= off2;
+                        }
+
+                    if ((scrollTop || scrollLeft)) {
+                        xy[0] += scrollLeft;
+                        xy[1] += scrollTop;
+                    }
+                    return xy;                   
+                };
+            } else {
+                return function(node) { // manually calculate by crawling up offsetParents
+                    //Calculate the Top and Left border sizes (assumes pixels)
+                    var calcBorders = function(node, xy2) {
+                        var t = parseInt(Y.DOM.getStyle(node, 'borderTopWidth'), 10) || 0,
+                            l = parseInt(Y.DOM.getStyle(node, 'borderLeftWidth'), 10) || 0;
+                        if (Y.UA.gecko) {
+                            if (RE_TABLE.test(node['tagName'])) {
+                                t = 0;
+                                l = 0;
+                            }
+                        }
+                        xy2[0] += l;
+                        xy2[1] += t;
+                        return xy2;
+                    };
+
+                    var xy = [node[OFFSET_LEFT], node[OFFSET_TOP]],
+                    parentNode = node,
+                    bCheck = ((Y.UA.gecko || (Y.UA.webkit > 519)) ? true : false);
+
+                    while (parentNode = parentNode[OFFSET_PARENT]) {
+                        xy[0] += parentNode[OFFSET_LEFT];
+                        xy[1] += parentNode[OFFSET_TOP];
+                        if (bCheck) {
+                            xy = calcBorders(parentNode, xy);
+                        }
+                    }
+
+                    // account for any scrolled ancestors
+                    if (Y.DOM.getStyle(node, POSITION) != FIXED) {
+                        parentNode = node;
+                        var scrollTop, scrollLeft;
+
+                        while (parentNode = parentNode['parentNode']) {
+                            scrollTop = parentNode['scrollTop'];
+                            scrollLeft = parentNode['scrollLeft'];
+
+                            //Firefox does something funky with borders when overflow is not visible.
+                            if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
+	                            xy = calcBorders(parentNode, xy);
+                            }
+                            
+
+                            if (scrollTop || scrollLeft) {
+                                xy[0] -= scrollLeft;
+                                xy[1] -= scrollTop;
+                            }
+                        }
+                        xy[0] += Y.DOM.docScrollX(node);
+                        xy[1] += Y.DOM.docScrollY(node);
+
+                    } else {
+                        //Fix FIXED position -- add scrollbars
+                        if (Y.UA.opera) {
+                            xy[0] -= Y.DOM.docScrollX(node);
+                            xy[1] -= Y.DOM.docScrollY(node);
+                        } else if (Y.UA.webkit || Y.UA.gecko) {
+                            xy[0] += Y.DOM.docScrollX(node);
+                            xy[1] += Y.DOM.docScrollY(node);
+                        }
+                    }
+                    //Round the numbers so we get sane data back
+                    xy[0] = Math.floor(xy[0]);
+                    xy[1] = Math.floor(xy[1]);
+
+                    return xy;                
+                };
+            }
+        }(),// NOTE: Executing for loadtime branching
+
+        /**
+         * Set the position of an html element in page coordinates, regardless of how the element is positioned.
+         * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+         * @method setXY
+         * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
+         * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
+         */
+        setXY: function(node, xy, noRetry) {
+            var pos = Y.DOM.getStyle(node, POSITION),
+                delta = [ // assuming pixels; if not we will have to retry
+                    parseInt( Y.DOM.getStyle(node, LEFT), 10 ),
+                    parseInt( Y.DOM.getStyle(node, TOP), 10 )
+                ];
+        
+            if (pos == 'static') { // default to relative
+                pos = RELATIVE;
+                Y.DOM.setStyle(node, POSITION, RELATIVE);
+            }
+
+            var currentXY = Y.DOM.getXY(node);
+
+            if (currentXY === false) { // has to be part of doc to have xy
+                Y.log('xy failed: node not available', 'error', 'Node');
+                return false; 
+            }
+            
+            if ( isNaN(delta[0]) ) {// in case of 'auto'
+                delta[0] = (pos == RELATIVE) ? 0 : node[OFFSET_LEFT];
+            } 
+            if ( isNaN(delta[1]) ) { // in case of 'auto'
+                delta[1] = (pos == RELATIVE) ? 0 : node[OFFSET_TOP];
+            } 
+
+            if (xy[0] !== null) {
+                Y.DOM.setStyle(node, LEFT, xy[0] - currentXY[0] + delta[0] + 'px');
+            }
+
+            if (xy[1] !== null) {
+                Y.DOM.setStyle(node, TOP, xy[1] - currentXY[1] + delta[1] + 'px');
+            }
+          
+            if (!noRetry) {
+                var newXY = Y.DOM.getXY(node);
+
+                // if retry is true, try one more time if we miss 
+               if ( (xy[0] !== null && newXY[0] != xy[0]) || 
+                    (xy[1] !== null && newXY[1] != xy[1]) ) {
+                   Y.DOM.setXY(node, xy, true);
+               }
+            }        
+
+            Y.log('setXY setting position to ' + xy, 'info', 'Node');
+        }
+    });
+
+}, '3.0.0', { requires: ['dom'] });
