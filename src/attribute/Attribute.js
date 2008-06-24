@@ -273,7 +273,8 @@
 
         /**
          * Default handler implementation for set events
-         *
+         * 
+         * @method _defAttrSet
          * @private
          * @param {EventFacade} CustomEvent Facade
          */
@@ -304,12 +305,13 @@
          * Retrieves the sub value at the provided path,
          * from the value object provided.
          *
+         * @method _getSubValue
+         * @private
+         * 
          * @param {Array} path  A path array, specifying the object traversal path
          *                      from which to obtain the sub value.
          * @param {Object} val  The object from which to extract the property value
          * @return {Any} The value stored in the path or undefined if not found.
-         *
-         * @private
          */
         _getSubValue: function (path, val) {
             var pl = path.length,
@@ -328,14 +330,15 @@
          * Sets the sub value at the provided path on the value object.
          * Returns the modified value object, or undefined if the path is invalid.
          *
+         * @method _setSubValue
+         * @private
+         * 
          * @param {Array} path  A path array, specifying the object traversal path
          *                      at which to set the sub value.
          * @param {Object} val  The object on which to set the sub value.
          * @param {Any} subval  The sub value to set.
          * @return {Object}     The modified object, with the new sub value set, or 
          *                      undefined, if the path was invalid.
-         *
-         * @private
          */
         _setSubValue: function(path, val, subval) {
 
@@ -397,10 +400,10 @@
          * Configures attributes, and sets initial values
          *
          * @method _initAtts
+         * @protected
+         * 
          * @param {Object} cfg Attribute configuration object literal
          * @param {Object} initValues Name/Value hash of initial values to apply
-         *
-         * @protected
          */
         _initAtts : function(cfg, initValues) {
             if (cfg) {
