@@ -93,8 +93,7 @@
     function _fireChange(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
         type = type + CHANGE;
 
-        // TODO: Publishing temporarily,
-        // while we address event bubbling.
+        // TODO: Publishing temporarily, while we address event bubbling/queuing
         this.publish(type, {queuable:false, defaultFn:this._defAttrSet});
 
         var eData = {
@@ -192,7 +191,9 @@
          * The 'get' handler will be passed the current value of the attribute 
          * as the only argument.
          * @method get
-         * @param {String} key The attribute whose value will be returned.
+         * @param {String} key The attribute whose value will be returned. If
+         * the value of the attribute is an Object, dot notation can be used to
+         * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
          */
         get: function(name) {
 
@@ -220,13 +221,17 @@
 
         /**
          * Sets the value of an attribute.
-         * 
+         *
          * @method set
-         * @param {String} name The name of the attribute
+         * @param {String} name The name of the attribute. Note, if the 
+         * value of the attribute is an Object, dot notation can be used
+         * to set the value of a property within the object 
+         * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
+         * been declared as an immutable attribute (see Attribute.CLONE).
          * @param {Any} value The value to apply to the attribute
          * @param {Object} Event options. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
-         * to attribute change events
+         * of attribute change events
          */
         set: function(name, val, opts) {
 
@@ -472,7 +477,7 @@
          */
         _initAttValue : function(att, cfg, initValues) {
 
-            var hasVal = ("value" in cfg),
+            var hasVal = (VALUE in cfg),
                 val = cfg.value,
                 simple,
                 complex,
