@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: dd-drag   drag.js  (YUI Library)</title>
+	<title>API: dddrag   drag.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>dd-drag&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>dddrag&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dd-drag.html">dd-drag</a>
+            &gt; <a href="./module_dddrag.html">dddrag</a>
                 
                  &gt; drag.js (source view) 
             </p>
@@ -38,14 +38,12 @@
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * This class provides the ability to drag a Node.</span>
-<span class="c">     * @module dd-drag</span>
+<span class="c">     * @module dddrag</span>
 <span class="c">     */</span>
+
     <span class="c">/**</span>
 <span class="c">     * This class provides the ability to drag a Node.</span>
 <span class="c">     * @class Drag</span>
-<span class="c">     * @namespace DD</span>
-<span class="c">     * @extends base</span>
-<span class="c">     * @constructor</span>
 <span class="c">     */</span>
 
     <span class="k">var</span> <span class="nx">DDM</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span>
@@ -55,15 +53,24 @@
         <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>        
         <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;mouseup&#39;</span><span class="o">,</span>
         <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;mousedown&#39;</span><span class="o">,</span>
+
         <span class="c">/**</span>
-<span class="c">        * @event drag:mouseDown</span>
-<span class="c">        * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.</span>
-<span class="c">        * @preventable</span>
-<span class="c">        * @bubbles DD.DDM</span>
-<span class="c">        * @defaultFn _handleMouseDown</span>
-<span class="c">        * @type Event.Custom</span>
-<span class="c">        */</span>
+<span class="c">         * When animation is enabled, this event fires when the animation</span>
+<span class="c">         * completes</span>
+<span class="c">         * @event animComplete</span>
+<span class="c">         * @type CustomEvent</span>
+<span class="c">         * @param {YAHOO.widget.Node} node the node that is expanding/collapsing</span>
+<span class="c">         * @param {String} type the type of animation (&quot;expand&quot; or &quot;collapse&quot;)</span>
+<span class="c">         */</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.</span>
+<span class="c">         * @event adamdragmouseDown</span>
+<span class="c">         * @type CustomEvent</span>
+<span class="c">         * @param e {Event} the mousedown event object</span>
+<span class="c">         */</span>
         <span class="nx">EV_MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;drag:mouseDown&#39;</span><span class="o">,</span>
+
         <span class="c">/**</span>
 <span class="c">        * @event drag:afterMouseDown</span>
 <span class="c">        * @description Fires after the mousedown event has been cleared.</span>
@@ -327,7 +334,7 @@
 <span class="c">        * @private</span>
 <span class="c">        * @method _handleTarget</span>
 <span class="c">        * @description Attribute handler for the target config attribute.</span>
-<span class="c">        * @param {Boolean/Object}</span>
+<span class="c">        * @param  blah {Boolean/Object} blah</span>
 <span class="c">        * @return {Boolean/Object}</span>
 <span class="c">        */</span>
         <span class="nx">_handleTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
@@ -398,28 +405,28 @@
 <span class="c">        * @private</span>
 <span class="c">        * @property _ev_md</span>
 <span class="c">        * @description A private reference to the mousedown DOM event</span>
-<span class="c">        * @type {Event}</span>
+<span class="c">        * @type Event</span>
 <span class="c">        */</span>
         <span class="nx">_ev_md</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _handles</span>
 <span class="c">        * @description A private hash of the valid drag handles</span>
-<span class="c">        * @type {Array}</span>
+<span class="c">        * @type Array</span>
 <span class="c">        */</span>
         <span class="nx">_handles</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _invalids</span>
 <span class="c">        * @description A private hash of the invalid selector strings</span>
-<span class="c">        * @type {Array}</span>
+<span class="c">        * @type Array</span>
 <span class="c">        */</span>
         <span class="nx">_invalids</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _dragThreshMet</span>
 <span class="c">        * @description Private flag to see if the drag threshhold was met</span>
-<span class="c">        * @type {Boolean}</span>
+<span class="c">        * @type Boolean</span>
 <span class="c">        */</span>
         <span class="nx">_dragThreshMet</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="c">/**</span>
@@ -476,7 +483,7 @@
 <span class="c">        * @private</span>
 <span class="c">        * @method _handleMouseUp</span>
 <span class="c">        * @description Handler for the mouseup DOM event</span>
-<span class="c">        * @param {Event}</span>
+<span class="c">        * @param e {Event} the event</span>
 <span class="c">        */</span>
         <span class="nx">_handleMouseUp</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_fixIEMouseUp</span><span class="o">();</span>
@@ -523,7 +530,7 @@
 <span class="c">        * @private</span>
 <span class="c">        * @method _handleMouseDownEvent</span>
 <span class="c">        * @description Handler for the mousedown DOM event</span>
-<span class="c">        * @param {Event}</span>
+<span class="c">        * @param e {Event} the event</span>
 <span class="c">        */</span>
         <span class="nx">_handleMouseDownEvent</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_MOUSE_DOWN</span><span class="o">,</span> <span class="o">{</span> <span class="nx">ev</span><span class="o">:</span> <span class="nx">ev</span> <span class="o">});</span>
@@ -532,7 +539,7 @@
 <span class="c">        * @private</span>
 <span class="c">        * @method _handleMouseDown</span>
 <span class="c">        * @description Handler for the mousedown DOM event</span>
-<span class="c">        * @param {Event}</span>
+<span class="c">        * @param e {Event} the event</span>
 <span class="c">        */</span>
         <span class="nx">_handleMouseDown</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">ev</span><span class="o">;</span>
@@ -561,7 +568,7 @@
         <span class="c">/**</span>
 <span class="c">        * @method validClick</span>
 <span class="c">        * @description Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.</span>
-<span class="c">        * @param {Event}</span>
+<span class="c">        * @param e {Event} the event</span>
 <span class="c">        * @return {Boolean}</span>
 <span class="c">        */</span>
         <span class="nx">validClick</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
@@ -896,13 +903,13 @@
 
                                 <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
 
-                                <li class="selected"><a href="module_dd-drag.html">dd-drag</a></li>
-
                                 <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
 
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
+
+                                <li class="selected"><a href="module_dddrag.html">dddrag</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
@@ -919,7 +926,7 @@
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DD.Drag.html">DD.Drag</a></li>
+                                <li class=""><a href="Drag.html">Drag</a></li>
                         </ul>
                     </div>
 

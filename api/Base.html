@@ -964,13 +964,61 @@ the name property of the instance will be used as the default prefix.
                             <div class="content">
                                     <div class="">
                                     <h4>
-                                        <a name="event_"></a></h4>
+                                        <a name="event_destroy">destroy</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong></strong>
+                                            <strong>destroy</strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Destroy event, fired prior to destruction. Invoking
+the preventDefault method on the EventFacade provided 
+to subscribers will prevent destruction from proceeding.
+<p>
+Subscribers to the after momemt of this event, will be notified
+after destruction is complete (and as a result cannot prevent
+destruction).
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;EventFacade&gt;</code>
+                                                             Event object
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_init">init</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>init</strong>
 
                                             (
                                                 
@@ -1048,13 +1096,13 @@ cannot prevent initialization).
 
                                 <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
 
-                                <li class=""><a href="module_dd-drag.html">dd-drag</a></li>
-
                                 <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
 
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
+
+                                <li class=""><a href="module_dddrag.html">dddrag</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
@@ -1163,7 +1211,10 @@ of the instance to the event type, if absent.
                         <h4>Events</h4>
                         <ul class="content">        
                                 <li class="">
-                                <a href="#event_"></a>
+                                <a href="#event_destroy">destroy</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_init">init</a>
                                 </li>
                         </ul>
                     </div>
