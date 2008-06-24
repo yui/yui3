@@ -124,72 +124,12 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_docHeight">docHeight</a>
-                                        <code>- Number</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Document height
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_docScrollX">docScrollX</a>
-                                        <code>- Number</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Amount page has been scroll vertically
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_docScrollY">docScrollY</a>
-                                        <code>- Number</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Amount page has been scroll horizontally
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
                                     <h4><a name="property_documentElement">documentElement</a>
                                         <code>- Node</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
                                             Returns a Node instance.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_docWidth">docWidth</a>
-                                        <code>- Number</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Document width
                                         </div>
                                     </div>
      
@@ -349,6 +289,21 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_text">text</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Normalizes nodeInnerText and textContent.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_tFoot">tFoot</a>
                                         <code>- Node</code>
                                     </h4>
@@ -370,36 +325,6 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                     <div class="detail">
                                         <div class="description">
                                             Returns a Node instance.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_winHeight">winHeight</a>
-                                        <code>- String</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Returns the inner height of the viewport (exludes scrollbar).
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_winWidth">winWidth</a>
-                                        <code>- String</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Returns the inner width of the viewport (exludes scrollbar).
                                         </div>
                                     </div>
      
@@ -985,6 +910,52 @@ aren't allowed to traverse outside their DOM tree.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_getComputedStyle">getComputedStyle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong>getComputedStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves the computed value for the given style attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attr &lt;String&gt;</code>
+                                                             The style attribute to retrieve.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        String
+                                                    </code></dt>
+                                                    <dd>The computed value of the style property for the element.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_getElementsByTagName">getElementsByTagName</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1257,6 +1228,54 @@ aren't allowed to traverse outside their DOM tree.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_next">next</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>next</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the next HTMLElement sibling that passes the boolean method. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>HTMLElement or null if not found</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_nodeInOut">nodeInOut</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1282,6 +1301,54 @@ aren't allowed to traverse outside their DOM tree.
                                                         void
                                                     </code></dt>
                                                     <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_previous">previous</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>previous</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the previous sibling that is an HTMLElement. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>Node instance or null if not found</dd>
                                                 </dl>
              
                                         </div>
@@ -1884,9 +1951,9 @@ Only valid on FORM elements
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1904,7 +1971,7 @@ Only valid on FORM elements
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Node.js.html">Node.js</a></li>
-                                <li class=""><a href="NodeExtras.js.html">NodeExtras.js</a></li>
+                                <li class=""><a href="NodeClassName.js.html">NodeClassName.js</a></li>
                         </ul>
                     </div>
 
@@ -1912,73 +1979,58 @@ Only valid on FORM elements
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_body">body</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_cells">cells</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_childNodes">childNodes</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_children">children</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_docHeight">docHeight</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_docScrollX">docScrollX</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_docScrollY">docScrollY</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_documentElement">documentElement</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_docWidth">docWidth</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_elements">elements</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_firstChild">firstChild</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_lastChild">lastChild</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_offsetParent">offsetParent</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_options">options</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_ownerDocument">ownerDocument</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_parentNode">parentNode</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_previousSibling">previousSibling</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_rows">rows</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_tBodies">tBodies</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_text">text</a>
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_tFoot">tFoot</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_tHead">tHead</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_winHeight">winHeight</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_winWidth">winWidth</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                        <!--<code>&lt;Node&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -2024,6 +2076,9 @@ Use 'document' string to retrieve document Node instance from string</a>
                                 <li class=""><!--<code>String</code>-->
                                 <a href="#method_getAttribute">getAttribute</a>
                                 </li>
+                                <li class=""><!--<code>String</code>-->
+                                <a href="#method_getComputedStyle">getComputedStyle</a>
+                                </li>
                                 <li class=""><!--<code>NodeList</code>-->
                                 <a href="#method_getElementsByTagName">getElementsByTagName</a>
                                 </li>
@@ -2042,8 +2097,14 @@ Use 'document' string to retrieve document Node instance from string</a>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_insertBefore">insertBefore</a>
                                 </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_next">next</a>
+                                </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_nodeInOut">nodeInOut</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_previous">previous</a>
                                 </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_query">query</a>

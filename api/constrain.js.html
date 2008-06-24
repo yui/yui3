@@ -37,10 +37,15 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * 3.x DragDrop</span>
+<span class="c">     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also</span>
+<span class="c">     * supports tick based moves and XY axis constraints.</span>
+<span class="c">     * @module dd-constrain</span>
+<span class="c">     */</span>
+    <span class="c">/**</span>
+<span class="c">     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also</span>
+<span class="c">     * supports tick based moves and XY axis constraints.</span>
 <span class="c">     * @class DragConstained</span>
 <span class="c">     * @namespace DD</span>
-<span class="c">     * @module dd-constrain</span>
 <span class="c">     * @extends Drag</span>
 <span class="c">     * @constructor</span>
 <span class="c">     */</span>
@@ -187,7 +192,7 @@
         <span class="nx">getRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">inc</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">).</span><span class="nx">getRegion</span><span class="o">();</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;region&#39;</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2view&#39;</span><span class="o">))</span> <span class="o">{</span>
@@ -421,9 +426,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

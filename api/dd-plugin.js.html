@@ -37,9 +37,12 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>       <span class="c">/**</span>
-<span class="c">        * 3.x DragDrop</span>
-<span class="c">        * @class DragPlugin</span>
+<span class="c">        * This is a simple Drag plugin that can be attached to a Node via the plug method.</span>
 <span class="c">        * @module dd-plugin</span>
+<span class="c">        */</span>
+       <span class="c">/**</span>
+<span class="c">        * This is a simple Drag plugin that can be attached to a Node via the plug method.</span>
+<span class="c">        * @class DragPlugin</span>
 <span class="c">        * @namespace Plugin</span>
 <span class="c">        * @extends drag</span>
 <span class="c">        * @constructor</span>
@@ -51,8 +54,18 @@
             <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">;</span>
             <span class="nx">Drag</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">};</span>
-
+        
+        <span class="c">/**</span>
+<span class="c">        * @property NAME</span>
+<span class="c">        * @description dd-plugin</span>
+<span class="c">        * @type {String}</span>
+<span class="c">        */</span>
         <span class="nx">Drag</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;dd-plugin&quot;</span><span class="o">;</span>
+        <span class="c">/**</span>
+<span class="c">        * @property NS</span>
+<span class="c">        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;</span>
+<span class="c">        * @type {String}</span>
+<span class="c">        */</span>
         <span class="nx">Drag</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;dd&quot;</span><span class="o">;</span>
 
 
@@ -95,9 +108,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

@@ -68,7 +68,109 @@ lifecycle methods and automatic instantiation of
 registered Attributes, through the static ATTRS property
                     </div>
 
+                        <div class="section constructor details">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong>Base</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                config
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl>
+                                            <dt>Parameters:</dt>
+                                                <dd>
+                                                    <code>config
+                                                    &lt;Object&gt; 
+                                                    </code>
+                                                     Object literal of configuration property name/value pairs
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="property_destroyed">destroyed</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag indicating whether or not this object
+has been through the destory lifecycle phase.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_initialized">initialized</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag indicating whether or not this object
+has been through the init lifecycle state.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_NAME">NAME</a>
+                                        <code>- static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Name string to be used to identify instances of 
+this class, for example in prefixing events.
+Classes extending Base, should define their own
+static NAME property.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_name">name</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The name string to be used to identify 
+this instance of object.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
 
                         <div class="section field inheritance">
                             <h4>Properties inherited from <a href="Attribute.html">Attribute</a>:</h4>
@@ -97,7 +199,7 @@ registered Attributes, through the static ATTRS property
                                         </code>
                                         
                                         <div class="description">
-                                            
+                                            Default destroy event handler
                                         </div>
 
                                         <div class="description">
@@ -131,7 +233,7 @@ registered Attributes, through the static ATTRS property
                                         </code>
                                         
                                         <div class="description">
-                                            
+                                            Default init event handler
                                         </div>
 
                                         <div class="description">
@@ -165,7 +267,8 @@ registered Attributes, through the static ATTRS property
                                         </code>
                                         
                                         <div class="description">
-                                            Destroy the class hierarchy rooted at this base class.
+                                            Destroys the class hierarchy rooted at this base class by invoking
+the descructor method on the prototype of each class in the hierarchy.
                                         </div>
 
                                         <div class="description">
@@ -239,7 +342,10 @@ with Base being the first class in the array
                                         </code>
                                         
                                         <div class="description">
-                                            Initialize the class hierarchy rooted at this base class.
+                                            Initializes the class hierarchy rooted at this base class,
+which includes initializing attributes for each class defined 
+in the class's static ATTRS property and invoking the initializer 
+method on the prototype of each class in the hierarchy.
                                         </div>
 
                                         <div class="description">
@@ -248,8 +354,86 @@ with Base being the first class in the array
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>userConf &lt;Object&gt;</code>
-                                                             Config hash containing
-attribute name/value pairs
+                                                             Config hash containing attribute name/value pairs
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_after">after</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>after</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Subscribe to a custom event hosted by this object.  The
+supplied callback will execute <em>after</em> any listeners added
+via the subscribe method, and after the default function,
+if configured for the event, has executed.
+<p>
+Overrides EventTarget's after method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The type of event to subscribe to. If 
+the type string does not contain a prefix ("prefix:eventType"), 
+the name property of the instance will be used as the default prefix.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                              The callback
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;Object&gt;</code>
+                                                             The execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;Object*&gt;</code>
+                                                             1..n params to supply to the callback
                                                         </dd>
                                                 </dl>
 
@@ -281,9 +465,14 @@ attribute name/value pairs
                                         </code>
                                         
                                         <div class="description">
-                                            Init lifecycle method, invoked during
-construction.
-Provides beforeDestroy and destroy lifecycle events
+                                            Destroy lifecycle method. Fires the destroy
+event, prior to invoking destructors for the
+class heirarchy.
+<p>
+Subscribers to the destroy
+event can preventDefault to prevent destruction
+from proceeding.
+</p>
                                         </div>
 
                                         <div class="description">
@@ -295,6 +484,69 @@ Provides beforeDestroy and destroy lifecycle events
                                                         void
                                                     </code></dt>
                                                     <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_fire">fire</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>fire</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         arguments
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fire a custom event by name.  The callback functions will be executed
+from the context specified when the event was created, and with the 
+following parameters.
+<p>
+Overrides EventTarget's fire method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String|Object&gt;</code>
+                                                             The type of the event, or an object that contains
+a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
+the name property of the instance will be used as the default prefix.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>arguments &lt;Object*&gt;</code>
+                                                             an arbitrary set of parameters to pass to 
+the handler.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>the return value from EventTarget.fire</dd>
                                                 </dl>
              
                                         </div>
@@ -322,10 +574,9 @@ Provides beforeDestroy and destroy lifecycle events
                                         </code>
                                         
                                         <div class="description">
-                                            Init lifecycle method, invoked during 
-construction.
-Provides beforeInit and init lifecycle events
-(TODO: registration mechanism for beforeInit, init through config)
+                                            Init lifecycle method, invoked during construction.
+Fires the init event prior to invoking initializers on
+the class hierarchy.
                                         </div>
 
                                         <div class="description">
@@ -334,7 +585,352 @@ Provides beforeInit and init lifecycle events
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>config &lt;Object&gt;</code>
-                                                             Configuration properties for the object
+                                                             Object literal of configuration property name/value pairs
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>on</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Alias for the subscribe method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_publish">publish</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Event.Custom
+                                            <strong>publish</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Creates a new custom event of the specified type.  If a custom event
+by that name already exists, it will not be re-created.  In either
+case the custom event is returned. 
+<p>
+Overrides EventTarget's publish method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                              The type, or name of the event. If the type does not 
+contain a prefix ("prefix:eventType"), the name property of the instance will 
+be used as the default prefix.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>opts &lt;Object&gt;</code>
+                                                             Optional config params (see EventTarget publish for details)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Event.Custom
+                                                    </code></dt>
+                                                    <dd>the custom event</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_subscribe">subscribe</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Event.Handle
+                                            <strong>subscribe</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Subscribe to a custom event hosted by this object.
+<p>
+Overrides EventTarget's subscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The type of event to subscribe to. If 
+the type string does not contain a prefix ("prefix:eventType"), 
+the name property of the instance will be used as the default prefix.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             The callback, invoked when the event is fired.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;Object&gt;</code>
+                                                             The execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;Object*&gt;</code>
+                                                             1..n params to supply to the callback
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Event.Handle
+                                                    </code></dt>
+                                                    <dd>unsubscribe handle</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_toString">toString</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>toString</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Default toString implementation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_unsubscribe.
+<p>
+Overrides EventTarget's unsubscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>">unsubscribe.
+<p>
+Overrides EventTarget's unsubscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p></a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong>unsubscribe.
+<p>
+Overrides EventTarget's unsubscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p></strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Unsubscribes one or more listeners the from the specified event
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String|Object&gt;</code>
+                                                              Either the handle to the subscriber or the 
+type of event.  If the type
+is not specified, it will attempt to remove
+the listener from all hosted events. If 
+the type string does not contain a prefix 
+("prefix:eventType"), the name property of the 
+instance will be used as the default prefix.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                                The subscribed function to unsubscribe, if not
+supplied, all subscribers will be removed.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;Object&gt;</code>
+                                                                 The custom object passed to subscribe.  This is
+optional, but if supplied will be used to
+disambiguate multiple listeners that are the same
+(e.g., you subscribe many object using a function
+that lives on the prototype)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>true if the subscriber was found and detached.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_unsubscribeAll">unsubscribeAll</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>unsubscribeAll</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes all listeners from the specified event.  If the event type
+is not specified, all listeners from all hosted custom events will
+be removed.
+<p>
+Overrides EventTarget's unsubscribeAll method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                                The type, or name of the event. If 
+the type string does not contain a prefix ("prefix:eventType"), 
+the name property of the instance will be used as the default prefix.
                                                         </dd>
                                                 </dl>
 
@@ -363,6 +959,67 @@ Provides beforeInit and init lifecycle events
                                 </div>
                             </div>
 
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_"></a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong></strong>
+
+                                            (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Init event, fired prior to initialization. Invoking
+the preventDefault method on the EventFacade provided 
+to subscribers will prevent initialization from occuring.
+<p>
+Subscribers to the after momemt of this event, will be notified
+after initialization of the object is complete (and therefore
+cannot prevent initialization).
+</p>
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;EventFacade&gt;</code>
+                                                             Event object
+                                                        </dd>
+                                                        <dd>
+                                                            <code>config &lt;object&gt;</code>
+                                                             Object literal of configuration name/value pairs
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
 
@@ -403,9 +1060,9 @@ Provides beforeInit and init lifecycle events
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -425,6 +1082,23 @@ Provides beforeInit and init lifecycle events
                         </ul>
                     </div>
 
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_destroyed">destroyed</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_initialized">initialized</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_NAME">NAME</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_name">name</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
 
                     <div class="module">
                         <h4>Methods</h4>
@@ -445,14 +1119,54 @@ Provides beforeInit and init lifecycle events
                                 <a href="#method__initHierarchy">_initHierarchy</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
+                                <a href="#method_after">after</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_destroy">destroy</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_fire">fire</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_init">init</a>
                                 </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_on">on</a>
+                                </li>
+                                <li class=""><!--<code>Event.Custom</code>-->
+                                <a href="#method_publish">publish</a>
+                                </li>
+                                <li class=""><!--<code>Event.Handle</code>-->
+                                <a href="#method_subscribe">subscribe</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_toString">toString</a>
+                                </li>
+                                <li class=""><!--<code>boolean</code>-->
+                                <a href="#method_unsubscribe.
+<p>
+Overrides EventTarget's unsubscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p>">unsubscribe.
+<p>
+Overrides EventTarget's unsubscribe method, to add the name prefix 
+of the instance to the event type, if absent.
+</p></a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_unsubscribeAll">unsubscribeAll</a>
+                                </li>
                         </ul>
                     </div>
 
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_"></a>
+                                </li>
+                        </ul>
+                    </div>
 
 
             </div>

@@ -37,16 +37,18 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * 3.x DragDrop Manager - Base</span>
-<span class="c">     * @class DDM</span>
+<span class="c">     * Provides the base Drag Drop Manger required for making a Node draggable.</span>
 <span class="c">     * @module dd-ddm-base</span>
+<span class="c">     */</span>
+
+     <span class="c">/**</span>
+<span class="c">     * Provides the base Drag Drop Manger required for making a Node draggable.</span>
+<span class="c">     * @class DDM</span>
 <span class="c">     * @namespace DD</span>
-<span class="c">     * @extends base</span>
-<span class="c">     * @extends event-target</span>
+<span class="c">     * @extends Base</span>
 <span class="c">     * @constructor</span>
 <span class="c">     */</span>
-     <span class="c">//TODO Add Event Bubbling??</span>
-<span class="c"></span>    
+    
     <span class="k">var</span> <span class="nx">DDMBase</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">};</span>
 
@@ -93,11 +95,11 @@
         <span class="nx">clickTimeThresh</span><span class="o">:</span> <span class="m">1000</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @property drags</span>
+<span class="c">        * @property _drags</span>
 <span class="c">        * @description Holder for all registered drag elements.</span>
 <span class="c">        * @type {Array}</span>
 <span class="c">        */</span>
-        <span class="nx">drags</span><span class="o">:</span> <span class="o">[],</span>
+        <span class="nx">_drags</span><span class="o">:</span> <span class="o">[],</span>
         <span class="c">/**</span>
 <span class="c">        * @property activeDrag</span>
 <span class="c">        * @description A reference to the currently active draggable object.</span>
@@ -106,87 +108,87 @@
         <span class="nx">activeDrag</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method regDrag</span>
-<span class="c">        * @description Adds a reference to the drag object to the DDM.drags array, called in the constructor of Drag.</span>
+<span class="c">        * @method _regDrag</span>
+<span class="c">        * @description Adds a reference to the drag object to the DDM._drags array, called in the constructor of Drag.</span>
 <span class="c">        * @param {Drag} d The Drag object</span>
 <span class="c">        */</span>
-        <span class="nx">regDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">drags</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">drags</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">;</span>
+        <span class="nx">_regDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method unregDrag</span>
-<span class="c">        * @description Remove this drag object from the DDM.drags array.</span>
+<span class="c">        * @method _unregDrag</span>
+<span class="c">        * @description Remove this drag object from the DDM._drags array.</span>
 <span class="c">        * @param {Drag} d The drag object.</span>
 <span class="c">        */</span>
-        <span class="nx">unregDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_unregDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="o">[];</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">drags</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="o">!==</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">tmp</span><span class="o">[</span><span class="nx">tmp</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">n</span><span class="o">;</span>
                 <span class="o">}</span>
             <span class="o">});</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">drags</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_drags</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method init</span>
+<span class="c">        * @method _init</span>
 <span class="c">        * @description DDM&#39;s init method</span>
 <span class="c">        */</span>
-        <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+        <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method start</span>
+<span class="c">        * @method _start</span>
 <span class="c">        * @description Internal method used by Drag to signal the start of a drag operation</span>
 <span class="c">        * @param {Number} x The x position of the drag element</span>
 <span class="c">        * @param {Number} y The y position of the drag element</span>
 <span class="c">        * @param {Number} w The width of the drag element</span>
 <span class="c">        * @param {Number} h The height of the drag element</span>
 <span class="c">        */</span>
-        <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">startDrag</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">_start</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">x</span><span class="o">,</span> <span class="nx">y</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">h</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_startDrag</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method startDrag</span>
+<span class="c">        * @method _startDrag</span>
 <span class="c">        * @description Factory method to be overwritten by other DDM&#39;s</span>
 <span class="c">        * @param {Number} x The x position of the drag element</span>
 <span class="c">        * @param {Number} y The y position of the drag element</span>
 <span class="c">        * @param {Number} w The width of the drag element</span>
 <span class="c">        * @param {Number} h The height of the drag element</span>
 <span class="c">        */</span>
-        <span class="nx">startDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
+        <span class="nx">_startDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method endDrag</span>
+<span class="c">        * @method _endDrag</span>
 <span class="c">        * @description Factory method to be overwritten by other DDM&#39;s</span>
 <span class="c">        */</span>
-        <span class="nx">endDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
-        <span class="nx">dropMove</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
+        <span class="nx">_endDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
+        <span class="nx">_dropMove</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method end</span>
+<span class="c">        * @method _end</span>
 <span class="c">        * @description Internal method used by Drag to signal the end of a drag operation</span>
 <span class="c">        */</span>
-        <span class="nx">end</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_end</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">endDrag</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_endDrag</span><span class="o">();</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">end</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method move</span>
+<span class="c">        * @method _move</span>
 <span class="c">        * @description Internal listener for the mousemove DOM event to pass to the Drag&#39;s move method.</span>
 <span class="c">        */</span>
-        <span class="nx">move</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_move</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">move</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">dropMove</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">_move</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_dropMove</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/**</span>
@@ -257,7 +259,7 @@
             <span class="k">var</span> <span class="nx">drag</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
                 <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">drags</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_drags</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">)))</span> <span class="o">{</span>
                         <span class="nx">drag</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
                     <span class="o">}</span>
@@ -271,7 +273,7 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;DD&#39;</span><span class="o">);</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span> <span class="o">=</span> <span class="nx">DDMBase</span><span class="o">;</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">init</span><span class="o">();</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
 </pre></div>
                     </div>
 			</div>
@@ -309,9 +311,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

@@ -53,7 +53,7 @@
   
 
                     <div class="summary description">
-                        3.x DragDrop
+                        This class provides the ability to drag a Node.
                     </div>
 
                         <div class="section constructor details">
@@ -392,6 +392,74 @@
                                     </div>
                                     <div class="private">
                                     <h4>
+                                        <a name="method__fixIEMouseDown">_fixIEMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseDown</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the onselectstart listner on the document to the _ieSelectFix property
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fixIEMouseUp">_fixIEMouseUp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseUp</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the _ieSelectFix property back to the onselectstart listner on the document.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
                                         <a name="method__handleMouseDown">_handleMouseDown</a></h4>
                                     <div class="detail">
                                         <code>
@@ -546,6 +614,106 @@
 
                                         <div class="description">
 
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__move">_move</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_move</strong>
+                                           (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fired from DragDropMgr (DDM) on mousemove.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The mousemove DOM event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__moveNode">_moveNode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_moveNode</strong>
+                                           (
+                                                
+                                                        
+                                                         eXY
+                                                    
+                                                
+                                                        , 
+                                                         noFire
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method performs the actual element move.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eXY &lt;Array&gt;</code>
+                                                             The XY to move the element to, usually comes from the mousemove DOM event.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>noFire &lt;Boolean&gt;</code>
+                                                             If true, the drag:drag event will not fire.
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -766,12 +934,12 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="">
                                     <h4>
                                         <a name="method_end">end</a></h4>
                                     <div class="detail">
                                         <code>
-                                         private 
+                                        
                                         
                                         
                                         void
@@ -820,60 +988,6 @@
 
                                         <div class="description">
 
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="private">
-                                    <h4>
-                                        <a name="method_move">move</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                         private 
-                                        
-                                        
-                                        void
-                                            <strong>move</strong>
-                                           (
-                                                
-                                                        
-                                                         eXY
-                                                    
-                                                
-                                                        , 
-                                                         noFire
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            This method performs the actual element move.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eXY &lt;Array&gt;</code>
-                                                             The XY to move the element to, usually comes from the mousemove DOM event.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>noFire &lt;Boolean&gt;</code>
-                                                             If true, the drag:drag event will not fire.
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -980,12 +1094,12 @@
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="private">
+                                    <div class="">
                                     <h4>
                                         <a name="method_start">start</a></h4>
                                     <div class="detail">
                                         <code>
-                                         private 
+                                        
                                         
                                         
                                         void
@@ -1089,6 +1203,35 @@
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_"></a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong></strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            drag:mouseDown
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="">
                                     <h4>
                                         <a name="event_activeHandleChange">activeHandleChange</a></h4>
@@ -2577,9 +2720,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -2660,6 +2803,12 @@
                                 <a href="#method__createEvents">_createEvents</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseDown">_fixIEMouseDown</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseUp">_fixIEMouseUp</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
                                 <a href="#method__handleMouseDown">_handleMouseDown</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
@@ -2673,6 +2822,12 @@
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__ieSelectFix">_ieSelectFix</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__move">_move</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__moveNode">_moveNode</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__setStartPosition">_setStartPosition</a>
@@ -2689,14 +2844,11 @@
                                 <li class="private"><!--<code>Self</code>-->
                                 <a href="#method_destructor">destructor</a>
                                 </li>
-                                <li class="private"><!--<code>void</code>-->
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_end">end</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method_initializer">initializer</a>
-                                </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method_move">move</a>
                                 </li>
                                 <li class=""><!--<code>Self</code>-->
                                 <a href="#method_removeHandle">removeHandle</a>
@@ -2704,7 +2856,7 @@
                                 <li class=""><!--<code>Self</code>-->
                                 <a href="#method_removeInvalid">removeInvalid</a>
                                 </li>
-                                <li class="private"><!--<code>void</code>-->
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_start">start</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
@@ -2719,6 +2871,9 @@
                     <div class="module">
                         <h4>Events</h4>
                         <ul class="content">        
+                                <li class="">
+                                <a href="#event_"></a>
+                                </li>
                                 <li class="">
                                 <a href="#event_activeHandleChange">activeHandleChange</a>
                                 </li>

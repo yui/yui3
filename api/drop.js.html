@@ -37,9 +37,12 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * 3.x DragDrop</span>
-<span class="c">     * @class Drop</span>
+<span class="c">     * This class provides the ability to create a Drop Target.</span>
 <span class="c">     * @module dd-drop</span>
+<span class="c">     */</span>
+    <span class="c">/**</span>
+<span class="c">     * This class provides the ability to create a Drop Target.</span>
+<span class="c">     * @class Drop</span>
 <span class="c">     * @namespace DD</span>
 <span class="c">     * @extends base</span>
 <span class="c">     * @constructor</span>
@@ -48,12 +51,41 @@
     <span class="k">var</span> <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
         <span class="nx">DDM</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span>
         <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
-        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">;</span>
+        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drop:over</span>
+<span class="c">        * @description Fires when a drag element is over this target.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="nx">EV_DROP_OVER</span> <span class="o">=</span> <span class="s1">&#39;drop:over&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drop:enter</span>
+<span class="c">        * @description Fires when a drag element enters this target.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="nx">EV_DROP_ENTER</span> <span class="o">=</span> <span class="s1">&#39;drop:enter&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drop:exit</span>
+<span class="c">        * @description Fires when a drag element exits this target.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="nx">EV_DROP_EXIT</span> <span class="o">=</span> <span class="s1">&#39;drop:exit&#39;</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">        * @event drop:hit</span>
+<span class="c">        * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        
 
     <span class="k">var</span> <span class="nx">Drop</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Drop</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">createShim</span><span class="o">();</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">_createShim</span><span class="o">();</span>
         <span class="nx">DDM</span><span class="o">.</span><span class="nx">regTarget</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="c">/* TODO</span>
 <span class="c">        if (Dom.getStyle(this.el, &#39;position&#39;) == &#39;fixed&#39;) {</span>
@@ -67,11 +99,21 @@
     <span class="nx">Drop</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;drop&#39;</span><span class="o">;</span>
 
     <span class="nx">Drop</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute node</span>
+<span class="c">        * @description Y.Node instanace to use as the element to make a Drop Target</span>
+<span class="c">        * @type Node</span>
+<span class="c">        */</span>        
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute groups</span>
+<span class="c">        * @description Array of groups to add this drop into.</span>
+<span class="c">        * @type Array</span>
+<span class="c">        */</span>        
         <span class="nx">groups</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;default&#39;</span><span class="o">],</span>
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">g</span><span class="o">)</span> <span class="o">{</span>
@@ -80,13 +122,23 @@
                     <span class="k">this</span><span class="o">.</span><span class="nx">_groups</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
             <span class="o">}</span>
-        <span class="o">},</span>        
+        <span class="o">},</span>   
+        <span class="c">/**</span>
+<span class="c">        * @attribute padding</span>
+<span class="c">        * @description CSS style padding to make the Drop Target bigger than the node.</span>
+<span class="c">        * @type String</span>
+<span class="c">        */</span>
         <span class="nx">padding</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">cssSizestoObject</span><span class="o">(</span><span class="nx">p</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute lock</span>
+<span class="c">        * @description Set to lock this drop element.</span>
+<span class="c">        * @type Boolean</span>
+<span class="c">        */</span>        
         <span class="nx">lock</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">lock</span><span class="o">)</span> <span class="o">{</span>
@@ -108,9 +160,10 @@
         <span class="nx">_createEvents</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             
             <span class="k">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="o">[</span>
-                <span class="s1">&#39;drop:over&#39;</span><span class="o">,</span>
-                <span class="s1">&#39;drop:enter&#39;</span><span class="o">,</span>
-                <span class="s1">&#39;drop:exit&#39;</span>
+                <span class="nx">EV_DROP_OVER</span><span class="o">,</span>
+                <span class="nx">EV_DROP_ENTER</span><span class="o">,</span>
+                <span class="nx">EV_DROP_EXIT</span><span class="o">,</span>
+                <span class="s1">&#39;drop:hit&#39;</span>
             <span class="o">];</span>
 
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
@@ -189,10 +242,10 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method deactivateShim</span>
+<span class="c">        * @method _deactivateShim</span>
 <span class="c">        * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]</span>
 <span class="c">        */</span>
-        <span class="nx">deactivateShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_deactivateShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="s1">&#39;dd-drop-active-valid&#39;</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="s1">&#39;dd-drop-active-invalid&#39;</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="s1">&#39;dd-drop-over&#39;</span><span class="o">);</span>
@@ -202,10 +255,10 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method activateShim</span>
+<span class="c">        * @method _activateShim</span>
 <span class="c">        * @description Activates the shim and adds some interaction CSS classes</span>
 <span class="c">        */</span>
-        <span class="nx">activateShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_activateShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">)</span> <span class="o">===</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
@@ -213,7 +266,8 @@
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
             <span class="o">}</span>
             
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">inGroup</span><span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;groups&#39;</span><span class="o">))</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">isVisible</span><span class="o">())</span> <span class="o">{</span>
+            <span class="c">//if (this.inGroup(DDM.activeDrag.get(&#39;groups&#39;)) &amp;&amp; this.get(NODE).isVisible()) {</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">inGroup</span><span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;groups&#39;</span><span class="o">)))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="s1">&#39;dd-drop-active-valid&#39;</span><span class="o">);</span>
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">addValid</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_active</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
@@ -273,10 +327,10 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method createShim</span>
+<span class="c">        * @method _createShim</span>
 <span class="c">        * @description Creates the Target shim and adds it to the DDM&#39;s playground..</span>
 <span class="c">        */</span>
-        <span class="nx">createShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_createShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">([</span><span class="s1">&#39;div&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">id</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;_shim&#39;</span> <span class="o">}]);</span>
             <span class="nx">s</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
                 <span class="nx">height</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
@@ -286,7 +340,7 @@
                 <span class="nx">zIndex</span><span class="o">:</span> <span class="m">10</span><span class="o">,</span>
                 <span class="nx">position</span><span class="o">:</span>  <span class="s1">&#39;absolute&#39;</span>
             <span class="o">});</span>
-            <span class="nx">DDM</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">s</span><span class="o">);</span>
+            <span class="nx">DDM</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">s</span><span class="o">);</span>
             <span class="nx">s</span><span class="o">.</span><span class="nx">setXY</span><span class="o">([-</span><span class="m">900</span><span class="o">,</span> <span class="o">-</span><span class="m">900</span><span class="o">]);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">shim</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
 
@@ -305,11 +359,11 @@
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrop</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">[</span><span class="k">this</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">overTarget</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drop:over&#39;</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_DROP_OVER</span><span class="o">);</span>
                     <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:over&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">overTarget</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drop:enter&#39;</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_DROP_ENTER</span><span class="o">);</span>
                     <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:enter&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
                     <span class="nx">DDM</span><span class="o">.</span><span class="nx">_handleTargetOver</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">force</span><span class="o">);</span>
                 <span class="o">}</span>
@@ -344,7 +398,7 @@
                 <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">overTarget</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">overTarget</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drop:exit&#39;</span><span class="o">);</span>
+                        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_DROP_EXIT</span><span class="o">);</span>
                         <span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:exit&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span> <span class="o">});</span>
                         <span class="nx">delete</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">[</span><span class="k">this</span><span class="o">];</span>
                         <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="s1">&#39;dd-drop-over&#39;</span><span class="o">);</span>
@@ -400,9 +454,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

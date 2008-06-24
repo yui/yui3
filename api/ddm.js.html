@@ -37,23 +37,28 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * 3.x DragDrop Manager - Shim support</span>
+<span class="c">     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.</span>
+<span class="c">     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.</span>
 <span class="c">     * @module dd-ddm</span>
+<span class="c">     */</span>
+
+     <span class="c">/**</span>
+<span class="c">     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.</span>
+<span class="c">     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.</span>
 <span class="c">     * @class DDM</span>
 <span class="c">     * @namespace DD</span>
 <span class="c">     * @extends Base</span>
 <span class="c">     * @constructor</span>
 <span class="c">     */</span>
-     <span class="c">//TODO Add Event Bubbling??</span>
-<span class="c"></span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span> <span class="o">{</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @property pg</span>
+<span class="c">        * @property _pg</span>
 <span class="c">        * @description The shim placed over the screen to track the mousemove event.</span>
 <span class="c">        * @type {Node}</span>
 <span class="c">        */</span>
-        <span class="nx">pg</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="nx">_pg</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _debugShim</span>
@@ -63,32 +68,32 @@
         <span class="nx">_debugShim</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
         <span class="nx">_activateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
         <span class="nx">_deactivateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>
-        <span class="nx">startDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_startDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;useShim&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">pg_activate</span><span class="o">();</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_pg_activate</span><span class="o">();</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_activateTargets</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>
-        <span class="nx">endDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg_deactivate</span><span class="o">();</span>
+        <span class="nx">_endDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg_deactivate</span><span class="o">();</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_deactivateTargets</span><span class="o">();</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method pg_deactivate</span>
+<span class="c">        * @method _pg_deactivate</span>
 <span class="c">        * @description Deactivates the shim</span>
 <span class="c">        */</span>
-        <span class="nx">pg_deactivate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
+        <span class="nx">_pg_deactivate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="s1">&#39;display&#39;</span><span class="o">,</span> <span class="s1">&#39;none&#39;</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method pg_activate</span>
+<span class="c">        * @method _pg_activate</span>
 <span class="c">        * @description Activates the shim</span>
 <span class="c">        */</span>
-        <span class="nx">pg_activate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg_size</span><span class="o">();</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
+        <span class="nx">_pg_activate</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
                 <span class="nx">top</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
                 <span class="nx">left</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
                 <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;block&#39;</span><span class="o">,</span>
@@ -98,15 +103,15 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method pg_size</span>
+<span class="c">        * @method _pg_size</span>
 <span class="c">        * @description Sizes the shim on: activatation, window:scroll, window:resize</span>
 <span class="c">        */</span>
-        <span class="nx">pg_size</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_pg_size</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">),</span>
                 <span class="nx">h</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;docHeight&#39;</span><span class="o">),</span>
                 <span class="nx">w</span> <span class="o">=</span> <span class="nx">b</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;docWidth&#39;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
                     <span class="nx">height</span><span class="o">:</span> <span class="nx">h</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
                     <span class="nx">width</span><span class="o">:</span> <span class="nx">w</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
                 <span class="o">});</span>
@@ -136,12 +141,12 @@
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                 <span class="nx">bd</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">pg</span><span class="o">);</span>
             <span class="o">}</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg</span> <span class="o">=</span> <span class="nx">pg</span><span class="o">;</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span> <span class="o">=</span> <span class="nx">pg</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="c">//TODO</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;scroll&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="nb">window</span><span class="o">,</span> <span class="s1">&#39;scroll&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_pg_size</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">}</span>   
     <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
 
@@ -183,9 +188,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

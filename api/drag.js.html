@@ -37,9 +37,12 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre>    <span class="c">/**</span>
-<span class="c">     * 3.x DragDrop</span>
-<span class="c">     * @class Drag</span>
+<span class="c">     * This class provides the ability to drag a Node.</span>
 <span class="c">     * @module dd-drag</span>
+<span class="c">     */</span>
+    <span class="c">/**</span>
+<span class="c">     * This class provides the ability to drag a Node.</span>
+<span class="c">     * @class Drag</span>
 <span class="c">     * @namespace DD</span>
 <span class="c">     * @extends base</span>
 <span class="c">     * @constructor</span>
@@ -52,24 +55,108 @@
         <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">,</span>        
         <span class="nx">MOUSE_UP</span> <span class="o">=</span> <span class="s1">&#39;mouseup&#39;</span><span class="o">,</span>
         <span class="nx">MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;mousedown&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:mouseDown</span>
+<span class="c">        * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.</span>
+<span class="c">        * @preventable</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @defaultFn _handleMouseDown</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;drag:mouseDown&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:afterMouseDown</span>
+<span class="c">        * @description Fires after the mousedown event has been cleared.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_AFTER_MOUSE_DOWN</span> <span class="o">=</span> <span class="s1">&#39;drag:afterMouseDown&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:removeHandle</span>
+<span class="c">        * @description Fires after a handle is removed.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_REMOVE_HANDLE</span> <span class="o">=</span> <span class="s1">&#39;drag:removeHandle&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:addHandle</span>
+<span class="c">        * @description Fires after a handle is added.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_ADD_HANDLE</span> <span class="o">=</span> <span class="s1">&#39;drag:addHandle&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:removeInvalid</span>
+<span class="c">        * @description Fires after an invalid selector is removed.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_REMOVE_INVALID</span> <span class="o">=</span> <span class="s1">&#39;drag:removeInvalid&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:addInvalid</span>
+<span class="c">        * @description Fires after an invalid selector is added.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_ADD_INVALID</span> <span class="o">=</span> <span class="s1">&#39;drag:addInvalid&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:start</span>
+<span class="c">        * @description Fires at the start of a drag operation.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_START</span> <span class="o">=</span> <span class="s1">&#39;drag:start&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:end</span>
+<span class="c">        * @description Fires at the end of a drag operation.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_END</span> <span class="o">=</span> <span class="s1">&#39;drag:end&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:drag</span>
+<span class="c">        * @description Fires every mousemove during a drag operation.</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
         <span class="nx">EV_DRAG</span> <span class="o">=</span> <span class="s1">&#39;drag:drag&#39;</span><span class="o">;</span>
 
-        <span class="c">/*</span>
-<span class="c"></span>
+
+        <span class="c">/**</span>
+<span class="c">        * @event drag:over</span>
+<span class="c">        * @description Fires when this node is over a Drop Target. (Fired from dd-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:enter</span>
+<span class="c">        * @description Fires when this node enters a Drop Target. (Fired from dd-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:exit</span>
+<span class="c">        * @description Fires when this node exits a Drop Target. (Fired from dd-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:drophit</span>
+<span class="c">        * @description Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
+<span class="c">        */</span>
+        <span class="c">/**</span>
+<span class="c">        * @event drag:dropmiss</span>
+<span class="c">        * @description Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)</span>
+<span class="c">        * @bubbles DD.DDM</span>
+<span class="c">        * @type Event.Custom</span>
 <span class="c">        */</span>
     
     <span class="k">var</span> <span class="nx">Drag</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Drag</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
-        <span class="nx">DDM</span><span class="o">.</span><span class="nx">regDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+        <span class="nx">DDM</span><span class="o">.</span><span class="nx">_regDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
     <span class="o">};</span>
     <span class="nx">Drag</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;drag&#39;</span><span class="o">;</span>
 
@@ -289,7 +376,12 @@
                 <span class="nx">EV_ADD_INVALID</span><span class="o">,</span>
                 <span class="nx">EV_START</span><span class="o">,</span>
                 <span class="nx">EV_END</span><span class="o">,</span>
-                <span class="nx">EV_DRAG</span>
+                <span class="nx">EV_DRAG</span><span class="o">,</span>
+                <span class="s1">&#39;drag:drophit&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;drag:dropmiss&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;drag:over&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;drag:enter&#39;</span><span class="o">,</span>
+                <span class="s1">&#39;drag:exit&#39;</span>
             <span class="o">];</span>
             
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
@@ -389,7 +481,7 @@
         <span class="nx">_handleMouseUp</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_fixIEMouseUp</span><span class="o">();</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">end</span><span class="o">();</span>
+                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_end</span><span class="o">();</span>
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/** </span>
@@ -406,12 +498,22 @@
 <span class="c">        * @description We will hold a copy of the current &quot;onselectstart&quot; method on this property, and reset it after we are done using it.</span>
 <span class="c">        */</span>
         <span class="nx">_ieSelectBack</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _fixIEMouseDown</span>
+<span class="c">        * @description This method copies the onselectstart listner on the document to the _ieSelectFix property</span>
+<span class="c">        */</span>
         <span class="nx">_fixIEMouseDown</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_ieSelectBack</span> <span class="o">=</span> <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">onselectstart</span><span class="o">;</span>
                 <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ieSelectFix</span><span class="o">;</span>
             <span class="o">}</span>           
         <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _fixIEMouseUp</span>
+<span class="c">        * @description This method copies the _ieSelectFix property back to the onselectstart listner on the document.</span>
+<span class="c">        */</span>
         <span class="nx">_fixIEMouseUp</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nb">document</span><span class="o">.</span><span class="nx">body</span><span class="o">.</span><span class="nx">onselectstart</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ieSelectBack</span><span class="o">;</span>
@@ -541,7 +643,7 @@
                 <span class="k">this</span><span class="o">.</span><span class="nx">_fromTimeout</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">start</span><span class="o">();</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">moveNode</span><span class="o">([</span><span class="k">this</span><span class="o">.</span><span class="nx">_ev_md</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ev_md</span><span class="o">.</span><span class="nx">pageY</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="k">this</span><span class="o">.</span><span class="nx">_ev_md</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_ev_md</span><span class="o">.</span><span class="nx">pageY</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/**</span>
@@ -621,14 +723,13 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
-<span class="c">        * @private</span>
 <span class="c">        * @method start</span>
 <span class="c">        * @description Starts the drag operation</span>
 <span class="c">        */</span>
         <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;lock&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">start</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">,</span> <span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)]);</span>
+                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_start</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">,</span> <span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)]);</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;startDrag&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="s1">&#39;yui-dd-dragging&#39;</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_START</span><span class="o">);</span>
@@ -648,7 +749,6 @@
             <span class="o">}</span>
         <span class="o">},</span>
         <span class="c">/**</span>
-<span class="c">        * @private</span>
 <span class="c">        * @method end</span>
 <span class="c">        * @description Ends the drag operation</span>
 <span class="c">        */</span>
@@ -678,12 +778,12 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method move</span>
+<span class="c">        * @method _moveNode</span>
 <span class="c">        * @description This method performs the actual element move.</span>
 <span class="c">        * @param {Array} eXY The XY to move the element to, usually comes from the mousemove DOM event.</span>
 <span class="c">        * @param {Boolean} noFire If true, the drag:drag event will not fire.</span>
 <span class="c">        */</span>
-        <span class="nx">moveNode</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">eXY</span><span class="o">,</span> <span class="nx">noFire</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_moveNode</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">eXY</span><span class="o">,</span> <span class="nx">noFire</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_align</span><span class="o">(</span><span class="nx">eXY</span><span class="o">),</span> <span class="nx">diffXY</span> <span class="o">=</span> <span class="o">[],</span> <span class="nx">diffXY2</span> <span class="o">=</span> <span class="o">[];</span>
 
             <span class="nx">diffXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
@@ -722,11 +822,11 @@
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
-<span class="c">        * @method move</span>
+<span class="c">        * @method _move</span>
 <span class="c">        * @description Fired from DragDropMgr (DDM) on mousemove.</span>
 <span class="c">        * @param {Event} ev The mousemove DOM event</span>
 <span class="c">        */</span>
-        <span class="nx">move</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">_move</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;lock&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Drag Locked&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
                 <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
@@ -740,12 +840,12 @@
                             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;pixel threshold met&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;dd-drag&quot;</span><span class="o">);</span>
                             <span class="k">this</span><span class="o">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                             <span class="k">this</span><span class="o">.</span><span class="nx">start</span><span class="o">();</span>
-                            <span class="k">this</span><span class="o">.</span><span class="nx">moveNode</span><span class="o">([</span><span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
+                            <span class="k">this</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
                         <span class="o">}</span>
                 
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="nx">clearTimeout</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_clickTimeout</span><span class="o">);</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">moveNode</span><span class="o">([</span><span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -756,7 +856,7 @@
 <span class="c">        * @return {Self}</span>
 <span class="c">        */</span>
         <span class="nx">destructor</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nx">DDM</span><span class="o">.</span><span class="nx">unregDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+            <span class="nx">DDM</span><span class="o">.</span><span class="nx">_unregDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">detach</span><span class="o">(</span><span class="nx">MOUSE_DOWN</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseDownEvent</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">detach</span><span class="o">(</span><span class="nx">MOUSE_UP</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseUp</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
@@ -808,9 +908,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

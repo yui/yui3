@@ -60,12 +60,12 @@
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
-                                    <h4><a name="property_CLASS_NAME">CLASS_NAME</a>
+                                    <h4><a name="property_ATTR">ATTR</a>
                                         <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            An interface for advanced DOM features.
+                                            A Region interface for Node.
                                         </div>
                                     </div>
      
@@ -75,12 +75,12 @@
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_text">text</a>
-                                        <code>- String</code>
+                                    <h4><a name="property_requires">requires</a>
+                                        <code>- object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Normalizes nodeInnerText and textContent.
+                                            An interface for advanced DOM features.
                                         </div>
                                     </div>
      
@@ -285,43 +285,6 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_getXY">getXY</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array
-                                            <strong>getXY</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Gets the current position of an element based on page coordinates. 
-Element must be part of the DOM tree to have page coordinates
-(display:none or elements not appended return false).
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Array
-                                                    </code></dt>
-                                                    <dd>The XY position of the element
-TODO: test inDocument/display</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_hasClass">hasClass</a></h4>
                                     <div class="detail">
                                         <code>
@@ -405,102 +368,6 @@ TODO: test inDocument/display</dd>
                                                         Node
                                                     </code></dt>
                                                     <dd>The Node instance at the given index.</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_next">next</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Object
-                                            <strong>next</strong>
-                                           (
-                                                
-                                                        
-                                                         method
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns the next HTMLElement sibling that passes the boolean method. 
-Returns the nearest HTMLElement sibling if no method provided.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>method &lt;Function&gt;</code>
-                                                             A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Object
-                                                    </code></dt>
-                                                    <dd>HTMLElement or null if not found</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_previous">previous</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Node
-                                            <strong>previous</strong>
-                                           (
-                                                
-                                                        
-                                                         method
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns the previous sibling that is an HTMLElement. 
-Returns the nearest HTMLElement sibling if no method provided.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>method &lt;Function&gt;</code>
-                                                             A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Node
-                                                    </code></dt>
-                                                    <dd>Node instance or null if not found</dd>
                                                 </dl>
              
                                         </div>
@@ -666,61 +533,6 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_setXY">setXY</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>setXY</strong>
-                                           (
-                                                
-                                                        
-                                                         xy
-                                                    
-                                                
-                                                        , 
-                                                         noRetry
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Set the position of an html element in page coordinates, regardless of how the element is positioned.
-The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>xy &lt;Array&gt;</code>
-                                                             Contains X & Y values for new position (coordinates are page-based)
-                                                        </dd>
-                                                        <dd>
-                                                            <code>noRetry &lt;Boolean&gt;</code>
-                                                             By default we try and set the position a second time if the first fails
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_size">size</a></h4>
                                     <div class="detail">
                                         <code>
@@ -746,6 +558,52 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                                         Int
                                                     </code></dt>
                                                     <dd>The number of items in the NodeList.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_toggleClass">toggleClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>toggleClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            If the className exists on the node it is removed, if it doesn't exist it is added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to be toggled
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -797,9 +655,9 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -817,18 +675,18 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Node.js.html">Node.js</a></li>
-                                <li class=""><a href="NodeExtras.js.html">NodeExtras.js</a></li>
+                                <li class=""><a href="NodeClassName.js.html">NodeClassName.js</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_CLASS_NAME">CLASS_NAME</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                <li class=""><a href="#property_ATTR">ATTR</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_text">text</a>
-                                        <!--<code>&lt;String&gt;</code>-->
+                                <li class=""><a href="#property_requires">requires</a>
+                                        <!--<code>&lt;object&gt;</code>-->
                                 </li>
                         </ul>
                     </div>
@@ -848,20 +706,11 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><!--<code>Array</code>-->
                                 <a href="#method_get">get</a>
                                 </li>
-                                <li class=""><!--<code>Array</code>-->
-                                <a href="#method_getXY">getXY</a>
-                                </li>
                                 <li class=""><!--<code>Boolean | Array</code>-->
                                 <a href="#method_hasClass">hasClass</a>
                                 </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_item">item</a>
-                                </li>
-                                <li class=""><!--<code>Object</code>-->
-                                <a href="#method_next">next</a>
-                                </li>
-                                <li class=""><!--<code>Node</code>-->
-                                <a href="#method_previous">previous</a>
                                 </li>
                                 <li class=""><!--<code>Boolean | Array</code>-->
                                 <a href="#method_removeClass">removeClass</a>
@@ -872,11 +721,11 @@ The element(s) must be part of the DOM tree to have page coordinates (display:no
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_set">set</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_setXY">setXY</a>
-                                </li>
                                 <li class=""><!--<code>Int</code>-->
                                 <a href="#method_size">size</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_toggleClass">toggleClass</a>
                                 </li>
                         </ul>
                     </div>

@@ -61,9 +61,17 @@
 <span class="c">     * and allows the host to support get/set methods for attributes,</span>
 <span class="c">     * initial configuration support and attribute change events.</span>
 <span class="c">     * &lt;/p&gt;</span>
-<span class="c">     * &lt;p&gt;Attributes added to the host can be defined as read-only,</span>
-<span class="c">     * clonable, with a default setter and validation support.</span>
-<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;Attributes added to the host can:&lt;/p&gt;</span>
+<span class="c">     * &lt;ul&gt;</span>
+<span class="c">     *     &lt;li&gt;Be defined as read-only.&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;Be defined with a set function, which can be used to manipulate</span>
+<span class="c">     *     values passed to Attribute&#39;s set method, before they are stored.&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;Be defined with a validator function, to validate values before they are stored.&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;Be defined with a get function, which can be used to manipulate stored values,</span>
+<span class="c">     *     before they are returned by Attribute&#39;s get method.&lt;/li&gt;</span>
+<span class="c">     *     &lt;li&gt;Specify if and how they should be cloned on &#39;get&#39; (see Attribute.CLONE for supported clone modes).&lt;/li&gt;</span>
+<span class="c">     * &lt;/ul&gt;</span>
+<span class="c">     *</span>
 <span class="c">     * @class Attribute</span>
 <span class="c">     * @uses EventTarget</span>
 <span class="c">     */</span>
@@ -170,10 +178,36 @@
     <span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
 <span class="c">         * Adds an attribute.</span>
-<span class="c">         *</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * The hash argument object literal supports the following optional properties:</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         *    &lt;dt&gt;value {Any}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;The initial value to set on the attribute&lt;/dd&gt;</span>
+<span class="c">         *    &lt;dt&gt;readonly {Boolean}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;Whether or not the attribute is read only. Attributes having readonly set to true</span>
+<span class="c">         *        cannot be set by invoking the set method&lt;/dd&gt;</span>
+<span class="c">         *    &lt;dt&gt;set {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;The setter function to be invoked (within the context of the host object) before </span>
+<span class="c">         *        the attribute is stored by a call to the set method. The value returned by the </span>
+<span class="c">         *        set function will be the finally stored value.&lt;/dd&gt;</span>
+<span class="c">         *    &lt;dt&gt;get {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;The getter function to be invoked (within the context of the host object) before</span>
+<span class="c">         *    the stored values is returned to a user invoking the get method for the attribute.</span>
+<span class="c">         *    The value returned by the get function is the final value which will be returned to the </span>
+<span class="c">         *    user when they invoke get.&lt;/dd&gt;</span>
+<span class="c">         *    &lt;dt&gt;validator {Function}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;The validator function which is invoked prior to setting the stored value. Returning</span>
+<span class="c">         *    false from the validator function will prevent the value from being stored&lt;/dd&gt;</span>
+<span class="c">         *    &lt;dt&gt;clone {Number}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dd&gt;If and how the value returned by a call to the get method, should be de-referenced from</span>
+<span class="c">         *    the stored value. By default values are not cloned, and hence a call to get will return</span>
+<span class="c">         *    a reference to the stored value. See Attribute.CLONE for more details about the clone </span>
+<span class="c">         *    options available&lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * @method add</span>
 <span class="c">         * @param {String} name The attribute key</span>
-<span class="c">         * @param {Object} val (optional) The attribute configuration</span>
+<span class="c">         * @param {Object} hash (optional) An object literal specifying the configuration for the attribute.</span>
 <span class="c">         */</span>
         <span class="nx">addAtt</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">hash</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;adding attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
@@ -224,12 +258,13 @@
 
         <span class="c">/**</span>
 <span class="c">         * Sets the value of an attribute.</span>
+<span class="c">         * </span>
 <span class="c">         * @method set</span>
 <span class="c">         * @param {String} name The name of the attribute</span>
 <span class="c">         * @param {Any} value The value to apply to the attribute</span>
 <span class="c">         * @param {Object} Event options. This object will be mixed into</span>
 <span class="c">         * the event facade passed as the first argument to subscribers </span>
-<span class="c">         * attribute change events</span>
+<span class="c">         * to attribute change events</span>
 <span class="c">         */</span>
         <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
 
@@ -551,9 +586,9 @@
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
-                                <li class=""><a href="module_selector.html">selector</a></li>
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
