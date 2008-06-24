@@ -208,9 +208,9 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <script type="text/javascript" src="../../../../build/base/base.js?bust=<?php echo(mktime()); ?>"></script>
 
     <!-- needed until new node.js is built into yui.js -->
+    <script type="text/javascript" src="../../../../build/dom/dom.js?bust=<?php echo(mktime()); ?>"></script>
     <script type="text/javascript" src="../../../../build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
 
-    <script type="text/javascript" src="../js/node-region.js?bust=<?php echo(mktime()); ?>"></script>
 
 
     <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js?bust=<?php echo(mktime()); ?>"></script>
