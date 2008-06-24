@@ -4,6 +4,7 @@
      */
 
      /**
+     * Provides the base Drag Drop Manger required for making a Node draggable.
      * @class DDM
      * @namespace DD
      * @extends Base
@@ -235,3 +236,4 @@
     Y.namespace('DD');
     Y.DD.DDM = DDMBase;
     Y.DD.DDM._init();
+

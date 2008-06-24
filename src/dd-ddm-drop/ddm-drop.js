@@ -3,6 +3,7 @@
      * @module dd-ddm-drop
      */
     /**
+     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * @class DDM
      * @namespace DD
      * @extends Base
@@ -339,5 +340,3 @@
         }
     }, true);
     
-
-

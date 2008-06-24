@@ -3,9 +3,13 @@ YUI.add('dd-constrain', function(Y) {
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
+     * @module dd-constrain
+     */
+    /**
+     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
+     * supports tick based moves and XY axis constraints.
      * @class DragConstained
      * @namespace DD
-     * @module dd-constrain
      * @extends Drag
      * @constructor
      */
@@ -346,6 +350,7 @@ YUI.add('dd-constrain', function(Y) {
     Y.extend(C, Y.DD.Drag, proto);
     //Set this to DD.Drag for other extensions
     Y.DD.Drag = C;
+
 
 
 }, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
