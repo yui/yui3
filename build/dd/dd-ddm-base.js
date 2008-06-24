@@ -1,15 +1,16 @@
 YUI.add('dd-ddm-base', function(Y) {
 
     /**
-     * 3.x DragDrop Manager - Base
-     * @class DDM
+     * Provides the base Drag Drop Manger required for making a Node draggable.
      * @module dd-ddm-base
+     */
+
+     /**
+     * @class DDM
      * @namespace DD
-     * @extends base
-     * @extends event-target
+     * @extends Base
      * @constructor
      */
-     //TODO Add Event Bubbling??
     
     var DDMBase = function() {
     };
@@ -57,11 +58,11 @@ YUI.add('dd-ddm-base', function(Y) {
         clickTimeThresh: 1000,
         /**
         * @private
-        * @property drags
+        * @property _drags
         * @description Holder for all registered drag elements.
         * @type {Array}
         */
-        drags: [],
+        _drags: [],
         /**
         * @property activeDrag
         * @description A reference to the currently active draggable object.
@@ -70,87 +71,87 @@ YUI.add('dd-ddm-base', function(Y) {
         activeDrag: false,
         /**
         * @private
-        * @method regDrag
-        * @description Adds a reference to the drag object to the DDM.drags array, called in the constructor of Drag.
+        * @method _regDrag
+        * @description Adds a reference to the drag object to the DDM._drags array, called in the constructor of Drag.
         * @param {Drag} d The Drag object
         */
-        regDrag: function(d) {
-            this.drags[this.drags.length] = d;
+        _regDrag: function(d) {
+            this._drags[this._drags.length] = d;
         },
         /**
         * @private
-        * @method unregDrag
-        * @description Remove this drag object from the DDM.drags array.
+        * @method _unregDrag
+        * @description Remove this drag object from the DDM._drags array.
         * @param {Drag} d The drag object.
         */
-        unregDrag: function(d) {
+        _unregDrag: function(d) {
             var tmp = [];
-            Y.each(this.drags, function(n, i) {
+            Y.each(this._drags, function(n, i) {
                 if (n !== d) {
                     tmp[tmp.length] = n;
                 }
             });
-            this.drags = tmp;
+            this._drags = tmp;
         },
         /**
         * @private
-        * @method init
+        * @method _init
         * @description DDM's init method
         */
-        init: function() {
-            Y.Node.get('document').on('mousemove', this.move, this, true);
-            Y.Node.get('document').on('mouseup', this.end, this, true);
+        _init: function() {
+            Y.Node.get('document').on('mousemove', this._move, this, true);
+            Y.Node.get('document').on('mouseup', this._end, this, true);
         },
         /**
         * @private
-        * @method start
+        * @method _start
         * @description Internal method used by Drag to signal the start of a drag operation
         * @param {Number} x The x position of the drag element
         * @param {Number} y The y position of the drag element
         * @param {Number} w The width of the drag element
         * @param {Number} h The height of the drag element
         */
-        start: function(x, y, w, h) {
-            this.startDrag.apply(this, arguments);
+        _start: function(x, y, w, h) {
+            this._startDrag.apply(this, arguments);
         },
         /**
         * @private
-        * @method startDrag
+        * @method _startDrag
         * @description Factory method to be overwritten by other DDM's
         * @param {Number} x The x position of the drag element
         * @param {Number} y The y position of the drag element
         * @param {Number} w The width of the drag element
         * @param {Number} h The height of the drag element
         */
-        startDrag: function() {},
+        _startDrag: function() {},
         /**
         * @private
-        * @method endDrag
+        * @method _endDrag
         * @description Factory method to be overwritten by other DDM's
         */
-        endDrag: function() {},
-        dropMove: function() {},
+        _endDrag: function() {},
+        _dropMove: function() {},
         /**
         * @private
-        * @method end
+        * @method _end
         * @description Internal method used by Drag to signal the end of a drag operation
         */
-        end: function() {
+        _end: function() {
             if (this.activeDrag) {
-                this.endDrag();
+                this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
         },
         /**
         * @private
-        * @method move
+        * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
         */
-        move: function() {
+        _move: function() {
             if (this.activeDrag) {
-                this.activeDrag.move.apply(this.activeDrag, arguments);
-                this.dropMove();
+                this.activeDrag._move.apply(this.activeDrag, arguments);
+                this._dropMove();
             }
         },
         /**
@@ -221,7 +222,7 @@ YUI.add('dd-ddm-base', function(Y) {
             var drag = false,
                 n = Y.Node.get(node);
             if (n instanceof Y.Node) {
-                Y.each(this.drags, function(v, k) {
+                Y.each(this._drags, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
                         drag = v;
                     }
@@ -235,8 +236,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
     Y.namespace('DD');
     Y.DD.DDM = DDMBase;
-    Y.DD.DDM.init();
-
+    Y.DD.DDM._init();
 
 
 }, '@VERSION@' ,{requires:['node', 'nodeextras', 'base'], skinnable:false});

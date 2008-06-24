@@ -1,7 +1,7 @@
 YUI.add('dd-plugin', function(Y) {
 
        /**
-        * 3.x DragDrop
+        * This is a simple Drag plugin that can be attached to a Node via the plug method.
         * @class DragPlugin
         * @module dd-plugin
         * @namespace Plugin
@@ -15,8 +15,18 @@ YUI.add('dd-plugin', function(Y) {
             config.node = config.owner;
             Drag.superclass.constructor.apply(this, arguments);
         };
-
+        
+        /**
+        * @property NAME
+        * @description dd-plugin
+        * @type {String}
+        */
         Drag.NAME = "dd-plugin";
+        /**
+        * @property NS
+        * @description The Drag instance will be placed on the Node instance under the dd namespace. It can be accessed via Node.dd;
+        * @type {String}
+        */
         Drag.NS = "dd";
 
 

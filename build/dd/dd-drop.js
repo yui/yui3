@@ -1,7 +1,7 @@
 YUI.add('dd-drop', function(Y) {
 
     /**
-     * 3.x DragDrop
+     * This class provides the ability to create a Drop Target.
      * @class Drop
      * @module dd-drop
      * @namespace DD
@@ -12,12 +12,41 @@ YUI.add('dd-drop', function(Y) {
     var NODE = 'node',
         DDM = Y.DD.DDM,
         OFFSET_HEIGHT = 'offsetHeight',
-        OFFSET_WIDTH = 'offsetWidth';
+        OFFSET_WIDTH = 'offsetWidth',
+        /**
+        * @event drop:over
+        * @description Fires when a drag element is over this target.
+        * @bubbles DD.DDM
+        * @type Event.Custom
+        */
+        EV_DROP_OVER = 'drop:over',
+        /**
+        * @event drop:enter
+        * @description Fires when a drag element enters this target.
+        * @bubbles DD.DDM
+        * @type Event.Custom
+        */
+        EV_DROP_ENTER = 'drop:enter',
+        /**
+        * @event drop:exit
+        * @description Fires when a drag element exits this target.
+        * @bubbles DD.DDM
+        * @type Event.Custom
+        */
+        EV_DROP_EXIT = 'drop:exit';
+
+        /**
+        * @event drop:hit
+        * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
+        * @bubbles DD.DDM
+        * @type Event.Custom
+        */
+        
 
     var Drop = function() {
         Drop.superclass.constructor.apply(this, arguments);
 
-        this.createShim();
+        this._createShim();
         DDM.regTarget(this);
         /* TODO
         if (Dom.getStyle(this.el, 'position') == 'fixed') {
@@ -31,11 +60,21 @@ YUI.add('dd-drop', function(Y) {
     Drop.NAME = 'drop';
 
     Drop.ATTRS = {
+        /**
+        * @attribute node
+        * @description Y.Node instanace to use as the element to make a Drop Target
+        * @type Node
+        */        
         node: {
             set: function(node) {
                 return Y.Node.get(node);
             }
         },
+        /**
+        * @attribute groups
+        * @description Array of groups to add this drop into.
+        * @type Array
+        */        
         groups: {
             value: ['default'],
             set: function(g) {
@@ -44,13 +83,23 @@ YUI.add('dd-drop', function(Y) {
                     this._groups[v] = true;
                 }, this);
             }
-        },        
+        },   
+        /**
+        * @attribute padding
+        * @description CSS style padding to make the Drop Target bigger than the node.
+        * @type String
+        */
         padding: {
             value: '0',
             set: function(p) {
                 return DDM.cssSizestoObject(p);
             }
         },
+        /**
+        * @attribute lock
+        * @description Set to lock this drop element.
+        * @type Boolean
+        */        
         lock: {
             value: false,
             set: function(lock) {
@@ -72,9 +121,10 @@ YUI.add('dd-drop', function(Y) {
         _createEvents: function() {
             
             var ev = [
-                'drop:over',
-                'drop:enter',
-                'drop:exit'
+                EV_DROP_OVER,
+                EV_DROP_ENTER,
+                EV_DROP_EXIT,
+                'drop:hit'
             ];
 
             Y.each(ev, function(v, k) {
@@ -153,10 +203,10 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
-        * @method deactivateShim
+        * @method _deactivateShim
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
-        deactivateShim: function() {
+        _deactivateShim: function() {
             this.get(NODE).removeClass('dd-drop-active-valid');
             this.get(NODE).removeClass('dd-drop-active-invalid');
             this.get(NODE).removeClass('dd-drop-over');
@@ -166,10 +216,10 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
-        * @method activateShim
+        * @method _activateShim
         * @description Activates the shim and adds some interaction CSS classes
         */
-        activateShim: function() {
+        _activateShim: function() {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
@@ -177,7 +227,7 @@ YUI.add('dd-drop', function(Y) {
                 return false;
             }
             
-            //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) { //TODO
+            //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
                 this.get(NODE).addClass('dd-drop-active-valid');
                 DDM.addValid(this);
@@ -238,10 +288,10 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
-        * @method createShim
+        * @method _createShim
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
-        createShim: function() {
+        _createShim: function() {
             var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
@@ -251,7 +301,7 @@ YUI.add('dd-drop', function(Y) {
                 zIndex: 10,
                 position:  'absolute'
             });
-            DDM.pg.appendChild(s);
+            DDM._pg.appendChild(s);
             s.setXY([-900, -900]);
             this.shim = s;
 
@@ -270,11 +320,11 @@ YUI.add('dd-drop', function(Y) {
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
-                    this.fire('drop:over');
+                    this.fire(EV_DROP_OVER);
                     DDM.activeDrag.fire('drag:over', { drop: this });
                 } else {
                     this.overTarget = true;
-                    this.fire('drop:enter');
+                    this.fire(EV_DROP_ENTER);
                     DDM.activeDrag.fire('drag:enter', { drop: this });
                     DDM._handleTargetOver(this, force);
                 }
@@ -309,7 +359,7 @@ YUI.add('dd-drop', function(Y) {
                 if (this.overTarget) {
                     this.overTarget = false;
                     if (DDM.activeDrag) {
-                        this.fire('drop:exit');
+                        this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
                         this.get(NODE).removeClass('dd-drop-over');
@@ -328,6 +378,7 @@ YUI.add('dd-drop', function(Y) {
     });
 
     Y.DD.Drop = Drop;
+
 
 
 }, '@VERSION@' ,{requires:['dd-ddm-drop'], skinnable:false});

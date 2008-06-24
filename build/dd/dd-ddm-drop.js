@@ -1,15 +1,29 @@
 YUI.add('dd-ddm-drop', function(Y) {
 
     /**
-     * 3.x DragDrop Manager - Drop support
-     * @class DDM
+     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * @module dd-ddm-drop
+     */
+    /**
+     * @class DDM
      * @namespace DD
      * @extends Base
      * @constructor
      */    
     Y.mix(Y.DD.DDM, {
+        /**
+        * @private
+        * @property _activeShims
+        * @description Placeholder for all active shims on the page
+        * @type {Object}
+        */
         _activeShims: {},
+        /**
+        * @private
+        * @method _hasActiveShim
+        * @description This method checks the _activeShims Object to see if there is a shim active.
+        * @return {Boolean}
+        */
         _hasActiveShim: function() {
             var ret = false;
             Y.each(this._activeShims, function(v, k) {
@@ -22,11 +36,11 @@ YUI.add('dd-ddm-drop', function(Y) {
         },
         /**
         * @private
-        * @property oldMode
+        * @property _oldMode
         * @description Placeholder for the mode when the drag object changes it..
         * @type Number
         */
-        oldMode: 0,
+        _oldMode: 0,
         /**
         * @property mode
         * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict
@@ -120,7 +134,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             }
         },
         /**
-        * @private
         * @method clearCache
         * @description Clears the cache data used for this interaction.
         */
@@ -157,7 +170,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             this._setMode();
             this.clearCache();
             Y.each(this.tars, function(v, k) {
-                v.activateShim.apply(v, []);
+                v._activateShim.apply(v, []);
                 
             }, this);
             this._handleTargetOver();
@@ -224,17 +237,17 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.activeDrop = null;
 
             Y.each(this.tars, function(v, k) {
-                v.deactivateShim.apply(v, []);
+                v._deactivateShim.apply(v, []);
             }, this);
             this._resetMode();
         },
         /**
         * @private
-        * @method dropMove
+        * @method _dropMove
         * @description This method is called when the move method is called on the Drag Object.
         * @param {Boolean} force Optional force at start.
         */
-        dropMove: function(force) {
+        _dropMove: function(force) {
             if (this._hasActiveShim()) {
                 this._handleTargetOver();
             } else {
@@ -245,11 +258,11 @@ YUI.add('dd-ddm-drop', function(Y) {
         },
         /**
         * @private
-        * @method lookup
+        * @method _lookup
         * @description Filters the list of Drops down to those in the viewport.
         * @return {Array} The valid Drop Targets that are in the viewport.
         */
-        lookup: function() {
+        _lookup: function() {
             if (!this.useHash) {
                 return this.validDrops;
             }
@@ -270,13 +283,12 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @param {Boolean} force Force it to run the first time.
         */
         _handleTargetOver: function() {
-            var drops = this.lookup();
+            var drops = this._lookup();
             Y.each(drops, function(v, k) {
                 v._handleTargetOver.call(v);
             }, this);
         },
         /**
-        * @private
         * @method regTarget
         * @description Add the passed in Target to the tars collection
         * @param {Object} t The Target to add to the tars collection
@@ -285,7 +297,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.tars[this.tars.length] = t;
         },
         /**
-        * @private
         * @method unregTarget
         * @description Remove the passed in Target from the tars collection
         * @param {Object} t The Target to remove from the tars collection
@@ -327,6 +338,9 @@ YUI.add('dd-ddm-drop', function(Y) {
             return drop;
         }
     }, true);
+    
+
+
 
 
 }, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});

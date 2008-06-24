@@ -1,5 +1,6 @@
     /**
-     * 3.x DragDrop
+     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
+     * supports tick based moves and XY axis constraints.
      * @class DragConstained
      * @namespace DD
      * @module dd-constrain
@@ -149,7 +150,7 @@
         getRegion: function(inc) {
             var r = {};
             if (this.get('constrain2node')) {
-                r = this.get('constrain2node').getRegion();
+                r = this.get('constrain2node').get('region');
             } else if (this.get('constrain2region')) {
                 r = this.get('constrain2region');
             } else if (this.get('constrain2view')) {

@@ -1,21 +1,24 @@
     /**
-     * 3.x DragDrop Manager - Shim support
+     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
+     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
      * @module dd-ddm
+     */
+
+     /**
      * @class DDM
      * @namespace DD
      * @extends Base
      * @constructor
      */
-     //TODO Add Event Bubbling??
 
     Y.mix(Y.DD.DDM, {
         /**
         * @private
-        * @property pg
+        * @property _pg
         * @description The shim placed over the screen to track the mousemove event.
         * @type {Node}
         */
-        pg: null,
+        _pg: null,
         /**
         * @private
         * @property _debugShim
@@ -25,32 +28,32 @@
         _debugShim: false,
         _activateTargets: function() {},
         _deactivateTargets: function() {},
-        startDrag: function() {
+        _startDrag: function() {
             if (this.activeDrag.get('useShim')) {
-                this.pg_activate();
+                this._pg_activate();
                 this._activateTargets();
             }
         },
-        endDrag: function() {
-            this.pg_deactivate();
+        _endDrag: function() {
+            this._pg_deactivate();
             this._deactivateTargets();
         },
         /**
         * @private
-        * @method pg_deactivate
+        * @method _pg_deactivate
         * @description Deactivates the shim
         */
-        pg_deactivate: function() {
-            this.pg.setStyle('display', 'none');
+        _pg_deactivate: function() {
+            this._pg.setStyle('display', 'none');
         },
         /**
         * @private
-        * @method pg_activate
+        * @method _pg_activate
         * @description Activates the shim
         */
-        pg_activate: function() {
-            this.pg_size();
-            this.pg.setStyles({
+        _pg_activate: function() {
+            this._pg_size();
+            this._pg.setStyles({
                 top: 0,
                 left: 0,
                 display: 'block',
@@ -60,15 +63,15 @@
         },
         /**
         * @private
-        * @method pg_size
+        * @method _pg_size
         * @description Sizes the shim on: activatation, window:scroll, window:resize
         */
-        pg_size: function() {
+        _pg_size: function() {
             if (this.activeDrag) {
                 var b = Y.Node.get('body'),
                 h = b.get('docHeight'),
                 w = b.get('docWidth');
-                this.pg.setStyles({
+                this._pg.setStyles({
                     height: h + 'px',
                     width: w + 'px'
                 });
@@ -98,13 +101,14 @@
             } else {
                 bd.appendChild(pg);
             }
-            this.pg = pg;
-            this.pg.on('mouseup', this.end, this, true);
-            this.pg.on('mousemove', this.move, this, true);
+            this._pg = pg;
+            this._pg.on('mouseup', this._end, this, true);
+            this._pg.on('mousemove', this._move, this, true);
             //TODO
-            Y.Event.addListener(window, 'resize', this.pg_size, this, true);
-            Y.Event.addListener(window, 'scroll', this.pg_size, this, true);
+            Y.Event.addListener(window, 'resize', this._pg_size, this, true);
+            Y.Event.addListener(window, 'scroll', this._pg_size, this, true);
         }   
     }, true);
 
     Y.DD.DDM._createPG();    
+
