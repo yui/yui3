@@ -25,17 +25,17 @@ YUI.add('attribute', function(Y) {
      * and allows the host to support get/set methods for attributes,
      * initial configuration support and attribute change events.
      * </p>
-     * <p>Attributes added to the host can be</p>
+     * <p>Attributes added to the host can:</p>
      * <ul>
-     *     <li>Defined as read-only</li>
-     *     <li>Defined with a setter function, which can be used to manipulate 
-     *     values passed to the set method, before they are stored.</li>
-     *     <li>Defined with a validator function, to validate values before allowing a set</li>
-     *     <li>Defined with a getter function, which can be used to manipulate stored values,
-     *     before they are returned by the get method.</li>
-     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes)</li>
+     *     <li>Be defined as read-only.</li>
+     *     <li>Be defined with a set function, which can be used to manipulate
+     *     values passed to Attribute's set method, before they are stored.</li>
+     *     <li>Be defined with a validator function, to validate values before they are stored.</li>
+     *     <li>Be defined with a get function, which can be used to manipulate stored values,
+     *     before they are returned by Attribute's get method.</li>
+     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
      * </ul>
-     * 
+     *
      * @class Attribute
      * @uses EventTarget
      */
@@ -94,8 +94,7 @@ YUI.add('attribute', function(Y) {
     function _fireChange(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
         type = type + CHANGE;
 
-        // TODO: Publishing temporarily,
-        // while we address event bubbling.
+        // TODO: Publishing temporarily, while we address event bubbling/queuing
         this.publish(type, {queuable:false, defaultFn:this._defAttrSet});
 
         var eData = {
@@ -269,7 +268,8 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Default handler implementation for set events
-         *
+         * 
+         * @method _defAttrSet
          * @private
          * @param {EventFacade} CustomEvent Facade
          */
@@ -299,12 +299,13 @@ YUI.add('attribute', function(Y) {
          * Retrieves the sub value at the provided path,
          * from the value object provided.
          *
+         * @method _getSubValue
+         * @private
+         * 
          * @param {Array} path  A path array, specifying the object traversal path
          *                      from which to obtain the sub value.
          * @param {Object} val  The object from which to extract the property value
          * @return {Any} The value stored in the path or undefined if not found.
-         *
-         * @private
          */
         _getSubValue: function (path, val) {
             var pl = path.length,
@@ -323,14 +324,15 @@ YUI.add('attribute', function(Y) {
          * Sets the sub value at the provided path on the value object.
          * Returns the modified value object, or undefined if the path is invalid.
          *
+         * @method _setSubValue
+         * @private
+         * 
          * @param {Array} path  A path array, specifying the object traversal path
          *                      at which to set the sub value.
          * @param {Object} val  The object on which to set the sub value.
          * @param {Any} subval  The sub value to set.
          * @return {Object}     The modified object, with the new sub value set, or 
          *                      undefined, if the path was invalid.
-         *
-         * @private
          */
         _setSubValue: function(path, val, subval) {
 
@@ -392,10 +394,10 @@ YUI.add('attribute', function(Y) {
          * Configures attributes, and sets initial values
          *
          * @method _initAtts
+         * @protected
+         * 
          * @param {Object} cfg Attribute configuration object literal
          * @param {Object} initValues Name/Value hash of initial values to apply
-         *
-         * @protected
          */
         _initAtts : function(cfg, initValues) {
             if (cfg) {
@@ -464,7 +466,7 @@ YUI.add('attribute', function(Y) {
          */
         _initAttValue : function(att, cfg, initValues) {
 
-            var hasVal = ("value" in cfg),
+            var hasVal = (VALUE in cfg),
                 val = cfg.value,
                 simple,
                 complex,
