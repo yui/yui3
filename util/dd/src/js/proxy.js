@@ -1,7 +1,10 @@
     /**
-     * 3.x DragDrop
-     * @class Proxy
+     * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
      * @module dd-proxy
+     */
+    /**
+     * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
+     * @class Proxy
      * @namespace DD
      * @extends Drag
      * @constructor
@@ -127,7 +130,6 @@
             }
         },
         /**
-        * @private
         * @method start
         * @description Starts the drag operation and sets the dragNode config option.
         */       
@@ -145,7 +147,6 @@
             }
         },
         /**
-        * @private
         * @method end
         * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
         */        
@@ -162,4 +163,5 @@
     //Extend DD.Drag
     Y.extend(Proxy, Y.DD.Drag, proto);
     //Set this new class as DD.Drag for other extensions
-    Y.DD.Drag = Proxy;
+    Y.DD.Drag = Proxy;    
+

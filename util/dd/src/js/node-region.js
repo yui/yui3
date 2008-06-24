@@ -1,4 +1,3 @@
-YUI.add('node-region', function(Y) {
     
     var getOffsets = function(r1, r2) {
 
@@ -119,4 +118,3 @@ YUI.add('node-region', function(Y) {
 
     });
 
-});
