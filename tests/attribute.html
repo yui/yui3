@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Attribute Tests</title>
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../build/dom/dom.js"></script>    
+    <script type="text/javascript" src="../build/yuitest/yuitest.js"></script>    
+    <script type="text/javascript" src="../build/base/base.js"></script>
+    <script type="text/javascript" src="../build/attribute/attribute.js"></script>
+
+    <script type="text/javascript">
+
+    (function() {
+        var Y = YUI().use("base", "yuitest");
+
+        var CLONE_ENUM = Y.Attribute.CLONE;
+
+        function AttHost(config) {
+            AttHost.superclass.constructor.apply(this, arguments);
+        }
+        AttHost.NAME = "atthost";
+
+        AttHost.ATTRS = {
+            A: {
+                value:"AVal"
+            },
+
+            B: {
+                value:"BVal"
+            },
+
+            C: {
+                value:"CVal",
+                readOnly: true
+            },
+            
+            D: {
+                value:"DVal",
+                writeOnce: true
+            }
+        };
+
+        Y.extend(AttHost, Y.Base);
+        
+        var template = {
+            createHost : function(cfg) {
+                return new AttHost(cfg);
+            },
+
+            setUp : function() {
+            },
+            
+            tearDown : function() {
+            },
+            
+            test : function() {
+                var h = this.createHost({A:"MyAVal", B:"MyBVal", C:"MyCVal", D:"MyDVal"});
+                h.set("D", "MyNewDVal");
+                Y.Assert.areEqual("MyAVal", h.get("A"));
+                Y.Assert.areEqual("MyBVal", h.get("B"));
+                Y.Assert.areEqual("CVal", h.get("C")); // Readonly
+                Y.Assert.areEqual("MyDVal", h.get("D")); // Write once, but not twice
+            }
+        };
+        
+        Y.Test.Runner.clear();
+        Y.Test.Runner.add(new Y.Test.Case(template));
+        Y.Test.Runner.run();
+
+        /*
+        AttHost.ATTRS = {
+            A: {
+                value : {
+                    a : {
+                        aa : "foo"
+                    },
+                    b : "bar"
+                },
+                clone : CLONE_ENUM.DEEP
+            },
+
+            B: {
+                value : {
+                    b : {
+                        bb : [0,1,2]
+                    }
+                },
+                clone : CLONE_ENUM.SHALLOW
+            },
+
+            C: {
+                value : {
+                    c : {
+                        cc : Y.Node.get("#foo")
+                    }
+                }
+            },
+
+            D: {
+                value : {
+                    d : {
+                        dd : 15
+                    }
+                }
+            },
+
+            E: {
+                value : {foo:"Ebar"},
+                set: function(val) {
+                    val.foo += "Modified";
+                }
+            },
+
+            F: {
+                value : "Ffoo",
+                readOnly: true,
+                set : function(val) {
+                    return val.toUpperCase();
+                }
+            },
+
+            G: {
+                writeOnce: true,
+                value:"GFoo"
+            },
+            
+            H: {
+                value:"HFoo",
+            }
+        };
+        */
+    })();
+    </script>
+</head>
+<body>
+    <div id="foo"></div>
+</body>
+</html>
