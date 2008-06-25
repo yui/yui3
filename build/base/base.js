@@ -15,7 +15,7 @@ YUI.add('base', function(Y) {
         INITIALIZER = "initializer",
         DESTRUCTOR = "destructor";
 
-    var ETP = Y.EventTarget.prototype;
+    var ETP = Y.Event.Target.prototype;
 
     function _prefixType(type, owner) {
         if (type.indexOf(SEP) === -1 && owner.name) {
@@ -43,7 +43,7 @@ YUI.add('base', function(Y) {
     /**
      * Name string to be used to identify instances of 
      * this class, for example in prefixing events.
-     * 
+     *
      * Classes extending Base, should define their own
      * static NAME property.
      * 
@@ -415,7 +415,7 @@ YUI.add('base', function(Y) {
         /**
          * Subscribe to a custom event hosted by this object.
          * <p>
-         * Overrides EventTarget's subscribe method, to add the name prefix 
+         * Overrides Event.Target's subscribe method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * 
@@ -440,7 +440,7 @@ YUI.add('base', function(Y) {
          * from the context specified when the event was created, and with the 
          * following parameters.
          * <p>
-         * Overrides EventTarget's fire method, to add the name prefix 
+         * Overrides Event.Target's fire method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method fire
@@ -449,7 +449,7 @@ YUI.add('base', function(Y) {
          * the name property of the instance will be used as the default prefix.
          * @param {Object*} arguments an arbitrary set of parameters to pass to 
          * the handler.
-         * @return {Boolean} the return value from EventTarget.fire
+         * @return {Boolean} the return value from Event.Target.fire
          *                   
          */
         fire : function() {
@@ -468,7 +468,7 @@ YUI.add('base', function(Y) {
          * case the custom event is returned. 
          *
          * <p>
-         * Overrides EventTarget's publish method, to add the name prefix 
+         * Overrides Event.Target's publish method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          *
@@ -476,7 +476,7 @@ YUI.add('base', function(Y) {
          * @param {String} type  The type, or name of the event. If the type does not 
          * contain a prefix ("prefix:eventType"), the name property of the instance will 
          * be used as the default prefix.
-         * @param {Object} opts Optional config params (see EventTarget publish for details)
+         * @param {Object} opts Optional config params (see Event.Target publish for details)
          * @return {Event.Custom} the custom event
          */
         publish : function() {
@@ -491,7 +491,7 @@ YUI.add('base', function(Y) {
          * via the subscribe method, and after the default function,
          * if configured for the event, has executed.
          * <p>
-         * Overrides EventTarget's after method, to add the name prefix 
+         * Overrides Event.Target's after method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method after
@@ -512,7 +512,7 @@ YUI.add('base', function(Y) {
          * Unsubscribes one or more listeners the from the specified event
          * @method unsubscribe.
          * <p>
-         * Overrides EventTarget's unsubscribe method, to add the name prefix 
+         * Overrides Event.Target's unsubscribe method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @param type {String|Object} Either the handle to the subscriber or the 
@@ -544,7 +544,7 @@ YUI.add('base', function(Y) {
          * is not specified, all listeners from all hosted custom events will
          * be removed.
          * <p>
-         * Overrides EventTarget's unsubscribeAll method, to add the name prefix 
+         * Overrides Event.Target's unsubscribeAll method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method unsubscribeAll

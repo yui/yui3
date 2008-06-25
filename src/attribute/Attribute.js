@@ -37,10 +37,10 @@
      * </ul>
      *
      * @class Attribute
-     * @uses EventTarget
+     * @uses Event.Target
      */
     function Attribute() {
-        Y.EventTarget.call(this, {emitFacade:true});
+        Y.Event.Target.call(this, {emitFacade:true});
         this._conf = this._conf || new Y.State();
         Y.log('att constructor called', 'info', 'Attribute');
     }
@@ -542,8 +542,8 @@
         }
     };
 
-    Y.mix(Attribute, Y.EventTarget, false, null, 1);
-    // Y.augment(Attribute, Y.EventTarget, null, null, {
+    Y.mix(Attribute, Y.Event.Target, false, null, 1);
+    // Y.augment(Attribute, Y.Event.Target, null, null, {
     //        emitFacade:true
     // });
 
