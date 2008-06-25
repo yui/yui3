@@ -5,7 +5,7 @@
     <script type="text/javascript" src="../build/yui/yui.js"></script>
     <script type="text/javascript" src="../build/base/base.js"></script>
     <script type="text/javascript" src="../build/dom/dom.js"></script>    
-    <script type="text/javascript" src="../build/attribute/attribute.js"></script>
+    <script type="text/javascript" src="../build/attribute/attribute-debug.js"></script>
 
     <script type="text/javascript">
 
@@ -21,7 +21,7 @@
         ClassOne.NAME = "main";
 
         ClassOne.ATTRS = {
-            A : {
+            A: {
                 value : {
                     a : {
                         aa : "foo"
@@ -31,7 +31,7 @@
                 clone : CLONE_ENUM.DEEP
             },
 
-            B : {
+            B: {
                 value : {
                     b : {
                         bb : [0,1,2]
@@ -40,7 +40,7 @@
                 clone : CLONE_ENUM.SHALLOW
             },
 
-            C : {
+            C: {
                 value : {
                     c : {
                         cc : Y.Node.get("#foo")
@@ -48,7 +48,7 @@
                 }
             },
 
-            D : {
+            D: {
                 value : {
                     d : {
                         dd : 15
@@ -56,17 +56,34 @@
                 }
             },
 
-            E : {
-                value : {foo:"bar"},
+            E: {
+                value : {foo:"Ebar"},
                 set: function(val) {
                     val.foo += "Modified";
                 }
+            },
+
+            F: {
+                value : "Ffoo",
+                readOnly: true,
+                set : function(val) {
+                    return val.toUpperCase();
+                }
+            },
+
+            G: {
+                writeOnce: true,
+                value:"GFoo"
+            },
+            
+            H: {
+                value:"HFoo",
             }
         };
 
         Y.extend(ClassOne, Y.Base);
 
-        x = new ClassOne();
+        x = new ClassOne({G:"GBar"});
 
         var valA = x.get("A");
         Y.log("Attempt Ref Change");
@@ -75,7 +92,7 @@
         valA.a.aa = "Changed a.a.aa reference";
 
         x.set("A.a.aa", "legit");
-        
+
         Y.log(x.get("A"));
         Y.log(x.get("A.a"));
         Y.log(x.get("A.a.aa"));
@@ -98,7 +115,9 @@
             Y.log(this.get("E"));
         });
 
-        x.set("E", "whoohoo");
+        x.set("E", {foo:"newbar"});
+        x.set("F", "FShouldNotGetSet-ReadOnly");
+        x.set("G", "GShouldNotGetSet-WriteOnce");
     })();
     </script>
 </head>

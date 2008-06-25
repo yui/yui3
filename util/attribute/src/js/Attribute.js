@@ -11,7 +11,8 @@
         SET = "set",
         VALUE = "value",
         CLONE = "clone",
-        READ_ONLY = "readonly",
+        READ_ONLY = "readOnly",
+        WRITE_ONCE = "writeOnce",
         VALIDATOR = "validator",
 
         CLONE_ENUM;
@@ -145,9 +146,13 @@
          * <dl>
          *    <dt>value {Any}</dt>
          *    <dd>The initial value to set on the attribute</dd>
-         *    <dt>readonly {Boolean}</dt>
-         *    <dd>Whether or not the attribute is read only. Attributes having readonly set to true
-         *        cannot be set by invoking the set method</dd>
+         *    <dt>readOnly {Boolean}</dt>
+         *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
+         *        cannot be set by invoking the set method.</dd>
+         *    <dt>writeOnce {Boolean}</dt>
+         *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+         *        can only have their values set once, be it through the default configuration, 
+         *        constructor configuration arguments, or by invoking set.</dd>
          *    <dt>set {Function}</dt>
          *    <dd>The setter function to be invoked (within the context of the host object) before 
          *        the attribute is stored by a call to the set method. The value returned by the 
@@ -264,9 +269,15 @@
                 return this;
             }
 
-            if (!initialSet && conf.get(name, READ_ONLY)) {
-                Y.log('set ' + name + ' failed; Attribute is readonly', 'info', 'Attribute');
-                return this;
+            if (!initialSet) {
+                if (conf.get(name, WRITE_ONCE)) {
+                    Y.log('set ' + name + ' failed; Attribute is writeOnce', 'info', 'Attribute');
+                    return this;
+                }
+                if (conf.get(name, READ_ONLY)) {
+                    Y.log('set ' + name + ' failed; Attribute is readOnly', 'info', 'Attribute');
+                    return this;
+                }
             }
 
             if (!conf.get(name)) {
@@ -428,6 +439,7 @@
                 var att,
                     attCfg,
                     values,
+                    value,
                     atts = Y.merge(cfg);
 
                 values = this._splitAttVals(initValues);
@@ -435,7 +447,10 @@
                 for (att in atts) {
                     if (O.owns(atts, att)) {
                         attCfg = atts[att];
-                        attCfg.value = this._initAttVal(att, attCfg, values);
+                        value = this._initAttVal(att, attCfg, values);
+                        if (value !== undefined) {
+                            attCfg.value = value;
+                        }
                         this.addAtt(att, attCfg);
                     }
                 }
@@ -475,7 +490,7 @@
         },
 
         /**
-         * Set the initial value of the given attribute from
+         * Returns the initial value of the given attribute from
          * either the default configuration provided, or the 
          * over-ridden value if it exists in the initValues 
          * hash provided.
@@ -500,7 +515,7 @@
                 subval,
                 subvals;
 
-            if (initValues) {
+            if (!cfg[READ_ONLY] && initValues) {
                 // Simple Attributes
                 simple = initValues.simple;
                 if (simple && O.owns(simple, att)) {
