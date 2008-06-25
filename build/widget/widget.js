@@ -42,7 +42,6 @@ var _instances = {};
  * @extends YUI.Base
  */
 function Widget(config) {
-	Y.log('constructor called', 'life', 'Widget');
 
 	this.uid = Y.guid(_WIDGET);
 	this.rendered = false;
@@ -206,7 +205,6 @@ var proto = {
 	 * @param  config {Object} Configuration obejct literal for the widget
 	 */
 	initializer: function(config) {
-		Y.log('initializer called', 'life', 'Widget');
 
 		this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
 
@@ -225,7 +223,6 @@ var proto = {
 	 *
 	 */
 	destructor: function() {
-		Y.log('destructor called', 'life', 'Widget');
 
 		this._destroyPlugins();
 
