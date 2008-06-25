@@ -29,6 +29,7 @@ YUI.add('attribute', function(Y) {
      * <p>Attributes added to the host can:</p>
      * <ul>
      *     <li>Be defined as read-only.</li>
+     *     <li>Be defined as write-once.</li>
      *     <li>Be defined with a set function, which can be used to manipulate
      *     values passed to Attribute's set method, before they are stored.</li>
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
@@ -41,6 +42,7 @@ YUI.add('attribute', function(Y) {
      * @uses EventTarget
      */
     function Attribute() {
+        Y.EventTarget.call(this, {emitFacade:true});
         this._conf = this._conf || new Y.State();
         Y.log('att constructor called', 'info', 'Attribute');
     }
@@ -542,9 +544,10 @@ YUI.add('attribute', function(Y) {
         }
     };
 
-    Y.augment(Attribute, Y.EventTarget, null, null, {
-        emitFacade: true
-    });
+    Y.mix(Attribute, Y.EventTarget, false, null, 1);
+    // Y.augment(Attribute, Y.EventTarget, null, null, {
+    //        emitFacade:true
+    // });
 
     Y.Attribute = Attribute;
 

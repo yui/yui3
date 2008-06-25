@@ -3,7 +3,7 @@ YUI.add('base', function(Y) {
     /**
      * Base class support for objects requiring
      * managed attributes and acting as event targets
-     * 
+     *
      * @module base
      */
 
@@ -37,11 +37,7 @@ YUI.add('base', function(Y) {
      */
     var Base = function() {
         Y.log('constructor called', 'life', 'Base');
-
-        // Hack: Augment doesn't seem to be invoking the constructor without this.
-        // Calling getEvent(which is a method not over-ridden by Base) causes
-        // Y.augment supercedes replacement to kick in
-        this.getEvent(INIT);
+        Y.Attribute.call(this);
         this.init.apply(this, arguments);
     };
 
@@ -312,9 +308,9 @@ YUI.add('base', function(Y) {
 
         /**
          * Default init event handler
-         * 
+         *
          * @method _defInitFn
-         * @private
+         * @protected
          */
         _defInitFn : function(config) {
             _instances[Y.stamp(this)] = this;
@@ -324,9 +320,9 @@ YUI.add('base', function(Y) {
 
         /**
          * Default destroy event handler
-         * 
+         *
          * @method _defDestroyFn
-         * @private
+         * @protected
          */
         _defDestroyFn : function() {
             this._destroyHierarchy();
@@ -566,7 +562,8 @@ YUI.add('base', function(Y) {
         }
     };
 
-    Y.augment(Base, Y.Attribute);
+    Y.mix(Base, Y.Attribute, false, null, 1);
+
     Y.Base = Base;
 
 
