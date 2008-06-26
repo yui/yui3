@@ -231,7 +231,7 @@ var yConfig2 = {};
 YUI().mix(yConfig2, yConfig);
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-var Y1 = new YUI(yConfig).use('node-region', 'dd-ddm', 'dd-proxy', 'dd-constrain');
+var Y1 = new YUI(yConfig).use('dd-ddm', 'dd-proxy', 'dd-constrain');
 
 Y1.on('event:ready', function() {
 
@@ -278,7 +278,6 @@ Y1.on('event:ready', function() {
         proxy: true,
         moveOnEnd: false
     }).addInvalid('strong.no');
-    //dd4.setHandle('#drag4Handle', true);
 
     dd6 = new Y1.DD.Drag({
         proxy: true,
@@ -305,34 +304,25 @@ Y1.on('event:ready', function() {
 
 });
 
-var Y = new YUI(yConfig2).use('node-region', 'dd-dragdrop-all');
+var Y = new YUI(yConfig2).use('dd-dragdrop-all');
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 Y.on('event:ready', function() {
-    Y.DD.DDM.useHash = false;
+    //Y.DD.DDM.useHash = false;
     //Y.DD.DDM._debugShim = true;
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
-
-    /*
-    Y.DD.DDM.on('drag:drag', function(e) {
-        console.log('DDM:drag:drag :: ', arguments);
-    });
-    Y.DD.DDM.on('drop:over', function(e) {
-        console.log('DDM:drop:over :: ', arguments);
-    });
-    */
 
     dd = new Y.DD.Drag({
         node: '#drag',
         groups: ['one', 'three'],
         target: true,
         dragMode: 'intersect',
+        //dragMode: 'strict',
         data: {
             one: 'This is my data object',
             two: 'This is my data object',
             three: 'This is my data object'
         }
     }).addHandle('h2');
-    //}).addHandle('h2')._bubbles.beforeMouseDown.subscribe('drag:beforeMouseDown', function(e) {
     /*
     dd.on('drag:mouseDown', function(e) {
         Y.log('mouseDown:: ', arguments);
@@ -374,21 +364,6 @@ Y.on('event:ready', function() {
     
     
     
-    /*
-    Y.DD.DDM.on('drag:drag', function(e) {
-        console.log('DDM:drag:drag :: ', arguments);
-    });
-    Y.DD.DDM.on('drop:over', function(e) {
-        console.log('DDM:drop:over :: ', arguments);
-    });
-    
-    Y.DD.DDM.on('drag:mouseDown', function(e) {
-        Y.log('DDMFire: drag:mouseDown :: ', arguments);
-        e.ev.preventDefault();
-        e.ev.halt();
-        Y.log('DDM stopped event..');
-    });
-    */
     
 
     dd2 = new Y.DD.Drag( {
@@ -420,25 +395,20 @@ Y.on('event:ready', function() {
     }
     ?>
 
-
-    dd3 = new Y.DD.Drag({
-        node: '#drag3'//,
-        //move: false
-    //}).addHandle('h2');
-    //}).addHandle('h2').addInvalid('h2.two');
-    }).addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
-    dd3.on('drag:drophit', function(e) {
-        Y.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
-    });
+    dd3 = Y.Node.get('#drag3');
+    //dd3.plug(Y.Plugin.Drag, { proxy: true });
+    dd3.plug(Y.Plugin.Drag);
+    dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    
     /*
-    dd3.on('drag:start', function(args) {
+    dd3.dd.on('drag:start', function(args) {
         if (this.get('activeHandle').test('h2.two')) {
             this.set('move', false);
         } else {
             this.set('move', true);
         }
     });
-    dd3.on('drag:drag', function(args) {
+    dd3.dd.on('drag:drag', function(args) {
         if (this.get('activeHandle').test('h2.two')) {
             var size = (args.info.xy[0] - args.info.start[0]);
             var w = parseInt(this.get('dragNode').getStyle('width'), 10);
