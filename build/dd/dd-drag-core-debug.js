@@ -176,6 +176,7 @@ YUI.add('dd-ddm-base', function(Y) {
             
             node.setStyle('top', (xy[1] + t) + 'px');
             node.setStyle('left', (xy[0] + l) + 'px');
+            
         },
         /**
         * @method cssSizestoObject
@@ -388,6 +389,7 @@ YUI.add('dd-drag', function(Y) {
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @defaultFn _handleMouseDown
         * @type Event.Custom
@@ -396,6 +398,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @type Event.Custom
         */
@@ -720,7 +723,7 @@ YUI.add('dd-drag', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            //this.addTarget(DDM);
             
         },
         /**
@@ -1122,7 +1125,11 @@ YUI.add('dd-drag', function(Y) {
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
             if (this.get('move')) {
-                DDM.setXY(this.get(DRAG_NODE), diffXY);
+                if (Y.UA.opera) {
+                    this.get(DRAG_NODE).setXY(xy);
+                } else {
+                    DDM.setXY(this.get(DRAG_NODE), diffXY);
+                }
             }
 
             this.region = {
@@ -1164,7 +1171,7 @@ YUI.add('dd-drag', function(Y) {
                 if (!this._dragThreshMet) {
                         var diffX = Math.abs(this.startXY[0] - ev.pageX);
                         var diffY = Math.abs(this.startXY[1] - ev.pageY);
-                        Y.log("diffX: " + diffX + "diffY: " + diffY, 'info', 'dd-drag');
+                        Y.log("diffX: " + diffX + ", diffY: " + diffY, 'info', 'dd-drag');
                         if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                             Y.log("pixel threshold met", "info", "dd-drag");
                             this._dragThreshMet = true;

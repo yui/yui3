@@ -137,7 +137,7 @@ YUI.add('dd-drop', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            //this.addTarget(DDM);
             
         },
         /**

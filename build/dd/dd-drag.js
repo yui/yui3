@@ -23,6 +23,7 @@ YUI.add('dd-drag', function(Y) {
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @defaultFn _handleMouseDown
         * @type Event.Custom
@@ -31,6 +32,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @type Event.Custom
         */
@@ -355,7 +357,7 @@ YUI.add('dd-drag', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            //this.addTarget(DDM);
             
         },
         /**
@@ -746,7 +748,11 @@ YUI.add('dd-drag', function(Y) {
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
             if (this.get('move')) {
-                DDM.setXY(this.get(DRAG_NODE), diffXY);
+                if (Y.UA.opera) {
+                    this.get(DRAG_NODE).setXY(xy);
+                } else {
+                    DDM.setXY(this.get(DRAG_NODE), diffXY);
+                }
             }
 
             this.region = {
