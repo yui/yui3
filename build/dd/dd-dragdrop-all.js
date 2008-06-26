@@ -707,6 +707,8 @@ YUI.add('dd-ddm-drop', function(Y) {
     
 
 
+
+
 }, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
 YUI.add('dd-drag', function(Y) {
 
