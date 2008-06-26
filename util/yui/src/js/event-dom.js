@@ -253,10 +253,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {Function} fn        The method the event invokes
                  * @param {Object}   obj    An arbitrary object that will be 
                  *                             passed as a parameter to the handler
-                 * @param {Boolean|object}  override  If true, the obj passed in becomes
-                 *                             the execution context of the listener. If an
-                 *                             object, this object becomes the execution
-                 *                             context.
+                 * @param {Boolean|object}  args 1..n ar
                  * @return {Boolean} True if the action was successful or defered,
                  *                        false if one or more of the elements 
                  *                        could not have the listener attached,
@@ -350,6 +347,7 @@ YUI.add("event-dom", function(Y) {
                         _el_events[ek] = _el_events[ek] || {};
                         _el_events[ek][key] = cewrapper;
 
+                        // var capture = (Y.lang.isObject(obj) && obj.capture);
                         // attach a listener that fires the custom event
                         this.nativeAdd(el, type, cewrapper.fn, false);
                     }
@@ -359,14 +357,14 @@ YUI.add("event-dom", function(Y) {
                     a = Y.Array(arguments, 2, true);
                     // a = a.shift();
 
-                    var context = el;
-                    if (override) {
-                        if (override === true) {
-                            context = obj;
-                        } else {
-                            context = override;
-                        }
-                    }
+                    var context = obj || el;
+                    // if (override) {
+                        // if (override === true) {
+                            // context = obj;
+                        // } else {
+                            // context = override;
+                        // }
+                    // }
 
                     a[1] = context;
 
@@ -548,10 +546,8 @@ YUI.add("event-dom", function(Y) {
                 //     var E = Y.Event;
                 //     if (!E.DOMReady) {
                 //         E.DOMReady=true;
-
                 //         // Fire the content ready custom event
                 //         E.DOMReadyEvent.fire();
-
                 //         // Remove the DOMContentLoaded (FF/Opera)
                 //         E.nativeRemove(document, "DOMContentLoaded", E._ready);
                 //     }

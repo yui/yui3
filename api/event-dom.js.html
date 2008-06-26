@@ -291,10 +291,7 @@
 <span class="c">                 * @param {Function} fn        The method the event invokes</span>
 <span class="c">                 * @param {Object}   obj    An arbitrary object that will be </span>
 <span class="c">                 *                             passed as a parameter to the handler</span>
-<span class="c">                 * @param {Boolean|object}  override  If true, the obj passed in becomes</span>
-<span class="c">                 *                             the execution context of the listener. If an</span>
-<span class="c">                 *                             object, this object becomes the execution</span>
-<span class="c">                 *                             context.</span>
+<span class="c">                 * @param {Boolean|object}  args 1..n ar</span>
 <span class="c">                 * @return {Boolean} True if the action was successful or defered,</span>
 <span class="c">                 *                        false if one or more of the elements </span>
 <span class="c">                 *                        could not have the listener attached,</span>
@@ -388,7 +385,8 @@
                         <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">]</span> <span class="o">||</span> <span class="o">{};</span>
                         <span class="nx">_el_events</span><span class="o">[</span><span class="nx">ek</span><span class="o">][</span><span class="nx">key</span><span class="o">]</span> <span class="o">=</span> <span class="nx">cewrapper</span><span class="o">;</span>
 
-                        <span class="c">// attach a listener that fires the custom event</span>
+                        <span class="c">// var capture = (Y.lang.isObject(obj) &amp;&amp; obj.capture);</span>
+<span class="c"></span>                        <span class="c">// attach a listener that fires the custom event</span>
 <span class="c"></span>                        <span class="k">this</span><span class="o">.</span><span class="nx">nativeAdd</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">cewrapper</span><span class="o">.</span><span class="nx">fn</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
                     <span class="o">}</span>
 
@@ -397,15 +395,15 @@
 <span class="c"></span>                    <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
                     <span class="c">// a = a.shift();</span>
 <span class="c"></span>
-                    <span class="k">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">el</span><span class="o">;</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">override</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">override</span> <span class="o">===</span> <span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">obj</span><span class="o">;</span>
-                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="nx">context</span> <span class="o">=</span> <span class="nx">override</span><span class="o">;</span>
-                        <span class="o">}</span>
-                    <span class="o">}</span>
-
+                    <span class="k">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">obj</span> <span class="o">||</span> <span class="nx">el</span><span class="o">;</span>
+                    <span class="c">// if (override) {</span>
+<span class="c"></span>                        <span class="c">// if (override === true) {</span>
+<span class="c"></span>                            <span class="c">// context = obj;</span>
+<span class="c"></span>                        <span class="c">// } else {</span>
+<span class="c"></span>                            <span class="c">// context = override;</span>
+<span class="c"></span>                        <span class="c">// }</span>
+<span class="c"></span>                    <span class="c">// }</span>
+<span class="c"></span>
                     <span class="nx">a</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">context</span><span class="o">;</span>
 
                     <span class="c">// set context to element if not specified</span>
@@ -586,11 +584,9 @@
 <span class="c"></span>                <span class="c">//     var E = Y.Event;</span>
 <span class="c"></span>                <span class="c">//     if (!E.DOMReady) {</span>
 <span class="c"></span>                <span class="c">//         E.DOMReady=true;</span>
-<span class="c"></span>
-                <span class="c">//         // Fire the content ready custom event</span>
+<span class="c"></span>                <span class="c">//         // Fire the content ready custom event</span>
 <span class="c"></span>                <span class="c">//         E.DOMReadyEvent.fire();</span>
-<span class="c"></span>
-                <span class="c">//         // Remove the DOMContentLoaded (FF/Opera)</span>
+<span class="c"></span>                <span class="c">//         // Remove the DOMContentLoaded (FF/Opera)</span>
 <span class="c"></span>                <span class="c">//         E.nativeRemove(document, &quot;DOMContentLoaded&quot;, E._ready);</span>
 <span class="c"></span>                <span class="c">//     }</span>
 <span class="c"></span>                <span class="c">// },</span>

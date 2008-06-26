@@ -2174,6 +2174,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
     Y.CustomEvent.prototype = {
 
+        _YUI_EVENT: true,
+
         /**
          * Apply configuration properties
          * @method applyConfig
@@ -2296,7 +2298,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
                 
-                var ef = new Y.Event.Facade(this);
+                var ef = new Y.Event.Facade(this, this.originalTarget);
 
                 // update the details field with the arguments
                 ef.details = this.details;
@@ -3360,10 +3362,7 @@ YUI.add("event-dom", function(Y) {
                  * @param {Function} fn        The method the event invokes
                  * @param {Object}   obj    An arbitrary object that will be 
                  *                             passed as a parameter to the handler
-                 * @param {Boolean|object}  override  If true, the obj passed in becomes
-                 *                             the execution context of the listener. If an
-                 *                             object, this object becomes the execution
-                 *                             context.
+                 * @param {Boolean|object}  args 1..n ar
                  * @return {Boolean} True if the action was successful or defered,
                  *                        false if one or more of the elements 
                  *                        could not have the listener attached,
@@ -3457,6 +3456,7 @@ YUI.add("event-dom", function(Y) {
                         _el_events[ek] = _el_events[ek] || {};
                         _el_events[ek][key] = cewrapper;
 
+                        // var capture = (Y.lang.isObject(obj) && obj.capture);
                         // attach a listener that fires the custom event
                         this.nativeAdd(el, type, cewrapper.fn, false);
                     }
@@ -3466,14 +3466,14 @@ YUI.add("event-dom", function(Y) {
                     a = Y.Array(arguments, 2, true);
                     // a = a.shift();
 
-                    var context = el;
-                    if (override) {
-                        if (override === true) {
-                            context = obj;
-                        } else {
-                            context = override;
-                        }
-                    }
+                    var context = obj || el;
+                    // if (override) {
+                        // if (override === true) {
+                            // context = obj;
+                        // } else {
+                            // context = override;
+                        // }
+                    // }
 
                     a[1] = context;
 
@@ -3655,10 +3655,8 @@ YUI.add("event-dom", function(Y) {
                 //     var E = Y.Event;
                 //     if (!E.DOMReady) {
                 //         E.DOMReady=true;
-
                 //         // Fire the content ready custom event
                 //         E.DOMReadyEvent.fire();
-
                 //         // Remove the DOMContentLoaded (FF/Opera)
                 //         E.nativeRemove(document, "DOMContentLoaded", E._ready);
                 //     }
@@ -3996,8 +3994,14 @@ YUI.add("event-facade", function(Y) {
          * @method wrapNode
          * @private
          */
+
         wrapNode = function(n) {
-            return (n) ? Y.Node.get(n) : n;
+
+            if (n) {
+                return Y.Node.get(n);
+            }
+
+            return null;
         },
 
         // resolve = (ua.webkit) ? function(n) {
@@ -4019,6 +4023,7 @@ YUI.add("event-facade", function(Y) {
          * @private
          */
         resolve = function(n) {
+
             try {
                 if (ua.webkit && n && 3 == n.nodeType) {
                     n = n.parentNode;
@@ -4048,7 +4053,9 @@ YUI.add("event-facade", function(Y) {
         // @TODO the document should be the target's owner document
 
         var e = ev, ot = origTarg, d = document, b = d.body,
-            x = e.pageX, y = e.pageY;
+            x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
+
+        Y.log("CE? " + isCE);
 
         // copy all primitives
         for (var i in e) {
@@ -4144,14 +4151,14 @@ YUI.add("event-facade", function(Y) {
          * @propery target
          * @type Node
          */
-        this.target = resolve(e.target || e.srcElement);
+        this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
 
         /**
          * Node reference for the element that the listener was attached to.
          * @propery originalTarget
          * @type Node
          */
-        this.originalTarget = resolve(ot);
+        this.originalTarget = (isCE) ? ot :  resolve(ot);
 
         var t = e.relatedTarget;
         if (!t) {
@@ -4167,7 +4174,7 @@ YUI.add("event-facade", function(Y) {
          * @propery relatedTarget
          * @type Node
          */
-        this.relatedTarget = resolve(t);
+        this.relatedTarget = (isCE) ? t : resolve(t);
         
         //////////////////////////////////////////////////////
         // methods

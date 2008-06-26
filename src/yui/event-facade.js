@@ -70,8 +70,14 @@ YUI.add("event-facade", function(Y) {
          * @method wrapNode
          * @private
          */
+
         wrapNode = function(n) {
-            return (n) ? Y.Node.get(n) : n;
+
+            if (n) {
+                return Y.Node.get(n);
+            }
+
+            return null;
         },
 
         // resolve = (ua.webkit) ? function(n) {
@@ -93,6 +99,7 @@ YUI.add("event-facade", function(Y) {
          * @private
          */
         resolve = function(n) {
+
             try {
                 if (ua.webkit && n && 3 == n.nodeType) {
                     n = n.parentNode;
@@ -122,7 +129,9 @@ YUI.add("event-facade", function(Y) {
         // @TODO the document should be the target's owner document
 
         var e = ev, ot = origTarg, d = document, b = d.body,
-            x = e.pageX, y = e.pageY;
+            x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
+
+        Y.log("CE? " + isCE);
 
         // copy all primitives
         for (var i in e) {
@@ -218,14 +227,14 @@ YUI.add("event-facade", function(Y) {
          * @propery target
          * @type Node
          */
-        this.target = resolve(e.target || e.srcElement);
+        this.target = (isCE) ? e.target : resolve(e.target || e.srcElement);
 
         /**
          * Node reference for the element that the listener was attached to.
          * @propery originalTarget
          * @type Node
          */
-        this.originalTarget = resolve(ot);
+        this.originalTarget = (isCE) ? ot :  resolve(ot);
 
         var t = e.relatedTarget;
         if (!t) {
@@ -241,7 +250,7 @@ YUI.add("event-facade", function(Y) {
          * @propery relatedTarget
          * @type Node
          */
-        this.relatedTarget = resolve(t);
+        this.relatedTarget = (isCE) ? t : resolve(t);
         
         //////////////////////////////////////////////////////
         // methods

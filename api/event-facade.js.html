@@ -108,8 +108,14 @@
 <span class="c">         * @method wrapNode</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
+
         <span class="nx">wrapNode</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">:</span> <span class="nx">n</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">// resolve = (ua.webkit) ? function(n) {</span>
@@ -131,6 +137,7 @@
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">resolve</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+
             <span class="k">try</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
@@ -160,7 +167,9 @@
         <span class="c">// @TODO the document should be the target&#39;s owner document</span>
 <span class="c"></span>
         <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nb">document</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
-            <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">;</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">,</span> <span class="nx">isCE</span> <span class="o">=</span> <span class="o">(</span><span class="nx">ev</span><span class="o">.</span><span class="nx">_YUI_EVENT</span><span class="o">);</span>
+
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;CE? &quot;</span> <span class="o">+</span> <span class="nx">isCE</span><span class="o">);</span>
 
         <span class="c">// copy all primitives</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
@@ -256,14 +265,14 @@
 <span class="c">         * @propery target</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">:</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">);</span>
 
         <span class="c">/**</span>
 <span class="c">         * Node reference for the element that the listener was attached to.</span>
 <span class="c">         * @propery originalTarget</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ot</span> <span class="o">:</span>  <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
@@ -279,7 +288,7 @@
 <span class="c">         * @propery relatedTarget</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
         
         <span class="c">//////////////////////////////////////////////////////</span>
 <span class="c"></span>        <span class="c">// methods</span>

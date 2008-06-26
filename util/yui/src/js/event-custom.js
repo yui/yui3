@@ -227,6 +227,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
     Y.CustomEvent.prototype = {
 
+        _YUI_EVENT: true,
+
         /**
          * Apply configuration properties
          * @method applyConfig
@@ -349,7 +351,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
                 
-                var ef = new Y.Event.Facade(this);
+                var ef = new Y.Event.Facade(this, this.originalTarget);
 
                 // update the details field with the arguments
                 ef.details = this.details;
