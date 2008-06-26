@@ -178,6 +178,8 @@ YUI.add('attribute', function(Y) {
          * @method add
          * @param {String} name The attribute key
          * @param {Object} config (optional) An object literal specifying the configuration for the attribute.
+         * <strong>NOTE:</strong> The config object is modified when adding an attribute, 
+         * so if you need to protect the original values, you will need to merge or clone the object.
          */
         addAtt: function(name, config) {
             Y.log('adding attribute: ' + name, 'info', 'Attribute');
@@ -444,13 +446,13 @@ YUI.add('attribute', function(Y) {
                     attCfg,
                     values,
                     value,
-                    atts = Y.merge(cfg);
+                    atts = cfg;
 
                 values = this._splitAttVals(initValues);
 
                 for (att in atts) {
                     if (O.owns(atts, att)) {
-                        attCfg = atts[att];
+                        attCfg = Y.merge(atts[att]);
                         value = this._initAttVal(att, attCfg, values);
                         if (value !== undefined) {
                             attCfg.value = value;
