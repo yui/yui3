@@ -52,30 +52,23 @@
     Base.NAME = 'base';
 
     var _instances = {};
-    
+
     Base.build = function(main, extensions, cfg) {
 
         var build = Base.build,
             builtClass,
             extClass,
             aggregates,
-            methods,
-            method,
             dynamic,
             key = main.NAME;
 
         if (cfg) {
             aggregates = cfg.aggregates;
-            methods = cfg.methods;
             dynamic = cfg.dynamic;
         }
 
-        if (dynamic) {
-            builtClass = build._template(main);
-            extensions.splice(0, 0, main);
-        } else {
-            builtClass = main;
-        }
+        // Create dynamic class or just modify main class
+        builtClass = (dynamic) ? build._template(main) : main;
 
         builtClass._build = {
             id: null,
@@ -89,22 +82,15 @@
             al = aggregates.length,
             i;
 
-        if (dynamic) {
-            // Statics
-            for (i = 0; i < el; i++) {
-                extClass = extensions[i];
-                Y.mix(builtClass, extClass, true);
-            }
-
-            // Need to reset aggregates after Y.mix(.., .., true)
-            if (aggregates) {
-                for (i = 0; i < al; i++) {
-                    var val = aggregates[i];
-                    if (O.owns(main, val)) {
-                        builtClass[val] = L.isArray(main[val]) ? [] : {};
-                    }
+        // Shallow isolate aggregates
+        if (dynamic && aggregates) {
+            for (i = 0; i < al; i++) {
+                var val = aggregates[i];
+                if (O.owns(main, val)) {
+                    builtClass[val] = L.isArray(main[val]) ? [] : {};
                 }
             }
+            Y.aggregate(builtClass, main, true, aggregates);
         }
 
         // Augment/Aggregate
@@ -120,14 +106,6 @@
 
             builtClass._build.exts.push(extClass);
             key = key + ":" + Y.stamp(extClass);
-        }
-
-        // Methods
-        if (methods) {
-            for (i = 0; i < methods.length; i++) {
-                method = methods[i];
-                builtClass.prototype[method] = build._wrappedFn(method);
-            }
         }
 
         builtClass._build.id = key;
@@ -148,6 +126,8 @@
         _template: function(main) {
 
             function BuiltClass() {
+                BuiltClass.superclass.constructor.apply(this, arguments);
+
                 var f = BuiltClass._build.exts, 
                     l = f.length;
 
@@ -156,6 +136,8 @@
                 }
                 return this;
             }
+
+            Y.extend(BuiltClass, main);
 
             return BuiltClass;
         },
@@ -174,25 +156,6 @@
             }
         
             return false;
-        },
-
-        _wrappedFn : function(method) {
-            return function() {
-        
-                var f = this.constructor._build.exts,
-                    l = f.length,
-                    fn,
-                    i,
-                    r;
-    
-                for (i = 0; i < l; i++) {
-                    fn = f[i].prototype[method];
-                    if (fn) {
-                        // TODO: Can we do anything meaningful with return values?
-                        r = fn.apply(this, arguments);
-                    }
-                }
-            };
         }
     });
 
