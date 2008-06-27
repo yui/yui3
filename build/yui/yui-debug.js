@@ -2286,7 +2286,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          * @param args {Array} the arguments array to apply to the listener
          * @private
          */
-        _notify: function(s, args) {
+        _notify: function(s, args, ef) {
 
             this.log(this.type + "->" + ": " +  s);
 
@@ -2298,7 +2298,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
                 
-                var ef = new Y.Event.Facade(this, this.originalTarget);
+                ef = ef || new Y.Event.Facade(this, this.originalTarget);
 
                 // update the details field with the arguments
                 ef.details = this.details;
