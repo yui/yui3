@@ -131,8 +131,6 @@ YUI.add("event-facade", function(Y) {
         var e = ev, ot = origTarg, d = document, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
 
-        Y.log("CE? " + isCE);
-
         // copy all primitives
         for (var i in e) {
             if (!Y.Lang.isObject(e[i])) {

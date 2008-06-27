@@ -465,6 +465,9 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 var hasSub = false;
                 es.lastLogState = es.logging;
 
+
+                var ef = new Y.Event.Facade(this, this.originalTarget);
+
                 for (i in subs) {
                     if (Y.Object.owns(subs, i)) {
 
@@ -480,7 +483,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                         s = subs[i];
                         if (s && s.fn) {
-                            ret = this._notify(s, args);
+                            ret = this._notify(s, args, ef);
                             if (false === ret) {
                                 this.stopped = 2;
                             }
@@ -525,7 +528,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                             s = subs[i];
                             if (s && s.fn) {
-                                ret = this._notify(s, args);
+                                ret = this._notify(s, args, ef);
                                 if (false === ret) {
                                     this.stopped = 2;
                                 }

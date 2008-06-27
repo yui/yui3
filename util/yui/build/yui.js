@@ -2412,6 +2412,9 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 var hasSub = false;
                 es.lastLogState = es.logging;
 
+
+                var ef = new Y.Event.Facade(this, this.originalTarget);
+
                 for (i in subs) {
                     if (Y.Object.owns(subs, i)) {
 
@@ -2427,7 +2430,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                         s = subs[i];
                         if (s && s.fn) {
-                            ret = this._notify(s, args);
+                            ret = this._notify(s, args, ef);
                             if (false === ret) {
                                 this.stopped = 2;
                             }
@@ -2472,7 +2475,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                             s = subs[i];
                             if (s && s.fn) {
-                                ret = this._notify(s, args);
+                                ret = this._notify(s, args, ef);
                                 if (false === ret) {
                                     this.stopped = 2;
                                 }
@@ -4054,8 +4057,6 @@ YUI.add("event-facade", function(Y) {
 
         var e = ev, ot = origTarg, d = document, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
-
-        Y.log("CE? " + isCE);
 
         // copy all primitives
         for (var i in e) {
