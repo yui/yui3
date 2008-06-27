@@ -2279,6 +2279,22 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             return found;
         },
 
+        _getFacade: function(args) {
+
+            var ef = new Y.Event.Facade(this, this.originalTarget);
+
+            // update the details field with the arguments
+            ef.details = this.details;
+
+            // if the first argument is an object literal, apply the
+            // properties to the event facade
+            if (args && Y.Lang.isObject(args[0], true)) {
+                Y.mix(ef, args[0]);
+            }
+
+            return ef;
+        },
+
         /**
          * Notify a single subscriber
          * @method _notify
@@ -2298,15 +2314,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
                 
-                ef = ef || new Y.Event.Facade(this, this.originalTarget);
-
-                // update the details field with the arguments
-                ef.details = this.details;
-
-                // if the first argument is an object literal, apply the
-                // properties to the event facade
-                if (args && Y.Lang.isObject(args[0], true)) {
-                    Y.mix(ef, args[0]);
+                if (!ef) {
+                    ef = this._getFacade(args);
                 }
 
                 a[0] = ef;
@@ -2413,7 +2422,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 es.lastLogState = es.logging;
 
 
-                var ef = new Y.Event.Facade(this, this.originalTarget);
+                var ef = this._getFacade(args);
 
                 for (i in subs) {
                     if (Y.Object.owns(subs, i)) {

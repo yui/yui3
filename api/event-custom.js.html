@@ -370,6 +370,22 @@
             <span class="k">return</span> <span class="nx">found</span><span class="o">;</span>
         <span class="o">},</span>
 
+        <span class="nx">_getFacade</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">);</span>
+
+            <span class="c">// update the details field with the arguments</span>
+<span class="c"></span>            <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
+
+            <span class="c">// if the first argument is an object literal, apply the</span>
+<span class="c"></span>            <span class="c">// properties to the event facade</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">ef</span><span class="o">;</span>
+        <span class="o">},</span>
+
         <span class="c">/**</span>
 <span class="c">         * Notify a single subscriber</span>
 <span class="c">         * @method _notify</span>
@@ -389,15 +405,8 @@
                 <span class="c">// @TODO object literal support to fire makes it possible for</span>
 <span class="c"></span>                <span class="c">// config info to be passed if we wish.</span>
 <span class="c"></span>                
-                <span class="nx">ef</span> <span class="o">=</span> <span class="nx">ef</span> <span class="o">||</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">);</span>
-
-                <span class="c">// update the details field with the arguments</span>
-<span class="c"></span>                <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
-
-                <span class="c">// if the first argument is an object literal, apply the</span>
-<span class="c"></span>                <span class="c">// properties to the event facade</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getFacade</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
@@ -504,7 +513,7 @@
                 <span class="nx">es</span><span class="o">.</span><span class="nx">lastLogState</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">;</span>
 
 
-                <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">);</span>
+                <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getFacade</span><span class="o">(</span><span class="nx">args</span><span class="o">);</span>
 
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">subs</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
