@@ -2422,7 +2422,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 es.lastLogState = es.logging;
 
 
-                var ef = this._getFacade(args);
+                var ef = (this.emitFacade) ? this._getFacade(args) : null;
 
                 for (i in subs) {
                     if (Y.Object.owns(subs, i)) {
