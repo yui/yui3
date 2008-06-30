@@ -348,7 +348,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
-            if (args && Y.Lang.isObject(args[0])) {
+            if (args && Y.Lang.isObject(args[0]), true) {
                 Y.mix(ef, args[0], true);
             }
 
