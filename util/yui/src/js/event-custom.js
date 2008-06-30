@@ -337,6 +337,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ef = this._facade;
 
             if (!ef) {
+                // Y.log('creating facade ' + Y.stamp(this));
                 ef = new Y.Event.Facade(this, this.originalTarget);
             }
 
@@ -347,8 +348,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
-            if (args && Y.Lang.isObject(args[0], true)) {
-                Y.mix(ef, args[0]);
+            if (args && Y.Lang.isObject(args[0])) {
+                Y.mix(ef, args[0], true);
             }
 
             this._facade = ef;
