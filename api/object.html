@@ -227,7 +227,7 @@ on the object.tructor prototype.
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class=" deprecated">
                                     <h4>
                                         <a name="method_owns">owns</a></h4>
                                     <div class="detail">
@@ -235,7 +235,7 @@ on the object.tructor prototype.
                                         
                                         
                                         
-                                        void
+                                        boolean
                                             <strong>owns</strong>
                                            (
                                                 
@@ -250,19 +250,6 @@ on the object.tructor prototype.
                                             Determines whether or not the property was added
 to the object instance.  Returns false if the property is not present
 in the object, or was inherited from the prototype.
-This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
-This 
-There is a discrepancy between Y.Object.owns and
-Object.prototype.hasOwnProperty when the property is a primitive added to
-both the instance AND prototype with the same value:
-<pre>
-var A = function() {};
-A.prototype.foo = 'foo';
-var a = new A();
-a.foo = 'foo';
-alert(a.hasOwnProperty('foo')); // true
-alert(Y.Object.owns(a, 'foo')); // false when using fallback
-</pre>
                                         </div>
 
                                         <div class="description">
@@ -278,11 +265,16 @@ alert(Y.Object.owns(a, 'foo')); // false when using fallback
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        boolean
                                                     </code></dt>
-                                                    <dd>Boolean</dd>
+                                                    <dd>true if the object has the property on the instance</dd>
                                                 </dl>
              
+                                            <div class="deprecated">
+                                                <strong>Deprecated</strong> Safari 1.x support has been removed, so this is simply a 
+wrapper for the native implementation.  Use the native implementation
+directly instead.
+                                            </div>        
                                         </div>
 
                                     </div>
@@ -471,7 +463,7 @@ the key inside of the braces.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_Object">Object</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=" deprecated"><!--<code>boolean</code>-->
                                 <a href="#method_owns">owns</a>
                                 </li>
                                 <li class=""><!--<code>String</code>-->

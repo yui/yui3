@@ -39,7 +39,7 @@
 <div class="highlight" ><pre>    <span class="c">/**</span>
 <span class="c">     * Base class support for objects requiring</span>
 <span class="c">     * managed attributes and acting as event targets</span>
-<span class="c">     * </span>
+<span class="c">     *</span>
 <span class="c">     * @module base</span>
 <span class="c">     */</span>
 
@@ -51,7 +51,7 @@
         <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
-    <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">EventTarget</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="k">function</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SEP</span><span class="o">)</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">owner</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
@@ -73,51 +73,53 @@
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
-
-        <span class="c">// Hack: Augment doesn&#39;t seem to be invoking the constructor without this.</span>
-<span class="c"></span>        <span class="c">// Calling getEvent(which is a method not over-ridden by Base) causes</span>
-<span class="c"></span>        <span class="c">// Y.augment supercedes replacement to kick in</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">INIT</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
 <span class="c">     * Name string to be used to identify instances of </span>
 <span class="c">     * this class, for example in prefixing events.</span>
-<span class="c">     * </span>
+<span class="c">     *</span>
 <span class="c">     * Classes extending Base, should define their own</span>
 <span class="c">     * static NAME property.</span>
 <span class="c">     * </span>
 <span class="c">     * @property NAME</span>
+<span class="c">     * @type String</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">;</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Object literal defining the set of attributes which</span>
+<span class="c">     * will be available for instances of this class, and </span>
+<span class="c">     * how they are configured. See Attributes addAtt method</span>
+<span class="c">     * for a description of configuration options available </span>
+<span class="c">     * for each attribute.</span>
+<span class="c">     *</span>
+<span class="c">     * @property ATTRS</span>
+<span class="c">     * @type Object</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+
     <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
-    
+
     <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span>
             <span class="nx">builtClass</span><span class="o">,</span>
             <span class="nx">extClass</span><span class="o">,</span>
             <span class="nx">aggregates</span><span class="o">,</span>
-            <span class="nx">methods</span><span class="o">,</span>
-            <span class="nx">method</span><span class="o">,</span>
             <span class="nx">dynamic</span><span class="o">,</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">main</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">aggregates</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">aggregates</span><span class="o">;</span>
-            <span class="nx">methods</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">methods</span><span class="o">;</span>
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="nx">cfg</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">;</span>
         <span class="o">}</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">);</span>
-            <span class="nx">extensions</span><span class="o">.</span><span class="nx">splice</span><span class="o">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">main</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">builtClass</span> <span class="o">=</span> <span class="nx">main</span><span class="o">;</span>
-        <span class="o">}</span>
+        <span class="c">// Create dynamic class or just modify main class</span>
+<span class="c"></span>        <span class="nx">builtClass</span> <span class="o">=</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">:</span> <span class="nx">main</span><span class="o">;</span>
 
         <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
@@ -131,22 +133,15 @@
             <span class="nx">al</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
             <span class="nx">i</span><span class="o">;</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Statics</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="nx">extClass</span> <span class="o">=</span> <span class="nx">extensions</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="c">// Need to reset aggregates after Y.mix(.., .., true)</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">al</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                    <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
-                    <span class="o">}</span>
+        <span class="c">// Shallow isolate aggregates</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span> <span class="o">&amp;&amp;</span> <span class="nx">aggregates</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">al</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">aggregates</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">builtClass</span><span class="o">[</span><span class="nx">val</span><span class="o">]</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">main</span><span class="o">[</span><span class="nx">val</span><span class="o">])</span> <span class="o">?</span> <span class="o">[]</span> <span class="o">:</span> <span class="o">{};</span>
                 <span class="o">}</span>
             <span class="o">}</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="nx">aggregates</span><span class="o">);</span>
         <span class="o">}</span>
 
         <span class="c">// Augment/Aggregate</span>
@@ -162,14 +157,6 @@
 
             <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="c">// Methods</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">methods</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">methods</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                <span class="nx">method</span> <span class="o">=</span> <span class="nx">methods</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
-                <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">method</span><span class="o">]</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_wrappedFn</span><span class="o">(</span><span class="nx">method</span><span class="o">);</span>
-            <span class="o">}</span>
         <span class="o">}</span>
 
         <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
@@ -190,6 +177,8 @@
         <span class="nx">_template</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">function</span> <span class="nx">BuiltClass</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+
                 <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span> 
                     <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
@@ -198,6 +187,8 @@
                 <span class="o">}</span>
                 <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
             <span class="o">}</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">BuiltClass</span><span class="o">,</span> <span class="nx">main</span><span class="o">);</span>
 
             <span class="k">return</span> <span class="nx">BuiltClass</span><span class="o">;</span>
         <span class="o">},</span>
@@ -216,25 +207,6 @@
             <span class="o">}</span>
         
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="nx">_wrappedFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        
-                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
-                    <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
-                    <span class="nx">fn</span><span class="o">,</span>
-                    <span class="nx">i</span><span class="o">,</span>
-                    <span class="nx">r</span><span class="o">;</span>
-    
-                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                    <span class="nx">fn</span> <span class="o">=</span> <span class="nx">f</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">method</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// TODO: Can we do anything meaningful with return values?</span>
-<span class="c"></span>                        <span class="nx">r</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">};</span>
         <span class="o">}</span>
     <span class="o">});</span>
 
@@ -289,9 +261,11 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span><span class="o">;</span>
 
             <span class="c">/**</span>
+<span class="c">             * &lt;p&gt;</span>
 <span class="c">             * Init event, fired prior to initialization. Invoking</span>
 <span class="c">             * the preventDefault method on the EventFacade provided </span>
 <span class="c">             * to subscribers will prevent initialization from occuring.</span>
+<span class="c">             * &lt;/p&gt;</span>
 <span class="c">             * &lt;p&gt;</span>
 <span class="c">             * Subscribers to the after momemt of this event, will be notified</span>
 <span class="c">             * after initialization of the object is complete (and therefore</span>
@@ -312,9 +286,11 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Destroy lifecycle method. Fires the destroy</span>
 <span class="c">         * event, prior to invoking destructors for the</span>
 <span class="c">         * class heirarchy.</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Subscribers to the destroy</span>
 <span class="c">         * event can preventDefault to prevent destruction</span>
@@ -327,9 +303,11 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destroy called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
 
             <span class="c">/**</span>
+<span class="c">             * &lt;p&gt;</span>
 <span class="c">             * Destroy event, fired prior to destruction. Invoking</span>
 <span class="c">             * the preventDefault method on the EventFacade provided </span>
 <span class="c">             * to subscribers will prevent destruction from proceeding.</span>
+<span class="c">             * &lt;/p&gt;</span>
 <span class="c">             * &lt;p&gt;</span>
 <span class="c">             * Subscribers to the after momemt of this event, will be notified</span>
 <span class="c">             * after destruction is complete (and as a result cannot prevent</span>
@@ -348,9 +326,9 @@
 
         <span class="c">/**</span>
 <span class="c">         * Default init event handler</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _defInitFn</span>
-<span class="c">         * @private</span>
+<span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
@@ -360,9 +338,9 @@
 
         <span class="c">/**</span>
 <span class="c">         * Default destroy event handler</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _defDestroyFn</span>
-<span class="c">         * @private</span>
+<span class="c">         * @protected</span>
 <span class="c">         */</span>
         <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
@@ -444,7 +422,7 @@
 <span class="c">         * @method toString</span>
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">contructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -456,9 +434,11 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Subscribe to a custom event hosted by this object.</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s subscribe method, to add the name prefix </span>
+<span class="c">         * Subscribe to a custom event hosted by this object.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Overrides Event.Target&#39;s subscribe method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * </span>
@@ -479,11 +459,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Fire a custom event by name.  The callback functions will be executed</span>
 <span class="c">         * from the context specified when the event was created, and with the </span>
 <span class="c">         * following parameters.</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s fire method, to add the name prefix </span>
+<span class="c">         * Overrides Event.Target&#39;s fire method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method fire</span>
@@ -492,7 +474,7 @@
 <span class="c">         * the name property of the instance will be used as the default prefix.</span>
 <span class="c">         * @param {Object*} arguments an arbitrary set of parameters to pass to </span>
 <span class="c">         * the handler.</span>
-<span class="c">         * @return {Boolean} the return value from EventTarget.fire</span>
+<span class="c">         * @return {Boolean} the return value from Event.Target.fire</span>
 <span class="c">         *                   </span>
 <span class="c">         */</span>
         <span class="nx">fire</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -506,12 +488,13 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Creates a new custom event of the specified type.  If a custom event</span>
 <span class="c">         * by that name already exists, it will not be re-created.  In either</span>
 <span class="c">         * case the custom event is returned. </span>
-<span class="c">         *</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s publish method, to add the name prefix </span>
+<span class="c">         * Overrides Event.Target&#39;s publish method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         *</span>
@@ -519,7 +502,7 @@
 <span class="c">         * @param {String} type  The type, or name of the event. If the type does not </span>
 <span class="c">         * contain a prefix (&quot;prefix:eventType&quot;), the name property of the instance will </span>
 <span class="c">         * be used as the default prefix.</span>
-<span class="c">         * @param {Object} opts Optional config params (see EventTarget publish for details)</span>
+<span class="c">         * @param {Object} opts Optional config params (see Event.Target publish for details)</span>
 <span class="c">         * @return {Event.Custom} the custom event</span>
 <span class="c">         */</span>
         <span class="nx">publish</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
@@ -529,12 +512,14 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Subscribe to a custom event hosted by this object.  The</span>
 <span class="c">         * supplied callback will execute &lt;em&gt;after&lt;/em&gt; any listeners added</span>
 <span class="c">         * via the subscribe method, and after the default function,</span>
 <span class="c">         * if configured for the event, has executed.</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s after method, to add the name prefix </span>
+<span class="c">         * Overrides Event.Target&#39;s after method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method after</span>
@@ -552,12 +537,14 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Unsubscribes one or more listeners the from the specified event</span>
-<span class="c">         * @method unsubscribe.</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s unsubscribe method, to add the name prefix </span>
+<span class="c">         * Unsubscribes one or more listeners the from the specified event.</span>
+<span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * &lt;p&gt;</span>
+<span class="c">         * Overrides Event.Target&#39;s unsubscribe method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * @method unsubscribe</span>
 <span class="c">         * @param type {String|Object} Either the handle to the subscriber or the </span>
 <span class="c">         *                        type of event.  If the type</span>
 <span class="c">         *                        is not specified, it will attempt to remove</span>
@@ -583,11 +570,13 @@
         <span class="o">},</span>
         
         <span class="c">/**</span>
+<span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Removes all listeners from the specified event.  If the event type</span>
 <span class="c">         * is not specified, all listeners from all hosted custom events will</span>
 <span class="c">         * be removed.</span>
+<span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
-<span class="c">         * Overrides EventTarget&#39;s unsubscribeAll method, to add the name prefix </span>
+<span class="c">         * Overrides Event.Target&#39;s unsubscribeAll method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method unsubscribeAll</span>
@@ -602,7 +591,8 @@
         <span class="o">}</span>
     <span class="o">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">);</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">;</span>
 </pre></div>
                     </div>

@@ -44,7 +44,7 @@
                         <span class="extends">
                           - uses 
                             
-                                <a href="EventTarget.html">EventTarget</a>
+                                <a href="Event.Target.html">Event.Target</a>
                             
                         </span>
                         
@@ -56,7 +56,9 @@
   
 
                     <div class="summary description">
-                        Attribute provides managed attribute support. 
+                        <p>
+Attribute provides managed attribute support. 
+</p>
 <p>
 The class is designed to be augmented onto a host class, 
 and allows the host to support get/set methods for attributes,
@@ -65,6 +67,7 @@ initial configuration support and attribute change events.
 <p>Attributes added to the host can:</p>
 <ul>
 <li>Be defined as read-only.</li>
+<li>Be defined as write-once.</li>
 <li>Be defined with a set function, which can be used to manipulate
 values passed to Attribute's set method, before they are stored.</li>
 <li>Be defined with a validator function, to validate values before they are stored.</li>
@@ -79,10 +82,10 @@ before they are returned by Attribute's get method.</li>
                             <h3 id="properties">Properties</h3>
                             <div class="content">
                                     <div class="">
-                                    <h4><a name="property_Attribute.CLONE">Attribute.CLONE</a>
-                                        <code>- static final {Object}
+                                    <h4><a name="property_CLONE">CLONE</a>
+                                        <code>- static final Object
 <p>
-Constants for clone formats supported by Attribute
+Constants for clone formats supported by Attribute.
 </p>
 <p>
 By default attribute values returned by the get method
@@ -194,18 +197,18 @@ on the clone type provided.
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__defAttrSet">_defAttrSet</a></h4>
+                                        <a name="method__defAttSet">_defAttSet</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_defAttrSet</strong>
+                                            <strong>_defAttSet</strong>
                                            (
                                                 
                                                         
-                                                         CustomEvent
+                                                         e
                                                     
                                                 
                                             )
@@ -220,8 +223,8 @@ on the clone type provided.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>CustomEvent &lt;EventFacade&gt;</code>
-                                                             Facade
+                                                            <code>e &lt;EventFacade&gt;</code>
+                                                             The event object for the custom event
                                                         </dd>
                                                 </dl>
 
@@ -240,14 +243,14 @@ on the clone type provided.
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__getSubValue">_getSubValue</a></h4>
+                                        <a name="method__getSubAttVal">_getSubAttVal</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
                                         Any
-                                            <strong>_getSubValue</strong>
+                                            <strong>_getSubAttVal</strong>
                                            (
                                                 
                                                         
@@ -331,7 +334,7 @@ from which to obtain the sub value.
                                                         </dd>
                                                         <dd>
                                                             <code>initValues &lt;Object&gt;</code>
-                                                             Name/Value hash of initial values to apply
+                                                             Name/value hash of initial values to apply
                                                         </dd>
                                                 </dl>
 
@@ -350,14 +353,14 @@ from which to obtain the sub value.
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__initAttValue">_initAttValue</a></h4>
+                                        <a name="method__initAttVal">_initAttVal</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
-                                        void
-                                            <strong>_initAttValue</strong>
+                                        Any
+                                            <strong>_initAttVal</strong>
                                            (
                                                 
                                                         
@@ -369,14 +372,14 @@ from which to obtain the sub value.
                                                     
                                                 
                                                         , 
-                                                         Initial
+                                                         initVales
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Set the initial value of the given attribute from
+                                            Returns the initial value of the given attribute from
 either the default configuration provided, or the 
 over-ridden value if it exists in the initValues 
 hash provided.
@@ -396,17 +399,18 @@ hash provided.
 object literal
                                                         </dd>
                                                         <dd>
-                                                            <code>Initial &lt;Object&gt;</code>
-                                                             attribute values.
+                                                            <code>initVales &lt;Object&gt;</code>
+                                                             Initial attribute values, provided 
+for the instance
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Any
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>Initial value of the attribute.</dd>
                                                 </dl>
              
                                         </div>
@@ -416,14 +420,14 @@ object literal
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__setSubValue">_setSubValue</a></h4>
+                                        <a name="method__setSubAttVal">_setSubAttVal</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
                                         Object
-                                            <strong>_setSubValue</strong>
+                                            <strong>_setSubAttVal</strong>
                                            (
                                                 
                                                         
@@ -487,26 +491,41 @@ undefined, if the path was invalid.</dd>
                                          private 
                                         
                                         
-                                        void
+                                        Object
                                             <strong>_splitAttrValues</strong>
                                            (
+                                                
+                                                        
+                                                         valueHash
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
                                             Utility to split out regular attribute values
-from complex attribute values
+from complex attribute values, so that complex
+attributes can be keyed by top level attribute name.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>valueHash &lt;Object&gt;</code>
+                                                             Name/value hash of initial values
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Object
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>Object literal with 2 properties - "simple" and "complex",
+containing simple and complex attribute values respectively keyed 
+by attribute the top level attribute name.</dd>
                                                 </dl>
              
                                         </div>
@@ -531,23 +550,29 @@ from complex attribute values
                                                     
                                                 
                                                         , 
-                                                         hash
+                                                         config
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Adds an attribute.
+                                            <p>
+Adds an attribute, with the provided configuration to the host object.
+</p>
 <p>
-The hash argument object literal supports the following optional properties:
+The config argument object literal supports the following optional properties:
 </p>
 <dl>
 <dt>value {Any}</dt>
 <dd>The initial value to set on the attribute</dd>
-<dt>readonly {Boolean}</dt>
-<dd>Whether or not the attribute is read only. Attributes having readonly set to true
-cannot be set by invoking the set method</dd>
+<dt>readOnly {Boolean}</dt>
+<dd>Whether or not the attribute is read only. Attributes having readOnly set to true
+cannot be set by invoking the set method.</dd>
+<dt>writeOnce {Boolean}</dt>
+<dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+can only have their values set once, be it through the default configuration, 
+constructor configuration arguments, or by invoking set.</dd>
 <dt>set {Function}</dt>
 <dd>The setter function to be invoked (within the context of the host object) before 
 the attribute is stored by a call to the set method. The value returned by the 
@@ -577,8 +602,10 @@ options available</dd>
                                                              The attribute key
                                                         </dd>
                                                         <dd>
-                                                            <code>hash &lt;Object&gt;</code>
+                                                            <code>config &lt;Object&gt;</code>
                                                              (optional) An object literal specifying the configuration for the attribute.
+<strong>NOTE:</strong> The config object is modified when adding an attribute, 
+so if you need to protect the original values, you will need to merge or clone the object.
                                                         </dd>
                                                 </dl>
 
@@ -628,7 +655,9 @@ as the only argument.
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>key &lt;String&gt;</code>
-                                                             The attribute whose value will be returned.
+                                                             The attribute whose value will be returned. If
+the value of the attribute is an Object, dot notation can be used to
+obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                                         </dd>
                                                 </dl>
 
@@ -671,7 +700,7 @@ as the only argument.
                                                     <code>
                                                         Object
                                                     </code></dt>
-                                                    <dd>A hash of attributes: name/values pairs</dd>
+                                                    <dd>A hash of attributes: name/value pairs</dd>
                                                 </dl>
              
                                         </div>
@@ -746,7 +775,7 @@ as the only argument.
                                                     
                                                 
                                                         , 
-                                                         Event
+                                                         opts
                                                     
                                                 
                                             )
@@ -762,17 +791,21 @@ as the only argument.
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>name &lt;String&gt;</code>
-                                                             The name of the attribute
+                                                             The name of the attribute. Note, if the 
+value of the attribute is an Object, dot notation can be used
+to set the value of a property within the object 
+(e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
+been declared as an immutable attribute (see Attribute.CLONE).
                                                         </dd>
                                                         <dd>
                                                             <code>value &lt;Any&gt;</code>
                                                              The value to apply to the attribute
                                                         </dd>
                                                         <dd>
-                                                            <code>Event &lt;Object&gt;</code>
-                                                             options. This object will be mixed into
+                                                            <code>opts &lt;Object&gt;</code>
+                                                             Optional event data. This object will be mixed into
 the event facade passed as the first argument to subscribers 
-to attribute change events
+of attribute change events
                                                         </dd>
                                                 </dl>
 
@@ -838,6 +871,14 @@ to attribute change events
                             </div>
                         </div>
 
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
 
 
 
@@ -904,10 +945,10 @@ to attribute change events
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
-                                <li class=""><a href="#property_Attribute.CLONE">Attribute.CLONE</a>
-                                        <!--<code>&lt;{Object}
+                                <li class=""><a href="#property_CLONE">CLONE</a>
+                                        <!--<code>&lt;Object
 <p>
-Constants for clone formats supported by Attribute
+Constants for clone formats supported by Attribute.
 </p>
 <p>
 By default attribute values returned by the get method
@@ -950,21 +991,21 @@ This is the default behavior.
                                 <a href="#method__clone">_clone</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
-                                <a href="#method__defAttrSet">_defAttrSet</a>
+                                <a href="#method__defAttSet">_defAttSet</a>
                                 </li>
                                 <li class="private"><!--<code>Any</code>-->
-                                <a href="#method__getSubValue">_getSubValue</a>
+                                <a href="#method__getSubAttVal">_getSubAttVal</a>
                                 </li>
                                 <li class="protected"><!--<code>void</code>-->
                                 <a href="#method__initAtts">_initAtts</a>
                                 </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__initAttValue">_initAttValue</a>
+                                <li class="private"><!--<code>Any</code>-->
+                                <a href="#method__initAttVal">_initAttVal</a>
                                 </li>
                                 <li class="private"><!--<code>Object</code>-->
-                                <a href="#method__setSubValue">_setSubValue</a>
+                                <a href="#method__setSubAttVal">_setSubAttVal</a>
                                 </li>
-                                <li class="private"><!--<code>void</code>-->
+                                <li class="private"><!--<code>Object</code>-->
                                 <a href="#method__splitAttrValues">_splitAttrValues</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->

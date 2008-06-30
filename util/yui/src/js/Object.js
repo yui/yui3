@@ -23,32 +23,21 @@ YUI.add("object", function(Y) {
      * Determines whether or not the property was added
      * to the object instance.  Returns false if the property is not present
      * in the object, or was inherited from the prototype.
-     * This abstraction is provided to basic hasOwnProperty for Safari 1.3.x.
-     * This 
-     * There is a discrepancy between Y.Object.owns and
-     * Object.prototype.hasOwnProperty when the property is a primitive added to
-     * both the instance AND prototype with the same value:
-     * <pre>
-     * var A = function() {};
-     * A.prototype.foo = 'foo';
-     * var a = new A();
-     * a.foo = 'foo';
-     * alert(a.hasOwnProperty('foo')); // true
-     * alert(Y.Object.owns(a, 'foo')); // false when using fallback
-     * </pre>
+     *
+     * @deprecated Safari 1.x support has been removed, so this is simply a 
+     * wrapper for the native implementation.  Use the native implementation
+     * directly instead.
+     *
+     * @TODO Remove
+     *
      * @method owns
      * @param o {any} The object being testing
      * @parma p {string} the property to look for
-     * @return Boolean
+     * @return {boolean} true if the object has the property on the instance
      */
-    O.owns = (Object.prototype.hasOwnProperty) ? 
-        function(o, p) {
-            return (o.hasOwnProperty) ? o.hasOwnProperty(p) : true;
-        } : 
-        function(o, p) {
-            return !L.isUndefined(o[p]) && 
-                    o.constructor.prototype[p] !== o[p];
-        };
+    O.owns = function(o, p) {
+        return (o && o.hasOwnProperty) ? o.hasOwnProperty(p) : false;
+    };
 
     /**
      * Returns an array containing the object's keys

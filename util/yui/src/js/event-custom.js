@@ -334,10 +334,16 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
         _getFacade: function(args) {
 
-            var ef = new Y.Event.Facade(this, this.originalTarget);
+            var ef = this._facade;
+
+            if (!ef) {
+                ef = new Y.Event.Facade(this, this.originalTarget);
+            }
 
             // update the details field with the arguments
             ef.details = this.details;
+            ef.target = this.target;
+            ef.originalTarget = this.originalTarget;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
@@ -345,7 +351,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 Y.mix(ef, args[0]);
             }
 
-            return ef;
+            this._facade = ef;
+
+
+            return this._facade;
         },
 
         /**

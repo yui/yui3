@@ -121,14 +121,14 @@ property names rather than e.details[1]
     o1.addTarget(o2);
 
 
-    // o2.addTarget(o3);
+    o2.addTarget(o3);
 
     o1.subscribe('o:1', function(e) {
         // Y.log('o1, o:1: ' + Y.Lang.dump(Y.Array(arguments)));
         // Y.log('o1, o:1: ');
-        Y.log('o1, o:1: ' + e.originalTarget);
+        Y.log('o1, o:1: ' + Y.Lang.dump(e.target));
         this.fire('chain', 1, 2);
-        e.halt();
+        //e.halt();
     });
 
     o1.after('o:1', function(e) {
@@ -144,7 +144,7 @@ property names rather than e.details[1]
     o2.subscribe('o:1', function(e) {
         // Y.log('o2, o:1 from o1: ' + Y.Lang.dump(Y.Array(arguments)));
         Y.log('o2, o:1 from o1: ' + e.target);
-        e.halt();
+        //e.halt();
     });
 
     o2.subscribe('chain', function(e) {
@@ -154,7 +154,7 @@ property names rather than e.details[1]
 
 
     o3.subscribe('o:1', function(e) {
-        Y.log('o1 to o3: ' + Y.Lang.dump(Y.Array(arguments)));
+        Y.log('o1 to o3: ' + Y.Lang.dump(e.target));
     });
 
 

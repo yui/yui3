@@ -52,9 +52,9 @@
 <span class="c">        * @private</span>
 <span class="c">        * @property _activeShims</span>
 <span class="c">        * @description Placeholder for all active shims on the page</span>
-<span class="c">        * @type {Object}</span>
+<span class="c">        * @type {Array}</span>
 <span class="c">        */</span>
-        <span class="nx">_activeShims</span><span class="o">:</span> <span class="o">{},</span>
+        <span class="nx">_activeShims</span><span class="o">:</span> <span class="o">[],</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @method _hasActiveShim</span>
@@ -62,14 +62,53 @@
 <span class="c">        * @return {Boolean}</span>
 <span class="c">        */</span>
         <span class="nx">_hasActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="k">return</span> <span class="o">((</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _addActiveShim </span>
+<span class="c">        * @description Adds a Drop Target to the list of active shims</span>
+<span class="c">        * @param {Object} d The Drop instance to add to the list.</span>
+<span class="c">        */</span>
+        <span class="nx">_addActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">===</span> <span class="nx">d</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">add</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
                 <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">add</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _removeActiveShim </span>
+<span class="c">        * @description Removes a Drop Target to the list of active shims</span>
+<span class="c">        * @param {Object} d The Drop instance to remove from the list.</span>
+<span class="c">        */</span>
+        <span class="nx">_removeActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">!==</span> <span class="nx">d</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">s</span><span class="o">[</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span>
+                
+            <span class="o">});</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method syncActiveShims</span>
+<span class="c">        * @description This method will sync the position of the shims on the Drop Targets that are currently active.</span>
+<span class="c">        * @return {Array} drops The list of Drop Targets that was just synced.</span>
+<span class="c">        */</span>
+        <span class="nx">syncActiveShims</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lookup</span><span class="o">();</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">sizeShim</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
             <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
 
-            <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+            <span class="k">return</span> <span class="nx">drops</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
@@ -177,6 +216,7 @@
         <span class="nx">clearCache</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span> <span class="o">=</span> <span class="o">[];</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span> <span class="o">=</span> <span class="o">[];</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>

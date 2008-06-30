@@ -59,6 +59,7 @@
 <span class="c">        * @event drag:mouseDown</span>
 <span class="c">        * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.</span>
 <span class="c">        * @preventable</span>
+<span class="c">        * @param {Event} ev The mousedown event.</span>
 <span class="c">        * @bubbles DD.DDM</span>
 <span class="c">        * @defaultFn _handleMouseDown</span>
 <span class="c">        * @type Event.Custom</span>
@@ -67,6 +68,7 @@
         <span class="c">/**</span>
 <span class="c">        * @event drag:afterMouseDown</span>
 <span class="c">        * @description Fires after the mousedown event has been cleared.</span>
+<span class="c">        * @param {Event} ev The mousedown event.</span>
 <span class="c">        * @bubbles DD.DDM</span>
 <span class="c">        * @type Event.Custom</span>
 <span class="c">        */</span>
@@ -365,7 +367,8 @@
             
             <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">EV_MOUSE_DOWN</span><span class="o">,</span> <span class="o">{</span>
                 <span class="nx">defaultFn</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseDown</span><span class="o">,</span>
-                <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span>
+                <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span>
             <span class="o">});</span>
 
             <span class="k">var</span> <span class="nx">ev</span> <span class="o">=</span> <span class="o">[</span>
@@ -387,6 +390,7 @@
             <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="o">{</span>
                     <span class="nx">emitFacade</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+                    <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
                     <span class="nx">preventable</span><span class="o">:</span> <span class="kc">false</span>
                 <span class="o">});</span>
             <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
@@ -709,6 +713,10 @@
 <span class="c">        * @description Internal init handler</span>
 <span class="c">        */</span>
         <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="c">//TODO give the node instance a copy of this object</span>
+<span class="c"></span>            <span class="c">//Not supported in PR1 due to Y.Node.get calling a new under the hood.</span>
+<span class="c"></span>            <span class="c">//this.get(NODE).dd = this;</span>
+<span class="c"></span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_invalids</span> <span class="o">=</span> <span class="o">{};</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_createEvents</span><span class="o">();</span>
@@ -793,7 +801,11 @@
             <span class="nx">diffXY2</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;move&#39;</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">DDM</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">),</span> <span class="nx">diffXY</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">.</span><span class="nx">opera</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">xy</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">DDM</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">),</span> <span class="nx">diffXY</span><span class="o">);</span>
+                <span class="o">}</span>
             <span class="o">}</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">region</span> <span class="o">=</span> <span class="o">{</span>
@@ -835,7 +847,7 @@
                 <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_dragThreshMet</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">var</span> <span class="nx">diffX</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">-</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">);</span>
                         <span class="k">var</span> <span class="nx">diffY</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">);</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;diffX: &quot;</span> <span class="o">+</span> <span class="nx">diffX</span> <span class="o">+</span> <span class="s2">&quot;diffY: &quot;</span> <span class="o">+</span> <span class="nx">diffY</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;diffX: &quot;</span> <span class="o">+</span> <span class="nx">diffX</span> <span class="o">+</span> <span class="s2">&quot;, diffY: &quot;</span> <span class="o">+</span> <span class="nx">diffY</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">diffX</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;clickPixelThresh&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="nx">diffY</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;clickPixelThresh&#39;</span><span class="o">))</span> <span class="o">{</span>
                             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;pixel threshold met&quot;</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;dd-drag&quot;</span><span class="o">);</span>
                             <span class="k">this</span><span class="o">.</span><span class="nx">_dragThreshMet</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
@@ -859,14 +871,6 @@
             <span class="nx">DDM</span><span class="o">.</span><span class="nx">_unregDrag</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">detach</span><span class="o">(</span><span class="nx">MOUSE_DOWN</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseDownEvent</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">detach</span><span class="o">(</span><span class="nx">MOUSE_UP</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseUp</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-        <span class="o">},</span>
-        <span class="c">/**</span>
-<span class="c">        * @method toString</span>
-<span class="c">        * @description General toString method for logging</span>
-<span class="c">        * @return String name for the object</span>
-<span class="c">        */</span>
-        <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="s1">&#39;Drag&#39;</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">});</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;DD&#39;</span><span class="o">);</span>    
