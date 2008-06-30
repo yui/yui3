@@ -16,9 +16,9 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @private
         * @property _activeShims
         * @description Placeholder for all active shims on the page
-        * @type {Object}
+        * @type {Array}
         */
-        _activeShims: {},
+        _activeShims: [],
         /**
         * @private
         * @method _hasActiveShim
@@ -26,14 +26,53 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Boolean}
         */
         _hasActiveShim: function() {
-            var ret = false;
+            return ((this._activeShims.length) ? true : false);
+        },
+        /**
+        * @private
+        * @method _addActiveShim 
+        * @description Adds a Drop Target to the list of active shims
+        * @param {Object} d The Drop instance to add to the list.
+        */
+        _addActiveShim: function(d) {
+            var add = true;
             Y.each(this._activeShims, function(v, k) {
-                if (k) {
-                    ret = true;
+                if (v._yuid === d._yuid) {
+                    add = false;
                 }
+            });
+            if (add) {
+                this._activeShims[this._activeShims.length] = d;
+            }
+        },
+        /**
+        * @private
+        * @method _removeActiveShim 
+        * @description Removes a Drop Target to the list of active shims
+        * @param {Object} d The Drop instance to remove from the list.
+        */
+        _removeActiveShim: function(d) {
+            var s = [];
+            Y.each(this._activeShims, function(v, k) {
+                if (v._yuid !== d._yuid) {
+                    s[s.length] = v;
+                }
+                
+            });
+            this._activeShims = s;
+        },
+        /**
+        * @method syncActiveShims
+        * @description This method will sync the position of the shims on the Drop Targets that are currently active.
+        * @return {Array} drops The list of Drop Targets that was just synced.
+        */
+        syncActiveShims: function() {
+            var drops = this._lookup();
+            Y.each(drops, function(v, k) {
+                v.sizeShim.call(v);
             }, this);
 
-            return ret;
+            return drops;
         },
         /**
         * @private
@@ -141,6 +180,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         clearCache: function() {
             this.validDrops = [];
             this.otherDrops = {};
+            this._activeShims = [];
         },
         /**
         * @private

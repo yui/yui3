@@ -331,7 +331,8 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                emitFacade: true
+                emitFacade: true,
+                bubbles: true
             });
 
             var ev = [
@@ -353,11 +354,12 @@ YUI.add('dd-drag', function(Y) {
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
+                    bubbles: true,
                     preventable: false
                 });
             }, this);
 
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
         },
         /**
@@ -675,6 +677,10 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
+            //TODO give the node instance a copy of this object
+            //Not supported in PR1 due to Y.Node.get calling a new under the hood.
+            //this.get(NODE).dd = this;
+
             this._invalids = {};
 
             this._createEvents();
@@ -829,14 +835,6 @@ YUI.add('dd-drag', function(Y) {
             DDM._unregDrag(this);
             this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
-        },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return 'Drag';
         }
     });
     Y.namespace('DD');    

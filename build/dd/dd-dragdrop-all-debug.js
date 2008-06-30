@@ -44,7 +44,8 @@ YUI.add('dd-ddm-base', function(Y) {
 
     };
 
-    Y.mix(DDMBase, {
+    //Y.mix(DDMBase, {
+    Y.extend(DDMBase, Y.Base, {
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -102,6 +103,7 @@ YUI.add('dd-ddm-base', function(Y) {
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
+            Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -234,10 +236,8 @@ YUI.add('dd-ddm-base', function(Y) {
         }
     });
 
-    Y.mix(DDMBase, Y.Base.prototype);
-
     Y.namespace('DD');
-    Y.DD.DDM = DDMBase;
+    Y.DD.DDM = new DDMBase();
     Y.DD.DDM._init();
 
 
@@ -382,9 +382,9 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @private
         * @property _activeShims
         * @description Placeholder for all active shims on the page
-        * @type {Object}
+        * @type {Array}
         */
-        _activeShims: {},
+        _activeShims: [],
         /**
         * @private
         * @method _hasActiveShim
@@ -392,14 +392,53 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Boolean}
         */
         _hasActiveShim: function() {
-            var ret = false;
+            return ((this._activeShims.length) ? true : false);
+        },
+        /**
+        * @private
+        * @method _addActiveShim 
+        * @description Adds a Drop Target to the list of active shims
+        * @param {Object} d The Drop instance to add to the list.
+        */
+        _addActiveShim: function(d) {
+            var add = true;
             Y.each(this._activeShims, function(v, k) {
-                if (k) {
-                    ret = true;
+                if (v._yuid === d._yuid) {
+                    add = false;
                 }
+            });
+            if (add) {
+                this._activeShims[this._activeShims.length] = d;
+            }
+        },
+        /**
+        * @private
+        * @method _removeActiveShim 
+        * @description Removes a Drop Target to the list of active shims
+        * @param {Object} d The Drop instance to remove from the list.
+        */
+        _removeActiveShim: function(d) {
+            var s = [];
+            Y.each(this._activeShims, function(v, k) {
+                if (v._yuid !== d._yuid) {
+                    s[s.length] = v;
+                }
+                
+            });
+            this._activeShims = s;
+        },
+        /**
+        * @method syncActiveShims
+        * @description This method will sync the position of the shims on the Drop Targets that are currently active.
+        * @return {Array} drops The list of Drop Targets that was just synced.
+        */
+        syncActiveShims: function() {
+            var drops = this._lookup();
+            Y.each(drops, function(v, k) {
+                v.sizeShim.call(v);
             }, this);
 
-            return ret;
+            return drops;
         },
         /**
         * @private
@@ -507,6 +546,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         clearCache: function() {
             this.validDrops = [];
             this.otherDrops = {};
+            this._activeShims = [];
         },
         /**
         * @private
@@ -1046,7 +1086,8 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                emitFacade: true
+                emitFacade: true,
+                bubbles: true
             });
 
             var ev = [
@@ -1068,11 +1109,12 @@ YUI.add('dd-drag', function(Y) {
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
+                    bubbles: true,
                     preventable: false
                 });
             }, this);
 
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
         },
         /**
@@ -1390,6 +1432,10 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
+            //TODO give the node instance a copy of this object
+            //Not supported in PR1 due to Y.Node.get calling a new under the hood.
+            //this.get(NODE).dd = this;
+
             this._invalids = {};
 
             this._createEvents();
@@ -1544,14 +1590,6 @@ YUI.add('dd-drag', function(Y) {
             DDM._unregDrag(this);
             this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
-        },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return 'Drag';
         }
     });
     Y.namespace('DD');    
@@ -2267,11 +2305,12 @@ YUI.add('dd-drop', function(Y) {
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
-                    preventable: false
+                    preventable: false,
+                    bubbles: true
                 });
             }, this);
 
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
         },
         /**
@@ -2444,6 +2483,7 @@ YUI.add('dd-drop', function(Y) {
 
             s.on('mouseover', this._handleOverEvent, this, true);
             s.on('mouseout', this._handleOutEvent, this, true);
+            
         },
         /**
         * @private
@@ -2457,12 +2497,12 @@ YUI.add('dd-drop', function(Y) {
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
-                    this.fire(EV_DROP_OVER);
-                    DDM.activeDrag.fire('drag:over', { drop: this });
+                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
                 } else {
                     this.overTarget = true;
-                    this.fire(EV_DROP_ENTER);
-                    DDM.activeDrag.fire('drag:enter', { drop: this });
+                    this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
                     DDM._handleTargetOver(this, force);
                 }
             } else {
@@ -2476,7 +2516,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
-            DDM._activeShims[this] = true;
+            DDM._addActiveShim(this);
         },
         /**
         * @private
@@ -2484,7 +2524,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
-            delete DDM._activeShims[this];
+            DDM._removeActiveShim(this);
         },
         /**
         * @private
@@ -2495,6 +2535,7 @@ YUI.add('dd-drop', function(Y) {
             if (!DDM.isOverTarget(this)) {
                 if (this.overTarget) {
                     this.overTarget = false;
+                    DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
@@ -2503,14 +2544,6 @@ YUI.add('dd-drop', function(Y) {
                     }
                 }
             }
-        },
-        /**
-        * @method toString
-        * @description Simple toString method.
-        * @return {String}
-        */
-        toString: function() {
-            return 'Drop (#' + this.get(NODE).get('id') + ')';
         }
     });
 

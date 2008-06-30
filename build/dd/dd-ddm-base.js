@@ -44,7 +44,8 @@ YUI.add('dd-ddm-base', function(Y) {
 
     };
 
-    Y.mix(DDMBase, {
+    //Y.mix(DDMBase, {
+    Y.extend(DDMBase, Y.Base, {
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -102,6 +103,7 @@ YUI.add('dd-ddm-base', function(Y) {
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
+            Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -234,10 +236,8 @@ YUI.add('dd-ddm-base', function(Y) {
         }
     });
 
-    Y.mix(DDMBase, Y.Base.prototype);
-
     Y.namespace('DD');
-    Y.DD.DDM = DDMBase;
+    Y.DD.DDM = new DDMBase();
     Y.DD.DDM._init();
 
 

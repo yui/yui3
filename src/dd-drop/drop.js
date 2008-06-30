@@ -131,11 +131,12 @@
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
-                    preventable: false
+                    preventable: false,
+                    bubbles: true
                 });
             }, this);
 
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
         },
         /**
@@ -308,6 +309,7 @@
 
             s.on('mouseover', this._handleOverEvent, this, true);
             s.on('mouseout', this._handleOutEvent, this, true);
+            
         },
         /**
         * @private
@@ -321,12 +323,12 @@
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
-                    this.fire(EV_DROP_OVER);
-                    DDM.activeDrag.fire('drag:over', { drop: this });
+                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
                 } else {
                     this.overTarget = true;
-                    this.fire(EV_DROP_ENTER);
-                    DDM.activeDrag.fire('drag:enter', { drop: this });
+                    this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
                     DDM._handleTargetOver(this, force);
                 }
             } else {
@@ -340,7 +342,7 @@
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
-            DDM._activeShims[this] = true;
+            DDM._addActiveShim(this);
         },
         /**
         * @private
@@ -348,7 +350,7 @@
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
-            delete DDM._activeShims[this];
+            DDM._removeActiveShim(this);
         },
         /**
         * @private
@@ -359,6 +361,7 @@
             if (!DDM.isOverTarget(this)) {
                 if (this.overTarget) {
                     this.overTarget = false;
+                    DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
@@ -367,14 +370,6 @@
                     }
                 }
             }
-        },
-        /**
-        * @method toString
-        * @description Simple toString method.
-        * @return {String}
-        */
-        toString: function() {
-            return 'Drop (#' + this.get(NODE).get('id') + ')';
         }
     });
 
