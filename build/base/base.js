@@ -364,7 +364,7 @@ YUI.add('base', function(Y) {
          * @method toString
          */
         toString: function() {
-            return this.contructor.NAME + "[" + this._yuid + "]";
+            return this.constructor.NAME + "[" + this._yuid + "]";
         },
 
         /**
