@@ -52,7 +52,7 @@ YUI.add('attribute', function(Y) {
      * @final
      * @type {Object}
      * <p>
-     * Constants for clone formats supported by Attribute
+     * Constants for clone formats supported by Attribute.
      * </p>
      * <p>
      * By default attribute values returned by the get method
@@ -249,7 +249,7 @@ YUI.add('attribute', function(Y) {
          * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
          * been declared as an immutable attribute (see Attribute.CLONE).
          * @param {Any} value The value to apply to the attribute
-         * @param {Object} Event options. This object will be mixed into
+         * @param {Object} opts Optional event data. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
          * of attribute change events
          */
@@ -301,10 +301,10 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Default handler implementation for set events
-         * 
+         *
          * @method _defAttSet
          * @private
-         * @param {EventFacade} CustomEvent Facade
+         * @param {EventFacade} e The event object for the custom event
          */
         _defAttSet : function(e) {
             var conf = this._conf,
@@ -334,7 +334,7 @@ YUI.add('attribute', function(Y) {
          *
          * @method _getSubAttVal
          * @private
-         * 
+         *
          * @param {Array} path  A path array, specifying the object traversal path
          *                      from which to obtain the sub value.
          * @param {Object} val  The object from which to extract the property value
@@ -409,7 +409,7 @@ YUI.add('attribute', function(Y) {
          * Gets multiple attribute values.
          *
          * @method getAtts
-         * @return {Object} A hash of attributes: name/values pairs
+         * @return {Object} A hash of attributes: name/value pairs
          */
         getAtts: function(atts) {
             var o = {};
@@ -430,7 +430,7 @@ YUI.add('attribute', function(Y) {
          * @protected
          * 
          * @param {Object} cfg Attribute configuration object literal
-         * @param {Object} initValues Name/Value hash of initial values to apply
+         * @param {Object} initValues Name/value hash of initial values to apply
          */
         _initAtts : function(cfg, initValues) {
             if (cfg) {
@@ -457,9 +457,15 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Utility to split out regular attribute values
-         * from complex attribute values
+         * from complex attribute values, so that complex
+         * attributes can be keyed by top level attribute name.
          *
          * @method _splitAttrValues
+         * @param {Object} valueHash Name/value hash of initial values
+         *
+         * @return {Object} Object literal with 2 properties - "simple" and "complex",
+         * containing simple and complex attribute values respectively keyed 
+         * by attribute the top level attribute name.
          * @private
          */
         _splitAttVals: function(valueHash) {
@@ -496,7 +502,10 @@ YUI.add('attribute', function(Y) {
          * @param {String} att Attribute name
          * @param {Object} cfg Default attribute configuration
          * object literal
-         * @param {Object} Initial attribute values.
+         * @param {Object} initVales Initial attribute values, provided 
+         * for the instance
+         *
+         * @return {Any} Initial value of the attribute.
          *
          * @method _initAttVal
          * @private
