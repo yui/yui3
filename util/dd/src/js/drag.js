@@ -21,6 +21,7 @@
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
         * @preventable
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @defaultFn _handleMouseDown
         * @type Event.Custom
@@ -29,6 +30,7 @@
         /**
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
+        * @param {Event} ev The mousedown event.
         * @bubbles DD.DDM
         * @type Event.Custom
         */
@@ -327,7 +329,8 @@
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                emitFacade: true
+                emitFacade: true,
+                bubbles: true
             });
 
             var ev = [
@@ -349,6 +352,7 @@
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
+                    bubbles: true,
                     preventable: false
                 });
             }, this);
@@ -671,6 +675,10 @@
         * @description Internal init handler
         */
         initializer: function() {
+            //TODO give the node instance a copy of this object
+            //Not supported in PR1 due to Y.Node.get calling a new under the hood.
+            //this.get(NODE).dd = this;
+
             this._invalids = {};
 
             this._createEvents();
@@ -755,7 +763,11 @@
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
             if (this.get('move')) {
-                DDM.setXY(this.get(DRAG_NODE), diffXY);
+                if (Y.UA.opera) {
+                    this.get(DRAG_NODE).setXY(xy);
+                } else {
+                    DDM.setXY(this.get(DRAG_NODE), diffXY);
+                }
             }
 
             this.region = {
@@ -797,7 +809,7 @@
                 if (!this._dragThreshMet) {
                         var diffX = Math.abs(this.startXY[0] - ev.pageX);
                         var diffY = Math.abs(this.startXY[1] - ev.pageY);
-                        Y.log("diffX: " + diffX + "diffY: " + diffY, 'info', 'dd-drag');
+                        Y.log("diffX: " + diffX + ", diffY: " + diffY, 'info', 'dd-drag');
                         if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
                             Y.log("pixel threshold met", "info", "dd-drag");
                             this._dragThreshMet = true;
@@ -821,14 +833,6 @@
             DDM._unregDrag(this);
             this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
-        },
-        /**
-        * @method toString
-        * @description General toString method for logging
-        * @return String name for the object
-        */
-        toString: function() {
-            return 'Drag';
         }
     });
     Y.namespace('DD');    

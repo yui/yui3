@@ -42,7 +42,8 @@
 
     };
 
-    Y.mix(DDMBase, {
+    //Y.mix(DDMBase, {
+    Y.extend(DDMBase, Y.Base, {
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -100,6 +101,7 @@
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
+            Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -174,6 +176,7 @@
             
             node.setStyle('top', (xy[1] + t) + 'px');
             node.setStyle('left', (xy[0] + l) + 'px');
+            
         },
         /**
         * @method cssSizestoObject
@@ -231,9 +234,7 @@
         }
     });
 
-    Y.mix(DDMBase, Y.Base.prototype);
-
     Y.namespace('DD');
-    Y.DD.DDM = DDMBase;
+    Y.DD.DDM = new DDMBase();
     Y.DD.DDM._init();
 
