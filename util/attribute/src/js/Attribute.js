@@ -141,7 +141,9 @@
 
     Attribute.prototype = {
         /**
-         * Adds an attribute.
+         * <p>
+         * Adds an attribute, with the provided configuration to the host object.
+         * </p>
          * <p>
          * The config argument object literal supports the following optional properties:
          * </p>
