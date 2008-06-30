@@ -2537,10 +2537,10 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = false;
                     DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
+                        this.get(NODE).removeClass('dd-drop-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
-                        this.get(NODE).removeClass('dd-drop-over');
                     }
                 }
             }
