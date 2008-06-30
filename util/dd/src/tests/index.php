@@ -176,6 +176,19 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <div id="davdoc" class="yui-t7">
     <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
     <div id="bd">
+        <?php
+        if ($_GET['events']) {
+        ?>
+        <p>This page is running <strong>with out</strong> the: drag:enter, drag:over, drag:exit, drop:enter, drop:over, drop:exit events firing. <a href="index.php">[Click here to enable the fires]</a></p>
+        <p>Drag the element below over the pile of elements that light up. It will be fast since the fire's are disabled.</p>
+        <?php
+        } else {
+        ?>
+        <p>This page is running with the: drag:enter, drag:over, drag:exit, drop:enter, drop:over, drop:exit events firing. <a href="index.php?events=1">[Click here to disable the fires]</a></p>
+        <p>Drag the element below over the pile of elements that light up. It will be slow in FF2/3.</p>
+        <?php
+        }
+        ?>
         <div id="play"></div>
         <div id="drag"><h2><strong>Drag</strong> Me</h2></div>
         <div id="drag2"><h2><strong>Drag</strong> <a href="#">Me II</a></h2></div>
@@ -212,14 +225,23 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <script type="text/javascript" src="../../../../build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
 
 
-
+    <?php
+    if ($_GET['events']) {
+    ?>
+    <script type="text/javascript" src="../../../../build/dd/dd-drag-all-min.js?bust=<?php echo(mktime()); ?>"></script>
+    <script type="text/javascript" src="dd-drop-core.js?bust=<?php echo(mktime()); ?>"></script>
+    <?php
+    } else {
+    ?>
     <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js?bust=<?php echo(mktime()); ?>"></script>
+    <?php
+    }
+    ?>
 
 <script type="text/javascript">
 var yConfig = {
-    
     logExclude: {
-        //'YUI': true,
+        'YUI': true,
         Event: true,
         Base: true,
         Attribute: true,
@@ -304,7 +326,7 @@ Y1.on('event:ready', function() {
 
 });
 
-var Y = new YUI(yConfig2).use('dd-dragdrop-all');
+var Y = new YUI(yConfig2).use('dd-ddm-drop', 'dd-plugin', 'dd-proxy', 'dd-constrain', 'dd-drop');
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
 Y.on('event:ready', function() {
     //Y.DD.DDM.useHash = false;

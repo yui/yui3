@@ -3,7 +3,7 @@
     <description>Rollup build file for json, stringify</description>
     <property environment="env" />
 
-    <property file="build.drag-core.properties" />
+    <property file="build.drop-core.properties" />
 
     <import file="${builddir}/3.x/bootstrap.xml" 
             description="Default Build Properties and Targets" />

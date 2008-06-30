@@ -37,6 +37,7 @@ Rollup Files:
     dd-drag-proxy.js    ==> dd-ddm-base, dd-ddm, dd-drag, dd-proxy, dd-plugin
     dd-drag-all.js      ==> dd-ddm-base, dd-ddm, dd-drag, dd-proxy, dd-constrain, dd-plugin
     dd-dragdrop-all.js  ==> dd-ddm-base, dd-ddm, dd-ddm-drop, dd-drag, dd-proxy, dd-constrain, dd-drop, dd-plugin
+    dd-drop-core.js     ==> dd-ddm-drop, dd-drop
 
 Example File:
     3.x/util/dd/src/tests/index.php
