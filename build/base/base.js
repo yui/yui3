@@ -48,9 +48,22 @@ YUI.add('base', function(Y) {
      * static NAME property.
      * 
      * @property NAME
+     * @type String
      * @static
      */
     Base.NAME = 'base';
+
+    /**
+     * Object literal defining the set of attributes which
+     * will be available for instances of this class, and 
+     * how they are configured. See Attributes addAtt method
+     * for a description of configuration options available 
+     * for each attribute.
+     *
+     * @property ATTRS
+     * @type Object
+     * @static
+     */
 
     var _instances = {};
 
@@ -210,9 +223,11 @@ YUI.add('base', function(Y) {
             this.name = this.constructor.NAME;
 
             /**
+             * <p>
              * Init event, fired prior to initialization. Invoking
              * the preventDefault method on the EventFacade provided 
              * to subscribers will prevent initialization from occuring.
+             * </p>
              * <p>
              * Subscribers to the after momemt of this event, will be notified
              * after initialization of the object is complete (and therefore
@@ -233,9 +248,11 @@ YUI.add('base', function(Y) {
         },
 
         /**
+         * <p>
          * Destroy lifecycle method. Fires the destroy
          * event, prior to invoking destructors for the
          * class heirarchy.
+         * </p>
          * <p>
          * Subscribers to the destroy
          * event can preventDefault to prevent destruction
@@ -247,9 +264,11 @@ YUI.add('base', function(Y) {
         destroy: function() {
 
             /**
+             * <p>
              * Destroy event, fired prior to destruction. Invoking
              * the preventDefault method on the EventFacade provided 
              * to subscribers will prevent destruction from proceeding.
+             * </p>
              * <p>
              * Subscribers to the after momemt of this event, will be notified
              * after destruction is complete (and as a result cannot prevent
@@ -376,7 +395,9 @@ YUI.add('base', function(Y) {
         },
 
         /**
+         * <p>
          * Subscribe to a custom event hosted by this object.
+         * </p>
          * <p>
          * Overrides Event.Target's subscribe method, to add the name prefix 
          * of the instance to the event type, if absent.
@@ -399,9 +420,11 @@ YUI.add('base', function(Y) {
         },
 
         /**
+         * <p>
          * Fire a custom event by name.  The callback functions will be executed
          * from the context specified when the event was created, and with the 
          * following parameters.
+         * </p>
          * <p>
          * Overrides Event.Target's fire method, to add the name prefix 
          * of the instance to the event type, if absent.
@@ -426,10 +449,11 @@ YUI.add('base', function(Y) {
         },
 
         /**
+         * <p>
          * Creates a new custom event of the specified type.  If a custom event
          * by that name already exists, it will not be re-created.  In either
          * case the custom event is returned. 
-         *
+         * </p>
          * <p>
          * Overrides Event.Target's publish method, to add the name prefix 
          * of the instance to the event type, if absent.
@@ -449,10 +473,12 @@ YUI.add('base', function(Y) {
         },
 
         /**
+         * <p>
          * Subscribe to a custom event hosted by this object.  The
          * supplied callback will execute <em>after</em> any listeners added
          * via the subscribe method, and after the default function,
          * if configured for the event, has executed.
+         * </p>
          * <p>
          * Overrides Event.Target's after method, to add the name prefix 
          * of the instance to the event type, if absent.
@@ -472,12 +498,14 @@ YUI.add('base', function(Y) {
         },
 
         /**
-         * Unsubscribes one or more listeners the from the specified event
-         * @method unsubscribe.
+         * <p>
+         * Unsubscribes one or more listeners the from the specified event.
+         * </p>
          * <p>
          * Overrides Event.Target's unsubscribe method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
+         * @method unsubscribe
          * @param type {String|Object} Either the handle to the subscriber or the 
          *                        type of event.  If the type
          *                        is not specified, it will attempt to remove
@@ -503,9 +531,11 @@ YUI.add('base', function(Y) {
         },
         
         /**
+         * <p>
          * Removes all listeners from the specified event.  If the event type
          * is not specified, all listeners from all hosted custom events will
          * be removed.
+         * </p>
          * <p>
          * Overrides Event.Target's unsubscribeAll method, to add the name prefix 
          * of the instance to the event type, if absent.

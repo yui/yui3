@@ -20,7 +20,9 @@ YUI.add('attribute', function(Y) {
         CLONE_ENUM;
 
     /**
+     * <p>
      * Attribute provides managed attribute support. 
+     * </p>
      * <p>
      * The class is designed to be augmented onto a host class, 
      * and allows the host to support get/set methods for attributes,
@@ -48,10 +50,10 @@ YUI.add('attribute', function(Y) {
     }
 
     /**
-     * @property Attribute.CLONE
+     * @property CLONE
      * @static
      * @final
-     * @type {Object}
+     * @type Object
      * <p>
      * Constants for clone formats supported by Attribute.
      * </p>
