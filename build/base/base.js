@@ -12,6 +12,9 @@ YUI.add('base', function(Y) {
         SEP = ":",
         DESTROY = "destroy",
         INIT = "init",
+        VALUE = "value",
+        INITIALIZED = "initialized",
+        DESTROYED = "destroyed",
         INITIALIZER = "initializer",
         DESTRUCTOR = "destructor";
 
@@ -32,14 +35,15 @@ YUI.add('base', function(Y) {
         Y.Attribute.call(this);
         this.init.apply(this, arguments);
     };
-
+    
+    
     /**
      * Name string to be used to identify instances of 
      * this class, for example in prefixing events.
      *
      * Classes extending Base, should define their own
      * static NAME property.
-     * 
+     *
      * @property NAME
      * @type String
      * @static
@@ -57,6 +61,35 @@ YUI.add('base', function(Y) {
      * @type Object
      * @static
      */
+    Base.ATTRS = {
+        /**
+         * Flag indicating whether or not this object
+         * has been through the init lifecycle phase.
+         *
+         * @attribute initialized
+         * @readonly
+         * @default false
+         * @type boolean
+         */
+        intialized: {
+            readOnly:true,
+            value:false
+        },
+
+        /**
+         * Flag indicating whether or not this object
+         * has been through the destroy lifecycle phase.
+         *
+         * @attribute destroyed
+         * @readonly
+         * @default false
+         * @type boolean
+         */
+        destroyed: {
+            readOnly:true,
+            value:false
+        }
+    };
 
     var _instances = {};
 
@@ -230,24 +263,6 @@ YUI.add('base', function(Y) {
         init: function(config) {
 
             /**
-             * Flag indicating whether or not this object
-             * has been through the destroy lifecycle phase.
-             * 
-             * @property destroyed
-             * @type boolean
-             */
-            this.destroyed = false;
-
-            /**
-             * Flag indicating whether or not this object
-             * has been through the init lifecycle phase.
-             * 
-             * @property initialized
-             * @type boolean
-             */
-            this.initialized = false;
-
-            /**
              * The name string to be used to identify 
              * this instance of object. 
              * @property name
@@ -327,7 +342,9 @@ YUI.add('base', function(Y) {
         _defInitFn : function(config) {
             _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
-            this.initialized = true;
+
+            this._conf.remove(INITIALIZED, VALUE);
+            this.set(INITIALIZED, true);
         },
 
         /**
@@ -339,7 +356,9 @@ YUI.add('base', function(Y) {
         _defDestroyFn : function() {
             this._destroyHierarchy();
             delete _instances[this._yuid];
-            this.destroyed = true;
+
+            this._conf.remove(DESTROYED, VALUE);
+            this.set(DESTROYED, true);
         },
 
         /**
