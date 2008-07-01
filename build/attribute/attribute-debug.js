@@ -97,52 +97,6 @@ YUI.add('attribute', function(Y) {
 
     CLONE_ENUM = Attribute.CLONE;
 
-    function _fireChange(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
-        type = type + CHANGE;
-
-        // TODO: Publishing temporarily, while we address event bubbling/queuing
-        this.publish(type, {queuable:false, defaultFn:this._defAttSet});
-
-        var eData = {
-            type: type,
-            prevVal: currVal,
-            newVal: newVal,
-            attrName: attrName,
-            subAttrName: strFullPath
-        };
-
-        if (opts) {
-            Y.mix(eData, opts);
-        }
-
-        this.fire(eData);
-    }
-
-    /**
-     * Clone utility method, which will 
-     * clone the provided value using YUI's 
-     * merge, or clone utilities based
-     * on the clone type provided.
-     * 
-     * @see Attribute.CLONE
-     * @method _clone
-     * @private 
-     * @param {Object} val
-     * @param {Object} type
-     */
-    function _clone(val, type) {
-        switch(type) {
-            case CLONE_ENUM.SHALLOW:
-                val = Y.merge(val);
-                break;
-            case CLONE_ENUM.DEEP:
-            case CLONE_ENUM.IMMUTABLE:
-                val = Y.clone(val);
-                break;
-        }
-        return val;
-    }
-
     Attribute.prototype = {
         /**
          * <p>
@@ -173,13 +127,14 @@ YUI.add('attribute', function(Y) {
          *    <dt>validator {Function}</dt>
          *    <dd>The validator function which is invoked prior to setting the stored value. Returning
          *    false from the validator function will prevent the value from being stored</dd>
-         *    <dt>clone {Number}</dt>
+         *    <dt>clone {int}</dt>
          *    <dd>If and how the value returned by a call to the get method, should be de-referenced from
          *    the stored value. By default values are not cloned, and hence a call to get will return
          *    a reference to the stored value. See Attribute.CLONE for more details about the clone 
          *    options available</dd>
          * </dl>
-         * @method add
+         *
+         * @method addAtt
          * @param {String} name The attribute key
          * @param {Object} config (optional) An object literal specifying the configuration for the attribute.
          * <strong>NOTE:</strong> The config object is modified when adding an attribute, 
@@ -203,10 +158,11 @@ YUI.add('attribute', function(Y) {
 
         /**
          * Removes an attribute.
-         * @method remove
+         *
+         * @method removeAtt
          * @param {String} name The attribute key
          */
-        remove: function(name) {
+        removeAtt: function(name) {
             this._conf.remove(name);
         },
 
@@ -216,6 +172,7 @@ YUI.add('attribute', function(Y) {
          * to the 'get' handler to obtain the value of the attribute.
          * The 'get' handler will be passed the current value of the attribute 
          * as the only argument.
+         *
          * @method get
          * @param {String} key The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
@@ -238,7 +195,7 @@ YUI.add('attribute', function(Y) {
             getFn = conf.get(name, GET);
             clone = conf.get(name, CLONE);
 
-            val = (clone) ? _clone(val, clone) : val;
+            val = (clone) ? this._cloneAttVal(val, clone) : val;
             val = (getFn) ? getFn.call(this, val) : val;
             val = (path) ? this._getSubAttVal(path, val) : val;
 
@@ -305,7 +262,7 @@ YUI.add('attribute', function(Y) {
                }
             }
 
-            _fireChange.call(this, name, currVal, val, name, strPath, opts);
+            this._fireAttChange(name, currVal, val, name, strPath, opts);
 
             return this;
         },
@@ -335,9 +292,12 @@ YUI.add('attribute', function(Y) {
 
             if (!valFn || valFn.call(this, val)) {
                 conf.add(name, { value: val });
+                e.newVal = conf.get(name, VALUE);
+            } else {
+                // Prevent "after" listeners from being 
+                // invoked since nothing changed.
+                e.stopImmediatePropagation();
             }
-
-            e.newVal = val;
         },
 
         /**
@@ -556,13 +516,71 @@ YUI.add('attribute', function(Y) {
             }
 
             return val;
+        },
+
+        /**
+         * Clone utility method, which will 
+         * clone the provided value using YUI's 
+         * merge, or clone utilities based
+         * on the clone type provided.
+         * 
+         * @see Attribute.CLONE
+         * @method _cloneAttVal
+         * @private 
+         * @param {Any} val Value to clone
+         * @param {int} type Clone type to use, See the CLONE property
+         */
+        _cloneAttVal : function(val, type) {
+            switch(type) {
+                case CLONE_ENUM.SHALLOW:
+                    val = Y.merge(val);
+                    break;
+                case CLONE_ENUM.DEEP:
+                case CLONE_ENUM.IMMUTABLE:
+                    val = Y.clone(val);
+                    break;
+            }
+            return val;
+        },
+
+        /**
+         * Utility method to help setup the event payload and 
+         * fire the attribute change event.
+         * 
+         * @method _fireAttChange
+         * @private
+         * @param {String} type The event name
+         * @param {Any} currVal The current value of the attribute
+         * @param {Any} newVal The new value of the attribute
+         * @param {String} attrName The name of the attribute
+         * @param {String} strFullPath The full path of the property being changed, 
+         * if this is a sub-attribute value being change
+         * @param {Function} defaultFn The default handler for the change event
+         * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
+         */
+        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
+            type = type + CHANGE;
+
+            // TODO: Publishing temporarily, while we address event bubbling/queuing
+            this.publish(type, {queuable:false, defaultFn:this._defAttSet});
+    
+            var eData = {
+                type: type,
+                prevVal: currVal,
+                newVal: newVal,
+                attrName: attrName,
+                subAttrName: strFullPath
+            };
+    
+            if (opts) {
+                Y.mix(eData, opts);
+            }
+    
+            this.fire(eData);
         }
     };
 
     Y.mix(Attribute, Y.Event.Target, false, null, 1);
-    // Y.augment(Attribute, Y.Event.Target, null, null, {
-    //        emitFacade:true
-    // });
 
     Y.Attribute = Attribute;
 

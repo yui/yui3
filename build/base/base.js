@@ -17,13 +17,6 @@ YUI.add('base', function(Y) {
 
     var ETP = Y.Event.Target.prototype;
 
-    function _prefixType(type, owner) {
-        if (type.indexOf(SEP) === -1 && owner.name) {
-           type = owner.name + ":" + type;
-        }
-        return type;
-    }
-
     /**
      * Provides a base class for managed attribute based
      * objects, which automates chaining of init and destroy
@@ -84,7 +77,7 @@ YUI.add('base', function(Y) {
         // Create dynamic class or just modify main class
         builtClass = (dynamic) ? build._template(main) : main;
 
-        builtClass._build = {
+        builtClass._yuibuild = {
             id: null,
             exts : [],
             dynamic : dynamic
@@ -118,11 +111,11 @@ YUI.add('base', function(Y) {
             // Old augment
             Y.mix(builtClass, extClass, true, null, 1);
 
-            builtClass._build.exts.push(extClass);
+            builtClass._yuibuild.exts.push(extClass);
             key = key + ":" + Y.stamp(extClass);
         }
 
-        builtClass._build.id = key;
+        builtClass._yuibuild.id = key;
         builtClass.prototype.hasImpl = build._hasImpl;
 
         if (dynamic) {
@@ -142,7 +135,7 @@ YUI.add('base', function(Y) {
             function BuiltClass() {
                 BuiltClass.superclass.constructor.apply(this, arguments);
 
-                var f = BuiltClass._build.exts, 
+                var f = BuiltClass._yuibuild.exts, 
                     l = f.length;
 
                 for (var i = 0; i < l; i++) {
@@ -156,25 +149,25 @@ YUI.add('base', function(Y) {
             return BuiltClass;
         },
 
-        _hasImpl : function(featureClass) {
-            if (this.constructor._build) {
-                var f = this.constructor._build.exts,
+        _hasImpl : function(extClass) {
+            if (this.constructor._yuibuild) {
+                var f = this.constructor._yuibuild.exts,
                     l = f.length,
                     i;
-    
+
                 for (i = 0; i < l; i++) {
-                    if (f[i] === featureClass) {
+                    if (f[i] === extClass) {
                         return true;
                     }
                 }
             }
-        
+
             return false;
         }
     });
 
-    Base.create = function(main, features, args) {
-        var c = Base.build(main, features, {dynamic:true}),
+    Base.create = function(main, extensions, args) {
+        var c = Base.build(main, extensions, {dynamic:true}),
             cArgs = Y.Array(arguments, 2, true);
 
         function F(){}
@@ -198,10 +191,10 @@ YUI.add('base', function(Y) {
 
             /**
              * Flag indicating whether or not this object
-             * has been through the destory lifecycle phase.
+             * has been through the destroy lifecycle phase.
              * 
              * @property destroyed
-             * @type Boolean
+             * @type boolean
              */
             this.destroyed = false;
             
@@ -210,7 +203,7 @@ YUI.add('base', function(Y) {
              * has been through the init lifecycle state.
              * 
              * @property initialized
-             * @type Boolean
+             * @type boolean
              */
             this.initialized = false;
 
@@ -347,16 +340,16 @@ YUI.add('base', function(Y) {
             for (var ci = 0, cl = classes.length; ci < cl; ci++) {
                 constr = classes[ci];
 
-                if (constr._build && constr._build.exts && !constr._build.dynamic) {
-                    for (var ei = 0, el = constr._build.exts.length; ei < el; ei++) {
-                        constr._build.exts[ei].apply(this, arguments);
+                if (constr._yuibuild && constr._yuibuild.exts && !constr._yuibuild.dynamic) {
+                    for (var ei = 0, el = constr._yuibuild.exts.length; ei < el; ei++) {
+                        constr._yuibuild.exts[ei].apply(this, arguments);
                     }
                 }
 
                 this._initAtts(constr.ATTRS, userConf);
 
                 if (O.owns(constr.prototype, INITIALIZER)) {
-                    constr.prototype.initializer.apply(this, arguments);
+                    constr.prototype[INITIALIZER].apply(this, arguments);
                 }
             }
         },
@@ -364,17 +357,19 @@ YUI.add('base', function(Y) {
         /**
          * Destroys the class hierarchy rooted at this base class by invoking
          * the descructor method on the prototype of each class in the hierarchy.
-         * 
+         *
          * @method _destroyHierarchy
          * @private
          */
         _destroyHierarchy : function() {
-            var constructor = this.constructor;
-            while (constructor && constructor.prototype) {
-                if (O.owns(constructor.prototype, DESTRUCTOR)) {
-                    constructor.prototype.destructor.apply(this, arguments);
+            var constr,
+                classes = this._getClasses();
+
+            for (var ci = classes.length-1; ci >= 0; ci--) {
+                constr = classes[ci];
+                if (O.owns(constr.prototype, DESTRUCTOR)) {
+                    constr.prototype[DESTRUCTOR].apply(this, arguments);
                 }
-                constructor = constructor.superclass ? constructor.superclass.constructor : null;
             }
         },
 
@@ -383,7 +378,7 @@ YUI.add('base', function(Y) {
          * @method toString
          */
         toString: function() {
-            return this.constructor.NAME + "[" + this._yuid + "]";
+            return this.constructor.NAME + "[" + Y.stamp(this) + "]";
         },
 
         /**
@@ -415,7 +410,7 @@ YUI.add('base', function(Y) {
          */
         subscribe : function() {
             var a = arguments;
-            a[0] = _prefixType(a[0], this);
+            a[0] = this._prefixEvtType(a[0]);
             return ETP.subscribe.apply(this, a);
         },
 
@@ -435,15 +430,15 @@ YUI.add('base', function(Y) {
          * the name property of the instance will be used as the default prefix.
          * @param {Object*} arguments an arbitrary set of parameters to pass to 
          * the handler.
-         * @return {Boolean} the return value from Event.Target.fire
-         *                   
+         * @return {boolean} the return value from Event.Target.fire
+         *
          */
         fire : function() {
             var a = arguments;
             if (L.isString(a[0])) {
-                a[0] = _prefixType(a[0], this);
+                a[0] = this._prefixEvtType(a[0]);
             } else if (a[0].type){
-                a[0].type = _prefixType(a[0].type, this);
+                a[0].type = this._prefixEvtType(a[0].type);
             }
             return ETP.fire.apply(this, a);
         },
@@ -468,7 +463,7 @@ YUI.add('base', function(Y) {
          */
         publish : function() {
             var a = arguments;
-            a[0] = _prefixType(a[0], this);
+            a[0] = this._prefixEvtType(a[0]);
             return ETP.publish.apply(this, a);
         },
 
@@ -493,7 +488,7 @@ YUI.add('base', function(Y) {
          */
         after : function() {
             var a = arguments;
-            a[0] = _prefixType(a[0], this);
+            a[0] = this._prefixEvtType(a[0]);
             return ETP.after.apply(this, a);
         },
 
@@ -525,7 +520,7 @@ YUI.add('base', function(Y) {
         unsubscribe: function(type, fn, context) {
             var a = arguments;
             if (L.isString(a[0])) {
-                a[0] = _prefixType(a[0], this);
+                a[0] = this._prefixEvtType(a[0]);
             }
             return ETP.unsubscribe.apply(this, a);
         },
@@ -547,8 +542,23 @@ YUI.add('base', function(Y) {
          */
         unsubscribeAll: function(type) {
             var a = arguments;
-            a[0] = _prefixType(a[0], this);
+            a[0] = this._prefixEvtType(a[0]);
             return ETP.unsubscribeAll.apply(this, a);
+        },
+
+        /**
+         * Utility method to prefix the event name with the
+         * name property of the instance, if absent
+         *
+         * @method _prefixEvtType
+         * @private
+         * @param {String} type The event name
+         */
+        _prefixEvtType: function(type) {
+            if (type.indexOf(SEP) === -1 && this.name) {
+               type = this.name + ":" + type;
+            }
+            return type;
         }
     };
 
