@@ -273,6 +273,16 @@ YUI.add('dd-drag', function(Y) {
         */
         groups: {
             value: ['default'],
+            get: function() {
+                if (!this._groups) {
+                    this._groups = {};
+                }
+                var ret = [];
+                Y.each(this._groups, function(v, k) {
+                    ret[ret.length] = k;
+                });
+                return ret;
+            },
             set: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
@@ -283,6 +293,28 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * @method addToGroup
+        * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
+        * @param {String} g The group to add this Drag Instance to.
+        * @return {Self}
+        */
+        addToGroup: function(g) {
+            this._groups[g] = true;
+            DDM._activateTargets();
+            return this;
+        },
+        /**
+        * @method removeFromGroup
+        * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.
+        * @param {String} g The group to remove this Drag Instance from.
+        * @return {Self}
+        */
+        removeFromGroup: function(g) {
+            delete this._groups[g];
+            DDM._activateTargets();
+            return this;
+        },
         /**
         * @property target
         * @description This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
@@ -380,9 +412,16 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @property _invalids
         * @description A private hash of the invalid selector strings
-        * @type {Array}
+        * @type {Object}
         */
         _invalids: null,
+        /**
+        * @private
+        * @property _invalidsDefault
+        * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
+        * @type {Object}
+        */
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
         /**
         * @private
         * @property _dragThreshMet
@@ -681,7 +720,13 @@ YUI.add('dd-drag', function(Y) {
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
 
-            this._invalids = {};
+            if (!this.get(NODE).get('id')) {
+                var id = Y.stamp(this.get(NODE));
+                this.get(NODE).set('id', id);
+            }
+            
+
+            this._invalids = this._invalidsDefault;
 
             this._createEvents();
             

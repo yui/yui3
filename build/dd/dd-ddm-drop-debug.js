@@ -212,7 +212,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.clearCache();
             Y.each(this.tars, function(v, k) {
                 v._activateShim.apply(v, []);
-                
             }, this);
             this._handleTargetOver();
             

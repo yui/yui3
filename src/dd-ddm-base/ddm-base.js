@@ -44,6 +44,7 @@
 
     //Y.mix(DDMBase, {
     Y.extend(DDMBase, Y.Base, {
+        _activateTargets: function() {},        
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -100,6 +101,7 @@
         */
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(document, 'mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
             Y.Event.Target.apply(this);
         },
@@ -138,6 +140,9 @@
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
+            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
+            //Add as a config option??
+            //if (this.activeDrag && this.activeDrag.get('dragging')) {
             if (this.activeDrag) {
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
@@ -154,6 +159,7 @@
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
+            //console.log('_move');
         },
         /**
         * @method setXY

@@ -24,6 +24,7 @@ YUI.add('dd-constrain', function(Y) {
 
     };
     
+    C.NAME = 'dragConstrained';
 
     C.ATTRS = {
         /**

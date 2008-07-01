@@ -106,6 +106,8 @@
             this._pg = pg;
             this._pg.on('mouseup', this._end, this, true);
             this._pg.on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(this._pg, 'mousemove', this._move, this, true);
+            
             //TODO
             Y.Event.addListener(window, 'resize', this._pg_size, this, true);
             Y.Event.addListener(window, 'scroll', this._pg_size, this, true);

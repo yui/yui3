@@ -23,6 +23,8 @@ YUI.add('dd-proxy', function(Y) {
 
     };
 
+    Proxy.NAME = 'dragProxy';
+
     Proxy.ATTRS = {
         /**
         * @attribute moveOnEnd
@@ -153,7 +155,7 @@ YUI.add('dd-proxy', function(Y) {
         * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
         */        
         end: function() {
-            if (this.get(PROXY)) {
+            if (this.get(PROXY) && this.get('dragging')) {
                 if (this.get('moveOnEnd')) {
                     this.get(NODE).setXY(this.lastXY);
                 }

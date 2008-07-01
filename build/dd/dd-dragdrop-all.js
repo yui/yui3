@@ -46,6 +46,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
     //Y.mix(DDMBase, {
     Y.extend(DDMBase, Y.Base, {
+        _activateTargets: function() {},        
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -102,6 +103,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(document, 'mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
             Y.Event.Target.apply(this);
         },
@@ -140,6 +142,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
+            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
+            //Add as a config option??
+            //if (this.activeDrag && this.activeDrag.get('dragging')) {
             if (this.activeDrag) {
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
@@ -156,6 +161,7 @@ YUI.add('dd-ddm-base', function(Y) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
+            //console.log('_move');
         },
         /**
         * @method setXY
@@ -353,6 +359,8 @@ YUI.add('dd-ddm', function(Y) {
             this._pg = pg;
             this._pg.on('mouseup', this._end, this, true);
             this._pg.on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(this._pg, 'mousemove', this._move, this, true);
+            
             //TODO
             Y.Event.addListener(window, 'resize', this._pg_size, this, true);
             Y.Event.addListener(window, 'scroll', this._pg_size, this, true);
@@ -578,7 +586,6 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.clearCache();
             Y.each(this.tars, function(v, k) {
                 v._activateShim.apply(v, []);
-                
             }, this);
             this._handleTargetOver();
             
@@ -1026,6 +1033,16 @@ YUI.add('dd-drag', function(Y) {
         */
         groups: {
             value: ['default'],
+            get: function() {
+                if (!this._groups) {
+                    this._groups = {};
+                }
+                var ret = [];
+                Y.each(this._groups, function(v, k) {
+                    ret[ret.length] = k;
+                });
+                return ret;
+            },
             set: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
@@ -1036,6 +1053,28 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * @method addToGroup
+        * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
+        * @param {String} g The group to add this Drag Instance to.
+        * @return {Self}
+        */
+        addToGroup: function(g) {
+            this._groups[g] = true;
+            DDM._activateTargets();
+            return this;
+        },
+        /**
+        * @method removeFromGroup
+        * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.
+        * @param {String} g The group to remove this Drag Instance from.
+        * @return {Self}
+        */
+        removeFromGroup: function(g) {
+            delete this._groups[g];
+            DDM._activateTargets();
+            return this;
+        },
         /**
         * @property target
         * @description This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
@@ -1133,9 +1172,16 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @property _invalids
         * @description A private hash of the invalid selector strings
-        * @type {Array}
+        * @type {Object}
         */
         _invalids: null,
+        /**
+        * @private
+        * @property _invalidsDefault
+        * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
+        * @type {Object}
+        */
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
         /**
         * @private
         * @property _dragThreshMet
@@ -1425,7 +1471,13 @@ YUI.add('dd-drag', function(Y) {
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
 
-            this._invalids = {};
+            if (!this.get(NODE).get('id')) {
+                var id = Y.stamp(this.get(NODE));
+                this.get(NODE).set('id', id);
+            }
+            
+
+            this._invalids = this._invalidsDefault;
 
             this._createEvents();
             
@@ -1607,6 +1659,8 @@ YUI.add('dd-proxy', function(Y) {
 
     };
 
+    Proxy.NAME = 'dragProxy';
+
     Proxy.ATTRS = {
         /**
         * @attribute moveOnEnd
@@ -1737,7 +1791,7 @@ YUI.add('dd-proxy', function(Y) {
         * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
         */        
         end: function() {
-            if (this.get(PROXY)) {
+            if (this.get(PROXY) && this.get('dragging')) {
                 if (this.get('moveOnEnd')) {
                     this.get(NODE).setXY(this.lastXY);
                 }
@@ -1780,6 +1834,7 @@ YUI.add('dd-constrain', function(Y) {
 
     };
     
+    C.NAME = 'dragConstrained';
 
     C.ATTRS = {
         /**
@@ -2296,13 +2351,6 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
-        * @property _active
-        * @description Is the target active and ready to be used..
-        * @type Boolean
-        */
-        _active: null,
-        /**
-        * @private
         * @property _valid
         * @description Flag for determining if the target is valid in this operation.
         * @type Boolean
@@ -2357,6 +2405,10 @@ YUI.add('dd-drop', function(Y) {
         */
         initializer: function() {
             this._createEvents();
+            if (!this.get(NODE).get('id')) {
+                var id = Y.stamp(this.get(NODE));
+                this.get(NODE).set('id', id);
+            }
         },
         /**
         * @private
@@ -2368,7 +2420,6 @@ YUI.add('dd-drop', function(Y) {
             this.get(NODE).removeClass('dd-drop-active-invalid');
             this.get(NODE).removeClass('dd-drop-over');
             this.shim.setXY([-999, -999]);
-            this._active = false;
             this.overTarget = false;
         },
         /**
@@ -2377,18 +2428,21 @@ YUI.add('dd-drop', function(Y) {
         * @description Activates the shim and adds some interaction CSS classes
         */
         _activateShim: function() {
+            if (!DDM.activeDrag) {
+                return false; //Nothing is dragging, no reason to activate.
+            }
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
             if (this.get('lock')) {
                 return false;
             }
-            
+            //TODO Visibility Check..
             //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
+                this.get(NODE).removeClass('dd-drop-active-invalid');
                 this.get(NODE).addClass('dd-drop-active-valid');
                 DDM.addValid(this);
-                this._active = false;
                 this.overTarget = false;
                 this.sizeShim();
             } else {
@@ -2405,6 +2459,7 @@ YUI.add('dd-drop', function(Y) {
                 xy = this.get(NODE).getXY(),
                 p = this.get('padding');
 
+
             //Apply padding
             nw = nw + p.left + p.right;
             nh = nh + p.top + p.bottom;
@@ -2420,8 +2475,9 @@ YUI.add('dd-drop', function(Y) {
                 
                 nh = (nh + dH);
                 nw = (nw + dW);
-                xy[0] = xy[0] - (dH - dd.deltaXY[0]);
-                xy[1] = xy[1] - (dW - dd.deltaXY[1]);
+                xy[0] = xy[0] - (dW - dd.deltaXY[0]);
+                xy[1] = xy[1] - (dH - dd.deltaXY[1]);
+
             }
             
             //Set the style on the shim
@@ -2478,8 +2534,8 @@ YUI.add('dd-drop', function(Y) {
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
-                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
+                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                 } else {
                     this.overTarget = true;
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });

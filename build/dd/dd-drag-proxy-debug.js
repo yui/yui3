@@ -46,6 +46,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
     //Y.mix(DDMBase, {
     Y.extend(DDMBase, Y.Base, {
+        _activateTargets: function() {},        
         /**
         * @property clickPixelThresh
         * @description The number of pixels moved needed to start a drag operation, default 3.
@@ -102,6 +103,7 @@ YUI.add('dd-ddm-base', function(Y) {
         */
         _init: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(document, 'mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
             Y.Event.Target.apply(this);
         },
@@ -140,6 +142,9 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
+            //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
+            //Add as a config option??
+            //if (this.activeDrag && this.activeDrag.get('dragging')) {
             if (this.activeDrag) {
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
@@ -156,6 +161,7 @@ YUI.add('dd-ddm-base', function(Y) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
+            //console.log('_move');
         },
         /**
         * @method setXY
@@ -353,6 +359,8 @@ YUI.add('dd-ddm', function(Y) {
             this._pg = pg;
             this._pg.on('mouseup', this._end, this, true);
             this._pg.on('mousemove', this._move, this, true);
+            //YAHOO.util.Event.on(this._pg, 'mousemove', this._move, this, true);
+            
             //TODO
             Y.Event.addListener(window, 'resize', this._pg_size, this, true);
             Y.Event.addListener(window, 'scroll', this._pg_size, this, true);
@@ -639,6 +647,16 @@ YUI.add('dd-drag', function(Y) {
         */
         groups: {
             value: ['default'],
+            get: function() {
+                if (!this._groups) {
+                    this._groups = {};
+                }
+                var ret = [];
+                Y.each(this._groups, function(v, k) {
+                    ret[ret.length] = k;
+                });
+                return ret;
+            },
             set: function(g) {
                 this._groups = {};
                 Y.each(g, function(v, k) {
@@ -649,6 +667,28 @@ YUI.add('dd-drag', function(Y) {
     };
 
     Y.extend(Drag, Y.Base, {
+        /**
+        * @method addToGroup
+        * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
+        * @param {String} g The group to add this Drag Instance to.
+        * @return {Self}
+        */
+        addToGroup: function(g) {
+            this._groups[g] = true;
+            DDM._activateTargets();
+            return this;
+        },
+        /**
+        * @method removeFromGroup
+        * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.
+        * @param {String} g The group to remove this Drag Instance from.
+        * @return {Self}
+        */
+        removeFromGroup: function(g) {
+            delete this._groups[g];
+            DDM._activateTargets();
+            return this;
+        },
         /**
         * @property target
         * @description This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
@@ -746,9 +786,16 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @property _invalids
         * @description A private hash of the invalid selector strings
-        * @type {Array}
+        * @type {Object}
         */
         _invalids: null,
+        /**
+        * @private
+        * @property _invalidsDefault
+        * @description A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
+        * @type {Object}
+        */
+        _invalidsDefault: {'textarea': true, 'input': true, 'a': true, 'button': true},
         /**
         * @private
         * @property _dragThreshMet
@@ -1047,7 +1094,13 @@ YUI.add('dd-drag', function(Y) {
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
 
-            this._invalids = {};
+            if (!this.get(NODE).get('id')) {
+                var id = Y.stamp(this.get(NODE));
+                this.get(NODE).set('id', id);
+            }
+            
+
+            this._invalids = this._invalidsDefault;
 
             this._createEvents();
             
@@ -1234,6 +1287,8 @@ YUI.add('dd-proxy', function(Y) {
 
     };
 
+    Proxy.NAME = 'dragProxy';
+
     Proxy.ATTRS = {
         /**
         * @attribute moveOnEnd
@@ -1364,7 +1419,7 @@ YUI.add('dd-proxy', function(Y) {
         * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.
         */        
         end: function() {
-            if (this.get(PROXY)) {
+            if (this.get(PROXY) && this.get('dragging')) {
                 if (this.get('moveOnEnd')) {
                     this.get(NODE).setXY(this.lastXY);
                 }

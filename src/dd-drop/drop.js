@@ -141,13 +141,6 @@
         },
         /**
         * @private
-        * @property _active
-        * @description Is the target active and ready to be used..
-        * @type Boolean
-        */
-        _active: null,
-        /**
-        * @private
         * @property _valid
         * @description Flag for determining if the target is valid in this operation.
         * @type Boolean
@@ -202,6 +195,10 @@
         */
         initializer: function() {
             this._createEvents();
+            if (!this.get(NODE).get('id')) {
+                var id = Y.stamp(this.get(NODE));
+                this.get(NODE).set('id', id);
+            }
         },
         /**
         * @private
@@ -213,7 +210,6 @@
             this.get(NODE).removeClass('dd-drop-active-invalid');
             this.get(NODE).removeClass('dd-drop-over');
             this.shim.setXY([-999, -999]);
-            this._active = false;
             this.overTarget = false;
         },
         /**
@@ -222,18 +218,21 @@
         * @description Activates the shim and adds some interaction CSS classes
         */
         _activateShim: function() {
+            if (!DDM.activeDrag) {
+                return false; //Nothing is dragging, no reason to activate.
+            }
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
             if (this.get('lock')) {
                 return false;
             }
-            
+            //TODO Visibility Check..
             //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
+                this.get(NODE).removeClass('dd-drop-active-invalid');
                 this.get(NODE).addClass('dd-drop-active-valid');
                 DDM.addValid(this);
-                this._active = false;
                 this.overTarget = false;
                 this.sizeShim();
             } else {
@@ -250,6 +249,7 @@
                 xy = this.get(NODE).getXY(),
                 p = this.get('padding');
 
+
             //Apply padding
             nw = nw + p.left + p.right;
             nh = nh + p.top + p.bottom;
@@ -265,8 +265,9 @@
                 
                 nh = (nh + dH);
                 nw = (nw + dW);
-                xy[0] = xy[0] - (dH - dd.deltaXY[0]);
-                xy[1] = xy[1] - (dW - dd.deltaXY[1]);
+                xy[0] = xy[0] - (dW - dd.deltaXY[0]);
+                xy[1] = xy[1] - (dH - dd.deltaXY[1]);
+
             }
             
             //Set the style on the shim
@@ -323,8 +324,8 @@
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
-                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
+                    this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                 } else {
                     this.overTarget = true;
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });

@@ -22,6 +22,7 @@
 
     };
     
+    C.NAME = 'dragConstrained';
 
     C.ATTRS = {
         /**
