@@ -150,6 +150,8 @@ YUI.add("event-facade", function(Y) {
             }
         }
 
+        this._yuifacade = true;
+
         /**
          * The X location of the event on the page (including scroll)
          * @property pageX
@@ -275,7 +277,12 @@ YUI.add("event-facade", function(Y) {
          * @method stopImmediatePropagation
          */
         this.stopImmediatePropagation = function() {
-            this.stopPropagation();
+
+            if (e.stopImmediatePropagation) {
+                e.stopImmediatePropagation();
+            } else {
+                this.stopPropagation();
+            }
 
             if (wrapper) {
                 wrapper.stopImmediatePropagation();

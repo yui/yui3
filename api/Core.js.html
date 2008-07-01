@@ -143,20 +143,20 @@
                         <span class="c">// if the receiver has this property, it is an object,</span>
 <span class="c"></span>                        <span class="c">// and merge is specified, merge the two objects.</span>
 <span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">m</span> <span class="o">&amp;&amp;</span> <span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
-                            <span class="c">// Y.log(&#39;recurse: &#39; + i);</span>
-<span class="c"></span>                            <span class="c">// @TODO recursive or no?</span>
+                            <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;aggregate RECURSE: &#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="o">);</span>
+                            <span class="c">// @TODO recursive or no?</span>
 <span class="c"></span>                            <span class="c">// Y.mix(fr[i], fs[i]); // not recursive</span>
 <span class="c"></span>                            <span class="nx">f</span><span class="o">(</span><span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">proto</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span> <span class="c">// recursive</span>
 <span class="c"></span>                        <span class="c">// otherwise apply the property only if overwrite</span>
 <span class="c"></span>                        <span class="c">// is specified or the receiver doesn&#39;t have one.</span>
 <span class="c"></span>                        <span class="c">// @TODO make sure the &#39;arr&#39; check isn&#39;t desructive</span>
 <span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">arr</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ov</span> <span class="o">||</span> <span class="o">!(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">fr</span><span class="o">)))</span> <span class="o">{</span>
-                            <span class="c">// Y.log(&#39;hash: &#39; + i);</span>
+                            <span class="c">// console.log(&#39;hash: &#39; + i);</span>
 <span class="c"></span>                            <span class="nx">fr</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                         <span class="c">// if merge is specified and the receiver is an array,</span>
 <span class="c"></span>                        <span class="c">// append the array item</span>
 <span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">arr</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="c">// Y.log(&#39;array: &#39; + i);</span>
+                            <span class="c">// console.log(&#39;array: &#39; + i);</span>
 <span class="c"></span>                            <span class="c">// @TODO probably will need to remove dups</span>
 <span class="c"></span>                            <span class="nx">fr</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">fs</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                         <span class="o">}</span>

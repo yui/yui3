@@ -105,7 +105,7 @@ YUI.add("core", function(Y) {
                         // if the receiver has this property, it is an object,
                         // and merge is specified, merge the two objects.
                         if (m && L.isObject(fr[i], true)) {
-                            // Y.log('recurse: ' + i);
+                            console.log('aggregate RECURSE: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
                             f(fr[i], fs[i], proto, true); // recursive
@@ -113,12 +113,12 @@ YUI.add("core", function(Y) {
                         // is specified or the receiver doesn't have one.
                         // @TODO make sure the 'arr' check isn't desructive
                         } else if (!arr && (ov || !(i in fr))) {
-                            // Y.log('hash: ' + i);
+                            // console.log('hash: ' + i);
                             fr[i] = fs[i];
                         // if merge is specified and the receiver is an array,
                         // append the array item
                         } else if (arr) {
-                            // Y.log('array: ' + i);
+                            // console.log('array: ' + i);
                             // @TODO probably will need to remove dups
                             fr.push(fs[i]);
                         }

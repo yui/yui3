@@ -771,7 +771,7 @@ YUI.add("core", function(Y) {
                         // if the receiver has this property, it is an object,
                         // and merge is specified, merge the two objects.
                         if (m && L.isObject(fr[i], true)) {
-                            // Y.log('recurse: ' + i);
+                            console.log('aggregate RECURSE: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
                             f(fr[i], fs[i], proto, true); // recursive
@@ -779,12 +779,12 @@ YUI.add("core", function(Y) {
                         // is specified or the receiver doesn't have one.
                         // @TODO make sure the 'arr' check isn't desructive
                         } else if (!arr && (ov || !(i in fr))) {
-                            // Y.log('hash: ' + i);
+                            // console.log('hash: ' + i);
                             fr[i] = fs[i];
                         // if merge is specified and the receiver is an array,
                         // append the array item
                         } else if (arr) {
-                            // Y.log('array: ' + i);
+                            // console.log('array: ' + i);
                             // @TODO probably will need to remove dups
                             fr.push(fs[i]);
                         }
@@ -2278,14 +2278,15 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             }
 
             // update the details field with the arguments
-            ef.details = this.details;
             ef.target = this.target;
             ef.originalTarget = this.originalTarget;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
-            if (args && Y.Lang.isObject(args[0]), true) {
+            if (args && Y.Lang.isObject(args[0], true)) {
                 Y.mix(ef, args[0], true);
+            } else { 
+                ef.details = this.details;
             }
 
             this._facade = ef;
@@ -2305,10 +2306,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
             this.log(this.type + "->" + ": " +  s);
 
-            var ret, wrap = this.emitFacade, a = Y.Array(args);
-            
+            var ret;
+
             // emit an Event.Facade if this is that sort of event
-            if (wrap) {
+            if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
 
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
@@ -2317,11 +2318,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                     ef = this._getFacade(args);
                 }
 
-                a[0] = ef;
-
+                args[0] = ef;
             }
              
-            ret = s.notify(this.context, a);
+            ret = s.notify(this.context, args);
 
             if (false === ret || this.stopped > 1) {
                 this.log("Event canceled by subscriber " + ret + ', ' + this.stopped);
@@ -4085,6 +4085,8 @@ YUI.add("event-facade", function(Y) {
             }
         }
 
+        this._yuifacade = true;
+
         /**
          * The X location of the event on the page (including scroll)
          * @property pageX
@@ -4210,7 +4212,12 @@ YUI.add("event-facade", function(Y) {
          * @method stopImmediatePropagation
          */
         this.stopImmediatePropagation = function() {
-            this.stopPropagation();
+
+            if (e.stopImmediatePropagation) {
+                e.stopImmediatePropagation();
+            } else {
+                this.stopPropagation();
+            }
 
             if (wrapper) {
                 wrapper.stopImmediatePropagation();
