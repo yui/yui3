@@ -142,6 +142,7 @@ YUI.add('attribute', function(Y) {
         addAtt: function(name, config) {
             var value, hasValue = (VALUE in config);
 
+
             if(hasValue) {
                 value = config.value;
                 delete config.value;
@@ -555,7 +556,7 @@ YUI.add('attribute', function(Y) {
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
             this.publish(type, {queuable:false, defaultFn:this._defAttSet});
-    
+
             var eData = {
                 type: type,
                 prevVal: currVal,
@@ -563,11 +564,11 @@ YUI.add('attribute', function(Y) {
                 attrName: attrName,
                 subAttrName: strFullPath
             };
-    
+
             if (opts) {
                 Y.mix(eData, opts);
             }
-    
+
             this.fire(eData);
         }
     };

@@ -144,6 +144,8 @@ YUI.add('attribute', function(Y) {
             Y.log('adding attribute: ' + name, 'info', 'Attribute');
             var value, hasValue = (VALUE in config);
 
+            if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'Attribute');}
+
             if(hasValue) {
                 value = config.value;
                 delete config.value;
@@ -563,7 +565,7 @@ YUI.add('attribute', function(Y) {
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
             this.publish(type, {queuable:false, defaultFn:this._defAttSet});
-    
+
             var eData = {
                 type: type,
                 prevVal: currVal,
@@ -571,11 +573,11 @@ YUI.add('attribute', function(Y) {
                 attrName: attrName,
                 subAttrName: strFullPath
             };
-    
+
             if (opts) {
                 Y.mix(eData, opts);
             }
-    
+
             this.fire(eData);
         }
     };

@@ -61,6 +61,38 @@ YUI.add('base', function(Y) {
 
     var _instances = {};
 
+    /**
+     * <p>
+     * Builds a constructor function (class) from the
+     * main function, and array of extension functions
+     * provided.
+     * </p>
+     * <p>
+     * The cfg object literal supports the following properties
+     * </p>
+     * <dl>
+     *    <dt>dynamic {boolean}</dt>
+     *    <dd>
+     *    <p>If true, a completely new class
+     *    is created which extends the main class, and acts as the 
+     *    host on which the extension classes are augmented.</p>
+     *    <p>If false, the extensions classes are augmented directly to
+     *    the main class, modifying the main class.</p>
+     *    </dd>
+     *    <dt>aggregates {String[]}</dt>
+     *    <dd>An array of static property names, which will get aggregated
+     *    on to the built class in addition to the default properties build 
+     *    will always aggregate - "ATTRS" and "PLUGINS", as defined by 
+     *    Base.build.AGGREGATES</dd>
+     * </dl>
+     *
+     * @method build
+     * @static
+     * @param {Function} main The main class on which to base the built class
+     * @param {Function[]} extensions The set of extension classes which will be
+     * augmented/aggregated to the built class.
+     * @param {Object} cfg
+     */
     Base.build = function(main, extensions, cfg) {
 
         var build = Base.build,
@@ -167,6 +199,14 @@ YUI.add('base', function(Y) {
         }
     });
 
+    /**
+     * @method create
+     * @static
+     *
+     * @param {Function} main 
+     * @param {Array} extensions
+     * @param {Any*} args 
+     */
     Base.create = function(main, extensions, args) {
         var c = Base.build(main, extensions, {dynamic:true}),
             cArgs = Y.Array(arguments, 2, true);
@@ -199,10 +239,10 @@ YUI.add('base', function(Y) {
              * @type boolean
              */
             this.destroyed = false;
-            
+
             /**
              * Flag indicating whether or not this object
-             * has been through the init lifecycle state.
+             * has been through the init lifecycle phase.
              * 
              * @property initialized
              * @type boolean
