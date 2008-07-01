@@ -3,7 +3,6 @@
 <head>
     <title>Base.build</title>
     <script type="text/javascript" src="../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../util/yui/src/js/State.js"></script>
     <script type="text/javascript" src="../build/attribute/attribute.js"></script>
     <script type="text/javascript" src="../build/base/base.js"></script>
     <script type="text/javascript" src="../util/plugin/src/js/Plugin.js"></script>
@@ -42,8 +41,6 @@
         Main.PLUGINS = [
             MainPlugin
         ];
-
-        Main.MAIN_CONSTANT;
 
         Y.extend(Main, Y.Base, {
             methodA : function() {
@@ -86,8 +83,6 @@
             ExtOnePlugin
         ];
 
-        ExtOne.EXTONE_CONSTANT = "EXTONE_CONSTANT";
-
         ExtOne.prototype = {
             methodB : function() {
                 Y.log("ExtOne methodB called - Attr value:" + this.get("extOne"));
@@ -129,8 +124,6 @@
             ExtTwoPlugin
         ];
 
-        ExtTwo.EXTTWO_CONSTANT = "EXTTWO_CONSTANT";
-
         ExtTwo.prototype = {
 
             methodB : function() {
@@ -146,7 +139,7 @@
             }
         };
 
-        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], {aggregates:["CLASSNAME"], methods:["methodB"], dynamic:true});
+        var CustMain = Y.Base.build(Main, [ExtOne, ExtTwo], {aggregates:["CLASSNAME"], dynamic:true});
         var c = new CustMain({mainA:"custMainA", extOne:"custExtOne"});
         c.methodA();
         c.methodB();

@@ -113,8 +113,14 @@
         x.after("destroy", function() {
             Y.log("After Destroy");
         });
-        
+
         x.destroy();
+
+        c1 = new ClassOne();
+        Y.log(c1.constructor.NAME);
+
+        c2 = new ClassTwo();
+        Y.log(c2.constructor.NAME);
     })();
     </script>
 </head>
