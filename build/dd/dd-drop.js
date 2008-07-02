@@ -208,9 +208,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
-            this.get(NODE).removeClass('dd-drop-active-valid');
-            this.get(NODE).removeClass('dd-drop-active-invalid');
-            this.get(NODE).removeClass('dd-drop-over');
+            this.get(NODE).removeClass('yui-dd-drop-active-valid');
+            this.get(NODE).removeClass('yui-dd-drop-active-invalid');
+            this.get(NODE).removeClass('yui-dd-drop-over');
             this.shim.setXY([-999, -999]);
             this.overTarget = false;
         },
@@ -232,13 +232,13 @@ YUI.add('dd-drop', function(Y) {
             //TODO Visibility Check..
             //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
-                this.get(NODE).removeClass('dd-drop-active-invalid');
-                this.get(NODE).addClass('dd-drop-active-valid');
+                this.get(NODE).removeClass('yui-dd-drop-active-invalid');
+                this.get(NODE).addClass('yui-dd-drop-active-valid');
                 DDM.addValid(this);
                 this.overTarget = false;
                 this.sizeShim();
             } else {
-                this.get(NODE).addClass('dd-drop-active-invalid');
+                this.get(NODE).addClass('yui-dd-drop-active-invalid');
             }
         },
         /**
@@ -322,7 +322,7 @@ YUI.add('dd-drop', function(Y) {
         */
         _handleTargetOver: function(force) {
             if (DDM.isOverTarget(this)) {
-                this.get(NODE).addClass('dd-drop-over');
+                this.get(NODE).addClass('yui-dd-drop-over');
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
@@ -332,6 +332,7 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = true;
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.get(NODE).addClass('yui-dd-drag-over');
                     DDM._handleTargetOver(this, force);
                 }
             } else {
@@ -366,7 +367,8 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = false;
                     DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
-                        this.get(NODE).removeClass('dd-drop-over');
+                        this.get(NODE).removeClass('yui-dd-drop-over');
+                        DDM.activeDrag.get(NODE).removeClass('yui-dd-drag-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];

@@ -265,10 +265,12 @@
                     this.activeDrop = tmp[0];
                     other = tmp[1];
                 }
+                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
                 this.activeDrop.fire('drop:hit', { drag: this.activeDrag, drop: this.activeDrop, others: other });
                 this.activeDrag.fire('drag:drophit', { drag: this.activeDrag,  drop: this.activeDrop, others: other });
             } else if (this.activeDrag) {
-                this.activeDrag.fire('drag:dropmiss');
+                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
+                this.activeDrag.fire('drag:dropmiss', { pageX: this.activeDrag.lastXY[0], pageY: this.activeDrag.lastXY[1] });
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
             }

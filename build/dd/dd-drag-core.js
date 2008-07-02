@@ -152,6 +152,17 @@ YUI.add('dd-ddm-base', function(Y) {
             }
         },
         /**
+        * @method stopDrag
+        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+        * @return {Self}
+        */       
+        stopDrag: function() {
+            if (this.activeDrag) {
+                this._end();
+            }
+            return this;
+        },
+        /**
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
@@ -1107,16 +1118,17 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @method start
         * @description Starts the drag operation
+        * @return {Self}
         */
         start: function() {
             if (!this.get('lock')) {
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass('yui-dd-dragging');
-                this.fire(EV_START);
+                this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
-                
                 var xy = this.nodeXY;
+                
                 this.region = {
                     '0': xy[0], 
                     '1': xy[1],
@@ -1128,22 +1140,26 @@ YUI.add('dd-drag', function(Y) {
                 };
                 
             }
+            return this;
         },
         /**
         * @method end
         * @description Ends the drag operation
+        * @return {Self}
         */
         end: function() {
             clearTimeout(this._clickTimeout);
             this._dragThreshMet = false;
             this._fromTimeout = false;
             if (!this.get('lock') && this.get('dragging')) {
-                this.fire(EV_END);
+                this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
             }
             this.get(NODE).removeClass('yui-dd-dragging');
             this.set('dragging', false);
             this.deltaXY = [0, 0];
             this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+
+            return this;
         },
         /**
         * @private
@@ -1193,6 +1209,8 @@ YUI.add('dd-drag', function(Y) {
             var startXY = this.nodeXY;
             if (!noFire) {
                 this.fire(EV_DRAG, {
+                    pageX: xy[0],
+                    pageY: xy[1],
                     info: {
                         start: startXY,
                         xy: xy,
@@ -1229,6 +1247,17 @@ YUI.add('dd-drag', function(Y) {
                     this._moveNode([ev.pageX, ev.pageY]);
                 }
             }
+        },
+        /**
+        * @method stopDrag
+        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+        * @return {Self}
+        */
+        stopDrag: function() {
+            if (this.get('dragging')) {
+                DDM._end();
+            }
+            return this;
         },
         /**
         * @private

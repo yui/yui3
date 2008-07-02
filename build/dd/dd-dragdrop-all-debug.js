@@ -152,6 +152,17 @@ YUI.add('dd-ddm-base', function(Y) {
             }
         },
         /**
+        * @method stopDrag
+        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+        * @return {Self}
+        */       
+        stopDrag: function() {
+            if (this.activeDrag) {
+                this._end();
+            }
+            return this;
+        },
+        /**
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
@@ -641,10 +652,12 @@ YUI.add('dd-ddm-drop', function(Y) {
                     this.activeDrop = tmp[0];
                     other = tmp[1];
                 }
+                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
                 this.activeDrop.fire('drop:hit', { drag: this.activeDrag, drop: this.activeDrop, others: other });
                 this.activeDrag.fire('drag:drophit', { drag: this.activeDrag,  drop: this.activeDrop, others: other });
             } else if (this.activeDrag) {
-                this.activeDrag.fire('drag:dropmiss');
+                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
+                this.activeDrag.fire('drag:dropmiss', { pageX: this.activeDrag.lastXY[0], pageY: this.activeDrag.lastXY[1] });
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
             }
@@ -1468,7 +1481,7 @@ YUI.add('dd-drag', function(Y) {
                 this._invalids[str] = true;
                 this.fire(EV_ADD_INVALID, { handle: str });
             } else {
-                Y.log('Selector needs to be a string..');
+                Y.log('Selector needs to be a string..', 'warn', 'dd-drag');
             }
             return this;
         },
@@ -1504,6 +1517,7 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @method start
         * @description Starts the drag operation
+        * @return {Self}
         */
         start: function() {
             if (!this.get('lock')) {
@@ -1511,10 +1525,10 @@ YUI.add('dd-drag', function(Y) {
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 Y.log('startDrag', 'info', 'dd-drag');
                 this.get(NODE).addClass('yui-dd-dragging');
-                this.fire(EV_START);
+                this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
-                
                 var xy = this.nodeXY;
+                
                 this.region = {
                     '0': xy[0], 
                     '1': xy[1],
@@ -1526,10 +1540,12 @@ YUI.add('dd-drag', function(Y) {
                 };
                 
             }
+            return this;
         },
         /**
         * @method end
         * @description Ends the drag operation
+        * @return {Self}
         */
         end: function() {
             clearTimeout(this._clickTimeout);
@@ -1537,12 +1553,14 @@ YUI.add('dd-drag', function(Y) {
             this._fromTimeout = false;
             if (!this.get('lock') && this.get('dragging')) {
                 Y.log('endDrag', 'info', 'dd-drag');
-                this.fire(EV_END);
+                this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
             }
             this.get(NODE).removeClass('yui-dd-dragging');
             this.set('dragging', false);
             this.deltaXY = [0, 0];
             this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+
+            return this;
         },
         /**
         * @private
@@ -1592,6 +1610,8 @@ YUI.add('dd-drag', function(Y) {
             var startXY = this.nodeXY;
             if (!noFire) {
                 this.fire(EV_DRAG, {
+                    pageX: xy[0],
+                    pageY: xy[1],
                     info: {
                         start: startXY,
                         xy: xy,
@@ -1631,6 +1651,18 @@ YUI.add('dd-drag', function(Y) {
                     this._moveNode([ev.pageX, ev.pageY]);
                 }
             }
+        },
+        /**
+        * @method stopDrag
+        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+        * @return {Self}
+        */
+        stopDrag: function() {
+            if (this.get('dragging')) {
+                Y.log('stopDrag called', 'warn', 'dd-drag');
+                DDM._end();
+            }
+            return this;
         },
         /**
         * @private
@@ -2435,9 +2467,9 @@ YUI.add('dd-drop', function(Y) {
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
-            this.get(NODE).removeClass('dd-drop-active-valid');
-            this.get(NODE).removeClass('dd-drop-active-invalid');
-            this.get(NODE).removeClass('dd-drop-over');
+            this.get(NODE).removeClass('yui-dd-drop-active-valid');
+            this.get(NODE).removeClass('yui-dd-drop-active-invalid');
+            this.get(NODE).removeClass('yui-dd-drop-over');
             this.shim.setXY([-999, -999]);
             this.overTarget = false;
         },
@@ -2459,13 +2491,13 @@ YUI.add('dd-drop', function(Y) {
             //TODO Visibility Check..
             //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
-                this.get(NODE).removeClass('dd-drop-active-invalid');
-                this.get(NODE).addClass('dd-drop-active-valid');
+                this.get(NODE).removeClass('yui-dd-drop-active-invalid');
+                this.get(NODE).addClass('yui-dd-drop-active-valid');
                 DDM.addValid(this);
                 this.overTarget = false;
                 this.sizeShim();
             } else {
-                this.get(NODE).addClass('dd-drop-active-invalid');
+                this.get(NODE).addClass('yui-dd-drop-active-invalid');
             }
         },
         /**
@@ -2549,7 +2581,7 @@ YUI.add('dd-drop', function(Y) {
         */
         _handleTargetOver: function(force) {
             if (DDM.isOverTarget(this)) {
-                this.get(NODE).addClass('dd-drop-over');
+                this.get(NODE).addClass('yui-dd-drop-over');
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
@@ -2559,6 +2591,7 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = true;
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.get(NODE).addClass('yui-dd-drag-over');
                     DDM._handleTargetOver(this, force);
                 }
             } else {
@@ -2593,7 +2626,8 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = false;
                     DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
-                        this.get(NODE).removeClass('dd-drop-over');
+                        this.get(NODE).removeClass('yui-dd-drop-over');
+                        DDM.activeDrag.get(NODE).removeClass('yui-dd-drag-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
@@ -2608,7 +2642,48 @@ YUI.add('dd-drop', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['dd-ddm-drop'], skinnable:false});
+YUI.add('dd-drop-plugin', function(Y) {
+
+       /**
+        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * @module dd-plugin
+        */
+       /**
+        * This is a simple Drop plugin that can be attached to a Node via the plug method.
+        * @class DropPlugin
+        * @namespace Plugin
+        * @extends drop
+        * @constructor
+        */
+
+        Y.Plugin = Y.Plugin || {};
+
+        var Drop = function(config) {
+            config.node = config.owner;
+            Drop.superclass.constructor.apply(this, arguments);
+        };
+        
+        /**
+        * @property NAME
+        * @description dd-drop-plugin
+        * @type {String}
+        */
+        Drop.NAME = "dd-drop-plugin";
+        /**
+        * @property NS
+        * @description The Drop instance will be placed on the Node instance under the drop namespace. It can be accessed via Node.drop;
+        * @type {String}
+        */
+        Drop.NS = "drop";
 
 
-YUI.add('dd-dragdrop-all', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop']});
+        Y.extend(Drop, Y.DD.Drop);
+        Y.Plugin.Drop = Drop;
+
+
+
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
+
+
+YUI.add('dd-dragdrop-all', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-plugin-drop']});
 
