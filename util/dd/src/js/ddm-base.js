@@ -150,6 +150,17 @@
             }
         },
         /**
+        * @method stopDrag
+        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+        * @return {Self}
+        */       
+        stopDrag: function() {
+            if (this.activeDrag) {
+                this._end();
+            }
+            return this;
+        },
+        /**
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.

@@ -119,16 +119,16 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             background-image: url( grid.png );
         }
 
-        .dd-drop-active {
+        .yui-dd-drop-active {
             border-style: dotted;
         }
-        .dd-drop-active-valid {
+        .yui-dd-drop-active-valid {
             border-color: blue;
         }
-        .dd-drop-active-invalid {
+        .yui-dd-drop-active-invalid {
             border-color: red;
         }
-        .dd-drop-over {
+        .yui-dd-drop-over {
             border-color: green;
         }
         #drop_4 {
@@ -199,7 +199,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         <div id="drag5">Drag Me V <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag6">Drag Me VI <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         <div id="drag7">Drag Me VII <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
-        <button id="test">Test Programmatic Move</button><br>
         <select>
             <option>Test Select</option>
             <option>Test Select</option>
@@ -208,7 +207,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             <option>Test Select</option>
         </select>
         <iframe src="blank.htm" height="300" width="300"></iframe>
-        <div id="anim_drop">Anim Drop</div>
 
     </div>
     <div id="ft">&nbsp;</div>
@@ -439,24 +437,6 @@ Y.on('event:ready', function() {
     });
     */
     
-    Y.Node.get('#test').on('click', function() {
-        Y.log('_setStartPosition:', 'info', 'Dav Test');
-        dd._setStartPosition(dd.get('node').getXY());
-        Y.log('DDM::activeDrag:', 'info', 'Dav Test');
-        Y.DD.DDM.activeDrag = dd;
-        Y.log('dd.start():', 'info', 'Dav Test');
-        dd.start();
-        for (var i = 0; i < 726; i++) {
-            Y.log('moveNode([' + i + ', 129]):', 'info', 'Dav Test');
-            dd.moveNode([i, 129]);
-        }
-        Y.log('end', 'info', 'Dav Test');
-        dd.end();
-        Y.log('_handleMouseUp():', 'info', 'Dav Test');
-        dd._handleMouseUp();
-    });
-
-
     
     //var b = Y.Node.get('#play');
     var b = document.getElementById('play');

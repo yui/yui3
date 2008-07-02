@@ -9,6 +9,7 @@ Source Files:
     constrain.js        ==> Adds constrain support to drag
     drop.js             ==> Drop Support
     dd-plugin.js        ==> Node plugin for Drag
+    dd-drop-plugin.js   ==> Node plugin for Drop
 
 
 Module Names:
@@ -20,6 +21,7 @@ Module Names:
     dd-constrain        ==> Adds constrain support to drag
     dd-drop             ==> Drop Support
     dd-plugin           ==> Node plugin for Drag
+    dd-drop-plugin      ==> Node plugin for Drop
 
 Build Files:
     dd-ddm-base.js      ==> Base DragDrop Manager
@@ -30,14 +32,15 @@ Build Files:
     dd-constrain.js     ==> Adds constrain support to drag
     dd-drop.js          ==> Drop Support
     dd-plugin.js        ==> Node plugin for Drag
+    dd-drop-plugin.js   ==> Node plugin for Drop
 
 
 Rollup Files:
     dd-drag-core.js     ==> dd-ddm-base, dd-ddm, dd-drag, dd-plugin
     dd-drag-proxy.js    ==> dd-ddm-base, dd-ddm, dd-drag, dd-proxy, dd-plugin
     dd-drag-all.js      ==> dd-ddm-base, dd-ddm, dd-drag, dd-proxy, dd-constrain, dd-plugin
-    dd-dragdrop-all.js  ==> dd-ddm-base, dd-ddm, dd-ddm-drop, dd-drag, dd-proxy, dd-constrain, dd-drop, dd-plugin
-    dd-drop-core.js     ==> dd-ddm-drop, dd-drop
+    dd-dragdrop-all.js  ==> dd-ddm-base, dd-ddm, dd-ddm-drop, dd-drag, dd-proxy, dd-constrain, dd-drop, dd-plugin, dd-drop-plugin
+    dd-drop-core.js     ==> dd-ddm-drop, dd-drop, dd-drop-plugin
 
 Example File:
     3.x/util/dd/src/tests/index.php
