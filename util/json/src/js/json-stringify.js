@@ -10,14 +10,13 @@ Y.JSON = Y.JSON || {};
 
 Y.mix(Y.JSON,{
     /**
-     * Regex used to replace special characters in strings for JSON
-     * stringification.
+     * Regex used to capture characters that need escaping before enclosing
+     * their containing string in quotes.
      * @property _SPECIAL_CHARS
      * @type {RegExp}
-     * @static
      * @private
      */
-    _SPECIAL_CHARS : /["\\\x00-\x1f\x7f-\x9f]/g,
+    _SPECIAL_CHARS : /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
 
     /**
      * Character substitution map for common escapes and special characters.
@@ -66,8 +65,10 @@ Y.mix(Y.JSON,{
      * be stringified as empty.
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
-     * @param w {Array} (optional) whitelist of acceptable object keys to include
-     * @param d {number} (optional) depth limit to recurse objects/arrays (practical minimum 1)
+     * @param w {Array} (optional) whitelist of acceptable object keys to
+     *                  include
+     * @param d {number} (optional) depth limit to recurse objects/arrays
+     *                   (practical minimum 1)
      * @return {string} JSON string representation of the input
      * @static
      * @public
@@ -86,9 +87,7 @@ Y.mix(Y.JSON,{
         // escape encode special characters
         var _char = function (c) {
             if (!m[c]) {
-                var a = c.charCodeAt();
-                m[c] = '\\u00' + Math.floor(a / 16).toString(16) +
-                                           (a % 16).toString(16);
+                m[c]='\\u'+('0000'+(+(c.charCodeAt(0))).toString(16)).slice(-4);
             }
             return m[c];
         };
