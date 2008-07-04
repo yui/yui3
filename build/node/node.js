@@ -1,9 +1,9 @@
+YUI.add('node', function(Y) {
+
 /**
  * DOM Abstractions.
  * @module node
  */
-
-YUI.add('node', function(Y) {
 
     /**
      * A wrapper for DOM Nodes.
@@ -446,8 +446,10 @@ YUI.add('node', function(Y) {
 
     Node.methods = function(name, fn) {
         if (typeof name == 'string') {
-            Node.prototype[name] = function(a, b, c, d, e) {
-                var ret = fn(this, a, b, c, d, e);
+            Node.prototype[name] = function() {
+                var args = slice.call(arguments);
+                args.unshift(this);
+                var ret = fn.apply(null, args);
                 if (ret === undefined) {
                     ret = this;
                 }
@@ -1065,13 +1067,58 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0', { requires: ['dom', 'selector', 'style'] });
+/**
+ * Extended Node interface for managing classNames.
+ * @module nodeclassname
+ */
+
+    /**
+     * An interface for manipulating className strings.
+     * @interface NodeClassName
+     */
+    Y.Node.addDOMMethods([
+        /**
+         * Determines whether an HTMLElement has the given className.
+         * @method hasClass
+         * @param {String} className the class name to search for
+         * @return {Boolean} A boolean value or array of boolean values
+         */
+        'hasClass',
+
+        /**
+         * Adds a class name to a given element or collection of elements.
+         * @method addClass         
+         * @param {String} className the class name to add to the class attribute
+         */
+        'addClass',
+
+        /**
+         * Removes a class name from a given element or collection of elements.
+         * @method removeClass         
+         * @param {String} className the class name to remove from the class attribute
+         */
+        'removeClass',
+
+        /**
+         * Replace a class with another class for a given element or collection of elements.
+         * If no oldClassName is present, the newClassName is simply added.
+         * @method replaceClass  
+         * @param {String} oldClassName the class name to be replaced
+         * @param {String} newClassName the class name that will be replacing the old class name
+         */
+        'replaceClass',
+
+        /**
+         * If the className exists on the node it is removed, if it doesn't exist it is added.
+         * @method toggleClass  
+         * @param {String} className the class name to be toggled
+         */
+        'toggleClass'
+    ]);
 /**
  * Extended interface for Node
  * @interface nodescreen
  */
-
-YUI.add('nodescreen', function(Y) {
 
     /**
      * An interface for Node positioning.
@@ -1086,113 +1133,44 @@ YUI.add('nodescreen', function(Y) {
 
     Y.Node.addDOMMethods(['getXY', 'setXY']);
 
-}, '3.0.0', { requires: ['node', 'domscreen'] });
 /**
  * Extended Node interface for managing classNames.
- * @module nodeclassname
+ * @module node-region
  */
 
-YUI.add('nodeclassname', function(Y) {
-
-    /**
-     * An interface for manipulating className strings.
-     * @interface NodeClassName
-     */
-    Y.Node.addDOMMethods([
-        /**
-         * Determines whether an HTMLElement has the given className.
-         * @method hasClass
-         * @param {String} className the class name to search for
-         * @return {Boolean | Array} A boolean value or array of boolean values
-         */
-        'hasClass',
-
-        /**
-         * Adds a class name to a given element or collection of elements.
-         * @method addClass         
-         * @param {String} className the class name to add to the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        'addClass',
-
-        /**
-         * Removes a class name from a given element or collection of elements.
-         * @method removeClass         
-         * @param {String} className the class name to remove from the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        'removeClass',
-
-        /**
-         * Replace a class with another class for a given element or collection of elements.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
-         */
-        'replaceClass',
-
-        /**
-         * If the className exists on the node it is removed, if it doesn't exist it is added.
-         * @method toggleClass  
-         * @param {String} className the class name to be toggled
-         */
-        'toggleClass'
-    ]);
-
-}, '3.0.0', { requires: ['node', 'domclassname'] });
 /**
- * Extended interface for Node
- * @module nodeextras
+ * A Region interface for Node.
+ * @interface NodeRegion
  */
 
-YUI.add('nodeextras', function(Y) {
+var ATTR = ['region', 'viewportRegion'],
+    getNode = Y.Node.getDOMNode;
 
-    /**
-     * An interface for advanced DOM features.
-     * @interface NodeExtras
-     */
+Y.each(ATTR, function(v, n) {
+    Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
+});
 
-}, '3.0.0', { requires: ['node', 'nodeclassname', 'nodescreen', 'noderegion'] });
-/**
- * Extended Node interface for managing classNames.
- * @module nodeclassname
- */
+Y.Node.addDOMMethods([
+    'inViewportRegion'
+]);
 
-YUI.add('noderegion', function(Y) {
-
-    /**
-     * A Region interface for Node.
-     * @interface NodeRegion
-     */
-
-    var ATTR = ['region', 'viewportRegion'],
-        getNode = Y.Node.getDOMNode;
-
-    Y.each(ATTR, function(v, n) {
-        Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-    });
-
-    Y.Node.addDOMMethods([
-        'inViewportRegion'
-    ]);
-
-    // these need special treatment to extract 2nd node arg
-    Y.Node.methods({
-        intersect: function(node1, node2, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-        },
-
-        inRegion: function(node1, node2, all, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
+// these need special treatment to extract 2nd node arg
+Y.Node.methods({
+    intersect: function(node1, node2, altRegion) {
+        if (node2 instanceof Y.Node) { // might be a region object
+            node2 = getNode(node2);
         }
-    });
+        return Y.DOM.intersect(getNode(node1), node2, altRegion); 
+    },
 
-}, '3.0.0', { requires: ['node', 'screen', 'region'] });
+    inRegion: function(node1, node2, all, altRegion) {
+        if (node2 instanceof Y.Node) { // might be a region object
+            node2 = getNode(node2);
+        }
+        return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
+    }
+});
+
+
+
+}, '@VERSION@' ,{requires:['dom']});

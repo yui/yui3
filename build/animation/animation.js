@@ -1,8 +1,9 @@
+YUI.add('animation', function(Y) {
+
 /**
- * Animation Utility.
+ * Y.Animation Utility.
  * @module animation
  */
-YUI.add('anim', function(Y) {
     /**
      * Handles animation _queueing and threading.
      * @class Anim
@@ -15,7 +16,10 @@ YUI.add('anim', function(Y) {
         TWEEN = 'tween',
         END = 'end',
         NODE = 'node',
-        ITERATION_COUNT = 'iterationCount';
+        ITERATION_COUNT = 'iterationCount',
+
+        RE_RGB = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+        NUM = Number;
 
     var _queue = [],
         _fx = {},
@@ -36,7 +40,7 @@ YUI.add('anim', function(Y) {
      * Provides an API for animating objects.
      * Usage:
      * <pre>
-     *  var anim = new Anim({
+     *  var anim = new Y.Anim({
      *      node: '#foo',
      *
      *      from: {
@@ -59,13 +63,19 @@ YUI.add('anim', function(Y) {
      *  anim.run(); 
      * </pre>
      *
-     * @class Anim
+     * @class Y.Anim
      */
-    var Anim = function() {
-        Anim.superclass.constructor.apply(this, arguments);
+    Y.Anim = function() {
+        Y.Anim.superclass.constructor.apply(this, arguments);
     };
 
-    Anim.NAME = 'anim';
+    /**
+     * The lowercase name of the class.
+     *
+     * @property NAME
+     * @static
+     */
+    Y.Anim.NAME = 'anim';
 
     /**
      * Regex of properties that should use the default unit.
@@ -73,7 +83,7 @@ YUI.add('anim', function(Y) {
      * @property RE_DEFAULT_UNIT
      * @static
      */
-    Anim.RE_DEFAULT_UNIT = /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i;
+    Y.Anim.RE_DEFAULT_UNIT = /^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i;
 
     /**
      * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
@@ -81,32 +91,23 @@ YUI.add('anim', function(Y) {
      * @property DEFAULT_UNIT
      * @static
      */
-    Anim.DEFAULT_UNIT = 'px';
+    Y.Anim.DEFAULT_UNIT = 'px';
 
-    Anim.SETTERS = {
-        xy: function(node, prop, xy) {
-            return node.setXY(xy);
-        }
-    };
+    /**
+     * Bucket for custom GETTERS
+     *
+     * @property GETTERS
+     * @static
+     */
+    Y.Anim.GETTERS = {};
 
-    Anim.GETTERS = {
-        xy: function(node) {
-            return node.getXY();
-        }
-    };
-
-    Anim.TRANSITIONS = {
-        xy: function(from, to, elapsed, duration, fn) {
-            return [
-                fn(elapsed, Number(from[0]), Number(to[0]) - Number(from[0]), duration),
-                fn(elapsed, Number(from[1]), Number(to[1]) - Number(from[1]), duration),
-            ];
-        }
-    };
-
-    Anim.DEFAULT_TRANSITION = function(from, to, elapsed, duration, fn) {
-        return fn(elapsed, Number(from), Number(to) - Number(from), duration);
-    };
+    /**
+     * Bucket for custom SETTERS
+     *
+     * @property SETTERS
+     * @static
+     */
+    Y.Anim.SETTERS = {};
 
     /**
      * The default setter to use when setting object properties.
@@ -114,8 +115,9 @@ YUI.add('anim', function(Y) {
      * @property DEFAULT_SETTER
      * @static
      */
-    Anim.DEFAULT_SETTER = function(node, prop, val, u) {
-        node.setStyle(prop, val + u);
+    Y.Anim.DEFAULT_SETTER = function(node, att, from, to, elapsed, duration, fn, unit) {
+        unit = unit || '';
+        node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
     };
 
     /**
@@ -124,11 +126,11 @@ YUI.add('anim', function(Y) {
      * @property DEFAULT_GETTER
      * @static
      */
-    Anim.DEFAULT_GETTER = function(node, prop) {
-        return node.getStyle(prop);
+    Y.Anim.DEFAULT_GETTER = function(node, prop) {
+        return node.getComputedStyle(prop);
     };
 
-    Anim.ATTRS = {
+    Y.Anim.ATTRS = {
         /**
          * The object to be animated.
          * @attribute node
@@ -143,7 +145,7 @@ YUI.add('anim', function(Y) {
         /**
          * The length of the animation.  Defaults to "1" (second).
          * @attribute duration
-         * @type Number
+         * @type NUM
          */
         duration: {
             value: 1
@@ -169,9 +171,7 @@ YUI.add('anim', function(Y) {
          * @attribute from
          * @type Object
          */
-        from: {
-
-        },
+        from: {},
 
         /**
          * The ending values for the animated properties. 
@@ -179,9 +179,9 @@ YUI.add('anim', function(Y) {
          * @attribute to
          * @type Object
          */
-        to: {
+        to: {},
 
-        },
+        keyframes: {},
 
         /**
          * Date stamp for the first frame of the animation.
@@ -207,7 +207,7 @@ YUI.add('anim', function(Y) {
 
         /**
          * Whether or not the animation is currently animated.
-         * @attribute isAnimated
+         * @attribute isY.Animated
          * @type Boolean
          * @default false 
          */
@@ -251,18 +251,6 @@ YUI.add('anim', function(Y) {
             value: 'normal' // | alternate (fwd on odd, rev on even per spec)
         }
 
-/*
-        fx: {
-            set: function(fx) {
-                if (Y.Lang.isString(fx)) {
-                    var __fx = [];
-                    __fx[0] = fx; 
-                    return __fx;
-                }
-                return fx;
-            }
-        }
-*/
     };
 
     /**
@@ -271,7 +259,7 @@ YUI.add('anim', function(Y) {
      * @method start
      * @static
      */    
-    Anim.start = function() {
+    Y.Anim.start = function() {
         if (!_timer) {
             _timer = setInterval(this.run, 1);
         }
@@ -282,7 +270,7 @@ YUI.add('anim', function(Y) {
      * @method stop
      * @static
      */    
-    Anim.pause = function() {
+    Y.Anim.pause = function() {
         for (var i = 0, len = _queue.length; i < len; ++i) {
             if (_queue[i].get(IS_ANIMATED)) {
                 _queue[i].pause();
@@ -295,7 +283,7 @@ YUI.add('anim', function(Y) {
      * @method stop
      * @static
      */    
-    Anim.stop = function() {
+    Y.Anim.stop = function() {
         clearInterval(_timer);
 
         for (var i = 0, len = _queue.length; i < len; ++i) {
@@ -310,7 +298,7 @@ YUI.add('anim', function(Y) {
      * @method run
      * @static
      */    
-    Anim.run = function() {
+    Y.Anim.run = function() {
         var anim;
 
         for (var i = 0, len = _queue.length; i < len; ++i) {
@@ -322,38 +310,12 @@ YUI.add('anim', function(Y) {
         }
     };
 
-/*
-    Anim.addFX = function(name, config) {
-        if (typeof name == 'string') {
-            _fx[name] = config;
-        } else { // assume multiple effects
-            Y.each(name, function(v, n) {
-                Anim.addFX(n, v);
-            });
-        }
-    };
-*/
-
-    Anim.RE_UNITS = /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/;
+    Y.Anim.RE_UNITS = /^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/;
 
     var proto = {
-/*
-        addFX: function(fx) {
-            if (typeof fx == 'string') {
-                this._addFX(fx);
-            } else if (Y.Lang.isObject(fx)) {
-                Y.each(fx, this._addFX, this);
-            }
-        },
-
-        _addFX: function(fx) {
-            this._fx = this._fx || {};
-            this._fx[fx] = fx;
-        },
-*/
         /**
          * Starts or resumes an animation.
-         * @param {Number|String} elapsed optional Millisecond or
+         * @param {NUM|String} elapsed optional Millisecond or
          * percent start time marker.
          * @method run
          */    
@@ -363,6 +325,18 @@ YUI.add('anim', function(Y) {
             }
         },
 
+        /**
+         * Starts or resumes an animation.
+         * @param {NUM|String} elapsed optional Millisecond or
+         * percent start time marker.
+         * @method run
+         */    
+        resume: function() { // TODO: test case
+            if (!this.get(IS_ANIMATED)) {
+                this.stop();
+                this._start();
+            }
+        },
         /**
          * Pauses the animation and
          * freezes it in its current state and time.
@@ -391,10 +365,10 @@ YUI.add('anim', function(Y) {
         _start: function() {
             _setPrivate(this, IS_ANIMATED, true);
             _setPrivate(this, START_TIME, new Date() - this.get(ELAPSED_TIME));
-            Anim.start(); // start animator
+            Y.Anim.start(); // start animator
 
             if (!this.get(ELAPSED_TIME)) {
-                this._runtimeAttr();
+                this._initAttr();
                 this.fire(START);
             } else {
                 this.fire('resume');
@@ -423,26 +397,28 @@ YUI.add('anim', function(Y) {
 
         _runFrame: function() {
             var t = new Date() - this.get(START_TIME),
-                d = this.get('duration') * 1000,
-                attr = this._attr,
-                transition,
+                attr = this._runtimeAttr,
+                node = this.get('node'),
+                attribute,
                 setter,
+                d,
                 val;
                 
             for (var i in attr) {
-                transition = Anim.TRANSITIONS[i] || Anim.DEFAULT_TRANSITION;
-                setter = Anim.SETTERS[i] || Anim.DEFAULT_SETTER;
-                if (t < d) {
-                    if (attr.hasOwnProperty(i)) {
-                        val = transition(attr[i].b, attr[i].e, t, d, attr[i].f); 
+                if (attr.hasOwnProperty(i)) {
+                    attribute = attr[i][0];
+                    setter = Y.Anim.SETTERS[i] || Y.Anim.DEFAULT_SETTER;
+                    d = attribute.duration;
+                    if (t < d) {
+                        setter(node, i, attribute.from, attribute.to, t, d, attribute.easing, attribute.unit); 
+                    } else { // set to final value
+                       // TODO: handle keyframes 
+                        setter(node, i, attribute.from, attribute.to, d, d, attribute.easing, attribute.unit); 
                     }
-                } else { // set to final value
-                    val = attr[i].e; 
                 }
-                setter(this.get('node'), i, val, attr[i].u);
             }
 
-            var elapsed = Number(this.get(ELAPSED_TIME) + t);
+            var elapsed = NUM(this.get(ELAPSED_TIME) + t);
             _setPrivate(this, elapsed, t);
 
             if (t >= d) {
@@ -470,112 +446,98 @@ YUI.add('anim', function(Y) {
         },
 
         _flip: function() {
-            var to = this.get('to'),
-                from = this.get('from'),
-                attr = this._attr,
-                begin, end;
-
-            Y.each(attr, function(v, n) { // to is required TODO: by
-                begin = attr[n].e;
-                end = attr[n].b;
-                attr[n].b = begin;
-                attr[n].e = end;
-                attr[n].c = end - begin;
-            }, this);
-        },
-
-        // TODO: support reverse in API?
-        _runtimeAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
                 fx = this.get('fx') || {},
+                duration = this.get('duration'),
+                node = this.get('node'),
+                easing = this.get('easing') || {},
+                keyframes = this.get('keyframes') || {},
+                attr = Y.merge(this._attr, {}),
+                unit, begin, end;
+
+            if (to) {
+                keyframes[100] = to;
+            }
+
+            var prev = {};
+            Y.each(attr, function(val, name) {
+                Y.each(val, function(v, n) {
+                    var b = val[n].to;
+                    var e = val[n].from;
+                    attr[name][n].from = b;
+                    attr[name][n].to = e;
+                });
+
+            }); // to is required TODO: by
+
+            this._runtimeAttr = Y.merge(attr, {});
+        },
+
+        // TODO: support reverse in API?
+        _initAttr: function() {
+            var from = this.get('from') || {},
+                to = this.get('to') || {},
+                fx = this.get('fx') || {},
+                duration = this.get('duration'),
+                node = this.get('node'),
+                easing = this.get('easing') || {},
+                keyframes = this.get('keyframes') || {},
                 attr = {},
                 unit, begin, end;
 
-            this._attr = {};
+            if (to) {
+                keyframes[100] = to;
+            }
 
-/*
-            this._initFX();
-            Y.each(fx, function(v, n) { // to is required TODO: by
-                var effect = _fx[v] || {};
-                var easing = effect.easing || this.get('easing');
+            var prev = {};
+            Y.each(keyframes, function(v, frame) {
+                Y.each(v, function(val, name) {
+                    if (Y.Lang.isFunction(val)) {
+                        val = val.call(this, node);
+                    }
 
-                if (effect.to) {
-                    Y.each(effect.to, function(v, n) {
-                        attr[n] = this._initAttr(n, effect.from[n], effect.to[n], easing);
-                    }, this);
-                }
-            }, this);
-*/
-            Y.each(to, function(v, n) { // to is required TODO: by
-                attr[n] = this._initAttr(n, from[n], to[n]);
-            }, this);
+                    var dur = duration * (parseInt(frame, 10) / 100) * 1000;
+                    var begin = prev[name] ? prev[name].to : from[name];
+
+                    if (!begin) {
+                        begin = (Y.Anim.GETTERS[name]) ? Y.Anim.GETTERS[name](node, name) : Y.Anim.DEFAULT_GETTER(node, name);
+                    } else if (Y.Lang.isFunction(begin)) {
+                        begin = begin.call(this, node);
+                    }
+
+                    var mFrom = Y.Anim.RE_UNITS.exec(begin);
+                    var mTo = Y.Anim.RE_UNITS.exec(val);
+
+                    begin = mFrom ? mFrom[1] : begin;
+                    var end = mTo ? mTo[1] : val,
+                        unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
+
+                    if (!unit && Y.Anim.RE_DEFAULT_UNIT.test(name)) {
+                        unit = Y.Anim.DEFAULT_UNIT;
+                    }
+
+                    attr[name] = attr[name] || [];
+                    attr[name].push({
+                        easing: v.easing || easing,
+                        to: end,
+                        duration: dur,
+                        unit: unit,
+                        from: begin
+                    });
+
+                    prev[name] = attr[name];
+
+                });
+            });
+
             this._attr = attr;
-        },
-
-        _initAttr: function(n, from, to, easing) {
-            easing = easing || this.get('easing');
-            var node = this.get('node');
-
-            if (Y.Lang.isFunction(from)) {
-                from = from.call(this, node);
-            }
-
-            if (Y.Lang.isFunction(to)) {
-                to = to.call(this, node);
-            }
-
-            if (from === undefined) {
-                var getter = Anim.GETTERS[n] || Anim.DEFAULT_GETTER;
-                from = getter(this.get('node'), n); // TODO: unset onEnd?
-            }
-
-            // TODO: allow mixed units? (e.g. from: width:50%, to: width:10em)
-            var mFrom = Anim.RE_UNITS.exec(from);
-            var mTo = Anim.RE_UNITS.exec(to);
-
-            var begin = mFrom ? mFrom[1] : from,
-                end = mTo ? mTo[1] : to,
-                unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
-
-            if (!unit && Anim.RE_DEFAULT_UNIT.test(n)) {
-                unit = Anim.DEFAULT_UNIT;
-            }
-
-            return {
-                b: begin,
-                e: end,
-                f: easing,
-                u: unit
-            };
+            this._runtimeAttr = Y.merge(attr, {});
         }
-/*
-        _initFX: function() {
-            var fx = this.get('fx') || {};
-            Y.each(fx, function(v, n) {
-                if (v in _fx) {
-                    if (_fx[v].onStart) {
-                        this.on(START, _fx[v].onStart);
-                    }
 
-                    if (_fx[v].onTween) {
-                        this.on(TWEEN, _fx[v].onTween);
-                    }
-
-                    if (_fx[v].onend) {
-                        this.on(END, _fx[v].onEnd);
-                    }
-                }
-            }, this);
-
-        }
-*/
     };
 
-
-    Y.extend(Anim, Y.Base, proto);
-    Y.Anim = Anim;
-}, '3.0.0', { requires: ['base', 'easing'] });
+    Y.extend(Y.Anim, Y.Base, proto);
 /*
 TERMS OF USE - EASING EQUATIONS
 Open source under the BSD License.
@@ -915,22 +877,129 @@ YUI.add('easing', function(Y) {
         }
     };
 }, '3.0.0');
-YUI.add('nodefxplugin', function(Y) {
 
-        Y.Plugin = Y.Plugin || {};
+Y.Anim.SETTERS.xy = function(node, att, from, to, elapsed, duration, fn) {
+    node.setXY([
+        fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
+        fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+    ]);
+};
 
-        function NodeFX(config) {
-            config.node = config.owner;
-            NodeFX.superclass.constructor.apply(this, arguments);
+Y.Anim.GETTERS.xy = function(node) {
+    return node.getXY();
+};
+
+
+Y.Anim.SETTERS.color = function(node, att, from, to, elapsed, duration, fn) {
+    from = RE_RGB.exec(Y.Color.toRGB(from));
+    to = RE_RGB.exec(Y.Color.toRGB(to));
+    node.setStyle(att, 'rgb(' + [
+        Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
+        Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
+        Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
+    ].join(', ') + ')');
+};
+
+Y.Anim.GETTERS.color = function(node, att) {
+    var val = node.getComputedStyle(att);
+    return (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+};
+
+Y.Anim.GETTERS.backgroundColor = Y.Anim.GETTERS.borderTopColor =
+        Y.Anim.GETTERS.borderRightColor = Y.Anim.GETTERS.borderBottomColor =
+                Y.Anim.GETTERS.borderRightColor = Y.Anim.GETTERS.color;
+
+Y.Anim.SETTERS.backgroundColor = Y.Anim.SETTERS.borderTopColor =
+        Y.Anim.SETTERS.borderRightColor = Y.Anim.SETTERS.borderBottomColor =
+                Y.Anim.SETTERS.borderRightColor = Y.Anim.SETTERS.color;
+
+Y.Anim.SETTERS.scroll = function(node, att, from, to, elapsed, duration, fn) {
+    var val = ([
+        fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
+        fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+    ]);
+
+    node.set('scrollLeft', val[0]);
+    node.set('scrollTop', val[1]);
+};
+
+Y.Anim.GETTERS.scroll = function(node) {
+    return [node.get('scrollLeft'), node.get('scrollTop')];
+};
+/**
+ * Used to calculate Bezier splines for any number of control points.
+ * @class Bezier
+ *
+ */
+Y.Bezier = {
+    /**
+     * Get the current position of the animated element based on t.
+     * Each point is an array of "x" and "y" values (0 = x, 1 = y)
+     * At least 2 points are required (start and end).
+     * First point is start. Last point is end.
+     * Additional control points are optional.     
+     * @method getPosition
+     * @param {Array} points An array containing Bezier points
+     * @param {Number} t A number between 0 and 1 which is the basis for determining current position
+     * @return {Array} An array containing int x and y member data
+     */
+    getPosition: function(points, t) {  
+        var n = points.length;
+        var tmp = [];
+
+        for (var i = 0; i < n; ++i){
+            tmp[i] = [points[i][0], points[i][1]]; // save input
         }
+        
+        for (var j = 1; j < n; ++j) {
+            for (i = 0; i < n - j; ++i) {
+                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+            }
+        }
+    
+        return [ tmp[0][0], tmp[0][1] ]; 
+    
+    }
+};
 
-        NodeFX.NAME = "nodefxplugin";
-        NodeFX.NS = "fx";
+    /**
+     * Usage:
+     * <pre>
+     *  var anim = new Y.Anim({
+     *      node: '#foo',
+     *
+     *      to: {
+     *          curve: [ [0, 100], [500, 200], [800, 300] ]
+     *       }
+     *  });
+     *   
+     *  anim.run(); 
+     * </pre>
+     *
+     */
 
-        var proto = {
-        };
+Y.Anim.SETTERS.curve = function(node, att, from, to, elapsed, duration, fn) {
+    var t = fn(elapsed, 0, 100, duration) / 100;				
+    val = YAHOO.util.Bezier.getPosition(to, t);
+    node.setXY(val);
+};
 
-        Y.extend(NodeFX, Y.Anim);
-        Y.Plugin.NodeFX = NodeFX;
+Y.Anim.GETTERS.curve = function(node, att) {
+    return node.getXY();
+};
+Y.namespace('Plugin');
+//Y.Plugin = Y.Plugin || {};
+Y.Plugin.NodeFX = function(config) {
+    config.node = config.owner;
+    Y.Plugin.NodeFX.superclass.constructor.apply(this, arguments);
+};
 
-}, '3.0.0', { requires: ['anim'] });
+Y.Plugin.NodeFX.NAME = "nodefxplugin";
+Y.Plugin.NodeFX.NS = "fx";
+
+Y.extend(Y.Plugin.NodeFX, Y.Anim);
+
+
+
+}, '@VERSION@' ,{requires:['base', 'node']});
