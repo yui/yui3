@@ -267,7 +267,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Add the category entryType checks
         entryTypes = this.get('entryTypes.category');
         for (t in entryTypes) {
-            if (Y.Object.owns(entryTypes,t)) {
+            if (entryTypes.hasOwnProperty(t)) {
                 this._catChecks.appendChild(
                     this._createEntryType(C.CATEGORY,t));
             }
@@ -276,7 +276,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // Add the source entryType checks
         entryTypes = this.get('entryTypes.source');
         for (t in entryTypes) {
-            if (Y.Object.owns(entryTypes,t)) {
+            if (entryTypes.hasOwnProperty(t)) {
                 this._srcChecks.appendChild(
                     this._createEntryType(C.SOURCE,t));
             }
@@ -571,8 +571,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     hideEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
         for (t in entryTypes) {
-            if (Y.Object.owns(entryTypes,t) &&
-                Y.Object.owns(entryTypes[t],name)) {
+            if (entryTypes.hasOwnProperty(t) &&
+                entryTypes[t].hasOwnProperty(name)) {
                 this.set('entryTypes.'+t+'.'+name, false);
             }
         }
@@ -581,8 +581,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     showEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
         for (t in entryTypes) {
-            if (Y.Object.owns(entryTypes,t) &&
-                Y.Object.owns(entryTypes[t],name)) {
+            if (entryTypes.hasOwnProperty(t) &&
+                entryTypes[t].hasOwnProperty(name)) {
                 this.set('entryTypes.'+t+'.'+name, true);
             }
         }
@@ -648,7 +648,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 function drill(o,p) {
                     if (typeof o === 'object') {
                         for (var k in o) {
-                            if (Y.Object.owns(o,k)) {
+                            if (o.hasOwnProperty(k)) {
                                 drill(o[k],p.concat(k));
                             }
                         }
