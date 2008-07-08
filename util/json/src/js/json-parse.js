@@ -59,6 +59,7 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
  */
     _INVALID  = /^[\],:{}\s]*$/,
 
+    has = Object.prototype.hasOwnProperty,
 /**
  * Traverses nested objects, applying a reviver function to each (key,value)
  * from the scope if the key:value's containing object.  The value returned
@@ -76,7 +77,7 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
             var k,v,value = o[key];
             if (value && typeof value === 'object') {
                 for (k in value) {
-                    if (Y.Object.owns(value,k)) {
+                    if (has.call(value,k)) {
                         v = walk(value, k);
                         if (v === undefined) {
                             delete value[k];
