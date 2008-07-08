@@ -189,6 +189,7 @@ if (!$_GET['quirks']) {
 
     <!-- needed until new node.js is built into yui.js -->
     <script type="text/javascript" src="../../build/node/node.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom.js"></script>
 
 
 <script type="text/javascript">
