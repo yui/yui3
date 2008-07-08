@@ -87,7 +87,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         this.silent = this.logSystem;
 
-        this.queuable = !(this.logSystem);
+        // this.queuable = !(this.logSystem);
+        this.queuable = false;
 
         /**
          * The subscribers to this event
@@ -344,6 +345,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             // update the details field with the arguments
             ef.target = this.target;
             ef.originalTarget = this.originalTarget;
+            ef.stopped = 0;
+            ef.prevented = 0;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
@@ -530,7 +533,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                 // process after listeners.  If the default behavior was
                 // prevented, the after events don't fire.
-                if (!this.prevented) {
+                if (!this.prevented && this.stopped > 1) {
                     subs = Y.merge(this.afters);
                     for (i in subs) {
                         if (Y.Object.owns(subs, i)) {
@@ -558,22 +561,22 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             }
 
             if (es.id === this.id) {
-                // console.log('clearing stack: ' + es.id + ', ' + this);
+// console.log('clearing stack: ' + es.id + ', ' + this);
 
-                // reset propragation properties while processing the rest of the queue
+// reset propragation properties while processing the rest of the queue
 
-                // process queued events
+// process queued events
                 var queue = es.queue;
 
                 while (queue.length) {
                     // q[0] = the event, q[1] = arguments to fire
                     var q = queue.pop(), ce = q[0];
 
-            // Y.log('firing queued event ' + ce.type + ', from ' + this);
+// Y.log('firing queued event ' + ce.type + ', from ' + this);
                     es.stopped = 0;
                     es.prevented = 0;
                     
-                    // set up stack to allow the next item to be processed
+// set up stack to allow the next item to be processed
                     es.next = ce;
 
                     ret = ce.fire.apply(ce, q[1]);

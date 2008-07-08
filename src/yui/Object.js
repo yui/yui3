@@ -28,7 +28,7 @@ YUI.add("object", function(Y) {
      * wrapper for the native implementation.  Use the native implementation
      * directly instead.
      *
-     * @TODO Remove
+     * @TODO Remove in PR2
      *
      * @method owns
      * @param o {any} The object being testing

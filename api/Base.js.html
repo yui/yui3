@@ -48,17 +48,13 @@
         <span class="nx">SEP</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span><span class="o">,</span>
         <span class="nx">DESTROY</span> <span class="o">=</span> <span class="s2">&quot;destroy&quot;</span><span class="o">,</span>
         <span class="nx">INIT</span> <span class="o">=</span> <span class="s2">&quot;init&quot;</span><span class="o">,</span>
+        <span class="nx">VALUE</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span><span class="o">,</span>
+        <span class="nx">INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;initialized&quot;</span><span class="o">,</span>
+        <span class="nx">DESTROYED</span> <span class="o">=</span> <span class="s2">&quot;destroyed&quot;</span><span class="o">,</span>
         <span class="nx">INITIALIZER</span> <span class="o">=</span> <span class="s2">&quot;initializer&quot;</span><span class="o">,</span>
         <span class="nx">DESTRUCTOR</span> <span class="o">=</span> <span class="s2">&quot;destructor&quot;</span><span class="o">;</span>
 
     <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
-
-    <span class="k">function</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">owner</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SEP</span><span class="o">)</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="nx">owner</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
-           <span class="nx">type</span> <span class="o">=</span> <span class="nx">owner</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
-    <span class="o">}</span>
 
     <span class="c">/**</span>
 <span class="c">     * Provides a base class for managed attribute based</span>
@@ -76,14 +72,15 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
-
+    
+    
     <span class="c">/**</span>
 <span class="c">     * Name string to be used to identify instances of </span>
 <span class="c">     * this class, for example in prefixing events.</span>
 <span class="c">     *</span>
 <span class="c">     * Classes extending Base, should define their own</span>
 <span class="c">     * static NAME property.</span>
-<span class="c">     * </span>
+<span class="c">     *</span>
 <span class="c">     * @property NAME</span>
 <span class="c">     * @type String</span>
 <span class="c">     * @static</span>
@@ -101,9 +98,70 @@
 <span class="c">     * @type Object</span>
 <span class="c">     * @static</span>
 <span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Flag indicating whether or not this object</span>
+<span class="c">         * has been through the init lifecycle phase.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute initialized</span>
+<span class="c">         * @readonly</span>
+<span class="c">         * @default false</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         */</span>
+        <span class="nx">intialized</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Flag indicating whether or not this object</span>
+<span class="c">         * has been through the destroy lifecycle phase.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute destroyed</span>
+<span class="c">         * @readonly</span>
+<span class="c">         * @default false</span>
+<span class="c">         * @type boolean</span>
+<span class="c">         */</span>
+        <span class="nx">destroyed</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span><span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span><span class="kc">false</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
 
     <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{};</span>
 
+    <span class="c">/**</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Builds a constructor function (class) from the</span>
+<span class="c">     * main function, and array of extension functions</span>
+<span class="c">     * provided.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * The cfg object literal supports the following properties</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     *    &lt;dt&gt;dynamic {boolean}&lt;/dt&gt;</span>
+<span class="c">     *    &lt;dd&gt;</span>
+<span class="c">     *    &lt;p&gt;If true, a completely new class</span>
+<span class="c">     *    is created which extends the main class, and acts as the </span>
+<span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
+<span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
+<span class="c">     *    the main class, modifying the main class.&lt;/p&gt;</span>
+<span class="c">     *    &lt;/dd&gt;</span>
+<span class="c">     *    &lt;dt&gt;aggregates {String[]}&lt;/dt&gt;</span>
+<span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
+<span class="c">     *    on to the built class in addition to the default properties build </span>
+<span class="c">     *    will always aggregate - &quot;ATTRS&quot; and &quot;PLUGINS&quot;, as defined by </span>
+<span class="c">     *    Base.build.AGGREGATES&lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @method build</span>
+<span class="c">     * @static</span>
+<span class="c">     * @param {Function} main The main class on which to base the built class</span>
+<span class="c">     * @param {Function[]} extensions The set of extension classes which will be</span>
+<span class="c">     * augmented/aggregated to the built class.</span>
+<span class="c">     * @param {Object} cfg</span>
+<span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">cfg</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">var</span> <span class="nx">build</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">,</span>
@@ -121,7 +179,7 @@
         <span class="c">// Create dynamic class or just modify main class</span>
 <span class="c"></span>        <span class="nx">builtClass</span> <span class="o">=</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">?</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_template</span><span class="o">(</span><span class="nx">main</span><span class="o">)</span> <span class="o">:</span> <span class="nx">main</span><span class="o">;</span>
 
-        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">=</span> <span class="o">{</span>
             <span class="nx">id</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
             <span class="nx">exts</span> <span class="o">:</span> <span class="o">[],</span>
             <span class="nx">dynamic</span> <span class="o">:</span> <span class="nx">dynamic</span>
@@ -155,11 +213,11 @@
             <span class="c">// Old augment</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">builtClass</span><span class="o">,</span> <span class="nx">extClass</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
 
-            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
+            <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
             <span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">extClass</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
+        <span class="nx">builtClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">key</span><span class="o">;</span>
         <span class="nx">builtClass</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">hasImpl</span> <span class="o">=</span> <span class="nx">build</span><span class="o">.</span><span class="nx">_hasImpl</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
@@ -179,7 +237,7 @@
             <span class="k">function</span> <span class="nx">BuiltClass</span><span class="o">()</span> <span class="o">{</span>
                 <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
 
-                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span> 
+                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="nx">BuiltClass</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span> 
                     <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
 
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
@@ -193,25 +251,33 @@
             <span class="k">return</span> <span class="nx">BuiltClass</span><span class="o">;</span>
         <span class="o">},</span>
 
-        <span class="nx">_hasImpl</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">featureClass</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_build</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
+        <span class="nx">_hasImpl</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">,</span>
                     <span class="nx">l</span> <span class="o">=</span> <span class="nx">f</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span>
                     <span class="nx">i</span><span class="o">;</span>
-    
+
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">featureClass</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">extClass</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span>
-        
+
             <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">});</span>
 
-    <span class="nx">Base</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">features</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">features</span><span class="o">,</span> <span class="o">{</span><span class="nx">dynamic</span><span class="o">:</span><span class="kc">true</span><span class="o">}),</span>
+    <span class="c">/**</span>
+<span class="c">     * @method create</span>
+<span class="c">     * @static</span>
+<span class="c">     *</span>
+<span class="c">     * @param {Function} main </span>
+<span class="c">     * @param {Array} extensions</span>
+<span class="c">     * @param {Any*} args </span>
+<span class="c">     */</span>
+    <span class="nx">Base</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="o">{</span><span class="nx">dynamic</span><span class="o">:</span><span class="kc">true</span><span class="o">}),</span>
             <span class="nx">cArgs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">2</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
 
         <span class="k">function</span> <span class="nx">F</span><span class="o">(){}</span>
@@ -233,24 +299,6 @@
 <span class="c">         */</span>
         <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;init called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
-
-            <span class="c">/**</span>
-<span class="c">             * Flag indicating whether or not this object</span>
-<span class="c">             * has been through the destory lifecycle phase.</span>
-<span class="c">             * </span>
-<span class="c">             * @property destroyed</span>
-<span class="c">             * @type Boolean</span>
-<span class="c">             */</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">destroyed</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
-            
-            <span class="c">/**</span>
-<span class="c">             * Flag indicating whether or not this object</span>
-<span class="c">             * has been through the init lifecycle state.</span>
-<span class="c">             * </span>
-<span class="c">             * @property initialized</span>
-<span class="c">             * @type Boolean</span>
-<span class="c">             */</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
             <span class="c">/**</span>
 <span class="c">             * The name string to be used to identify </span>
@@ -333,7 +381,9 @@
         <span class="nx">_defInitFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_initHierarchy</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">initialized</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">INITIALIZED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -345,7 +395,9 @@
         <span class="nx">_defDestroyFn</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_destroyHierarchy</span><span class="o">();</span>
             <span class="nx">delete</span> <span class="nx">_instances</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">];</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">destroyed</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="nx">DESTROYED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -386,16 +438,16 @@
             <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">cl</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&lt;</span> <span class="nx">cl</span><span class="o">;</span> <span class="nx">ci</span><span class="o">++)</span> <span class="o">{</span>
                 <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_build</span> <span class="o">&amp;&amp;</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ei</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ei</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">ei</span><span class="o">++)</span> <span class="o">{</span>
-                        <span class="nx">constr</span><span class="o">.</span><span class="nx">_build</span><span class="o">.</span><span class="nx">exts</span><span class="o">[</span><span class="nx">ei</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span> <span class="o">&amp;&amp;</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ei</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">ei</span> <span class="o">&lt;</span> <span class="nx">el</span><span class="o">;</span> <span class="nx">ei</span><span class="o">++)</span> <span class="o">{</span>
+                        <span class="nx">constr</span><span class="o">.</span><span class="nx">_yuibuild</span><span class="o">.</span><span class="nx">exts</span><span class="o">[</span><span class="nx">ei</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">_initAtts</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">ATTRS</span><span class="o">,</span> <span class="nx">userConf</span><span class="o">);</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">INITIALIZER</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">initializer</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">INITIALIZER</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -403,17 +455,19 @@
         <span class="c">/**</span>
 <span class="c">         * Destroys the class hierarchy rooted at this base class by invoking</span>
 <span class="c">         * the descructor method on the prototype of each class in the hierarchy.</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @method _destroyHierarchy</span>
 <span class="c">         * @private</span>
 <span class="c">         */</span>
         <span class="nx">_destroyHierarchy</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">constructor</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">;</span>
-            <span class="k">while</span> <span class="o">(</span><span class="nx">constructor</span> <span class="o">&amp;&amp;</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">constructor</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">destructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="k">var</span> <span class="nx">constr</span><span class="o">,</span>
+                <span class="nx">classes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getClasses</span><span class="o">();</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">ci</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">;</span> <span class="nx">ci</span> <span class="o">&gt;=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">ci</span><span class="o">--)</span> <span class="o">{</span>
+                <span class="nx">constr</span> <span class="o">=</span> <span class="nx">classes</span><span class="o">[</span><span class="nx">ci</span><span class="o">];</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">DESTRUCTOR</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">constr</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">DESTRUCTOR</span><span class="o">].</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="o">}</span>
-                <span class="nx">constructor</span> <span class="o">=</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">superclass</span> <span class="o">?</span> <span class="nx">constructor</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
 
@@ -422,7 +476,7 @@
 <span class="c">         * @method toString</span>
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -454,7 +508,7 @@
 <span class="c">         */</span>
         <span class="nx">subscribe</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -474,15 +528,15 @@
 <span class="c">         * the name property of the instance will be used as the default prefix.</span>
 <span class="c">         * @param {Object*} arguments an arbitrary set of parameters to pass to </span>
 <span class="c">         * the handler.</span>
-<span class="c">         * @return {Boolean} the return value from Event.Target.fire</span>
-<span class="c">         *                   </span>
+<span class="c">         * @return {boolean} the return value from Event.Target.fire</span>
+<span class="c">         *</span>
 <span class="c">         */</span>
         <span class="nx">fire</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">){</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">type</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
@@ -507,7 +561,7 @@
 <span class="c">         */</span>
         <span class="nx">publish</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">publish</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -532,7 +586,7 @@
 <span class="c">         */</span>
         <span class="nx">after</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">after</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -564,7 +618,7 @@
         <span class="nx">unsubscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">context</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]))</span> <span class="o">{</span>
-                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+                <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
@@ -586,8 +640,23 @@
 <span class="c">         */</span>
         <span class="nx">unsubscribeAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">;</span>
-            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_prefixType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">);</span>
+            <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_prefixEvtType</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribeAll</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Utility method to prefix the event name with the</span>
+<span class="c">         * name property of the instance, if absent</span>
+<span class="c">         *</span>
+<span class="c">         * @method _prefixEvtType</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {String} type The event name</span>
+<span class="c">         */</span>
+        <span class="nx">_prefixEvtType</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">SEP</span><span class="o">)</span> <span class="o">===</span> <span class="o">-</span><span class="m">1</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+               <span class="nx">type</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">type</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">};</span>
 

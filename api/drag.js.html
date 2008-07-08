@@ -309,6 +309,16 @@
 <span class="c">        */</span>
         <span class="nx">groups</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">value</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;default&#39;</span><span class="o">],</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_groups</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_groups</span> <span class="o">=</span> <span class="o">{};</span>
+                <span class="o">}</span>
+                <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">[];</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_groups</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">ret</span><span class="o">[</span><span class="nx">ret</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">k</span><span class="o">;</span>
+                <span class="o">});</span>
+                <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+            <span class="o">},</span>
             <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">g</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_groups</span> <span class="o">=</span> <span class="o">{};</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
@@ -319,6 +329,28 @@
     <span class="o">};</span>
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Drag</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @method addToGroup</span>
+<span class="c">        * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.</span>
+<span class="c">        * @param {String} g The group to add this Drag Instance to.</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        */</span>
+        <span class="nx">addToGroup</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">g</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_groups</span><span class="o">[</span><span class="nx">g</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="nx">DDM</span><span class="o">.</span><span class="nx">_activateTargets</span><span class="o">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method removeFromGroup</span>
+<span class="c">        * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.</span>
+<span class="c">        * @param {String} g The group to remove this Drag Instance from.</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        */</span>
+        <span class="nx">removeFromGroup</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">g</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">_groups</span><span class="o">[</span><span class="nx">g</span><span class="o">];</span>
+            <span class="nx">DDM</span><span class="o">.</span><span class="nx">_activateTargets</span><span class="o">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @property target</span>
 <span class="c">        * @description This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..</span>
@@ -416,9 +448,16 @@
 <span class="c">        * @private</span>
 <span class="c">        * @property _invalids</span>
 <span class="c">        * @description A private hash of the invalid selector strings</span>
-<span class="c">        * @type {Array}</span>
+<span class="c">        * @type {Object}</span>
 <span class="c">        */</span>
         <span class="nx">_invalids</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property _invalidsDefault</span>
+<span class="c">        * @description A private hash of the default invalid selector strings: {&#39;textarea&#39;: true, &#39;input&#39;: true, &#39;a&#39;: true, &#39;button&#39;: true}</span>
+<span class="c">        * @type {Object}</span>
+<span class="c">        */</span>
+        <span class="nx">_invalidsDefault</span><span class="o">:</span> <span class="o">{</span><span class="s1">&#39;textarea&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span> <span class="s1">&#39;input&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span> <span class="s1">&#39;a&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span> <span class="s1">&#39;button&#39;</span><span class="o">:</span> <span class="kc">true</span><span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _dragThreshMet</span>
@@ -703,7 +742,7 @@
                 <span class="k">this</span><span class="o">.</span><span class="nx">_invalids</span><span class="o">[</span><span class="nx">str</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_ADD_INVALID</span><span class="o">,</span> <span class="o">{</span> <span class="nx">handle</span><span class="o">:</span> <span class="nx">str</span> <span class="o">});</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Selector needs to be a string..&#39;</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Selector needs to be a string..&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
             <span class="o">}</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
@@ -717,7 +756,13 @@
 <span class="c"></span>            <span class="c">//Not supported in PR1 due to Y.Node.get calling a new under the hood.</span>
 <span class="c"></span>            <span class="c">//this.get(NODE).dd = this;</span>
 <span class="c"></span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">_invalids</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">));</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+            <span class="o">}</span>
+            
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_invalids</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_invalidsDefault</span><span class="o">;</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_createEvents</span><span class="o">();</span>
             
@@ -733,6 +778,7 @@
         <span class="c">/**</span>
 <span class="c">        * @method start</span>
 <span class="c">        * @description Starts the drag operation</span>
+<span class="c">        * @return {Self}</span>
 <span class="c">        */</span>
         <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;lock&#39;</span><span class="o">))</span> <span class="o">{</span>
@@ -740,10 +786,10 @@
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">_start</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">,</span> <span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">)]);</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;startDrag&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">addClass</span><span class="o">(</span><span class="s1">&#39;yui-dd-dragging&#39;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_START</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_START</span><span class="o">,</span> <span class="o">{</span> <span class="nx">pageX</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">pageY</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">});</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="nx">MOUSE_UP</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseUp</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                
                 <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">;</span>
+                
                 <span class="k">this</span><span class="o">.</span><span class="nx">region</span> <span class="o">=</span> <span class="o">{</span>
                     <span class="s1">&#39;0&#39;</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
                     <span class="s1">&#39;1&#39;</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
@@ -755,10 +801,12 @@
                 <span class="o">};</span>
                 
             <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @method end</span>
 <span class="c">        * @description Ends the drag operation</span>
+<span class="c">        * @return {Self}</span>
 <span class="c">        */</span>
         <span class="nx">end</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">clearTimeout</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_clickTimeout</span><span class="o">);</span>
@@ -766,12 +814,14 @@
             <span class="k">this</span><span class="o">.</span><span class="nx">_fromTimeout</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;lock&#39;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;endDrag&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_END</span><span class="o">);</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_END</span><span class="o">,</span> <span class="o">{</span> <span class="nx">pageX</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">pageY</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">});</span>
             <span class="o">}</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="s1">&#39;yui-dd-dragging&#39;</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">];</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">detach</span><span class="o">(</span><span class="nx">MOUSE_UP</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_handleMouseUp</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
@@ -821,6 +871,8 @@
             <span class="k">var</span> <span class="nx">startXY</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">nodeXY</span><span class="o">;</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">noFire</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">EV_DRAG</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">pageX</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span>
+                    <span class="nx">pageY</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
                     <span class="nx">info</span><span class="o">:</span> <span class="o">{</span>
                         <span class="nx">start</span><span class="o">:</span> <span class="nx">startXY</span><span class="o">,</span>
                         <span class="nx">xy</span><span class="o">:</span> <span class="nx">xy</span><span class="o">,</span>
@@ -860,6 +912,18 @@
                     <span class="k">this</span><span class="o">.</span><span class="nx">_moveNode</span><span class="o">([</span><span class="nx">ev</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">ev</span><span class="o">.</span><span class="nx">pageY</span><span class="o">]);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method stopDrag</span>
+<span class="c">        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        */</span>
+        <span class="nx">stopDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;stopDrag called&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">);</span>
+                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_end</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>

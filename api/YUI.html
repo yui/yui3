@@ -292,10 +292,6 @@ omit - features that should not be loaded if this module is present</dd>
                                             Executes the callback after a DOM event, custom event
 or method.  If the first argument is a function, it
 is assumed the target is a method.
-For DOM and custom events:
-type, callback, context, 1-n arguments
-For methods:
-callback, object (method host), methodName, context, 1-n arguments
                                         </div>
 
                                         <div class="description">
@@ -602,6 +598,10 @@ callback, object (method host), methodName, context, 1-n arguments
                                                          c
                                                     
                                                 
+                                                        , 
+                                                         args*
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -623,6 +623,10 @@ is executed with.
                                                         <dd>
                                                             <code>c &lt;object&gt;</code>
                                                              the execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             0..n arguments to append to the arguments collection for the function
                                                         </dd>
                                                 </dl>
 

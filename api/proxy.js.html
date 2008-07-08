@@ -59,6 +59,8 @@
 
     <span class="o">};</span>
 
+    <span class="nx">Proxy</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;dragProxy&#39;</span><span class="o">;</span>
+
     <span class="nx">Proxy</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
 <span class="c">        * @attribute moveOnEnd</span>
@@ -189,7 +191,7 @@
 <span class="c">        * @description Ends the drag operation, if moveOnEnd is set it will position the Drag Element to the new location of the proxy.</span>
 <span class="c">        */</span>        
         <span class="nx">end</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PROXY</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PROXY</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragging&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;moveOnEnd&#39;</span><span class="o">))</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">).</span><span class="nx">setXY</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">);</span>
                 <span class="o">}</span>

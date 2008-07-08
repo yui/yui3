@@ -98,6 +98,9 @@
 <span class="c">     * properties are applied, and a property that is already on the</span>
 <span class="c">     * reciever will not be overwritten.  The default behavior can</span>
 <span class="c">     * be modified by supplying the appropriate parameters.</span>
+<span class="c">     *</span>
+<span class="c">     * @TODO add constants for the modes</span>
+<span class="c">     *</span>
 <span class="c">     * @method mix</span>
 <span class="c">     * @static</span>
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
@@ -115,6 +118,7 @@
 <span class="c">     * @param merge {boolean} merge objects instead of overwriting/ignoring</span>
 <span class="c">     * Used by Y.aggregate</span>
 <span class="c">     * @return the augmented object</span>
+<span class="c">     * @TODO review for PR2</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">mode</span><span class="o">,</span> <span class="nx">merge</span><span class="o">)</span> <span class="o">{</span>
 
@@ -204,6 +208,8 @@
 <span class="c">     *</span>
 <span class="c">     * @todo constructor optional?</span>
 <span class="c">     * @todo understanding what an instance is augmented with</span>
+<span class="c">     * @TODO evaluate if we can do this in a way that doesn&#39;t interfere</span>
+<span class="c">     * with normal inheritance</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
@@ -458,9 +464,11 @@
 <span class="c">     * supplied object&#39;s context, optionally adding any additional</span>
 <span class="c">     * supplied parameters to the end of the arguments the function</span>
 <span class="c">     * is executed with.</span>
+<span class="c">     * @TODO review param order for PR2</span>
 <span class="c">     *</span>
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
+<span class="c">     * @param args* 0..n arguments to append to the arguments collection for the function</span>
 <span class="c">     * @return the wrapped function</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
@@ -544,6 +552,8 @@
 <span class="c">     * or method.  If the first argument is a function, it</span>
 <span class="c">     * is assumed the target is a method.</span>
 <span class="c">     *</span>
+<span class="c">     * @TODO add event</span>
+<span class="c">     *</span>
 <span class="c">     * For DOM and custom events:</span>
 <span class="c">     * type, callback, context, 1-n arguments</span>
 <span class="c">     *  </span>
@@ -559,11 +569,6 @@
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
-    <span class="o">};</span>
-
-    <span class="c">// Object factory</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-
     <span class="o">};</span>
 
 <span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>

@@ -398,6 +398,7 @@
 
     <span class="c">// Centralizing error messaging means we can configure how</span>
 <span class="c"></span>    <span class="c">// they are communicated.</span>
+<span class="c"></span>    <span class="c">// @TODO do we need a param to force throwing an error</span>
 <span class="c"></span>    <span class="nx">fail</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">e</span><span class="o">,</span> <span class="nx">eType</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">);</span>
 
@@ -419,6 +420,7 @@
 <span class="c">// This makes it so that the YUI global can be used like the YAHOO</span>
 <span class="c">// global was used prior to 3.x.  More importantly, the YUI global</span>
 <span class="c">// provides global metadata, so env needs to be configured.</span>
+<span class="c">// @TODO review</span>
 <span class="c"></span><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
     <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="nx">YUI</span><span class="o">,</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
 

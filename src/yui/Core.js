@@ -60,6 +60,9 @@ YUI.add("core", function(Y) {
      * properties are applied, and a property that is already on the
      * reciever will not be overwritten.  The default behavior can
      * be modified by supplying the appropriate parameters.
+     *
+     * @TODO add constants for the modes
+     *
      * @method mix
      * @static
      * @param {Function} r  the object to receive the augmentation
@@ -77,6 +80,7 @@ YUI.add("core", function(Y) {
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
      * @return the augmented object
+     * @TODO review for PR2
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
 
@@ -166,6 +170,8 @@ YUI.add("core", function(Y) {
      *
      * @todo constructor optional?
      * @todo understanding what an instance is augmented with
+     * @TODO evaluate if we can do this in a way that doesn't interfere
+     * with normal inheritance
      */
     Y.augment = function(r, s, ov, wl, args) {
 
@@ -420,9 +426,11 @@ YUI.add("core", function(Y) {
      * supplied object's context, optionally adding any additional
      * supplied parameters to the end of the arguments the function
      * is executed with.
+     * @TODO review param order for PR2
      *
      * @param f {Function} the function to bind
      * @param c the execution context
+     * @param args* 0..n arguments to append to the arguments collection for the function
      * @return the wrapped function
      */
     Y.bind = function(f, c) {
@@ -506,6 +514,8 @@ YUI.add("core", function(Y) {
      * or method.  If the first argument is a function, it
      * is assumed the target is a method.
      *
+     * @TODO add event
+     *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
      *  
@@ -521,11 +531,6 @@ YUI.add("core", function(Y) {
         }
 
         return Y;
-    };
-
-    // Object factory
-    Y.create = function() {
-
     };
 
 }, "3.0.0");

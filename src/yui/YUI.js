@@ -360,6 +360,7 @@ YUI.prototype = {
 
     // Centralizing error messaging means we can configure how
     // they are communicated.
+    // @TODO do we need a param to force throwing an error
     fail: function(msg, e, eType) {
         this.log(msg, "error");
 
@@ -381,6 +382,7 @@ YUI.prototype = {
 // This makes it so that the YUI global can be used like the YAHOO
 // global was used prior to 3.x.  More importantly, the YUI global
 // provides global metadata, so env needs to be configured.
+// @TODO review
 (function() {
     var Y = YUI, p = Y.prototype, i;
 

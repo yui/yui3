@@ -350,8 +350,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                             <div class="content">
                                 <code>
                                     
-                                        <a class="" href="Base.html#property_destroyed">destroyed</a><span class="">,</span>
-                                        <a class="" href="Base.html#property_initialized">initialized</a><span class="">,</span>
                                         <a class="" href="Base.html#property_name">name</a>
                                 </code>
                             </div>
@@ -1718,6 +1716,40 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_stopDrag">stopDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>stopDrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_syncActiveShims">syncActiveShims</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1803,7 +1835,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <h4>Methods inherited from <a href="Attribute.html">Attribute</a>:</h4>
                                 <div class="content">
                                     <code>
-                                            <a class="private" href="Attribute.html#method__clone">_clone</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_add">add</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_remove">remove</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
+                                            <a class="private" href="Attribute.html#method__cloneAttVal">_cloneAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__fireAttChange">_fireAttChange</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_addAtt">addAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_removeAtt">removeAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
                                     </code>
                                 </div>
                             </div>
@@ -1811,7 +1843,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <h4>Methods inherited from <a href="Base.html">Base</a>:</h4>
                                 <div class="content">
                                     <code>
-                                            <a class="protected" href="Base.html#method__defDestroyFn">_defDestroyFn</a><span class="protected">,</span>                                            <a class="protected" href="Base.html#method__defInitFn">_defInitFn</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>                                            <a class="protected" href="Base.html#method__getClasses">_getClasses</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__initHierarchy">_initHierarchy</a><span class="private">,</span>                                            <a class="" href="Base.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Base.html#method_destroy">destroy</a><span class="">,</span>                                            <a class="" href="Base.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Base.html#method_init">init</a><span class="">,</span>                                            <a class="" href="Base.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Base.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Base.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_toString">toString</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <a class="protected" href="Base.html#method__defDestroyFn">_defDestroyFn</a><span class="protected">,</span>                                            <a class="protected" href="Base.html#method__defInitFn">_defInitFn</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>                                            <a class="protected" href="Base.html#method__getClasses">_getClasses</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__initHierarchy">_initHierarchy</a><span class="private">,</span>                                            <a class="private" href="Base.html#method__prefixEvtType">_prefixEvtType</a><span class="private">,</span>                                            <a class="" href="Base.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Base.html#method_destroy">destroy</a><span class="">,</span>                                            <a class="" href="Base.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Base.html#method_init">init</a><span class="">,</span>                                            <a class="" href="Base.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Base.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Base.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_toString">toString</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribeAll">unsubscribeAll</a>
                                     </code>
                                 </div>
                             </div>
@@ -1917,7 +1949,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                             <h4>Events inherited from <a href="Base.html">Base</a>:</h4>
                             <div class="content">
                                 <code>
-                                        <a class="" href="Base.html#event_destroy">destroy</a><span class="">,</span>                                        <a class="" href="Base.html#event_init">init</a><span class="">,</span>
+                                        <a class="" href="Base.html#event_beforeDestroyedChange">beforeDestroyedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_beforeInitializedChange">beforeInitializedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_destroy">destroy</a><span class="">,</span>                                        <a class="" href="Base.html#event_destroyedChange">destroyedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_init">init</a><span class="">,</span>                                        <a class="" href="Base.html#event_initializedChange">initializedChange</a><span class="">,</span>
                                 </code>
                             </div>
                         </div>
@@ -1943,6 +1975,14 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                             </div>
                         </div>
 
+                        <div class="section field inheritance">
+                            <h4>Configuration attributes inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#config_destroyed">destroyed</a><span class="">,</span>                                        <a class="" href="Base.html#config_initialized">initialized</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
 
 			</div>
 		</div>
@@ -2156,6 +2196,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_setXY">setXY</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_stopDrag">stopDrag</a>
                                 </li>
                                 <li class=""><!--<code>Array</code>-->
                                 <a href="#method_syncActiveShims">syncActiveShims</a>

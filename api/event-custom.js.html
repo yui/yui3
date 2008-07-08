@@ -125,7 +125,8 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">silent</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">;</span>
 
-        <span class="k">this</span><span class="o">.</span><span class="nx">queuable</span> <span class="o">=</span> <span class="o">!(</span><span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span><span class="o">);</span>
+        <span class="c">// this.queuable = !(this.logSystem);</span>
+<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">queuable</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * The subscribers to this event</span>
@@ -382,6 +383,8 @@
             <span class="c">// update the details field with the arguments</span>
 <span class="c"></span>            <span class="nx">ef</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
             <span class="nx">ef</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
             <span class="c">// if the first argument is an object literal, apply the</span>
 <span class="c"></span>            <span class="c">// properties to the event facade</span>
@@ -568,7 +571,7 @@
 
                 <span class="c">// process after listeners.  If the default behavior was</span>
 <span class="c"></span>                <span class="c">// prevented, the after events don&#39;t fire.</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">prevented</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">afters</span><span class="o">);</span>
                     <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">subs</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">subs</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
@@ -596,22 +599,22 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">es</span><span class="o">.</span><span class="nx">id</span> <span class="o">===</span> <span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// console.log(&#39;clearing stack: &#39; + es.id + &#39;, &#39; + this);</span>
+<span class="c">// console.log(&#39;clearing stack: &#39; + es.id + &#39;, &#39; + this);</span>
 <span class="c"></span>
-                <span class="c">// reset propragation properties while processing the rest of the queue</span>
+<span class="c">// reset propragation properties while processing the rest of the queue</span>
 <span class="c"></span>
-                <span class="c">// process queued events</span>
+<span class="c">// process queued events</span>
 <span class="c"></span>                <span class="k">var</span> <span class="nx">queue</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">queue</span><span class="o">;</span>
 
                 <span class="k">while</span> <span class="o">(</span><span class="nx">queue</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// q[0] = the event, q[1] = arguments to fire</span>
 <span class="c"></span>                    <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queue</span><span class="o">.</span><span class="nx">pop</span><span class="o">(),</span> <span class="nx">ce</span> <span class="o">=</span> <span class="nx">q</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
 
-            <span class="c">// Y.log(&#39;firing queued event &#39; + ce.type + &#39;, from &#39; + this);</span>
+<span class="c">// Y.log(&#39;firing queued event &#39; + ce.type + &#39;, from &#39; + this);</span>
 <span class="c"></span>                    <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
                     <span class="nx">es</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
                     
-                    <span class="c">// set up stack to allow the next item to be processed</span>
+<span class="c">// set up stack to allow the next item to be processed</span>
 <span class="c"></span>                    <span class="nx">es</span><span class="o">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">;</span>
 
                     <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">q</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>

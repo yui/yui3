@@ -183,11 +183,26 @@
                                     </div>
                                     <div class="private">
                                     <h4><a name="property__invalids">_invalids</a>
-                                        <code>- private {Array}</code>
+                                        <code>- private {Object}</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
                                             A private hash of the invalid selector strings
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__invalidsDefault">_invalidsDefault</a>
+                                        <code>- private {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
                                         </div>
                                     </div>
      
@@ -900,6 +915,52 @@
                                     </div>
                                     <hr />
                                     </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addToGroup">addToGroup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addToGroup</strong>
+                                           (
+                                                
+                                                        
+                                                         g
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add this Drag instance to a group, this should be used for on-the-fly group additions.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>g &lt;String&gt;</code>
+                                                             The group to add this Drag Instance to.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="private">
                                     <h4>
                                         <a name="method_destructor">destructor</a></h4>
@@ -942,7 +1003,7 @@
                                         
                                         
                                         
-                                        void
+                                        Self
                                             <strong>end</strong>
                                            (
                                             )
@@ -958,7 +1019,7 @@
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Self
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
@@ -993,6 +1054,52 @@
                                                     <dt>Returns:
                                                     <code>
                                                         void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeFromGroup">removeFromGroup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeFromGroup</strong>
+                                           (
+                                                
+                                                        
+                                                         g
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove this Drag instance from a group, this should be used for on-the-fly group removals.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>g &lt;String&gt;</code>
+                                                             The group to remove this Drag Instance from.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
@@ -1102,7 +1209,7 @@
                                         
                                         
                                         
-                                        void
+                                        Self
                                             <strong>start</strong>
                                            (
                                             )
@@ -1118,7 +1225,41 @@
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stopDrag">stopDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>stopDrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
@@ -3136,6 +3277,9 @@
                                 <li class="private"><a href="#property__invalids">_invalids</a>
                                         <!--<code>&lt;{Object}&gt;</code>-->
                                 </li>
+                                <li class="private"><a href="#property__invalidsDefault">_invalidsDefault</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_deltaXY">deltaXY</a>
                                         <!--<code>&lt;{Object}&gt;</code>-->
                                 </li>
@@ -3208,14 +3352,20 @@
                                 <li class=""><!--<code>Self</code>-->
                                 <a href="#method_addInvalid">addInvalid</a>
                                 </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addToGroup">addToGroup</a>
+                                </li>
                                 <li class="private"><!--<code>Self</code>-->
                                 <a href="#method_destructor">destructor</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>Self</code>-->
                                 <a href="#method_end">end</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method_initializer">initializer</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeFromGroup">removeFromGroup</a>
                                 </li>
                                 <li class=""><!--<code>Self</code>-->
                                 <a href="#method_removeHandle">removeHandle</a>
@@ -3223,8 +3373,11 @@
                                 <li class=""><!--<code>Self</code>-->
                                 <a href="#method_removeInvalid">removeInvalid</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>Self</code>-->
                                 <a href="#method_start">start</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_stopDrag">stopDrag</a>
                                 </li>
                                 <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_validClick">validClick</a>

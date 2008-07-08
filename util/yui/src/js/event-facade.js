@@ -1,52 +1,50 @@
 YUI.add("event-facade", function(Y) {
 
-    /*
 
     var whitelist = {
         "altKey"          : 1,
-        "button"          : 1, // we supply
-        "bubbles"         : 1,
-        "cancelable"      : 1,
-        "charCode"        : 1, // we supply
+        // "button"          : 1, // we supply
+        // "bubbles"         : 1, // needed?
+        // "cancelable"      : 1, // needed? 
+        // "charCode"        : 1, // we supply
         "cancelBubble"    : 1,
-        "currentTarget"   : 1,
+        // "currentTarget"   : 1, // we supply
         "ctrlKey"         : 1,
-        "clientX"         : 1,
-        "clientY"         : 1,
+        "clientX"         : 1, // needed?
+        "clientY"         : 1, // needed?
         "detail"          : 1, // not fully implemented
         // "fromElement"     : 1,
         "keyCode"         : 1,
-        "height"          : 1,
-        "initEvent"       : 1, // need the init events?
-        "initMouseEvent"  : 1,
-        "initUIEvent"     : 1,
-        "layerX"          : 1,
-        "layerY"          : 1,
+        // "height"          : 1, // needed?
+        // "initEvent"       : 1, // need the init events?
+        // "initMouseEvent"  : 1,
+        // "initUIEvent"     : 1,
+        // "layerX"          : 1, // needed?
+        // "layerY"          : 1, // needed?
         "metaKey"         : 1,
-        "modifiers"       : 1,
-        "offsetX"         : 1,
-        "offsetY"         : 1,
-        "preventDefault"  : 1, // we supply
+        // "modifiers"       : 1, // needed?
+        // "offsetX"         : 1, // needed?
+        // "offsetY"         : 1, // needed?
+        // "preventDefault"  : 1, // we supply
         // "reason"          : 1, // IE proprietary
         // "relatedTarget"   : 1,
-        "returnValue"     : 1,
+        // "returnValue"     : 1, // needed?
         "shiftKey"        : 1,
         // "srcUrn"          : 1, // IE proprietary
         // "srcElement"      : 1,
         // "srcFilter"       : 1, IE proprietary
-        "stopPropagation" : 1, // we supply
+        // "stopPropagation" : 1, // we supply
         // "target"          : 1,
-        "timeStamp"       : 1,
+        // "timeStamp"       : 1, // needed?
         // "toElement"       : 1,
-        "type"            : 1,
+        // "type"            : 1, // needed?
         // "view"            : 1,
-        "which"           : 1, // we supply
-        "width"           : 1,
+        // "which"           : 1, // we supply
+        // "width"           : 1, // needed?
         "x"               : 1,
         "y"               : 1
     };
 
-    */
     var ua = Y.UA,
 
         /**
@@ -66,32 +64,6 @@ YUI.add("event-facade", function(Y) {
         },
 
         /**
-         * Wraps an element in a Node facade
-         * @method wrapNode
-         * @private
-         */
-
-        wrapNode = function(n) {
-
-            if (n) {
-                return Y.Node.get(n);
-            }
-
-            return null;
-        },
-
-        // resolve = (ua.webkit) ? function(n) {
-        //     try {
-        //         if (ua.webkit && n && 3 == n.nodeType) {
-        //             n = n.parentNode;
-        //         } 
-        //     } catch(ex) { }
-        //     return wrapNode(n);
-        // } : function(n) {
-        //     return wrapNode(n);
-        // };
-
-        /**
          * Returns a wrapped node.  Intended to be used on event targets,
          * so it will return the node's parent if the target is a text
          * node
@@ -100,13 +72,17 @@ YUI.add("event-facade", function(Y) {
          */
         resolve = function(n) {
 
+            if (!n) {
+                return null;
+            }
+
             try {
-                if (ua.webkit && n && 3 == n.nodeType) {
+                if (ua.webkit && 3 == n.nodeType) {
                     n = n.parentNode;
                 } 
             } catch(ex) { }
 
-            return wrapNode(n);
+            return Y.Node.get(n);
         };
 
 
@@ -128,12 +104,14 @@ YUI.add("event-facade", function(Y) {
 
         // @TODO the document should be the target's owner document
 
-        var e = ev, ot = origTarg, d = document, b = d.body,
+        var e = ev, ot = origTarg, d = Y.config.doc, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
 
-        // copy all primitives
-        for (var i in e) {
-            if (!Y.Lang.isObject(e[i])) {
+        // copy all primitives ... this is slow in FF
+        // for (var i in e) {
+        for (var i in whitelist) {
+            // if (!Y.Lang.isObject(e[i])) {
+            if (whitelist.hasOwnProperty(i)) {
                 this[i] = e[i];
             }
         }
@@ -196,11 +174,18 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
 
         /**
+         * The button that was pushed.
+         * @property button
+         * @type int
+         */
+        this.button = e.which || e.button;
+
+        /**
          * The button that was pushed.  Same as button.
          * @property which
          * @type int
          */
-        this.which = e.which || e.button;
+        this.which = this.button;
 
         /**
          * The event details.  Currently supported for Custom

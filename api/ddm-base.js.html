@@ -82,6 +82,7 @@
 
     <span class="c">//Y.mix(DDMBase, {</span>
 <span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DDMBase</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+        <span class="nx">_activateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>        
         <span class="c">/**</span>
 <span class="c">        * @property clickPixelThresh</span>
 <span class="c">        * @description The number of pixels moved needed to start a drag operation, default 3.</span>
@@ -138,7 +139,8 @@
 <span class="c">        */</span>
         <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="c">//YAHOO.util.Event.on(document, &#39;mousemove&#39;, this._move, this, true);</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
@@ -176,11 +178,25 @@
 <span class="c">        * @description Internal method used by Drag to signal the end of a drag operation</span>
 <span class="c">        */</span>
         <span class="nx">_end</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">//@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction</span>
+<span class="c"></span>            <span class="c">//Add as a config option??</span>
+<span class="c"></span>            <span class="c">//if (this.activeDrag &amp;&amp; this.activeDrag.get(&#39;dragging&#39;)) {</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_endDrag</span><span class="o">();</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">end</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method stopDrag</span>
+<span class="c">        * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        */</span>       
+        <span class="nx">stopDrag</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
@@ -192,7 +208,8 @@
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">_move</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_dropMove</span><span class="o">();</span>
             <span class="o">}</span>
-        <span class="o">},</span>
+            <span class="c">//console.log(&#39;_move&#39;);</span>
+<span class="c"></span>        <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @method setXY</span>
 <span class="c">        * @description A simple method to set the top and left position from offsets instead of page coordinates</span>

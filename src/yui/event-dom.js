@@ -535,24 +535,6 @@ YUI.add("event-dom", function(Y) {
                     }
                 },
 
-                /*
-                 * Fires the DOMReady event listeners the first time the document is
-                 * usable.
-                 * @method _ready
-                 * @static
-                 * @private
-                 */
-                // _ready: function(e) {
-                //     var E = Y.Event;
-                //     if (!E.DOMReady) {
-                //         E.DOMReady=true;
-                //         // Fire the content ready custom event
-                //         E.DOMReadyEvent.fire();
-                //         // Remove the DOMContentLoaded (FF/Opera)
-                //         E.nativeRemove(document, "DOMContentLoaded", E._ready);
-                //     }
-                // },
-
                 /**
                  * Polling function that runs before the onload event fires, 
                  * attempting to attach to DOM Nodes as soon as they are 

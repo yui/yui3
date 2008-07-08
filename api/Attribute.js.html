@@ -133,52 +133,6 @@
 
     <span class="nx">CLONE_ENUM</span> <span class="o">=</span> <span class="nx">Attribute</span><span class="o">.</span><span class="nx">CLONE</span><span class="o">;</span>
 
-    <span class="k">function</span> <span class="nx">_fireChange</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
-
-        <span class="c">// TODO: Publishing temporarily, while we address event bubbling/queuing</span>
-<span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttSet</span><span class="o">});</span>
-
-        <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
-            <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">currVal</span><span class="o">,</span>
-            <span class="nx">newVal</span><span class="o">:</span> <span class="nx">newVal</span><span class="o">,</span>
-            <span class="nx">attrName</span><span class="o">:</span> <span class="nx">attrName</span><span class="o">,</span>
-            <span class="nx">subAttrName</span><span class="o">:</span> <span class="nx">strFullPath</span>
-        <span class="o">};</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">eData</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
-        <span class="o">}</span>
-
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eData</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="c">/**</span>
-<span class="c">     * Clone utility method, which will </span>
-<span class="c">     * clone the provided value using YUI&#39;s </span>
-<span class="c">     * merge, or clone utilities based</span>
-<span class="c">     * on the clone type provided.</span>
-<span class="c">     * </span>
-<span class="c">     * @see Attribute.CLONE</span>
-<span class="c">     * @method _clone</span>
-<span class="c">     * @private </span>
-<span class="c">     * @param {Object} val</span>
-<span class="c">     * @param {Object} type</span>
-<span class="c">     */</span>
-    <span class="k">function</span> <span class="nx">_clone</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">switch</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">SHALLOW</span><span class="o">:</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-                <span class="k">break</span><span class="o">;</span>
-            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">DEEP</span><span class="o">:</span>
-            <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">IMMUTABLE</span><span class="o">:</span>
-                <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
-                <span class="k">break</span><span class="o">;</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
-    <span class="o">}</span>
-
     <span class="nx">Attribute</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
         <span class="c">/**</span>
 <span class="c">         * &lt;p&gt;</span>
@@ -209,13 +163,14 @@
 <span class="c">         *    &lt;dt&gt;validator {Function}&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;The validator function which is invoked prior to setting the stored value. Returning</span>
 <span class="c">         *    false from the validator function will prevent the value from being stored&lt;/dd&gt;</span>
-<span class="c">         *    &lt;dt&gt;clone {Number}&lt;/dt&gt;</span>
+<span class="c">         *    &lt;dt&gt;clone {int}&lt;/dt&gt;</span>
 <span class="c">         *    &lt;dd&gt;If and how the value returned by a call to the get method, should be de-referenced from</span>
 <span class="c">         *    the stored value. By default values are not cloned, and hence a call to get will return</span>
 <span class="c">         *    a reference to the stored value. See Attribute.CLONE for more details about the clone </span>
 <span class="c">         *    options available&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
-<span class="c">         * @method add</span>
+<span class="c">         *</span>
+<span class="c">         * @method addAtt</span>
 <span class="c">         * @param {String} name The attribute key</span>
 <span class="c">         * @param {Object} config (optional) An object literal specifying the configuration for the attribute.</span>
 <span class="c">         * &lt;strong&gt;NOTE:&lt;/strong&gt; The config object is modified when adding an attribute, </span>
@@ -224,6 +179,8 @@
         <span class="nx">addAtt</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;adding attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);</span>
             <span class="k">var</span> <span class="nx">value</span><span class="o">,</span> <span class="nx">hasValue</span> <span class="o">=</span> <span class="o">(</span><span class="nx">VALUE</span> <span class="k">in</span> <span class="nx">config</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">config</span><span class="o">[</span><span class="nx">READ_ONLY</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">hasValue</span><span class="o">)</span> <span class="o">{</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;readOnly attribute: &#39;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39;, added without an initial value. Value will be set on intial call to set&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Attribute&#39;</span><span class="o">);}</span>
 
             <span class="k">if</span><span class="o">(</span><span class="nx">hasValue</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">value</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">value</span><span class="o">;</span>
@@ -239,10 +196,11 @@
 
         <span class="c">/**</span>
 <span class="c">         * Removes an attribute.</span>
-<span class="c">         * @method remove</span>
+<span class="c">         *</span>
+<span class="c">         * @method removeAtt</span>
 <span class="c">         * @param {String} name The attribute key</span>
 <span class="c">         */</span>
-        <span class="nx">remove</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">removeAtt</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">remove</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
         <span class="o">},</span>
 
@@ -252,6 +210,7 @@
 <span class="c">         * to the &#39;get&#39; handler to obtain the value of the attribute.</span>
 <span class="c">         * The &#39;get&#39; handler will be passed the current value of the attribute </span>
 <span class="c">         * as the only argument.</span>
+<span class="c">         *</span>
 <span class="c">         * @method get</span>
 <span class="c">         * @param {String} key The attribute whose value will be returned. If</span>
 <span class="c">         * the value of the attribute is an Object, dot notation can be used to</span>
@@ -274,7 +233,7 @@
             <span class="nx">getFn</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">GET</span><span class="o">);</span>
             <span class="nx">clone</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">CLONE</span><span class="o">);</span>
 
-            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">clone</span><span class="o">)</span> <span class="o">?</span> <span class="nx">_clone</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">clone</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">clone</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cloneAttVal</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">clone</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">getFn</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
             <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">path</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">_getSubAttVal</span><span class="o">(</span><span class="nx">path</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
 
@@ -341,7 +300,7 @@
                <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="nx">_fireChange</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_fireAttChange</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">val</span><span class="o">,</span> <span class="nx">name</span><span class="o">,</span> <span class="nx">strPath</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
 
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
@@ -371,9 +330,12 @@
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">valFn</span> <span class="o">||</span> <span class="nx">valFn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="o">{</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">val</span> <span class="o">});</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">conf</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">VALUE</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="c">// Prevent &quot;after&quot; listeners from being </span>
+<span class="c"></span>                <span class="c">// invoked since nothing changed.</span>
+<span class="c"></span>                <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
             <span class="o">}</span>
-
-            <span class="nx">e</span><span class="o">.</span><span class="nx">newVal</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -592,14 +554,72 @@
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Clone utility method, which will </span>
+<span class="c">         * clone the provided value using YUI&#39;s </span>
+<span class="c">         * merge, or clone utilities based</span>
+<span class="c">         * on the clone type provided.</span>
+<span class="c">         * </span>
+<span class="c">         * @see Attribute.CLONE</span>
+<span class="c">         * @method _cloneAttVal</span>
+<span class="c">         * @private </span>
+<span class="c">         * @param {Any} val Value to clone</span>
+<span class="c">         * @param {int} type Clone type to use, See the CLONE property</span>
+<span class="c">         */</span>
+        <span class="nx">_cloneAttVal</span> <span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">switch</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">SHALLOW</span><span class="o">:</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">DEEP</span><span class="o">:</span>
+                <span class="nx">case</span> <span class="nx">CLONE_ENUM</span><span class="o">.</span><span class="nx">IMMUTABLE</span><span class="o">:</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                    <span class="k">break</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Utility method to help setup the event payload and </span>
+<span class="c">         * fire the attribute change event.</span>
+<span class="c">         * </span>
+<span class="c">         * @method _fireAttChange</span>
+<span class="c">         * @private</span>
+<span class="c">         * @param {String} type The event name</span>
+<span class="c">         * @param {Any} currVal The current value of the attribute</span>
+<span class="c">         * @param {Any} newVal The new value of the attribute</span>
+<span class="c">         * @param {String} attrName The name of the attribute</span>
+<span class="c">         * @param {String} strFullPath The full path of the property being changed, </span>
+<span class="c">         * if this is a sub-attribute value being change</span>
+<span class="c">         * @param {Function} defaultFn The default handler for the change event</span>
+<span class="c">         * @param {Object} opts Any additional event data to mix into the attribute change event&#39;s event facade.</span>
+<span class="c">         */</span>
+        <span class="nx">_fireAttChange</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">currVal</span><span class="o">,</span> <span class="nx">newVal</span><span class="o">,</span> <span class="nx">attrName</span><span class="o">,</span> <span class="nx">strFullPath</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">,</span> <span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">type</span> <span class="o">=</span> <span class="nx">type</span> <span class="o">+</span> <span class="nx">CHANGE</span><span class="o">;</span>
+
+            <span class="c">// TODO: Publishing temporarily, while we address event bubbling/queuing</span>
+<span class="c"></span>            <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="o">{</span><span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span> <span class="nx">defaultFn</span><span class="o">:</span><span class="k">this</span><span class="o">.</span><span class="nx">_defAttSet</span><span class="o">});</span>
+
+            <span class="k">var</span> <span class="nx">eData</span> <span class="o">=</span> <span class="o">{</span>
+                <span class="nx">type</span><span class="o">:</span> <span class="nx">type</span><span class="o">,</span>
+                <span class="nx">prevVal</span><span class="o">:</span> <span class="nx">currVal</span><span class="o">,</span>
+                <span class="nx">newVal</span><span class="o">:</span> <span class="nx">newVal</span><span class="o">,</span>
+                <span class="nx">attrName</span><span class="o">:</span> <span class="nx">attrName</span><span class="o">,</span>
+                <span class="nx">subAttrName</span><span class="o">:</span> <span class="nx">strFullPath</span>
+            <span class="o">};</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">opts</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">eData</span><span class="o">,</span> <span class="nx">opts</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">eData</span><span class="o">);</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Attribute</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
-    <span class="c">// Y.augment(Attribute, Y.Event.Target, null, null, {</span>
-<span class="c"></span>    <span class="c">//        emitFacade:true</span>
-<span class="c"></span>    <span class="c">// });</span>
-<span class="c"></span>
+
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span> <span class="o">=</span> <span class="nx">Attribute</span><span class="o">;</span>
 </pre></div>
                     </div>

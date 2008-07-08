@@ -1,5 +1,6 @@
 /**
  * Array utilities
+ * @TODO investigate using Array subclasses for some of this
  * @class array
  * @static
  */
@@ -113,6 +114,7 @@ YUI.add("array", function(Y) {
      * Returns the index of the first item in the array
      * that contains the specified value, -1 if the
      * value isn't found.
+     * @TODO use native method if avail
      * @method indexOf
      * @param a {Array} the array to search
      * @param val the value to search for

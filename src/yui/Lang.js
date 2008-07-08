@@ -9,17 +9,18 @@ YUI.add("lang", function(Y) {
 
     var L = Y.Lang, SPLICE="splice", LENGTH="length";
 
-        /**
-         * Determines whether or not the provided object is an array.
-         * Testing typeof/instanceof/constructor of arrays across frame 
-         * boundaries isn't possible in Safari unless you have a reference
-         * to the other frame to test against its Array prototype.  To
-         * handle this case, we test well-known array properties instead.
-         * properties.
-         * @method isArray
-         * @param {any} o The object being testing
-         * @return Boolean
-         */
+    /**
+     * Determines whether or not the provided object is an array.
+     * Testing typeof/instanceof/constructor of arrays across frame 
+     * boundaries isn't possible in Safari unless you have a reference
+     * to the other frame to test against its Array prototype.  To
+     * handle this case, we test well-known array properties instead.
+     * properties.
+     * @TODO can we kill this cross frame hack?
+     * @method isArray
+     * @param {any} o The object being testing
+     * @return Boolean
+     */
      L.isArray = function(o) { 
         if (o) {
            //return L.isNumber(o.length) && L.isFunction(o.splice);

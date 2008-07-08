@@ -360,6 +360,7 @@ YUI.prototype = {
 
     // Centralizing error messaging means we can configure how
     // they are communicated.
+    // @TODO do we need a param to force throwing an error
     fail: function(msg, e, eType) {
         this.log(msg, "error");
 
@@ -381,6 +382,7 @@ YUI.prototype = {
 // This makes it so that the YUI global can be used like the YAHOO
 // global was used prior to 3.x.  More importantly, the YUI global
 // provides global metadata, so env needs to be configured.
+// @TODO review
 (function() {
     var Y = YUI, p = Y.prototype, i;
 
@@ -407,17 +409,18 @@ YUI.add("lang", function(Y) {
 
     var L = Y.Lang, SPLICE="splice", LENGTH="length";
 
-        /**
-         * Determines whether or not the provided object is an array.
-         * Testing typeof/instanceof/constructor of arrays across frame 
-         * boundaries isn't possible in Safari unless you have a reference
-         * to the other frame to test against its Array prototype.  To
-         * handle this case, we test well-known array properties instead.
-         * properties.
-         * @method isArray
-         * @param {any} o The object being testing
-         * @return Boolean
-         */
+    /**
+     * Determines whether or not the provided object is an array.
+     * Testing typeof/instanceof/constructor of arrays across frame 
+     * boundaries isn't possible in Safari unless you have a reference
+     * to the other frame to test against its Array prototype.  To
+     * handle this case, we test well-known array properties instead.
+     * properties.
+     * @TODO can we kill this cross frame hack?
+     * @method isArray
+     * @param {any} o The object being testing
+     * @return Boolean
+     */
      L.isArray = function(o) { 
         if (o) {
            //return L.isNumber(o.length) && L.isFunction(o.splice);
@@ -535,6 +538,7 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
 
 /**
  * Array utilities
+ * @TODO investigate using Array subclasses for some of this
  * @class array
  * @static
  */
@@ -648,6 +652,7 @@ YUI.add("array", function(Y) {
      * Returns the index of the first item in the array
      * that contains the specified value, -1 if the
      * value isn't found.
+     * @TODO use native method if avail
      * @method indexOf
      * @param a {Array} the array to search
      * @param val the value to search for
@@ -726,6 +731,9 @@ YUI.add("core", function(Y) {
      * properties are applied, and a property that is already on the
      * reciever will not be overwritten.  The default behavior can
      * be modified by supplying the appropriate parameters.
+     *
+     * @TODO add constants for the modes
+     *
      * @method mix
      * @static
      * @param {Function} r  the object to receive the augmentation
@@ -743,6 +751,7 @@ YUI.add("core", function(Y) {
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
      * @return the augmented object
+     * @TODO review for PR2
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
 
@@ -832,6 +841,8 @@ YUI.add("core", function(Y) {
      *
      * @todo constructor optional?
      * @todo understanding what an instance is augmented with
+     * @TODO evaluate if we can do this in a way that doesn't interfere
+     * with normal inheritance
      */
     Y.augment = function(r, s, ov, wl, args) {
 
@@ -1086,9 +1097,11 @@ YUI.add("core", function(Y) {
      * supplied object's context, optionally adding any additional
      * supplied parameters to the end of the arguments the function
      * is executed with.
+     * @TODO review param order for PR2
      *
      * @param f {Function} the function to bind
      * @param c the execution context
+     * @param args* 0..n arguments to append to the arguments collection for the function
      * @return the wrapped function
      */
     Y.bind = function(f, c) {
@@ -1172,6 +1185,8 @@ YUI.add("core", function(Y) {
      * or method.  If the first argument is a function, it
      * is assumed the target is a method.
      *
+     * @TODO add event
+     *
      * For DOM and custom events:
      * type, callback, context, 1-n arguments
      *  
@@ -1187,11 +1202,6 @@ YUI.add("core", function(Y) {
         }
 
         return Y;
-    };
-
-    // Object factory
-    Y.create = function() {
-
     };
 
 }, "3.0.0");
@@ -1225,7 +1235,7 @@ YUI.add("object", function(Y) {
      * wrapper for the native implementation.  Use the native implementation
      * directly instead.
      *
-     * @TODO Remove
+     * @TODO Remove in PR2
      *
      * @method owns
      * @param o {any} The object being testing
@@ -2023,7 +2033,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         this.silent = this.logSystem;
 
-        this.queuable = !(this.logSystem);
+        // this.queuable = !(this.logSystem);
+        this.queuable = false;
 
         /**
          * The subscribers to this event
@@ -2280,6 +2291,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             // update the details field with the arguments
             ef.target = this.target;
             ef.originalTarget = this.originalTarget;
+            ef.stopped = 0;
+            ef.prevented = 0;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
@@ -2466,7 +2479,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
                 // process after listeners.  If the default behavior was
                 // prevented, the after events don't fire.
-                if (!this.prevented) {
+                if (!this.prevented && this.stopped > 1) {
                     subs = Y.merge(this.afters);
                     for (i in subs) {
                         if (Y.Object.owns(subs, i)) {
@@ -2494,22 +2507,22 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             }
 
             if (es.id === this.id) {
-                // console.log('clearing stack: ' + es.id + ', ' + this);
+// console.log('clearing stack: ' + es.id + ', ' + this);
 
-                // reset propragation properties while processing the rest of the queue
+// reset propragation properties while processing the rest of the queue
 
-                // process queued events
+// process queued events
                 var queue = es.queue;
 
                 while (queue.length) {
                     // q[0] = the event, q[1] = arguments to fire
                     var q = queue.pop(), ce = q[0];
 
-            // Y.log('firing queued event ' + ce.type + ', from ' + this);
+// Y.log('firing queued event ' + ce.type + ', from ' + this);
                     es.stopped = 0;
                     es.prevented = 0;
                     
-                    // set up stack to allow the next item to be processed
+// set up stack to allow the next item to be processed
                     es.next = ce;
 
                     ret = ce.fire.apply(ce, q[1]);
@@ -3655,24 +3668,6 @@ YUI.add("event-dom", function(Y) {
                     }
                 },
 
-                /*
-                 * Fires the DOMReady event listeners the first time the document is
-                 * usable.
-                 * @method _ready
-                 * @static
-                 * @private
-                 */
-                // _ready: function(e) {
-                //     var E = Y.Event;
-                //     if (!E.DOMReady) {
-                //         E.DOMReady=true;
-                //         // Fire the content ready custom event
-                //         E.DOMReadyEvent.fire();
-                //         // Remove the DOMContentLoaded (FF/Opera)
-                //         E.nativeRemove(document, "DOMContentLoaded", E._ready);
-                //     }
-                // },
-
                 /**
                  * Polling function that runs before the onload event fires, 
                  * attempting to attach to DOM Nodes as soon as they are 
@@ -3935,53 +3930,51 @@ YUI.add("event-dom", function(Y) {
 }, "3.0.0");
 YUI.add("event-facade", function(Y) {
 
-    /*
 
     var whitelist = {
         "altKey"          : 1,
-        "button"          : 1, // we supply
-        "bubbles"         : 1,
-        "cancelable"      : 1,
-        "charCode"        : 1, // we supply
+        // "button"          : 1, // we supply
+        // "bubbles"         : 1, // needed?
+        // "cancelable"      : 1, // needed? 
+        // "charCode"        : 1, // we supply
         "cancelBubble"    : 1,
-        "currentTarget"   : 1,
+        // "currentTarget"   : 1, // we supply
         "ctrlKey"         : 1,
-        "clientX"         : 1,
-        "clientY"         : 1,
+        "clientX"         : 1, // needed?
+        "clientY"         : 1, // needed?
         "detail"          : 1, // not fully implemented
         // "fromElement"     : 1,
         "keyCode"         : 1,
-        "height"          : 1,
-        "initEvent"       : 1, // need the init events?
-        "initMouseEvent"  : 1,
-        "initUIEvent"     : 1,
-        "layerX"          : 1,
-        "layerY"          : 1,
+        // "height"          : 1, // needed?
+        // "initEvent"       : 1, // need the init events?
+        // "initMouseEvent"  : 1,
+        // "initUIEvent"     : 1,
+        // "layerX"          : 1, // needed?
+        // "layerY"          : 1, // needed?
         "metaKey"         : 1,
-        "modifiers"       : 1,
-        "offsetX"         : 1,
-        "offsetY"         : 1,
-        "preventDefault"  : 1, // we supply
+        // "modifiers"       : 1, // needed?
+        // "offsetX"         : 1, // needed?
+        // "offsetY"         : 1, // needed?
+        // "preventDefault"  : 1, // we supply
         // "reason"          : 1, // IE proprietary
         // "relatedTarget"   : 1,
-        "returnValue"     : 1,
+        // "returnValue"     : 1, // needed?
         "shiftKey"        : 1,
         // "srcUrn"          : 1, // IE proprietary
         // "srcElement"      : 1,
         // "srcFilter"       : 1, IE proprietary
-        "stopPropagation" : 1, // we supply
+        // "stopPropagation" : 1, // we supply
         // "target"          : 1,
-        "timeStamp"       : 1,
+        // "timeStamp"       : 1, // needed?
         // "toElement"       : 1,
-        "type"            : 1,
+        // "type"            : 1, // needed?
         // "view"            : 1,
-        "which"           : 1, // we supply
-        "width"           : 1,
+        // "which"           : 1, // we supply
+        // "width"           : 1, // needed?
         "x"               : 1,
         "y"               : 1
     };
 
-    */
     var ua = Y.UA,
 
         /**
@@ -4001,32 +3994,6 @@ YUI.add("event-facade", function(Y) {
         },
 
         /**
-         * Wraps an element in a Node facade
-         * @method wrapNode
-         * @private
-         */
-
-        wrapNode = function(n) {
-
-            if (n) {
-                return Y.Node.get(n);
-            }
-
-            return null;
-        },
-
-        // resolve = (ua.webkit) ? function(n) {
-        //     try {
-        //         if (ua.webkit && n && 3 == n.nodeType) {
-        //             n = n.parentNode;
-        //         } 
-        //     } catch(ex) { }
-        //     return wrapNode(n);
-        // } : function(n) {
-        //     return wrapNode(n);
-        // };
-
-        /**
          * Returns a wrapped node.  Intended to be used on event targets,
          * so it will return the node's parent if the target is a text
          * node
@@ -4035,13 +4002,17 @@ YUI.add("event-facade", function(Y) {
          */
         resolve = function(n) {
 
+            if (!n) {
+                return null;
+            }
+
             try {
-                if (ua.webkit && n && 3 == n.nodeType) {
+                if (ua.webkit && 3 == n.nodeType) {
                     n = n.parentNode;
                 } 
             } catch(ex) { }
 
-            return wrapNode(n);
+            return Y.Node.get(n);
         };
 
 
@@ -4063,12 +4034,14 @@ YUI.add("event-facade", function(Y) {
 
         // @TODO the document should be the target's owner document
 
-        var e = ev, ot = origTarg, d = document, b = d.body,
+        var e = ev, ot = origTarg, d = Y.config.doc, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
 
-        // copy all primitives
-        for (var i in e) {
-            if (!Y.Lang.isObject(e[i])) {
+        // copy all primitives ... this is slow in FF
+        // for (var i in e) {
+        for (var i in whitelist) {
+            // if (!Y.Lang.isObject(e[i])) {
+            if (whitelist.hasOwnProperty(i)) {
                 this[i] = e[i];
             }
         }
@@ -4131,11 +4104,18 @@ YUI.add("event-facade", function(Y) {
         //////////////////////////////////////////////////////
 
         /**
+         * The button that was pushed.
+         * @property button
+         * @type int
+         */
+        this.button = e.which || e.button;
+
+        /**
          * The button that was pushed.  Same as button.
          * @property which
          * @type int
          */
-        this.which = e.which || e.button;
+        this.which = this.button;
 
         /**
          * The event details.  Currently supported for Custom
