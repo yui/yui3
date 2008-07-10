@@ -61,12 +61,8 @@ YUI.add("aop", function(Y) {
         },
 
         detach: function(sid) {
-            if (sid in this.before) {
-                delete this.before[id];
-            }
-            if (sid in this.after) {
-                delete this.after[id];
-            }
+            delete this.before[sid];
+            delete this.after[sid];
         },
 
         _unload: function(e, me) {

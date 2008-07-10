@@ -53,7 +53,6 @@ YUI.prototype = {
     //    logExclude
     //    throwFail
     //    pollInterval
-    //    compat
     //    core
     // }
 
@@ -68,21 +67,18 @@ YUI.prototype = {
         // before _setup is called.
         this.config = o;
 
+        var i = (YUI.Env && YUI.Env._idx++) || 0;
         this.Env = {
             // @todo expand the new module metadata
             mods: {},
             _idx: 0,
             _pre: 'yuid',
-            _used: {}
+            _used: {},
+            _yidx: i,
+            _uidx: 0
         };
 
-
         this.constructor = YUI;
-
-        var i = YUI.Env._idx++;
-
-        this.Env._yidx = i;
-        this.Env._uidx = 0;
 
         this.id = this.guid('YUI');
 
@@ -183,15 +179,17 @@ YUI.prototype = {
         var Y = this, 
             a=Array.prototype.slice.call(arguments), 
             mods=YUI.Env.mods, 
-            used = Y.Env._used;
+            used = Y.Env._used,loader
 
         // YUI().use('*'); // bind everything available
         if (a[0] === "*") {
-            a = Y.Object.keys(mods);
+            // a = Y.Object.keys(mods);
             // //return Y.use.apply(Y, Y.Object.keys(mods));
-            // for (var k in mods) {
-                // Y.use(k);
-            // }
+            for (var k in mods) {
+                if (mods.hasOwnProperty(k)) {
+                    Y.use(k);
+                }
+            }
         }
 
         // Y.log('loader before: ' + a.join(','));
@@ -200,7 +198,7 @@ YUI.prototype = {
         // is available.
         if (Y.Loader) {
 
-            var loader = new Y.Loader(Y.config);
+            loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.calculate();
             a = loader.sorted;
@@ -283,7 +281,7 @@ YUI.prototype = {
         if (Y.Loader && missing.length) {
             // dynamic load
             Y.log('trying to get the missing modules ' + missing);
-            var loader = new Y.Loader();
+            loader = new Y.Loader();
             loader.require(missing);
             loader.subscribe('success', attach, loader, 'loader');
             loader.insert();
@@ -384,7 +382,9 @@ YUI.prototype = {
 
             // category filters are not used to suppress the log event
             // so that the data can be stored and displayed later.
-            Y.fire && Y.fire('yui:log', msg, cat, src);
+            if (Y.fire) {
+                Y.fire('yui:log', msg, cat, src);
+            }
         }
 
         return Y;

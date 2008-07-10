@@ -98,12 +98,8 @@
         <span class="o">},</span>
 
         <span class="nx">detach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">sid</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">sid</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="nx">sid</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-            <span class="o">}</span>
+            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">before</span><span class="o">[</span><span class="nx">sid</span><span class="o">];</span>
+            <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">after</span><span class="o">[</span><span class="nx">sid</span><span class="o">];</span>
         <span class="o">},</span>
 
         <span class="nx">_unload</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">e</span><span class="o">,</span> <span class="nx">me</span><span class="o">)</span> <span class="o">{</span>
@@ -228,22 +224,6 @@
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
-
-                                <li class=""><a href="module_dd-ddm.html">dd-ddm</a></li>
-
-                                <li class=""><a href="module_dd-ddm-base.html">dd-ddm-base</a></li>
-
-                                <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
-
-                                <li class=""><a href="module_dd-drag.html">dd-drag</a></li>
-
-                                <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 

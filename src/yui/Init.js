@@ -19,10 +19,6 @@
 
             core = ["object", "ua", "later"];
 
-            if (C.compat) {
-                core.push("compat");
-            }
-
             core.push(
               "aop", 
               "event-custom", 
@@ -30,11 +26,12 @@
               "event-ready",
               "event-dom", 
               "event-facade",
+              "dom", 
               "node", 
               "io", 
-              "get");
-              // "dump", 
-              // "substitute",
+              "get",
+              "dump", 
+              "substitute");
               // "loader"
 
         }

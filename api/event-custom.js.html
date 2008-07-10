@@ -556,8 +556,8 @@
                 <span class="c">// bubble if this is hosted in an event target and propagation has not been stopped</span>
 <span class="c"></span>                <span class="c">// @TODO check if we need to worry about defaultFn order</span>
 <span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">bubbles</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">stopped</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attempting to bubble &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">);</span>
-                    <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                    <span class="c">// this.log(&#39;attempting to bubble &#39; + this);</span>
+<span class="c"></span>                    <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
@@ -831,22 +831,6 @@
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
-
-                                <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
-
-                                <li class=""><a href="module_dd-ddm.html">dd-ddm</a></li>
-
-                                <li class=""><a href="module_dd-ddm-base.html">dd-ddm-base</a></li>
-
-                                <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
-
-                                <li class=""><a href="module_dd-drag.html">dd-drag</a></li>
-
-                                <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 

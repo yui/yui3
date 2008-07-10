@@ -420,6 +420,16 @@ Removed ChainedError
 Custom event errors now invoke Y.fail, which can be configured to throw the error or log
 Removed Event.Target.before
 Implemented Event.Target.after
-Added config for stoppedFn and preventedFn... these are exectuted if a subscriber calles
-the corresponding function.  They receive the custom event as a param.  Execution context
-is the host object or the custom event.
+Added config for stoppedFn and preventedFn... these are exectuted if a subscriber calls the corresponding function
+They receive the custom event as a param.  Execution context is the host object or the custom event.
+Added script timeout to Get
+EventFacade was reverted to using a white list for properties copied from the event object (performance encancement)
+Only one EventFacade is created per custom event rather than one per fire
+Events are now NOT queuable by default
+Removed compat config option
+Removed Compat.js from yui
+Added compat module, which includes DOM and DOM Event compat layer
+dump and substitute are now bound by default since they are still in the yui module.
+dom is a separate module included in yui core
+
+

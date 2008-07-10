@@ -518,7 +518,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // bubble if this is hosted in an event target and propagation has not been stopped
                 // @TODO check if we need to worry about defaultFn order
                 if (this.bubbles && this.host && !this.stopped) {
-                    this.log('attempting to bubble ' + this);
+                    // this.log('attempting to bubble ' + this);
                     ret = this.host.bubble(this);
                 }
 
