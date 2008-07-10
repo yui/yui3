@@ -1,28 +1,123 @@
 YUI.add("io", function (Y) {
+   /*
+	* HTTP communications module.
+	* @module io
+	*/
 
-	// Transaction event handlers map
-	var _E = ['start', 'complete', 'success', 'failure', 'abort'];
+   /*
+    * The io class is a utility that brokers HTTP requests through a simplified
+    * interface.  Specifically, it allows JavaScript to make HTTP requests to
+    * a resource without a page reload.  The underlying transport for making
+    * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
+    * Flash, if specified as a transport, for cross-domain requests, using the
+    * same interface.
+    *
+	* @class io
+	*/
 
 	// Window reference
 	var w = Y.config.win;
 
-	// Transaction id counter
+   /*
+	* @description A transaction counter that increments for each transaction.
+	*
+	* @property transactionId
+	* @private
+	* @static
+	* @type int
+	*/
 	var transactionId = 0;
 
-	// HTTP headers map
+   /*
+	* @description Object of default HTTP headers to be initialized and sent
+	* for all transactions.
+	*
+	* @property _headers
+	* @private
+	* @static
+	* @type object
+	*/
 	var _headers = {
 		'X-Requested-With' : 'XMLHttpRequest'
 	};
 
-	// Timeout map
+   /*
+	* @description Object that stores timeout values for any transaction with
+	* a defined "timeout" configuration property.
+	*
+	* @property _timeOut
+	* @private
+	* @static
+	* @type object
+	*/
 	var _timeout = {};
 
-	// Transaction queue and queue properties
+   /*
+	* @description Object that stores callback handlers for cross-domain requests,
+	*
+	* @property _fn
+	* @private
+	* @static
+	* @type object
+	*/
+	var _fn = {};
+
+   /*
+	* @description Map of transports created for cross-domain requests.
+	*
+	* @property _xdr
+	* @private
+	* @static
+	* @type object
+	*/
+	var _xdr = {
+		flash:null
+	}
+
+   /*
+	* @description Array of transactions queued for processing
+	*
+	* @property _q
+	* @private
+	* @static
+	* @type array
+	*/
 	var _q = [];
+
+   /*
+	* @description Property to determine whether the queue is set to
+	* 1 (active) or 0 (inactive).  When inactive, transactions
+	* will be stored in the queue until the queue is set to active.
+	*
+	* @property _q
+	* @private
+	* @static
+	* @type int
+	*/
 	var _qState = 1;
+
+   /*
+	* @description Queue property to set a maximum queue storage size.  When
+	* this property is set, the queue will not store any more transactions
+	* until the queue size os reduced below this threshold. There is no
+	* maximum queue size until it is explicitly set.
+	*
+	* @property _qMaxSize
+	* @private
+	* @static
+	* @type int
+	*/
 	var _qMaxSize = false;
 
-	/* Define Queue Functions */
+   /*
+	* @description Method for requesting a transaction, and queueing the
+	* request before it is sent to the resource.
+	*
+	* @method _queue
+	* @private
+	* @static
+    * @return int
+	*/
 	function _queue(uri, c) {
 
 		if (_qMaxSize === false || _q.length < _qMaxSize) {
@@ -40,6 +135,14 @@ YUI.add("io", function (Y) {
 		return id;
 	};
 
+   /*
+	* @description Method for promoting a transaction to the top of the queue.
+	*
+	* @method _unshift
+	* @private
+	* @static
+    * @return void
+	*/
 	function _unshift(id) {
 		var r;
 
@@ -52,11 +155,29 @@ YUI.add("io", function (Y) {
 		}
 	};
 
+   /*
+	* @description Method for removing a transaction from the top of the
+	* queue, and sending the transaction to _io().
+	*
+	* @method _shift
+	* @private
+	* @static
+    * @return void
+	*/
 	function _shift() {
 		var c = _q.shift();
 		_io(c.uri, c.cfg, c.id);
 	};
 
+   /*
+	* @description Method to query the current size of the queue, or to
+	* set a maximum queue size.
+	*
+	* @method _size
+	* @private
+	* @static
+    * @return int
+	*/
 	function _size(i) {
 		if (i) {
 			_qMaxSize = i;
@@ -67,6 +188,16 @@ YUI.add("io", function (Y) {
 		}
 	};
 
+   /*
+	* @description Method for setting the queue to active. If there are
+	* transactions pending in the queue, they will be processed from the
+	* queue in FIFO order.
+	*
+	* @method _start
+	* @private
+	* @static
+    * @return void
+	*/
 	function _start() {
 		var len = (_q.length > _qMaxSize > 0) ? _qMaxSize : _q.length;
 
@@ -81,10 +212,29 @@ YUI.add("io", function (Y) {
 
 	};
 
+   /*
+	* @description Method for setting queue processing to inactive.
+	* Transaction requests to YUI.io.queue() will be stored in the queue, but
+	* not processed until the queue is reset to "active".
+	*
+	* @method _stop
+	* @private
+	* @static
+    * @return void
+	*/
 	function _stop() {
 		_qState = 0;
 	};
 
+   /*
+	* @description Method for removing a specific, pending transaction from
+	* the queue.
+	*
+	* @method _purge
+	* @private
+	* @static
+    * @return void
+	*/
 	function _purge(id) {
 		if (Y.Lang.isNumber(id)) {
 			for (var i = 0; i < _q.length; i++) {
@@ -97,84 +247,279 @@ YUI.add("io", function (Y) {
 	};
 	/* End Queue Functions */
 
-	/* --- Define Constructor --- */
-	function _io(uri, c, id) {
-		// Create transaction object
+   /*
+	* @description Method for requesting a transaction. _io() is implemented as
+	* yui.io().  Each transaction may include a configuration object.  Its
+	* properties are:
+	*
+	* method: HTTP method verb (e.g., GET or POST). If this property is not
+	*         not defined, the default value will be GET.
+	*
+	* data: This is the name-value string that will be sent as the transaction
+    *		data.  If the request is HTTP GET, the data become part of
+    *		querystring. If HTTP POST, the data are sent in the message body.
+	*
+	* xdr: Defines the transport to be used for cross-domain requests.  By
+	*      setting this property, the transaction will use the specified
+	*      transport instead of XMLHttpRequest.  Currently, the only alternate
+	*      transport supported is Flash (e.g., { xdr: 'flash' }).
+	*
+	* form: This is a defined object used to process HTML form as data.  The
+	*       properties are:
+	*       {
+	*	      id: object, //HTML form object or id of HTML form
+	*         useDisabled: boolean, //Allow disabled HTML form field values
+	*                      to be sent as part of the data.
+    *       }
+    *
+    * on: This is a defined object used to create and handle specific
+    *     events during a transaction lifecycle.  These events will fire in
+    *     addition to the global io events. The events are:
+    *	  start - This event is fired when a request is sent to a resource.
+    *     complete - This event fires when the transaction is complete.
+    *     success - This event fires when the response status resolves to
+    *               HTTP 2xx.
+    *     failure - This event fires when the response status resolves to
+    *               HTTP 4xx, 5xx, and beyond.
+    *	  abort - This even is fired when a transaction abort is fire by
+    *             timeout, or when it is manually aborted.
+    *
+    *     The properties are:
+    *     {
+	*       start: function(id, args){},
+	*       complete: function(id, responseobject, args){},
+	*       success: function(id, responseobject, args){},
+	*       failure: function(id, responseobject, args){},
+	*       abort: function(id, args){}
+	*     }
+	*	  Each property can reference a function or be written as an
+	*     inline function.
+	*
+	* context: Object reference for an event handler when it is implemented
+	*          as a method of a base object. Defining "context" will preserve
+	*          the proper reference of "this" used in the event handler.
+	* header: This is a defined object of client headers, as many as.
+	*         desired for the transaction.  These headers are sentThe object
+	*         pattern is:
+	*		  {
+	*		    header: value
+	*         }
+	*
+	* timeout: This value, defined as milliseconds, is a time threshold for the
+	*          transaction. When this threshold is reached, and the resource
+	*          has not responded, the transaction will be aborted.
+	* arguments: Object, array, string, or number passed to all registered
+	*            event handlers.  This value is available as the second
+	*            argument in the "start" and "abort" event handlers; and, it is
+	*            the third argument in the "complete", "success", and "failure"
+	*            event handlers.
+	*
+	* @method _io
+	* @private
+	* @static
+    * @param {string} uri - qualified path to transaction resource.
+    * @param {object} c - configuration object for the transaction.
+    * @return object
+	*/
+	function _io(uri, c) {
+		var c = c || {};
+		var o = _create((arguments.length = 3) ? arguments[2] : null, c);
+		var m = (c.method) ? c.method.toUpperCase() : 'GET';
+		var d = (c.data) ? c.data : null;
 
-		var o = _create(Y.Lang.isNumber(id) ? id : null);
-		var m = (c && c.method) ? c.method.toUpperCase() : 'GET';
-		var d = (c && c.data) ? c.data : null;
-
-		/* Determine configuration properties */
-		if(c){
-			// If config.timeout is defined, initialize timeout poll.
-			if (c.timeout) {
-				_startTimeout(o, c);
-			}
-
-			// If config.form is defined, perform data operations.
-			if (c.form) {
-				// Serialize the HTML form into a string of name-value pairs.
-				var f = _serialize(c.form);
-				// If config.data is defined, concatenate the data to the form string.
-				if (d) {
-					f += "&" + d;
-				}
-
-				if (m === 'POST') {
-					d = f;
-					_setHeader('Content-Type', 'application/x-www-form-urlencoded');
-				}
-				else if (m === 'GET') {
-					uri = _concat(uri, f);
-				}
-			}
-			else if (d && m === 'GET') {
-				uri = _concat(uri, c.data);
-			}
-			else if (d && m === 'POST') {
-				_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-			}
-
+		if (c.xdr === 'flash') {
 			if (c.on) {
-				_tEvents(o, c);
+				_fn[o.id] = c.on;
 			}
+			o.c.send(uri, c, o.id);
+
+			return o;
 		}
 
+		/* Determine configuration properties */
+		// If config.form is defined, perform data operations.
+		if (c.form) {
+			// Serialize the HTML form into a string of name-value pairs.
+			var f = _serialize(c.form);
+			// If config.data is defined, concatenate the data to the form string.
+			if (d) {
+				f += "&" + d;
+			}
+
+			if (m === 'POST') {
+				d = f;
+				_setHeader('Content-Type', 'application/x-www-form-urlencoded');
+			}
+			else if (m === 'GET') {
+				uri = _concat(uri, f);
+			}
+		}
+		else if (d && m === 'GET') {
+			uri = _concat(uri, c.data);
+		}
+		else if (d && m === 'POST') {
+			_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+		}
+
+		// If config.timeout is defined, initialize timeout poll.
+		if (c.timeout) {
+			_startTimeout(o, c);
+		}
 		/* End Configuration Properties */
 
 		o.c.onreadystatechange = function() { _readyState(o, c); };
 		_open(o.c, m, uri);
-		_setHeaders(o.c, (c && c.headers) ? c.headers : {});
+		_setHeaders(o.c, (c.headers || {}));
 		_async(o, (d || ''), c);
 
 		o.abort = function () {
 			_abort(o, c);
 		}
-
 		o.status = function() {
 			return o.c.readyState !== 4 && o.c.readyState !== 0;
 		}
 
 		return o;
 	};
-	/* --- End Constructor --- */
 
-	function _tEvents(o, c){
-		for(var i = 0; i < _E.length; i++) {
-			if(c.on[_E[i]]) {
-				o['t:' + _E[i]] = new Y.Event.Target().publish(_E[i]);
-				Y.log('Transaction Event t:' + _E[i] + ' published for transaction ' + o.id, 'info', 'io');
-				o['t:' + _E[i]].subscribe(c.on[_E[i]], c.context, c.arguments );
-				Y.log('Transaction Event t:' + _E[i] + ' subscribed for transaction ' + o.id, 'info', 'io');
-			}
+   /*
+	* @description Method for creating and subscribing transaction events.
+	*
+	* @method _tPubSub
+	* @private
+	* @static
+	* @param {string} e - event to be published
+	* @param {object} c - configuration object for the transaction.
+	*
+    * @return void
+	*/
+	function _tPubSub(e, c){
+			var event = new Y.Event.Target().publish('transaction:' + e);
+			event.subscribe(c.on[e], (c.context || this), c.arguments);
+
+			return event;
+	};
+
+	function _ioStart(id, c) {
+		// Set default value of argument c, property "on" to Object if
+		// the property is null or undefined.
+		c.on = c.on || {};
+		var event;
+
+		Y.fire('io:start', id);
+
+		if (_fn[id] && _fn[id].start) {
+			c.on.start = _fn[id].start;
+		}
+		if (c.on.start) {
+			event = _tPubSub('start', c);
+			event.fire(id);
 		}
 	};
 
-	function _transport(t){
+	function _ioComplete(o, c) {
+		// Set default value of argument c, property "on" to Object if
+		// the property is null or undefined.
+		c.on = c.on || {};
+		var event;
+
+		Y.fire('io:complete', o.id, o.c);
+
+		if (_fn[o.id] && _fn[o.id].complete) {
+			c.on.complete = _fn[o.id].complete;
+			delete _fn[o.id];
+		}
+
+		if (c.on.complete) {
+			event = _tPubSub('complete', c);
+			event.fire(o.id, o.c);
+		}
+
+	}
+
+	function _ioSuccess(o, c) {
+		// Set default value of argument c, property "on" to Object if
+		// the property is null or undefined.
+		c.on = c.on || {};
+		var event;
+		// Fire global "io:success" event
+		Y.fire('io:success', o.id, o.c);
+
+		if (c.on.success) {
+			event = _tPubSub('success', c);
+			event.fire(o.id, o.c);
+		}
+	}
+
+	function _ioFailure(o, c) {
+		// Set default value of argument c, property "on" to Object if
+		// the property is null or undefined.
+		c.on = c.on || {};
+		var event;
+		// Fire global "io:failure" event
+		Y.fire('io:failure', o.id, o.c);
+
+		if (_fn[o.id] && _fn[o.id].failure) {
+			c.on.failure = _fn[o.id].failure;
+			delete _fn[o.id];
+		}
+
+		if (c.on.failure) {
+			event = _tPubSub('failure', c);
+			event.fire(o.id, o.c);
+		}
+	}
+
+	function _ioAbort(id, c) {
+		// Set default value of argument c, property "on" to Object if
+		// the property is null or undefined.
+		c.on = c.on || {};
+		var event;
+		Y.fire('io:abort', o.id);
+
+		if (_fn[id] && _fn[o.id].abort) {
+			c.on.abort = _fn[o.id].abort;
+			delete _fn[o.id];
+		}
+
+		if (c.on.abort) {
+			event = _tPubSub('abort', c);
+			event.fire(id);
+		}
+	}
+
+	function _xhr() {
 		return (w.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 	};
 
+   /*
+	* @description Method that creates the Flash transport swf.
+	*
+	* @method _swf
+	* @private
+	* @static
+    * @return void
+	*/
+	function _swf(uri) {
+		var c = document.createElement('div');
+		document.body.appendChild(c);
+
+		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">';
+		swf += '<param name="movie" value="' + uri + '">';
+		swf += '<param name="allowScriptAccess" value="sameDomain">';
+		swf += '</object>';
+		c.innerHTML = swf;
+
+		_xdr.flash = Y.config.doc.getElementById('yuiSwfIo');
+	}
+   /*
+	* @description Method that increments _transactionId for each transaction.
+	*
+	* @method _id
+	* @private
+	* @static
+    * @return int
+	*/
 	function _id(){
 		var id = transactionId;
 		transactionId++;
@@ -182,20 +527,56 @@ YUI.add("io", function (Y) {
 		return id;
 	}
 
-	function _create(i, t) {
-
+   /*
+	* @description Method that creates a unique transaction object for each
+	* request..
+	*
+	* @method _create
+	* @private
+	* @static
+    * @param {number} s - URI or root data.
+    * @param {number} c - configuration object
+    * @return object
+	*/
+	function _create(i, c) {
 		var o = {};
 		o.id = Y.Lang.isNumber(i) ? i : _id();
-		o.c = _transport(t);
+		if (c && c.xdr) {
+			o.c = _xdr[c.xdr];
+		}
+		else {
+			o.c = _xhr();
+		}
 
 		return o;
 	};
 
+   /*
+	* @description Method that concatenates string data for HTTP GET transactions.
+	*
+	* @method _concat
+	* @private
+	* @static
+    * @param {string} s - URI or root data.
+    * @param {string} d - data to be concatenated onto URI.
+    * @return int
+	*/
 	function _concat(s, d) {
 		s += ((s.indexOf('?') == -1) ? '?' : '&') + d;
 		return s;
 	};
 
+   /*
+	* @description Method that stores default client headers for all transactions.
+	* If a label is passed with no value argument, the header will be deleted.
+	*
+	* @method _setHeader
+	* @private
+	* @static
+    * @param {string} l - HTTP header
+    * @param {string} v - HTTP header value
+    * @return int
+	*/
 	function _setHeader(l, v) {
 		if (v) {
 			_headers[l] = v;
@@ -205,6 +586,28 @@ YUI.add("io", function (Y) {
 		}
 	};
 
+	function _initTransport(o) {
+		switch (o.id) {
+			case 'flash':
+				_swf(o.src);
+				break;
+			default:
+				return false;
+		}
+		return true;
+	};
+
+   /*
+	* @description Method that sets all HTTP headers to be sent in a transaction.
+	*
+	* @method _setHeaders
+	* @private
+	* @static
+    * @param {object} o - XHR instance for the specific transaction.
+    * @param {object} h - HTTP headers for the specific transaction, as defined
+    *                     in the configuration object passed to YUI.io().
+    * @return void
+	*/
 	function _setHeaders(o, h) {
 
 		var p;
@@ -226,16 +629,21 @@ YUI.add("io", function (Y) {
 		o.open(m, uri, true);
 	};
 
+   /*
+	* @description Method that sends the transaction request, and fires the
+	*              event -- io:start and t:start.
+	*
+	* @method _async
+	* @private
+	* @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {string} d - Transaction data.
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @return void
+	*/
 	function _async(o, d, c) {
 		o.c.send(d);
-		var a = (c && c.arguments) ? c.arguments : null;
-		// Fire global "io:start" event
-		Y.fire('io:start', o.id);
-
-		// Fire transaction "start" event
-		if (o['t:start']) {
-			o['t:start'].fire(o.id, a);
-		}
+		_ioStart(o.id, c);
 	};
 
 	function _startTimeout(o, c) {
@@ -247,27 +655,41 @@ YUI.add("io", function (Y) {
 		delete _timeout[id];
 	};
 
+   /*
+	* @description Method bound to onreadystatechange, and fires the events
+	*              io:complete and t:complete, when the transaction is complete.
+	*
+	* @method _readyState
+	* @private
+	* @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @return void
+	*/
 	function _readyState(o, c) {
-
 		if (o.c.readyState === 4) {
-
-			if (c && c.timeout) {
+			if (c.timeout) {
 				_clearTimeout(o.id);
 			}
-
-			// Fire global "io:complete" event
-			Y.fire('io:complete', o.id, o.c);
-
-			if (o['t:complete']) {
-				o['t:complete'].fire(o.id, o.c, c.arguments);
-			}
-
+			_ioComplete(o, c);
 			_handleResponse(o, c);
 		}
 	};
 
+   /*
+	* @description Method that determines if a transaction response qualifies
+	* as success or failure, based on the response HTTP status code, and
+	* fires the appropriate success or failure events.
+	*
+	* @method _handleResponse
+	* @private
+	* @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @return void
+	*/
 	function _handleResponse(o, c) {
-
+		var status;
 		try{
 			if (o.c.status && o.c.status !== 0) {
 				status = o.c.status;
@@ -285,28 +707,27 @@ YUI.add("io", function (Y) {
 		 * However, the response data are still available.
 		 */
 		if (status >= 200 && status < 300 || status === 1223) {
-			// Fire global "io:success" event
-			Y.fire('io:success', o.id, o.c);
-
-			if (o['t:success']) {
-				o['t:success'].fire(o.id, o.c, c.arguments);
-			}
+			_ioSuccess(o, c);
 		}
 		else {
-			// Fire global "io:failure" event
-			Y.fire('io:failure', o.id, o.c);
-
-			if (o['t:failure']) {
-				o['t:failure'].fire(o.id, o.c, c.arguments);
-			}
+			_ioFailure(o, c);
 		}
 
-		_destroy(o, c);
+		_destroy(o);
 	};
 
+   /*
+	* @description Method that terminates a transaction, if it is still
+	* in progress, and fires events io:abort and t:abort.
+	*
+	* @method _abort
+	* @private
+	* @static
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
+    * @return void
+	*/
 	function _abort(o, c) {
-
-		var a = (c && c.arguments) ? c.arguments : null;
 
 		if(o && o.c) {
 			o.c.abort();
@@ -316,14 +737,7 @@ YUI.add("io", function (Y) {
 					_clearTimeout(o.id);
 				}
 			}
-			// Fire global "io:abort" event
-			Y.fire('io:abort', o.id);
-
-			if (o['t:abort']) {
-				o['t:abort'].fire(o.id, a);
-			}
-
-
+			_ioAbort(o.id, c);
 			_destroy(o);
 		}
 	};
@@ -331,7 +745,9 @@ YUI.add("io", function (Y) {
 	function _destroy(o) {
 		// IE6 will throw a "Type Mismatch" error if the event handler is set to "null".
 		if(w.XMLHttpRequest) {
-			o.c.onreadystatechange = null;
+			if (o.c) {
+				o.c.onreadystatechange = null;
+			}
 		}
 
 		o.c = null;
@@ -355,7 +771,7 @@ YUI.add("io", function (Y) {
 
 			if ((useDf) ? n : (n && dF));
 			{
-				switch(e.type)
+				switch (e.type)
 				{
 					case 'select-one':
 					case 'select-multiple':
@@ -392,19 +808,126 @@ YUI.add("io", function (Y) {
 	};
 	/* end form serialization */
 
-	/* yui.io HTTP header interface definition*/
+	_io.start = _ioStart;
+	_io.complete = _ioComplete;
+	_io.error = _ioFailure;
+	_io.abort = _ioAbort;
+
+   /*** Begin public interface definition ***/
+   /*
+	* @description Method that stores default client headers for all transactions.
+	* If a label is passed with no value argument, the header will be deleted.
+	* This method is the interface for _setHeader().
+	*
+	* @method header
+	* @public
+	* @static
+    * @param {string} l - HTTP header
+    * @param {string} v - HTTP header value
+    * @return int
+	*/
 	_io.header = _setHeader;
-	/* end yui.io interface */
 
-	/* queue interface definition*/
+   /*
+	* @description Method for specifying and initializing a transport
+	* to facilitate cross-domain HTTP requests.  This method is the
+	* interface for _initTransport
+	*
+	* @method transport
+	* @public
+	* @static
+    * @param {object} t - configuration object for the transport.
+    * @return boolean
+	*/
+	_io.transport = _initTransport;
+
+   /*
+	* @description Method for requesting a transaction, and queueing the
+	* request before it is sent to the resource. This method is the
+	* interface for _queue().
+	*
+	* @method queue
+	* @public
+	* @static
+    * @param {string} uri - qualified path to transaction resource.
+    * @param {object} c - configuration object for the transaction.
+    * @return int
+	*/
 	_io.queue = _queue;
-	_io.queue.size = _size;
-	_io.queue.start = _start;
-	_io.queue.stop = _stop;
-	_io.queue.promote = _unshift;
-	_io.queue.purge = _purge;
-	/* end queue interface */
 
+   /*
+	* @description Method to query the current size of the queue, or to
+	* set a maximum queue size.  This method is the interface for _size().
+	*
+	* @method size
+	* @public
+	* @static
+	* @param {number} i - Specified maximum size of queue.
+    * @return number
+	*/
+	_io.queue.size = _size;
+
+   /*
+	* @description Method for setting the queue to "active". If there are
+	* transactions pending in the queue, they will be processed from the
+	* queue in FIFO order. This method is the interface for _start().
+	*
+	* @method start
+	* @public
+	* @static
+    * @return void
+	*/
+	_io.queue.start = _start;
+
+   /*
+	* @description Method for setting queue processing to inactive.
+	* Transaction requests to YUI.io.queue() will be stored in the queue, but
+	* not processed until the queue is set to "active". This method is the
+	* interface for _stop().
+	*
+	* @method stop
+	* @public
+	* @static
+    * @return void
+	*/
+	_io.queue.stop = _stop;
+
+   /*
+	* @description Method for promoting a transaction to the top of the queue.
+	* This method is the interface for _unshift().
+	*
+	* @method promote
+	* @public
+	* @static
+	* @param {number} i - ID of queued transaction.
+    * @return void
+	*/
+	_io.queue.promote = _unshift;
+
+   /*
+	* @description Method for removing a specific, pending transaction from
+	* the queue. This method is the interface for _purge().
+	*
+	* @method purge
+	* @public
+	* @static
+	* @param {number} i - ID of queued transaction.
+    * @return void
+	*/
+	_io.queue.purge = _purge;
+
+   /*
+	* @description Method for requesting a transaction. This method
+	* is the interface for _io().
+	*
+	* @method io
+	* @public
+	* @static
+    * @param {string} uri - qualified path to transaction resource.
+    * @param {object} c - configuration object for the transaction.
+    * @return object
+    */
 	Y.io = _io;
+   /*** End public interface definition ***/
 
 }, "3.0.0");
