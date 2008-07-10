@@ -29,7 +29,7 @@ clear
 echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
-cvs commit -m "$CMT" dd-*/*.js
+cvs commit -m "$CMT" dd/*.js
 clear
 echo "****************************************"
 echo "Commit Finished"

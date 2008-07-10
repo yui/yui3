@@ -14,6 +14,7 @@ wait
 clear
 wait
 
+
 ln -sf build.drag-proxy.xml build.xml
 wait
 ln -sf build.drag-proxy.properties build.properties
