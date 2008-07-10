@@ -186,7 +186,7 @@ YUI.prototype = {
 
         // YUI().use('*'); // bind everything available
         if (a[0] === "*") {
-            a = Object.keys(mods);
+            a = Y.Object.keys(mods);
             // //return Y.use.apply(Y, Y.Object.keys(mods));
             // for (var k in mods) {
                 // Y.use(k);
