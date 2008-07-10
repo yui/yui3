@@ -94,20 +94,12 @@ YUI.add('animation', function(Y) {
     Y.Anim.DEFAULT_UNIT = 'px';
 
     /**
-     * Bucket for custom GETTERS
+     * Bucket for custom getters and setters
      *
-     * @property GETTERS
+     * @property CUSTOM_ATTRIBUTES
      * @static
      */
-    Y.Anim.GETTERS = {};
-
-    /**
-     * Bucket for custom SETTERS
-     *
-     * @property SETTERS
-     * @static
-     */
-    Y.Anim.SETTERS = {};
+    Y.Anim.CUSTOM_ATTRIBUTES = {};
 
     /**
      * The default setter to use when setting object properties.
@@ -333,7 +325,6 @@ YUI.add('animation', function(Y) {
          */    
         resume: function() { // TODO: test case
             if (!this.get(IS_ANIMATED)) {
-                this.stop();
                 this._start();
             }
         },
@@ -368,9 +359,11 @@ YUI.add('animation', function(Y) {
             Y.Anim.start(); // start animator
 
             if (!this.get(ELAPSED_TIME)) {
+                this._actualFrames = 0;
                 this._initAttr();
                 this.fire(START);
             } else {
+                console.log(this._attr);
                 this.fire('resume');
             }
 
@@ -392,12 +385,13 @@ YUI.add('animation', function(Y) {
             _setPrivate(this, START_TIME, null);
             _setPrivate(this, ELAPSED_TIME, 0);
 
-            this.fire(END, elapsed);
+            this.fire(END, {elapsed: elapsed});
         },
 
         _runFrame: function() {
             var t = new Date() - this.get(START_TIME),
                 attr = this._runtimeAttr,
+                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
                 node = this.get('node'),
                 attribute,
                 setter,
@@ -407,8 +401,11 @@ YUI.add('animation', function(Y) {
             for (var i in attr) {
                 if (attr.hasOwnProperty(i)) {
                     attribute = attr[i][0];
-                    setter = Y.Anim.SETTERS[i] || Y.Anim.DEFAULT_SETTER;
                     d = attribute.duration;
+
+                    setter = (i in customAttr && 'set' in customAttr[i]) ?
+                            customAttr[i].set : Y.Anim.DEFAULT_SETTER;
+
                     if (t < d) {
                         setter(node, i, attribute.from, attribute.to, t, d, attribute.easing, attribute.unit); 
                     } else { // set to final value
@@ -418,8 +415,8 @@ YUI.add('animation', function(Y) {
                 }
             }
 
-            var elapsed = NUM(this.get(ELAPSED_TIME) + t);
-            _setPrivate(this, elapsed, t);
+            this._actualFrames += 1;
+            _setPrivate(this, ELAPSED_TIME, t);
 
             if (t >= d) {
                 this._lastFrame();
@@ -428,6 +425,7 @@ YUI.add('animation', function(Y) {
 
         _lastFrame: function() {
             var iter = this.get('iterations'),
+                elapsed = this.get(ELAPSED_TIME),
                 iterCount = this.get(ITERATION_COUNT);
 
             iterCount += 1;
@@ -435,7 +433,7 @@ YUI.add('animation', function(Y) {
                 if (this.get('direction') == 'alternate') {
                     this._flip();
                 }
-                this.fire('iteration', this.get(ELAPSED_TIME));
+                this.fire('iteration', { frames: this._actualFrames });
             } else {
                 iterCount = 0;
                 this._end();
@@ -448,12 +446,12 @@ YUI.add('animation', function(Y) {
         _flip: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
-                fx = this.get('fx') || {},
                 duration = this.get('duration'),
                 node = this.get('node'),
                 easing = this.get('easing') || {},
                 keyframes = this.get('keyframes') || {},
                 attr = Y.merge(this._attr, {}),
+                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
                 unit, begin, end;
 
             if (to) {
@@ -463,10 +461,14 @@ YUI.add('animation', function(Y) {
             var prev = {};
             Y.each(attr, function(val, name) {
                 Y.each(val, function(v, n) {
-                    var b = val[n].to;
-                    var e = val[n].from;
-                    attr[name][n].from = b;
-                    attr[name][n].to = e;
+                    if (name in customAttr && customAttr[name].reverse) {
+                        val[n] = customAttr[name].reverse(val[n]);
+                    } else {
+                        var b = val[n].to;
+                        var e = val[n].from;
+                        attr[name][n].from = b;
+                        attr[name][n].to = e;
+                    }
                 });
 
             }); // to is required TODO: by
@@ -478,12 +480,12 @@ YUI.add('animation', function(Y) {
         _initAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
-                fx = this.get('fx') || {},
                 duration = this.get('duration'),
                 node = this.get('node'),
                 easing = this.get('easing') || {},
                 keyframes = this.get('keyframes') || {},
                 attr = {},
+                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
                 unit, begin, end;
 
             if (to) {
@@ -501,7 +503,8 @@ YUI.add('animation', function(Y) {
                     var begin = prev[name] ? prev[name].to : from[name];
 
                     if (!begin) {
-                        begin = (Y.Anim.GETTERS[name]) ? Y.Anim.GETTERS[name](node, name) : Y.Anim.DEFAULT_GETTER(node, name);
+                        begin = (name in customAttr && 'get' in customAttr[name])  ?
+                                customAttr[name].get(node, name) : Y.Anim.DEFAULT_GETTER(node, name);
                     } else if (Y.Lang.isFunction(begin)) {
                         begin = begin.call(this, node);
                     }
@@ -878,90 +881,60 @@ YUI.add('easing', function(Y) {
     };
 }, '3.0.0');
 
-Y.Anim.SETTERS.xy = function(node, att, from, to, elapsed, duration, fn) {
-    node.setXY([
-        fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
-        fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
-    ]);
-};
-
-Y.Anim.GETTERS.xy = function(node) {
-    return node.getXY();
-};
-
-
-Y.Anim.SETTERS.color = function(node, att, from, to, elapsed, duration, fn) {
-    from = RE_RGB.exec(Y.Color.toRGB(from));
-    to = RE_RGB.exec(Y.Color.toRGB(to));
-    node.setStyle(att, 'rgb(' + [
-        Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
-        Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
-        Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
-    ].join(', ') + ')');
-};
-
-Y.Anim.GETTERS.color = function(node, att) {
-    var val = node.getComputedStyle(att);
-    return (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
-};
-
-Y.Anim.GETTERS.backgroundColor = Y.Anim.GETTERS.borderTopColor =
-        Y.Anim.GETTERS.borderRightColor = Y.Anim.GETTERS.borderBottomColor =
-                Y.Anim.GETTERS.borderRightColor = Y.Anim.GETTERS.color;
-
-Y.Anim.SETTERS.backgroundColor = Y.Anim.SETTERS.borderTopColor =
-        Y.Anim.SETTERS.borderRightColor = Y.Anim.SETTERS.borderBottomColor =
-                Y.Anim.SETTERS.borderRightColor = Y.Anim.SETTERS.color;
-
-Y.Anim.SETTERS.scroll = function(node, att, from, to, elapsed, duration, fn) {
-    var val = ([
-        fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
-        fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
-    ]);
-
-    node.set('scrollLeft', val[0]);
-    node.set('scrollTop', val[1]);
-};
-
-Y.Anim.GETTERS.scroll = function(node) {
-    return [node.get('scrollLeft'), node.get('scrollTop')];
-};
-/**
- * Used to calculate Bezier splines for any number of control points.
- * @class Bezier
- *
- */
-Y.Bezier = {
-    /**
-     * Get the current position of the animated element based on t.
-     * Each point is an array of "x" and "y" values (0 = x, 1 = y)
-     * At least 2 points are required (start and end).
-     * First point is start. Last point is end.
-     * Additional control points are optional.     
-     * @method getPosition
-     * @param {Array} points An array containing Bezier points
-     * @param {Number} t A number between 0 and 1 which is the basis for determining current position
-     * @return {Array} An array containing int x and y member data
-     */
-    getPosition: function(points, t) {  
-        var n = points.length;
-        var tmp = [];
-
-        for (var i = 0; i < n; ++i){
-            tmp[i] = [points[i][0], points[i][1]]; // save input
-        }
-        
-        for (var j = 1; j < n; ++j) {
-            for (i = 0; i < n - j; ++i) {
-                tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
-                tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
-            }
-        }
-    
-        return [ tmp[0][0], tmp[0][1] ]; 
-    
+Y.Anim.CUSTOM_ATTRIBUTES.xy = {
+    set: function(node, att, from, to, elapsed, duration, fn) {
+        node.setXY([
+            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
+            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+        ]);
+    },
+    get: function(node) {
+        return node.getXY();
     }
 };
+
+
+Y.Anim.CUSTOM_ATTRIBUTES.color = {
+    set: function(node, att, from, to, elapsed, duration, fn) {
+        from = RE_RGB.exec(Y.Color.toRGB(from));
+        to = RE_RGB.exec(Y.Color.toRGB(to));
+        node.setStyle(att, 'rgb(' + [
+            Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
+            Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
+            Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
+        ].join(', ') + ')');
+    },
+    
+    get: function(node, att) {
+        var val = node.getComputedStyle(att);
+        return (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+    }
+};
+
+Y.each(['backgroundColor',
+        'borderTopColor',
+        'borderRightColor', 
+        'borderBottomColor', 
+        'borderLeftColor'],
+        function(v, i) {
+            Y.Anim.CUSTOM_ATTRIBUTES[v] = Y.Anim.CUSTOM_ATTRIBUTES.color;
+        }
+);
+Y.Anim.CUSTOM_ATTRIBUTES.scroll = {
+    set: function(node, att, from, to, elapsed, duration, fn) {
+        var val = ([
+            fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
+            fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
+        ]);
+
+        node.set('scrollLeft', val[0]);
+        node.set('scrollTop', val[1]);
+    },
+    get: function(node) {
+        return [node.get('scrollLeft'), node.get('scrollTop')];
+    }
+};
+
 
     /**
      * Usage:
@@ -979,14 +952,59 @@ Y.Bezier = {
      *
      */
 
-Y.Anim.SETTERS.curve = function(node, att, from, to, elapsed, duration, fn) {
-    var t = fn(elapsed, 0, 100, duration) / 100;				
-    val = YAHOO.util.Bezier.getPosition(to, t);
-    node.setXY(val);
+Y.Anim.CUSTOM_ATTRIBUTES.curve = {
+    set: function(node, att, from, to, elapsed, duration, fn) {
+        var t = fn(elapsed, 0, 100, duration) / 100;
+        node.setXY(Y.Anim.getBezier(to, t));
+    },
+
+    get: function(node, att) {
+        return node.getXY();
+    },
+
+    reverse: function(val) {
+        var to = [],
+            from  = val.from;
+       for (var i = 0, len = val.to.length; i < len; ++i) {
+            to.unshift(val.to[i]); 
+        } 
+
+        val.from = val.to.pop();
+        val.to = to;
+console.log(val);
+        return val;
+    }
 };
 
-Y.Anim.GETTERS.curve = function(node, att) {
-    return node.getXY();
+/**
+ * Get the current position of the animated element based on t.
+ * Each point is an array of "x" and "y" values (0 = x, 1 = y)
+ * At least 2 points are required (start and end).
+ * First point is start. Last point is end.
+ * Additional control points are optional.     
+ * @method getBezier
+ * @static
+ * @param {Array} points An array containing Bezier points
+ * @param {Number} t A number between 0 and 1 which is the basis for determining current position
+ * @return {Array} An array containing int x and y member data
+ */
+Y.Anim.getBezier = function(points, t) {  
+    var n = points.length;
+    var tmp = [];
+
+    for (var i = 0; i < n; ++i){
+        tmp[i] = [points[i][0], points[i][1]]; // save input
+    }
+    
+    for (var j = 1; j < n; ++j) {
+        for (i = 0; i < n - j; ++i) {
+            tmp[i][0] = (1 - t) * tmp[i][0] + t * tmp[parseInt(i + 1, 10)][0];
+            tmp[i][1] = (1 - t) * tmp[i][1] + t * tmp[parseInt(i + 1, 10)][1]; 
+        }
+    }
+
+    return [ tmp[0][0], tmp[0][1] ]; 
+
 };
 Y.namespace('Plugin');
 //Y.Plugin = Y.Plugin || {};
