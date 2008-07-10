@@ -15,7 +15,7 @@
             width: 100px;
             border: 1px solid black;
             background-color: #ccc;
-            top: 300px;
+            top: 200px;
         }
         #drag1 {
             height: 50px;
@@ -93,7 +93,7 @@ var yConfig = {
     } 
 };
 
-var Y = new YUI(yConfig).use('dd-drop', 'nodefxplugin', 'dd-plugin', 'dd-drop-plugin');
+var Y = new YUI(yConfig).use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin');
 
 Y.on('event:ready', function() {
     //Y.DD.DDM._debugShim = true;

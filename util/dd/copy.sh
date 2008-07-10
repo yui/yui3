@@ -11,6 +11,8 @@ rm scroll.js
 wait
 rm timer.js
 wait
+rm portal.js
+wait
 files=`ls *.js`
 echo "****************************************"
 echo "Processing files"

@@ -1,4 +1,17 @@
-DragDrop 3.x
+**** version 3.0.0 PR1 ***
+
+Known Issues:
+
+    Firefox 2.x:
+        Drags with handles inside an element with overflow: hidden will not target properly.
+
+    All:
+        Scrolling Module not available as of this release.
+
+
+
+**** File Structure and Module Info ***
+
 
 Source Files:
     ddm-base.js         ==> Base DragDrop Manager
@@ -42,5 +55,3 @@ Rollup Files:
     dd-dragdrop-all.js  ==> dd-ddm-base, dd-ddm, dd-ddm-drop, dd-drag, dd-proxy, dd-constrain, dd-drop, dd-plugin, dd-drop-plugin
     dd-drop-core.js     ==> dd-ddm-drop, dd-drop, dd-drop-plugin
 
-Example File:
-    3.x/util/dd/src/tests/index.php

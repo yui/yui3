@@ -1,0 +1,94 @@
+#play {
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+    zoom: 1;
+}
+#play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}        
+ul.list {
+    border: 1px dashed #ccc;
+    margin: 10px;
+    width: 325px;
+    float: left;
+    min-height: 500px;
+    zoom: 1;
+
+}
+
+.yui-dd-proxy {
+    text-align: left;
+    padding-left: 20px;
+    padding: 5px;
+    margin: 2px;
+}
+
+.yui-dd-proxy li, #play li {
+    padding-left: 20px;
+    padding: 5px;
+    margin: 2px;
+}
+
+#play li.moving {
+    background-color: #D1E6EC;
+    border: 1px solid #7EA6B2;
+}
+
+div.mod {
+    border: 1px solid #808080;
+    background-color: white;
+}
+div.mod div.inner {
+    overflow: hidden;
+}
+/*
+.yui-dd-proxy div.mod {
+    overflow: visible;
+}
+*/
+div.mod h2 {
+    margin: 0;
+    border-bottom: 1px solid #808080;
+    background-color: #ccc;
+    cursor: move;
+    position: relative;
+    padding: 3px;
+    font-weight: bold;
+    background: transparent url(sprite.png) repeat-x scroll 0pt -200px;
+}
+
+
+div.minned h2 {
+    border-bottom: 1px solid #ccc;
+}
+div.minned ul {
+    /*display: none;*/
+}
+
+div.mod h2 a.close, div.mod h2 a.min {
+    background:transparent url(layout_sprite.png) no-repeat scroll -20px -100px;
+    border:1px solid #808080;
+    display: block;
+    height: 13px;
+    width: 17px;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+    right: 4px;
+    top: 1px;
+    position: absolute;
+    font-size: 80%;
+    margin: 2px;
+    padding: 0;
+}
+div.mod h2 a.min {
+    background:transparent url(layout_sprite.png) no-repeat scroll -20px -220px;
+    right: 25px;
+}
+div.minned h2 a.min {
+    background:transparent url(layout_sprite.png) no-repeat scroll -20px -260px;
+    right: 25px;
+}
+div.mod h2 a:hover.close, div.mod h2 a:hover.min {
+    border-color: #000;
+}
+
