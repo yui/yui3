@@ -14,6 +14,7 @@ YUI.add('dd-ddm-base', function(Y) {
      */
     
     var DDMBase = function() {
+        DDMBase.superclass.constructor.apply(this, arguments);
     };
 
     DDMBase.NAME = 'DragDropMgr';
@@ -23,42 +24,64 @@ YUI.add('dd-ddm-base', function(Y) {
         * @attribute clickPixelThresh
         * @description The number of pixels to move to start a drag operation, default is 3.
         * @type Number
-        */        
+        */
         clickPixelThresh: {
-            value: 3,
-            set: function(p) {
-                this.clickPixelThresh = p;
-            }
+            value: 3
         },
         /**
-        * @attribute clickPixelThresh
+        * @attribute clickTimeThresh
         * @description The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
         * @type Number
         */        
         clickTimeThresh: {
-            value: 1000,
-            set: function(p) {
-                this.clickTimeThresh = p;
-            }
+            value: 1000
+        },
+        /**
+        * @attribute dragMode
+        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances. 
+        * @type String
+        */        
+        dragMode: {
+            value: 'point',
+            set: function(mode) {
+                this._setDragMode(mode);
+            }           
         }
 
     };
 
-    //Y.mix(DDMBase, {
     Y.extend(DDMBase, Y.Base, {
+        /**
+        * @private
+        * @method _setDragMode
+        * @description Handler for dragMode attribute setter.
+        * @param String/Number The Number value or the String for the DragMode to default all future drag instances to.
+        * @return Number The Mode to be set
+        */
+        _setDragMode: function(mode) {
+            if (mode === null) {
+                mode = Y.DD.DDM.get('dragMode');
+            }
+            switch (mode) {
+                case 1:
+                case 'intersect':
+                    return 1;
+                case 2:
+                case 'strict':
+                    return 2;
+                case 0:
+                case 'point':
+                    return 0;
+            }
+            return 0;       
+        },
+        /**
+        * @property CSS_PREFIX
+        * @description The PREFIX to attach to all DD CSS class names
+        * @type {String}
+        */
+        CSS_PREFIX: 'yui-dd',
         _activateTargets: function() {},        
-        /**
-        * @property clickPixelThresh
-        * @description The number of pixels moved needed to start a drag operation, default 3.
-        * @type {Number}
-        */
-        clickPixelThresh: 3,
-        /**
-        * @property clickTimeThresh
-        * @description The number of milliseconds a mousedown needs to exceed to start a drag operation, default 1000.
-        * @type {Number}
-        */
-        clickTimeThresh: 1000,
         /**
         * @private
         * @property _drags
@@ -101,9 +124,8 @@ YUI.add('dd-ddm-base', function(Y) {
         * @method _init
         * @description DDM's init method
         */
-        _init: function() {
+        initializer: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
-            //YAHOO.util.Event.on(document, 'mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
             Y.Event.Target.apply(this);
         },
@@ -166,13 +188,13 @@ YUI.add('dd-ddm-base', function(Y) {
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
+        * @param {Event} ev The Dom mousemove Event
         */
-        _move: function() {
+        _move: function(ev) {
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
-            //console.log('_move');
         },
         /**
         * @method setXY
@@ -198,6 +220,8 @@ YUI.add('dd-ddm-base', function(Y) {
             
         },
         /**
+        * //TODO Private, rename??...
+        * @private
         * @method cssSizestoObject
         * @description Helper method to use to set the gutter from the attribute setter.
         * @param {String} gutter CSS style string for gutter: '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
@@ -255,7 +279,6 @@ YUI.add('dd-ddm-base', function(Y) {
 
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
-    Y.DD.DDM._init();
 
 
 
@@ -323,8 +346,7 @@ YUI.add('dd-ddm', function(Y) {
                 top: 0,
                 left: 0,
                 display: 'block',
-                opacity: ((this._debugShim) ? '.5' : '0'),
-                filter: 'alpha(opacity=' + ((this._debugShim) ? '50' : '0') + ')'
+                opacity: ((this._debugShim) ? '.5' : '0')
             });
         },
         /**
@@ -349,14 +371,16 @@ YUI.add('dd-ddm', function(Y) {
         * @description Creates the shim and adds it's listeners to it.
         */
         _createPG: function() {
-            var pg = Y.Node.create(['div']),
+            //var pg = Y.Node.create(['div']),
+            var pg = Y.Node.create('<div></div>'),
             bd = Y.Node.get('body');
             pg.setStyles({
                 top: '0',
                 left: '0',
                 position: 'absolute',
                 zIndex: '9999',
-                opacity: '0',
+                overflow: 'hidden',
+                //opacity: '0',
                 backgroundColor: 'red',
                 display: 'none',
                 height: '5px',
@@ -370,7 +394,7 @@ YUI.add('dd-ddm', function(Y) {
             this._pg = pg;
             this._pg.on('mouseup', this._end, this, true);
             this._pg.on('mousemove', this._move, this, true);
-            //YAHOO.util.Event.on(this._pg, 'mousemove', this._move, this, true);
+            
             
             //TODO
             Y.Event.addListener(window, 'resize', this._pg_size, this, true);
@@ -546,7 +570,7 @@ YUI.add('dd-drag', function(Y) {
         * @type Number
         */
         clickPixelThresh: {
-            value: DDM.clickPixelThresh
+            value: DDM.get('clickPixelThresh')
         },
         /**
         * @attribute clickTimeThresh
@@ -554,7 +578,7 @@ YUI.add('dd-drag', function(Y) {
         * @type Number
         */
         clickTimeThresh: {
-            value: DDM.clickTimeThresh
+            value: DDM.get('clickTimeThresh')
         },
         /**
         * @attribute lock
@@ -565,9 +589,9 @@ YUI.add('dd-drag', function(Y) {
             value: false,
             set: function(lock) {
                 if (lock) {
-                    this.get(NODE).addClass('yui-dd-locked');
+                    this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
-                    this.get(NODE).removeClass('yui-dd-locked');
+                    this.get(NODE).removeClass(DDM.CSS_PREFIX + '-locked');
                 }
             }
         },
@@ -632,23 +656,13 @@ YUI.add('dd-drag', function(Y) {
         },
         /**
         * @attribute dragMode
-        * @description This attribute only works if the dd-drop module is active. It will make this node a drop target as well as draggable
-        * @type Boolean
+        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of this Drag instance.
+        * @type String
         */
         dragMode: {
-            value: 'default',
+            value: null,
             set: function(mode) {
-                switch (mode) {
-                    case 'point':
-                        return 0;
-                    case 'intersect':
-                        return 1;
-                    case 'strict':
-                        return 2;
-                    case 'default':
-                        return -1;
-                }
-                return 'default';
+                return DDM._setDragMode(mode);
             }
         },
         /**
@@ -717,7 +731,7 @@ YUI.add('dd-drag', function(Y) {
             if (Y.DD.Drop) {
                 if (config === false) {
                     if (this.target) {
-                        DDM.unregTarget(this.target);
+                        DDM._unregTarget(this.target);
                         this.target = null;
                     }
                     return false;
@@ -748,10 +762,11 @@ YUI.add('dd-drag', function(Y) {
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                emitFacade: true,
-                bubbles: true
+                queuable: true,
+                emitFacade: true//,
+                //bubbles: true
             });
-
+            
             var ev = [
                 EV_AFTER_MOUSE_DOWN,
                 EV_REMOVE_HANDLE,
@@ -767,17 +782,19 @@ YUI.add('dd-drag', function(Y) {
                 'drag:enter',
                 'drag:exit'
             ];
-            
+            /* //TODO FF Performance hit here
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
-                    bubbles: true,
-                    preventable: false
+                    bubbles: false,
+                    preventable: false,
+                    queuable: true
                 });
             }, this);
-
-            this.addTarget(DDM);
+            */
+            //this.addTarget(DDM);
             
+           
         },
         /**
         * @private
@@ -786,6 +803,8 @@ YUI.add('dd-drag', function(Y) {
         * @type {Event}
         */
         _ev_md: null,
+        __ev_md: null,
+        __ev_mu: null,
         /**
         * @private
         * @property _handles
@@ -897,8 +916,8 @@ YUI.add('dd-drag', function(Y) {
         */
         _fixIEMouseDown: function() {
             if (Y.UA.ie) {
-                this._ieSelectBack = document.body.onselectstart;
-                document.body.onselectstart = this._ieSelectFix;
+                this._ieSelectBack = Y.config.doc.body.onselectstart;
+                Y.config.doc.body.onselectstart = this._ieSelectFix;
             }           
         },
         /**
@@ -908,7 +927,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _fixIEMouseUp: function() {
             if (Y.UA.ie) {
-                document.body.onselectstart = this._ieSelectBack;
+                Y.config.doc.body.onselectstart = this._ieSelectBack;
             }           
         },
         /**
@@ -1110,9 +1129,9 @@ YUI.add('dd-drag', function(Y) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
             
-            this.get(NODE).addClass('yui-draggable');
-            this.get(NODE).on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            this.get(NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+            this.get(NODE).addClass(DDM.CSS_PREFIX + '-draggable');
+            this.__ev_md = this.get(NODE).on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            this.__ev_mu = this.get(NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
             this._dragThreshMet = false;
         },
         /**
@@ -1124,7 +1143,7 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get('lock')) {
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
-                this.get(NODE).addClass('yui-dd-dragging');
+                this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
                 var xy = this.nodeXY;
@@ -1154,7 +1173,7 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get('lock') && this.get('dragging')) {
                 this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
             }
-            this.get(NODE).removeClass('yui-dd-dragging');
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-dragging');
             this.set('dragging', false);
             this.deltaXY = [0, 0];
             this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
@@ -1263,12 +1282,19 @@ YUI.add('dd-drag', function(Y) {
         * @private
         * @method destructor
         * @description Lifecycle destructor, unreg the drag from the DDM and remove listeners
-        * @return {Self}
         */
         destructor: function() {
             DDM._unregDrag(this);
-            this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-draggable');
+            //TODO this doesn't work properly!!
+            //this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            //this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+            this.__ev_mu.detach();
+            this.__ev_md.detach();
+            if (this.target) {
+                this.target.destroy();
+            }
         }
     });
     Y.namespace('DD');    
@@ -1357,23 +1383,22 @@ YUI.add('dd-proxy', function(Y) {
         _createFrame: function() {
             if (!DDM._proxy) {
                 DDM._proxy = true;
-                var p = Y.Node.create(['div']),
-                bd = Y.Node.get('body');
+                //var p = Y.Node.create(['div']);
+                var p = Y.Node.create('<div></div>');
 
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
                     zIndex: '999',
+                    top: '-999px',
+                    left: '-999px',
                     border: this.get('borderStyle')
                 });
 
-                if (bd.get(FIRST_CHILD)) {
-                    bd.insertBefore(p, bd.get(FIRST_CHILD));
-                } else {
-                    bd.appendChild(p);
-                }
+                //DDM._pg.get('parentNode').insertBefore(p, DDM._pg.get('nextSibling'));
+                DDM._pg.get('parentNode').insertBefore(p, DDM._pg);
                 p.set('id', Y.stamp(p));
-                p.addClass('yui-dd-proxy');
+                p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
             }
         },
@@ -1387,8 +1412,8 @@ YUI.add('dd-proxy', function(Y) {
             var n = this.get(NODE);
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
-                    height: n.get('clientHeight') + 'px',
-                    width: n.get('clientWidth') + 'px'
+                    height: n.get('offsetHeight') + 'px',
+                    width: n.get('offsetWidth') + 'px'
                 });
             }
             this.get(DRAG_NODE).setStyles({

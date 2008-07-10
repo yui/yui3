@@ -76,23 +76,22 @@
         _createFrame: function() {
             if (!DDM._proxy) {
                 DDM._proxy = true;
-                var p = Y.Node.create(['div']),
-                bd = Y.Node.get('body');
+                //var p = Y.Node.create(['div']);
+                var p = Y.Node.create('<div></div>');
 
                 p.setStyles({
                     position: 'absolute',
                     display: 'none',
                     zIndex: '999',
+                    top: '-999px',
+                    left: '-999px',
                     border: this.get('borderStyle')
                 });
 
-                if (bd.get(FIRST_CHILD)) {
-                    bd.insertBefore(p, bd.get(FIRST_CHILD));
-                } else {
-                    bd.appendChild(p);
-                }
+                //DDM._pg.get('parentNode').insertBefore(p, DDM._pg.get('nextSibling'));
+                DDM._pg.get('parentNode').insertBefore(p, DDM._pg);
                 p.set('id', Y.stamp(p));
-                p.addClass('yui-dd-proxy');
+                p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
             }
         },
@@ -106,8 +105,8 @@
             var n = this.get(NODE);
             if (this.get('resizeFrame')) {
                 DDM._proxy.setStyles({
-                    height: n.get('clientHeight') + 'px',
-                    width: n.get('clientWidth') + 'px'
+                    height: n.get('offsetHeight') + 'px',
+                    width: n.get('offsetWidth') + 'px'
                 });
             }
             this.get(DRAG_NODE).setStyles({

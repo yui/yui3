@@ -12,6 +12,7 @@
      */
     
     var DDMBase = function() {
+        DDMBase.superclass.constructor.apply(this, arguments);
     };
 
     DDMBase.NAME = 'DragDropMgr';
@@ -21,42 +22,64 @@
         * @attribute clickPixelThresh
         * @description The number of pixels to move to start a drag operation, default is 3.
         * @type Number
-        */        
+        */
         clickPixelThresh: {
-            value: 3,
-            set: function(p) {
-                this.clickPixelThresh = p;
-            }
+            value: 3
         },
         /**
-        * @attribute clickPixelThresh
+        * @attribute clickTimeThresh
         * @description The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
         * @type Number
         */        
         clickTimeThresh: {
-            value: 1000,
-            set: function(p) {
-                this.clickTimeThresh = p;
-            }
+            value: 1000
+        },
+        /**
+        * @attribute dragMode
+        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances. 
+        * @type String
+        */        
+        dragMode: {
+            value: 'point',
+            set: function(mode) {
+                this._setDragMode(mode);
+            }           
         }
 
     };
 
-    //Y.mix(DDMBase, {
     Y.extend(DDMBase, Y.Base, {
+        /**
+        * @private
+        * @method _setDragMode
+        * @description Handler for dragMode attribute setter.
+        * @param String/Number The Number value or the String for the DragMode to default all future drag instances to.
+        * @return Number The Mode to be set
+        */
+        _setDragMode: function(mode) {
+            if (mode === null) {
+                mode = Y.DD.DDM.get('dragMode');
+            }
+            switch (mode) {
+                case 1:
+                case 'intersect':
+                    return 1;
+                case 2:
+                case 'strict':
+                    return 2;
+                case 0:
+                case 'point':
+                    return 0;
+            }
+            return 0;       
+        },
+        /**
+        * @property CSS_PREFIX
+        * @description The PREFIX to attach to all DD CSS class names
+        * @type {String}
+        */
+        CSS_PREFIX: 'yui-dd',
         _activateTargets: function() {},        
-        /**
-        * @property clickPixelThresh
-        * @description The number of pixels moved needed to start a drag operation, default 3.
-        * @type {Number}
-        */
-        clickPixelThresh: 3,
-        /**
-        * @property clickTimeThresh
-        * @description The number of milliseconds a mousedown needs to exceed to start a drag operation, default 1000.
-        * @type {Number}
-        */
-        clickTimeThresh: 1000,
         /**
         * @private
         * @property _drags
@@ -99,9 +122,8 @@
         * @method _init
         * @description DDM's init method
         */
-        _init: function() {
+        initializer: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
-            //YAHOO.util.Event.on(document, 'mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
             Y.Event.Target.apply(this);
         },
@@ -164,13 +186,13 @@
         * @private
         * @method _move
         * @description Internal listener for the mousemove DOM event to pass to the Drag's move method.
+        * @param {Event} ev The Dom mousemove Event
         */
-        _move: function() {
+        _move: function(ev) {
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
             }
-            //console.log('_move');
         },
         /**
         * @method setXY
@@ -196,6 +218,8 @@
             
         },
         /**
+        * //TODO Private, rename??...
+        * @private
         * @method cssSizestoObject
         * @description Helper method to use to set the gutter from the attribute setter.
         * @param {String} gutter CSS style string for gutter: '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
@@ -253,5 +277,4 @@
 
     Y.namespace('DD');
     Y.DD.DDM = new DDMBase();
-    Y.DD.DDM._init();
 

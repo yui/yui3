@@ -11,7 +11,15 @@ YUI.add('dd-ddm-drop', function(Y) {
      * @extends Base
      * @constructor
      */    
+    //TODO CSS class name for the bestMatch..
     Y.mix(Y.DD.DDM, {
+        /**
+        * @private
+        * @property _noShim
+        * @description This flag turns off the use of the mouseover/mouseout shim. It should not be used unless you know what you are doing.
+        * @type {Boolean}
+        */
+        _noShim: false,
         /**
         * @private
         * @property _activeShims
@@ -26,7 +34,10 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Boolean}
         */
         _hasActiveShim: function() {
-            return ((this._activeShims.length) ? true : false);
+            if (this._noShim) {
+                return true;
+            }
+            return this._activeShims.length;
         },
         /**
         * @private
@@ -35,15 +46,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @param {Object} d The Drop instance to add to the list.
         */
         _addActiveShim: function(d) {
-            var add = true;
-            Y.each(this._activeShims, function(v, k) {
-                if (v._yuid === d._yuid) {
-                    add = false;
-                }
-            });
-            if (add) {
-                this._activeShims[this._activeShims.length] = d;
-            }
+            this._activeShims[this._activeShims.length] = d;
         },
         /**
         * @private
@@ -64,10 +67,11 @@ YUI.add('dd-ddm-drop', function(Y) {
         /**
         * @method syncActiveShims
         * @description This method will sync the position of the shims on the Drop Targets that are currently active.
+        * @param {Boolean} force Resize/sync all Targets.
         * @return {Array} drops The list of Drop Targets that was just synced.
         */
-        syncActiveShims: function() {
-            var drops = this._lookup();
+        syncActiveShims: function(force) {
+            var drops = ((force) ? this.targets : this._lookup());
             Y.each(drops, function(v, k) {
                 v.sizeShim.call(v);
             }, this);
@@ -76,30 +80,27 @@ YUI.add('dd-ddm-drop', function(Y) {
         },
         /**
         * @private
-        * @property _oldMode
-        * @description Placeholder for the mode when the drag object changes it..
-        * @type Number
-        */
-        _oldMode: 0,
-        /**
         * @property mode
         * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict
         * @type Number
         */
         mode: 0,
         /**
+        * @private
         * @property POINT
         * @description In point mode, a Drop is targeted by the cursor being over the Target
         * @type Number
         */
         POINT: 0,
         /**
+        * @private
         * @property INTERSECT
         * @description In intersect mode, a Drop is targeted by "part" of the drag node being over the Target
         * @type Number
         */
         INTERSECT: 1,
         /**
+        * @private
         * @property STRICT
         * @description In strict mode, a Drop is targeted by the "entire" drag node being over the Target
         * @type Number
@@ -122,6 +123,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description An array of the valid Drop Targets for this interaction.
         * @type {Array}
         */
+        //TODO Change array/object literals to be in sync..
         validDrops: [],
         /**
         * @property otherDrops
@@ -130,19 +132,38 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         otherDrops: {},
         /**
-        * @property tars
+        * @property targets
         * @description All of the Targets
         * @type {Array}
         */
-        tars: [],
+        targets: [],
         /**
-        * @method addValid
+        * @private 
+        * @method _addValid
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
         */
-        addValid: function(drop) {
+        _addValid: function(drop) {
             this.validDrops[this.validDrops.length] = drop;
+            return this;
+        },
+        /**
+        * @private 
+        * @method _removeValid
+        * @description Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
+        * @param {Object} drop
+        * @return {Self}
+        */
+        _removeValid: function(drop) {
+            var drops = [];
+            Y.each(this.validDrops, function(v, k) {
+                if (v !== drop) {
+                    drops[drops.length] = v
+                }
+            });
+
+            this.validDrops = drops;
             return this;
         },
         /**
@@ -152,10 +173,11 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @return {Boolean}
         */
         isOverTarget: function(drop) {
-            if (Y.Lang.isObject(this.activeDrag) && drop) {
+            //if (Y.Lang.isObject(this.activeDrag) && drop) { //TODO, check this check..
+            if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY;
                 if (xy) {
-                    if (this.mode == this.STRICT) {
+                    if (this.activeDrag.get('dragMode') == this.STRICT) {
                         return this.activeDrag.get('dragNode').inRegion(drop.region, true, this.activeDrag.region);
                     } else {
                         return drop.shim.intersect({
@@ -184,33 +206,12 @@ YUI.add('dd-ddm-drop', function(Y) {
         },
         /**
         * @private
-        * @method _setMode
-        * @description Private method to set the interaction mode based on the activeDrag's config
-        */
-        _setMode: function() {
-            this._oldMode = this.mode;
-            if (this.activeDrag && (this.activeDrag.get('dragMode') !== -1)) {
-                this.mode = this.activeDrag.get('dragMode');
-            }
-        },
-        /**
-        * @private
-        * @method _resetMode
-        * @description Private method to reset the interaction mode to the default after a drag operation
-        */
-        _resetMode: function() {
-            this.mode = this._oldMode;
-        },
-
-        /**
-        * @private
         * @method _activateTargets
         * @description Clear the cache and activate the shims of all the targets
         */
         _activateTargets: function() {
-            this._setMode();
             this.clearCache();
-            Y.each(this.tars, function(v, k) {
+            Y.each(this.targets, function(v, k) {
                 v._activateShim.apply(v, []);
             }, this);
             this._handleTargetOver();
@@ -256,10 +257,13 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..
         */
         _deactivateTargets: function() {
-            var other = [];
+            var other = [],
+                activeDrag = this.activeDrag;
             
-            if (this.activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
-                if (!this.mode) {
+            //TODO why is this check so hard??
+            if (activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
+                if (!activeDrag.get('dragMode')) {
+                    //TODO otherDrops -- private..
                     other = this.otherDrops;
                     delete other[this.activeDrop];
                 } else {
@@ -267,29 +271,27 @@ YUI.add('dd-ddm-drop', function(Y) {
                     this.activeDrop = tmp[0];
                     other = tmp[1];
                 }
-                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
-                this.activeDrop.fire('drop:hit', { drag: this.activeDrag, drop: this.activeDrop, others: other });
-                this.activeDrag.fire('drag:drophit', { drag: this.activeDrag,  drop: this.activeDrop, others: other });
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                this.activeDrop.fire('drop:hit', { drag: activeDrag, drop: this.activeDrop, others: other });
+                activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: this.activeDrop, others: other });
             } else if (this.activeDrag) {
-                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
-                this.activeDrag.fire('drag:dropmiss', { pageX: this.activeDrag.lastXY[0], pageY: this.activeDrag.lastXY[1] });
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
             }
             
             this.activeDrop = null;
 
-            Y.each(this.tars, function(v, k) {
+            Y.each(this.targets, function(v, k) {
                 v._deactivateShim.apply(v, []);
             }, this);
-            this._resetMode();
         },
         /**
         * @private
         * @method _dropMove
         * @description This method is called when the move method is called on the Drag Object.
-        * @param {Boolean} force Optional force at start.
         */
-        _dropMove: function(force) {
+        _dropMove: function() {
             if (this._hasActiveShim()) {
                 this._handleTargetOver();
             } else {
@@ -331,35 +333,28 @@ YUI.add('dd-ddm-drop', function(Y) {
             }, this);
         },
         /**
-        * @method regTarget
-        * @description Add the passed in Target to the tars collection
-        * @param {Object} t The Target to add to the tars collection
+        * @private
+        * @method _regTarget
+        * @description Add the passed in Target to the targets collection
+        * @param {Object} t The Target to add to the targets collection
         */
-        regTarget: function(t) {
-            this.tars[this.tars.length] = t;
+        _regTarget: function(t) {
+            this.targets[this.targets.length] = t;
         },
         /**
-        * @method unregTarget
-        * @description Remove the passed in Target from the tars collection
-        * @param {Object} t The Target to remove from the tars collection
+        * @private
+        * @method _unregTarget
+        * @description Remove the passed in Target from the targets collection
+        * @param {Object} t The Target to remove from the targets collection
         */
-        unregTarget: function(t) {
-            var tars = [];
-            Y.each(this.tars, function(v, k) {
+        _unregTarget: function(t) {
+            var targets = [];
+            Y.each(this.targets, function(v, k) {
                 if (v != t) {
-                    tars[tars.length] = v;
+                    targets[targets.length] = v;
                 }
             }, this);
-            this.tars = tars;
-        },
-        /**
-        * @method rnd
-        * @description Round a number to the nearest 100th.
-        * @param {Number} The number to round
-        * @return {Number} The rounded number
-        */
-        rnd: function(n) {
-            return (Math.round(n / 100) * 100);
+            this.targets = targets;
         },
         /**
         * @method getDrop
@@ -371,7 +366,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             var drop = false,
                 n = Y.Node.get(node);
             if (n instanceof Y.Node) {
-                Y.each(this.tars, function(v, k) {
+                Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
                         drop = v;
                     }
@@ -438,7 +433,7 @@ YUI.add('dd-drop', function(Y) {
         Drop.superclass.constructor.apply(this, arguments);
 
         this._createShim();
-        DDM.regTarget(this);
+        DDM._regTarget(this);
         /* TODO
         if (Dom.getStyle(this.el, 'position') == 'fixed') {
             Event.on(window, 'scroll', function() {
@@ -495,9 +490,9 @@ YUI.add('dd-drop', function(Y) {
             value: false,
             set: function(lock) {
                 if (lock) {
-                    this.get(NODE).addClass('yui-dd-drop-locked');
+                    this.get(NODE).addClass(DDM.CSS_PREFIX + '-drop-locked');
                 } else {
-                    this.get(NODE).removeClass('yui-dd-drop-locked');
+                    this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
             }
         }
@@ -522,11 +517,12 @@ YUI.add('dd-drop', function(Y) {
                 this.publish(v, {
                     emitFacade: true,
                     preventable: false,
-                    bubbles: true
+                    //bubbles: true,
+                    queuable: true
                 });
             }, this);
 
-            this.addTarget(DDM);
+            //this.addTarget(DDM);
             
         },
         /**
@@ -584,7 +580,8 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function() {
-            this._createEvents();
+            //TODO FF performance hit here.
+            //this._createEvents();
             if (!this.get(NODE).get('id')) {
                 var id = Y.stamp(this.get(NODE));
                 this.get(NODE).set('id', id);
@@ -592,14 +589,29 @@ YUI.add('dd-drop', function(Y) {
         },
         /**
         * @private
+        * @method destructor
+        * @description Lifecycle destructor, unreg the drag from the DDM and remove listeners
+        */
+        destructor: function() {
+            DDM._unregTarget(this);
+            if (this.shim) {
+                this.shim.get('parentNode').removeChild(this.shim);
+                this.shim = null;
+            }
+        },        
+        /**
+        * @private
         * @method _deactivateShim
         * @description Removes classes from the target, resets some flags and sets the shims deactive position [-999, -999]
         */
         _deactivateShim: function() {
-            this.get(NODE).removeClass('yui-dd-drop-active-valid');
-            this.get(NODE).removeClass('yui-dd-drop-active-invalid');
-            this.get(NODE).removeClass('yui-dd-drop-over');
-            this.shim.setXY([-999, -999]);
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
+            this.shim.setStyles({
+                top: '-999px',
+                left: '-999px'
+            });
             this.overTarget = false;
         },
         /**
@@ -617,16 +629,19 @@ YUI.add('dd-drop', function(Y) {
             if (this.get('lock')) {
                 return false;
             }
+            var node = this.get(NODE);
             //TODO Visibility Check..
             //if (this.inGroup(DDM.activeDrag.get('groups')) && this.get(NODE).isVisible()) {
             if (this.inGroup(DDM.activeDrag.get('groups'))) {
-                this.get(NODE).removeClass('yui-dd-drop-active-invalid');
-                this.get(NODE).addClass('yui-dd-drop-active-valid');
-                DDM.addValid(this);
+                node.removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
+                node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
+                DDM._addValid(this);
                 this.overTarget = false;
                 this.sizeShim();
             } else {
-                this.get(NODE).addClass('yui-dd-drop-active-invalid');
+                DDM._removeValid(this);
+                node.removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
+                node.addClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             }
         },
         /**
@@ -634,9 +649,10 @@ YUI.add('dd-drop', function(Y) {
         * @description Positions and sizes the shim with the raw data from the node, this can be used to programatically adjust the Targets shim for Animation..
         */
         sizeShim: function() {
-            var nh = this.get(NODE).get(OFFSET_HEIGHT),
-                nw = this.get(NODE).get(OFFSET_WIDTH),
-                xy = this.get(NODE).getXY(),
+            var node = this.get(NODE),
+                nh = node.get(OFFSET_HEIGHT),
+                nw = node.get(OFFSET_WIDTH),
+                xy = node.getXY(),
                 p = this.get('padding');
 
 
@@ -647,7 +663,7 @@ YUI.add('dd-drop', function(Y) {
             xy[1] = xy[1] - p.top;
             
 
-            if (DDM.mode === DDM.INTERSECT) {
+            if (DDM.activeDrag.get('dragMode') === DDM.INTERSECT) {
                 //Intersect Mode, make the shim bigger
                 var dd = DDM.activeDrag,
                     dH = dd.get(NODE).get(OFFSET_HEIGHT),
@@ -685,32 +701,36 @@ YUI.add('dd-drop', function(Y) {
         * @description Creates the Target shim and adds it to the DDM's playground..
         */
         _createShim: function() {
-            var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
+            //var s = Y.Node.create(['div', { id: this.get(NODE).get('id') + '_shim' }]);
+            var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
             s.setStyles({
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                 width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
                 backgroundColor: 'yellow',
-                opacity: '.5',
-                zIndex: 10,
+                //opacity: '.5',
+                zIndex: 999,
+                overflow: 'hidden',
+                top: '-900px',
+                left: '-900px',
                 position:  'absolute'
             });
             DDM._pg.appendChild(s);
-            s.setXY([-900, -900]);
             this.shim = s;
 
             s.on('mouseover', this._handleOverEvent, this, true);
             s.on('mouseout', this._handleOutEvent, this, true);
-            
+            s.on('mousemove', function() {
+                //console.log('move');
+            }, this, true);
         },
         /**
         * @private
         * @method _handleOverTarget
         * @description This handles the over target call made from this object or from the DDM
-        * @param force Force a check on initialization
         */
-        _handleTargetOver: function(force) {
+        _handleTargetOver: function() {
             if (DDM.isOverTarget(this)) {
-                this.get(NODE).addClass('yui-dd-drop-over');
+                this.get(NODE).addClass(DDM.CSS_PREFIX + '-drop-over');
                 DDM.activeDrop = this;
                 DDM.otherDrops[this] = this;
                 if (this.overTarget) {
@@ -720,8 +740,8 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = true;
                     this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
                     DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
-                    DDM.activeDrag.get(NODE).addClass('yui-dd-drag-over');
-                    DDM._handleTargetOver(this, force);
+                    DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
+                    DDM._handleTargetOver();
                 }
             } else {
                 this._handleOut();
@@ -734,6 +754,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
+            //console.log('over');
             DDM._addActiveShim(this);
         },
         /**
@@ -742,6 +763,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
+            //console.log('out');
             DDM._removeActiveShim(this);
         },
         /**
@@ -755,8 +777,8 @@ YUI.add('dd-drop', function(Y) {
                     this.overTarget = false;
                     DDM._removeActiveShim(this);
                     if (DDM.activeDrag) {
-                        this.get(NODE).removeClass('yui-dd-drop-over');
-                        DDM.activeDrag.get(NODE).removeClass('yui-dd-drag-over');
+                        this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
+                        DDM.activeDrag.get(NODE).removeClass(DDM.CSS_PREFIX + '-drag-over');
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
