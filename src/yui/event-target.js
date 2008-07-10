@@ -217,9 +217,9 @@ YUI.add("event-target", function(Y) {
             var ce = this.getEvent(t);
 
             if (!ce) {
-                if (!(type in SILENT)) {
-Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
-                }
+                // if (!(type in SILENT)) {
+// Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
+                // }
                 return true;
             }
 
@@ -309,9 +309,10 @@ Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event
     };
 
     // make Y an event target
-    Y.augment(Y, ET, false, false, { 
+    Y.mix(Y, ET.prototype, false, false, { 
         bubbles: false 
     });
+    ET.call(Y);
 
 
 }, "3.0.0");

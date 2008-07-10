@@ -12,14 +12,35 @@
 // var Y = YUI().use('get');
 var Y = YUI();
 
-Y.Get.css(["../../build/menu/assets/skins/sam/menu.css",
-             "../../build/logger/assets/skins/sam/logger.css"], { 
+Y.Get.script(["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js"], { 
+
+        timeout: 100,
 
         onSuccess: function() {
             Y.log("css1 (menu, logger) complet", 'warn');
+        },
+
+        onTimeout: function() {
+            Y.log('onTimeout handler');
         }
     
 });
+/*
+Y.Get.css(["../../build/menu/assets/skins/sam/menu.css",
+             "../../build/logger/assets/skins/sam/logger.css"], { 
+
+        timeout: 0,
+
+        onSuccess: function() {
+            Y.log("css1 (menu, logger) complet", 'warn');
+        },
+
+        onTimeout: function() {
+            Y.log('onTimeout handler');
+        }
+    
+});
+*/
 
 
 })();

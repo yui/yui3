@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: yui   event-target.js  (YUI Library)</title>
+	<title>API: yuiloader   event-target.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>yuiloader&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_yui.html">yui</a>
+            &gt; <a href="./module_yuiloader.html">yuiloader</a>
                 
                  &gt; event-target.js (source view) 
             </p>
@@ -254,10 +254,10 @@
             <span class="k">var</span> <span class="nx">ce</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(!(</span><span class="nx">type</span> <span class="k">in</span> <span class="nx">SILENT</span><span class="o">))</span> <span class="o">{</span>
-<span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">type</span> <span class="o">+</span> <span class="s1">&#39; fire did nothing (not published, no subscribers)&#39;</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;Event&#39;</span><span class="o">);</span>
-                <span class="o">}</span>
-                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="c">// if (!(type in SILENT)) {</span>
+<span class="c">// Y.log(type + &#39; fire did nothing (not published, no subscribers)&#39;, &#39;info&#39;, &#39;Event&#39;);</span>
+<span class="c"></span>                <span class="c">// }</span>
+<span class="c"></span>                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
             <span class="o">}</span>
 
             <span class="c">// Provide this object&#39;s subscribers the object they are listening to.</span>
@@ -346,9 +346,10 @@
     <span class="o">};</span>
 
     <span class="c">// make Y an event target</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">ET</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="o">{</span> 
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">ET</span><span class="o">.</span><span class="nx">prototype</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="o">{</span> 
         <span class="nx">bubbles</span><span class="o">:</span> <span class="kc">false</span> 
     <span class="o">});</span>
+    <span class="nx">ET</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
 
 
 <span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
@@ -393,7 +394,7 @@
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                                <li class="selected"><a href="module_yuiloader.html">yuiloader</a></li>
                         </ul>
                     </div>
 
@@ -409,9 +410,7 @@
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>
                                 <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="lang.html">lang</a></li>
-                                <li class=""><a href="object.html">object</a></li>
-                                <li class=""><a href="ua.html">ua</a></li>
-                                <li class=""><a href="YUI.html">YUI</a></li>
+                                <li class=""><a href="Y.Loader.html">Y.Loader</a></li>
                         </ul>
                     </div>
 
@@ -432,10 +431,7 @@
                                 <li class=""><a href="Init.js.html">Init.js</a></li>
                                 <li class=""><a href="Lang.js.html">Lang.js</a></li>
                                 <li class=""><a href="Later.js.html">Later.js</a></li>
-                                <li class=""><a href="Object.js.html">Object.js</a></li>
-                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
-                                <li class=""><a href="UA.js.html">UA.js</a></li>
-                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
                         </ul>
                     </div>
 

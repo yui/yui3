@@ -123,12 +123,12 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     <hr />
                                     </div>
                                     <div class="private">
-                                    <h4><a name="property__oldMode">_oldMode</a>
-                                        <code>- private Number</code>
+                                    <h4><a name="property__noShim">_noShim</a>
+                                        <code>- private {Boolean}</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            Placeholder for the mode when the drag object changes it..
+                                            This flag turns off the use of the mouseover/mouseout shim. It should not be used unless you know what you are doing.
                                         </div>
                                     </div>
      
@@ -183,12 +183,12 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_clickPixelThresh">clickPixelThresh</a>
-                                        <code>- {Number}</code>
+                                    <h4><a name="property_CSS_PREFIX">CSS_PREFIX</a>
+                                        <code>- {String}</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
-                                            The number of pixels moved needed to start a drag operation, default 3.
+                                            The PREFIX to attach to all DD CSS class names
                                         </div>
                                     </div>
      
@@ -197,24 +197,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                     <hr />
                                     </div>
-                                    <div class="">
-                                    <h4><a name="property_clickTimeThresh">clickTimeThresh</a>
-                                        <code>- {Number}</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            The number of milliseconds a mousedown needs to exceed to start a drag operation, default 1000.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4><a name="property_INTERSECT">INTERSECT</a>
-                                        <code>- Number</code>
+                                        <code>- private Number</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -227,9 +212,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4><a name="property_mode">mode</a>
-                                        <code>- Number</code>
+                                        <code>- private Number</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -257,9 +242,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4><a name="property_POINT">POINT</a>
-                                        <code>- Number</code>
+                                        <code>- private Number</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -272,9 +257,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4><a name="property_STRICT">STRICT</a>
-                                        <code>- Number</code>
+                                        <code>- private Number</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -288,7 +273,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_tars">tars</a>
+                                    <h4><a name="property_targets">targets</a>
                                         <code>- {Array}</code>
                                     </h4>
                                     <div class="detail">
@@ -440,6 +425,52 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="private">
                                     <h4>
+                                        <a name="method__addValid">_addValid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Self
+                                            <strong>_addValid</strong>
+                                           (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                            
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
                                         <a name="method__createPG">_createPG</a></h4>
                                     <div class="detail">
                                         <code>
@@ -517,11 +548,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                         void
                                             <strong>_dropMove</strong>
                                            (
-                                                
-                                                        
-                                                         force
-                                                    
-                                                
                                             )
                                         </code>
                                         
@@ -531,13 +557,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                         <div class="description">
 
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>force &lt;Boolean&gt;</code>
-                                                             Optional force at start.
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -779,6 +798,11 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                         void
                                             <strong>_move</strong>
                                            (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -788,6 +812,13 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The Dom mousemove Event
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -952,6 +983,52 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="private">
                                     <h4>
+                                        <a name="method__regTarget">_regTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_regTarget</strong>
+                                           (
+                                                
+                                                        
+                                                         t
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add the passed in Target to the targets collection
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>t &lt;Object&gt;</code>
+                                                             The Target to add to the targets collection
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
                                         <a name="method__removeActiveShim">_removeActiveShim</a></h4>
                                     <div class="detail">
                                         <code>
@@ -998,29 +1075,41 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__resetMode">_resetMode</a></h4>
+                                        <a name="method__removeValid">_removeValid</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
-                                        void
-                                            <strong>_resetMode</strong>
+                                        Self
+                                            <strong>_removeValid</strong>
                                            (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Private method to reset the interaction mode to the default after a drag operation
+                                            Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                            
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Self
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
@@ -1032,31 +1121,43 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="private">
                                     <h4>
-                                        <a name="method__setMode">_setMode</a></h4>
+                                        <a name="method__setDragMode">_setDragMode</a></h4>
                                     <div class="detail">
                                         <code>
                                          private 
                                         
                                         
                                         void
-                                            <strong>_setMode</strong>
+                                            <strong>_setDragMode</strong>
                                            (
+                                                
+                                                        
+                                                         String/Number
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Private method to set the interaction mode based on the activeDrag's config
+                                            Handler for dragMode attribute setter.
                                         </div>
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>String/Number &lt;object&gt;</code>
+                                                             The Number value or the String for the DragMode to default all future drag instances to.
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>Number The Mode to be set</dd>
                                                 </dl>
              
                                         </div>
@@ -1250,27 +1351,27 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4>
-                                        <a name="method_addValid">addValid</a></h4>
+                                        <a name="method__unregTarget">_unregTarget</a></h4>
                                     <div class="detail">
                                         <code>
+                                         private 
                                         
                                         
-                                        
-                                        Self
-                                            <strong>addValid</strong>
+                                        void
+                                            <strong>_unregTarget</strong>
                                            (
                                                 
                                                         
-                                                         drop
+                                                         t
                                                     
                                                 
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
+                                            Remove the passed in Target from the targets collection
                                         </div>
 
                                         <div class="description">
@@ -1278,15 +1379,15 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>drop &lt;Object&gt;</code>
-                                                            
+                                                            <code>t &lt;Object&gt;</code>
+                                                             The Target to remove from the targets collection
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Self
+                                                        void
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
@@ -1330,12 +1431,12 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <hr />
                                     </div>
-                                    <div class="">
+                                    <div class="private">
                                     <h4>
                                         <a name="method_cssSizestoObject">cssSizestoObject</a></h4>
                                     <div class="detail">
                                         <code>
-                                        
+                                         private 
                                         
                                         
                                         Object
@@ -1350,7 +1451,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                         </code>
                                         
                                         <div class="description">
-                                            Helper method to use to set the gutter from the attribute setter.
+                                            //TODO Private, rename??...
                                         </div>
 
                                         <div class="description">
@@ -1570,98 +1671,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_regTarget">regTarget</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>regTarget</strong>
-                                           (
-                                                
-                                                        
-                                                         t
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Add the passed in Target to the tars collection
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Object&gt;</code>
-                                                             The Target to add to the tars collection
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_rnd">rnd</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Number
-                                            <strong>rnd</strong>
-                                           (
-                                                
-                                                        
-                                                         The
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Round a number to the nearest 100th.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>The &lt;Number&gt;</code>
-                                                             number to round
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Number
-                                                    </code></dt>
-                                                    <dd>The rounded number</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_setXY">setXY</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1759,6 +1768,11 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                         Array
                                             <strong>syncActiveShims</strong>
                                            (
+                                                
+                                                        
+                                                         force
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -1768,6 +1782,13 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                         <div class="description">
 
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>force &lt;Boolean&gt;</code>
+                                                             Resize/sync all Targets.
+                                                        </dd>
+                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
@@ -1775,52 +1796,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                                         Array
                                                     </code></dt>
                                                     <dd>drops The list of Drop Targets that was just synced.</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_unregTarget">unregTarget</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>unregTarget</strong>
-                                           (
-                                                
-                                                        
-                                                         t
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Remove the passed in Target from the tars collection
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>t &lt;Object&gt;</code>
-                                                             The Target to remove from the tars collection
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -1902,6 +1877,88 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="event_beforeClickTimeThreshChange">beforeClickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeClickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'clickTimeThresh' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDragModeChange">beforeDragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'dragMode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="event_clickPixelThreshChange">clickPixelThreshChange</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1922,6 +1979,88 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                         
                                         <div class="description">
                                             Fires when the value for the configuration attribute 'clickPixelThresh' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickTimeThreshChange">clickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickTimeThresh' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragModeChange">dragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragMode' changes.
                                         </div>
 
                                         <div class="description">
@@ -1964,6 +2103,34 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                     <div class="detail">
                                         <div class="description">
                                             The number of pixels to move to start a drag operation, default is 3.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickTimeThresh">clickTimeThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragMode">dragMode</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances.
                                         </div>
                                     </div>
  
@@ -2023,7 +2190,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_yuiloader.html">yuiloader</a></li>
                         </ul>
                     </div>
 
@@ -2053,7 +2220,7 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <li class="private"><a href="#property__drags">_drags</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class="private"><a href="#property__oldMode">_oldMode</a>
+                                <li class="private"><a href="#property__noShim">_noShim</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__pg">_pg</a>
@@ -2065,28 +2232,25 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <li class=""><a href="#property_activeDrop">activeDrop</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_clickPixelThresh">clickPixelThresh</a>
+                                <li class=""><a href="#property_CSS_PREFIX">CSS_PREFIX</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_clickTimeThresh">clickTimeThresh</a>
+                                <li class="private"><a href="#property_INTERSECT">INTERSECT</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_INTERSECT">INTERSECT</a>
-                                        <!--<code>&lt;{Array}&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_mode">mode</a>
+                                <li class="private"><a href="#property_mode">mode</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_otherDrops">otherDrops</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_POINT">POINT</a>
+                                <li class="private"><a href="#property_POINT">POINT</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_STRICT">STRICT</a>
+                                <li class="private"><a href="#property_STRICT">STRICT</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
-                                <li class=""><a href="#property_tars">tars</a>
+                                <li class=""><a href="#property_targets">targets</a>
                                         <!--<code>&lt;{Array}&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_useHash">useHash</a>
@@ -2106,6 +2270,9 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__addActiveShim">_addActiveShim</a>
+                                </li>
+                                <li class="private"><!--<code>Self</code>-->
+                                <a href="#method__addValid">_addValid</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__createPG">_createPG</a>
@@ -2150,13 +2317,16 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <a href="#method__regDrag">_regDrag</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
+                                <a href="#method__regTarget">_regTarget</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
                                 <a href="#method__removeActiveShim">_removeActiveShim</a>
                                 </li>
-                                <li class="private"><!--<code>void</code>-->
-                                <a href="#method__resetMode">_resetMode</a>
+                                <li class="private"><!--<code>Self</code>-->
+                                <a href="#method__removeValid">_removeValid</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
-                                <a href="#method__setMode">_setMode</a>
+                                <a href="#method__setDragMode">_setDragMode</a>
                                 </li>
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__start">_start</a>
@@ -2167,13 +2337,13 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <li class="private"><!--<code>void</code>-->
                                 <a href="#method__unregDrag">_unregDrag</a>
                                 </li>
-                                <li class=""><!--<code>Self</code>-->
-                                <a href="#method_addValid">addValid</a>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unregTarget">_unregTarget</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_clearCache">clearCache</a>
                                 </li>
-                                <li class=""><!--<code>Object</code>-->
+                                <li class="private"><!--<code>Object</code>-->
                                 <a href="#method_cssSizestoObject">cssSizestoObject</a>
                                 </li>
                                 <li class=""><!--<code>Object or Array</code>-->
@@ -2189,12 +2359,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <a href="#method_isOverTarget">isOverTarget</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_regTarget">regTarget</a>
-                                </li>
-                                <li class=""><!--<code>Number</code>-->
-                                <a href="#method_rnd">rnd</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_setXY">setXY</a>
                                 </li>
                                 <li class=""><!--<code>Self</code>-->
@@ -2202,9 +2366,6 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 </li>
                                 <li class=""><!--<code>Array</code>-->
                                 <a href="#method_syncActiveShims">syncActiveShims</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_unregTarget">unregTarget</a>
                                 </li>
                         </ul>
                     </div>
@@ -2216,7 +2377,19 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                                 <a href="#event_beforeClickPixelThreshChange">beforeClickPixelThreshChange</a>
                                 </li>
                                 <li class="">
+                                <a href="#event_beforeClickTimeThreshChange">beforeClickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDragModeChange">beforeDragModeChange</a>
+                                </li>
+                                <li class="">
                                 <a href="#event_clickPixelThreshChange">clickPixelThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickTimeThreshChange">clickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragModeChange">dragModeChange</a>
                                 </li>
                         </ul>
                     </div>
@@ -2226,6 +2399,12 @@ It is also required to have Drop Targets enabled, as the viewport shim will cont
                         <ul class="content">        
                                 <li class="">
                                 <a href="#config_clickPixelThresh">clickPixelThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickTimeThresh">clickTimeThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragMode">dragMode</a>
                                 </li>
                         </ul>
                     </div>

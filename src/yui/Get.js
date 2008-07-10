@@ -153,7 +153,7 @@ Y.Get = function() {
         var q = queues[id];
         // execute failure callback
         if (q.onFailure) {
-            var sc=q.scope || q.win;
+            var sc=q.scope || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
     };
@@ -177,8 +177,23 @@ Y.Get = function() {
 
         // execute success callback
         if (q.onSuccess) {
-            var sc=q.scope || q.win;
+            var sc=q.scope || q;
             q.onSuccess.call(sc, _returnData(q));
+        }
+    };
+
+    /**
+     * Timeout detected
+     * @method _timeout
+     * @param id {string} the id of the request
+     * @private
+     */
+    var _timeout = function(id) {
+        Y.log("Get utility timeout " + id);
+        var q = queues[id];
+        if (q.onTimeout) {
+            var sc=q.scope || q;
+            q.onTimeout.call(sc, _returnData(q));
         }
     };
 
@@ -191,7 +206,13 @@ Y.Get = function() {
      */
     var _next = function(id, loaded) {
         Y.log("_next: " + id + ", loaded: " + loaded, "info", "Get");
+
         var q = queues[id];
+
+        if (q.timer) {
+            // Y.log('cancel timer');
+            q.timer.cancel();
+        }
 
         if (q.aborted) {
             var msg = "transaction " + id + " was aborted";
@@ -215,33 +236,17 @@ Y.Get = function() {
         var w=q.win, d=w.document, h=d.getElementsByTagName("head")[0], n;
 
         if (q.url.length === 0) {
-            // Safari 2.x workaround - There is no way to know when 
-            // a script is ready in versions of Safari prior to 3.x.
-            // Adding an extra node reduces the problem, but doesn't
-            // eliminate it completely because the browser executes
-            // them asynchronously. 
-            if (q.type === "script" && ua.webkit && ua.webkit < 420 && 
-                    !q.finalpass && !q.varName) {
-                // Add another script node.  This does not guarantee that the
-                // scripts will execute in order, but it does appear to fix the
-                // problem on fast connections more effectively than using an
-                // arbitrary timeout.  It is possible that the browser does
-                // block subsequent script execution in this case for a limited
-                // time.
-                var extra = _scriptNode(null, q.win, q.charset);
-                extra.innerHTML='Y.Get._finalize("' + id + '");';
-                q.nodes.push(extra); h.appendChild(extra);
-
-            } else {
-                _finish(id);
-            }
-
+            _finish(id);
             return;
         } 
 
-
         var url = q.url[0];
         Y.log("attempting to load " + url, "info", "Get");
+
+        if (q.timeout) {
+            // Y.log('create timer');
+            q.timer = L.later(q.timeout, q, _timeout, id);
+        }
 
         if (q.type === "script") {
             n = _scriptNode(url, w, q.charset);
@@ -352,7 +357,7 @@ Y.Get = function() {
 
         var q = queues[id];
         q.win = q.win || window;
-        q.scope = q.scope || q.win;
+        q.scope = q.scope || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
@@ -392,65 +397,15 @@ Y.Get = function() {
                 }
             };
 
-        // webkit prior to 3.x is problemmatic
+        // webkit prior to 3.x is no longer supported
         } else if (ua.webkit) {
 
             if (type === "script") {
-
                 // Safari 3.x supports the load event for script nodes (DOM2)
-                if (ua.webkit >= 420) {
-
-                    n.addEventListener("load", function() {
-                        Y.log(id + " DOM2 onload " + url, "info", "Get");
-                        f(id, url);
-                    });
-
-                // Nothing can be done with Safari < 3.x except to pause and hope
-                // for the best, particularly after last script is inserted. The
-                // scripts will always execute in the order they arrive, not
-                // necessarily the order in which they were inserted.  To support
-                // script nodes with complete reliability in these browsers, script
-                // nodes either need to invoke a function in the window once they
-                // are loaded or the implementer needs to provide a well-known
-                // property that the utility can poll for.
-                } else {
-                    // Poll for the existence of the named variable, if it
-                    // was supplied.
-                    var q = queues[id];
-                    if (q.varName) {
-                        var freq=Y.Get.POLL_FREQ;
-                        Y.log("Polling for " + q.varName[0]);
-                        q.maxattempts = Y.Get.TIMEOUT/freq;
-                        q.attempts = 0;
-                        q._cache = q.varName[0].split(".");
-                        q.timer = L.later(freq, q, function(o) {
-                            var a=this._cache, l=a.length, w=this.win, i;
-                            for (i=0; i<l; i=i+1) {
-                                w = w[a[i]];
-                                if (!w) {
-                                    // if we have exausted our attempts, give up
-                                    this.attempts++;
-                                    if (this.attempts++ > this.maxattempts) {
-                                        var msg = "Over retry limit, giving up";
-                                        q.timer.cancel();
-                                        _fail(id, msg);
-                                    } else {
-                                        Y.log(a[i] + " failed, retrying");
-                                    }
-                                    return;
-                                }
-                            }
-                            
-                            Y.log("Safari poll complete");
-
-                            q.timer.cancel();
-                            f(id, url);
-
-                        }, null, true);
-                    } else {
-                        L.later(Y.Get.POLL_FREQ, null, f, [id, url]);
-                    }
-                }
+                n.addEventListener("load", function() {
+                    Y.log(id + " DOM2 onload " + url, "info", "Get");
+                    f(id, url);
+                });
             } 
 
         // FireFox and Opera support onload (but not DOM2 in FF) handlers for

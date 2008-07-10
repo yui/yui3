@@ -114,23 +114,22 @@
         <span class="nx">_createFrame</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(!</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">([</span><span class="s1">&#39;div&#39;</span><span class="o">]),</span>
-                <span class="nx">bd</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;body&#39;</span><span class="o">);</span>
+                <span class="c">//var p = Y.Node.create([&#39;div&#39;]);</span>
+<span class="c"></span>                <span class="k">var</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="s1">&#39;&lt;div&gt;&lt;/div&gt;&#39;</span><span class="o">);</span>
 
                 <span class="nx">p</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
                     <span class="nx">position</span><span class="o">:</span> <span class="s1">&#39;absolute&#39;</span><span class="o">,</span>
                     <span class="nx">display</span><span class="o">:</span> <span class="s1">&#39;none&#39;</span><span class="o">,</span>
                     <span class="nx">zIndex</span><span class="o">:</span> <span class="s1">&#39;999&#39;</span><span class="o">,</span>
+                    <span class="nx">top</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span><span class="o">,</span>
+                    <span class="nx">left</span><span class="o">:</span> <span class="s1">&#39;-999px&#39;</span><span class="o">,</span>
                     <span class="nx">border</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;borderStyle&#39;</span><span class="o">)</span>
                 <span class="o">});</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">bd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">bd</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">bd</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">FIRST_CHILD</span><span class="o">));</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">bd</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">p</span><span class="o">);</span>
-                <span class="o">}</span>
+                <span class="c">//DDM._pg.get(&#39;parentNode&#39;).insertBefore(p, DDM._pg.get(&#39;nextSibling&#39;));</span>
+<span class="c"></span>                <span class="nx">DDM</span><span class="o">.</span><span class="nx">_pg</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;parentNode&#39;</span><span class="o">).</span><span class="nx">insertBefore</span><span class="o">(</span><span class="nx">p</span><span class="o">,</span> <span class="nx">DDM</span><span class="o">.</span><span class="nx">_pg</span><span class="o">);</span>
                 <span class="nx">p</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;id&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="nx">p</span><span class="o">));</span>
-                <span class="nx">p</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="s1">&#39;yui-dd-proxy&#39;</span><span class="o">);</span>
+                <span class="nx">p</span><span class="o">.</span><span class="nx">addClass</span><span class="o">(</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-proxy&#39;</span><span class="o">);</span>
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
             <span class="o">}</span>
         <span class="o">},</span>
@@ -144,8 +143,8 @@
             <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;resizeFrame&#39;</span><span class="o">))</span> <span class="o">{</span>
                 <span class="nx">DDM</span><span class="o">.</span><span class="nx">_proxy</span><span class="o">.</span><span class="nx">setStyles</span><span class="o">({</span>
-                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;clientHeight&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
-                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;clientWidth&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
+                    <span class="nx">height</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetHeight&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="o">,</span>
+                    <span class="nx">width</span><span class="o">:</span> <span class="nx">n</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;offsetWidth&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span>
                 <span class="o">});</span>
             <span class="o">}</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">setStyles</span><span class="o">({</span>
@@ -245,7 +244,7 @@
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_yuiloader.html">yuiloader</a></li>
                         </ul>
                     </div>
 

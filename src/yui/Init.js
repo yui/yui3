@@ -28,12 +28,14 @@
               "event-custom", 
               "event-target", 
               "event-ready",
-              "event-dom", "event-facade",
+              "event-dom", 
+              "event-facade",
               "node", 
               "io", 
+              "get");
               // "dump", 
               // "substitute",
-              "get");
+              // "loader"
 
         }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: yui   Get.js  (YUI Library)</title>
+	<title>API: yuiloader   Get.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>yuiloader&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_yui.html">yui</a>
+            &gt; <a href="./module_yuiloader.html">yuiloader</a>
                 
                  &gt; Get.js (source view) 
             </p>
@@ -190,7 +190,7 @@
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="c">// execute failure callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
             <span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">,</span> <span class="nx">msg</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -214,8 +214,23 @@
 
         <span class="c">// execute success callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
             <span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Timeout detected</span>
+<span class="c">     * @method _timeout</span>
+<span class="c">     * @param id {string} the id of the request</span>
+<span class="c">     * @private</span>
+<span class="c">     */</span>
+    <span class="k">var</span> <span class="nx">_timeout</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Get utility timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+            <span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
 
@@ -228,7 +243,13 @@
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">_next</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">loaded</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;_next: &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot;, loaded: &quot;</span> <span class="o">+</span> <span class="nx">loaded</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
+
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// Y.log(&#39;cancel timer&#39;);</span>
+<span class="c"></span>            <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
+        <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">aborted</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; was aborted&quot;</span><span class="o">;</span>
@@ -252,33 +273,17 @@
         <span class="k">var</span> <span class="nx">w</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">w</span><span class="o">.</span><span class="nb">document</span><span class="o">,</span> <span class="nx">h</span><span class="o">=</span><span class="nx">d</span><span class="o">.</span><span class="nx">getElementsByTagName</span><span class="o">(</span><span class="s2">&quot;head&quot;</span><span class="o">)[</span><span class="m">0</span><span class="o">],</span> <span class="nx">n</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Safari 2.x workaround - There is no way to know when </span>
-<span class="c"></span>            <span class="c">// a script is ready in versions of Safari prior to 3.x.</span>
-<span class="c"></span>            <span class="c">// Adding an extra node reduces the problem, but doesn&#39;t</span>
-<span class="c"></span>            <span class="c">// eliminate it completely because the browser executes</span>
-<span class="c"></span>            <span class="c">// them asynchronously. </span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&lt;</span> <span class="m">420</span> <span class="o">&amp;&amp;</span> 
-                    <span class="o">!</span><span class="nx">q</span><span class="o">.</span><span class="nx">finalpass</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Add another script node.  This does not guarantee that the</span>
-<span class="c"></span>                <span class="c">// scripts will execute in order, but it does appear to fix the</span>
-<span class="c"></span>                <span class="c">// problem on fast connections more effectively than using an</span>
-<span class="c"></span>                <span class="c">// arbitrary timeout.  It is possible that the browser does</span>
-<span class="c"></span>                <span class="c">// block subsequent script execution in this case for a limited</span>
-<span class="c"></span>                <span class="c">// time.</span>
-<span class="c"></span>                <span class="k">var</span> <span class="nx">extra</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">charset</span><span class="o">);</span>
-                <span class="nx">extra</span><span class="o">.</span><span class="nx">innerHTML</span><span class="o">=</span><span class="s1">&#39;Y.Get._finalize(&quot;&#39;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;&quot;);&#39;</span><span class="o">;</span>
-                <span class="nx">q</span><span class="o">.</span><span class="nx">nodes</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">extra</span><span class="o">);</span> <span class="nx">h</span><span class="o">.</span><span class="nx">appendChild</span><span class="o">(</span><span class="nx">extra</span><span class="o">);</span>
-
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">_finish</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
-            <span class="o">}</span>
-
+            <span class="nx">_finish</span><span class="o">(</span><span class="nx">id</span><span class="o">);</span>
             <span class="k">return</span><span class="o">;</span>
         <span class="o">}</span> 
 
-
         <span class="k">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">url</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;attempting to load &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timeout</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// Y.log(&#39;create timer&#39;);</span>
+<span class="c"></span>            <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">timeout</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="nx">_timeout</span><span class="o">,</span> <span class="nx">id</span><span class="o">);</span>
+        <span class="o">}</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">n</span> <span class="o">=</span> <span class="nx">_scriptNode</span><span class="o">(</span><span class="nx">url</span><span class="o">,</span> <span class="nx">w</span><span class="o">,</span> <span class="nx">q</span><span class="o">.</span><span class="nx">charset</span><span class="o">);</span>
@@ -389,7 +394,7 @@
 
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nb">window</span><span class="o">;</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
+        <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="o">)</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
                       <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
 
@@ -429,65 +434,15 @@
                 <span class="o">}</span>
             <span class="o">};</span>
 
-        <span class="c">// webkit prior to 3.x is problemmatic</span>
+        <span class="c">// webkit prior to 3.x is no longer supported</span>
 <span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span><span class="o">)</span> <span class="o">{</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">{</span>
-
                 <span class="c">// Safari 3.x supports the load event for script nodes (DOM2)</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&gt;=</span> <span class="m">420</span><span class="o">)</span> <span class="o">{</span>
-
-                    <span class="nx">n</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; DOM2 onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
-                        <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-                    <span class="o">});</span>
-
-                <span class="c">// Nothing can be done with Safari &lt; 3.x except to pause and hope</span>
-<span class="c"></span>                <span class="c">// for the best, particularly after last script is inserted. The</span>
-<span class="c"></span>                <span class="c">// scripts will always execute in the order they arrive, not</span>
-<span class="c"></span>                <span class="c">// necessarily the order in which they were inserted.  To support</span>
-<span class="c"></span>                <span class="c">// script nodes with complete reliability in these browsers, script</span>
-<span class="c"></span>                <span class="c">// nodes either need to invoke a function in the window once they</span>
-<span class="c"></span>                <span class="c">// are loaded or the implementer needs to provide a well-known</span>
-<span class="c"></span>                <span class="c">// property that the utility can poll for.</span>
-<span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="c">// Poll for the existence of the named variable, if it</span>
-<span class="c"></span>                    <span class="c">// was supplied.</span>
-<span class="c"></span>                    <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">var</span> <span class="nx">freq</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">POLL_FREQ</span><span class="o">;</span>
-                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Polling for &quot;</span> <span class="o">+</span> <span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
-                        <span class="nx">q</span><span class="o">.</span><span class="nx">maxattempts</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">TIMEOUT</span><span class="o">/</span><span class="nx">freq</span><span class="o">;</span>
-                        <span class="nx">q</span><span class="o">.</span><span class="nx">attempts</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-                        <span class="nx">q</span><span class="o">.</span><span class="nx">_cache</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">varName</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">split</span><span class="o">(</span><span class="s2">&quot;.&quot;</span><span class="o">);</span>
-                        <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">freq</span><span class="o">,</span> <span class="nx">q</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">_cache</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">w</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">win</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
-                            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                                <span class="nx">w</span> <span class="o">=</span> <span class="nx">w</span><span class="o">[</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
-                                <span class="k">if</span> <span class="o">(!</span><span class="nx">w</span><span class="o">)</span> <span class="o">{</span>
-                                    <span class="c">// if we have exausted our attempts, give up</span>
-<span class="c"></span>                                    <span class="k">this</span><span class="o">.</span><span class="nx">attempts</span><span class="o">++;</span>
-                                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attempts</span><span class="o">++</span> <span class="o">&gt;</span> <span class="k">this</span><span class="o">.</span><span class="nx">maxattempts</span><span class="o">)</span> <span class="o">{</span>
-                                        <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Over retry limit, giving up&quot;</span><span class="o">;</span>
-                                        <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
-                                        <span class="nx">_fail</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">msg</span><span class="o">);</span>
-                                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot; failed, retrying&quot;</span><span class="o">);</span>
-                                    <span class="o">}</span>
-                                    <span class="k">return</span><span class="o">;</span>
-                                <span class="o">}</span>
-                            <span class="o">}</span>
-                            
-                            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Safari poll complete&quot;</span><span class="o">);</span>
-
-                            <span class="nx">q</span><span class="o">.</span><span class="nx">timer</span><span class="o">.</span><span class="nx">cancel</span><span class="o">();</span>
-                            <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
-
-                        <span class="o">},</span> <span class="kc">null</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">L</span><span class="o">.</span><span class="nx">later</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Get</span><span class="o">.</span><span class="nx">POLL_FREQ</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="o">[</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">]);</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
+<span class="c"></span>                <span class="nx">n</span><span class="o">.</span><span class="nx">addEventListener</span><span class="o">(</span><span class="s2">&quot;load&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; DOM2 onload &quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
+                    <span class="nx">f</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">url</span><span class="o">);</span>
+                <span class="o">});</span>
             <span class="o">}</span> 
 
         <span class="c">// FireFox and Opera support onload (but not DOM2 in FF) handlers for</span>
@@ -758,7 +713,7 @@
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                                <li class="selected"><a href="module_yuiloader.html">yuiloader</a></li>
                         </ul>
                     </div>
 
@@ -774,9 +729,7 @@
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>
                                 <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="lang.html">lang</a></li>
-                                <li class=""><a href="object.html">object</a></li>
-                                <li class=""><a href="ua.html">ua</a></li>
-                                <li class=""><a href="YUI.html">YUI</a></li>
+                                <li class=""><a href="Y.Loader.html">Y.Loader</a></li>
                         </ul>
                     </div>
 
@@ -797,10 +750,7 @@
                                 <li class=""><a href="Init.js.html">Init.js</a></li>
                                 <li class=""><a href="Lang.js.html">Lang.js</a></li>
                                 <li class=""><a href="Later.js.html">Later.js</a></li>
-                                <li class=""><a href="Object.js.html">Object.js</a></li>
-                                <li class=""><a href="Substitute.js.html">Substitute.js</a></li>
-                                <li class=""><a href="UA.js.html">UA.js</a></li>
-                                <li class=""><a href="YUI.js.html">YUI.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
                         </ul>
                     </div>
 

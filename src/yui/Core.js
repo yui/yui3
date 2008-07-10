@@ -109,7 +109,7 @@ YUI.add("core", function(Y) {
                         // if the receiver has this property, it is an object,
                         // and merge is specified, merge the two objects.
                         if (m && L.isObject(fr[i], true)) {
-                            console.log('aggregate RECURSE: ' + i);
+                            // console.log('aggregate RECURSE: ' + i);
                             // @TODO recursive or no?
                             // Y.mix(fr[i], fs[i]); // not recursive
                             f(fr[i], fs[i], proto, true); // recursive

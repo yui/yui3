@@ -12,87 +12,126 @@
 /**
  * YUILoader provides dynamic loading for YUI.
  * @class Y.Loader
- * @todo
- *      version management, automatic sandboxing
+ * @TODO version management
  */
+
+
+// http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
 YUI.add("loader", function(Y) {
 
-    var L=Y.lang, env=Y.env,
-        PROV = "_provides", SUPER = "_supersedes",
-        REQ = "expanded", AFTER = "_after",
+    var BASE = 'base', 
+        CSS = 'css',
+        JS = 'js',
+        PKG = 'pkg',
 
-        OU: {
-            appendArray: function(o, a) {
-                if (a) {
-                    for (var i=0; i<a.length; i=i+1) {
-                        o[a[i]] = true;
-                    }
-                }
-            },
+        ANIMATION = 'animation',
+        RESET = 'reset',
+        FONTS = 'fonts',
+        GRIDS = 'grids',
+        CONNECTION = 'connection',
+        DRAGDROP = 'dragdrop',
+        BUTTON = 'button',
+        MENU = 'menu',
+        CALENDAR = 'calendar',
+        SLIDER = 'slider',
+        JSON = 'json',
+        DATASOURCE = 'datasource',
+        SELECTOR = 'selector',
+        RESIZE = 'resize',
+        VERSION = '3.0.0',
+        ROOT = VERSION + '/build/';
 
-            keys: function(o, ordered) {
-                var a=[], i;
-                for (i in o) {
-                    if (Y.object.owns(o, i)) {
-                        a.push(i);
-                    }
-                }
 
-                return a;
-            }
+Y.Env.moduleInfo = {
+
+    root: ROOT,
+
+    base: 'http://yui.yahooapis.com/' + ROOT,
+
+    comboBase: 'http://yui.yahooapis.com/combo?',
+
+    skin: {
+        defaultSkin: 'sam',
+        base: 'assets/skins/',
+        path: 'skin.css',
+        after: [RESET, FONTS, GRIDS, BASE],
+        rollup: 3
+    },
+
+    moduleInfo: {
+
+        base: {
+            type: CSS,
+            after: [RESET, FONTS, GRIDS]
         },
 
-        AU: {
+        fonts: {
+            type: CSS
+        },
 
-            appendArray: function(a1, a2) {
-                Array.prototype.push.apply(a1, a2);
-                /*
-                for (var i=0; i<a2.length; i=i+1) {
-                    a1.push(a2[i]);
-                }
-                */
-            },
+        grids: {
+            type: CSS,
+            requires: [FONTS],
+            optional: [RESET]
+        },
 
-            indexOf: function(a, val) {
-                for (var i=0; i<a.length; i=i+1) {
-                    if (a[i] === val) {
-                        return i;
-                    }
-                }
+        log: {
+            optional: [DRAGDROP],
+            path: 'log/logreader-min.js',
+            skinnable: 1
+        },
 
-                return -1;
-            },
+        reset: {
+            type: CSS
+        },
 
-            toObject: function(a) {
-                var o = {};
-                for (var i=0; i<a.length; i=i+1) {
-                    o[a[i]] = true;
-                }
+        'reset-fonts-grids': {
+            type: CSS,
+            path: 'reset-fonts-grids/reset-fonts-grids.css',
+            supersedes: [RESET, FONTS, GRIDS, 'reset-fonts'],
+            rollup: 4
+        },
 
-                return o;
-            },
+        'reset-fonts': {
+            type: CSS,
+            path: 'reset-fonts/reset-fonts.css',
+            supersedes: [RESET, FONTS],
+            rollup: 2
+        },
 
-            /*
-             * Returns a unique array.  Does not maintain order, which is fine
-             * for this application, and performs better than it would if it
-             * did.
-             */
-            uniq: function(a) {
-                return OU.keys(AU.toObject(a));
-            }
+        substitute: {
+            requires: ['dump']
+        },
+
+        yuitestcore: {
+        },
+
+        yuitest: {
+            requires: ['log'],
+            skinnable: 1,
+            supersedes: ['yuitestcore'],
         }
- 
-    var YUI = {
+    }
+};
 
-        dupsAllowed: {'yahoo': true, 'get': true},
+
+    var L=Y.Lang, env=Y.Env,
+        PROV = "_provides", SUPER = "_supersedes",
+        REQ = "expanded";
+
+    var _Y = {
+
+        // dupsAllowed: {'yahoo': true, 'get': true},
+        dupsAllowed: {},
 
         /*
          * The library metadata for the current release
          * @property YUIInfo
          * @static
          */
-        info: '@yuiinfo@', 
+        // info: '@yuiinfo@', 
+        info: Y.Env.moduleInfo
 
     };
 
@@ -114,27 +153,27 @@ YUI.add("loader", function(Y) {
          */
         this._useYahooListener = false;
 
-        /**
+        /*
          * Callback that will be executed when the loader is finished
          * with an insert
          * @method onSuccess
          * @type function
          */
-        this.onSuccess = null;
+        // this.onSuccess = null;
 
-        /**
+        /*
          * Callback that will be executed if there is a failure
          * @method onFailure
          * @type function
          */
-        this.onFailure = Y.log;
+        // this.onFailure = Y.log;
 
-        /**
+        /*
          * Callback that will be executed each time a new module is loaded
          * @method onProgress
          * @type function
          */
-        this.onProgress = null;
+        // this.onProgress = null;
 
         /**
          * The execution scope for all callbacks
@@ -165,7 +204,7 @@ YUI.add("loader", function(Y) {
         this.charset = null;
 
         /**
-         * The name of the variable in a sandbox or script node 
+         * The name of a script node 
          * (for external script support in Safari 2.x and earlier)
          * to reference when the load is complete.  If this variable 
          * is not available in the specified scripts, the operation will 
@@ -181,7 +220,7 @@ YUI.add("loader", function(Y) {
          * @type string
          * @default http://yui.yahooapis.com/[YUI VERSION]/build/
          */
-        this.base = YUI.info.base;
+        this.base = _Y.info.base;
 
         /**
          * A list of modules that should not be loaded, even if
@@ -244,7 +283,16 @@ YUI.add("loader", function(Y) {
          * The library metadata
          * @property moduleInfo
          */
-        this.moduleInfo = Y.merge(YUI.info.moduleInfo);
+        // this.moduleInfo = Y.merge(_Y.info.moduleInfo);
+        this.moduleInfo = {};
+        
+        var defaults = _Y.info.moduleInfo;
+
+        for (var i in defaults) {
+            if (defaults.hasOwnProperty(i)) {
+                this.addModule(defaults[i], i);
+            }
+        }
 
         /**
          * List of rollup files found in the library metadata
@@ -334,16 +382,18 @@ YUI.add("loader", function(Y) {
          *   @property skin
          */
 
-        var self = this;
+        Y.on('yui:load', this.loadNext, this);
 
-        env.listeners.push(function(m) {
-            if (self._useYahooListener) {
-                //Y.log("YUI listener: " + m.name);
-                self.loadNext(m.name);
-            }
-        });
+        // var self = this;
 
-        this.skin = Y.merge(YUI.info.skin); 
+        // env.listeners.push(function(m) {
+            // if (self._useYahooListener) {
+                // //Y.log("YUI listener: " + m.name);
+                // self.loadNext(m.name);
+            // }
+        // });
+
+        this.skin = Y.merge(_Y.info.skin); 
 
         this._config(o);
 
@@ -369,9 +419,12 @@ YUI.add("loader", function(Y) {
             // apply config values
             if (o) {
                 for (var i in o) {
-                    if (Y.object.owns(o, i)) {
+                    if (Y.Object.owns(o, i)) {
                         if (i == "require") {
                             this.require(o[i]);
+                        // support the old callback syntax
+                        } else if (i.indexOf('on') === 0) {
+                            this.subscribe(i.substr(2).toLowerCase(), o[i]);
                         } else {
                             this[i] = o[i];
                         }
@@ -388,14 +441,14 @@ YUI.add("loader", function(Y) {
                 // the logger must be available in order to use the debug
                 // versions of the library
                 if (f === "DEBUG") {
-                    this.require("logger");
+                    this.require("log");
                 }
 
                 // hack to handle a a bug where LogWriter is being instantiated
                 // at load time, and the loader has no way to sort above it
                 // at the moment.
-                if (!Y.widget.LogWriter) {
-                    Y.widget.LogWriter = function() {
+                if (!Y.LogWriter) {
+                    Y.LogWriter = function() {
                         return Y;
                     };
                 }
@@ -420,22 +473,35 @@ YUI.add("loader", function(Y) {
          * </dl>
          * @method addModule
          * @param o An object containing the module data
+         * @param name the module name (optional), required if not in the module data
          * @return {boolean} true if the module was added, false if 
          * the object passed in did not provide all required attributes
          */
-        addModule: function(o) {
+        addModule: function(o, name) {
 
-            if (!o || !o.name || !o.type || (!o.path && !o.fullpath)) {
+            name = name || o.name;
+
+            if (!o || !name) {
                 return false;
+            }
+
+            if (!o.type) {
+                o.type = JS;
+            }
+
+            if (!o.path && !o.fullpath) {
+                o.path = name + "/" + name + "-min." + o.type;
             }
 
             o.ext = ('ext' in o) ? o.ext : true;
             o.requires = o.requires || [];
 
-            this.moduleInfo[o.name] = o;
+            this.moduleInfo[name] = o;
             this.dirty = true;
 
-            return true;
+            //Y.log('New module ' + name);
+
+            return o;
         },
 
         /**
@@ -446,7 +512,8 @@ YUI.add("loader", function(Y) {
         require: function(what) {
             var a = (typeof what === "string") ? arguments : what;
             this.dirty = true;
-            OU.appendArray(this.required, a);
+            //OU.appendArray(this.required, a);
+            Y.mix(this.required, Y.Array.hash(a));
         },
 
         /**
@@ -503,45 +570,43 @@ YUI.add("loader", function(Y) {
          * @param mod The module definition from moduleInfo
          */
         getRequires: function(mod) {
+
             if (!mod) {
+                Y.log('getRequires, no module');
                 return [];
             }
 
             if (!this.dirty && mod.expanded) {
+                Y.log('already expanded');
                 return mod.expanded;
             }
 
-            mod.requires=mod.requires || [];
-            var i, d=[], r=mod.requires, o=mod.optional, info=this.moduleInfo, m;
-            for (i=0; i<r.length; i=i+1) {
-                d.push(r[i]);
-                m = info[r[i]];
-                AU.appendArray(d, this.getRequires(m));
 
-                // add existing skins for skinnable modules as well.  The only
-                // way to do this is go through the list of required items (this
-                // assumes that _skin is called before getRequires is called on
-                // the module.
-                // if (m.skinnable) {
-                //     var req=this.required, l=req.length;
-                //     for (var j=0; j<l; j=j+1) {
-                //         // Y.log('checking ' + r[j]);
-                //         if (req[j].indexOf(r[j]) > -1) {
-                //             // Y.log('adding ' + r[j]);
-                //             d.push(req[j]);
-                //         }
-                //     }
-                // }
+            var i, d=[], r=mod.requires, o=mod.optional, 
+                info=this.moduleInfo, m;
+
+            for (i=0; i<r.length; i=i+1) {
+                Y.log('requiring ' + r[i]);
+                d.push(r[i]);
+                m = this.getModule(r[i]);
+                // AU.appendArray(d, this.getRequires(m));
+                d.concat(this.getRequires(m));
+                // Y.log(d);
             }
 
             if (o && this.loadOptional) {
                 for (i=0; i<o.length; i=i+1) {
                     d.push(o[i]);
-                    AU.appendArray(d, this.getRequires(info[o[i]]));
+                    // AU.appendArray(d, this.getRequires(info[o[i]]));
+                    d.concat(this.getRequires(info[o[i]]));
                 }
             }
 
-            mod.expanded = AU.uniq(d);
+            // mod.expanded = AU.uniq(d);
+            mod.expanded = Y.Object.keys(Y.Array.hash(d));
+
+            // Y.log(mod.expanded);
+
 
             return mod.expanded;
         },
@@ -556,7 +621,7 @@ YUI.add("loader", function(Y) {
          */
         getProvides: function(name, notMe) {
             var addMe = !(notMe), ckey = (addMe) ? PROV : SUPER,
-                m = this.moduleInfo[name], o = {};
+                m = this.getModule(name), o = {};
 
             if (!m) {
                 return o;
@@ -572,7 +637,7 @@ YUI.add("loader", function(Y) {
             // use worker to break cycles
             var add = function(mm) {
                 if (!done[mm]) {
-                    // Y.log(name + ' provides worker trying: ' + mm);
+                    Y.log(name + ' provides worker trying: ' + mm);
                     done[mm] = true;
                     // we always want the return value normal behavior 
                     // (provides) for superseded modules.
@@ -598,7 +663,7 @@ YUI.add("loader", function(Y) {
             m[PROV][name] = true;
 
 // Y.log(name + " supersedes " + L.dump(m[SUPER], 0));
-// Y.log(name + " provides " + L.dump(m[PROV], 0));
+Y.log(name + " provides " + L.dump(m[PROV], 0));
 
             return m[ckey];
         },
@@ -615,14 +680,13 @@ YUI.add("loader", function(Y) {
                 this._config(o);
                 this._setup();
                 this._explode();
-                // this._skin(); // deprecated
                 if (this.allowRollup) {
                     this._rollup();
                 }
                 this._reduce();
                 this._sort();
 
-                // Y.log("after calculate: " + L.dump(this.required));
+                Y.log("after calculate: " + this.sorted);
 
                 this.dirty = false;
             }
@@ -641,34 +705,33 @@ YUI.add("loader", function(Y) {
 
             // Create skin modules
             for (name in info) {
-                var m = info[name];
-                if (m && m.skinnable) {
-                    // Y.log("skinning: " + name);
-                    var o=this.skin.overrides, smod;
-                    if (o && o[name]) {
-                        for (i=0; i<o[name].length; i=i+1) {
-                            smod = this._addSkin(o[name][i], name);
+                if (info.hasOwnProperty(name)) {
+                    var m = this.getModule(name);
+                    if (m && m.skinnable) {
+                        // Y.log("skinning: " + name);
+                        var o=this.skin.overrides, smod;
+                        if (o && o[name]) {
+                            for (i=0; i<o[name].length; i=i+1) {
+                                smod = this._addSkin(o[name][i], name);
+                            }
+                        } else {
+                            smod = this._addSkin(this.skin.defaultSkin, name);
                         }
-                    } else {
-                        smod = this._addSkin(this.skin.defaultSkin, name);
-                    }
 
-                    m.requires.push(smod);
+                        m.requires.push(smod);
+                    }
                 }
 
             }
 
             var l = Y.merge(this.inserted); // shallow clone
             
-            if (!this._sandbox) {
-                l = Y.merge(l, env.modules);
-            }
-
             // Y.log("Already loaded stuff: " + L.dump(l, 0));
 
             // add the ignore list to the list of loaded packages
             if (this.ignore) {
-                OU.appendArray(l, this.ignore);
+                // OU.appendArray(l, this.ignore);
+                Y.mix(l, Y.Array.hash(this.ignore));
             }
 
             // remove modules on the force list from the loaded list
@@ -683,7 +746,7 @@ YUI.add("loader", function(Y) {
             // expand the list to include superseded modules
             for (j in l) {
                 // Y.log("expanding: " + j);
-                if (Y.object.owns(l, j)) {
+                if (Y.Object.owns(l, j)) {
                     Y.mix(l, this.getProvides(j));
                 }
             }
@@ -707,29 +770,31 @@ YUI.add("loader", function(Y) {
             var r=this.required, i, mod;
 
             for (i in r) {
-                mod = this.moduleInfo[i];
-                if (mod) {
+                if (r.hasOwnProperty(i)) {
+                    mod = this.getModule(i);
+                    Y.log('exploding ' + i);
 
                     var req = this.getRequires(mod);
 
                     if (req) {
-                        OU.appendArray(r, req);
+                        Y.log('via explode: ' + req);
+                        Y.mix(r, Y.Array.hash(req));
                     }
                 }
             }
         },
 
-        /**
-         * Sets up the requirements for the skin assets if any of the
-         * requested modules are skinnable
-         * @method _skin
-         * @private
-         * @deprecated skin modules are generated for all skinnable
-         *             components during _setup(), and the components
-         *             are configured to require the skin.
-         */
-        _skin: function() {
+        getModule: function(name) {
 
+            var m = this.moduleInfo[name];
+
+            // create the default module
+            if (!m) {
+                Y.log('Module does not exist: ' + name + ', creating with defaults');
+                m = this.addModule({}, name);
+            }
+
+            return m;
         },
 
         /**
@@ -778,15 +843,18 @@ YUI.add("loader", function(Y) {
          * @private
          */
         _rollup: function() {
-            var i, j, m, s, rollups={}, r=this.required, roll;
+            var i, j, m, s, rollups={}, r=this.required, roll,
+                info = this.moduleInfo;
 
             // find and cache rollup modules
             if (this.dirty || !this.rollups) {
-                for (i in this.moduleInfo) {
-                    m = this.moduleInfo[i];
-                    //if (m && m.rollup && m.supersedes) {
-                    if (m && m.rollup) {
-                        rollups[i] = m;
+                for (i in info) {
+                    if (info.hasOwnProperty(i)) {
+                        m = this.getModule(i);
+                        // if (m && m.rollup && m.supersedes) {
+                        if (m && m.rollup) {
+                            rollups[i] = m;
+                        }
                     }
                 }
 
@@ -802,7 +870,7 @@ YUI.add("loader", function(Y) {
 
                     // there can be only one
                     if (!r[i] && !this.loaded[i]) {
-                        m =this.moduleInfo[i]; s = m.supersedes; roll=false;
+                        m =this.getModule(i); s = m.supersedes ||[]; roll=false;
 
                         if (!m.rollup) {
                             continue;
@@ -813,12 +881,14 @@ YUI.add("loader", function(Y) {
                         // Y.log('skin? ' + i + ": " + skin);
                         if (skin) {
                             for (j in r) {
-                                if (i !== j && this.parseSkin(j)) {
-                                    c++;
-                                    roll = (c >= m.rollup);
-                                    if (roll) {
-                                        // Y.log("skin rollup " + L.dump(r));
-                                        break;
+                                if (r.hasOwnProperty(j)) {
+                                    if (i !== j && this.parseSkin(j)) {
+                                        c++;
+                                        roll = (c >= m.rollup);
+                                        if (roll) {
+                                            // Y.log("skin rollup " + L.dump(r));
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -829,7 +899,7 @@ YUI.add("loader", function(Y) {
                             for (j=0;j<s.length;j=j+1) {
 
                                 // if the superseded module is loaded, we can't load the rollup
-                                if (this.loaded[s[j]] && (!YUI.dupsAllowed[s[j]])) {
+                                if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
                                     roll = false;
                                     break;
                                 // increment the counter if this module is required.  if we are
@@ -891,17 +961,19 @@ YUI.add("loader", function(Y) {
                             var skin_pre = this.SKIN_PREFIX + skinDef.skin;
                             //Y.log("skin_pre: " + skin_pre);
                             for (j in r) {
-                                m = this.moduleInfo[j];
-                                var ext = m && m.ext;
-                                if (!ext && j !== i && j.indexOf(skin_pre) > -1) {
-                                    // Y.log ("removing component skin: " + j);
-                                    delete r[j];
+                                if (r.hasOwnProperty(j)) {
+                                    m = this.getModule(j);
+                                    var ext = m && m.ext;
+                                    if (!ext && j !== i && j.indexOf(skin_pre) > -1) {
+                                        // Y.log ("removing component skin: " + j);
+                                        delete r[j];
+                                    }
                                 }
                             }
                         }
                     } else {
 
-                         m = this.moduleInfo[i];
+                         m = this.getModule(i);
                          s = m && m.supersedes;
                          if (s) {
                              for (j=0; j<s.length; j=j+1) {
@@ -922,26 +994,29 @@ YUI.add("loader", function(Y) {
          */
         _sort: function() {
             // create an indexed list
-            var s=[], info=this.moduleInfo, loaded=this.loaded,
+            var s=Y.Object.keys(this.required), info=this.moduleInfo, loaded=this.loaded,
                 me = this;
 
             // returns true if b is not loaded, and is required
             // directly or by means of modules it supersedes.
             var requires = function(aa, bb) {
-                if (loaded[bb]) {
+
+                var mm=info[aa];
+
+                if (loaded[bb] || !mm) {
                     return false;
                 }
 
-                var ii, mm=info[aa], rr=mm && mm.expanded, 
-                    after = mm && mm.after, other=info[bb];
+                var ii, rr = mm.expanded, 
+                    after = mm.after, other=info[bb];
 
                 // check if this module requires the other directly
-                if (rr && AU.indexOf(rr, bb) > -1) {
+                if (rr && Y.Array.indexOf(rr, bb) > -1) {
                     return true;
                 }
 
                 // check if this module should be sorted after the other
-                if (after && AU.indexOf(after, bb) > -1) {
+                if (after && Y.Array.indexOf(after, bb) > -1) {
                     return true;
                 }
 
@@ -955,28 +1030,13 @@ YUI.add("loader", function(Y) {
                     }
                 }
 
-                // var ss=me.getProvides(bb, true);
-                // if (ss) {
-                //     for (ii in ss) {
-                //         if (requires(aa, ii)) {
-                //             return true;
-                //         }
-                //     }
-                // }
-
                 // external css files should be sorted below yui css
-                if (mm.ext && mm.type == 'css' && (!other.ext)) {
+                if (mm.ext && mm.type == CSS && (!other.ext)) {
                     return true;
                 }
 
                 return false;
             };
-
-            // get the required items out of the obj into an array so we
-            // can sort
-            for (var i in this.required) {
-                s.push(i);
-            }
 
             // pointer to the first unsorted item
             var p=0; 
@@ -1030,19 +1090,6 @@ YUI.add("loader", function(Y) {
             this.sorted = s;
         },
 
-        toString: function() {
-            var o = {
-                type: "YUILoader",
-                base: this.base,
-                filter: this.filter,
-                required: this.required,
-                loaded: this.loaded,
-                inserted: this.inserted
-            };
-
-            L.dump(o, 1);
-        },
-
         /**
          * inserts the requested modules and their dependencies.  
          * <code>type</code> can be "js" or "css".  Both script and 
@@ -1066,9 +1113,9 @@ YUI.add("loader", function(Y) {
                 var self = this;
                 this._internalCallback = function() {
                             self._internalCallback = null;
-                            self.insert(null, "js");
+                            self.insert(null, JS);
                         };
-                this.insert(null, "css");
+                this.insert(null, CSS);
                 return;
             }
 
@@ -1110,19 +1157,22 @@ YUI.add("loader", function(Y) {
                     return;
                 }
 
-                // Y.log("loadNext executing, just loaded " + mname);
+                Y.log("loadNext executing, just loaded " + mname);
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
                 // data to avoid loading the same module multiple times
                 this.inserted[mname] = true;
 
-                if (this.onProgress) {
-                    this.onProgress.call(this.scope, {
-                            name: mname,
-                            data: this.data
-                        });
-                }
+                // if (this.onProgress) {
+                  //   this.onProgress.call(this.scope, );
+                // }
+
+                this.fire('progress', {
+                    name: mname,
+                    data: this.data
+                });
+
                 //var o = this.getProvides(mname);
                 //this.inserted = Y.merge(this.inserted, o);
             }
@@ -1131,7 +1181,8 @@ YUI.add("loader", function(Y) {
 
             for (i=0; i<len; i=i+1) {
 
-                // This.inserted keeps track of what the loader has loaded
+                // this.inserted keeps track of what the loader has loaded.
+                // move on if this item is done.
                 if (s[i] in this.inserted) {
                     // Y.log(s[i] + " alread loaded ");
                     continue;
@@ -1142,35 +1193,45 @@ YUI.add("loader", function(Y) {
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    // Y.log("still loading " + s[i] + ", waiting");
+                    Y.log("still loading " + s[i] + ", waiting");
                     return;
                 }
 
                 // log("inserting " + s[i]);
-                m = this.moduleInfo[s[i]];
+                m = this.getModule(s[i]);
 
                 if (!m) {
-                    this.onFailure.call(this.scope, {
-                            msg: "undefined module " + m,
-                            data: this.data
-                        });
+                    // this.onFailure.call(this.scope, {
+                        // msg: "undefined module " + m,
+                        // data: this.data
+                    // });
+                    var msg = "undefined module " + m;
+                    Y.log(msg, 'warn', 'Loader');
+
+                    this.fire('failure', {
+                        msg: msg,
+                        data: this.data
+                    });
+
                     return;
                 }
+
 
                 // The load type is stored to offer the possibility to load
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    //Y.log("attempting to load " + s[i] + ", " + this.base);
+                    Y.log("attempting to load " + s[i] + ", " + this.base);
 
-                    var fn=(m.type === "css") ? Y.Get.css : Y.Get.script,
+                    var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         url=m.fullpath || this._url(m.path), self=this, 
                         c=function(o) {
+                            // Y.log('loading next, just loaded' + o.data);
                             self.loadNext(o.data);
                         };
 
                     // safari 2.x or lower, script, and part of YUI
-                    if (Y.ua.webkit && Y.ua.webkit < 420 && m.type === "js" && 
+                    if (Y.UA.webkit && Y.UA.webkit < 420 && m.type === JS && 
                           !m.varName) {
                           //YUI.info.moduleInfo[s[i]]) {
                           //Y.log("using Y env " + s[i] + ", " + m.varName);
@@ -1196,14 +1257,22 @@ YUI.add("loader", function(Y) {
 
             // internal callback for loading css first
             if (this._internalCallback) {
+
                 var f = this._internalCallback;
                 this._internalCallback = null;
                 f.call(this);
-            } else if (this.onSuccess) {
+
+            // } else if (this.onSuccess) {
+            } else {
                 this._pushEvents();
-                this.onSuccess.call(this.scope, {
+
+                // this.onSuccess.call(this.scope, {
+                //       data: this.data
+                // });
+
+                this.fire('success', {
                         data: this.data
-                    });
+                });
             }
 
         },
@@ -1247,6 +1316,7 @@ YUI.add("loader", function(Y) {
 
     };
 
-})();
+    Y.augment(Y.Loader, Y.Event.Target);
+
 
 }, "3.0.0");

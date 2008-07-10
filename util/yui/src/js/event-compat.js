@@ -287,5 +287,9 @@ YUI.add("event-compat", function(Y) {
 
     Y.mix(Y.Event, o);
 
+    Y.util.Event = Y.Event;
+
+    Y.register("event", Y, {version: "@VERSION@", build: "@BUILD@"});
+
 }, "3.0.0");
 

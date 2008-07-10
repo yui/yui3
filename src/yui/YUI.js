@@ -179,16 +179,33 @@ YUI.prototype = {
      */
     use: function() {
 
-        var a=arguments, l=a.length, mods=YUI.Env.mods, 
-            Y = this, used = Y.Env._used;
+        var Y = this, 
+            a=Array.prototype.slice.call(arguments), 
+            mods=YUI.Env.mods, 
+            used = Y.Env._used;
 
-        // YUI().use('*'); // assumes you need everything you've included
+        // YUI().use('*'); // bind everything available
         if (a[0] === "*") {
-            //return Y.use.apply(Y, Y.Object.keys(mods));
-            for (var k in mods) {
-                Y.use(k);
-            }
+            a = Object.keys(mods);
+            // //return Y.use.apply(Y, Y.Object.keys(mods));
+            // for (var k in mods) {
+                // Y.use(k);
+            // }
         }
+
+        Y.log('loader before: ' + a.join(','));
+
+        // use loader to optimize and sort the requirements if it
+        // is available.
+        if (Y.Loader) {
+
+            var loader = new Y.Loader(Y.config);
+            loader.require(a);
+            loader.calculate();
+            a = loader.sorted;
+        }
+
+        Y.log('loader after: ' + a.join(','));
 
         var missing = [], r = [], f = function(name) {
 
@@ -202,6 +219,7 @@ YUI.prototype = {
             var m = mods[name], j, req, use;
 
             if (m) {
+                Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
             } else {
@@ -228,7 +246,9 @@ YUI.prototype = {
             }
         };
 
-        for (var i=0; i<l; i=i+1) {
+        // iterate arguments
+        for (var i=0, l=a.length; i<l; i=i+1) {
+            // th
             if ((i === l-1) && typeof a[i] === 'function') {
                 // Y.log('found loaded listener');
                 Y.on('yui:load', a[i], Y, Y);
@@ -237,9 +257,12 @@ YUI.prototype = {
             }
         }
 
-        // Y.log('all reqs: ' + r);
+        Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
         var attach = function() {
+
+            Y.log('attach ' + arguments[0]);
+
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
@@ -256,8 +279,16 @@ YUI.prototype = {
             }
         };
 
-        if (false && missing.length) {
+        if (Y.Loader && missing.length) {
             // dynamic load
+            Y.log('trying to get the missing modules ' + missing);
+            var loader = new Y.Loader();
+            loader.require(missing);
+            loader.subscribe('success', attach, loader, 'loader');
+            loader.insert();
+            // loader.subscribe('failure', function() {
+                // Y.log('asdf');
+                // });
         } else {
             attach();
         }

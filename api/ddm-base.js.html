@@ -50,6 +50,7 @@
 <span class="c">     */</span>
     
     <span class="k">var</span> <span class="nx">DDMBase</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">DDMBase</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
 
     <span class="nx">DDMBase</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DragDropMgr&#39;</span><span class="o">;</span>
@@ -59,42 +60,64 @@
 <span class="c">        * @attribute clickPixelThresh</span>
 <span class="c">        * @description The number of pixels to move to start a drag operation, default is 3.</span>
 <span class="c">        * @type Number</span>
-<span class="c">        */</span>        
+<span class="c">        */</span>
         <span class="nx">clickPixelThresh</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="m">3</span><span class="o">,</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">clickPixelThresh</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">3</span>
         <span class="o">},</span>
         <span class="c">/**</span>
-<span class="c">        * @attribute clickPixelThresh</span>
+<span class="c">        * @attribute clickTimeThresh</span>
 <span class="c">        * @description The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.</span>
 <span class="c">        * @type Number</span>
 <span class="c">        */</span>        
         <span class="nx">clickTimeThresh</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">value</span><span class="o">:</span> <span class="m">1000</span><span class="o">,</span>
-            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">clickTimeThresh</span> <span class="o">=</span> <span class="nx">p</span><span class="o">;</span>
-            <span class="o">}</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">1000</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute dragMode</span>
+<span class="c">        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances. </span>
+<span class="c">        * @type String</span>
+<span class="c">        */</span>        
+        <span class="nx">dragMode</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;point&#39;</span><span class="o">,</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">mode</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_setDragMode</span><span class="o">(</span><span class="nx">mode</span><span class="o">);</span>
+            <span class="o">}</span>           
         <span class="o">}</span>
 
     <span class="o">};</span>
 
-    <span class="c">//Y.mix(DDMBase, {</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DDMBase</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">DDMBase</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _setDragMode</span>
+<span class="c">        * @description Handler for dragMode attribute setter.</span>
+<span class="c">        * @param String/Number The Number value or the String for the DragMode to default all future drag instances to.</span>
+<span class="c">        * @return Number The Mode to be set</span>
+<span class="c">        */</span>
+        <span class="nx">_setDragMode</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">mode</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">mode</span> <span class="o">===</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">mode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragMode&#39;</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="nx">switch</span> <span class="o">(</span><span class="nx">mode</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
+                <span class="nx">case</span> <span class="s1">&#39;intersect&#39;</span><span class="o">:</span>
+                    <span class="k">return</span> <span class="m">1</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
+                <span class="nx">case</span> <span class="s1">&#39;strict&#39;</span><span class="o">:</span>
+                    <span class="k">return</span> <span class="m">2</span><span class="o">;</span>
+                <span class="nx">case</span> <span class="m">0</span><span class="o">:</span>
+                <span class="nx">case</span> <span class="s1">&#39;point&#39;</span><span class="o">:</span>
+                    <span class="k">return</span> <span class="m">0</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="m">0</span><span class="o">;</span>       
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @property CSS_PREFIX</span>
+<span class="c">        * @description The PREFIX to attach to all DD CSS class names</span>
+<span class="c">        * @type {String}</span>
+<span class="c">        */</span>
+        <span class="nx">CSS_PREFIX</span><span class="o">:</span> <span class="s1">&#39;yui-dd&#39;</span><span class="o">,</span>
         <span class="nx">_activateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{},</span>        
-        <span class="c">/**</span>
-<span class="c">        * @property clickPixelThresh</span>
-<span class="c">        * @description The number of pixels moved needed to start a drag operation, default 3.</span>
-<span class="c">        * @type {Number}</span>
-<span class="c">        */</span>
-        <span class="nx">clickPixelThresh</span><span class="o">:</span> <span class="m">3</span><span class="o">,</span>
-        <span class="c">/**</span>
-<span class="c">        * @property clickTimeThresh</span>
-<span class="c">        * @description The number of milliseconds a mousedown needs to exceed to start a drag operation, default 1000.</span>
-<span class="c">        * @type {Number}</span>
-<span class="c">        */</span>
-        <span class="nx">clickTimeThresh</span><span class="o">:</span> <span class="m">1000</span><span class="o">,</span>
         <span class="c">/**</span>
 <span class="c">        * @private</span>
 <span class="c">        * @property _drags</span>
@@ -137,10 +160,9 @@
 <span class="c">        * @method _init</span>
 <span class="c">        * @description DDM&#39;s init method</span>
 <span class="c">        */</span>
-        <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">initializer</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mousemove&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_move</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
-            <span class="c">//YAHOO.util.Event.on(document, &#39;mousemove&#39;, this._move, this, true);</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;document&#39;</span><span class="o">).</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;mouseup&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">,</span> <span class="k">this</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="o">},</span>
         <span class="c">/**</span>
@@ -202,14 +224,14 @@
 <span class="c">        * @private</span>
 <span class="c">        * @method _move</span>
 <span class="c">        * @description Internal listener for the mousemove DOM event to pass to the Drag&#39;s move method.</span>
+<span class="c">        * @param {Event} ev The Dom mousemove Event</span>
 <span class="c">        */</span>
-        <span class="nx">_move</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">_move</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">_move</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">_dropMove</span><span class="o">();</span>
             <span class="o">}</span>
-            <span class="c">//console.log(&#39;_move&#39;);</span>
-<span class="c"></span>        <span class="o">},</span>
+        <span class="o">},</span>
         <span class="c">/**</span>
 <span class="c">        * @method setXY</span>
 <span class="c">        * @description A simple method to set the top and left position from offsets instead of page coordinates</span>
@@ -234,6 +256,8 @@
             
         <span class="o">},</span>
         <span class="c">/**</span>
+<span class="c">        * //TODO Private, rename??...</span>
+<span class="c">        * @private</span>
 <span class="c">        * @method cssSizestoObject</span>
 <span class="c">        * @description Helper method to use to set the gutter from the attribute setter.</span>
 <span class="c">        * @param {String} gutter CSS style string for gutter: &#39;5 0&#39; (sets top and bottom to 5px, left and right to 0px), &#39;1 2 3 4&#39; (top 1px, right 2px, bottom 3px, left 4px)</span>
@@ -291,7 +315,6 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;DD&#39;</span><span class="o">);</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DDMBase</span><span class="o">();</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">_init</span><span class="o">();</span>
 </pre></div>
                     </div>
 			</div>
@@ -333,7 +356,7 @@
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_yuiloader.html">yuiloader</a></li>
                         </ul>
                     </div>
 
