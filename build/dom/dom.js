@@ -1260,7 +1260,10 @@ Y.mix(Y.DOM, {
         var val = '',
             doc = node[OWNER_DOCUMENT];
 
-        return doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
+        if (node[STYLE]) {
+            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
+        }
+        return val;
     }
 });
 
@@ -1394,7 +1397,7 @@ Y.mix(Y.DOM, {
                 var scrollLeft = Y.DOM.docScrollX(node),
                     scrollTop = Y.DOM.docScrollY(node),
                     box = node[GET_BOUNDING_CLIENT_RECT](),
-                    doc = node[OWNER_DOCUMENT],
+                    doc = Y.DOM._getDoc(node),
                     //Round the numbers so we get sane data back
                     xy = [Math.floor(box[LEFT]), Math.floor(box[TOP])];
 
