@@ -55,14 +55,15 @@ YUI.add('compat', function(Y) {
      
         augmentProto: function(r, s) {
             var a = arguments, wl = (a.length > 2) ? Y.Array(a, 2, true) : null;
-            return Y.bind(Y.prototype, r, s, (wl), wl);
+            return Y.mix(r, s, (wl), wl, 1);
         },
 
-        augment: Y.bind(Y.augment, Y),
         extend: Y.bind(Y.extend, Y), 
         // merge: Y.bind(Y.merge, Y)
         merge: Y.merge
     }, true);
+
+    L.augment = L.augmentProto;
 
     // IE won't enumerate this
     L.hasOwnProperty = Y.Object.owns;
