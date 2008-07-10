@@ -419,10 +419,6 @@ YUI.add('compat', function(Y) {
     // @todo subscribe register to the module added event to pick
     // modules registered with the new method.
 //}, "3.0.0");
-//Y.namespace('YAHOO.util');
-window.YAHOO = window.YAHOO || {};
-YAHOO.util = YAHOO.util || {};
-
 (function() {
     var propertyCache = {};
     var patterns = {
@@ -452,7 +448,7 @@ YAHOO.util = YAHOO.util || {};
         //return property.replace(/-([a-z])/gi, function(m0, m1) {return m1.toUpperCase()}) // cant use function as 2nd arg yet due to safari bug
     };
 
-    Y.Dom = {
+    var Dom = {
 
         get: function(el) {
             if (el) {
@@ -467,7 +463,7 @@ YAHOO.util = YAHOO.util || {};
                 if ('length' in el) { // array-like 
                     var c = [];
                     for (var i = 0, len = el.length; i < len; ++i) {
-                        c[c.length] = Y.Dom.get(el[i]);
+                        c[c.length] = Dom.get(el[i]);
                     }
                     
                     return c;
@@ -480,15 +476,15 @@ YAHOO.util = YAHOO.util || {};
         },
 
         isAncestor: function(haystack, needle) {
-            return Y.DOM.contains(Y.Dom.get(haystack), Y.Dom.get(needle));
+            return YUI.DOM.contains(Dom.get(haystack), Dom.get(needle));
         },
 
         inDocument: function(el) {
-            return Y.Dom.isAncestor(Y.config.doc.documentElement, el);
+            return Dom.isAncestor(Y.config.doc.documentElement, el);
         },
        
         batch: function(el, method, o, override, args) {
-            el = (el && (el.tagName || el.item)) ? el : Y.Dom.get(el); // skip get() when possible 
+            el = (el && (el.tagName || el.item)) ? el : Dom.get(el); // skip get() when possible 
  
             if (!el || !method) { 
                 return false; 
@@ -523,21 +519,21 @@ YAHOO.util = YAHOO.util || {};
 
         // 2.x returns false if already present
         _addClass: function(el, className) {
-            if ( Y.DOM.hasClass(el, className) ) {
+            if ( YUI.DOM.hasClass(el, className) ) {
                 return false;
             }
 
-            Y.DOM.addClass(el, className);
+            YUI.DOM.addClass(el, className);
             return true;
         },
 
         // 2.x returns false if not present
         _removeClass: function(el, className) {
-            if ( !Y.DOM.hasClass(el, className) ) {
+            if ( !YUI.DOM.hasClass(el, className) ) {
                 return false;
             }
 
-            Y.DOM.removeClass(el, className);
+            YUI.DOM.removeClass(el, className);
             return true;
         },
 
@@ -547,13 +543,13 @@ YAHOO.util = YAHOO.util || {};
                 return false;
             }
 
-            Y.DOM.replaceClass(el, oldClass, newClass);
+            YUI.DOM.replaceClass(el, oldClass, newClass);
             return true;
         },
 
         getElementsByClassName: function(className, tag, root) {
             tag = tag || '*';
-            root = (root) ? Y.Dom.get(root) : Y.config.doc; 
+            root = (root) ? Dom.get(root) : Y.config.doc; 
             var nodes = [];
             if (root) {
                 nodes = Y.Selector.query(tag + '.' + className, root);
@@ -563,32 +559,32 @@ YAHOO.util = YAHOO.util || {};
 
         getElementsBy: function(method, tag, root) {
             tag = tag || '*';
-            root = (root) ? Y.Dom.get(root) : null || document;
+            root = (root) ? Dom.get(root) : null || document;
 
             var nodes = [];
             if (root) {
-                nodes = Y.DOM.byTag(tag, root, method);
+                nodes = YUI.DOM.byTag(tag, root, method);
             }
             return nodes;
         },
 
-        getViewportWidth: Y.DOM.winWidth,
-        getViewportHeight: Y.DOM.winHeight,
-        getDocumentWidth: Y.DOM.docWidth,
-        getDocumentHeight: Y.DOM.docHeight,
-        getDocumentScrollTop: Y.DOM.docScrollY,
-        getDocumentScrollLeft: Y.DOM.docScrollX,
-        getDocumentHeight: Y.DOM.docHeight,
+        getViewportWidth: YUI.DOM.winWidth,
+        getViewportHeight: YUI.DOM.winHeight,
+        getDocumentWidth: YUI.DOM.docWidth,
+        getDocumentHeight: YUI.DOM.docHeight,
+        getDocumentScrollTop: YUI.DOM.docScrollY,
+        getDocumentScrollLeft: YUI.DOM.docScrollX,
+        getDocumentHeight: YUI.DOM.docHeight,
 
         _guid: function(el, prefix) {
             prefix = prefix || 'yui-gen';
-            Y.Dom._id_counter = Y.Dom._id_counter || 0;
+            Dom._id_counter = Dom._id_counter || 0;
 
             if (el && el.id) { // do not override existing ID
                 return el.id;
             } 
 
-            var id = prefix + Y.Dom._id_counter++;
+            var id = prefix + Dom._id_counter++;
 
             if (el) {
                 el.id = id;
@@ -599,23 +595,23 @@ YAHOO.util = YAHOO.util || {};
 
         _region: function(el) {
             if ( (el.parentNode === null || el.offsetParent === null ||
-                    Y.DOM.getStyle(el, 'display') == 'none') && el != el.ownerDocument.body) {
+                    YUI.DOM.getStyle(el, 'display') == 'none') && el != el.ownerDocument.body) {
                 return false;
             }
 
-            return Y.DOM.region(el);
+            return YUI.DOM.region(el);
 
         },
 
         _ancestorByClass: function(element, className) {
-            return Y.DOM.ancestor(element, function(el) {
-                return Y.DOM.hasClass(el, className);
+            return YUI.DOM.ancestor(element, function(el) {
+                return YUI.DOM.hasClass(el, className);
             });
         },
 
         _ancestorByTag: function(element, tag) {
             tag = tag.toUpperCase();
-            return Y.DOM.ancestor(element, function(el) {
+            return YUI.DOM.ancestor(element, function(el) {
                 return el.tagName.toUpperCase() === tag;
             });
         }
@@ -624,62 +620,62 @@ YAHOO.util = YAHOO.util || {};
     var slice = [].slice;
 
     var wrap = function(fn, name) {
-        Y.Dom[name] = function() {
+        Dom[name] = function() {
             var args = slice.call(arguments);
-            args[0] = Y.Dom.get(args[0]);
-            return fn.apply(Y.Dom, args);
+            args[0] = Dom.get(args[0]);
+            return fn.apply(Dom, args);
         };
     };
 
     var wrapped = {
-        getAncestorBy: Y.DOM.ancestor,
-        getAncestorByClassName: Y.Dom._ancestorByClass,
-        getAncestorByTagName: Y.Dom._ancestorByTag,
-        getPreviousSiblingBy: Y.DOM.previous,
-        getPreviousSibling: Y.DOM.previous,
-        getNextSiblingBy: Y.DOM.next,
-        getNextSibling: Y.DOM.next,
-        getFirstChildBy: Y.DOM.firstChild,
-        getFirstChild: Y.DOM.firstChild,
-        getLastChildBy: Y.DOM.lastChild,
-        getLastChild: Y.DOM.lastChild,
-        getChildrenBy: Y.DOM.children,
-        getChildren: Y.DOM.children,
+        getAncestorBy: YUI.DOM.ancestor,
+        getAncestorByClassName: Dom._ancestorByClass,
+        getAncestorByTagName: Dom._ancestorByTag,
+        getPreviousSiblingBy: YUI.DOM.previous,
+        getPreviousSibling: YUI.DOM.previous,
+        getNextSiblingBy: YUI.DOM.next,
+        getNextSibling: YUI.DOM.next,
+        getFirstChildBy: YUI.DOM.firstChild,
+        getFirstChild: YUI.DOM.firstChild,
+        getLastChildBy: YUI.DOM.lastChild,
+        getLastChild: YUI.DOM.lastChild,
+        getChildrenBy: YUI.DOM.children,
+        getChildren: YUI.DOM.children,
         insertBefore: function(newNode, refNode) {
-            Y.DOM.insertBefore(Y.Dom.get(newNode), Y.Dom.get(refNode));
+            YUI.DOM.insertBefore(Dom.get(newNode), Dom.get(refNode));
         },
         insertAfter: function(newNode, refNode) {
-            Y.DOM.insertAfter(Y.Dom.get(newNode), Y.Dom.get(refNode));
+            YUI.DOM.insertAfter(Dom.get(newNode), Dom.get(refNode));
         }
     };
 
     Y.each(wrapped, wrap);
 
     var batched = {
-        getStyle: Y.DOM.getStyle,
-        setStyle: Y.DOM.setStyle,
-        getXY: Y.DOM.getXY,
-        setXY: Y.DOM.setXY,
-        getX: Y.DOM.getX,
-        getY: Y.DOM.getY,
-        setX: Y.DOM.setX, 
-        setY: Y.DOM.setY, 
-        getRegion: Y.Dom._region,
-        hasClass: Y.DOM.hasClass,
-        addClass: Y.Dom._addClass,
-        removeClass: Y.Dom._removeClass,
-        replaceClass: Y.Dom._replaceClass,
-        generateId: Y.Dom._guid
+        getStyle: YUI.DOM.getStyle,
+        setStyle: YUI.DOM.setStyle,
+        getXY: YUI.DOM.getXY,
+        setXY: YUI.DOM.setXY,
+        getX: YUI.DOM.getX,
+        getY: YUI.DOM.getY,
+        setX: YUI.DOM.setX, 
+        setY: YUI.DOM.setY, 
+        getRegion: Dom._region,
+        hasClass: YUI.DOM.hasClass,
+        addClass: Dom._addClass,
+        removeClass: Dom._removeClass,
+        replaceClass: Dom._replaceClass,
+        generateId: Dom._guid
     };
 
     Y.each(batched, function(v, n) {
-        Y.Dom[n] = function(el) {
+        Dom[n] = function(el) {
             var args = slice.call(arguments, 1);
-            return Y.Dom.batch(el, v, null, null, args);
+            return Dom.batch(el, v, null, null, args);
         };
     });
 
-    YAHOO.util.Dom = Y.Dom;
+    Y.util.Dom = Dom;
 
     YAHOO.util.Region = function(t, r, b, l) {
         this.top = t;
@@ -735,7 +731,7 @@ YAHOO.util = YAHOO.util || {};
     };
 
     YAHOO.util.Region.getRegion = function(el) {
-        return Y.DOM.region(el);
+        return YUI.DOM.region(el);
     };
 
     YAHOO.util.Point = function(x, y) {
