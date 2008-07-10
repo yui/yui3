@@ -179,7 +179,8 @@ YUI.prototype = {
         var Y = this, 
             a=Array.prototype.slice.call(arguments), 
             mods=YUI.Env.mods, 
-            used = Y.Env._used,loader
+            used = Y.Env._used,
+            loader;
 
         // YUI().use('*'); // bind everything available
         if (a[0] === "*") {

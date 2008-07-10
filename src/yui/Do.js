@@ -94,22 +94,27 @@ YUI.add("aop", function(Y) {
 
     Y.Do.Method.prototype.exec = function () {
 
-        var args = Y.Array(arguments, 0, true), i, ret, newRet;
+        var args = Y.Array(arguments, 0, true), 
+            i, ret, newRet, 
+            bf = this.before,
+            af = this.after;
 
         // for (i=0; i<this.before.length; ++i) {
-        for (i in this.before) {
-            ret = this.before[i].apply(this.obj, args);
+        for (i in bf) {
+            if (bf.hasOwnProperty(i)) {
+                ret = bf[i].apply(this.obj, args);
 
-            // Stop processing if an Error is returned
-            if (ret && ret.constructor == Y.Do.Error) {
-                // this.logger.debug("Error before " + this.methodName + 
-                //      ": " ret.msg);
-                return ret.retVal;
-            // Check for altered arguments
-            } else if (ret && ret.constructor == Y.Do.AlterArgs) {
-                // this.logger.debug("Params altered before " + 
-                //      this.methodName + ": " ret.msg);
-                args = ret.newArgs;
+                // Stop processing if an Error is returned
+                if (ret && ret.constructor == Y.Do.Error) {
+                    // this.logger.debug("Error before " + this.methodName + 
+                    //      ": " ret.msg);
+                    return ret.retVal;
+                // Check for altered arguments
+                } else if (ret && ret.constructor == Y.Do.AlterArgs) {
+                    // this.logger.debug("Params altered before " + 
+                    //      this.methodName + ": " ret.msg);
+                    args = ret.newArgs;
+                }
             }
         }
 
@@ -118,18 +123,20 @@ YUI.add("aop", function(Y) {
 
         // execute after methods.
         // for (i=0; i<this.after.length; ++i) {
-        for (i in this.after) {
-            newRet = this.after[i].apply(this.obj, args);
-            // Stop processing if an Error is returned
-            if (newRet && newRet.constructor == Y.Do.Error) {
-                // this.logger.debug("Error after " + this.methodName + 
-                //      ": " ret.msg);
-                return newRet.retVal;
-            // Check for a new return value
-            } else if (newRet && newRet.constructor == Y.Do.AlterReturn) {
-                // this.logger.debug("Return altered after " + 
-                //      this.methodName + ": " newRet.msg);
-                ret = newRet.newRetVal;
+        for (i in af) {
+            if (af.hasOwnProperty(i)) {
+                newRet = af[i].apply(this.obj, args);
+                // Stop processing if an Error is returned
+                if (newRet && newRet.constructor == Y.Do.Error) {
+                    // this.logger.debug("Error after " + this.methodName + 
+                    //      ": " ret.msg);
+                    return newRet.retVal;
+                // Check for a new return value
+                } else if (newRet && newRet.constructor == Y.Do.AlterReturn) {
+                    // this.logger.debug("Return altered after " + 
+                    //      this.methodName + ": " newRet.msg);
+                    ret = newRet.newRetVal;
+                }
             }
         }
 

@@ -1,11 +1,11 @@
 // Compatibility layer for 2.x
 YUI.add("compat", function(Y) {
 
-    // Bind the core modules to the YUI global
-    YUI._setup();
 
-    // if (Y === YUI) {
     if (YUI !== window.YAHOO) {
+
+        // Bind the core modules to the YUI global
+        YUI._setup();
         
         // get any existing YAHOO obj props
         var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
@@ -17,11 +17,15 @@ YUI.add("compat", function(Y) {
         if (o) {
             Y.mix(Y, o);
         }
+
+    }
+
+    if (Y !== YUI) {
+        YUI.use('compat');
     }
 
     // add old namespaces
     Y.namespace("util", "widget", "example");
-
 
     // case/location change
     Y.env = (Y.env) ? Y.mix(Y.env, Y.Env) : Y.Env;
