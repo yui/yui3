@@ -59,8 +59,7 @@
                 top: 0,
                 left: 0,
                 display: 'block',
-                opacity: ((this._debugShim) ? '.5' : '0'),
-                filter: 'alpha(opacity=' + ((this._debugShim) ? '50' : '0') + ')'
+                opacity: ((this._debugShim) ? '.5' : '0')
             });
         },
         /**
@@ -85,14 +84,16 @@
         * @description Creates the shim and adds it's listeners to it.
         */
         _createPG: function() {
-            var pg = Y.Node.create(['div']),
+            //var pg = Y.Node.create(['div']),
+            var pg = Y.Node.create('<div></div>'),
             bd = Y.Node.get('body');
             pg.setStyles({
                 top: '0',
                 left: '0',
                 position: 'absolute',
                 zIndex: '9999',
-                opacity: '0',
+                overflow: 'hidden',
+                //opacity: '0',
                 backgroundColor: 'red',
                 display: 'none',
                 height: '5px',
@@ -106,7 +107,7 @@
             this._pg = pg;
             this._pg.on('mouseup', this._end, this, true);
             this._pg.on('mousemove', this._move, this, true);
-            //YAHOO.util.Event.on(this._pg, 'mousemove', this._move, this, true);
+            
             
             //TODO
             Y.Event.addListener(window, 'resize', this._pg_size, this, true);

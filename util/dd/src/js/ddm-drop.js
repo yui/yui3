@@ -9,7 +9,15 @@
      * @extends Base
      * @constructor
      */    
+    //TODO CSS class name for the bestMatch..
     Y.mix(Y.DD.DDM, {
+        /**
+        * @private
+        * @property _noShim
+        * @description This flag turns off the use of the mouseover/mouseout shim. It should not be used unless you know what you are doing.
+        * @type {Boolean}
+        */
+        _noShim: false,
         /**
         * @private
         * @property _activeShims
@@ -24,7 +32,10 @@
         * @return {Boolean}
         */
         _hasActiveShim: function() {
-            return ((this._activeShims.length) ? true : false);
+            if (this._noShim) {
+                return true;
+            }
+            return this._activeShims.length;
         },
         /**
         * @private
@@ -33,15 +44,7 @@
         * @param {Object} d The Drop instance to add to the list.
         */
         _addActiveShim: function(d) {
-            var add = true;
-            Y.each(this._activeShims, function(v, k) {
-                if (v._yuid === d._yuid) {
-                    add = false;
-                }
-            });
-            if (add) {
-                this._activeShims[this._activeShims.length] = d;
-            }
+            this._activeShims[this._activeShims.length] = d;
         },
         /**
         * @private
@@ -62,10 +65,11 @@
         /**
         * @method syncActiveShims
         * @description This method will sync the position of the shims on the Drop Targets that are currently active.
+        * @param {Boolean} force Resize/sync all Targets.
         * @return {Array} drops The list of Drop Targets that was just synced.
         */
-        syncActiveShims: function() {
-            var drops = this._lookup();
+        syncActiveShims: function(force) {
+            var drops = ((force) ? this.targets : this._lookup());
             Y.each(drops, function(v, k) {
                 v.sizeShim.call(v);
             }, this);
@@ -74,30 +78,27 @@
         },
         /**
         * @private
-        * @property _oldMode
-        * @description Placeholder for the mode when the drag object changes it..
-        * @type Number
-        */
-        _oldMode: 0,
-        /**
         * @property mode
         * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict
         * @type Number
         */
         mode: 0,
         /**
+        * @private
         * @property POINT
         * @description In point mode, a Drop is targeted by the cursor being over the Target
         * @type Number
         */
         POINT: 0,
         /**
+        * @private
         * @property INTERSECT
         * @description In intersect mode, a Drop is targeted by "part" of the drag node being over the Target
         * @type Number
         */
         INTERSECT: 1,
         /**
+        * @private
         * @property STRICT
         * @description In strict mode, a Drop is targeted by the "entire" drag node being over the Target
         * @type Number
@@ -120,6 +121,7 @@
         * @description An array of the valid Drop Targets for this interaction.
         * @type {Array}
         */
+        //TODO Change array/object literals to be in sync..
         validDrops: [],
         /**
         * @property otherDrops
@@ -128,19 +130,38 @@
         */
         otherDrops: {},
         /**
-        * @property tars
+        * @property targets
         * @description All of the Targets
         * @type {Array}
         */
-        tars: [],
+        targets: [],
         /**
-        * @method addValid
+        * @private 
+        * @method _addValid
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
         */
-        addValid: function(drop) {
+        _addValid: function(drop) {
             this.validDrops[this.validDrops.length] = drop;
+            return this;
+        },
+        /**
+        * @private 
+        * @method _removeValid
+        * @description Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
+        * @param {Object} drop
+        * @return {Self}
+        */
+        _removeValid: function(drop) {
+            var drops = [];
+            Y.each(this.validDrops, function(v, k) {
+                if (v !== drop) {
+                    drops[drops.length] = v
+                }
+            });
+
+            this.validDrops = drops;
             return this;
         },
         /**
@@ -150,10 +171,11 @@
         * @return {Boolean}
         */
         isOverTarget: function(drop) {
-            if (Y.Lang.isObject(this.activeDrag) && drop) {
+            //if (Y.Lang.isObject(this.activeDrag) && drop) { //TODO, check this check..
+            if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY;
                 if (xy) {
-                    if (this.mode == this.STRICT) {
+                    if (this.activeDrag.get('dragMode') == this.STRICT) {
                         return this.activeDrag.get('dragNode').inRegion(drop.region, true, this.activeDrag.region);
                     } else {
                         return drop.shim.intersect({
@@ -182,33 +204,12 @@
         },
         /**
         * @private
-        * @method _setMode
-        * @description Private method to set the interaction mode based on the activeDrag's config
-        */
-        _setMode: function() {
-            this._oldMode = this.mode;
-            if (this.activeDrag && (this.activeDrag.get('dragMode') !== -1)) {
-                this.mode = this.activeDrag.get('dragMode');
-            }
-        },
-        /**
-        * @private
-        * @method _resetMode
-        * @description Private method to reset the interaction mode to the default after a drag operation
-        */
-        _resetMode: function() {
-            this.mode = this._oldMode;
-        },
-
-        /**
-        * @private
         * @method _activateTargets
         * @description Clear the cache and activate the shims of all the targets
         */
         _activateTargets: function() {
-            this._setMode();
             this.clearCache();
-            Y.each(this.tars, function(v, k) {
+            Y.each(this.targets, function(v, k) {
                 v._activateShim.apply(v, []);
             }, this);
             this._handleTargetOver();
@@ -254,10 +255,13 @@
         * @description This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..
         */
         _deactivateTargets: function() {
-            var other = [];
+            var other = [],
+                activeDrag = this.activeDrag;
             
-            if (this.activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
-                if (!this.mode) {
+            //TODO why is this check so hard??
+            if (activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
+                if (!activeDrag.get('dragMode')) {
+                    //TODO otherDrops -- private..
                     other = this.otherDrops;
                     delete other[this.activeDrop];
                 } else {
@@ -265,30 +269,28 @@
                     this.activeDrop = tmp[0];
                     other = tmp[1];
                 }
-                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
-                this.activeDrop.fire('drop:hit', { drag: this.activeDrag, drop: this.activeDrop, others: other });
-                this.activeDrag.fire('drag:drophit', { drag: this.activeDrag,  drop: this.activeDrop, others: other });
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                this.activeDrop.fire('drop:hit', { drag: activeDrag, drop: this.activeDrop, others: other });
+                activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: this.activeDrop, others: other });
             } else if (this.activeDrag) {
-                this.activeDrag.get('node').removeClass('yui-dd-drag-over')
-                this.activeDrag.fire('drag:dropmiss', { pageX: this.activeDrag.lastXY[0], pageY: this.activeDrag.lastXY[1] });
+                activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
+                activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
                 Y.log('No Active Drag', 'warn', 'dd-ddm');
             }
             
             this.activeDrop = null;
 
-            Y.each(this.tars, function(v, k) {
+            Y.each(this.targets, function(v, k) {
                 v._deactivateShim.apply(v, []);
             }, this);
-            this._resetMode();
         },
         /**
         * @private
         * @method _dropMove
         * @description This method is called when the move method is called on the Drag Object.
-        * @param {Boolean} force Optional force at start.
         */
-        _dropMove: function(force) {
+        _dropMove: function() {
             if (this._hasActiveShim()) {
                 //Y.log('We have an active shim, check targets', 'info', 'dd-ddm');
                 this._handleTargetOver();
@@ -331,35 +333,28 @@
             }, this);
         },
         /**
-        * @method regTarget
-        * @description Add the passed in Target to the tars collection
-        * @param {Object} t The Target to add to the tars collection
+        * @private
+        * @method _regTarget
+        * @description Add the passed in Target to the targets collection
+        * @param {Object} t The Target to add to the targets collection
         */
-        regTarget: function(t) {
-            this.tars[this.tars.length] = t;
+        _regTarget: function(t) {
+            this.targets[this.targets.length] = t;
         },
         /**
-        * @method unregTarget
-        * @description Remove the passed in Target from the tars collection
-        * @param {Object} t The Target to remove from the tars collection
+        * @private
+        * @method _unregTarget
+        * @description Remove the passed in Target from the targets collection
+        * @param {Object} t The Target to remove from the targets collection
         */
-        unregTarget: function(t) {
-            var tars = [];
-            Y.each(this.tars, function(v, k) {
+        _unregTarget: function(t) {
+            var targets = [];
+            Y.each(this.targets, function(v, k) {
                 if (v != t) {
-                    tars[tars.length] = v;
+                    targets[targets.length] = v;
                 }
             }, this);
-            this.tars = tars;
-        },
-        /**
-        * @method rnd
-        * @description Round a number to the nearest 100th.
-        * @param {Number} The number to round
-        * @return {Number} The rounded number
-        */
-        rnd: function(n) {
-            return (Math.round(n / 100) * 100);
+            this.targets = targets;
         },
         /**
         * @method getDrop
@@ -371,7 +366,7 @@
             var drop = false,
                 n = Y.Node.get(node);
             if (n instanceof Y.Node) {
-                Y.each(this.tars, function(v, k) {
+                Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
                         drop = v;
                     }

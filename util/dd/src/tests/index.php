@@ -5,9 +5,8 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <html>
 <head>
     <title>YUI: DragDrop</title>
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/reset-fonts-grids/reset-fonts-grids.css"> 
-    <link rel="stylesheet" href="http://blog.davglass.com/wp-content/themes/davglass/style.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="http://us.js2.yimg.com/us.js.yimg.com/i/ydn/yuiweb/css/dpsyntax-min-11.css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css"> 
+    <link rel="stylesheet" href="http://blog.davglass.com/wp-content/themes/davglass/style.css" type="text/css">    
     <style type="text/css" media="screen">
         p, h2 {
             margin: 1em;
@@ -15,15 +14,12 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         #davdoc {
             min-height: 2000px;
         }
-        #drag, #drag2, #drag3, #drag4, #drag5, #drag6, #drag7, .drop, #anim_drop {
+        #drag, #drag2, #drag3, #drag4, #drag5, #drag6, #drag7, .drop {
             height: 75px;
             width: 75px;
             border: 1px solid black;
             z-index: 1;
             text-align: center;
-        }
-        #anim_drop {
-            position: relative;
         }
         #bd {
             position: relative;
@@ -99,6 +95,10 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         }
         #drag4.yui-dd-dragging {
             opacity: .5;
+
+        }
+        .yui-dd-proxy {
+            background-color: red;
         }
         #drag7EL {
             position: absolute;
@@ -166,9 +166,6 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
             top: -61px;
             left: -10px;
         }
-        .yui-dd-proxy {
-            background-color: red;
-        }
 	</style>
 </head>
 <body class="yui-skin-sam">
@@ -176,23 +173,11 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
 <div id="davdoc" class="yui-t7">
     <div id="hd"><h1 id="header"><a href="http://blog.davglass.com/">YUI: DragDrop 3.x</a></h1></div>
     <div id="bd">
-        <?php
-        if ($_GET['events']) {
-        ?>
-        <p>This page is running <strong>with out</strong> the: drag:enter, drag:over, drag:exit, drop:enter, drop:over, drop:exit events firing. <a href="index.php">[Click here to enable the fires]</a></p>
-        <p>Drag the element below over the pile of elements that light up. It will be fast since the fire's are disabled.</p>
-        <?php
-        } else {
-        ?>
-        <p>This page is running with the: drag:enter, drag:over, drag:exit, drop:enter, drop:over, drop:exit events firing. <a href="index.php?events=1">[Click here to disable the fires]</a></p>
-        <p>Drag the element below over the pile of elements that light up. It will be slow in FF2/3.</p>
-        <?php
-        }
-        ?>
         <div id="play"></div>
         <div id="drag"><h2><strong>Drag</strong> Me</h2></div>
         <div id="drag2"><h2><strong>Drag</strong> <a href="#">Me II</a></h2></div>
         <div id="drag3"><h2 class="one">X</h2><h2 class="two">X</h2><h2 class="three">X</h2><h2 class="four">X</h2><br><br>Drag Me III</div>
+        <button id="test">Test Programmatic Move</button><br>
         <div id="drag4Cont">
             <div id="drag4">Drag Me IV <strong class="no">NO</strong><br><strong class="yes">Yes</strong></div>
         </div>
@@ -214,7 +199,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <script type="text/javascript" src="../../../../build/yui/yui.js?bust=<?php echo(mktime()); ?>"></script>
 
     <!-- needed until built into a module -->
-    <script type="text/javascript" src="../../../../util/yui/src/js/State.js?bust=<?php echo(mktime()); ?>"></script>
+    <!--script type="text/javascript" src="http://greatniece-lx.corp.yahoo.com/YuiWip/yui3x/build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script-->
     <script type="text/javascript" src="../../../../build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script>
     <script type="text/javascript" src="../../../../build/base/base.js?bust=<?php echo(mktime()); ?>"></script>
 
@@ -222,19 +207,10 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
     <script type="text/javascript" src="../../../../build/dom/dom.js?bust=<?php echo(mktime()); ?>"></script>
     <script type="text/javascript" src="../../../../build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
 
+    <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all-min.js?bust=<?php echo(mktime()); ?>"></script>
 
-    <?php
-    if ($_GET['events']) {
-    ?>
-    <script type="text/javascript" src="../../../../build/dd/dd-drag-all-min.js?bust=<?php echo(mktime()); ?>"></script>
-    <script type="text/javascript" src="dd-drop-core.js?bust=<?php echo(mktime()); ?>"></script>
-    <?php
-    } else {
-    ?>
-    <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js?bust=<?php echo(mktime()); ?>"></script>
-    <?php
-    }
-    ?>
+
+
 
 <script type="text/javascript">
 var yConfig = {
@@ -245,24 +221,44 @@ var yConfig = {
         Attribute: true,
         augment: true
     } 
-    
 };
-var yConfig2 = {};
-YUI().mix(yConfig2, yConfig);
+var yConfig2 = {
+    logExclude: {
+        'YUI': true,
+        Event: true,
+        Base: true,
+        Attribute: true,
+        augment: true
+    } 
+};
 
 //var Y1 = new YUI().use('dd-drag', 'dd-proxy');
-var Y1 = new YUI(yConfig).use('dd-ddm', 'dd-proxy', 'dd-constrain');
+var Y1 = new YUI(yConfig).use('dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain');
 
 Y1.on('event:ready', function() {
-
     //Y1.DD.DDM._debugShim = true;
+    
+    //dd4 = Y1.Base.create(Y1.DD.Proxy, [Y1.DD.DragConstrained], {
+    /*
+    myDD = Y1.Base.build(Y1.DD.Proxy, [Y1.DD.DragConstrained]);
+    console.log(myDD);
+    dd4 = new myDD({
+        node: '#drag4',
+        constrain2node: '#drag4Cont',
+        tickX: 25,
+        tickY: 25,
+        gutter: '5'
+    });
+    console.log(dd4);
+    */
 
+    
     dd4 = new Y1.DD.Drag({
         node: '#drag4',
         useShim: false,
+        //tickX: 25,
+        //tickY: 25,
         proxy: true,
-        tickX: 25,
-        tickY: 25,
         //tickXArray: [10, 133, 245, 333, 388, 455, 488, 546, 667, 798, 892],
         //tickXArray: [133, 245, 333, 455, 488, 546, 667, 798, 892],
         //tickYArray: [249, 339, 459, 479, 579],
@@ -278,11 +274,12 @@ Y1.on('event:ready', function() {
         constrain2node: '#drag4Cont',
         //constrain2view: true,
         //gutter: '-15 20 15 -20'
-        gutter: '5',
+        gutter:  '-20',
         //stickX: true,
         //stickY: true
         foo: true
     });
+    
     /*
     dd4.addInvalid('strong.no').on('drag:beforeMouseDown', function(e) {
         Y.log('beforeMouseDown::HALT');
@@ -292,16 +289,18 @@ Y1.on('event:ready', function() {
     });
     //}).addInvalid('strong.no');
     */
-
+    
     dd5 = new Y1.DD.Drag({
         node: '#drag5',
         proxy: true,
-        moveOnEnd: false
+        moveOnEnd: false,
+        borderStyle: '3px solid orange'
     }).addInvalid('strong.no');
+    //dd4.setHandle('#drag4Handle', true);
 
     dd6 = new Y1.DD.Drag({
-        proxy: true,
         node: '#drag6',
+        proxy: true,
         resizeFrame: false,
         offsetNode: false
     }).addInvalid('strong.no').on('drag:start', function() {
@@ -313,24 +312,50 @@ Y1.on('event:ready', function() {
         }).set('innerHTML', 'Dragging Me!!')
     });
     dd7 = new Y1.DD.Drag({
-        proxy: true,
         node: '#drag7',
+        proxy: true,
         resizeFrame: false,
         offsetNode: false,
         dragNode: '#drag7EL'
-    }).addInvalid('strong.no').on('drag:beforeStart', function() {
+    }).addInvalid('strong.no').on('drag:start', function() {
         this.deltaXY = [-10, -10];
     });
+    
 
 });
 
-var Y = new YUI(yConfig2).use('dd-ddm-drop', 'dd-plugin', 'dd-proxy', 'dd-constrain', 'dd-drop');
+var Y = new YUI(yConfig2).use('dd-drop', 'dd-proxy', 'dd-plugin', function(Y) {
 //var Y = new YUI().use('dd-ddm', 'dd-drag');
-Y.on('event:ready', function() {
-    //Y.DD.DDM.useHash = false;
+//Y.on('event:ready', function() {
     //Y.DD.DDM._debugShim = true;
+    //Y.DD.DDM.set('dragMode', 'strict');
+    //Y.DD.DDM.useHash = false;
     //Y.DD.DDM.mode = Y.DD.DDM.INTERSECT;
 
+    /*
+    Y.DD.DDM.on('drag:drag', function(e) {
+        console.log('DDM:drag:drag :: ', arguments);
+    });
+    Y.DD.DDM.on('drop:over', function(e) {
+        console.log('DDM:drop:over :: ', arguments);
+    });
+    */
+
+/* //Event Hijacking
+    Y.Event._nativeAdd = Y.Event.nativeAdd;
+    Y.Event.nativeAdd = function(el, type, fn, capture) {
+        this._nativeAdd.apply(this, arguments);
+        var fn2 = function() {
+            console.log(arguments);
+        };
+        if (el.addEventListener) {
+                el.addEventListener(type, fn2, !!capture);
+        } else if (el.attachEvent) {
+                el.attachEvent("on" + type, fn2);
+        } 
+    };
+  */  
+    
     dd = new Y.DD.Drag({
         node: '#drag',
         groups: ['one', 'three'],
@@ -343,6 +368,7 @@ Y.on('event:ready', function() {
             three: 'This is my data object'
         }
     }).addHandle('h2');
+    //}).addHandle('h2')._bubbles.beforeMouseDown.subscribe('drag:beforeMouseDown', function(e) {
     /*
     dd.on('drag:mouseDown', function(e) {
         Y.log('mouseDown:: ', arguments);
@@ -350,12 +376,21 @@ Y.on('event:ready', function() {
         Y.log('mouseDown Event stopped');
     });
 
+    
     dd.on('drag:start', function(e) {
-        Y.log('start:: ', arguments);
-        e.halt();
-        Y.log('start Event stopped');
+    //dd.on('drag:mouseDown', function(e) {
+        dd.addToGroup('two');
     });
     */
+    Y.Node.get('document').on('keypress', function(e) {
+        if ((e.keyCode === 27) || (e.charCode === 27)) {
+            if (dd.get('dragging')) {
+                console.info('DD is dragging, stop it..');
+                dd.stopDrag();
+            }
+        }
+    });
+    
     <?php
     if ($_GET['events']) {
     ?>
@@ -373,17 +408,32 @@ Y.on('event:ready', function() {
     <?php
     }
     ?>
+
     dd.on('drag:drophit', function(e) {
-        Y.log('drag:drophit :: ' + e.drop.get('node').get('id'));
+        console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
     });
     
     dd.on('drag:dropmiss', function() {
-        Y.log('drag:dropmiss', arguments);
+        console.log('drag:dropmiss', arguments);
     });
     
     
     
+    /*
+    Y.DD.DDM.on('drag:drag', function(e) {
+        console.log('DDM:drag:drag :: ', arguments);
+    });
+    Y.DD.DDM.on('drop:over', function(e) {
+        console.log('DDM:drop:over :: ', arguments);
+    });
     
+    Y.DD.DDM.on('drag:mouseDown', function(e) {
+        Y.log('DDMFire: drag:mouseDown :: ', arguments);
+        e.ev.preventDefault();
+        e.ev.halt();
+        Y.log('DDM stopped event..');
+    });
+    */
     
 
     dd2 = new Y.DD.Drag( {
@@ -396,6 +446,7 @@ Y.on('event:ready', function() {
         dragMode: 'point'
         //dragMode: 'intersect'
     }).addInvalid('h2 a');
+
 
     <?php
     if ($_GET['events']) {
@@ -416,19 +467,37 @@ Y.on('event:ready', function() {
     ?>
 
     dd3 = Y.Node.get('#drag3');
-    //dd3.plug(Y.Plugin.Drag, { proxy: true });
-    dd3.plug(Y.Plugin.Drag);
+    dd3.plug(Y.Plugin.Drag, { proxy: true });
+    //dd3.plug(Y.Plugin.Drag);
     dd3.dd.addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+
+/*
+    dd3.dd.on('activeHandle', function(e) {
+        console.log('activeHandle::halt');
+        e.halt();
+    });
+*/
     
     /*
-    dd3.dd.on('drag:start', function(args) {
+    dd3 = new Y.DD.Drag({
+        node: '#drag3'//,
+        //move: false
+    //}).addHandle('h2');
+    //}).addHandle('h2').addInvalid('h2.two');
+    }).addHandle('h2.one').addHandle('h2.two').removeHandle('h2.one').addHandle('h2.three').addHandle('h2.four');
+    dd3.on('drag:drophit', function(e) {
+        //console.log('drag:drophit :: ' + e.drop.get('node').get('id'), e);
+    });
+    */
+    /*
+    dd3.on('drag:start', function(args) {
         if (this.get('activeHandle').test('h2.two')) {
             this.set('move', false);
         } else {
             this.set('move', true);
         }
     });
-    dd3.dd.on('drag:drag', function(args) {
+    dd3.on('drag:drag', function(args) {
         if (this.get('activeHandle').test('h2.two')) {
             var size = (args.info.xy[0] - args.info.start[0]);
             var w = parseInt(this.get('dragNode').getStyle('width'), 10);
@@ -437,6 +506,26 @@ Y.on('event:ready', function() {
     });
     */
     
+    Y.Node.get('#test').on('click', function() {
+        Y.DD.DDM._noShim = true;
+        Y.log('_setStartPosition:', 'info', 'Dav Test');
+        dd._setStartPosition(dd.get('node').getXY());
+        Y.log('DDM::activeDrag:', 'info', 'Dav Test');
+        Y.DD.DDM.activeDrag = dd;
+        Y.log('dd.start():', 'info', 'Dav Test');
+        dd.start();
+        for (var i = 0; i < 726; i++) {
+            //Y.log('moveNode([' + i + ', 129]):', 'info', 'Dav Test');
+            Y.DD.DDM._move({ pageX: i, pageY: 129});
+        }
+        Y.log('end', 'info', 'Dav Test');
+        dd.end();
+        Y.log('_handleMouseUp():', 'info', 'Dav Test');
+        dd._handleMouseUp();
+        Y.DD.DDM._noShim = false;
+    });
+
+
     
     //var b = Y.Node.get('#play');
     var b = document.getElementById('play');
@@ -449,10 +538,11 @@ Y.on('event:ready', function() {
         
         var drop = new Y.DD.Drop( {
             node: el,
-            groups: [((i % 2) ? 'two' : 'one')]//,
-            //padding: '2 4 6 8'
+            groups: [((i % 2) ? 'two' : 'one')]
+            //lock: ((i % 2) ? true : false)//,
+            //padding: '0'
         });
-        
+        /*
         drop.on('drop:enter', function(ev) {
             //Y.log('drop:enter :: ', this.get('node').get('id'));
         });
@@ -462,12 +552,14 @@ Y.on('event:ready', function() {
         drop.on('drop:exit', function() {
             //Y.log('drop:exit :: ', this.get('node').get('id'));
         });
+        */
         drop.on('drop:hit', function(e) {
-            Y.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
+            console.log('drop:hit :: Drag: ' + e.drag.get('node').get('id') + ' ::: Drop: ' + this.get('node').get('id'), e);
             if (e.drag.get('data')) {
-                Y.log('Payload: ', e.drag.get('data'));
+                console.log('Payload: ', e.drag.get('data'));
             }
         });
+        
         
     }
         

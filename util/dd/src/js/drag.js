@@ -159,7 +159,7 @@
         * @type Number
         */
         clickPixelThresh: {
-            value: DDM.clickPixelThresh
+            value: DDM.get('clickPixelThresh')
         },
         /**
         * @attribute clickTimeThresh
@@ -167,7 +167,7 @@
         * @type Number
         */
         clickTimeThresh: {
-            value: DDM.clickTimeThresh
+            value: DDM.get('clickTimeThresh')
         },
         /**
         * @attribute lock
@@ -178,9 +178,9 @@
             value: false,
             set: function(lock) {
                 if (lock) {
-                    this.get(NODE).addClass('yui-dd-locked');
+                    this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
-                    this.get(NODE).removeClass('yui-dd-locked');
+                    this.get(NODE).removeClass(DDM.CSS_PREFIX + '-locked');
                 }
             }
         },
@@ -245,23 +245,13 @@
         },
         /**
         * @attribute dragMode
-        * @description This attribute only works if the dd-drop module is active. It will make this node a drop target as well as draggable
-        * @type Boolean
+        * @description This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of this Drag instance.
+        * @type String
         */
         dragMode: {
-            value: 'default',
+            value: null,
             set: function(mode) {
-                switch (mode) {
-                    case 'point':
-                        return 0;
-                    case 'intersect':
-                        return 1;
-                    case 'strict':
-                        return 2;
-                    case 'default':
-                        return -1;
-                }
-                return 'default';
+                return DDM._setDragMode(mode);
             }
         },
         /**
@@ -330,7 +320,7 @@
             if (Y.DD.Drop) {
                 if (config === false) {
                     if (this.target) {
-                        DDM.unregTarget(this.target);
+                        DDM._unregTarget(this.target);
                         this.target = null;
                     }
                     return false;
@@ -361,10 +351,11 @@
             
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
-                emitFacade: true,
-                bubbles: true
+                queuable: true,
+                emitFacade: true//,
+                //bubbles: true
             });
-
+            
             var ev = [
                 EV_AFTER_MOUSE_DOWN,
                 EV_REMOVE_HANDLE,
@@ -380,17 +371,19 @@
                 'drag:enter',
                 'drag:exit'
             ];
-            
+            /* //TODO FF Performance hit here
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
-                    bubbles: true,
-                    preventable: false
+                    bubbles: false,
+                    preventable: false,
+                    queuable: true
                 });
             }, this);
-
-            this.addTarget(DDM);
+            */
+            //this.addTarget(DDM);
             
+           
         },
         /**
         * @private
@@ -399,6 +392,8 @@
         * @type {Event}
         */
         _ev_md: null,
+        __ev_md: null,
+        __ev_mu: null,
         /**
         * @private
         * @property _handles
@@ -510,8 +505,8 @@
         */
         _fixIEMouseDown: function() {
             if (Y.UA.ie) {
-                this._ieSelectBack = document.body.onselectstart;
-                document.body.onselectstart = this._ieSelectFix;
+                this._ieSelectBack = Y.config.doc.body.onselectstart;
+                Y.config.doc.body.onselectstart = this._ieSelectFix;
             }           
         },
         /**
@@ -521,7 +516,7 @@
         */
         _fixIEMouseUp: function() {
             if (Y.UA.ie) {
-                document.body.onselectstart = this._ieSelectBack;
+                Y.config.doc.body.onselectstart = this._ieSelectBack;
             }           
         },
         /**
@@ -732,9 +727,9 @@
                 this.set(DRAG_NODE, this.get(NODE));
             }
             
-            this.get(NODE).addClass('yui-draggable');
-            this.get(NODE).on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            this.get(NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+            this.get(NODE).addClass(DDM.CSS_PREFIX + '-draggable');
+            this.__ev_md = this.get(NODE).on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            this.__ev_mu = this.get(NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
             this._dragThreshMet = false;
         },
         /**
@@ -747,7 +742,7 @@
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 Y.log('startDrag', 'info', 'dd-drag');
-                this.get(NODE).addClass('yui-dd-dragging');
+                this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
                 var xy = this.nodeXY;
@@ -778,7 +773,7 @@
                 Y.log('endDrag', 'info', 'dd-drag');
                 this.fire(EV_END, { pageX: this.lastXY[0], pageY: this.lastXY[1] });
             }
-            this.get(NODE).removeClass('yui-dd-dragging');
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-dragging');
             this.set('dragging', false);
             this.deltaXY = [0, 0];
             this.get(DRAG_NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
@@ -891,12 +886,19 @@
         * @private
         * @method destructor
         * @description Lifecycle destructor, unreg the drag from the DDM and remove listeners
-        * @return {Self}
         */
         destructor: function() {
             DDM._unregDrag(this);
-            this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-draggable');
+            //TODO this doesn't work properly!!
+            //this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            //this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
+            this.__ev_mu.detach();
+            this.__ev_md.detach();
+            if (this.target) {
+                this.target.destroy();
+            }
         }
     });
     Y.namespace('DD');    
