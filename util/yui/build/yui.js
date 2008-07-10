@@ -3315,7 +3315,8 @@ YUI.add("event-dom", function(Y) {
 
                     // Y.log('addListener: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
 
-                    var a=Y.Array(arguments, 1, true), override = a[3], E = Y.Event;
+                    var a=Y.Array(arguments, 1, true), override = a[3], E = Y.Event,
+                        aa=Y.Array(arguments, 0, true);
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
@@ -3339,6 +3340,7 @@ YUI.add("event-dom", function(Y) {
 
                         Y.each(el, proc, E);
 
+
                         return handles;
 
 
@@ -3358,7 +3360,7 @@ YUI.add("event-dom", function(Y) {
                             // defer adding the event until the element is available
                             this.onAvailable(el, function() {
                                 // Y.Event.addListener(el, type, fn, obj, override);
-                                Y.Event.addListener.apply(Y.Event, Y.Array(arguments, 0, true));
+                                Y.Event.addListener.apply(Y.Event, aa);
                             });
 
                             return true;
