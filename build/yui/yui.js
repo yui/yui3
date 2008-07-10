@@ -17,7 +17,8 @@ if (typeof YUI === 'undefined' || !YUI) {
         var Y = this;
         // Allow var yui = YUI() instead of var yui = new YUI()
         if (window === Y) {
-            return new YUI(o).log('creating new instance');
+            // return new YUI(o).log('creating new instance');
+            return new YUI(o);
         } else {
             // set up the core environment
             Y._init(o);
@@ -193,7 +194,7 @@ YUI.prototype = {
             // }
         }
 
-        Y.log('loader before: ' + a.join(','));
+        // Y.log('loader before: ' + a.join(','));
 
         // use loader to optimize and sort the requirements if it
         // is available.
@@ -205,7 +206,7 @@ YUI.prototype = {
             a = loader.sorted;
         }
 
-        Y.log('loader after: ' + a.join(','));
+        // Y.log('loader after: ' + a.join(','));
 
         var missing = [], r = [], f = function(name) {
 
@@ -219,7 +220,7 @@ YUI.prototype = {
             var m = mods[name], j, req, use;
 
             if (m) {
-                Y.log('found ' + name);
+                // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
             } else {
@@ -257,16 +258,16 @@ YUI.prototype = {
             }
         }
 
-        Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
         var attach = function() {
 
-            Y.log('attach ' + arguments[0]);
+            // Y.log('attach ' + arguments[0]);
 
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    Y.log('attaching ' + r[i], 'info', 'YUI');
+                    // Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
