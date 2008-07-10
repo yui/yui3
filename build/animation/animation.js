@@ -108,6 +108,7 @@ YUI.add('animation', function(Y) {
      * @static
      */
     Y.Anim.DEFAULT_SETTER = function(node, att, from, to, elapsed, duration, fn, unit) {
+
         unit = unit || '';
         node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
     };
@@ -363,7 +364,6 @@ YUI.add('animation', function(Y) {
                 this._initAttr();
                 this.fire(START);
             } else {
-                console.log(this._attr);
                 this.fire('resume');
             }
 
@@ -971,7 +971,6 @@ Y.Anim.CUSTOM_ATTRIBUTES.curve = {
 
         val.from = val.to.pop();
         val.to = to;
-console.log(val);
         return val;
     }
 };
