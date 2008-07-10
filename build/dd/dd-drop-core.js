@@ -719,9 +719,6 @@ YUI.add('dd-drop', function(Y) {
 
             s.on('mouseover', this._handleOverEvent, this, true);
             s.on('mouseout', this._handleOutEvent, this, true);
-            s.on('mousemove', function() {
-                //console.log('move');
-            }, this, true);
         },
         /**
         * @private
@@ -754,7 +751,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseover DOM event on the Target Shim
         */
         _handleOverEvent: function() {
-            //console.log('over');
             DDM._addActiveShim(this);
         },
         /**
@@ -763,7 +759,6 @@ YUI.add('dd-drop', function(Y) {
         * @description Handles the mouseout DOM event on the Target Shim
         */
         _handleOutEvent: function() {
-            //console.log('out');
             DDM._removeActiveShim(this);
         },
         /**
