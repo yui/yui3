@@ -34,11 +34,14 @@ ul.list {
 }
 
 div.mod {
+    position: relative;
     border: 1px solid #808080;
     background-color: white;
+    zoom: 1;
 }
 div.mod div.inner {
     overflow: hidden;
+    zoom: 1;
 }
 /*
 .yui-dd-proxy div.mod {
@@ -46,26 +49,27 @@ div.mod div.inner {
 }
 */
 div.mod h2 {
+    position: relative;
+    zoom: 1;
     margin: 0;
     border-bottom: 1px solid #808080;
-    background-color: #ccc;
     cursor: move;
-    position: relative;
     padding: 3px;
     font-weight: bold;
-    background: transparent url(sprite.png) repeat-x scroll 0pt -200px;
+    background-color: #ccc;
+    background-image: url(sprite.png);
+    background-position: 0 -200px;
+    zoom: 1;
 }
-
 
 div.minned h2 {
     border-bottom: 1px solid #ccc;
 }
-div.minned ul {
-    /*display: none;*/
-}
 
 div.mod h2 a.close, div.mod h2 a.min {
-    background:transparent url(layout_sprite.png) no-repeat scroll -20px -100px;
+    background-color: #ccc;
+    background-image: url(layout_sprite.png);
+    background-position: -20px -100px;
     border:1px solid #808080;
     display: block;
     height: 13px;
