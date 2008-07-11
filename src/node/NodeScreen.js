@@ -3,8 +3,6 @@
  * @interface nodescreen
  */
 
-YUI.add('nodescreen', function(Y) {
-
     /**
      * An interface for Node positioning.
      * @interface nodescreen
@@ -18,4 +16,3 @@ YUI.add('nodescreen', function(Y) {
 
     Y.Node.addDOMMethods(['getXY', 'setXY']);
 
-}, '3.0.0', { requires: ['node', 'domscreen'] });

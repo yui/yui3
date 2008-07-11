@@ -5,7 +5,6 @@
  * @requires yahoo, dom
  */
 
-YUI.add('selector', function(Y) {
 /**
  * Provides helper methods for collecting and filtering DOM elements.
  * @class Selector
@@ -621,4 +620,3 @@ if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
 
-}, '3.0.0');

@@ -3,8 +3,6 @@
  * @module nodeclassname
  */
 
-YUI.add('nodeclassname', function(Y) {
-
     /**
      * An interface for manipulating className strings.
      * @interface NodeClassName
@@ -14,7 +12,7 @@ YUI.add('nodeclassname', function(Y) {
          * Determines whether an HTMLElement has the given className.
          * @method hasClass
          * @param {String} className the class name to search for
-         * @return {Boolean | Array} A boolean value or array of boolean values
+         * @return {Boolean} A boolean value or array of boolean values
          */
         'hasClass',
 
@@ -22,7 +20,6 @@ YUI.add('nodeclassname', function(Y) {
          * Adds a class name to a given element or collection of elements.
          * @method addClass         
          * @param {String} className the class name to add to the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
         'addClass',
 
@@ -30,7 +27,6 @@ YUI.add('nodeclassname', function(Y) {
          * Removes a class name from a given element or collection of elements.
          * @method removeClass         
          * @param {String} className the class name to remove from the class attribute
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
         'removeClass',
 
@@ -40,7 +36,6 @@ YUI.add('nodeclassname', function(Y) {
          * @method replaceClass  
          * @param {String} oldClassName the class name to be replaced
          * @param {String} newClassName the class name that will be replacing the old class name
-         * @return {Boolean | Array} A pass/fail boolean or array of booleans
          */
         'replaceClass',
 
@@ -51,5 +46,3 @@ YUI.add('nodeclassname', function(Y) {
          */
         'toggleClass'
     ]);
-
-}, '3.0.0', { requires: ['node', 'domclassname'] });

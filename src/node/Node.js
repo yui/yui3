@@ -3,8 +3,6 @@
  * @module node
  */
 
-YUI.add('node', function(Y) {
-
     /**
      * A wrapper for DOM Nodes.
      * Node properties can be accessed via the set/get methods.
@@ -56,7 +54,7 @@ YUI.add('node', function(Y) {
     var slice = [].slice;
 
     // private factory
-    var wrap = function(node) {
+    var wrapDOM = function(node) {
         var ret = null;
 
         if (node && NODE_TYPE in node) {
@@ -109,14 +107,14 @@ YUI.add('node', function(Y) {
                 b = getDOMNode(b);
             }
         }
-        return wrap(_nodes[this._yuid][method](a, b, c, d, e));
+        return wrapDOM(_nodes[this._yuid][method](a, b, c, d, e));
     };
 
     /*
      * Wraps the return value in a node instance
      */
     var nodeOut = function(method, a, b, c, d, e) {
-        return wrap(_nodes[this._yuid][method](a, b, c, d, e));
+        return wrapDOM(_nodes[this._yuid][method](a, b, c, d, e));
     };
 
     /* 
@@ -447,8 +445,10 @@ YUI.add('node', function(Y) {
 
     Node.methods = function(name, fn) {
         if (typeof name == 'string') {
-            Node.prototype[name] = function(a, b, c, d, e) {
-                var ret = fn(this, a, b, c, d, e);
+            Node.prototype[name] = function() {
+                var args = slice.call(arguments);
+                args.unshift(this);
+                var ret = fn.apply(null, args);
                 if (ret === undefined) {
                     ret = this;
                 }
@@ -525,7 +525,7 @@ YUI.add('node', function(Y) {
                 node = null;
             }
 
-            return wrap(node);
+            return wrapDOM(node);
         },
 
         /**
@@ -567,7 +567,7 @@ YUI.add('node', function(Y) {
                 if (_restrict && _restrict[this._yuid] && !Y.DOM.contains(node, val)) {
                     val = null; // not allowed to go outside of root node
                 } else {
-                    val = wrap(val);
+                    val = wrapDOM(val);
                 }
             } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
                 val = node[prop];
@@ -614,7 +614,7 @@ YUI.add('node', function(Y) {
          * @return {Node} A Node instance for the matching HTMLElement.
          */
         query: function(selector) {
-            return wrap(Selector.query(selector, _nodes[this._yuid], true));
+            return wrapDOM(Selector.query(selector, _nodes[this._yuid], true));
         },
 
         /**
@@ -625,7 +625,7 @@ YUI.add('node', function(Y) {
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
          */
         queryAll: function(selector) {
-            return wrap(Selector.query(selector, _nodes[this._yuid]));
+            return wrapDOM(Selector.query(selector, _nodes[this._yuid]));
         },
 
         /**
@@ -701,7 +701,7 @@ YUI.add('node', function(Y) {
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(fn) {
-            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
         },
 
         /**
@@ -713,7 +713,7 @@ YUI.add('node', function(Y) {
          * @return {Node} Node instance or null if not found
          */
         previous: function(fn) {
-            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)));
         }, 
 
         /**
@@ -725,7 +725,7 @@ YUI.add('node', function(Y) {
          * @return {Object} HTMLElement or null if not found
          */
         next: function(node, fn) {
-            return wrap(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
         },
         
        /*
@@ -824,53 +824,19 @@ YUI.add('node', function(Y) {
         return frag.firstChild;
     };
 
-    var _createHTML = function(jsonml) {
-        var html = [];
-        var att = [];
-
-        if (Y.Lang.isString(jsonml)) { // text node
-            return jsonml;
-        }
-
-        if (!jsonml || !jsonml.push) { // isArray
-            return ''; // expecting array 
-        }
-
-        var tag = jsonml[0];
-        if (!Y.Lang.isString(tag)) {
-            return null; // bad tag error
-        }
-
-        var tmpAtt;
-        for (var i = 1, len = jsonml.length; i < len; ++i) {
-            if (typeof jsonml[i] === 'string' || jsonml[i].push) {
-                html[html.length] = _createHTML(jsonml[i]);
-            } else if (typeof jsonml[i] == 'object') {
-                for (var attr in jsonml[i]) {
-                    tmpAtt = (attr != 'className') ? attr : 'class';
-
-                    if (jsonml[i].hasOwnProperty(attr)) {
-                        att[att.length] = ' ' + tmpAtt + '="' + jsonml[i][attr] + '"';
-                    }
-                }
-            }
-        }
-        return '<' + tag + att.join('') + '>' + html.join('') + '</' + tag + '>';
-        
-    };
-
     /** 
      *  Creates a Node instance from an HTML string or jsonml
      * @method create
      * @param {String | Array} jsonml HTML string or jsonml
      */
-    Node.create = function(jsonml) {
-        return wrap(_createNode(jsonml));
+    Node.create = function(html) {
+        //return wrapDOM(_createNode(html));
+        return wrapDOM(Y.DOM.create(html));
     };
 
     Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
-        return wrap(doc.getElementById(id));
+        return wrapDOM(doc.getElementById(id));
     };
 
     /**
@@ -901,11 +867,10 @@ YUI.add('node', function(Y) {
                     node = Y.config.doc;
                     break;
                 default: 
-                    node = Selector.query(node, doc, true);
+                    node = Y.Selector.query(node, doc, true);
             }
         }
-
-        node = wrap(node);
+        node = wrapDOM(node);
 
         if (isRoot) {
             _restrict = _restrict || {};
@@ -937,7 +902,7 @@ YUI.add('node', function(Y) {
             nodes = Selector.query(nodes, doc);
         }
 
-        return wrap(nodes);
+        return wrapDOM(nodes);
 
     };
 
@@ -975,7 +940,7 @@ YUI.add('node', function(Y) {
          */
         item: function(index) {
             var node = _nodes[this._yuid][index];
-            return (node && node.tagName) ? wrap(node) : (node && node.get) ? node : null;
+            return (node && node.tagName) ? wrapDOM(node) : (node && node.get) ? node : null;
         },
 
         /**
@@ -1028,7 +993,7 @@ YUI.add('node', function(Y) {
          * @see Selector
          */
         filter: function(selector) {
-            return wrap(Selector.filter(_nodes[this._yuid], selector));
+            return wrapDOM(Selector.filter(_nodes[this._yuid], selector));
         },
 
         /**
@@ -1067,4 +1032,3 @@ YUI.add('node', function(Y) {
 
     Y.Node = Node;
     Y.NodeList = NodeList;
-}, '3.0.0', { requires: ['dom', 'selector', 'style'] });

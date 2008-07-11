@@ -1,218 +1,104 @@
-YUI.add('style', function(Y) {
+var STYLE = 'style',
+    FLOAT = 'float',
+    CSS_FLOAT = 'cssFloat',
+    STYLE_FLOAT = 'styleFloat',
+    TRANSPARENT = 'transparent',
+    VISIBLE = 'visible',
+    WIDTH = 'width',
+    HEIGHT = 'height',
+    BORDER_TOP_WIDTH = 'borderTopWidth',
+    BORDER_RIGHT_WIDTH = 'borderRightWidth',
+    BORDER_BOTTOM_WIDTH = 'borderBottomWidth',
+    BORDER_LEFT_WIDTH = 'borderLeftWidth',
+    GET_COMPUTED_STYLE = 'getComputedStyle',
 
-    var OWNER_DOCUMENT = 'ownerDocument',
-        DEFAULT_VIEW = 'defaultView',
-        PX = 'px';
+    DOCUMENT = Y.config.doc;
 
-    var _alias = {};
 
-    if (document.documentElement.style.cssFloat !== undefined) {
-        _alias['float'] = 'cssFloat';
-    } else if (document.documentElement.style.styleFloat !== undefined) {
-        _alias['float'] = 'styleFloat';
-    }
+Y.mix(Y.DOM, {
+    CUSTOM_STYLES: {},
 
-    // use alpha filter for IE opacity
-    if (document.documentElement.style.opacity === undefined &&
-            document.documentElement.filters) {
-        _alias['opacity'] = {
-            get: function(node) {
-                var val = 100;
-                try { // will error if no DXImageTransform
-                    val = node.filters['DXImageTransform.Microsoft.Alpha'].opacity;
+    setStyle: function(node, att, val) {
+        var style = node[STYLE],
+            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
-                } catch(e) {
-                    try { // make sure its in the document
-                        val = node.filters('alpha').opacity;
-                    } catch(e) {
-                        Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
-                    }
-                }
-                return val / 100;
-            },
-
-            set: function(node, val, style) {
-                if (typeof style.filter == 'string') { // in case not appended
-                    style.filter = 'alpha(opacity=' + val * 100 + ')';
-                    
-                    if (!node.currentStyle || !node.currentStyle.hasLayout) {
-                        style.zoom = 1; // needs layout 
-                    }
+        if (style) {
+            if (att in CUSTOM_STYLES) {
+                if (CUSTOM_STYLES[att].set) {
+                    CUSTOM_STYLES[att].set(node, val, style);
+                    return; // NOTE: return
+                } else if (typeof CUSTOM_STYLES[att] === 'string') {
+                    att = CUSTOM_STYLES[att];
                 }
             }
+            style[att] = val; 
         }
-    }
+    },
 
+    getStyle: function(node, att) {
+        var style = node[STYLE],
+            CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
+            val = '';
 
-    Y.mix(Y.DOM, {
-        setStyle: function(node, att, val) {
-            var style = node.style;
-            if (style) {
-                if (_alias[att]) {
-                    if (_alias[att].set) {
-                        _alias[att].set(node, val, style);
-                        return; // NOTE: return
-                    } else {
-                        att = _alias[att];
-                    }
-                }
-                node.style[att] = val; 
-            }
-        },
-
-        getStyle: function(node, att) {
-            var style = node.style;
-            if (_alias[att]) {
-                if (style && _alias[att].get) {
-                    return _alias[att].get(node, att, style); // NOTE: return
-                } else {
-                    att = _alias[att];
+        if (style) {
+            if (att in CUSTOM_STYLES) {
+                if (CUSTOM_STYLES[att].get) {
+                    return CUSTOM_STYLES[att].get(node, att, style); // NOTE: return
+                } else if (typeof CUSTOM_STYLES[att] === 'string') {
+                    att = CUSTOM_STYLES[att];
                 }
             }
-
-            var val = style ? style[att] : undefined;
+            val = style[att];
             if (val === '') { // TODO: is empty string sufficient?
-                val = Y.DOM.getComputedStyle(node, att);
+                val = Y.DOM[GET_COMPUTED_STYLE](node, att);
             }
-
-            return val;
-        },
-
-        getComputedStyle: function(node, att) {
-            var view = node[OWNER_DOCUMENT][DEFAULT_VIEW];
-            return view.getComputedStyle(node, '')[att];
-        }
-   });
-
-    // IE getComputedStyle
-    // TODO: unit-less lineHeight (e.g. 1.22)
-    var re_compute = /[a-z]*(?:height|width|top|bottom|left|right|fontSize|color|visibility)/i,
-        re_size = /^width|height$/,
-        re_color = /color$/i,
-        re_rgb = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
-        re_hex = /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-        re_unit = /^(\d[.\d]*)+(em|ex|px|gd|rem|vw|vh|vm|ch|mm|cm|in|pt|pc|deg|rad|ms|s|hz|khz|%){1}?/i;
-
-    var getIEComputedStyle = function(el, property) {
-        var value = '',
-            current = el.currentStyle[property],
-            match = re_compute.exec(property);
-
-        if (!match || current.indexOf(PX) > -1) { // no need to convert
-            value = current;
-        } else if (match && computed[match[0]]) { // use compute function
-            value = computed[match[0]](el, property);
-        } else if (re_unit.test(current)) { // convert to pixel
-            value = getPixel(el, property);
         }
 
-        return value;
-    };
+        return val;
+    },
 
-    var getPixelLayout = function(el, prop) {
-        var current = el.currentStyle[prop],                        // value of "width", "top", etc.
-            capped = prop.charAt(0).toUpperCase() + prop.substr(1), // "Width", "Top", etc.
-            offset = 'offset' + capped,                             // "offsetWidth", "offsetTop", etc.
-            pixel = 'pixel' + capped,                               // "pixelWidth", "pixelTop", etc.
-            value = '';
+    getComputedStyle: function(node, att) {
+        var val = '',
+            doc = node[OWNER_DOCUMENT];
 
-        if (current == 'auto') {
-            var actual = el[offset]; // offsetHeight/Top etc.
-            if (actual === undefined) { // likely "right" or "bottom"
-                val = 0;
-            }
-
-            value = actual;
-            if (re_size.test(prop)) { // account for box model diff 
-                el.style[prop] = actual; 
-                if (el[offset] > actual) {
-                    // the difference is padding + border (works in Standards & Quirks modes)
-                    value = actual - (el[offset] - actual);
-                }
-                el.style[prop] = 'auto'; // revert to auto
-            }
-        } else { // convert units to px
-            if (!el.style[pixel] && !el.style[prop]) { // need to map style.width to currentStyle (no currentStyle.pixelWidth)
-                el.style[prop] = current;              // no style.pixelWidth if no style.width
-            }
-            value = el.style[pixel];
+        if (node[STYLE]) {
+            val = doc[DEFAULT_VIEW][GET_COMPUTED_STYLE](node, '')[att];
         }
-        return value + PX;
-    };
+        return val;
+    }
+});
 
-    var getPixelBorder = function(el, property) {
-        // clientHeight/Width = paddingBox (e.g. offsetWidth - borderWidth)
-        // clientTop/Left = borderWidth
-        var value = null;
-        if (!el.currentStyle.hasLayout) {
-            el.style.zoom = 1; // need layout to measure client
+if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][CSS_FLOAT] !== UNDEFINED) {
+    Y.DOM.CUSTOM_STYLES[FLOAT] = CSS_FLOAT;
+} else if (DOCUMENT[DOCUMENT_ELEMENT][STYLE][STYLE_FLOAT] !== UNDEFINED) {
+    Y.DOM.CUSTOM_STYLES[FLOAT] = STYLE_FLOAT;
+}
+
+if (Y.UA.opera) { // opera defaults to hex instead of RGB
+    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+        var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
+            val = view[GET_COMPUTED_STYLE](node, '')[att];
+
+        if (re_color.test(att)) {
+            val = Y.Color.toRGB(val);
         }
 
-        switch(property) {
-            case 'borderTopWidth':
-                value = el.clientTop;
-                break;
-            case 'borderBottomWidth':
-                value = el.offsetHeight - el.clientHeight - el.clientTop;
-                break;
-            case 'borderLeftWidth':
-                value = el.clientLeft;
-                break;
-            case 'borderRightWidth':
-                value = el.offsetWidth - el.clientWidth - el.clientLeft;
-                break;
-        }
-        return value + PX;
-    };
-
-    var getPixel = function(node, att) {
-        // use pixelRight to convert to px
-        var val = null,
-            styleRight = node.currentStyle.right,
-            current = node.currentStyle[att];
-
-        node.style.right = current;
-        val = node.style.pixelRight;
-        node.style.right = styleRight; // revert
-
-        return val + PX;
-    };
-
-    var getPixelMargin = function(node, att) {
-        if (node.currentStyle[att] == 'auto') {
-            val = 0 + PX;
-        } else {
-            val = getPixel(node, att);
-        }
         return val;
     };
 
-    var getVisibility = function(node, att) {
-        var current;
-        while ( (current = node.currentStyle) && current[att] == 'inherit') { // NOTE: assignment in test
-            node = node.parentNode;
+}
+
+if (Y.UA.webkit) { // safari converts transparent to rgba()
+    Y.DOM[GET_COMPUTED_STYLE] = function(node, att) {
+        var view = node[OWNER_DOCUMENT][DEFAULT_VIEW],
+            val = view[GET_COMPUTED_STYLE](node, '')[att];
+
+        if (val === 'rgba(0, 0, 0, 0)') {
+            val = TRANSPARENT; 
         }
-        return (current) ? current[att] : 'visible';
+
+        return val;
     };
 
-    var computed = {
-        width: getPixelLayout,
-        height: getPixelLayout,
-        borderTopWidth: getPixelBorder,
-        borderRightWidth: getPixelBorder,
-        borderBottomWidth: getPixelBorder,
-        borderLeftWidth: getPixelBorder,
-        marginTop: getPixelMargin,
-        marginRight: getPixelMargin,
-        marginBottom: getPixelMargin,
-        marginLeft: getPixelMargin,
-        visibility: getVisibility
-        //fontSize: getPixelFont,
-        //color: getComputedColor
-    };
+}
 
-
-    if (!window.getComputedStyle) {
-        Y.DOM.getComputedStyle = getIEComputedStyle; 
-    }
-}, '3.0.0', { requires: ['dom'] });

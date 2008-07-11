@@ -1,19 +1,12 @@
-YUI.add('nodefxplugin', function(Y) {
+Y.namespace('Plugin');
+//Y.Plugin = Y.Plugin || {};
+Y.Plugin.NodeFX = function(config) {
+    config.node = config.owner;
+    Y.Plugin.NodeFX.superclass.constructor.apply(this, arguments);
+};
 
-        Y.Plugin = Y.Plugin || {};
+Y.Plugin.NodeFX.NAME = "nodefxplugin";
+Y.Plugin.NodeFX.NS = "fx";
 
-        function NodeFX(config) {
-            config.node = config.owner;
-            NodeFX.superclass.constructor.apply(this, arguments);
-        }
+Y.extend(Y.Plugin.NodeFX, Y.Anim);
 
-        NodeFX.NAME = "nodefxplugin";
-        NodeFX.NS = "fx";
-
-        var proto = {
-        };
-
-        Y.extend(NodeFX, Y.Anim);
-        Y.Plugin.NodeFX = NodeFX;
-
-}, '3.0.0', { requires: ['anim'] });
