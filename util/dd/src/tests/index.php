@@ -28,6 +28,7 @@ $count = (($_GET['count']) ? $_GET['count'] : 10);
         <ul>
             <li><a href="test.php">General Test Page</a></li>
             <li><a href="list.php">Lists Example</a></li>
+            <li><a href="anim.php">Animated Drop Targets Example</a></li>
             <li><a href="portal.php">Portal Example</a></li>
         </ul>
     </div>
