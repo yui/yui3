@@ -16,7 +16,6 @@ YUI.add('easing', function(Y) {
     /**
      * Singleton that determines how an animation proceeds from start to end.
      * @class Easing
-     * @namespace Y
     */
 
     Y.Easing = {
