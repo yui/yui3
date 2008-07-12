@@ -6,33 +6,6 @@
      * Handles animation _queueing and threading.
      */
 
-    var IS_ANIMATED = 'isAnimated',
-        START_TIME = 'startTime',
-        ELAPSED_TIME = 'elapsedTime',
-        START = 'start',
-        TWEEN = 'tween',
-        END = 'end',
-        NODE = 'node',
-        ITERATION_COUNT = 'iterationCount',
-
-        RE_RGB = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
-        NUM = Number;
-
-    var _queue = [],
-        _fx = {},
-        _timer;
-
-    var _setPrivate = function(anim, prop, val) {
-        if (typeof prop == 'string') {
-            anim._conf.add(prop, { value: val });
-        } else {
-            Y.each(prop, function(v, n) {
-                _setPrivate(anim, n, v);
-            });
-        }
-    };
-
-
     /**
      * Provides an API for animating objects.
      * Usage:
@@ -62,6 +35,33 @@
      *
      * @class Anim
      */
+    var IS_ANIMATED = 'isAnimated',
+        START_TIME = 'startTime',
+        ELAPSED_TIME = 'elapsedTime',
+        START = 'start',
+        TWEEN = 'tween',
+        END = 'end',
+        NODE = 'node',
+        ITERATION_COUNT = 'iterationCount',
+
+        RE_RGB = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+        NUM = Number;
+
+    var _queue = [],
+        _fx = {},
+        _timer;
+
+    var _setPrivate = function(anim, prop, val) {
+        if (typeof prop == 'string') {
+            anim._conf.add(prop, { value: val });
+        } else {
+            Y.each(prop, function(v, n) {
+                _setPrivate(anim, n, v);
+            });
+        }
+    };
+
+
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
     };
