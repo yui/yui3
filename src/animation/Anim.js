@@ -4,7 +4,6 @@
  */
     /**
      * Handles animation _queueing and threading.
-     * @class Anim
      */
 
     var IS_ANIMATED = 'isAnimated',
@@ -61,7 +60,7 @@
      *  anim.run(); 
      * </pre>
      *
-     * @class Y.Anim
+     * @class Anim
      */
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
