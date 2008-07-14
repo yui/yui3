@@ -11,8 +11,6 @@ Y.mix(Y.log.Reader, {
 
     PLUGINS : [],
 
-    TEMPLATE : Y.Widget.TEMPLATE,
-
     CLASSES : {
         CONTAINER   : 'yui-log',
         HD          : 'yui-log-hd',
