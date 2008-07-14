@@ -9,7 +9,7 @@
          * The ObjectAssert object provides functions to test JavaScript objects
          * for a variety of cases.
          *
-         * @namespace YAHOO.util
+         * @namespace Y
          * @class ObjectAssert
          * @static
          */

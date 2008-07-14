@@ -8,7 +8,7 @@
          * an error is thrown.
          *
          * @namespace Y
-         * @class assert
+         * @class Assert
          * @static
          */
         Y.Assert = {
@@ -619,5 +619,5 @@
         Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     };
     
-    YUI.add("assert", M, "3.0.0");
+    YUI.add("assert", M, "3.0.0", { requires: "substitute" });
 })();

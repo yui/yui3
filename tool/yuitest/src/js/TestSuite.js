@@ -8,8 +8,8 @@
          * A test suite that can contain a collection of TestCase and TestSuite objects.
          * @param {String||Object} data The name of the test suite or an object containing
          *      a name property as well as setUp and tearDown methods.
-         * @namespace YAHOO.tool
-         * @class TestSuite
+         * @namespace Y.Test
+         * @class Suite
          * @constructor
          */
         Y.Test.Suite = function (data /*:String||Object*/) {

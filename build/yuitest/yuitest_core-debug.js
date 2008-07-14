@@ -134,8 +134,8 @@
          * A test suite that can contain a collection of TestCase and TestSuite objects.
          * @param {String||Object} data The name of the test suite or an object containing
          *      a name property as well as setUp and tearDown methods.
-         * @namespace YAHOO.tool
-         * @class TestSuite
+         * @namespace Y.Test
+         * @class Suite
          * @constructor
          */
         Y.Test.Suite = function (data /*:String||Object*/) {
@@ -1020,7 +1020,7 @@
          * an error is thrown.
          *
          * @namespace Y
-         * @class assert
+         * @class Assert
          * @static
          */
         Y.Assert = {
@@ -1631,7 +1631,7 @@
         Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     };
     
-    YUI.add("assert", M, "3.0.0");
+    YUI.add("assert", M, "3.0.0", { requires: "substitute" });
 })();
 
 (function(){
@@ -1976,7 +1976,7 @@
          * The ObjectAssert object provides functions to test JavaScript objects
          * for a variety of cases.
          *
-         * @namespace YAHOO.util
+         * @namespace Y
          * @class ObjectAssert
          * @static
          */
@@ -2065,7 +2065,7 @@
          * The DateAssert object provides functions to test JavaScript Date objects
          * for a variety of cases.
          *
-         * @namespace YAHOO.util
+         * @namespace Y
          * @class DateAssert
          * @static
          */

@@ -6,8 +6,8 @@
 
         /**
          * Runs pages containing test suite definitions.
-         * @namespace YAHOO.tool
-         * @class TestManager
+         * @namespace Y.Test
+         * @class Manager
          * @static
          */
         Y.Test.Manager = {

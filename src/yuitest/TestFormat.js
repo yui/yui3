@@ -13,7 +13,6 @@
          * @static
          */
         Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
-            //TODO: Implement
             return Y.JSON.stringify(results);
         };
         
