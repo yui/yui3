@@ -24,13 +24,10 @@ var NODE_TYPE = 'node',
 
     UNDEFINED = undefined;
 
-    var re_tag = /<([a-z]+)/i;
-    var fragTags = {
-        option: 'select',
-        td: 'tr',
-        tr: 'table'
-    };
-    
+var re_tag = /<([a-z]+)/i;
+
+var templateCache = {};
+
 Y.DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
@@ -67,7 +64,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, fn); // @tested
+        return Y.DOM._childBy(element, null, fn); // @tested
+    },
+
+    firstChildByTag: function(element, tag, fn) {
+        return Y.DOM._childBy(element, tag, fn); // @tested
     },
 
     /**
@@ -81,7 +82,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, fn, true); // @tested
+        return Y.DOM._childBy(element, null, fn, true); // @tested
+    },
+
+    lastChildByTag: function(element, tag, fn) {
+        return Y.DOM._childBy(element, tag, fn, true); // @tested
     },
 
     /**
@@ -107,7 +112,7 @@ Y.DOM = {
                     }
                 }
 
-                return elements;
+                return elements; // @tested
             };
         } else {
             return function(element, tag, fn) {
@@ -123,7 +128,7 @@ Y.DOM = {
                         };
                     }
 
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn); // @tested
                 }
                 return elements;
             };
@@ -140,45 +145,7 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn);
-    },
-
-    /**
-     * Filters a collection of HTMLElements by the given attributes.
-     * @method filterByAttributes
-     * @param {Array} elements The collection of HTMLElements to filter.
-     * @param {Object} A name/value hash of attributes.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements with matching attributes are kept.
-     * @return {Array} The filtered collection of elements.
-     */
-    filterByAttributes: function(elements, attr, fn) { // Match one of space seperated words 
-        var s = ' ',
-            pass = false,
-            retNodes = [];
-
-        outer:
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
-            for (var j = 0, attLen = attr[LENGTH]; j < attLen; ++j) {
-                pass = false;
-                if (attr[j][0] === 'class') {
-                    attr[j][0] = 'className';                        
-                }
-                if (!elements[i][attr[j][0]] || 
-                        !( (s + elements[i][attr[j][0]] + s).indexOf(s + attr[j][2] + s) > -1)) {
-                    continue outer;
-                }
-                pass = true;
-            }
-            if ( fn && !fn(elements[i]) ) {
-                pass = false;
-            }
-            if (pass) {
-                retNodes[retNodes[LENGTH]] = elements[i];
-            }
-        }
-        return retNodes;
+        return Y.DOM.childrenByTag(element, null, fn); // @tested
     },
 
     previous: function(element, fn) {
@@ -345,18 +312,30 @@ Y.DOM = {
         return ret;
     },
 
-    create: (Y.UA.ie) ? function(html, doc) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
-        return doc.createElement(html);
-        
-    } : function(html, doc) {
-        doc = doc || Y.config.doc;
-        re_tag.exec(html);
-        var tag = (RegExp.$1) ? fragTags[RegExp.$1] : 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = html;
-        return frag.firstChild;
+        var m = re_tag.exec(html);
+        var create = Y.DOM._create,
+            custom = Y.DOM.creators,
+            tag, ret;
 
+        if (m && custom[m[1]]) {
+            if (typeof custom[m[1]] === 'function') {
+                create = custom[m[1]];
+            } else {
+                tag = custom[m[1]];
+            }
+        }
+        ret = create(html, doc, tag);
+        return (ret.childNodes.length > 1) ? ret.childNodes : ret.childNodes[0]; // collection or item
+        //return ret.firstChild;
+    },
+
+    _create: function(html, doc, tag) {
+        tag = tag || 'div';
+        var frag = templateCache[tag] || doc.createElement(tag);
+        frag.innerHTML = html;
+        return frag;
     },
 
     /**
@@ -421,7 +400,7 @@ Y.DOM = {
                                         doc[PARENT_WINDOW] || Y.config.win;
     },
 
-    _childBy: function(element, fn, rev) {
+    _childBy: function(element, tag, fn, rev) {
         var ret = null,
             root, axis;
 
@@ -434,7 +413,7 @@ Y.DOM = {
                 axis = NEXT_SIBLING;
             }
 
-            if (Y.DOM._testElement(root, null, fn)) { // is the matching element
+            if (Y.DOM._testElement(root, tag, fn)) { // is the matching element
                 ret = root;
             } else { // need to scan nextSibling axis of firstChild to find matching element
                 ret = Y.DOM.elementByAxis(root, axis, fn);
@@ -449,16 +428,81 @@ Y.DOM = {
         return (element && element[TAG_NAME] &&
                 (!tag || element[TAG_NAME].toUpperCase() === tag) &&
                 (!fn || fn(element)));
+    },
+
+    creators: {},
+
+    _IESimpleCreate: function(html, doc) {
+        doc = doc || Y.config.doc;
+        return doc.createElement(html);
     }
 };
 
-/**
- * The selector module provides helper methods allowing CSS3 Selectors to be used with DOM elements.
- * @module selector
- * @title Selector Utility
- * @requires yahoo, dom
- */
 
+(function() {
+    var creators = Y.DOM.creators,
+        create = Y.DOM.create,
+        re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/;
+
+    var TABLE_OPEN = '<table>',
+        TABLE_CLOSE = '</table>';
+
+    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
+        Y.mix(creators, {
+            option: function(html, doc) {
+                var frag = create('<select>' + html + '</select>');
+                return frag;
+            },
+
+            tr: function(html, doc) {
+                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
+                return frag.firstChild;
+            },
+
+            td: function(html, doc) {
+                var frag = creators.tr('<tr>' + html + '</tr>', doc);
+                return frag.firstChild;
+            }, 
+
+            tbody: function(html, doc) {
+                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
+                return frag;
+            },
+
+            legend: 'fieldset'
+        });
+
+        creators.col = creators.tbody; // IE wraps in colgroup
+    }
+
+    if (Y.UA.ie) {
+        // TODO: allow multiples ("<link><link>")
+        creators.col = creators.script = creators.link = Y.DOM._IESimpleCreate; 
+
+        // TODO: thead/tfoot with nested tbody
+        creators.tbody = function(html, doc) {
+            var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
+            var tb = frag.children.tags('tbody')[0];
+            if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
+                tb.parentNode.removeChild(tb);
+            }
+            return frag;
+        };
+
+    }
+
+    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
+        Y.mix(creators, {
+                th: creators.td,
+                thead: creators.tbody,
+                tfoot: creators.tbody,
+                caption: creators.tbody,
+                colgroup: creators.tbody,
+                col: creators.tbody,
+                optgroup: creators.option
+        });
+    }
+})();
 /**
  * Provides helper methods for collecting and filtering DOM elements.
  * @class Selector
@@ -468,8 +512,10 @@ Y.DOM = {
 var NODE_TYPE = 'nodeType',
     NODE_NAME = 'nodeName',
     TAG_NAME = 'tagName',
+    TAG = 'tag',
     ATTRIBUTES = 'attributes',
     PSEUDOS = 'pseudos',
+    COMBINATOR = 'combinator',
     PARENT_NODE = 'parentNode',
     FIRST_CHILD = 'firstChild',
     LAST_CHILD = 'lastChild',
@@ -519,9 +565,9 @@ Y.Selector = {
             var s = ' ';
             return (s + attr + s).indexOf((s + val + s)) > -1;
         },
-        '|=': function(attr, val) { return getRegExp('^' + val + '[-]?').test(attr); }, // Match start with value followed by optional hyphen
+        '|=': function(attr, val) { return Y.DOM._getRegExp('^' + val + '[-]?').test(attr); }, // Match start with value followed by optional hyphen
         '^=': function(attr, val) { return attr.indexOf(val) === 0; }, // Match starts with value
-        '$=': function(attr, val) { return attr.lastIndexOf(val) === attr.length - val.length; }, // Match ends with value
+        '$=': function(attr, val) { return attr.lastIndexOf(val) === attr[LENGTH] - val[LENGTH]; }, // Match ends with value
         '*=': function(attr, val) { return attr.indexOf(val) > -1; }, // Match contains value as substring 
         '': function(attr, val) { return attr; } // Just test for existence of attribute
     },
@@ -534,7 +580,7 @@ Y.Selector = {
      */
     pseudos: {
         'root': function(node) {
-            return node === node.ownerDocument.documentElement;
+            return node === node[OWNER_DOCUMENT][DOCUMENT_ELEMENT];
         },
 
         'nth-child': function(node, val) {
@@ -571,15 +617,15 @@ Y.Selector = {
          
         'only-child': function(node) {
             var children = Y.DOM.children(node[PARENT_NODE]);
-            return children.length === 1 && children[0] === node;
+            return children[LENGTH] === 1 && children[0] === node;
         },
 
         'only-of-type': function(node) {
-            return Y.DOM.childrenByTag(node[PARENT_NODE], node[TAG_NAME]).length === 1;
+            return Y.DOM.childrenByTag(node[PARENT_NODE], node[TAG_NAME])[LENGTH] === 1;
         },
 
         'empty': function(node) {
-            return node.childNodes.length === 0;
+            return node.childNodes[LENGTH] === 0;
         },
 
         'not': function(node, simple) {
@@ -606,15 +652,13 @@ Y.Selector = {
     
      */
     test: function(node, selector) {
-        node = Y.Selector.document.getElementById(node) || node;
-
         if (!node) {
             return false;
         }
 
         var groups = selector ? selector.split(',') : [];
-        if (groups.length) {
-            for (var i = 0, len = groups.length; i < len; ++i) {
+        if (groups[LENGTH]) {
+            for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
                 if ( rTestNode(node, groups[i]) ) { // passes if ANY group matches
                     return true;
                 }
@@ -636,26 +680,8 @@ Y.Selector = {
     filter: function(nodes, selector) {
         nodes = nodes || [];
 
-        var node,
-            result = [],
-            tokens = tokenize(selector);
-
-        if (!nodes.item) { // if not HTMLCollection, handle arrays of ids and/or nodes
-            Y.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                if (!nodes[i][TAG_NAME]) { // tagName limits to HTMLElements 
-                    node = Y.Selector.document.getElementById(nodes[i]);
-                    if (node) { // skip IDs that return null 
-                        nodes[i] = node;
-                    } else {
-                        Y.log('filter: skipping invalid node', 'warn', 'Selector');
-                    }
-                }
-            }
-        }
-        result = rFilter(nodes, tokenize(selector)[0]);
-        clearParentCache();
-        Y.log('filter: returning:' + result.length, 'info', 'Selector');
+        var result = rFilter(nodes, tokenize(selector)[0]);
+        Y.log('filter: returning:' + result[LENGTH], 'info', 'Selector');
         return result;
     },
 
@@ -671,7 +697,7 @@ Y.Selector = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
+        //Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
         return result;
     }
 };
@@ -684,9 +710,9 @@ var query = function(selector, root, firstOnly, deDupe) {
 
     var groups = selector.split(','); // TODO: handle comma in attribute/pseudo
 
-    if (groups.length > 1) {
+    if (groups[LENGTH] > 1) {
         var found;
-        for (var i = 0, len = groups.length; i < len; ++i) {
+        for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
             found = arguments.callee(groups[i], root, firstOnly, true);
             result = firstOnly ? found : result.concat(found); 
         }
@@ -697,7 +723,7 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (root && !root[NODE_NAME]) { // assume ID
         root = Y.Selector.document.getElementById(root);
         if (!root) {
-            Y.log('invalid root node provided', 'warn', 'Selector');
+            Y.log('invalid root node provided', 'error', 'Selector');
             return result;
         }
     }
@@ -718,7 +744,7 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (id) {
         node = Y.Selector.document.getElementById(id);
 
-        if (node && (root[NODE_NAME] == '#document' || Y.DOM.contains(node, root))) {
+        if (node && (root[NODE_TYPE] === 9 || Y.DOM.contains(root, node))) {
             if ( rTestNode(node, null, idToken) ) {
                 if (idToken === token) {
                     nodes = [node]; // simple selector
@@ -731,88 +757,83 @@ var query = function(selector, root, firstOnly, deDupe) {
         }
     }
 
-    if (root && !nodes.length) {
+    if (root && !nodes[LENGTH]) {
         nodes = root.getElementsByTagName(token.tag);
     }
 
-    if (nodes.length) {
+    if (nodes[LENGTH]) {
         result = rFilter(nodes, token, firstOnly, deDupe); 
-        //result = Y.DOM.filterByAttributes(nodes, token[ATTRIBUTES]);
     }
-    clearParentCache();
     return result;
 };
 
 var rFilter = function(nodes, token, firstOnly, deDupe) {
     var result = firstOnly ? null : [];
 
-    for (var i = 0, len = nodes.length; i < len; i++) {
-        if (! rTestNode(nodes[i], '', token, deDupe)) {
-            continue;
+    result = Y.DOM.filterElementsBy(nodes, function(node) {
+        if (! rTestNode(node, '', token, deDupe)) {
+            return false;
         }
 
-        if (firstOnly) {
-            return nodes[i];
-        }
         if (deDupe) {
-            if (nodes[i]._found) {
-                continue;
+            if (node._found) {
+                return false;
             }
-            nodes[i]._found = true;
-            foundCache[foundCache.length] = nodes[i];
+            node._found = true;
+            foundCache[foundCache[LENGTH]] = node;
         }
-
-        result[result.length] = nodes[i];
-    }
+        return true;
+    }, firstOnly);
 
     return result;
 };
 
 var rTestNode = function(node, selector, token, deDupe) {
     token = token || tokenize(selector).pop() || {};
+    var ops = Y.Selector.operators,
+        pseudos = Y.Selector.pseudos,
+        prev = token.previous;
 
     if (!node[TAG_NAME] ||
-        (token.tag !== '*' && node[TAG_NAME].toUpperCase() !== token.tag) ||
+        (token[TAG] !== '*' && node[TAG_NAME].toUpperCase() !== token[TAG]) ||
         (deDupe && node._found) ) {
         return false;
     }
 
-    if (token[ATTRIBUTES].length) {
+    if (token[ATTRIBUTES][LENGTH]) {
         var attribute;
-        for (var i = 0, len = token[ATTRIBUTES].length; i < len; ++i) {
+        for (var i = 0, len = token[ATTRIBUTES][LENGTH]; i < len; ++i) {
             attribute = node.getAttribute(token[ATTRIBUTES][i][0], 2);
             if (attribute === undefined) {
                 return false;
             }
-            if ( Y.Selector.operators[token[ATTRIBUTES][i][1]] &&
-                    !Y.Selector.operators[token[ATTRIBUTES][i][1]](attribute, token[ATTRIBUTES][i][2])) {
+            if ( ops[token[ATTRIBUTES][i][1]] &&
+                    !ops[token[ATTRIBUTES][i][1]](attribute, token[ATTRIBUTES][i][2])) {
                 return false;
             }
         }
     }
 
-    if (token[PSEUDOS].length) {
-        for (var i = 0, len = token[PSEUDOS].length; i < len; ++i) {
-            if (Y.Selector[PSEUDOS][token[PSEUDOS][i][0]] &&
-                    !Y.Selector[PSEUDOS][token[PSEUDOS][i][0]](node, token[PSEUDOS][i][1])) {
+    if (token[PSEUDOS][LENGTH]) {
+        for (var i = 0, len = token[PSEUDOS][LENGTH]; i < len; ++i) {
+            if (pseudos[token[PSEUDOS][i][0]] &&
+                    !pseudos[token[PSEUDOS][i][0]](node, token[PSEUDOS][i][1])) {
                 return false;
             }
         }
     }
-
-    return (token.previous && token.previous.combinator !== ',') ?
-            combinators[token.previous.combinator](node, token) :
+    return (prev && prev[COMBINATOR] !== ',') ?
+            combinators[prev[COMBINATOR]](node, token) :
             true;
 };
 
 
 var foundCache = [];
-var parentCache = [];
 var regexCache = {};
 
 var clearFoundCache = function() {
-    Y.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
-    for (var i = 0, len = foundCache.length; i < len; ++i) {
+    Y.log('getBySelector: clearing found cache of ' + foundCache[LENGTH] + ' elements');
+    for (var i = 0, len = foundCache[LENGTH]; i < len; ++i) {
         try { // IE no like delete
             delete foundCache[i]._found;
         } catch(e) {
@@ -821,25 +842,6 @@ var clearFoundCache = function() {
     }
     foundCache = [];
     Y.log('getBySelector: done clearing foundCache');
-};
-
-var clearParentCache = function() {
-    if (!document.documentElement.children) { // caching children lookups for gecko
-        return function() {
-            for (var i = 0, len = parentCache.length; i < len; ++i) {
-                delete parentCache[i]._children;
-            }
-            parentCache = [];
-        };
-    } else return function() {}; // do nothing
-}();
-
-var getRegExp = function(str, flags) {
-    flags = flags || '';
-    if (!regexCache[str + flags]) {
-        regexCache[str + flags] = new RegExp(str, flags);
-    }
-    return regexCache[str + flags];
 };
 
 var combinators = {
@@ -899,7 +901,6 @@ var getNth = function(node, expr, tag, reverse) {
 
     if (tag) {
         siblings = Y.DOM.childrenByTag(node.parentNode, tag);
-console.log(siblings);
     } else {
         siblings = Y.DOM.children(node.parentNode);
     }
@@ -915,7 +916,7 @@ console.log(siblings);
 
     if (a === 0) { // just the first
         if (reverse) {
-            b = siblings.length - b + 1; 
+            b = siblings[LENGTH] - b + 1; 
         }
 
         if (siblings[b - 1] === node) {
@@ -930,13 +931,13 @@ console.log(siblings);
     }
 
     if (!reverse) {
-        for (var i = b - 1, len = siblings.length; i < len; i += a) {
+        for (var i = b - 1, len = siblings[LENGTH]; i < len; i += a) {
             if ( i >= 0 && siblings[i] === node ) {
                 return true;
             }
         }
     } else {
-        for (var i = siblings.length - b, len = siblings.length; i >= 0; i -= a) {
+        for (var i = siblings[LENGTH] - b, len = siblings[LENGTH]; i >= 0; i -= a) {
             if ( i < len && siblings[i] === node ) {
                 return true;
             }
@@ -946,7 +947,7 @@ console.log(siblings);
 };
 
 var getId = function(attr) {
-    for (var i = 0, len = attr.length; i < len; ++i) {
+    for (var i = 0, len = attr[LENGTH]; i < len; ++i) {
         if (attr[i][0] == 'id' && attr[i][1] === '=') {
             return attr[i][2];
         }
@@ -954,7 +955,7 @@ var getId = function(attr) {
 };
 
 var getIdTokenIndex = function(tokens) {
-    for (var i = 0, len = tokens.length; i < len; ++i) {
+    for (var i = 0, len = tokens[LENGTH]; i < len; ++i) {
         if (getId(tokens[i][ATTRIBUTES])) {
             return i;
         }
@@ -994,19 +995,19 @@ var tokenize = function(selector) {
     do {
         found = false; // reset after full pass
         for (var re in patterns) {
-                if (!Y.Object.owns(patterns, re)) {
-                    continue;
-                }
-                if (re != 'tag' && re != 'combinator') { // only one allowed
-                    token[re] = token[re] || [];
-                }
+            if (!patterns.hasOwnProperty(re)) {
+                continue;
+            }
+            if (re != TAG && re != COMBINATOR) { // only one allowed
+                token[re] = token[re] || [];
+            }
             if (match = patterns[re].exec(selector)) { // note assignment
                 found = true;
-                if (re != 'tag' && re != 'combinator') { // only one allowed
+                if (re != TAG && re != COMBINATOR) { // only one allowed
                     //token[re] = token[re] || [];
 
                     // capture ID for fast path to element
-                    if (re === 'attributes' && match[1] === 'id') {
+                    if (re === ATTRIBUTES && match[1] === 'id') {
                         token.id = match[3];
                     }
 
@@ -1015,7 +1016,7 @@ var tokenize = function(selector) {
                     token[re] = match[1];
                 }
                 selector = selector.replace(match[0], ''); // strip current match from selector
-                if (re === 'combinator' || !selector.length) { // next token or done
+                if (re === COMBINATOR || !selector[LENGTH]) { // next token or done
                     token[ATTRIBUTES] = fixAttributes(token[ATTRIBUTES]);
                     token[PSEUDOS] = token[PSEUDOS] || [];
                     token.tag = token.tag ? token.tag.toUpperCase() : '*';
@@ -1035,7 +1036,7 @@ var tokenize = function(selector) {
 var fixAttributes = function(attr) {
     var aliases = Y.Selector.attrAliases;
     attr = attr || [];
-    for (var i = 0, len = attr.length; i < len; ++i) {
+    for (var i = 0, len = attr[LENGTH]; i < len; ++i) {
         if (aliases[attr[i][0]]) { // convert reserved words, etc
             attr[i][0] = aliases[attr[i][0]];
         }
@@ -1053,14 +1054,13 @@ var replaceShorthand = function(selector) {
         selector = selector.replace(patterns[ATTRIBUTES], 'REPLACED_ATTRIBUTE');
     }
     for (var re in shorthand) {
-        if (!Y.Object.owns(shorthand, re)) {
-            continue;
+        if (shorthand.hasOwnProperty(re)) {
+            selector = selector.replace(Y.DOM._getRegExp(re, 'gi'), shorthand[re]);
         }
-        selector = selector.replace(getRegExp(re, 'gi'), shorthand[re]);
     }
 
     if (attrs) {
-        for (var i = 0, len = attrs.length; i < len; ++i) {
+        for (var i = 0, len = attrs[LENGTH]; i < len; ++i) {
             selector = selector.replace('REPLACED_ATTRIBUTE', attrs[i]);
         }
     }
@@ -1074,6 +1074,11 @@ if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
     Y.Selector.attrAliases['for'] = 'htmlFor';
 }
 
+/**
+ * Add className management functionality to DOM.
+ * @class DOMClassName
+ *
+ */
 
 var CLASS_NAME = 'className';
 
@@ -1147,6 +1152,12 @@ Y.mix(Y.DOM, {
         }
     }
 });
+
+/**
+ * Provides color conversion functionality.
+ * @class Color
+ *
+ */
 
 var TO_STRING = 'toString',
     RE = RegExp,
@@ -1311,13 +1322,8 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
 }
 
 /**
-* Extended interface for DOM
-* @module domscreen
-*/
-
-/**
- * An interface for advanced DOM features.
- * @interface DOMScreen
+ * Add position and window/document size detection functionality to DOM.
+ * @class DOMScreen
  */
 
 var OFFSET_TOP = 'offsetTop',
@@ -1651,6 +1657,11 @@ Y.mix(Y.DOM, {
     }
 });
 
+/**
+ * Adds region management functionality to DOM.
+ * @class DOMRegion
+ *
+ */
 var getOffsets = function(r1, r2) {
 
     var t = Math.max(r1.top,    r2.top   ),
