@@ -47,6 +47,6 @@
         };
     };
     
-    YUI.add("testformat", M, "3.0.0");
+    YUI.add("testformat", M, "@VERSION@");
     
 })();

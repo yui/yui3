@@ -619,5 +619,5 @@
         Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     };
     
-    YUI.add("assert", M, "3.0.0", { requires: "substitute" });
+    YUI.add("assert", M, "@VERSION@", { requires: "substitute" });
 })();

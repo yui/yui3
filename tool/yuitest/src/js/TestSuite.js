@@ -78,5 +78,5 @@
         };
     };
     
-    YUI.add("testsuite", M, "3.0.0", { requires: ["lang", "testcase"] });
+    YUI.add("testsuite", M, "@VERSION@", { requires: ["lang", "testcase"] });
 })();

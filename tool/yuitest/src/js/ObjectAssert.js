@@ -84,6 +84,6 @@
 
     };
     
-    YUI.add("objectassert", M, "3.0.0");
+    YUI.add("objectassert", M, "@VERSION@");
     
 })();

@@ -121,7 +121,7 @@
         };
     };
     
-    YUI.add("testcase", M, "3.0.0", { use: ["lang"] });
+    YUI.add("testcase", M, "@VERSION@", { use: ["lang"] });
 })();
 
 (function(){
@@ -204,7 +204,7 @@
         };
     };
     
-    YUI.add("testsuite", M, "3.0.0", { requires: ["lang", "testcase"] });
+    YUI.add("testsuite", M, "@VERSION@", { requires: ["lang", "testcase"] });
 })();
 
 (function(){
@@ -1007,7 +1007,7 @@
         })();
     };
     
-    YUI.add("testrunner", M, "3.0.0", { requires: ["event"] });
+    YUI.add("testrunner", M, "@VERSION@", { requires: ["event"] });
 })();
 
 (function(){
@@ -1631,7 +1631,7 @@
         Y.extend(Y.Assert.UnexpectedError, Y.Assert.Error);
     };
     
-    YUI.add("assert", M, "3.0.0", { requires: "substitute" });
+    YUI.add("assert", M, "@VERSION@", { requires: "substitute" });
 })();
 
 (function(){
@@ -1962,7 +1962,7 @@
         };
     };
     
-    YUI.add("arrayassert", M, "3.0.0");
+    YUI.add("arrayassert", M, "@VERSION@");
 })();
 
 (function(){
@@ -2051,7 +2051,7 @@
 
     };
     
-    YUI.add("objectassert", M, "3.0.0");
+    YUI.add("objectassert", M, "@VERSION@");
     
 })();
 
@@ -2111,9 +2111,9 @@
         };
     };
     
-    YUI.add("dateassert", M, "3.0.0");
+    YUI.add("dateassert", M, "@VERSION@");
     
 })();
 
-YUI.add("yuitest", function(){}, "3.0.0", { use: ["assert", "objectassert", "arrayassert", "dateassert", "testcase", "testsuite", "testrunner", "mock"] });
+YUI.add("yuitest", function(){}, "@VERSION@", { use: ["assert", "objectassert", "arrayassert", "dateassert", "testcase", "testsuite", "testrunner", "mock"] });
 

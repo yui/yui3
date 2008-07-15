@@ -54,6 +54,6 @@
         };
     };
     
-    YUI.add("dateassert", M, "3.0.0");
+    YUI.add("dateassert", M, "@VERSION@");
     
 })();

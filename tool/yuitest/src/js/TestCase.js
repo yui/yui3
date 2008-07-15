@@ -121,5 +121,5 @@
         };
     };
     
-    YUI.add("testcase", M, "3.0.0", { use: ["lang"] });
+    YUI.add("testcase", M, "@VERSION@", { use: ["lang"] });
 })();

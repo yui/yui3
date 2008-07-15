@@ -326,5 +326,5 @@
         };
     };
     
-    YUI.add("arrayassert", M, "3.0.0");
+    YUI.add("arrayassert", M, "@VERSION@");
 })();

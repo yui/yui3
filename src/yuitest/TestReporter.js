@@ -169,5 +169,5 @@
         };
     };
     
-    YUI.add("testreporter", M, "3.0.0");
+    YUI.add("testreporter", M, "@VERSION@");
 })();

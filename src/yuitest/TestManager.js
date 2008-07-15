@@ -340,6 +340,6 @@
         
     };
     
-    YUI.add("testmanager", M, "3.0.0");
+    YUI.add("testmanager", M, "@VERSION@");
 })();    
     

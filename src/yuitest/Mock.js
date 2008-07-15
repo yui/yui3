@@ -5,7 +5,10 @@ YUI.add("mock", function(Y){
 
     /**
      * Creates a new mock object.
-     * @param {Object} template The object to mock.
+     * @class Mock
+     * @constructor
+     * @param {Object} template (Optional) An object whose methods
+     *      should be stubbed out on the mock object.
      */
     Y.Mock = function(template){
     
@@ -34,9 +37,20 @@ YUI.add("mock", function(Y){
         //return it
         return mock;    
     };
-    
-    
-    
+        
+    /**
+     * Assigns an expectation to a mock object. This is used to create
+     * methods and properties on the mock object that are monitored for
+     * calls and changes, respectively.
+     * @param {Object} mock The object to add the expectation to.
+     * @param {Object} expectation An object defining the expectation. For
+     *      a method, the keys "method" and "arguments" are required with
+     *      an optional "returns" key available. For properties, the keys
+     *      "property" and "value" are required.
+     * @return {void}
+     * @method expect
+     * @static
+     */ 
     Y.Mock.expect = function(mock /*:Object*/, expectation /*:Object*/){
 
         //make sure there's a place to store the expectations
@@ -100,6 +114,14 @@ YUI.add("mock", function(Y){
         }
     };
 
+    /**
+     * Verifies that all expectations of a mock object have been met and
+     * throws an assertion error if not.
+     * @param {Object} mock The object to verify..
+     * @return {void}
+     * @method verify
+     * @static
+     */ 
     Y.Mock.verify = function(mock /*:Object*/){    
         O.each(mock.__expectations, function(expectation){
             if (expectation.method) {
@@ -130,4 +152,4 @@ YUI.add("mock", function(Y){
     Y.Mock.Value.Object = Y.Mock.Value(Y.Assert.isObject,[]);
     Y.Mock.Value.Function = Y.Mock.Value(Y.Assert.isFunction,[]);    
 
-}, "3.0.0");
+}, "@VERSION@");

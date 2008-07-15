@@ -1,1 +1,1 @@
-YUI.add("yuitest", function(){}, "3.0.0", { use: ["assert", "objectassert", "arrayassert", "dateassert", "testcase", "testsuite", "testrunner", "mock"] });
+YUI.add("yuitest", function(){}, "@VERSION@", { use: ["assert", "objectassert", "arrayassert", "dateassert", "testcase", "testsuite", "testrunner", "mock"] });

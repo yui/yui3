@@ -798,5 +798,5 @@
         })();
     };
     
-    YUI.add("testrunner", M, "3.0.0", { requires: ["event"] });
+    YUI.add("testrunner", M, "@VERSION@", { requires: ["event"] });
 })();
