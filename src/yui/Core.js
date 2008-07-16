@@ -97,7 +97,8 @@ YUI.add("core", function(Y) {
                 for (var i in fs) { 
 
                     // We never want to overwrite the prototype
-                    if (PROTO === i) {
+                    // if (PROTO === i) {
+                    if (PROTO === i || '_yuid' === i) {
                         continue;
                     }
 

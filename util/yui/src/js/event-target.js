@@ -266,11 +266,11 @@ YUI.add("event-target", function(Y) {
             if (!evt.stopped && targs) {
 
                 for (var i in targs) {
-                    if (Y.Object.owns(targs, i)) {
-                        // @TODO need to provide the event target to the bubble target
+                    if (targs.hasOwnProperty(i)) {
 
                         var t = targs[i], type = evt.type,
-                            ce = t.getEvent(type) || t.publish(type);
+                            // ce = t.getEvent(type) || t.publish(type, evt);
+                            ce = t.getEvent(type) || t.publish(type, evt);
 
                         ce.target = evt.target;
 

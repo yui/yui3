@@ -37,7 +37,7 @@ YUI.add("event-facade", function(Y) {
         // "target"          : 1,
         // "timeStamp"       : 1, // needed?
         // "toElement"       : 1,
-        // "type"            : 1, // needed?
+        "type"            : 1,
         // "view"            : 1,
         // "which"           : 1, // we supply
         // "width"           : 1, // needed?

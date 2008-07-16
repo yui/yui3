@@ -135,7 +135,8 @@
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">fs</span><span class="o">)</span> <span class="o">{</span> 
 
                     <span class="c">// We never want to overwrite the prototype</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">PROTO</span> <span class="o">===</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                    <span class="c">// if (PROTO === i) {</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">PROTO</span> <span class="o">===</span> <span class="nx">i</span> <span class="o">||</span> <span class="s1">&#39;_yuid&#39;</span> <span class="o">===</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
                         <span class="k">continue</span><span class="o">;</span>
                     <span class="o">}</span>
 

@@ -303,11 +303,11 @@
             <span class="k">if</span> <span class="o">(!</span><span class="nx">evt</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">&amp;&amp;</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">targs</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">targs</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c">// @TODO need to provide the event target to the bubble target</span>
-<span class="c"></span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">targs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+
                         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
-                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">);</span>
+                            <span class="c">// ce = t.getEvent(type) || t.publish(type, evt);</span>
+<span class="c"></span>                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
 
                         <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
 

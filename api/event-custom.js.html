@@ -39,7 +39,38 @@
 <div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;event-custom&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="k">var</span> <span class="nx">onsubscribeType</span> <span class="o">=</span> <span class="s2">&quot;_event:onsub&quot;</span><span class="o">,</span>
-        <span class="nx">AFTER</span> <span class="o">=</span> <span class="s1">&#39;after&#39;</span><span class="o">;</span>
+
+        <span class="nx">AFTER</span> <span class="o">=</span> <span class="s1">&#39;after&#39;</span><span class="o">,</span> 
+
+<span class="c">/*</span>
+<span class="c">        CONFIGS = {</span>
+<span class="c">            hasFacade: 1,</span>
+<span class="c">            bubbles: 1,</span>
+<span class="c">            preventable: 1,</span>
+<span class="c">            cancelable: 1,</span>
+<span class="c">            queuable: 1,</span>
+<span class="c">            defaultFn: 1,</span>
+<span class="c">            preventedFn: 1,</span>
+<span class="c">            stoppedFn: 1,</span>
+<span class="c">            fireOnce: 1,</span>
+<span class="c">            silent: 1,</span>
+<span class="c">            type: 1</span>
+<span class="c">        }</span>
+<span class="c">        */</span>
+
+        <span class="nx">CONFIGS</span> <span class="o">=</span> <span class="o">[</span>
+            <span class="s1">&#39;hasFacade&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;bubbles&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;preventable&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;cancelable&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;queuable&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;defaultFn&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;preventedFn&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;stoppedFn&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;fireOnce&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;silent&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;type&#39;</span>
+        <span class="o">]</span>
 
     <span class="c">/**</span>
 <span class="c">     * Return value from all subscribe operations</span>
@@ -269,16 +300,16 @@
         <span class="nx">_YUI_EVENT</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
 
         <span class="c">/**</span>
-<span class="c">         * Apply configuration properties</span>
+<span class="c">         * Apply configuration properties.  Only applies the CONFIG whitelist</span>
 <span class="c">         * @method applyConfig</span>
 <span class="c">         * @param o hash of properties to apply</span>
 <span class="c">         * @param force {boolean} if true, properties that exist on the event </span>
 <span class="c">         * will be overwritten.</span>
 <span class="c">         */</span>
         <span class="nx">applyConfig</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">force</span><span class="o">);</span>
-        <span class="o">},</span>
-
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">force</span><span class="o">,</span> <span class="nx">CONFIGS</span><span class="o">);</span>
+            <span class="c">// Y.mix(this, o, force);</span>
+<span class="c"></span>        <span class="o">},</span>
 
         <span class="nx">_subscribe</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">obj</span><span class="o">,</span> <span class="nx">args</span><span class="o">,</span> <span class="nx">when</span><span class="o">)</span> <span class="o">{</span>
 

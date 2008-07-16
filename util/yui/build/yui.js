@@ -796,7 +796,8 @@ YUI.add("core", function(Y) {
                 for (var i in fs) { 
 
                     // We never want to overwrite the prototype
-                    if (PROTO === i) {
+                    // if (PROTO === i) {
+                    if (PROTO === i || '_yuid' === i) {
                         continue;
                     }
 
@@ -1844,7 +1845,38 @@ YUI.add("aop", function(Y) {
 YUI.add("event-custom", function(Y) {
 
     var onsubscribeType = "_event:onsub",
-        AFTER = 'after';
+
+        AFTER = 'after', 
+
+/*
+        CONFIGS = {
+            hasFacade: 1,
+            bubbles: 1,
+            preventable: 1,
+            cancelable: 1,
+            queuable: 1,
+            defaultFn: 1,
+            preventedFn: 1,
+            stoppedFn: 1,
+            fireOnce: 1,
+            silent: 1,
+            type: 1
+        }
+        */
+
+        CONFIGS = [
+            'hasFacade',
+            'bubbles',
+            'preventable',
+            'cancelable',
+            'queuable',
+            'defaultFn',
+            'preventedFn',
+            'stoppedFn',
+            'fireOnce',
+            'silent',
+            'type'
+        ]
 
     /**
      * Return value from all subscribe operations
@@ -2069,16 +2101,16 @@ YUI.add("event-custom", function(Y) {
         _YUI_EVENT: true,
 
         /**
-         * Apply configuration properties
+         * Apply configuration properties.  Only applies the CONFIG whitelist
          * @method applyConfig
          * @param o hash of properties to apply
          * @param force {boolean} if true, properties that exist on the event 
          * will be overwritten.
          */
         applyConfig: function(o, force) {
-            Y.mix(this, o, force);
+            Y.mix(this, o, force, CONFIGS);
+            // Y.mix(this, o, force);
         },
-
 
         _subscribe: function(fn, obj, args, when) {
 
@@ -2872,11 +2904,11 @@ YUI.add("event-target", function(Y) {
             if (!evt.stopped && targs) {
 
                 for (var i in targs) {
-                    if (Y.Object.owns(targs, i)) {
-                        // @TODO need to provide the event target to the bubble target
+                    if (targs.hasOwnProperty(i)) {
 
                         var t = targs[i], type = evt.type,
-                            ce = t.getEvent(type) || t.publish(type);
+                            // ce = t.getEvent(type) || t.publish(type, evt);
+                            ce = t.getEvent(type) || t.publish(type, evt);
 
                         ce.target = evt.target;
 
@@ -3841,7 +3873,7 @@ YUI.add("event-facade", function(Y) {
         // "target"          : 1,
         // "timeStamp"       : 1, // needed?
         // "toElement"       : 1,
-        // "type"            : 1, // needed?
+        "type"            : 1,
         // "view"            : 1,
         // "which"           : 1, // we supply
         // "width"           : 1, // needed?
