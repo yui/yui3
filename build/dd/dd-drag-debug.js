@@ -134,7 +134,11 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                return Y.Node.get(node);
+                var node = Y.Node.get(node);
+                if (!node) {
+                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                }
+                return node;
             }
         },
         /**
@@ -144,7 +148,11 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
-                return Y.Node.get(node);
+                var node = Y.Node.get(node);
+                if (!node) {
+                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                }
+                return node;
             }
         },
         /**
@@ -373,17 +381,16 @@ YUI.add('dd-drag', function(Y) {
                 'drag:enter',
                 'drag:exit'
             ];
-            /* //TODO FF Performance hit here
+            
             Y.each(ev, function(v, k) {
                 this.publish(v, {
                     emitFacade: true,
-                    bubbles: false,
+                    bubbles: true,
                     preventable: false,
                     queuable: true
                 });
             }, this);
-            */
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
            
         },
@@ -396,6 +403,20 @@ YUI.add('dd-drag', function(Y) {
         _ev_md: null,
         __ev_md: null,
         __ev_mu: null,
+        /**
+        * @private
+        * @property _startTime
+        * @description The getTime of the mousedown event. Not used, just here in case someone wants/needs to use it.
+        * @type Date
+        */
+        _startTime: null,
+        /**
+        * @private
+        * @property _endTime
+        * @description The getTime of the mouseup event. Not used, just here in case someone wants/needs to use it.
+        * @type Date
+        */
+        _endTime: null,
         /**
         * @private
         * @property _handles
@@ -748,6 +769,8 @@ YUI.add('dd-drag', function(Y) {
                 this.fire(EV_START, { pageX: this.nodeXY[0], pageY: this.nodeXY[1] });
                 this.get(DRAG_NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
                 var xy = this.nodeXY;
+
+                this._startTime = (new Date()).getTime();
                 
                 this.region = {
                     '0': xy[0], 
@@ -768,6 +791,7 @@ YUI.add('dd-drag', function(Y) {
         * @return {Self}
         */
         end: function() {
+            this._endTime = (new Date()).getTime();
             clearTimeout(this._clickTimeout);
             this._dragThreshMet = false;
             this._fromTimeout = false;
@@ -856,15 +880,15 @@ YUI.add('dd-drag', function(Y) {
             } else {
                 this.mouseXY = [ev.pageX, ev.pageY];
                 if (!this._dragThreshMet) {
-                        var diffX = Math.abs(this.startXY[0] - ev.pageX);
-                        var diffY = Math.abs(this.startXY[1] - ev.pageY);
-                        Y.log("diffX: " + diffX + ", diffY: " + diffY, 'info', 'dd-drag');
-                        if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
-                            Y.log("pixel threshold met", "info", "dd-drag");
-                            this._dragThreshMet = true;
-                            this.start();
-                            this._moveNode([ev.pageX, ev.pageY]);
-                        }
+                    var diffX = Math.abs(this.startXY[0] - ev.pageX);
+                    var diffY = Math.abs(this.startXY[1] - ev.pageY);
+                    Y.log("diffX: " + diffX + ", diffY: " + diffY, 'info', 'dd-drag');
+                    if (diffX > this.get('clickPixelThresh') || diffY > this.get('clickPixelThresh')) {
+                        Y.log("pixel threshold met", "info", "dd-drag");
+                        this._dragThreshMet = true;
+                        this.start();
+                        this._moveNode([ev.pageX, ev.pageY]);
+                    }
                 
                 } else {
                     clearTimeout(this._clickTimeout);

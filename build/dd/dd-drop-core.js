@@ -453,7 +453,11 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             set: function(node) {
-                return Y.Node.get(node);
+                var node = Y.Node.get(node);
+                if (!node) {
+                    Y.fail('DD.Drop: Invalid Node Given: ' + node);
+                }
+                return node;               
             }
         },
         /**
@@ -517,12 +521,12 @@ YUI.add('dd-drop', function(Y) {
                 this.publish(v, {
                     emitFacade: true,
                     preventable: false,
-                    //bubbles: true,
+                    bubbles: true,
                     queuable: true
                 });
             }, this);
 
-            //this.addTarget(DDM);
+            this.addTarget(DDM);
             
         },
         /**
@@ -580,8 +584,7 @@ YUI.add('dd-drop', function(Y) {
         * @description Private lifecycle method
         */
         initializer: function() {
-            //TODO FF performance hit here.
-            //this._createEvents();
+            this._createEvents();
             if (!this.get(NODE).get('id')) {
                 var id = Y.stamp(this.get(NODE));
                 this.get(NODE).set('id', id);
@@ -787,7 +790,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
 
        /**
