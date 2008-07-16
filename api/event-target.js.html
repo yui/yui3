@@ -307,7 +307,13 @@
 
                         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
                             <span class="c">// ce = t.getEvent(type) || t.publish(type, evt);</span>
-<span class="c"></span>                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">||</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
+<span class="c"></span>                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> 
+                            
+                        <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
+                            <span class="nx">ce</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">host</span> <span class="o">===</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">;</span>
+                            <span class="nx">ce</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
+                        <span class="o">}</span>
 
                         <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
 

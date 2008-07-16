@@ -270,7 +270,13 @@ YUI.add("event-target", function(Y) {
 
                         var t = targs[i], type = evt.type,
                             // ce = t.getEvent(type) || t.publish(type, evt);
-                            ce = t.getEvent(type) || t.publish(type, evt);
+                            ce = t.getEvent(type) 
+                            
+                        if (!ce) {
+                            ce = t.publish(type, evt);
+                            ce.context = (evt.host === evt.context) ? t : evt.context;
+                            ce.host = t;
+                        }
 
                         ce.target = evt.target;
 

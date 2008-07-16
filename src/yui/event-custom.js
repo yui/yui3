@@ -31,6 +31,8 @@ YUI.add("event-custom", function(Y) {
             'stoppedFn',
             'fireOnce',
             'silent',
+            'host',
+            'context',
             'type'
         ]
 
