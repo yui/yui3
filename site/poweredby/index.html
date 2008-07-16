@@ -1,0 +1,143 @@
+<?php
+//for RSS feeds:
+require_once('../inc/rss-feed.inc');
+
+$title="Yahoo! User Interface Library: Sites Powered by YUI";
+$section="poweredby";
+$highlightSyntax=false;
+$prepend = '<!--CSS source files for the Container Control --> 
+<link rel="stylesheet" type="text/css" href="examples-2.css">
+
+<style type="text/css">
+	 ul#poweredby-commercial li { list-style:none; }
+</style>
+';
+
+include "../inc/header.inc";
+?>
+
+<div id="yui-main">
+<div class="yui-b">
+
+
+    <h1 class="first-content">Yahoo! User Interface Library: Sites Powered by YUI</h1>
+    <div class="yui-gc">
+		  <div class="yui-u first">
+		  	
+
+<p>The YUI Library debuted at Yahoo in 2005 and was <a href="http://yuiblog.com/blog/2006/02/13/the-yahoo-user-interface-library/">open-sourced</a> under a <a href="http://developer.yahoo.com/yui/license.html">BSD licence</a> in February 2006. Since its release, YUI has been integrated into practically all of Yahoo!'s properties, including the <a href="http://www.yahoo.com/">Yahoo! home page</a>, <a href="http://mail.yahoo.com/">Yahoo! Mail</a>, and <a href="http://www.flickr.com/">Flickr</a>. On the <a href="http://yuiblog.com/blog/category/yui-implementations/">YUIBlog</a>, we've profiled companies like <a href="http://yuiblog.com/blog/2008/06/05/implementation-focus-linkedin/">LinkedIn</a>, <a href="http://yuiblog.com/blog/2007/12/05/mint/">Mint</a>, <a href="http://yuiblog.com/blog/2006/08/04/sugarcrm/">SugarCRM</a> and <a href="http://yuiblog.com/blog/2006/10/13/powerreviews/">PowerReviews</a> who have adopted YUI as their frontend platform.  And all of that is just the tip of the iceberg.  <a href="http://yuiblog.com/blog/category/in-the-wild">Check out the "In the Wild" column on YUIBlog for many more examples of YUI being used across the web</a>.</p>
+
+<h2>A Few of the Hundreds of YUI-based Sites:</h2>
+<ul id="poweredby-commercial">
+<li><a id="linkedin" href="http://www.linkedin.com/"><span>LinkedIn</span></a></li>
+<li><a id="jetblue" href="http://www.jetblue.com/"><span>JetBlue Airlines</span></a></li>
+<li><a id="southwest" href="http://www.southwest.com/"><span>Southwest Airlines</span></a></li>
+<li><a id="marketwatch" href="http://www.marketwatch.com/"><span>MarketWatch</span></a></li>
+
+<!-- <li><a id="dowjones" href="http://www.djindexes.com/"><span>Dow Jones Indexes</span></a></li> -->
+<li><a id="slashdot" href="http://www.slashdot.org/firehose.shtml"><span>Slashdot Firehose</span></a></li>
+<li><a id="hitwise" href="http://www.hitwise.com/"><span>Hitwise</span></a></li>
+<li><a id="target" href="http://www.target.com/"><span>Target</span></a></li>
+<li><a id="sugarcrm" href="http://www.sugarcrm.com/"><span>SugarCRM</span></a></li>
+<li><a id="powerreviews" href="http://www.powerreviews.com/"><span>PowerReviews</span></a></li>
+<li><a id="thinkature" href="http://www.thinkature.com/"><span>Thinkature</span></a></li>
+<li><a id="smugmug" href="http://www.smugmug.com/"><span>SmugMug</span></a></li>
+
+<li><a id="genius" href="http://www.genius.com/"><span>Genius.com</span></a></li>
+<li><a id="ourstory" href="http://www.ourstory.com/"><span>OurStory</span></a></li>
+<li><a id="wikia" href="http://www.wikia.com/"><span>Wikia</span></a></li>
+<li><a id="podtech" href="http://www.podtech.net/"><span>PodTech</span></a></li>
+<li><a id="newsvine" href="http://www.newsvine.com/"><span>Newsvine</span></a></li>
+<li><p><a href="http://tech.groups.yahoo.com/group/ydn-javascript/links/YUI_Implementations_001149002597/">...and more!</a></p></li>
+</ul>
+<br clear="left">
+
+<h2>YUI is LinkedIn!</h2>
+
+<p>One of the hottest social-networking sites in the world is built using YUI.  Hear why from LinkedIn's developers.</p>
+
+<p><embed src=http://cosmos.bcst.yahoo.com/up/fop/embedflv/swf/fop_wrapper.swf?sv=0&#038;id=7653846&#038;autoStart=0&#038;infoEnable=1&#038;shareEnable=1&#038;prepanelEnable=1&#038;carouselEnable=0&#038;postpanelEnable=1 width=400 height=300 type=application/x-shockwave-flash></embed></p>
+
+<h2>Frameworks &amp; Libraries:</h2>
+
+<p>The YUI Library is compatible with and extended by many other frontend libraries.  Dustin Diaz's DED|Chain, for example, takes the YUI foundation and sugars it up with a chaining syntax.  Jack Slocum's Ext JS, which originally began as a set of YUI extensions, can employ the YUI core and thereby adds all of the great Ext components to the YUI ecosystem.  Here are a few sites to explore as you orient yourself to all of the resources available in the YUI developer community:</p>
+
+<ul>
+<li id=""><a href="http://dedchain.dustindiaz.com/">DED|Chain</a></li>
+<li id=""><a href="http://www.bubbling-library.com/">Bubbling Library</a></li>
+<li id=""><a href="http://www.leftturnsolutions.com/">Eddy Framework</a></li>
+<li id=""><a href="http://layout.constantology.com/">___layouts</a></li>
+<li id=""><a href="http://blog.davglass.com/2006/06/yui-code-samples/">Dav Glass' Code Samples</a></li>
+</ul>
+
+
+      </div>
+
+			
+			<div class="yui-u">
+				<div id="yui-examples">
+
+
+
+<?php
+$oGroupsRss = new SimpleRss('http://pipes.yahoo.com/pipes/pipe.run?_id=9v4jfl5J3RGC4gtZxAnzeQ&_render=rss', 600, 15);
+
+if ($oRssObject = $oGroupsRss->GetRssObject()) {
+?><h2 id="yuiblog" class="first-content">YUI Implementation Articles on YUIBlog <a href="http://pipes.yahoo.com/pipes/pipe.run?_id=9v4jfl5J3RGC4gtZxAnzeQ&_render=rss"><img class="rssbadge" src="http://us.i1.yimg.com/us.yimg.com/i/us/ext/rss.gif" height="17" width="36" alt="RSS badge"></a></h2>
+				<div id="yuiblogbody"><?php
+ echo '<ul class="yuirssreader">';
+ foreach ($oRssObject->aItems as $oItem) {
+   $thistitle = htmlspecialchars($oItem->sTitle);
+   $thisdate = strftime("%D %T",strtotime($oItem->sDate));
+   echo "<li><a href=\"$oItem->sLink\">$thistitle</a><p class='byline'><cite>$oItem->sAuthor</cite><span class='yuirssreader-date'>$thisdate</span></p></li>";
+ }
+ echo '</ul>';
+ if ($oGroupsRss->IsCached()) {
+	echo '<!--cached-->';
+ } else {
+	echo '<!--not cached-->';
+ }
+ echo '</div>';
+}
+
+
+$oGroupsRss = new SimpleRss('http://gallery.yahoo.com/rss/technology/8', 600, 10);
+
+if ($oRssObject = $oGroupsRss->GetRssObject()) {
+?><h2 id="yahoogallery">YUI Apps on Yahoo! Gallery <a href="http://gallery.yahoo.com/rss/technology/8"><img class="rssbadge" src="http://us.i1.yimg.com/us.yimg.com/i/us/ext/rss.gif" height="17" width="36" alt="RSS badge"></a></h2>
+				<div id="yahoogallerybody"><?php
+ echo '<ul class="yuirssreader">';
+ foreach ($oRssObject->aItems as $oItem) {
+   $thistitle = htmlspecialchars($oItem->sTitle);
+   $thisdate = strftime("%D %T",strtotime($oItem->sDate));
+   echo "<li><a href=\"$oItem->sLink\">$thistitle</a><p class='byline'><cite>$oItem->sAuthor</cite><span class='yuirssreader-date'>$thisdate</span></p></li>";
+ }
+ echo '</ul>';
+ if ($oGroupsRss->IsCached()) {
+	echo '<!--cached-->';
+ } else {
+	echo '<!--not cached-->';
+ }
+ echo '</div>';
+}
+
+   ?>
+
+
+
+				</div>
+			</div>
+
+	
+
+	</div>
+
+</div>
+
+</div>
+
+
+<?php
+include "../inc/side.inc";
+include "../inc/footer.inc";
+?>

@@ -1,0 +1,137 @@
+<?php
+
+$title="YUI Roadmap";
+$section="roadmap";
+$highlightSyntax=true;
+$prepend = '';
+
+include "../../inc/header.inc";
+
+$append = '';
+?>
+
+<div id="yui-main">
+<div class="yui-b">
+
+<div class="apisummary">
+
+<h1 class="first-content">YUI Roadmap</h1>
+
+<p>by Eric Miraglia and george puckett; <em>Last Updated: July 1, 2008</em></p>
+
+<p><em>How to evaluate dates associated with milestones described in this document:</em> The YUI development team has consistently issued minor and patch releases within two weeks of the target once a date is established.  The target date is best thought of as being the first date in a release window about three weeks in duration.  Once announced, there is a very good likelihood that we'll release during that window.  For major releases &mdash; for example, for the 3.x release process and the open source infrastructure initiative &mdash; dates listed here are planning targets and are less reliable than release-date forecasts in the 2.x development program.</p>
+<h2>YUI 2.x planning:</h2>
+<h3>Next Release: 2.6.0</h3>
+<p><em>Summary:</em>2.6.0 will be among the final major releases on the 2.x YUI tree. With this release, all <em>beta</em> and <em>experimental</em> components will be brought to GA, including (most importantly) DataTable and Rich Text Editor. Core objectives:</p>
+<ol>
+  <li>GA release for DataTable, with refinement of current feature set and stabilization of all remaining problem areas.</li>
+  <li>GA for all other beta/experimental components, including the GA for Rich Text Editor.</li>
+  <li>Address all high-priority bugs in the 2.5.x family and flag as WONTFIX those issues that we don't anticipate addressing.  While it is almost certain that there will be a series of 2.6.x maintenance releases that address additional bugs, we hope in this timeframe to be proactively identifying existing issues that are not planned for redress in 2.x.</li>
+  <li>The release window for the YUI Carousel, which was a slip from 2.5.0.</li>
+  <li>Premliminary IE8 testing and support, as applicable. It's likely, based on what we know today about the IE8 schedule, that full IE8 support will be addressed in a 2.6.x or 2.7.0 release, but this is the release cycle where we'll start looking closely at IE8's available partner builds.</li>
+</ol>
+<p><em>Date:</em> No date is associated with this release. For planning purposes, we're projecting a tentative September release date to accommodate late-summer testing on IE8 and to accommodate work on the 3.0 Preview release in July.
+</p>
+<table border="1" width="100%">
+  <tr>
+    <th>Component</th>
+    <th>Details</th>
+    <th>Developer</th>
+  </tr>
+
+<tr class="odd">
+<td valign="top">Carousel</td>
+<td valign="top">
+New component.  Carousel component based on Bill Scott's carousel with some additions to better conform to carousel design pattern.<br/>
+Development of this component is approaching completion.  We are in the planning stages of posting a Carousel preview ahead of the 2.6.0 release for community feedback.  More details will be posted here in the coming weeks. </td>
+<td valign="top">
+Gopal Venkatesan</td>
+</tr>
+
+<tr>
+<td valign="top">DataTable  </td>
+<td valign="top">
+Changes:  <br/>
+- Stabilize scrollability  <br/>
+- Stabilize key handling  <br/>
+- bug fixes <br/></td>
+<td valign="top">
+Jenny Han Donnelly<br/>
+Luke Smith</td>
+</tr>
+
+<tr class="odd">
+<td valign="top">Drag & Drop  </td>
+<td valign="top">
+Changes:  <br/>
+- Added option for use of shim. <br/></td>
+<td valign="top">
+Dav Glass<br/></td>
+</tr>
+
+<tr>
+<td valign="top">All  </td>
+<td valign="top">
+IE8 support, pending a test-worthy build of IE8. (If we can't vouch for IE8 support in this release, IE8 will itself necessitate a subsequent patch or minor release on 2.x for that specific purpose.<br/></td>
+<td valign="top">
+All<br/></td>
+</tr>
+</table>
+
+<h2>YUI 3.x planning:</h2>
+
+<p>YUI 3.x represents the next major increment of the YUI Library.  We've been working hard on YUI 3.x since late 2007 with the goal of providing a more modular, more consistent library platform that will carry the benefits of library feature-richness while allowing you to have less unused code on the page when using library components.  YUI 3.x improves speed, size, ease-of-use, extensibility, and security.  We're still very early in this process, but we'll begin sharing preview milestones with the YUI community in Q208 and moving toward a full focus on 3.x development this summer and beyond.</p>
+
+<h3>Next Release: 3.0.0 PR1</h3>
+
+<p><em>Summary: </em>3.0.0 PR1 is a developer preview that provides the first public look at the new YUI Core and select utilities. Objectives include:</p>
+<ol>
+  <li>Begin process of getting community feedback on the new architecture.</li>
+  <li>Begin process of getting community involved in development on top of the new 3.x architecture.</li>
+</ol>
+<p><em>Projected Date:</em> July 2008.  Per the note above, 3.x projects represent our current targets but are more likely to slip than dates associated with the more mature 2.x code line.</p>
+<table width="100%" border="1">
+  <tr>
+    <th>Component</th>
+    <th>Details</th>
+    <th>Developer</th>
+  </tr>
+  <tr class="odd">
+    <td>YUI Core</td>
+    <td>Inclusive of the current Yahoo Global Object, YUI Loader, Dom, Event, Selector, and Get components.</td>
+    <td>Matt Sweeney, Adam Moore and others</td>
+  </tr>
+  <tr>
+    <td>Connection Manager</td>
+    <td>First revision of XHR functionality for 3.x.</td>
+    <td>Thomas Sha</td>
+  </tr>
+  <tr class="odd">
+    <td>Drag and Drop</td>
+    <td>First revision of Drag and Drop for 3.x.</td>
+    <td>Dav Glass</td>
+  </tr>
+  <tr>
+    <td>Animation</td>
+    <td>First revision of Animation for 3.x.</td>
+    <td>Matt Sweeney</td>
+  </tr>
+  <tr>
+    <td>Developer Tools</td>
+    <td>Draft of YUI Test to facilitate early explorations of 3.x implementations.</td>
+    <td>Nicholas C. Zakas and others</td>
+  </tr>
+</table>
+
+
+<h2>Movement to 2-way Open Source:</h2>
+
+<p>YUI was released as free-source software under a BSD license in 2006. During its development, we've seen a fantastic community develop around the library, and in 2008 we will take steps to open up the development process to community contribution and ownership. We have committed to announcing a roadmap and timeline for this in Q2 (so, before the end of June). When we do that, the information will be made available here and <a href="http://tech.groups.yahoo.com/group/ydn-javascript/">in the community forum</a>.</p>
+<p><em>Eric's note: </em>Obviously, we missed the Q2 date on making this announcement. We're getting close to doing so, however, and in fact 2.6.0 will be the first release that contains significant content from the community. We hope to make a substantive announcement on this in July, but for now we invite you to join the <a href="http://tech.groups.yahoo.com/group/yui-contributors/">YUI Contributors forum</a> <em>if you have an interest in making significant contributions to YUI.</em> If so, we'd welcome your participation in our conversation as we get this process in place.</p>
+</div>
+
+</div>
+</div>
+
+<?php include "../../inc/side.inc" ?>
+<?php include "../../inc/footer.inc" ?>

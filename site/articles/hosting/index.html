@@ -1,0 +1,320 @@
+<?php
+
+$title="Serving YUI Files from Yahoo! Servers";
+$section="hosting";
+$highlightSyntax=true;
+$prepend = '
+
+<style type="text/css">
+#ygma {margin-bottom:1em;}
+h1 {font-size:175%;}
+h2 {font-size:122%;border-width:0;}
+h2.byline {font-size:100%;text-align:left;margin-top:2em; margin-bottom: 2em;font-weight:normal;}
+h3 {font-size:100%;}
+h1,h2,h3,p,ul {margin-bottom:1em;}
+h1 {margin-top:0; padding-top:0;}
+h2 {margin-top:0; padding-top:.5em;}
+ul {margin-left:1.5em;margin-bottom:1.5em;}
+blockquote {margin:1em 2em 1em 2em;font-style:italic;}
+li h3 {margin-bottom:0;}
+abbr {cursor:help;}
+.gloss {color:#E76300;font-weight:bold;}
+
+#buttonContainer button {
+    /* 
+    display: block;
+    outline: none;
+    font-style: normal;
+    */
+    text-align: center;
+    white-space: nowrap;
+    font-size: 75%;
+}
+
+#filterContainer {
+    border: 2px groove #ccc;
+    margin: .3em;
+    padding: .3em;
+    width: 13em;
+    display:-moz-inline-box;
+    display: inline-block;
+}
+
+#filter button {
+    font-size: 75%;
+}
+
+#optionsContainer {
+    border: 2px groove #ccc;
+    margin: .3em;
+    padding: .3em;
+    width: 34em;
+    display:-moz-inline-box;
+    display: inline-block;
+}
+
+#optionsContainer input {
+    font-size: 75%;
+}
+
+#loadOptionalContainer button {
+    font-size: 75%;
+}
+
+#allowRollupContainer button {
+    font-size: 75%;
+}
+
+#cssContainer, #coreContainer, #toolContainer, #utilityContainer, #widgetContainer, #rollupContainer {
+    border: 2px groove #ccc;
+    margin: 1em 0;
+    padding: .3em;
+    line-height: 1.5em;
+}
+
+.yui-button {margin:.3em;}
+
+#configurator {background-color:#eee; padding:0 .5em; border:1px solid #666;}
+
+#configurator fieldset {background-color:#dedede;}
+#configurator legend {background-color:#666; color:#fff; padding:2px 10px; font-weight:bold; border:1px solid #dedede;}
+
+/*override a yui.css style for the arbitrary module id for logger*/
+#configurator #logger {margin-top:0;}
+</style>';
+
+include "../../inc/header.inc";
+
+$append = '
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/'.$yuiUseVersion.'/build/button/assets/skins/sam/button.css">
+<script type="text/javascript" src="http://yui.yahooapis.com/'.$yuiUseVersion.'/build/element/element-beta-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/'.$yuiUseVersion.'/build/button/button-min.js"></script> 
+
+<script type="text/javascript" src="/yui/docs/assets/yuiModuleMeta.js"></script>
+<script type="text/javascript" src="/yui/docs/assets/yuiConfigurator.js"></script>
+
+<script type="text/javascript">
+YAHOO.yui.configurator();
+</script>
+';
+?>
+
+<div id="yui-main">
+<div class="yui-b">
+
+<h1>Serving YUI Files from Yahoo! Servers</h1>
+
+<p>by Eric Miraglia; <em>Last Updated: March 12, 2008</em></p>
+
+<p><a href="#configure">Configure</a> | <a href="#background">History</a> | <a href="#tou">Terms of Use</a> | <a href="#filepaths">Filepaths</a> | <a href="#aggregates">Aggregate (Rollup) Files</a></p>
+
+<div id="configurator">
+
+<h3 id="configure">YUI Dependency Configurator:</h3>
+<p>Choose the YUI components you want to use on your page; beneath the button toolbars, the text area will update with the sorted dependency list required to power your desired components.  By default, we'll use aggregrate (rollup) files where possible and serve the files from <code>yui.yahooapis.com</code>.  You can disallow rollups and/or set your own base URL path if you choose.</p>
+
+<div>
+      <fieldset id="filterContainer">
+      <legend>Filter</legend>
+      </fieldset>
+      <fieldset id="optionsContainer">
+      <legend>Options</legend>
+      <span id="loadOptionalContainer"></span><span id="allowRollupContainer"></span><span id="baseContainer">base:
+      <input id="baseInput" type="text" name="baseInput">
+      </input>
+      </span>
+      </fieldset>
+    </div>
+<div id="buttonContainer">
+
+<div class="yui-g">
+	<div class="yui-u first">
+      <fieldset id="coreContainer">
+      <legend>YUI JavaScript Core</legend>
+      </fieldset>
+      <fieldset id="utilityContainer">
+      <legend>YUI JavaScript Utilities</legend>
+      </fieldset>
+      <fieldset id="rollupContainer">
+      <legend>YUI Aggregate (Rollup) Files</legend>
+      </fieldset>
+    </div>
+	<div class="yui-u">
+      <fieldset id="cssContainer">
+      <legend>YUI CSS Packages</legend>
+      </fieldset>
+      <fieldset id="widgetContainer">
+      <legend>YUI User Interface Widgets</legend>
+      </fieldset> 
+      <fieldset id="toolContainer">
+      <legend>YUI Developer Tools</legend>
+      </fieldset>    
+    </div>
+</div>
+
+        <textarea id="loaderOutput" name="loaderOutput" class="HTML:nogutter" cols="60" rows="1"><!-- Choose the YUI Modules you wish to load from
+the options above; as you make your selections, this space
+will update with the optimized dependency list.-->
+</textarea>
+</div>
+</div>
+
+
+<h3 id="background">Background of YUI Hosting by Yahoo!</h3>
+
+<p>With the release of YUI version 2.2.0 in Februrary, 2007, Yahoo! opened up free YUI hosting from the Yahoo! network (via <code>yui.yahooapis.com</code>) to all YUI implementers. For more about this decision and its rationale, please refer to "<a href="http://yuiblog.com/blog/2007/02/22/free-yui-hosting">Free Hosting of YUI Files from Yahoo!</a>" on the <a href="http://yuiblog.com">YUIBlog</a>.  Since that date, all YUI releases have been posted to <code>yui.yahooapis.com</code>.  Beginning with the 2.4.1 YUI release, <a href="http://yuiblog.com/blog/2008/01/15/hosting-yui-in-china/">YUI files have also been posted to <code>cn.yui.yahooapis.com</code></a>; for users in mainland China, this latter host is much more performant.</p>
+
+<p>YUI consists of three classes of static resources: JavaScript files, CSS files (providing a default visual treatment for some UI controls), and images (supporting the default visual treatment). </p>
+<p>If appropriate to your application's deployment and its security/privacy regime, you may choose to use Yahoo!'s network to serve YUI files. To do so, you need simply to reference YUI JavaScript and CSS files in their appropriate locations on Yahoo! servers. When you do this, image files referenced within the default YUI CSS files will be served from Yahoo!'s network as well. Yahoo! specifies no service-level agreement for availability of these files, but the filepaths specified below are the same ones Yahoo! developers use for many YUI deployments &mdash; Yahoo! hosting is optimized for fast response times, good cache hit rates, and the use of gzip compression during HTTP transport.</p>
+
+<h3>Hosted Files:</h3>
+<p>When you <a href="http://developer.yahoo.com/yui/download/">download the YUI Library</a>, the YUI build directory contains three types of JavaScript files for each component:</p>
+<ol>
+  <li><strong>Minified (e.g. &quot;animation-min.js&quot;):</strong> The minified file has been stripped of comments, white space, and some line breaks to make it as compact as possible.</li>
+  <li><strong>Standard (e.g. &quot;animation.js&quot;):</strong> The fully commented file, formatted for readability.</li>
+  <li><strong>Debug (e.g. &quot;animation-debug.js&quot;):</strong> The fully commented file, including debug statements that output to the <a href="http://developer.yahoo.com/yui/logger/">Logger</a> interface if present.  </li>
+</ol>
+
+<h3 id="tou">Terms of Use:</h3>
+
+<p>Yahoo!'s hosting of YUI files is covered by all applicable sections of the <a href="http://developer.yahoo.com/terms/">Terms of Use governing Yahoo! APIs</a>; your use of YUI files from Yahoo!'s servers constitutes an agreement to those terms.  Access of YUI files from Yahoo!'s servers will be recorded in Yahoo!'s Web traffic logs.  Please be sure that this usage is fully consistent with your own user privacy agreement before deploying YUI files from Yahoo! servers as part of your application.</p>
+
+
+
+
+<h3 id="filepaths">Filepaths for YUI Library Component Files as of Version <?php echo($yuiCurrentVersion);?>: </h3>
+<p>Individual files for each component are available for inclusion via the following <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags (<strong>note:</strong> use <code>cn.yui.yahoapis.com</code> if most of your users are in mainland China):</p>
+
+<pre><textarea name="code" class="HTML:nogutter:nocontrols" cols="60" rows="1">
+<!--CSS source files for the entire YUI Library-->
+<!--CSS Foundation: (also partially aggegrated in reset-fonts-grids.css; does not include base.css)-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset/reset-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/base/base-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/fonts/fonts-min.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/grids/grids-min.css">
+
+<!--CSS for Controls:-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/container/assets/skins/sam/container.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/menu/assets/skins/sam/menu.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/autocomplete/assets/skins/sam/autocomplete.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/button/assets/skins/sam/button.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/calendar/assets/skins/sam/calendar.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/colorpicker/assets/skins/sam/colorpicker.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/datatable/assets/skins/sam/datatable.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/editor/assets/skins/sam/editor.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/imagecropper/assets/skins/sam/imagecropper.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/layout/assets/skins/sam/layout.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/resize/assets/skins/sam/resize.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/tabview/assets/skins/sam/tabview.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/treeview/assets/skins/sam/treeview.css">
+
+
+<!--JavaScript source files for the entire YUI Library:-->
+
+<!--YUI Core (also aggregated in yahoo-dom-event.js; see readmes in the
+YUI download for details on each of the aggregate files and their contents):-->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/dom/dom-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/event/event-min.js"></script>
+
+<!--Utilities (also partialy aggregated utilities.js; see readmes in the
+YUI download for details on each of the aggregate files and their contents):-->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/element/element-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/connection/connection-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cookie/cookie-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/datasource/datasource-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/get/get-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/history/history-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/imageloader/imageloader-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/json/json-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/resize/resize-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/selector/selector-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yuiloader/yuiloader-beta-min.js"></script>
+
+<!--YUI's UI Controls:-->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/container/container-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/menu/menu-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/autocomplete/autocomplete-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/button/button-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/calendar/calendar-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/charts/charts-experimental-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/colorpicker/colorpicker-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/datatable/datatable-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/editor/editor-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/imagecropper/imagecropper-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/layout/layout-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/slider/slider-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/tabview/tabview-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/treeview/treeview-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/uploader/uploader-experimental-min.js"></script>
+
+<!--YUI Developer Tools: Logging, Testing and Profiling -->
+<!--These are all components that are useful in developing and debugging
+    your work; however, none of these is designed to be a user-facing 
+    component.  They are specifically targeted toward easing your work
+    as a developer.-->
+<!--css-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/logger/assets/skins/sam/logger.css">
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/profilerviewer/assets/skins/sam/profilerviewer.css">
+<!--js-->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/logger/logger-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/profiler/profiler-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/profilerviewer/profilerviewer-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yuitest/yuitest-min.js"></script>
+
+<!--.swf file for the YUI Charts Control-->
+<script type="text/javascript">
+YAHOO.widget.Chart.SWFURL = "http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/charts/assets/charts.swf"; 
+</script>
+</textarea></pre>
+
+<p><strong>Note:</strong> If you are using the Container Family of controls but are <em>not</em> using <a href="../../container/tooltip/">Tooltip</a>, <a href="../../container/panel/">Panel</a>, <a href="../../container/dialog/">Dialog</a>, or <a href="../../container/simpledialog/">SimpleDialog</a>, you may substitute <code>container-min.js</code> with the smaller <code>container_core-min.js</code> file:</p>
+
+<textarea name="code" class="HTML" cols="60" rows="1"><!-- If not using Tooltip, Panel, Dialog, or SimpleDialog: -->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/container/container_core-min.js"></script>
+</textarea>
+
+<h3 id="aggregates">Filepaths for Aggregate Files:</h3>
+<p>YUI is distributed with four aggregate files that package components commonly deployed together.  You can read more about each of these aggregate files in the README documents that accompany them in <a href="http://developer.yahoo.com/yui/download/">the YUI distribution</a>:</p>
+
+<ol>
+	<li><strong><code>reset-fonts-grids.css</code> and <code>reset-fonts.css</code>:</strong> As their names suggest, these files combine components of the YUI CSS foundation.</li>
+    <li><strong><code>yahoo-dom-event.js</code>:</strong> Combines the three files the comprise the YUI Core: the <a href="http://developer.yahoo.com/yui/yahoo/">YAHOO Global Object</a>, the <a href="http://developer.yahoo.com/yui/dom/">Dom Collection</a>, and the <a href="http://developer.yahoo.com/yui/event/">Event Utility</a>.  These three files are almost always used in concert and are a shared requirement for most YUI implementations.</li>
+    <li><strong><code>yuiloader-dom-event.js</code>:</strong> In addition to the YUI Core files included in <code>yahoo-dom-event.js</code>, <code>yuiloader-dom-event.js</code> adds the <a href="http://developer.yahoo.com/yui/yuiloader/">YUI Loader</a> and the <a href="http://developer.yahoo.com/yui/get/">Get Utility</a>.  Between them, these two additional packages allow you to lazy-load any additional YUI dependencies your implementation requires.  This is the perfect base aggregate for situations where you want the library's core on the page and want the further ability to bring in <em>any</em> additional YUI component via script.</li>
+    <li><strong><code>utilities.js</code>:</strong> The <code>utilities.js</code> aggregate combines the Yahoo Global Object, Dom Collection, Event Utility, <a href="http://developer.yahoo.com/yui/element/">Element Utility</a>, <a href="http://developer.yahoo.com/yui/connection/">Connection Manager</a>, <a href="http://developer.yahoo.com/yui/dragdrop/">Drag &amp; Drop Utility</a> and <a href="http://developer.yahoo.com/yui/animation/">Animation Utility</a>.  Use this file to reduce HTTP requests whenever you are including more than three of its constituent components.</li>
+    <li><strong><code>skin.css</code>:</strong> The <code>skin.css</code> aggregate combines all of the YUI Sam Skin CSS for all of the YUI controls in a single file.  Where you are using several UI controls on the same page, the aggregate CSS file allows you to get all of their style information in a single file.  See the <a href="/yui/articles/skinning/">Understanding Skinning article</a> for more information.</li>    
+</ol>
+
+<p>The aggregate files can be included on your page using the following the following <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags:</p>
+
+<pre><textarea name="code" class="HTML:nogutter:nocontrols" cols="60" rows="1">
+
+<!--aggregate file paths for utilities.js and yahoo-dom-event.js-->
+<!--NOTE: Do not use any of these files together; utilities.js 
+includes everything that is in yahoo-dom-event.js andyuiloader-dom-event.js; 
+yuiloader-dom-event.js includes everything in yahoo-dom-event.js.  Choose
+the single aggregat that best suits your needs, or use the configuration tool
+at the top of the page to choose a rollup for you based on your component
+usage. -->
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/utilities/utilities.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yuiloader-dom-event/yuiloader-dom-event.js"></script>
+
+<!--aggregate file path for reset-fonts-grids.css-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts-grids/reset-fonts-grids.css">
+
+<!--aggregate file path for reset-fonts.css-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts/reset-fonts.css">
+
+<!--aggregate file path for YUI Sam Skin CSS for UI controls-->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/assets/skins/sam/skin.css">
+</textarea></pre>
+
+</div>
+</div>
+
+<?php include "../../inc/side.inc" ?>
+<?php include "../../inc/footer.inc" ?>
