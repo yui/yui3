@@ -514,7 +514,7 @@ YUI.add("lang", function(Y) {
 
     /**
      * Provides the language utilites and extensions used by the library
-     * @class lang
+     * @class Lang
      */
     Y.Lang = Y.Lang || {};
 
