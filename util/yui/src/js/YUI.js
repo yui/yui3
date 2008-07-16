@@ -67,22 +67,26 @@ YUI.prototype = {
         // before _setup is called.
         this.config = o;
 
-        var i = (YUI.Env && YUI.Env._idx++) || 0;
         this.Env = {
             // @todo expand the new module metadata
             mods: {},
+            _instances: {},
             _idx: 0,
             _pre: 'yuid',
             _used: {},
-            _yidx: i,
+            _yidx: 0,
             _uidx: 0
         };
 
+        if (YUI.Env) {
+            this.Env._yidx = ++YUI.Env._idx;
+            this.id = this.stamp(this);
+            YUI.Env._instances[this.id] = this;
+        }
+
         this.constructor = YUI;
 
-        this.id = this.guid('YUI');
-
-        this.log(i + ') init ');
+        this.log(this.id + ') init ');
     },
     
     /**
@@ -109,6 +113,31 @@ YUI.prototype = {
         //     silent: true
         // });
     },
+
+    getInstance: function(id) {
+        return YUI.Env._instances[id];
+    },
+
+    applyTo: function(id, method, args) {
+
+        var instance = this.getInstance(id);
+
+        if (instance) {
+
+            var nest = method.split(','), m = instance;
+
+            for (var i=0; i<nest.length; i=i+1) {
+
+                m = m[nest[i]];
+
+                if (!m) {
+                    this.fail('applyTo failure: ' + method);
+                }
+            }
+
+            m.apply(instance, args);
+        }
+    }, 
 
     /**
      * Register a module
@@ -419,6 +448,25 @@ YUI.prototype = {
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
+    },
+
+    // objects that will use the event system require a unique 
+    // identifier.  An uid will be generated and applied if one
+    // isn't found
+    stamp: function(o) {
+
+        if (!o) {
+            return o;
+        }
+
+        var uid = (typeof o === 'string') ? o : o._yuid;
+
+        if (!uid) {
+            uid = this.guid();
+            o._yuid = uid;
+        }
+
+        return uid;
     }
 };
 

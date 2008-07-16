@@ -33,6 +33,7 @@ YUI.add("event-custom", function(Y) {
             'silent',
             'host',
             'context',
+            'emitFacade',
             'type'
         ]
 
@@ -227,6 +228,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         this.bubbles = true;
 
+        this.emitFacade = false;
+
         this.applyConfig(o, true);
 
         this.log("Creating " + this);
@@ -385,12 +388,11 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             // properties to the event facade
             if (args && Y.Lang.isObject(args[0], true)) {
                 Y.mix(ef, args[0], true);
-            } else { 
-                ef.details = this.details;
             }
 
-            this._facade = ef;
+            ef.details = this.details;
 
+            this._facade = ef;
 
             return this._facade;
         },

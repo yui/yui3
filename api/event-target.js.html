@@ -306,14 +306,22 @@
                     <span class="k">if</span> <span class="o">(</span><span class="nx">targs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
                         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
-                            <span class="c">// ce = t.getEvent(type) || t.publish(type, evt);</span>
-<span class="c"></span>                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> 
+                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> 
                             
-                        <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
-                            <span class="nx">ce</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">host</span> <span class="o">===</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">;</span>
+                        <span class="c">// if this event was not published on the bubble target,</span>
+<span class="c"></span>                        <span class="c">// publish it with sensible default properties</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">)</span> <span class="o">{</span>
+
+                            <span class="c">// publish the event on the bubble target using this event</span>
+<span class="c"></span>                            <span class="c">// for its configuration</span>
+<span class="c"></span>                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">evt</span><span class="o">);</span>
+
+                            <span class="c">// set the host and context appropriately</span>
+<span class="c"></span>                            <span class="nx">ce</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="o">(</span><span class="nx">evt</span><span class="o">.</span><span class="nx">host</span> <span class="o">===</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">context</span><span class="o">;</span>
                             <span class="nx">ce</span><span class="o">.</span><span class="nx">host</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
-                            <span class="nx">ce</span><span class="o">.</span><span class="nx">defaultFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+                            <span class="c">// clear handlers if specified on this event</span>
+<span class="c"></span>                            <span class="nx">ce</span><span class="o">.</span><span class="nx">defaultFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                             <span class="nx">ce</span><span class="o">.</span><span class="nx">preventedFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                             <span class="nx">ce</span><span class="o">.</span><span class="nx">stoppedFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                         <span class="o">}</span>

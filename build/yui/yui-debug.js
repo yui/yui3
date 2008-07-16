@@ -67,22 +67,26 @@ YUI.prototype = {
         // before _setup is called.
         this.config = o;
 
-        var i = (YUI.Env && YUI.Env._idx++) || 0;
         this.Env = {
             // @todo expand the new module metadata
             mods: {},
+            _instances: {},
             _idx: 0,
             _pre: 'yuid',
             _used: {},
-            _yidx: i,
+            _yidx: 0,
             _uidx: 0
         };
 
+        if (YUI.Env) {
+            this.Env._yidx = ++YUI.Env._idx;
+            this.id = this.stamp(this);
+            YUI.Env._instances[this.id] = this;
+        }
+
         this.constructor = YUI;
 
-        this.id = this.guid('YUI');
-
-        this.log(i + ') init ');
+        this.log(this.id + ') init ');
     },
     
     /**
@@ -109,6 +113,31 @@ YUI.prototype = {
         //     silent: true
         // });
     },
+
+    getInstance: function(id) {
+        return YUI.Env._instances[id];
+    },
+
+    applyTo: function(id, method, args) {
+
+        var instance = this.getInstance(id);
+
+        if (instance) {
+
+            var nest = method.split(','), m = instance;
+
+            for (var i=0; i<nest.length; i=i+1) {
+
+                m = m[nest[i]];
+
+                if (!m) {
+                    this.fail('applyTo failure: ' + method);
+                }
+            }
+
+            m.apply(instance, args);
+        }
+    }, 
 
     /**
      * Register a module
@@ -419,6 +448,25 @@ YUI.prototype = {
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
+    },
+
+    // objects that will use the event system require a unique 
+    // identifier.  An uid will be generated and applied if one
+    // isn't found
+    stamp: function(o) {
+
+        if (!o) {
+            return o;
+        }
+
+        var uid = (typeof o === 'string') ? o : o._yuid;
+
+        if (!uid) {
+            uid = this.guid();
+            o._yuid = uid;
+        }
+
+        return uid;
     }
 };
 
@@ -1044,24 +1092,6 @@ YUI.add("core", function(Y) {
         }
 
         return r;
-    };
-
-    // objects that will use the event system require a unique 
-    // identifier.  An uid will be generated and applied if one
-    // isn't found
-    Y.stamp = function(o) {
-        if (!o) {
-            return o;
-        }
-
-        var uid = (L.isString(o)) ? o : o._yuid;
-
-        if (!uid) {
-            uid = Y.guid();
-            o._yuid = uid;
-        }
-
-        return uid;
     };
 
     Y.each = function(o, f, c, proto) {
@@ -1908,6 +1938,7 @@ YUI.add("event-custom", function(Y) {
             'silent',
             'host',
             'context',
+            'emitFacade',
             'type'
         ]
 
@@ -2102,6 +2133,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         this.bubbles = true;
 
+        this.emitFacade = false;
+
         this.applyConfig(o, true);
 
         this.log("Creating " + this);
@@ -2260,12 +2293,11 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             // properties to the event facade
             if (args && Y.Lang.isObject(args[0], true)) {
                 Y.mix(ef, args[0], true);
-            } else { 
-                ef.details = this.details;
             }
 
-            this._facade = ef;
+            ef.details = this.details;
 
+            this._facade = ef;
 
             return this._facade;
         },
@@ -2956,13 +2988,21 @@ YUI.add("event-target", function(Y) {
                     if (targs.hasOwnProperty(i)) {
 
                         var t = targs[i], type = evt.type,
-                            // ce = t.getEvent(type) || t.publish(type, evt);
                             ce = t.getEvent(type) 
                             
+                        // if this event was not published on the bubble target,
+                        // publish it with sensible default properties
                         if (!ce) {
+
+                            // publish the event on the bubble target using this event
+                            // for its configuration
                             ce = t.publish(type, evt);
+
+                            // set the host and context appropriately
                             ce.context = (evt.host === evt.context) ? t : evt.context;
                             ce.host = t;
+
+                            // clear handlers if specified on this event
                             ce.defaultFn = null;
                             ce.preventedFn = null;
                             ce.stoppedFn = null;

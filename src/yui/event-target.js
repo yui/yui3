@@ -269,13 +269,21 @@ YUI.add("event-target", function(Y) {
                     if (targs.hasOwnProperty(i)) {
 
                         var t = targs[i], type = evt.type,
-                            // ce = t.getEvent(type) || t.publish(type, evt);
                             ce = t.getEvent(type) 
                             
+                        // if this event was not published on the bubble target,
+                        // publish it with sensible default properties
                         if (!ce) {
+
+                            // publish the event on the bubble target using this event
+                            // for its configuration
                             ce = t.publish(type, evt);
+
+                            // set the host and context appropriately
                             ce.context = (evt.host === evt.context) ? t : evt.context;
                             ce.host = t;
+
+                            // clear handlers if specified on this event
                             ce.defaultFn = null;
                             ce.preventedFn = null;
                             ce.stoppedFn = null;

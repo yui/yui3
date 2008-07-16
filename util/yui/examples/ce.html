@@ -172,6 +172,16 @@ property names rather than e.details[1]
 
     }, 2, 3);
 
+    o1.fire('o:1', {
+        foo: {
+            nested_foo: [1,2,3]
+        },
+        bar: {
+            nested_bar: "absorbed from fire arg 0"
+        }
+
+    }, 2, 3);
+
     (o1 && o1['base'] && o1.base());
 
 

@@ -331,24 +331,6 @@ YUI.add("core", function(Y) {
         return r;
     };
 
-    // objects that will use the event system require a unique 
-    // identifier.  An uid will be generated and applied if one
-    // isn't found
-    Y.stamp = function(o) {
-        if (!o) {
-            return o;
-        }
-
-        var uid = (L.isString(o)) ? o : o._yuid;
-
-        if (!uid) {
-            uid = Y.guid();
-            o._yuid = uid;
-        }
-
-        return uid;
-    };
-
     Y.each = function(o, f, c, proto) {
 
         if (o.each && o.item) {
