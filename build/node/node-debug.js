@@ -803,6 +803,7 @@ YUI.add('node', function(Y) {
             if (PluginClass && PluginClass.NS) {
                 this[PluginClass.NS] = new PluginClass(config);
             }
+            return this;
         },
 
         inDoc: function(doc) {
