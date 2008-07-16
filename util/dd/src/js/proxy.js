@@ -12,7 +12,6 @@
     var DDM = Y.DD.DDM,
         NODE = 'node',
         DRAG_NODE = 'dragNode',
-        FIRST_CHILD = 'firstChild',
         PROXY = 'proxy';
      
 

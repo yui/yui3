@@ -3,7 +3,7 @@
 Known Issues:
 
     Firefox 2.x:
-        Drags with handles inside an element with overflow: hidden will not target properly.
+        Prpxy Drags with handles inside an element with overflow: hidden will not target properly.
 
     All:
         Scrolling Module not available as of this release.

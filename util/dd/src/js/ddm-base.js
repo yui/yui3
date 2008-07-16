@@ -12,6 +12,7 @@
      */
     
     var DDMBase = function() {
+        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
@@ -125,7 +126,7 @@
         initializer: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
-            Y.Event.Target.apply(this);
+            //Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -164,7 +165,6 @@
         _end: function() {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
-            //if (this.activeDrag && this.activeDrag.get('dragging')) {
             if (this.activeDrag) {
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
