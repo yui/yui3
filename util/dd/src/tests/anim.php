@@ -68,18 +68,18 @@
 
 
 
-<script type="text/javascript" src="../../../../build/yui/yui.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/yui/yui-min.js?bust=<?php echo(mktime()); ?>"></script>
 
 <!-- needed until built into a module -->
-<script type="text/javascript" src="../../../../build/attribute/attribute.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/base/base.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/attribute/attribute-min.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/base/base-min.js?bust=<?php echo(mktime()); ?>"></script>
 
 <!-- needed until new node.js is built into yui.js -->
-<script type="text/javascript" src="../../../../build/dom/dom.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/node/node.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/dom/dom-min.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/node/node-min.js?bust=<?php echo(mktime()); ?>"></script>
 
-<script type="text/javascript" src="../../../../build/animation/animation.js?bust=<?php echo(mktime()); ?>"></script>
-<script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/animation/animation-min.js?bust=<?php echo(mktime()); ?>"></script>
+<script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all-min.js?bust=<?php echo(mktime()); ?>"></script>
     
 
 <script type="text/javascript">
