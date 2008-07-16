@@ -14,6 +14,7 @@ YUI.add('dd-ddm-base', function(Y) {
      */
     
     var DDMBase = function() {
+        //debugger;
         DDMBase.superclass.constructor.apply(this, arguments);
     };
 
@@ -127,7 +128,7 @@ YUI.add('dd-ddm-base', function(Y) {
         initializer: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
-            Y.Event.Target.apply(this);
+            //Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -166,7 +167,6 @@ YUI.add('dd-ddm-base', function(Y) {
         _end: function() {
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
-            //if (this.activeDrag && this.activeDrag.get('dragging')) {
             if (this.activeDrag) {
                 this._endDrag();
                 this.activeDrag.end.call(this.activeDrag);
@@ -543,11 +543,11 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                var node = Y.Node.get(node);
-                if (!node) {
+                var n = Y.Node.get(node);
+                if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
                 }
-                return node;
+                return n;
             }
         },
         /**
@@ -557,11 +557,11 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
-                var node = Y.Node.get(node);
-                if (!node) {
+                var n = Y.Node.get(node);
+                if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
                 }
-                return node;
+                return n;
             }
         },
         /**
@@ -771,8 +771,8 @@ YUI.add('dd-drag', function(Y) {
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
                 queuable: true,
-                emitFacade: true//,
-                //bubbles: true
+                emitFacade: true,
+                bubbles: true
             });
             
             var ev = [
@@ -793,6 +793,7 @@ YUI.add('dd-drag', function(Y) {
             
             Y.each(ev, function(v, k) {
                 this.publish(v, {
+                    type: v,
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
@@ -1161,7 +1162,7 @@ YUI.add('dd-drag', function(Y) {
         * @return {Self}
         */
         start: function() {
-            if (!this.get('lock')) {
+            if (!this.get('lock') && !this.get('dragging')) {
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 this.get(NODE).addClass(DDM.CSS_PREFIX + '-dragging');

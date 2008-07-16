@@ -70,11 +70,11 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             set: function(node) {
-                var node = Y.Node.get(node);
-                if (!node) {
+                var n = Y.Node.get(node);
+                if (!n) {
                     Y.fail('DD.Drop: Invalid Node Given: ' + node);
                 }
-                return node;               
+                return n;               
             }
         },
         /**
@@ -136,6 +136,7 @@ YUI.add('dd-drop', function(Y) {
 
             Y.each(ev, function(v, k) {
                 this.publish(v, {
+                    type: v,
                     emitFacade: true,
                     preventable: false,
                     bubbles: true,
@@ -202,10 +203,12 @@ YUI.add('dd-drop', function(Y) {
         */
         initializer: function() {
             this._createEvents();
-            if (!this.get(NODE).get('id')) {
-                var id = Y.stamp(this.get(NODE));
-                this.get(NODE).set('id', id);
+            var node = this.get(NODE);
+            if (!node.get('id')) {
+                var id = Y.stamp(node);
+                node.set('id', id);
             }
+            node.addClass(DDM.CSS_PREFIX + '-drop');
         },
         /**
         * @private
@@ -218,6 +221,7 @@ YUI.add('dd-drop', function(Y) {
                 this.shim.get('parentNode').removeChild(this.shim);
                 this.shim = null;
             }
+            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
         },        
         /**
         * @private

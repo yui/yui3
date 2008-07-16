@@ -134,11 +134,11 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                var node = Y.Node.get(node);
-                if (!node) {
+                var n = Y.Node.get(node);
+                if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
                 }
-                return node;
+                return n;
             }
         },
         /**
@@ -148,11 +148,11 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
-                var node = Y.Node.get(node);
-                if (!node) {
+                var n = Y.Node.get(node);
+                if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
                 }
-                return node;
+                return n;
             }
         },
         /**
@@ -362,8 +362,8 @@ YUI.add('dd-drag', function(Y) {
             this.publish(EV_MOUSE_DOWN, {
                 defaultFn: this._handleMouseDown,
                 queuable: true,
-                emitFacade: true//,
-                //bubbles: true
+                emitFacade: true,
+                bubbles: true
             });
             
             var ev = [
@@ -384,6 +384,7 @@ YUI.add('dd-drag', function(Y) {
             
             Y.each(ev, function(v, k) {
                 this.publish(v, {
+                    type: v,
                     emitFacade: true,
                     bubbles: true,
                     preventable: false,
@@ -761,7 +762,7 @@ YUI.add('dd-drag', function(Y) {
         * @return {Self}
         */
         start: function() {
-            if (!this.get('lock')) {
+            if (!this.get('lock') && !this.get('dragging')) {
                 this.set('dragging', true);
                 DDM._start(this.deltaXY, [this.get(NODE).get(OFFSET_HEIGHT), this.get(NODE).get(OFFSET_WIDTH)]);
                 Y.log('startDrag', 'info', 'dd-drag');
