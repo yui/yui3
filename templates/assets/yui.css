@@ -135,7 +135,9 @@ img.icon-rss {display:inline;border:none !important;position:relative;top:2px;le
 #examples li.selected {font-weight:bold;}
 
 /*styles for example pages*/
-.example .promo {background-color:#89d;border-color:#666666; padding:1em;}
+/* .example .promo {background-color:#89d;border-color:#666666; padding:1em;} */
+
+.example .promo {background:#f2fbff url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:13px;margin-bottom:13px;}
 .example .promo h1, .example .promo h2, .example .promo  h3 {color:#FFCC66;}
 .example .promo h1 {font-size:159%; padding-top:0; margin-top:0;}
 .exampleIntro, .exampleIntro p, .exampleIntro a, .exampleIntro a code {color:#fff;}

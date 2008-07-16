@@ -254,7 +254,7 @@ include("'.$docroot.'inc/header.inc");
 
 	<h2><?php echo $currentModule[name].": ".$examples[$name][name]?></h2>
 
-	<div id="promo" class="component">
+	<div id="example" class="promo">
 	<p>
 	<?php 
 	$filename = $dataroot.$currentModuleName."/".$name."_intro.php";
@@ -262,7 +262,7 @@ include("'.$docroot.'inc/header.inc");
 	?>
 	</p>	
 
-	<div class="module <?php
+	<div class="module example-container <?php
 	//add newWindow class if new window is required
 	if($currentExample["newWindow"] == "require") {
 		echo ' newWindow';
@@ -274,7 +274,9 @@ include("'.$docroot.'inc/header.inc");
 	if($currentExample["newWindow"] == "default") {
 	$url = $name."_clean.html";
 ?>		<div class="hd exampleHd">
-			<p class="newWindowButton yui-skin-sam"><!--<span id="newWindowLinkx"><span class="first-child">--><a href="<?php echo($url);?>" target="_blank">View example in new window.</a><!--</span></span>-->		
+			<p class="newWindowButton yui-skin-sam">
+                <a href="<?php echo($url);?>" target="_blank">View example in new window.</a>
+            </p>
 		</div><?php
 	}
 	
@@ -289,7 +291,13 @@ include("'.$docroot.'inc/header.inc");
 	will have full html structure.*/
 		if($currentExample["newWindow"] == "require") {
 	?>
-	<p class="newWindowButton yui-skin-sam"><span id="newWindowLink"><span class="first-child"><a href="<?php echo $name.'_source.html' ?>" target="_blank">View example in new window.</a></span></span>		
+	<p class="newWindowButton yui-skin-sam">
+        <span id="newWindowLink">
+            <span class="first-child">
+                <a href="<?php echo $name.'_source.html' ?>" target="_blank">View example in new window.</a>
+            </span>
+        </span>	
+    </p>
 	
 	<?php
 		} else { //show inline example
