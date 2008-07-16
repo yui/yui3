@@ -123,7 +123,7 @@ YUI.prototype = {
 
         if (instance) {
 
-            var nest = method.split(','), m = instance;
+            var nest = method.split('.'), m = instance;
 
             for (var i=0; i<nest.length; i=i+1) {
 
@@ -134,7 +134,7 @@ YUI.prototype = {
                 }
             }
 
-            m.apply(instance, args);
+            return m.apply(instance, args);
         }
     }, 
 
