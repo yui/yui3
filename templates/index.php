@@ -53,7 +53,6 @@ foreach($aUtils as $key=>$aUtil) {
             <li><a href='examples/reset/index.html'>Reset CSS</a></li>
             <li><a href='examples/base/index.html'>Base CSS</a></li>
             <li><a href='examples/fonts/index.html'>Fonts CSS</a></li>
-            <li><a href='examples/grids/index.html'>Grids CSS</a></li>
         </ul>
 	    <h4>Developer Tools:</h4>
 	    <ul>
@@ -68,11 +67,15 @@ foreach($aUtils as $key=>$aUtil) {
 	</div>
 	<div class="yui-u">
         <h4>YUI Core:</h4>
-		<ul>
-        	<li><a href="examples/yahoo/index.html">YAHOO Global Object</a> (including language and environment utilities)</li>
-			<li><a href="examples/dom/index.html">Dom Collection</a> (including helper methods for class managment, positioning, and more)</li>
-			<li><a href="examples/event/index.html">Event Utility</a> (including support for cross-browser DOM events and Custom Events)</li>
-		</ul>
+        <ul>
+            <li><a href='examples/placeholder/index.html'>PlaceHolder</a></li>
+        <?php
+            $aUtils = getModulesByType("core",$modules);
+            foreach($aUtils as $key=>$aUtil) {
+	            echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+            }
+        ?>
+        </ul>
 		<h4>Utilities:</h4>
 		<ul>
             <li><a href='examples/placeholder/index.html'>PlaceHolder</a></li>

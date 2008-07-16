@@ -250,19 +250,19 @@ include("'.$docroot.'inc/header.inc");
 	<div id="yui-main">
 		<div class="yui-b">
 		  <div class="yui-ge">
-			  <div class="yui-u first example">
-	
-	<div class="promo">
-	<h1><?php echo $currentModule[name].": ".$examples[$name][name]?></h1>
-	
-	<div class="exampleIntro">
+			  <div class="yui-u first example" id="main">
+
+	<h2><?php echo $currentModule[name].": ".$examples[$name][name]?></h2>
+
+	<div id="promo" class="component">
+	<p>
 	<?php 
 	$filename = $dataroot.$currentModuleName."/".$name."_intro.php";
 	include($filename);
 	?>
-	</div>	
-					
-	<div class="example-container module <?php
+	</p>	
+
+	<div class="module <?php
 	//add newWindow class if new window is required
 	if($currentExample["newWindow"] == "require") {
 		echo ' newWindow';
@@ -280,7 +280,7 @@ include("'.$docroot.'inc/header.inc");
 	
 		?>
 		<div id="example-canvas" class="bd">
-	
+
 	<?php
 	/*show source code inline for normal examples; if the newWindow
 	property for this example is "require", then only display the link
@@ -317,7 +317,7 @@ include("'.$docroot.'inc/header.inc");
 	include($filename);
 	?>
 				</div>
-				<div class="yui-u">
+				<div class="yui-u sidebar">
 	<?php 
 	
 	
@@ -358,15 +358,17 @@ include("'.$docroot.'inc/header.inc");
 	} /*end conditional for logger suppression */
 	?>				
 				
-					<div id="examples">
-						<h3<?php
+					<div id="examples" class="mod box4">
+                        <div class="hd">
+						<h4>
+    <?php
 	/*apply firstContent class if logger was suppressed*/ 
-	if($currentExample["loggerInclude"]=="suppress" || $loggerAvailable == false) {
-		echo " class='firstContent'";
-	} 
-	?>><?php echo($currentModule[name]);?> Examples:</h3>
-	
-						<div id="exampleToc">
+    //	if($currentExample["loggerInclude"]=="suppress" || $loggerAvailable == false) {
+	//	echo " class='firstContent'";
+	//} 
+	?><?php echo($currentModule[name]);?> Examples:</h4>
+                        </div>
+						<div class="bd">
 							<ul>
 								<?php
 	$aCurrentExamples = getExamplesByModule($currentModuleName, $examples);
@@ -388,7 +390,6 @@ include("'.$docroot.'inc/header.inc");
 				$moduleSuffix = "";
 			}
 			echo "<li".$selected."><a href='../".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"].$moduleSuffix."</a></li>";
-			
 		}
 	}
 	?>
@@ -396,8 +397,11 @@ include("'.$docroot.'inc/header.inc");
 						</div>
 					</div>
 					
-					<div id="module">
-						<h3>More <?php echo($currentModule[name])." Resources:";?></h3>
+					<div class="mod box4">
+                        <div class="hd">
+						<h4>More <?php echo($currentModule[name])." Resources:";?></h4>
+                        </div>
+                        <div class="bd">
 						<ul>
 							<li><a href="http://developer.yahoo.com/yui/<?php echo($currentModuleName);?>/">User's Guide</a><?php echo $externalLabel; ?></li>
 <?php
@@ -419,6 +423,7 @@ if($currentModule[cheatsheet]) {
 }
                          
 						?></ul>
+                        </div>
 					</div>
 			  </div>
 		</div>
