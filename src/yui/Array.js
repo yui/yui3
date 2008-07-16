@@ -1,7 +1,7 @@
 /**
  * Array utilities
  * @TODO investigate using Array subclasses for some of this
- * @class array
+ * @class Array
  * @static
  */
 YUI.add("array", function(Y) {

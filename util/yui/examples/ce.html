@@ -180,7 +180,12 @@ property names rather than e.details[1]
     //o1.fire('o:2', 4, 5, 6);
 
     var ns = YUI.applyTo(Y.id, 'namespace', ['foo.bar']);
-    Y.log('ns: ' + ns);
+    // var o = YUI.applyTo('id', 'io.start', [obj, args]);
+    var a = YUI.applyTo(Y.id, 'Object.keys', [{
+            foo: 1,
+            bar: 2
+        }]);
+    Y.log('keys: ' + a);
     debugger;
 
 

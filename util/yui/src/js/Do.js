@@ -4,30 +4,73 @@ YUI.add("aop", function(Y) {
     var BEFORE = 0,
         AFTER = 1;
 
+    /**
+     * Allows for the insertion of methods that are executed before or after
+     * a specified method
+     * @class Do
+     * @static
+     */
     Y.Do = {
 
+        /**
+         * Cache of objects touched by the utility
+         * @property objs
+         * @static
+         */
         objs: {},
 
-        // if 'c' context is supplied, apply remaining args to callback
+        /**
+         * Execute the supplied method before the specified function
+         * @method before
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @static
+         */
         before: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(BEFORE, f, obj, sFn);
+
+            return this._inject(BEFORE, f, obj, sFn);
         },
 
-        // if 'c' context is supplied, apply remaining args to callback
+        /**
+         * Execute the supplied method after the specified function
+         * @method after
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @static
+         */
         after: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(AFTER, f, obj, sFn);
+
+            return this._inject(AFTER, f, obj, sFn);
         },
 
+        /**
+         * Execute the supplied method after the specified function
+         * @method _inject
+         * @param when {string} before or after
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @private
+         * @static
+         */
         _inject: function(when, fn, obj, sFn) {
 
             // object id
@@ -60,6 +103,11 @@ YUI.add("aop", function(Y) {
 
         },
 
+        /**
+         * Detach a before or after subscription
+         * @method detach
+         * @param sid {string} the subscription handle
+         */
         detach: function(sid) {
             delete this.before[sid];
             delete this.after[sid];
@@ -72,6 +120,13 @@ YUI.add("aop", function(Y) {
 
     //////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Wrapper for a displaced method with aop enabled
+     * @class Do.Method
+     * @constructor
+     * @param obj The object to operate on
+     * @param sFn The name of the method to displace
+     */
     Y.Do.Method = function(obj, sFn) {
         this.obj = obj;
         this.methodName = sFn;
@@ -82,6 +137,13 @@ YUI.add("aop", function(Y) {
         this.after = {};
     };
 
+    /**
+     * Register a aop subscriber
+     * @method register
+     * @param sid {string} the subscriber id
+     * @param fn {Function} the function to execute
+     * @param when {string} when to execute the function
+     */
     Y.Do.Method.prototype.register = function (sid, fn, when) {
         if (when) {
             // this.after.push(fn);
@@ -92,6 +154,10 @@ YUI.add("aop", function(Y) {
         }
     };
 
+    /**
+     * Execute the wrapped method
+     * @method exec
+     */
     Y.Do.Method.prototype.exec = function () {
 
         var args = Y.Array(arguments, 0, true), 
@@ -148,6 +214,7 @@ YUI.add("aop", function(Y) {
     /**
      * Return an Error object when you want to terminate the execution
      * of all subsequent method calls
+     * @class Do.Error
      */
     Y.Do.Error = function(msg, retVal) {
         this.msg = msg;
@@ -158,6 +225,7 @@ YUI.add("aop", function(Y) {
      * Return an AlterArgs object when you want to change the arguments that
      * were passed into the function.  An example would be a service that scrubs
      * out illegal characters prior to executing the core business logic.
+     * @class Do.AlterArgs
      */
     Y.Do.AlterArgs = function(msg, newArgs) {
         this.msg = msg;
@@ -167,6 +235,7 @@ YUI.add("aop", function(Y) {
     /**
      * Return an AlterReturn object when you want to change the result returned
      * from the core method to the caller
+     * @class Do.AlterReturn
      */
     Y.Do.AlterReturn = function(msg, newRetVal) {
         this.msg = msg;

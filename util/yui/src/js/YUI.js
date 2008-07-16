@@ -114,10 +114,26 @@ YUI.prototype = {
         // });
     },
 
+    /**
+     * Gets a YUI instance with by id
+     * @method getInstance
+     * @param id {string} the instance id
+     * @return {YUI} the matched YUI instance
+     */
     getInstance: function(id) {
         return YUI.Env._instances[id];
     },
 
+    /**
+     * Executes a method on a YUI instance with
+     * the specified id.
+     * @method applyTo
+     * @param id {string} the YUI instance id
+     * @param method {string} the name of the method to exectute.
+     * Ex: 'Object.keys'
+     * @param args {Array} the arguments to apply to the method
+     * @return the return value from the applied method or null
+     */
     applyTo: function(id, method, args) {
 
         var instance = this.getInstance(id);
@@ -137,6 +153,8 @@ YUI.prototype = {
 
             return m.apply(instance, args);
         }
+
+        return null;
     }, 
 
     /**
@@ -431,10 +449,18 @@ YUI.prototype = {
         return Y;
     },
 
-    // Centralizing error messaging means we can configure how
-    // they are communicated.
-    // @TODO do we need a param to force throwing an error
-    fail: function(msg, e, eType) {
+    /**
+     * Report an error.  The reporting mechanism is controled by
+     * the 'throwFail' configuration attribute.  If throwFail is
+     * not specified, the message is written to the logger, otherwise
+     * a JS error is thrown
+     * @method fail
+     * @param msg {string} the failure message
+     * @param e {Error} Optional JS error that was caught.  If supplied
+     * and throwFail is specified, this error will be re-thrown.
+     * @return {YUI} this YUI instance
+     */
+    fail: function(msg, e) {
         this.log(msg, "error");
 
         if (this.config.throwFail) {
@@ -444,15 +470,24 @@ YUI.prototype = {
         return this;
     },
 
-    // generate an id that is unique among all YUI instances
+    /**
+     * Generate an id that is unique among all YUI instances
+     * @method guid
+     * @param pre {string} optional guid prefix
+     * @return {string} the guid
+     */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
     },
 
-    // objects that will use the event system require a unique 
-    // identifier.  An uid will be generated and applied if one
-    // isn't found
+    /**
+     * Stamps an object with a guid.  If the object already
+     * has one, a new one is not created
+     * @method stamp
+     * @param o The object to stamp
+     * @return {string} The object's guid
+     */
     stamp: function(o) {
 
         if (!o) {

@@ -113,10 +113,26 @@ YUI.prototype = {
         // });
     },
 
+    /**
+     * Gets a YUI instance with by id
+     * @method getInstance
+     * @param id {string} the instance id
+     * @return {YUI} the matched YUI instance
+     */
     getInstance: function(id) {
         return YUI.Env._instances[id];
     },
 
+    /**
+     * Executes a method on a YUI instance with
+     * the specified id.
+     * @method applyTo
+     * @param id {string} the YUI instance id
+     * @param method {string} the name of the method to exectute.
+     * Ex: 'Object.keys'
+     * @param args {Array} the arguments to apply to the method
+     * @return the return value from the applied method or null
+     */
     applyTo: function(id, method, args) {
 
         var instance = this.getInstance(id);
@@ -136,6 +152,8 @@ YUI.prototype = {
 
             return m.apply(instance, args);
         }
+
+        return null;
     }, 
 
     /**
@@ -416,10 +434,18 @@ YUI.prototype = {
         return Y;
     },
 
-    // Centralizing error messaging means we can configure how
-    // they are communicated.
-    // @TODO do we need a param to force throwing an error
-    fail: function(msg, e, eType) {
+    /**
+     * Report an error.  The reporting mechanism is controled by
+     * the 'throwFail' configuration attribute.  If throwFail is
+     * not specified, the message is written to the logger, otherwise
+     * a JS error is thrown
+     * @method fail
+     * @param msg {string} the failure message
+     * @param e {Error} Optional JS error that was caught.  If supplied
+     * and throwFail is specified, this error will be re-thrown.
+     * @return {YUI} this YUI instance
+     */
+    fail: function(msg, e) {
 
         if (this.config.throwFail) {
             throw e || new Error(msg);
@@ -428,15 +454,24 @@ YUI.prototype = {
         return this;
     },
 
-    // generate an id that is unique among all YUI instances
+    /**
+     * Generate an id that is unique among all YUI instances
+     * @method guid
+     * @param pre {string} optional guid prefix
+     * @return {string} the guid
+     */
     guid: function(pre) {
         var e = this.Env, p = (pre) || e._pre;
         return p +'-' + e._yidx + '-' + e._uidx++;
     },
 
-    // objects that will use the event system require a unique 
-    // identifier.  An uid will be generated and applied if one
-    // isn't found
+    /**
+     * Stamps an object with a guid.  If the object already
+     * has one, a new one is not created
+     * @method stamp
+     * @param o The object to stamp
+     * @return {string} The object's guid
+     */
     stamp: function(o) {
 
         if (!o) {
@@ -615,7 +650,7 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
 /**
  * Array utilities
  * @TODO investigate using Array subclasses for some of this
- * @class array
+ * @class Array
  * @static
  */
 YUI.add("array", function(Y) {
@@ -1259,7 +1294,7 @@ YUI.add("core", function(Y) {
 }, "3.0.0");
 /**
  * Object utils
- * @class object
+ * @class Object
  */
 YUI.add("object", function(Y) {
 
@@ -1340,7 +1375,7 @@ YUI.add("ua", function(Y) {
 
     /**
      * Browser/platform detection
-     * @class ua
+     * @class UA
      */
     Y.UA = function() {
 
@@ -1706,30 +1741,73 @@ YUI.add("aop", function(Y) {
     var BEFORE = 0,
         AFTER = 1;
 
+    /**
+     * Allows for the insertion of methods that are executed before or after
+     * a specified method
+     * @class Do
+     * @static
+     */
     Y.Do = {
 
+        /**
+         * Cache of objects touched by the utility
+         * @property objs
+         * @static
+         */
         objs: {},
 
-        // if 'c' context is supplied, apply remaining args to callback
+        /**
+         * Execute the supplied method before the specified function
+         * @method before
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @static
+         */
         before: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(BEFORE, f, obj, sFn);
+
+            return this._inject(BEFORE, f, obj, sFn);
         },
 
-        // if 'c' context is supplied, apply remaining args to callback
+        /**
+         * Execute the supplied method after the specified function
+         * @method after
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @static
+         */
         after: function(fn, obj, sFn, c) {
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));
                 f = Y.bind.apply(Y, a);
             }
-            this._inject(AFTER, f, obj, sFn);
+
+            return this._inject(AFTER, f, obj, sFn);
         },
 
+        /**
+         * Execute the supplied method after the specified function
+         * @method _inject
+         * @param when {string} before or after
+         * @param fn {Function} the function to execute
+         * @param obj the object hosting the method to displace
+         * @param sFn {string} the name of the method to displace
+         * @param c The execution context for fn
+         * @return {string} handle for the subscription
+         * @private
+         * @static
+         */
         _inject: function(when, fn, obj, sFn) {
 
             // object id
@@ -1762,6 +1840,11 @@ YUI.add("aop", function(Y) {
 
         },
 
+        /**
+         * Detach a before or after subscription
+         * @method detach
+         * @param sid {string} the subscription handle
+         */
         detach: function(sid) {
             delete this.before[sid];
             delete this.after[sid];
@@ -1774,6 +1857,13 @@ YUI.add("aop", function(Y) {
 
     //////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Wrapper for a displaced method with aop enabled
+     * @class Do.Method
+     * @constructor
+     * @param obj The object to operate on
+     * @param sFn The name of the method to displace
+     */
     Y.Do.Method = function(obj, sFn) {
         this.obj = obj;
         this.methodName = sFn;
@@ -1784,6 +1874,13 @@ YUI.add("aop", function(Y) {
         this.after = {};
     };
 
+    /**
+     * Register a aop subscriber
+     * @method register
+     * @param sid {string} the subscriber id
+     * @param fn {Function} the function to execute
+     * @param when {string} when to execute the function
+     */
     Y.Do.Method.prototype.register = function (sid, fn, when) {
         if (when) {
             // this.after.push(fn);
@@ -1794,6 +1891,10 @@ YUI.add("aop", function(Y) {
         }
     };
 
+    /**
+     * Execute the wrapped method
+     * @method exec
+     */
     Y.Do.Method.prototype.exec = function () {
 
         var args = Y.Array(arguments, 0, true), 
@@ -1842,6 +1943,7 @@ YUI.add("aop", function(Y) {
     /**
      * Return an Error object when you want to terminate the execution
      * of all subsequent method calls
+     * @class Do.Error
      */
     Y.Do.Error = function(msg, retVal) {
         this.msg = msg;
@@ -1852,6 +1954,7 @@ YUI.add("aop", function(Y) {
      * Return an AlterArgs object when you want to change the arguments that
      * were passed into the function.  An example would be a service that scrubs
      * out illegal characters prior to executing the core business logic.
+     * @class Do.AlterArgs
      */
     Y.Do.AlterArgs = function(msg, newArgs) {
         this.msg = msg;
@@ -1861,6 +1964,7 @@ YUI.add("aop", function(Y) {
     /**
      * Return an AlterReturn object when you want to change the result returned
      * from the core method to the caller
+     * @class Do.AlterReturn
      */
     Y.Do.AlterReturn = function(msg, newRetVal) {
         this.msg = msg;

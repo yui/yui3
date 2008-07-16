@@ -5,13 +5,11 @@
  * and yahoo-dom-event.js), and will automatically use these when
  * appropriate in order to minimize the number of http connections
  * required to load all of the dependencies.
- * 
- * @module yuiloader
  */
 
 /**
  * YUILoader provides dynamic loading for YUI.
- * @class Y.Loader
+ * @class Loader
  * @TODO version management
  */
 

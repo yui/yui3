@@ -387,68 +387,61 @@ this list will be applied to the receiver.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_AlterArgs">AlterArgs</a></h4>
+                                        <a name="method_applyTo">applyTo</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
                                         void
-                                            <strong>AlterArgs</strong>
+                                            <strong>applyTo</strong>
                                            (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         method
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Return an AlterArgs object when you want to change the arguments that
-were passed into the function.  An example would be a service that scrubs
-out illegal characters prior to executing the core business logic.
+                                            Executes a method on a YUI instance with
+the specified id.
                                         </div>
 
                                         <div class="description">
 
-
                                                 <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;string&gt;</code>
+                                                              the YUI instance id
+                                                        </dd>
+                                                        <dd>
+                                                            <code>method &lt;string&gt;</code>
+                                                              the name of the method to exectute.
+Ex: 'Object.keys'
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array&gt;</code>
+                                                              the arguments to apply to the method
+                                                        </dd>
                                                 </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_AlterReturn">AlterReturn</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>AlterReturn</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Return an AlterReturn object when you want to change the result returned
-from the core method to the caller
-                                        </div>
-
-                                        <div class="description">
-
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
                                                         void
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>the return value from the applied method or null</dd>
                                                 </dl>
              
                                         </div>
@@ -736,98 +729,6 @@ object.  Used to set up context for cloned functions.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_dump">dump</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        String
-                                            <strong>dump</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         d
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns a simple string representation of the object or array.
-Other types of objects will be returned unprocessed.  Arrays
-are expected to be indexed.  Use object notation for
-associative arrays.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;Object&gt;</code>
-                                                              The object to dump
-                                                        </dd>
-                                                        <dd>
-                                                            <code>d &lt;int&gt;</code>
-                                                              How deep to recurse child objects, default 3
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        String
-                                                    </code></dt>
-                                                    <dd>the dump result</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_Error">Error</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>Error</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Return an Error object when you want to terminate the execution
-of all subsequent method calls
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd></dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_extend">extend</a></h4>
                                     <div class="detail">
                                         <code>
@@ -891,6 +792,156 @@ Static members will not be inherited.
                                                         YUI
                                                     </code></dt>
                                                     <dd>the YUI instance</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_fail">fail</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        YUI
+                                            <strong>fail</strong>
+                                           (
+                                                
+                                                        
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Report an error.  The reporting mechanism is controled by
+the 'throwFail' configuration attribute.  If throwFail is
+not specified, the message is written to the logger, otherwise
+a JS error is thrown
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>msg &lt;string&gt;</code>
+                                                              the failure message
+                                                        </dd>
+                                                        <dd>
+                                                            <code>e &lt;Error&gt;</code>
+                                                              Optional JS error that was caught.  If supplied
+and throwFail is specified, this error will be re-thrown.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>this YUI instance</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getInstance">getInstance</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        YUI
+                                            <strong>getInstance</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets a YUI instance with by id
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;string&gt;</code>
+                                                              the instance id
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>the matched YUI instance</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_guid">guid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong>guid</strong>
+                                           (
+                                                
+                                                        
+                                                         pre
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Generate an id that is unique among all YUI instances
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>pre &lt;string&gt;</code>
+                                                              optional guid prefix
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        string
+                                                    </code></dt>
+                                                    <dd>the guid</dd>
                                                 </dl>
              
                                         </div>
@@ -1174,6 +1225,53 @@ This fails because "long" is a future reserved word in ECMAScript
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_stamp">stamp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong>stamp</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Stamps an object with a guid.  If the object already
+has one, a new one is not created
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             The object to stamp
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        string
+                                                    </code></dt>
+                                                    <dd>The object's guid</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_use">use</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1252,25 +1350,11 @@ must be the last parameter.
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
-                                <li class=""><a href="module_dd-constrain.html">dd-constrain</a></li>
-
-                                <li class=""><a href="module_dd-ddm.html">dd-ddm</a></li>
-
-                                <li class=""><a href="module_dd-ddm-base.html">dd-ddm-base</a></li>
-
-                                <li class=""><a href="module_dd-ddm-drop.html">dd-ddm-drop</a></li>
-
-                                <li class=""><a href="module_dd-drag.html">dd-drag</a></li>
-
-                                <li class=""><a href="module_dd-drop.html">dd-drop</a></li>
-
-                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
-
-                                <li class=""><a href="module_dd-proxy.html">dd-proxy</a></li>
-
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
 
                                 <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
@@ -1283,7 +1367,12 @@ must be the last parameter.
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="array.html">array</a></li>
+                                <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Do.html">Do</a></li>
+                                <li class=""><a href="Do.AlterArgs.html">Do.AlterArgs</a></li>
+                                <li class=""><a href="Do.AlterReturn.html">Do.AlterReturn</a></li>
+                                <li class=""><a href="Do.Error.html">Do.Error</a></li>
+                                <li class=""><a href="Do.Method.html">Do.Method</a></li>
                                 <li class=""><a href="Event.html">Event</a></li>
                                 <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
                                 <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
@@ -1292,8 +1381,8 @@ must be the last parameter.
                                 <li class=""><a href="Event.Target.html">Event.Target</a></li>
                                 <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="lang.html">lang</a></li>
-                                <li class=""><a href="object.html">object</a></li>
-                                <li class=""><a href="ua.html">ua</a></li>
+                                <li class=""><a href="Object.html">Object</a></li>
+                                <li class=""><a href="UA.html">UA</a></li>
                                 <li class="selected"><a href="YUI.html">YUI</a></li>
                         </ul>
                     </div>
@@ -1350,10 +1439,7 @@ must be the last parameter.
                                 <a href="#method_aggregate">aggregate</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
-                                <a href="#method_AlterArgs">AlterArgs</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_AlterReturn">AlterReturn</a>
+                                <a href="#method_applyTo">applyTo</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_augment">augment</a>
@@ -1367,14 +1453,17 @@ must be the last parameter.
                                 <li class=""><!--<code>Array|Object</code>-->
                                 <a href="#method_clone">clone</a>
                                 </li>
-                                <li class=""><!--<code>String</code>-->
-                                <a href="#method_dump">dump</a>
-                                </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_Error">Error</a>
-                                </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_extend">extend</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_fail">fail</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_getInstance">getInstance</a>
+                                </li>
+                                <li class=""><!--<code>string</code>-->
+                                <a href="#method_guid">guid</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_log">log</a>
@@ -1387,6 +1476,9 @@ must be the last parameter.
                                 </li>
                                 <li class=""><!--<code>Object</code>-->
                                 <a href="#method_namespace">namespace</a>
+                                </li>
+                                <li class=""><!--<code>string</code>-->
+                                <a href="#method_stamp">stamp</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_use">use</a>

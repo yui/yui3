@@ -2,7 +2,7 @@ YUI.add("ua", function(Y) {
 
     /**
      * Browser/platform detection
-     * @class ua
+     * @class UA
      */
     Y.UA = function() {
 

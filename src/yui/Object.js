@@ -1,6 +1,6 @@
 /**
  * Object utils
- * @class object
+ * @class Object
  */
 YUI.add("object", function(Y) {
 
