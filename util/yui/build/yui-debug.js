@@ -2963,6 +2963,9 @@ YUI.add("event-target", function(Y) {
                             ce = t.publish(type, evt);
                             ce.context = (evt.host === evt.context) ? t : evt.context;
                             ce.host = t;
+                            ce.defaultFn = null;
+                            ce.preventedFn = null;
+                            ce.stoppedFn = null;
                         }
 
                         ce.target = evt.target;
