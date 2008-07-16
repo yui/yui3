@@ -17,9 +17,11 @@ body {
 </style>
 
 <?php
+// TODO: loader3x
 //Fonts is always required:
-$loader->load("fonts");
-echo ($loader->tags());	
+// $loader->load("fonts");
+// echo ($loader->tags());
+include($docroot."inc/loaderSubstitute.php");
 
 //mechanism for adding header content from within source file in templates;
 //add this optional file, examplename_customheader.php, in your examples dir

@@ -52,6 +52,10 @@ if ($prepend) { /*there is additional css or header information for this page --
 echo $prepend;
 }
 
+if (isset($loaderSubstitute)) {
+    include($docroot."inc/loaderSubstitute.php");
+}
+
 ?>
 
 </head>

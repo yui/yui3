@@ -35,7 +35,7 @@ if(! $examples[$name]) {
 	$currentExample = $examples[$name];
 	$currentModuleName = $examples[$name][modules][0];
 	$currentModule = validateModule($currentModuleName, $modules);
-	
+
 	$title="YUI Library Examples: ".$currentModule["name"].": ".$examples[$name][name];
 	$section=$currentModuleName;
 	$component=$currentModule[name];
@@ -157,17 +157,17 @@ if(! $examples[$name]) {
 		//If we're using logger, then load it...
 		if($log=="true") {
 			$loader->load("logger");
-			
+
 			//...but specify exactly which debug versions we're using:
 			if((isset($examples[$name][logger])) && (is_array($examples[$name][logger]))) {
-				
+
 				//list of module names can be derived from the keyset of $modules:
 				$aModuleNames = array_keys($modules);
 				array_push($aModuleNames, "datasource", "yahoo"); //add modules that have no examples; these don't appear in $module's keys
-				
+
 				//array of modulename = boolean pairs to send to $yui_config->configDebug();
 				$configDebug = array();
-				
+
 				foreach ($examples[$name][logger] as $logSource) {
 					//Only "enable" logging in Loader for YUI module sources, not 
 					//custom, arbitrary logger sources that may be in use in an example:
@@ -183,9 +183,8 @@ if(! $examples[$name]) {
 				//print_r($examples[$name][logger]);
 				// print_r($configDebug);
 			}
-			
 		}
-			
+
 		//Now that Logger is loaded, load all necessary tags for this example; write to the doc
 		//in header so that examples can be included inline.  Added isset/is_array to accommodate
 		//leaving off requires metadata for examples that require a new window.
@@ -201,13 +200,13 @@ if(! $examples[$name]) {
 
 		//We use Dom and Button as part of the template:
 		// $loader->load("yuiloader", "event", "dom", "button");
-        // TODO: YUI 3x Loader
-		$loader->load("yuiloader", "event", "dom");
-		
+        // TODO: 3xloader
+		//$loader->load("yuiloader", "event", "dom");
+
 		//Reset, fonts and grids come in via yui.css; tell loader not to load them again:
 		//NOTE: This isn't working as of 7/7/07...defending against this in loader loop above, too.
 		$loader->setLoaded("fonts","reset","grids");
-		
+
 		//mechanism for adding header content from within source file in templates;
 		//add this optional file, examplename_customheader.php, in your examples dir
 		//along with the other three files as needed.
@@ -238,15 +237,14 @@ $bodyclass = "'.$bodyclass.'";
 $title = "'.str_replace('"', '\\"', $title).'";
 include("'.$docroot.'inc/header.inc"); 
 ?>
-		
 ';
-		//END YDN PAGE VARIABLES AND HEADER INCLUDE
+	    //END YDN PAGE VARIABLES AND HEADER INCLUDE
 		} else {
+            $loaderSubstitute = true;
 			include($docroot."inc/header.php");
-		}		
-
+		}
 	?>
-	
+
 	<div id="yui-main">
 		<div class="yui-b">
 		  <div class="yui-ge">

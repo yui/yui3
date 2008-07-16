@@ -1,11 +1,14 @@
 <?php
+
 if (!isset($docroot)) { $docroot=""; }
 $dataroot = $docroot."examples/data/";
 
 $developerHome = 'http://developer.yahoo.com/yui/3';
 $loader2x = "/home/y/share/pear/Yahoo/YUI/loader.php";
+
 // TODO: Adam's input on 3x loader
 $loader3x = "/home/y/share/pear/Yahoo/YUI/loader.php";
+
 $loggerAvailable = false;
 
 $aTypes = array('css', 'core', 'utility', 'tool');
@@ -27,13 +30,6 @@ if(!isset($buildpath)) {
     $buildpath = (isset($_GET['buildpath'])) ? $_GET['buildpath'] : false;
 }
 
-if($buildpath) {
-    $buildpathQS = "&buildpath=".$buildpath;
-} else {
-    $buildpathQS = "";
-}
-
-
 //The current YUI version, for building filepaths in docs:
 if (!isset($yuiCurrentVersion)) {
     if (isset($_GET['v'])) {
@@ -41,11 +37,6 @@ if (!isset($yuiCurrentVersion)) {
     } else {
         $yuiCurrentVersion = "[yuiCurrentVersion]";
     }
-}
-
-//other querystring values
-if(!isset($generalQS)) {
-    $generalQS = "&v=$yuiCurrentVersion";
 }
 
 require($docroot."examples/module/modules.php");
