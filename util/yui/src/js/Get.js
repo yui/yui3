@@ -64,7 +64,7 @@ Y.Get = function() {
      * @private
      */
     var _node = function(type, attr, win) {
-        var w = win || window, d=w.document, n=d.createElement(type);
+        var w = win || Y.config.win, d=w.document, n=d.createElement(type);
 
         for (var i in attr) {
             if (attr[i] && Y.Object.owns(attr, i)) {
@@ -356,7 +356,7 @@ Y.Get = function() {
         });
 
         var q = queues[id];
-        q.win = q.win || window;
+        q.win = q.win || Y.config.win;
         q.scope = q.scope || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;

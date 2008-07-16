@@ -199,7 +199,7 @@ YUI.add("compat", function(Y) {
              * @private
              */
             _getScroll: function() {
-                var dd = document.documentElement, db = document.body;
+                var d = Y.config.doc, dd = d.documentElement, db = d.body;
                 if (dd && (dd.scrollTop || dd.scrollLeft)) {
                     return [dd.scrollTop, dd.scrollLeft];
                 } else if (db) {
