@@ -319,7 +319,7 @@ YUI.add("event-dom", function(Y) {
                     // Element should be an html element or an array if we get 
                     // here.
                     if (!el) {
-                        // this.logger.debug("unable to attach event " + type);
+                        // Y.log("unable to attach event " + type);
                         return false;
                     }
 
@@ -410,7 +410,7 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     if (!fn || !fn.call) {
-                        // this.logger.debug("Error, function is not valid " + fn);
+                        // Y.log("Error, function is not valid " + fn);
                         //return false;
                         return this.purgeElement(el, false, type);
                     }
@@ -563,7 +563,7 @@ YUI.add("event-dom", function(Y) {
 
                     this.locked = true;
 
-                    // this.logger.debug("tryPreloadAttach");
+                    // Y.log.debug("tryPreloadAttach");
 
                     // keep trying until after the page is loaded.  We need to 
                     // check the page load state prior to trying to bind the 
@@ -736,7 +736,7 @@ YUI.add("event-dom", function(Y) {
                             el.attachEvent("on" + type, fn);
                     } 
                     // else {
-                      //   Y.log('DOM evt error')
+                      //   Y.log('DOM evt error');
                     // }
                 },
 

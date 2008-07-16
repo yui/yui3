@@ -177,7 +177,7 @@ YUI.prototype = {
     use: function() {
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments), 
+            a=Array.prototype.slice.call(arguments, 0), 
             mods=YUI.Env.mods, 
             used = Y.Env._used,
             loader;
@@ -186,11 +186,14 @@ YUI.prototype = {
         if (a[0] === "*") {
             // a = Y.Object.keys(mods);
             // //return Y.use.apply(Y, Y.Object.keys(mods));
+            a = [];
             for (var k in mods) {
                 if (mods.hasOwnProperty(k)) {
-                    Y.use(k);
+                    a.push(k);
                 }
             }
+
+            return Y.use.apply(Y, a);
         }
 
         // Y.log('loader before: ' + a.join(','));
@@ -229,8 +232,12 @@ YUI.prototype = {
 
             // make sure requirements are attached
             if (req) {
-                for (j = 0; j < req.length; j = j + 1) {
-                    f(req[j]);
+                if (Y.Lang.isString(req)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < req.length; j = j + 1) {
+                        f(req[j]);
+                    }
                 }
             }
 
@@ -240,8 +247,12 @@ YUI.prototype = {
 
             // auto-attach sub-modules
             if (use) {
-                for (j = 0; j < use.length; j = j + 1) {
-                    f(use[j]);
+                if (Y.Lang.isString(use)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < use.length; j = j + 1) {
+                        f(use[j]);
+                    }
                 }
             }
         };
@@ -3370,7 +3381,7 @@ YUI.add("event-dom", function(Y) {
                     // Element should be an html element or an array if we get 
                     // here.
                     if (!el) {
-                        // this.logger.debug("unable to attach event " + type);
+                        // Y.log("unable to attach event " + type);
                         return false;
                     }
 
@@ -3461,7 +3472,7 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     if (!fn || !fn.call) {
-                        // this.logger.debug("Error, function is not valid " + fn);
+                        // Y.log("Error, function is not valid " + fn);
                         //return false;
                         return this.purgeElement(el, false, type);
                     }
@@ -3614,7 +3625,7 @@ YUI.add("event-dom", function(Y) {
 
                     this.locked = true;
 
-                    // this.logger.debug("tryPreloadAttach");
+                    // Y.log.debug("tryPreloadAttach");
 
                     // keep trying until after the page is loaded.  We need to 
                     // check the page load state prior to trying to bind the 
@@ -3787,7 +3798,7 @@ YUI.add("event-dom", function(Y) {
                             el.attachEvent("on" + type, fn);
                     } 
                     // else {
-                      //   Y.log('DOM evt error')
+                      //   Y.log('DOM evt error');
                     // }
                 },
 
@@ -7858,14 +7869,14 @@ Y.Get = function() {
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js",
          * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.data); // foo
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(o.data); // foo
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new Y.DDProxy("dd1"); // also new o.reference("dd1"); would work
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the scope");
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log(o.nodes.length === 2) // true
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("transaction failed");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
          * &nbsp;&nbsp;&nbsp;&nbsp;scope: Y,

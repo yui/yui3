@@ -177,7 +177,7 @@ YUI.prototype = {
     use: function() {
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments), 
+            a=Array.prototype.slice.call(arguments, 0), 
             mods=YUI.Env.mods, 
             used = Y.Env._used,
             loader;
@@ -186,11 +186,14 @@ YUI.prototype = {
         if (a[0] === "*") {
             // a = Y.Object.keys(mods);
             // //return Y.use.apply(Y, Y.Object.keys(mods));
+            a = [];
             for (var k in mods) {
                 if (mods.hasOwnProperty(k)) {
-                    Y.use(k);
+                    a.push(k);
                 }
             }
+
+            return Y.use.apply(Y, a);
         }
 
         // Y.log('loader before: ' + a.join(','));
@@ -229,8 +232,12 @@ YUI.prototype = {
 
             // make sure requirements are attached
             if (req) {
-                for (j = 0; j < req.length; j = j + 1) {
-                    f(req[j]);
+                if (Y.Lang.isString(req)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < req.length; j = j + 1) {
+                        f(req[j]);
+                    }
                 }
             }
 
@@ -240,8 +247,12 @@ YUI.prototype = {
 
             // auto-attach sub-modules
             if (use) {
-                for (j = 0; j < use.length; j = j + 1) {
-                    f(use[j]);
+                if (Y.Lang.isString(use)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < use.length; j = j + 1) {
+                        f(use[j]);
+                    }
                 }
             }
         };

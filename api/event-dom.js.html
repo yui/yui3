@@ -357,7 +357,7 @@
                     <span class="c">// Element should be an html element or an array if we get </span>
 <span class="c"></span>                    <span class="c">// here.</span>
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(!</span><span class="nx">el</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// this.logger.debug(&quot;unable to attach event &quot; + type);</span>
+                        <span class="c">// Y.log(&quot;unable to attach event &quot; + type);</span>
 <span class="c"></span>                        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
                     <span class="o">}</span>
 
@@ -448,7 +448,7 @@
                     <span class="o">}</span>
 
                     <span class="k">if</span> <span class="o">(!</span><span class="nx">fn</span> <span class="o">||</span> <span class="o">!</span><span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="c">// this.logger.debug(&quot;Error, function is not valid &quot; + fn);</span>
+                        <span class="c">// Y.log(&quot;Error, function is not valid &quot; + fn);</span>
 <span class="c"></span>                        <span class="c">//return false;</span>
 <span class="c"></span>                        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">purgeElement</span><span class="o">(</span><span class="nx">el</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="nx">type</span><span class="o">);</span>
                     <span class="o">}</span>
@@ -601,7 +601,7 @@
 
                     <span class="k">this</span><span class="o">.</span><span class="nx">locked</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                    <span class="c">// this.logger.debug(&quot;tryPreloadAttach&quot;);</span>
+                    <span class="c">// Y.log.debug(&quot;tryPreloadAttach&quot;);</span>
 <span class="c"></span>
                     <span class="c">// keep trying until after the page is loaded.  We need to </span>
 <span class="c"></span>                    <span class="c">// check the page load state prior to trying to bind the </span>
@@ -774,7 +774,7 @@
                             <span class="nx">el</span><span class="o">.</span><span class="nx">attachEvent</span><span class="o">(</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">);</span>
                     <span class="o">}</span> 
                     <span class="c">// else {</span>
-<span class="c"></span>                      <span class="c">//   Y.log(&#39;DOM evt error&#39;)</span>
+<span class="c"></span>                      <span class="c">//   Y.log(&#39;DOM evt error&#39;);</span>
 <span class="c"></span>                    <span class="c">// }</span>
 <span class="c"></span>                <span class="o">},</span>
 
@@ -855,6 +855,8 @@
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
 
                                 <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 

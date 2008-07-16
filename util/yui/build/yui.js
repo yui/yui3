@@ -82,7 +82,6 @@ YUI.prototype = {
 
         this.id = this.guid('YUI');
 
-        this.log(i + ') init ');
     },
     
     /**
@@ -129,7 +128,6 @@ YUI.prototype = {
      */
     add: function(name, fn, version, details) {
 
-        this.log('Adding a new component' + name);
 
         // @todo expand this to include version mapping
         
@@ -177,7 +175,7 @@ YUI.prototype = {
     use: function() {
 
         var Y = this, 
-            a=Array.prototype.slice.call(arguments), 
+            a=Array.prototype.slice.call(arguments, 0), 
             mods=YUI.Env.mods, 
             used = Y.Env._used,
             loader;
@@ -186,14 +184,16 @@ YUI.prototype = {
         if (a[0] === "*") {
             // a = Y.Object.keys(mods);
             // //return Y.use.apply(Y, Y.Object.keys(mods));
+            a = [];
             for (var k in mods) {
                 if (mods.hasOwnProperty(k)) {
-                    Y.use(k);
+                    a.push(k);
                 }
             }
+
+            return Y.use.apply(Y, a);
         }
 
-        // Y.log('loader before: ' + a.join(','));
 
         // use loader to optimize and sort the requirements if it
         // is available.
@@ -205,7 +205,6 @@ YUI.prototype = {
             a = loader.sorted;
         }
 
-        // Y.log('loader after: ' + a.join(','));
 
         var missing = [], r = [], f = function(name) {
 
@@ -219,29 +218,34 @@ YUI.prototype = {
             var m = mods[name], j, req, use;
 
             if (m) {
-                // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name, 'info', 'YUI');
                 missing.push(name);
             }
 
             // make sure requirements are attached
             if (req) {
-                for (j = 0; j < req.length; j = j + 1) {
-                    f(req[j]);
+                if (Y.Lang.isString(req)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < req.length; j = j + 1) {
+                        f(req[j]);
+                    }
                 }
             }
 
             // add this module to full list of things to attach
-            // Y.log('using ' + name);
             r.push(name);
 
             // auto-attach sub-modules
             if (use) {
-                for (j = 0; j < use.length; j = j + 1) {
-                    f(use[j]);
+                if (Y.Lang.isString(use)) {
+                    f(req);
+                } else {
+                    for (j = 0; j < use.length; j = j + 1) {
+                        f(use[j]);
+                    }
                 }
             }
         };
@@ -250,44 +254,36 @@ YUI.prototype = {
         for (var i=0, l=a.length; i<l; i=i+1) {
             // th
             if ((i === l-1) && typeof a[i] === 'function') {
-                // Y.log('found loaded listener');
                 Y.on('yui:load', a[i], Y, Y);
             } else {
                 f(a[i]);
             }
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
         var attach = function() {
 
-            // Y.log('attach ' + arguments[0]);
 
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    // Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
 
             if (Y.fire) {
-                // Y.log('firing loaded event');
                 Y.fire('yui:load', Y);
             } else {
-                // Y.log('loaded event not fired.');
             }
         };
 
         if (Y.Loader && missing.length) {
             // dynamic load
-            Y.log('trying to get the missing modules ' + missing);
             loader = new Y.Loader();
             loader.require(missing);
             loader.subscribe('success', attach, loader, 'loader');
             loader.insert();
             // loader.subscribe('failure', function() {
-                // Y.log('asdf');
                 // });
         } else {
             attach();
@@ -395,7 +391,6 @@ YUI.prototype = {
     // they are communicated.
     // @TODO do we need a param to force throwing an error
     fail: function(msg, e, eType) {
-        this.log(msg, "error");
 
         if (this.config.throwFail) {
             throw e || new Error(msg);
@@ -805,7 +800,6 @@ YUI.add("core", function(Y) {
                         continue;
                     }
 
-                    // Y.log('i: ' + i + ", " + fs[i]);
                     // @TODO deal with the hasownprop issue
 
                     // check white list if it was supplied
@@ -886,7 +880,6 @@ YUI.add("core", function(Y) {
         // working on a class, so apply constructor infrastructure
         if (rProto && construct) {
 
-            // Y.log('augment will call constructor:');
 
             // Y.Do.before(r, construct);
 
@@ -904,13 +897,11 @@ YUI.add("core", function(Y) {
 
                     var me = this;
 
-// Y.log('sequestered function "' + k + '" executed.  Initializing Event.Target');
 
                     // overwrite the prototype with all of the sequestered functions,
                     // but only if it hasn't been overridden
                     for (var i in sequestered) {
                         if (Y.Object.owns(sequestered, i) && (me[i] === replacements[i])) {
-                            // Y.log('... restoring ' + k);
                             me[i] = sequestered[i];
                         }
                     }
@@ -925,7 +916,6 @@ YUI.add("core", function(Y) {
 
                 if ((!wl || (k in wl)) && (ov || !(k in this))) {
 
-                    // Y.log('augment: ' + k);
 
                     if (Y.Lang.isFunction(v)) {
 
@@ -938,7 +928,6 @@ YUI.add("core", function(Y) {
 
                     } else {
 
-                        // Y.log('augment() applying non-function: ' + k);
 
                         this[k] = v;
                     }
@@ -1139,7 +1128,6 @@ YUI.add("core", function(Y) {
      */
     Y.bind = function(f, c) {
         // if (!f) {
-            // Y.log('no f');
         // }
         var a = Y.Array(arguments, 2, true);
         return function () {
@@ -1789,13 +1777,9 @@ YUI.add("aop", function(Y) {
 
                 // Stop processing if an Error is returned
                 if (ret && ret.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error before " + this.methodName + 
-                    //      ": " ret.msg);
                     return ret.retVal;
                 // Check for altered arguments
                 } else if (ret && ret.constructor == Y.Do.AlterArgs) {
-                    // this.logger.debug("Params altered before " + 
-                    //      this.methodName + ": " ret.msg);
                     args = ret.newArgs;
                 }
             }
@@ -1811,13 +1795,9 @@ YUI.add("aop", function(Y) {
                 newRet = af[i].apply(this.obj, args);
                 // Stop processing if an Error is returned
                 if (newRet && newRet.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error after " + this.methodName + 
-                    //      ": " ret.msg);
                     return newRet.retVal;
                 // Check for a new return value
                 } else if (newRet && newRet.constructor == Y.Do.AlterReturn) {
-                    // this.logger.debug("Return altered after " + 
-                    //      this.methodName + ": " newRet.msg);
                     ret = newRet.newRetVal;
                 }
             }
@@ -1918,7 +1898,6 @@ YUI.add("event-custom", function(Y) {
     Y.CustomEvent = function(type, o) {
 
         if (arguments.length > 2) {
-this.log('CustomEvent context and silent are now in the config', 'warn', 'Event');
         }
 
         o = o || {};
@@ -1940,7 +1919,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         this.context = Y;
 
-        this.logSystem = (type == "yui:log");
 
         /**
          * By default all custom events are logged in the debug build, set silent
@@ -1948,9 +1926,7 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          * @property silent
          * @type boolean
          */
-        this.silent = this.logSystem;
 
-        // this.queuable = !(this.logSystem);
         this.queuable = false;
 
         /**
@@ -2059,7 +2035,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
         this.applyConfig(o, true);
 
-        this.log("Creating " + this);
 
         // Only add subscribe events for events that are not generated by 
         // Event.Custom
@@ -2201,7 +2176,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ef = this._facade;
 
             if (!ef) {
-                // Y.log('creating facade ' + Y.stamp(this));
                 ef = new Y.Event.Facade(this, this.originalTarget);
             }
 
@@ -2234,7 +2208,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
          */
         _notify: function(s, args, ef) {
 
-            this.log(this.type + "->" + ": " +  s);
 
             var ret;
 
@@ -2254,7 +2227,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             ret = s.notify(this.context, args);
 
             if (false === ret || this.stopped > 1) {
-                this.log("Event canceled by subscriber " + ret + ', ' + this.stopped);
                 return false;
             }
 
@@ -2271,7 +2243,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var es = Y.Env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {
             if (!this.silent) {
-                Y.log(msg, cat || "info", "Event");
             }
         },
 
@@ -2308,7 +2279,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // if (b && this.queuable && this.type != es.next.type) {
                 if (this.queuable && this.type != es.next.type) {
 
-                    this.log('queue ' + this.type + ', ' + this);
 
                     es.queue.push([this, arguments]);
                     return true;
@@ -2334,7 +2304,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
 
             if (this.fireOnce && this.fired) {
 
-                this.log('fireOnce event: ' + this + ' already fired');
 
             } else {
 
@@ -2345,7 +2314,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 this.fired = true;
                 this.details = args;
 
-                this.log("Firing " + this  + ", " + "args: " + args);
 
                 var hasSub = false;
                 es.lastLogState = es.logging;
@@ -2381,7 +2349,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // bubble if this is hosted in an event target and propagation has not been stopped
                 // @TODO check if we need to worry about defaultFn order
                 if (this.bubbles && this.host && !this.stopped) {
-                    // this.log('attempting to bubble ' + this);
                     ret = this.host.bubble(this);
                 }
 
@@ -2435,7 +2402,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                     // q[0] = the event, q[1] = arguments to fire
                     var q = queue.pop(), ce = q[0];
 
-// Y.log('firing queued event ' + ce.type + ', from ' + this);
                     es.stopped = 0;
                     es.prevented = 0;
                     
@@ -2789,7 +2755,6 @@ YUI.add("event-target", function(Y) {
             var o = opts || {}, events = this._yuievt.events, ce = events[type];
 
             if (ce) {
-                Y.log("publish() skipped: '"+type+"' exists", 'info', 'Event');
 
                 // update config for the event
                 ce.applyConfig(o, true);
@@ -2860,7 +2825,6 @@ YUI.add("event-target", function(Y) {
 
             if (!ce) {
                 // if (!(type in SILENT)) {
-// Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
                 // }
                 return true;
             }
@@ -3313,25 +3277,21 @@ YUI.add("event-dom", function(Y) {
                  */
                 addListener: function(el, type, fn, obj) {
 
-                    // Y.log('addListener: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
 
                     var a=Y.Array(arguments, 1, true), override = a[3], E = Y.Event,
                         aa=Y.Array(arguments, 0, true);
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
-    Y.log(type + " addListener call failed, invalid callback", "error", "Event");
                         return false;
                     }
 
                     // The el argument can be an array of elements or element ids.
                     if (this._isValidCollection(el)) {
 
-                        // Y.log('collection: ' + el);
 
                         var handles=[], h, i, l, proc = function(v, k) {
                             // handles.push(this.addListener(el[i], type, fn, obj, override));
-                            // Y.log('collection stuff: ' + v);
                             var b = a.slice();
                             b.unshift(v);
                             h = E.addListener.apply(E, b);
@@ -3370,7 +3330,6 @@ YUI.add("event-dom", function(Y) {
                     // Element should be an html element or an array if we get 
                     // here.
                     if (!el) {
-                        // this.logger.debug("unable to attach event " + type);
                         return false;
                     }
 
@@ -3461,7 +3420,6 @@ YUI.add("event-dom", function(Y) {
                     }
 
                     if (!fn || !fn.call) {
-                        // this.logger.debug("Error, function is not valid " + fn);
                         //return false;
                         return this.purgeElement(el, false, type);
                     }
@@ -3501,7 +3459,6 @@ YUI.add("event-dom", function(Y) {
                         }
                     }
 
-                    // Y.log('wrapper for facade: ' + 'event:' + Y.stamp(boundEl) + e.type);
 
                     return new Y.Event.Facade(ev, boundEl, _wrappers['event:' + Y.stamp(boundEl) + e.type]);
                 },
@@ -3548,7 +3505,6 @@ YUI.add("event-dom", function(Y) {
                                  !o.alert              && // o is not a window
                                  (o.item || typeof o[0] !== "undefined") );
                     } catch(ex) {
-                        Y.log("collection check failure", "warn");
                         return false;
                     }
 
@@ -3614,7 +3570,6 @@ YUI.add("event-dom", function(Y) {
 
                     this.locked = true;
 
-                    // this.logger.debug("tryPreloadAttach");
 
                     // keep trying until after the page is loaded.  We need to 
                     // check the page load state prior to trying to bind the 
@@ -3787,7 +3742,6 @@ YUI.add("event-dom", function(Y) {
                             el.attachEvent("on" + type, fn);
                     } 
                     // else {
-                      //   Y.log('DOM evt error')
                     // }
                 },
 
@@ -4558,7 +4512,6 @@ YUI.add('node', function(Y) {
 
     var Node = function(node) {
         if (!node || !node[NODE_TYPE]) {
-            Y.log('invalid node:' + node, 'error', 'Node');
             return null;
         }
 
@@ -5135,7 +5088,6 @@ YUI.add('node', function(Y) {
          */
         get: function(name) {
             if (name == 'length') {
-                Y.log('the length property is deprecated; use size()', 'warn', 'NodeList');
                 return _nodes[this._yuid].length;
             }
             var nodes = _nodes[this._yuid];
@@ -5945,21 +5897,18 @@ Y.Selector = {
             tokens = tokenize(selector);
 
         if (!nodes.item) { // if not HTMLCollection, handle arrays of ids and/or nodes
-            Y.log('filter: scanning input for HTMLElements/IDs', 'info', 'Selector');
             for (var i = 0, len = nodes.length; i < len; ++i) {
                 if (!nodes[i][TAG_NAME]) { // tagName limits to HTMLElements 
                     node = Y.Selector.document.getElementById(nodes[i]);
                     if (node) { // skip IDs that return null 
                         nodes[i] = node;
                     } else {
-                        Y.log('filter: skipping invalid node', 'warn', 'Selector');
                     }
                 }
             }
         }
         result = rFilter(nodes, tokenize(selector)[0]);
         clearParentCache();
-        Y.log('filter: returning:' + result.length, 'info', 'Selector');
         return result;
     },
 
@@ -5975,7 +5924,6 @@ Y.Selector = {
      */
     query: function(selector, root, firstOnly) {
         var result = query(selector, root, firstOnly);
-        Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
         return result;
     }
 };
@@ -6001,7 +5949,6 @@ var query = function(selector, root, firstOnly, deDupe) {
     if (root && !root[NODE_NAME]) { // assume ID
         root = Y.Selector.document.getElementById(root);
         if (!root) {
-            Y.log('invalid root node provided', 'warn', 'Selector');
             return result;
         }
     }
@@ -6115,7 +6062,6 @@ var parentCache = [];
 var regexCache = {};
 
 var clearFoundCache = function() {
-    Y.log('getBySelector: clearing found cache of ' + foundCache.length + ' elements');
     for (var i = 0, len = foundCache.length; i < len; ++i) {
         try { // IE no like delete
             delete foundCache[i]._found;
@@ -6124,7 +6070,6 @@ var clearFoundCache = function() {
         }
     }
     foundCache = [];
-    Y.log('getBySelector: done clearing foundCache');
 };
 
 var clearParentCache = function() {
@@ -6420,7 +6365,6 @@ Y.mix(Y.DOM, {
                 Y.DOM.removeClass(node, className);
             }
 
-            //Y.log('removeClass removing ' + className, 'info', 'Node');
         }                 
     },
 
@@ -6433,7 +6377,6 @@ Y.mix(Y.DOM, {
      * @return {Boolean | Array} A pass/fail boolean or array of booleans
      */
     replaceClass: function(node, oldC, newC) {
-        //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
         Y.DOM.addClass(node, newC);
         Y.DOM.removeClass(node, oldC);
     },
@@ -6647,7 +6590,6 @@ Y.mix(Y.DOM, {
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node)[HEIGHT];
-        Y.log('winHeight returning ' + h, 'info', 'DOM');
         return h;
     },
 
@@ -6657,7 +6599,6 @@ Y.mix(Y.DOM, {
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node)[WIDTH];
-        Y.log('winWidth returning ' + w, 'info', 'DOM');
         return w;
     },
 
@@ -6667,7 +6608,6 @@ Y.mix(Y.DOM, {
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node)[HEIGHT];
-        Y.log('docHeight returning ' + h, 'info', 'DOM');
         return Math.max(h, Y.DOM._getWinSize(node)[HEIGHT]);
     },
 
@@ -6677,7 +6617,6 @@ Y.mix(Y.DOM, {
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node)[WIDTH];
-        Y.log('docWidth returning ' + w, 'info', 'DOM');
         return Math.max(w, Y.DOM._getWinSize(node)[WIDTH]);
     },
 
@@ -6859,7 +6798,6 @@ Y.mix(Y.DOM, {
         var currentXY = Y.DOM.getXY(node);
 
         if (currentXY === false) { // has to be part of doc to have xy
-            Y.log('xy failed: node not available', 'error', 'Node');
             return false; 
         }
         
@@ -6888,7 +6826,6 @@ Y.mix(Y.DOM, {
            }
         }        
 
-        Y.log('setXY setting position to ' + xy, 'info', 'Node');
     },
 
     /**
@@ -7113,7 +7050,6 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
                 try { // make sure its in the document
                     val = node[FILTERS]('alpha')[OPACITY];
                 } catch(e) {
-                    Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
                 }
             }
             return val / 100;
@@ -7450,7 +7386,6 @@ Y.Get = function() {
      * @private
      */
     var _fail = function(id, msg) {
-        Y.log("get failure: " + msg, "warn", "Get");
         var q = queues[id];
         // execute failure callback
         if (q.onFailure) {
@@ -7466,7 +7401,6 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id);
         var q = queues[id];
         q.finished = true;
 
@@ -7490,7 +7424,6 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Get utility timeout " + id);
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.scope || q;
@@ -7506,12 +7439,10 @@ Y.Get = function() {
      * @private
      */
     var _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "Get");
 
         var q = queues[id];
 
         if (q.timer) {
-            // Y.log('cancel timer');
             q.timer.cancel();
         }
 
@@ -7542,10 +7473,8 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
-        Y.log("attempting to load " + url, "info", "Get");
 
         if (q.timeout) {
-            // Y.log('create timer');
             q.timer = L.later(q.timeout, q, _timeout, id);
         }
 
@@ -7571,7 +7500,6 @@ Y.Get = function() {
             h.appendChild(n);
         }
         
-        Y.log("Appending node: " + url, "info", "Get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -7693,7 +7621,6 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    Y.log(id + " onload " + url, "info", "Get");
                     f(id, url);
                 }
             };
@@ -7704,7 +7631,6 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    Y.log(id + " DOM2 onload " + url, "info", "Get");
                     f(id, url);
                 });
             } 
@@ -7714,7 +7640,6 @@ Y.Get = function() {
         // nodes.
         } else { 
             n.onload = function() {
-                Y.log(id + " onload " + url, "info", "Get");
                 f(id, url);
             };
         }
@@ -7757,7 +7682,6 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            Y.log(id + " finalized ", "info", "Get");
             L.later(0, null, _finish, id);
         },
 
@@ -7771,7 +7695,6 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId;
             var q = queues[id];
             if (q) {
-                Y.log("Aborting " + id, "info", "Get");
                 q.aborted = true;
             }
         }, 
@@ -7858,14 +7781,11 @@ Y.Get = function() {
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js",
          * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.data); // foo
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(o.data); // foo
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new Y.DDProxy("dd1"); // also new o.reference("dd1"); would work
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the scope");
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log(o.nodes.length === 2) // true
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("transaction failed");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
          * &nbsp;&nbsp;&nbsp;&nbsp;scope: Y,
@@ -7947,7 +7867,6 @@ Y.Get = function() {
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' setup completing) .');
 
         if (C.core) {
 

@@ -41,8 +41,6 @@
 <span class="c"> * @module nodeclassname</span>
 <span class="c"> */</span>
 
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s1">&#39;nodeclassname&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-
     <span class="c">/**</span>
 <span class="c">     * An interface for manipulating className strings.</span>
 <span class="c">     * @interface NodeClassName</span>
@@ -52,7 +50,7 @@
 <span class="c">         * Determines whether an HTMLElement has the given className.</span>
 <span class="c">         * @method hasClass</span>
 <span class="c">         * @param {String} className the class name to search for</span>
-<span class="c">         * @return {Boolean | Array} A boolean value or array of boolean values</span>
+<span class="c">         * @return {Boolean} A boolean value or array of boolean values</span>
 <span class="c">         */</span>
         <span class="s1">&#39;hasClass&#39;</span><span class="o">,</span>
 
@@ -60,7 +58,6 @@
 <span class="c">         * Adds a class name to a given element or collection of elements.</span>
 <span class="c">         * @method addClass         </span>
 <span class="c">         * @param {String} className the class name to add to the class attribute</span>
-<span class="c">         * @return {Boolean | Array} A pass/fail boolean or array of booleans</span>
 <span class="c">         */</span>
         <span class="s1">&#39;addClass&#39;</span><span class="o">,</span>
 
@@ -68,7 +65,6 @@
 <span class="c">         * Removes a class name from a given element or collection of elements.</span>
 <span class="c">         * @method removeClass         </span>
 <span class="c">         * @param {String} className the class name to remove from the class attribute</span>
-<span class="c">         * @return {Boolean | Array} A pass/fail boolean or array of booleans</span>
 <span class="c">         */</span>
         <span class="s1">&#39;removeClass&#39;</span><span class="o">,</span>
 
@@ -78,7 +74,6 @@
 <span class="c">         * @method replaceClass  </span>
 <span class="c">         * @param {String} oldClassName the class name to be replaced</span>
 <span class="c">         * @param {String} newClassName the class name that will be replacing the old class name</span>
-<span class="c">         * @return {Boolean | Array} A pass/fail boolean or array of booleans</span>
 <span class="c">         */</span>
         <span class="s1">&#39;replaceClass&#39;</span><span class="o">,</span>
 
@@ -89,8 +84,6 @@
 <span class="c">         */</span>
         <span class="s1">&#39;toggleClass&#39;</span>
     <span class="o">]);</span>
-
-<span class="o">},</span> <span class="s1">&#39;3.0.0&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="s1">&#39;domclassname&#39;</span><span class="o">]</span> <span class="o">});</span>
 </pre></div>
                     </div>
 			</div>
@@ -111,6 +104,8 @@
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
 
                                 <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 

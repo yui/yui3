@@ -41,8 +41,6 @@
 <span class="c"> * @module node</span>
 <span class="c"> */</span>
 
-<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
-
     <span class="c">/**</span>
 <span class="c">     * A wrapper for DOM Nodes.</span>
 <span class="c">     * Node properties can be accessed via the set/get methods.</span>
@@ -94,7 +92,7 @@
     <span class="k">var</span> <span class="nx">slice</span> <span class="o">=</span> <span class="o">[].</span><span class="nx">slice</span><span class="o">;</span>
 
     <span class="c">// private factory</span>
-<span class="c"></span>    <span class="k">var</span> <span class="nx">wrap</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>    <span class="k">var</span> <span class="nx">wrapDOM</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">NODE_TYPE</span> <span class="k">in</span> <span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
@@ -147,14 +145,14 @@
                 <span class="nx">b</span> <span class="o">=</span> <span class="nx">getDOMNode</span><span class="o">(</span><span class="nx">b</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
-        <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">][</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">][</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">));</span>
     <span class="o">};</span>
 
     <span class="c">/*</span>
 <span class="c">     * Wraps the return value in a node instance</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">nodeOut</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">method</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">][</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">][</span><span class="nx">method</span><span class="o">](</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">));</span>
     <span class="o">};</span>
 
     <span class="c">/* </span>
@@ -485,8 +483,10 @@
 
     <span class="nx">Node</span><span class="o">.</span><span class="nx">methods</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">name</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">name</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">e</span><span class="o">);</span>
+            <span class="nx">Node</span><span class="o">.</span><span class="nx">prototype</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">);</span>
+                <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="kc">null</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
                 <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
                 <span class="o">}</span>
@@ -563,7 +563,7 @@
                 <span class="nx">node</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
             <span class="o">}</span>
 
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -605,7 +605,7 @@
                 <span class="k">if</span> <span class="o">(</span><span class="nx">_restrict</span> <span class="o">&amp;&amp;</span> <span class="nx">_restrict</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">contains</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
                     <span class="nx">val</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span> <span class="c">// not allowed to go outside of root node</span>
 <span class="c"></span>                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+                    <span class="nx">val</span> <span class="o">=</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">RE_VALID_PROP_TYPES</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="k">typeof</span> <span class="nx">node</span><span class="o">[</span><span class="nx">prop</span><span class="o">]))</span> <span class="o">{</span> <span class="c">// safe to read</span>
 <span class="c"></span>                <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">prop</span><span class="o">];</span>
@@ -652,7 +652,7 @@
 <span class="c">         * @return {Node} A Node instance for the matching HTMLElement.</span>
 <span class="c">         */</span>
         <span class="nx">query</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="kc">true</span><span class="o">));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="kc">true</span><span class="o">));</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -663,7 +663,7 @@
 <span class="c">         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.</span>
 <span class="c">         */</span>
         <span class="nx">queryAll</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">]));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">selector</span><span class="o">,</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">]));</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -739,7 +739,7 @@
 <span class="c">         * @return {Node} The matching Node instance or null if not found</span>
 <span class="c">         */</span>
         <span class="nx">ancestor</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">PARENT_NODE</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">PARENT_NODE</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)));</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -751,7 +751,7 @@
 <span class="c">         * @return {Node} Node instance or null if not found</span>
 <span class="c">         */</span>
         <span class="nx">previous</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">PREVIOUS_SIBLING</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">PREVIOUS_SIBLING</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
         <span class="o">},</span> 
 
         <span class="c">/**</span>
@@ -763,7 +763,7 @@
 <span class="c">         * @return {Object} HTMLElement or null if not found</span>
 <span class="c">         */</span>
         <span class="nx">next</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">NEXT_SIBLING</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">NEXT_SIBLING</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
         <span class="o">},</span>
         
        <span class="c">/*</span>
@@ -862,53 +862,19 @@
         <span class="k">return</span> <span class="nx">frag</span><span class="o">.</span><span class="nx">firstChild</span><span class="o">;</span>
     <span class="o">};</span>
 
-    <span class="k">var</span> <span class="nx">_createHTML</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">html</span> <span class="o">=</span> <span class="o">[];</span>
-        <span class="k">var</span> <span class="nx">att</span> <span class="o">=</span> <span class="o">[];</span>
-
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">))</span> <span class="o">{</span> <span class="c">// text node</span>
-<span class="c"></span>            <span class="k">return</span> <span class="nx">jsonml</span><span class="o">;</span>
-        <span class="o">}</span>
-
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">jsonml</span> <span class="o">||</span> <span class="o">!</span><span class="nx">jsonml</span><span class="o">.</span><span class="nx">push</span><span class="o">)</span> <span class="o">{</span> <span class="c">// isArray</span>
-<span class="c"></span>            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">;</span> <span class="c">// expecting array </span>
-<span class="c"></span>        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">jsonml</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
-        <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">tag</span><span class="o">))</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span> <span class="c">// bad tag error</span>
-<span class="c"></span>        <span class="o">}</span>
-
-        <span class="k">var</span> <span class="nx">tmpAtt</span><span class="o">;</span>
-        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">1</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">jsonml</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;string&#39;</span> <span class="o">||</span> <span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">push</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">html</span><span class="o">[</span><span class="nx">html</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">_createHTML</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">attr</span> <span class="k">in</span> <span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">{</span>
-                    <span class="nx">tmpAtt</span> <span class="o">=</span> <span class="o">(</span><span class="nx">attr</span> <span class="o">!=</span> <span class="s1">&#39;className&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="nx">attr</span> <span class="o">:</span> <span class="s1">&#39;class&#39;</span><span class="o">;</span>
-
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">attr</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="nx">att</span><span class="o">[</span><span class="nx">att</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">tmpAtt</span> <span class="o">+</span> <span class="s1">&#39;=&quot;&#39;</span> <span class="o">+</span> <span class="nx">jsonml</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="nx">attr</span><span class="o">]</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-        <span class="k">return</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="nx">tag</span> <span class="o">+</span> <span class="nx">att</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span> <span class="o">+</span> <span class="nx">html</span><span class="o">.</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;&#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;&lt;/&#39;</span> <span class="o">+</span> <span class="nx">tag</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span><span class="o">;</span>
-        
-    <span class="o">};</span>
-
     <span class="c">/** </span>
 <span class="c">     *  Creates a Node instance from an HTML string or jsonml</span>
 <span class="c">     * @method create</span>
 <span class="c">     * @param {String | Array} jsonml HTML string or jsonml</span>
 <span class="c">     */</span>
-    <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">_createNode</span><span class="o">(</span><span class="nx">jsonml</span><span class="o">));</span>
+    <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">//return wrapDOM(_createNode(html));</span>
+<span class="c"></span>        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">html</span><span class="o">));</span>
     <span class="o">};</span>
 
     <span class="nx">Node</span><span class="o">.</span><span class="nx">getById</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">doc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">])</span> <span class="o">?</span> <span class="nx">doc</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
-        <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
+        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
     <span class="o">};</span>
 
     <span class="c">/**</span>
@@ -939,11 +905,10 @@
                     <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
                     <span class="k">break</span><span class="o">;</span>
                 <span class="nx">default</span><span class="o">:</span> 
-                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                    <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">doc</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">}</span>
-
-        <span class="nx">node</span> <span class="o">=</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+        <span class="nx">node</span> <span class="o">=</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">isRoot</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">_restrict</span> <span class="o">=</span> <span class="nx">_restrict</span> <span class="o">||</span> <span class="o">{};</span>
@@ -975,7 +940,7 @@
             <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">Selector</span><span class="o">.</span><span class="nx">query</span><span class="o">(</span><span class="nx">nodes</span><span class="o">,</span> <span class="nx">doc</span><span class="o">);</span>
         <span class="o">}</span>
 
-        <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">nodes</span><span class="o">);</span>
+        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">nodes</span><span class="o">);</span>
 
     <span class="o">};</span>
 
@@ -1013,7 +978,7 @@
 <span class="c">         */</span>
         <span class="nx">item</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">index</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">][</span><span class="nx">index</span><span class="o">];</span>
-            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">?</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">:</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="k">return</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">tagName</span><span class="o">)</span> <span class="o">?</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">:</span> <span class="o">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">)</span> <span class="o">?</span> <span class="nx">node</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -1066,7 +1031,7 @@
 <span class="c">         * @see Selector</span>
 <span class="c">         */</span>
         <span class="nx">filter</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">selector</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="nx">wrap</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">selector</span><span class="o">));</span>
+            <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Selector</span><span class="o">.</span><span class="nx">filter</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">selector</span><span class="o">));</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -1105,7 +1070,6 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">;</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">;</span>
-<span class="o">},</span> <span class="s1">&#39;3.0.0&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">,</span> <span class="s1">&#39;style&#39;</span><span class="o">]</span> <span class="o">});</span>
 </pre></div>
                     </div>
 			</div>
@@ -1126,6 +1090,8 @@
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
 
                                 <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 

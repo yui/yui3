@@ -52,13 +52,46 @@
   
 
                     <div class="summary description">
-                        Handles animation _queueing and threading.
+                        Provides an API for animating objects.
+Usage:
+<pre>
+var anim = new Y.Anim({
+node: '#foo',
+from: {
+opacity: 0
+},
+to: {
+height: 200,
+width: function(node) {
+return node.get('offsetHeight') / 2;
+},
+opacity: 1
+},
+easing: Y.Easing.easeOut
+});
+anim.run(); 
+</pre>
                     </div>
 
 
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
                             <div class="content">
+                                    <div class="">
+                                    <h4><a name="property_CUSTOM_ATTRIBUTES">CUSTOM_ATTRIBUTES</a>
+                                        <code>- static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Bucket for custom getters and setters
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                                     <div class="">
                                     <h4><a name="property_DEFAULT_GETTER">DEFAULT_GETTER</a>
                                         <code>- static object</code>
@@ -96,6 +129,21 @@
                                     <div class="detail">
                                         <div class="description">
                                             The default unit to use with properties that pass the RE_DEFAULT_UNIT test.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_NAME">NAME</a>
+                                        <code>- static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The lowercase name of the class.
                                         </div>
                                     </div>
      
@@ -481,13 +529,13 @@ Only one thread can run at a time.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="event_beforeIsAnimatedChange">beforeIsAnimatedChange</a></h4>
+                                        <a name="event_beforeIsY.AnimatedChange">beforeIsY.AnimatedChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong>beforeIsAnimatedChange</strong>
+                                            <strong>beforeIsY.AnimatedChange</strong>
 
                                             (
                                                 
@@ -500,7 +548,7 @@ Only one thread can run at a time.
                                         </code>
                                         
                                         <div class="description">
-                                            Fires before the value for the configuration attribute 'isAnimated' changes. Return false to cancel the attribute change.
+                                            Fires before the value for the configuration attribute 'isY.Animated' changes. Return false to cancel the attribute change.
                                         </div>
 
                                         <div class="description">
@@ -932,13 +980,13 @@ Only one thread can run at a time.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="event_isAnimatedChange">isAnimatedChange</a></h4>
+                                        <a name="event_isY.AnimatedChange">isY.AnimatedChange</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                            <strong>isAnimatedChange</strong>
+                                            <strong>isY.AnimatedChange</strong>
 
                                             (
                                                 
@@ -951,7 +999,7 @@ Only one thread can run at a time.
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'isAnimated' changes.
+                                            Fires when the value for the configuration attribute 'isY.Animated' changes.
                                         </div>
 
                                         <div class="description">
@@ -1205,7 +1253,7 @@ Normal will repeat the animation, alternate will reverse on every other pass.
                                     </div>        
                                     <div class="">
                                     <h4><a name="config_duration">duration</a>
-                                        <code>- Number</code>
+                                        <code>- NUM</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -1267,7 +1315,7 @@ If no from value is specified, the DEFAULT_GETTER will be used.
                                     <hr />
                                     </div>        
                                     <div class="">
-                                    <h4><a name="config_isAnimated">isAnimated</a>
+                                    <h4><a name="config_isY.Animated">isY.Animated</a>
                                         <code>- Boolean</code>
                                     </h4>
                                     <div class="detail">
@@ -1388,6 +1436,8 @@ Fields may be strings, numbers, or functions.
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
                                 <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
 
                                 <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
@@ -1400,8 +1450,8 @@ Fields may be strings, numbers, or functions.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class="selected"><a href="Anim.html">Anim</a></li>
-                                <li class="selected"><a href="Anim.html">Anim</a></li>
-                                <li class=""><a href="Y.Easing.html">Y.Easing</a></li>
+                                <li class=""><a href="Bezier.html">Bezier</a></li>
+                                <li class=""><a href="Easing.html">Easing</a></li>
                         </ul>
                     </div>
 
@@ -1409,14 +1459,22 @@ Fields may be strings, numbers, or functions.
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class=""><a href="Anim.js.html">Anim.js</a></li>
+                                <li class=""><a href="Bezier.js.html">Bezier.js</a></li>
+                                <li class=""><a href="ColorAnim.js.html">ColorAnim.js</a></li>
+                                <li class=""><a href="Curve.js.html">Curve.js</a></li>
                                 <li class=""><a href="Easing.js.html">Easing.js</a></li>
                                 <li class=""><a href="NodeFXPlugin.js.html">NodeFXPlugin.js</a></li>
+                                <li class=""><a href="Scroll.js.html">Scroll.js</a></li>
+                                <li class=""><a href="XY.js.html">XY.js</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Properties</h4>
                         <ul class="content">        
+                                <li class=""><a href="#property_CUSTOM_ATTRIBUTES">CUSTOM_ATTRIBUTES</a>
+                                        <!--<code>&lt;object&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_DEFAULT_GETTER">DEFAULT_GETTER</a>
                                         <!--<code>&lt;object&gt;</code>-->
                                 </li>
@@ -1424,6 +1482,9 @@ Fields may be strings, numbers, or functions.
                                         <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_DEFAULT_UNIT">DEFAULT_UNIT</a>
+                                        <!--<code>&lt;object&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_NAME">NAME</a>
                                         <!--<code>&lt;object&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_RE_DEFAULT_UNIT">RE_DEFAULT_UNIT</a>
@@ -1469,7 +1530,7 @@ Fields may be strings, numbers, or functions.
                                 <a href="#event_beforeFromChange">beforeFromChange</a>
                                 </li>
                                 <li class="">
-                                <a href="#event_beforeIsAnimatedChange">beforeIsAnimatedChange</a>
+                                <a href="#event_beforeIsY.AnimatedChange">beforeIsY.AnimatedChange</a>
                                 </li>
                                 <li class="">
                                 <a href="#event_beforeIterationCountChange">beforeIterationCountChange</a>
@@ -1502,7 +1563,7 @@ Fields may be strings, numbers, or functions.
                                 <a href="#event_fromChange">fromChange</a>
                                 </li>
                                 <li class="">
-                                <a href="#event_isAnimatedChange">isAnimatedChange</a>
+                                <a href="#event_isY.AnimatedChange">isY.AnimatedChange</a>
                                 </li>
                                 <li class="">
                                 <a href="#event_iterationCountChange">iterationCountChange</a>
@@ -1541,7 +1602,7 @@ Fields may be strings, numbers, or functions.
                                 <a href="#config_from">from</a>
                                 </li>
                                 <li class="">
-                                <a href="#config_isAnimated">isAnimated</a>
+                                <a href="#config_isY.Animated">isY.Animated</a>
                                 </li>
                                 <li class="">
                                 <a href="#config_iterationCount">iterationCount</a>
