@@ -35,11 +35,11 @@ $yuiUseVersion = "2.5.2";
 	<title><?php if (isset($title)) { echo $title ; } else {?>Yahoo! Search Web Services<?php } ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <?php if (isset($metainfo)) { echo $metainfo; } ?>
-	<link rel="stylesheet" type="text/css" href="../assets/yui.css">
+	<link rel="stylesheet" type="text/css" href="/assets/yui.css">
 <?php
 if ($highlightSyntax) { /*include code for syntax-highlighting boxes, mostly found on landing and example pages*/
 ?>
-	<link rel="stylesheet" type="text/css" href="../assets/dpSyntaxHighlighter.css">
+	<link rel="stylesheet" type="text/css" href="/assets/dpSyntaxHighlighter.css">
 <?php
 }
 
@@ -82,4 +82,4 @@ if ($prepend) { /*there is additional css or header information for this page --
 	<div id="pagetitle"><h1>YUI 3: <?php echo $titlebar ?></h1></div>
 </div>
 <div id="bd">
-<div id="bar-note"><p><strong>Note:</strong> This is the <a href="http://developer.yahoo.com/yui/3">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui">YUI 2.x</a> site?</p></div>
+<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui">YUI 2.x</a> site?</p></div>
