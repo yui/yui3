@@ -53,12 +53,12 @@ if(! $examples[$name]) {
 
 	//prep arbitrary <body> element class; useful for skinned panels
 	//that render to the body directly
-	if(isset($currentExample["bodyclass"])) {
+	if(isset($currentExample["bodyclass"]) && $currentExample["bodyclass"] !== false) {
 		$bodyclass = $currentExample["bodyclass"];
 	} else {
 		$bodyclass = " yui-skin-sam";
 	}
-	
+
 	//instantiate loader, then set the buildpath if a custom
 	//buildpath is requested via the querystring:
 	$loader = new YAHOO_util_Loader();

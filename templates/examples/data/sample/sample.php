@@ -50,7 +50,12 @@ $examples["sample-one"] = array(
     
     /* Does this example require syntax highlighting?  If so, the approprate JS 
     and CSS resources will be placed on the page. */
-	highlightSyntax => true
+	highlightSyntax => true,
+
+    /* Class name to add to the body tag, if required by the example. If
+    a bodyclass is not specified (or false), the default body class of
+    "yui-skin-sam" will be applied */
+    bodyclass => false,
 
     // NOT SUPPORTED FOR PR1
     /* Use this array to designate what "sources" in the logger console
@@ -73,7 +78,8 @@ $examples["sample-two"] = array(
 	sequence => array(2),
 	newWindow => "default",
 	requires => array("yui", "base"),
-	highlightSyntax => true
+	highlightSyntax => true,
+    bodyclass => "sample-skin"
 );
 
 ?>
