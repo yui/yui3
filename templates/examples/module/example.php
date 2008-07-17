@@ -414,7 +414,7 @@ include("'.$docroot.'inc/header.inc");
 /* Currently, all modules that are not of type=="css" have API documentation conforming to the same AdamDoc URL style:*/
 if ($currentModule[type] != "css") {
 ?>
-						<li><a href="<?php echo $docroot ?>docs/module_<?php echo($currentModuleName);?>.html">API Documentation</a></li>
+						<li><a href="<?php echo $docroot ?>api/module_<?php echo($currentModuleName);?>.html">API Documentation</a></li>
 <?php 
 }
 /* cheatsheet is indicated by $currentModule[cheatsheet] -- either true, false, or a string specifying the filename for this module's cheatsheet (e.g., if it isn't modulename.pdf) */
