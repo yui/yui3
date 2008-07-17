@@ -20,4 +20,14 @@ $examples["simple-drag"] = array(
 	highlightSyntax => true
 );
 
+$examples["proxy-drag"] = array(
+	name => "Proxy Drag",
+	modules => array("dd"),
+	description => "Proxy Drag Description",
+	sequence => array(2),
+	newWindow => "default",
+	requires => array("yui", "dd-drop", 'dd-proxy'),
+	highlightSyntax => true
+);
+
 ?>
