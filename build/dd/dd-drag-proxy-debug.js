@@ -1514,7 +1514,7 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
        /**
