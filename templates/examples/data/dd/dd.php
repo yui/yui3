@@ -16,7 +16,7 @@ $examples["simple-drag"] = array(
 	description => "Simple Drag Description",
 	sequence => array(1),
 	newWindow => "default",
-	requires => array("yui", "dd-drop"),
+	requires => array("yui", "dd-drag"),
 	highlightSyntax => true
 );
 
@@ -26,7 +26,7 @@ $examples["proxy-drag"] = array(
 	description => "Proxy Drag Description",
 	sequence => array(2),
 	newWindow => "default",
-	requires => array("yui", "dd-drop", 'dd-proxy'),
+	requires => array("yui", "dd-drag", 'dd-proxy'),
 	highlightSyntax => true
 );
 
@@ -36,7 +36,17 @@ $examples["constrained-drag"] = array(
 	description => "Drag Constrained to a Region",
 	sequence => array(3),
 	newWindow => "default",
-	requires => array("yui", "dd-drop", 'dd-proxy', 'dd-constrain'),
+	requires => array("yui", "dd-drag", 'dd-proxy', 'dd-constrain'),
+	highlightSyntax => true
+);
+
+$examples["groups-drag"] = array(
+	name => "Interaction Groups",
+	modules => array("dd"),
+	description => "Interaction Groups",
+	sequence => array(3),
+	newWindow => "default",
+	requires => array("yui", 'dd-proxy', "dd-drop"),
 	highlightSyntax => true
 );
 
