@@ -267,7 +267,7 @@ p.loggerButton {text-align:center;}
 
 
 #bar-note {
-	background:#f2fbff url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:3px;margin-bottom:1em;
+	background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:3px;margin-bottom:1em;
 	}
 #bar-note a {color:#2288BB;text-decoration:none;}
 #bar-note a:hover {text-decoration:underline;}
@@ -358,3 +358,9 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 #main table.examplesTable tbody td a {font-size:109.44%;}
 #main table.examplesTable th,
 #main table.examplesTable td {padding:5px;}
+
+/* */
+.example h2 em {font-size:78.5714%;color:#666;}
+.ex-box {border:1px solid #D9D9D9;}
+.ex-box .bd {background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;padding:10px;border:1px solid #FFF;}
+.ex-box .ft {background:#F2FBFF url(../assets/gradient-example-ft.png) repeat-x 0 0;border-top:1px solid #D9D9D9;}
