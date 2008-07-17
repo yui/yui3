@@ -2,10 +2,16 @@
 
 /* Test Module: */
 $modules["sample"] = array(
+        /* The name of the module, used in index listings, titles, headers */
 		"name" => "Sample Core Utility",
+        /* The type of the module.
+           Currently used values for type are:
+           "css", "core", "utility", "tool" */
 		"type" => "core",
-        /*this description appears on the component's examples index page*/
-		"description" => "Sample Utility Description", 
+        /* This description appears on the component's examples index page*/
+		"description" => "Sample Utility Description",
+        /* Whether or not the component has a cheatsheet. PR1 will not snip with
+           cheatsheets */ 
 		"cheatsheet" => false 
 );	
 
