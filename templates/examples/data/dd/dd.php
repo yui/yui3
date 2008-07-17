@@ -30,4 +30,14 @@ $examples["proxy-drag"] = array(
 	highlightSyntax => true
 );
 
+$examples["constrained-drag"] = array(
+	name => "Drag Constrained to a Region",
+	modules => array("dd"),
+	description => "Drag Constrained to a Region",
+	sequence => array(3),
+	newWindow => "default",
+	requires => array("yui", "dd-drop", 'dd-proxy', 'dd-constrain'),
+	highlightSyntax => true
+);
+
 ?>
