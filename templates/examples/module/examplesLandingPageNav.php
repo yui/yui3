@@ -7,7 +7,6 @@ require($docroot."inc/common.php");
 if (!isset($currentModuleName )) {
 	$currentModuleName = $_GET['module'];
 };
-
 if($modules[$currentModuleName]) {
 	$currentModule = $modules[$currentModuleName];
 	$component=$currentModule[name];
@@ -27,9 +26,9 @@ if($modules[$currentModuleName]) {
 			/*This may be a cross-listed example.  If it is, build the link out
 			and defer it until later on the page:*/
 			if ($currentModuleName != $thisExample[modules][0])  {
-				$relatedExamples .= "<li><a href='/yui/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a> (included with examples for the <a href='/yui/".$thisExample[modules][0]."/index.html'>".$modules[$thisExample[modules][0]][name]."</a>)</li>\n";
+				$relatedExamples .= "<li><a href='/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a> (included with examples for the <a href='/yui/3/".$thisExample[modules][0]."/index.html'>".$modules[$thisExample[modules][0]][name]."</a>)</li>\n";
 			} else {
-				echo "<li><a href='/yui/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a></li>\n";
+				echo "<li><a href='/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a></li>\n";
 			}
 		}
 ?>
@@ -50,5 +49,6 @@ if($modules[$currentModuleName]) {
     </div>
 </div>
 <?php
+    }
 }
-?>		
+?>	
