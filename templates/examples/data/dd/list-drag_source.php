@@ -1,4 +1,7 @@
 <style type="text/css" media="screen">
+    .yui-dd-proxy {
+        text-align: left;
+    }
     #play {
         border: 1px solid black;
         padding: 10px;
