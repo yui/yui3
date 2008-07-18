@@ -624,7 +624,7 @@
             }
             if (r) {
                 if (hTest) {
-                    var els = ev.originalTarget.queryAll(hTest);
+                    var els = ev.currentTarget.queryAll(hTest);
                     els.each(function(n, i) {
                         if (n.contains(tar) || n.compareTo(tar)) {
                             this.set('activeHandle', els.item(i));
