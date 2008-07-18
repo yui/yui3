@@ -265,9 +265,7 @@
 
             <span class="c">// This this the target unless target is current not null</span>
 <span class="c"></span>            <span class="c">// (set in bubble()).</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(!</span><span class="nx">ce</span><span class="o">.</span><span class="nx">target</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-            <span class="o">}</span>
+<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
 
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
@@ -306,7 +304,7 @@
                     <span class="k">if</span> <span class="o">(</span><span class="nx">targs</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
 
                         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">targs</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">type</span><span class="o">,</span>
-                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> 
+                            <span class="nx">ce</span> <span class="o">=</span> <span class="nx">t</span><span class="o">.</span><span class="nx">getEvent</span><span class="o">(</span><span class="nx">type</span><span class="o">),</span> <span class="nx">targetProp</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
                             
                         <span class="c">// if this event was not published on the bubble target,</span>
 <span class="c"></span>                        <span class="c">// publish it with sensible default properties</span>
@@ -326,8 +324,11 @@
                             <span class="nx">ce</span><span class="o">.</span><span class="nx">stoppedFn</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
                         <span class="o">}</span>
 
-                        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetProp</span><span class="o">;</span>
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
 
+                        <span class="c">// ce.target = evt.target;</span>
+<span class="c"></span>
                         <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ret</span> <span class="o">&amp;&amp;</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">evt</span><span class="o">.</span><span class="nx">details</span><span class="o">);</span>
 
                         <span class="c">// stopPropagation() was called</span>

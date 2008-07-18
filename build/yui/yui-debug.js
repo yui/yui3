@@ -3038,9 +3038,7 @@ YUI.add("event-target", function(Y) {
 
             // This this the target unless target is current not null
             // (set in bubble()).
-            if (!ce.target) {
-                ce.target = this;
-            }
+            ce.target = ce.target || this;
 
             var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             var ret = ce.fire.apply(ce, a);
@@ -3079,7 +3077,7 @@ YUI.add("event-target", function(Y) {
                     if (targs.hasOwnProperty(i)) {
 
                         var t = targs[i], type = evt.type,
-                            ce = t.getEvent(type) 
+                            ce = t.getEvent(type), targetProp = evt.target || this;
                             
                         // if this event was not published on the bubble target,
                         // publish it with sensible default properties
@@ -3099,7 +3097,10 @@ YUI.add("event-target", function(Y) {
                             ce.stoppedFn = null;
                         }
 
-                        ce.target = evt.target;
+                        ce.target = targetProp;
+                        ce.originalTarget = t;
+
+                        // ce.target = evt.target;
 
                         ret = ret && ce.fire.apply(ce, evt.details);
 
