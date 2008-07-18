@@ -2,7 +2,6 @@
 var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation');
 
 Y.on('event:ready', function() {
-    //Y.DD.DDM._debugShim = true;
 
     var goingUp = false, lastY = 0, crossList = false;
  
