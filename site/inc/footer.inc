@@ -21,16 +21,16 @@ dp.SyntaxHighlighter.HighlightAll('code');
 
 
 
-//only hardwire yuiloader on the page if we are not in the 
-//examples directory; PHP Loader will handle all YUI script inclusion
-//for examples.
-if (!substr_count($_SERVER["REQUEST_URI"], "examples")) {
-	if (substr_count($_SERVER["REQUEST_URI"], "articles/hosting")) {
-		echo '<script type="text/javascript" src="/yui/build/yuiloader-dom-event/yuiloader-dom-event.js?v='.$yuiUseVersion.'"></script>';
-	} else {
-		echo '<script type="text/javascript" src="http://yui.yahooapis.com/'.$yuiUseVersion.'/build/yuiloader-dom-event/yuiloader-dom-event.js"></script>';
-	}
+//YUI 2.x Loader belongs on the page for all YDN-served pages.  For
+//the configurator page ("articles/hosting"), this must always be
+//the latest version (as opposed to the $yuiUseVersion, which may
+//be one or two versions old.)
+if (substr_count($_SERVER["REQUEST_URI"], "articles/hosting")) {
+	echo '<script type="text/javascript" src="/yui/build/yuiloader-dom-event/yuiloader-dom-event.js?v='.$yuiCurrentVersion.'"></script>';
+} else {
+	echo '<script type="text/javascript" src="http://yui.yahooapis.com/combo?'.$yuiUseVersion.'/build/yuiloader-dom-event/yuiloader-dom-event.js&'.$yuiUseVersion.'/build/autocomplete/autocomplete-min.js"></script>';
 }
+
 
 if ($append) { //there is additional javascript for this page -- perhaps some use of YUI and/or custom js -- that is meant to be inserted at the last line of the file
 	echo $append;
