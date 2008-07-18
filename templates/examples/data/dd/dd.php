@@ -70,4 +70,14 @@ $examples["list-drag"] = array(
 	highlightSyntax => true
 );
 
+$examples["portal-drag"] = array(
+	name => "Portal Style Example",
+	modules => array("dd", 'animation'),
+	description => "Portal style example using Drag & Drop Event Bubbling and Animation.",
+	sequence => array(7),
+	newWindow => "require",
+	requires => array("yui", 'dd-drop', 'dd-constrain', 'dd-proxy', 'animation'),
+	highlightSyntax => true
+);
+
 ?>
