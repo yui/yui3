@@ -50,4 +50,14 @@ $examples["groups-drag"] = array(
 	highlightSyntax => true
 );
 
+$examples["shim-drag"] = array(
+	name => "Using the Drag Shim",
+	modules => array("dd"),
+	description => "Using the drag shim.",
+	sequence => array(3),
+	newWindow => "default",
+	requires => array("yui", 'dd-ddm', 'dd-proxy'),
+	highlightSyntax => true
+);
+
 ?>
