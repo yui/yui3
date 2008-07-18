@@ -2373,12 +2373,6 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 ef = new Y.Event.Facade(this, this.currentTarget);
             }
 
-            // update the details field with the arguments
-            ef.target = this.target;
-            ef.currentTarget = this.currentTarget;
-            ef.stopped = 0;
-            ef.prevented = 0;
-
             // if the first argument is an object literal, apply the
             // properties to the event facade
             var o = args && args[0];
@@ -2386,7 +2380,12 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 Y.mix(ef, o, true);
             }
 
+            // update the details field with the arguments
             ef.details = this.details;
+            ef.target = this.target;
+            ef.currentTarget = this.currentTarget;
+            ef.stopped = 0;
+            ef.prevented = 0;
 
             this._facade = ef;
 
@@ -2558,8 +2557,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                     ret = this.host.bubble(this);
                 }
 
-                this.stopped = es.stopped || 0;
-                this.prevented = es.prevented || 0;
+                // is.stopped = es.stopped || 0;
+                // this.prevented = es.prevented || 0;
+                this.stopped = 0;
+                this.prevented = 0;
 
                 // execute the default behavior if not prevented
                 // @TODO need context

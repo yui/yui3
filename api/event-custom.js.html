@@ -402,12 +402,6 @@
                 <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="c">// update the details field with the arguments</span>
-<span class="c"></span>            <span class="nx">ef</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
-            <span class="nx">ef</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
-            <span class="nx">ef</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-            <span class="nx">ef</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
-
             <span class="c">// if the first argument is an object literal, apply the</span>
 <span class="c"></span>            <span class="c">// properties to the event facade</span>
 <span class="c"></span>            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
@@ -415,7 +409,12 @@
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 
-            <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
+            <span class="c">// update the details field with the arguments</span>
+<span class="c"></span>            <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span> <span class="o">=</span> <span class="nx">ef</span><span class="o">;</span>
 
@@ -587,8 +586,10 @@
 <span class="c"></span>                    <span class="nx">ret</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">.</span><span class="nx">bubble</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
                 <span class="o">}</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
-                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="nx">es</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+                <span class="c">// is.stopped = es.stopped || 0;</span>
+<span class="c"></span>                <span class="c">// this.prevented = es.prevented || 0;</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
                 <span class="c">// execute the default behavior if not prevented</span>
 <span class="c"></span>                <span class="c">// @TODO need context</span>
