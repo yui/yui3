@@ -1,7 +1,7 @@
 <?php 
-$title="The Drag &amp; Drop Utility";
+$title="The Drag &amp; Drop Utility - 3.0";
 $section="dd";
-$component="Drag &amp; Drop Utility";
+$component="Drag &amp; Drop Utility - 3.0";
 $highlightSyntax = true;
 $releasenotes = true;
 include "../inc/header.inc";
@@ -24,7 +24,7 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+										<li><a href="#modules">Module Descriptions</a></li>
 										<li><a href="#[you id here]">[your sub-section title here]</a></li>
 										<li><a href="#[you id here]">[your sub-section title here]</a></li>
 										</ul></li>
@@ -48,66 +48,73 @@ include "../inc/header.inc";
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+                    &lt;!-- TODO file list.. --&gt;
+                    &lt;!-- TODO file list.. --&gt;
+                    &lt;!-- TODO file list.. --&gt;
 				</textarea>
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
+					<li><a href="#modules">Module Descriptions</a></li>
 					<li><a href="#[you id here]">[your sub-section title here]</a></li>
 					<li><a href="#[you id here]">[your sub-section title here]</a></li>
 					<li><a href="#[you id here]">[your sub-section title here]</a></li>
 				</ul>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+				<h4 id="modules">Module Descriptions</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>Module descriptions go here..</p>
 				
 				<table>
 					<thead>
 						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
+							<th>Module Name</th>
+							<th>Description</th>
 						</tr>
 					</tbody>
 					<tbody>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>dd-ddm-base</code></td>
+							<td>Base DragDrop Manager</td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>dd-ddm</code></td>
+							<td>Adds shim support</td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>dd-ddm-drop</code></td>
+							<td>Adds Drop support</td>
+						</tr>
+						<tr>
+							<td><code>dd-drag</code></td>
+							<td>Main drag class</td>
+						</tr>
+						<tr>
+							<td><code>dd-proxy</code></td>
+							<td>Adds proxy support to Drag</td>
+						</tr>
+						<tr>
+							<td><code>dd-constrain</code></td>
+							<td>Adds constrain support to drag</td>
+						</tr>
+						<tr>
+							<td><code>dd-drop</code></td>
+							<td>Drop Support</td>
+						</tr>
+						</tr>
+						<tr>
+							<td><code>dd-plugin</code></td>
+							<td>Node plugin for Drag</td>
+						</tr>
+						<tr>
+							<td><code>dd-drop-plugin</code></td>
+							<td>Node plugin for Drop</td>
 						</tr>
 					</tbody>
 				</table>
@@ -128,16 +135,17 @@ include "../inc/support.inc";
 <div class="yui-u sidebar">
 
 	<?php 
-	include "../inc/cheatsheet.inc";
+	//include "../inc/cheatsheet.inc";
 	?>
 			
 			<div id="examples">
 <?php 
-	include("../inc/examplesNav/".$section.".inc");
+    //TODO
+	include("../inc/examplesNav/dd.inc");
 ?>
 		   </div>
 		   
-		   	<div id="morereading">
+		   	<!--div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
 				
 				<ul>
@@ -146,10 +154,10 @@ include "../inc/support.inc";
 					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
 
 			   </ul>
-		   </div>
+		   </div-->
 		   
 <?php 
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
+$thisURI="http://developer.yahoo.com/yui/3/dd/";
 require_once('../inc/badge.inc');
 ?>
 <h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
