@@ -31,6 +31,14 @@ echo "Checking in Doc files"
 echo "****************************************"
 cvs commit -m "$CMT" dd/*.js
 clear
+wait
+echo "****************************************"
+echo "Checking in Test file"
+echo "****************************************"
+cd ../tests
+wait
+cvs commit -m "$CMT" dd.html
+clear
 echo "****************************************"
 echo "Commit Finished"
 echo "****************************************"
