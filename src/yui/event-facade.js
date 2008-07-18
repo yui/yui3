@@ -97,14 +97,14 @@ YUI.add("event-facade", function(Y) {
      * fixed here.  Provids a security layer when required.
      * @class Event.Facade
      * @param ev {Event} the DOM event
-     * @param origTarg {HTMLElement} the element the listener was attached to
+     * @param currentTarget {HTMLElement} the element the listener was attached to
      * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
      */
-    Y.Event.Facade = function(ev, origTarg, wrapper, details) {
+    Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
 
         // @TODO the document should be the target's owner document
 
-        var e = ev, ot = origTarg, d = Y.config.doc, b = d.body,
+        var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
 
         // copy all primitives ... this is slow in FF
@@ -216,10 +216,10 @@ YUI.add("event-facade", function(Y) {
 
         /**
          * Node reference for the element that the listener was attached to.
-         * @propery originalTarget
+         * @propery currentTarget
          * @type Node
          */
-        this.originalTarget = (isCE) ? ot :  resolve(ot);
+        this.currentTarget = (isCE) ? ot :  resolve(ot);
 
         var t = e.relatedTarget;
         if (!t) {

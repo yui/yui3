@@ -57,7 +57,7 @@
             <span class="s1">&#39;context&#39;</span><span class="o">,</span>
             <span class="s1">&#39;emitFacade&#39;</span><span class="o">,</span>
             <span class="s1">&#39;target&#39;</span><span class="o">,</span>
-            <span class="s1">&#39;originalTarget&#39;</span><span class="o">,</span>
+            <span class="s1">&#39;currentTarget&#39;</span><span class="o">,</span>
             <span class="s1">&#39;details&#39;</span><span class="o">,</span>
             <span class="s1">&#39;type&#39;</span>
         <span class="o">]</span>
@@ -399,20 +399,20 @@
             <span class="k">var</span> <span class="nx">ef</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_facade</span><span class="o">;</span>
 
             <span class="k">if</span> <span class="o">(!</span><span class="nx">ef</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Y.log(&#39;creating facade &#39; + Y.stamp(this));</span>
-<span class="c"></span>                <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">);</span>
+                <span class="nx">ef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="c">// update the details field with the arguments</span>
 <span class="c"></span>            <span class="nx">ef</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span><span class="o">;</span>
-            <span class="nx">ef</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span><span class="o">;</span>
+            <span class="nx">ef</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
             <span class="nx">ef</span><span class="o">.</span><span class="nx">stopped</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
             <span class="nx">ef</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
             <span class="c">// if the first argument is an object literal, apply the</span>
 <span class="c"></span>            <span class="c">// properties to the event facade</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="kc">true</span><span class="o">);</span>
+<span class="c"></span>            <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">args</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">_yuifacade</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">ef</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="nx">ef</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">details</span><span class="o">;</span>
@@ -436,7 +436,8 @@
             <span class="k">var</span> <span class="nx">ret</span><span class="o">;</span>
 
             <span class="c">// emit an Event.Facade if this is that sort of event</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">emitFacade</span> <span class="o">&amp;&amp;</span> <span class="o">(!</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">||</span> <span class="o">!</span><span class="nx">args</span><span class="o">[</span><span class="m">0</span><span class="o">].</span><span class="nx">_yuifacade</span><span class="o">))</span> <span class="o">{</span>
+<span class="c"></span>            <span class="c">// if (this.emitFacade &amp;&amp; (!args[0] || !args[0]._yuifacade)) {</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">emitFacade</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="c">// @TODO object literal support to fire makes it possible for</span>
 <span class="c"></span>                <span class="c">// config info to be passed if we wish.</span>
@@ -538,6 +539,10 @@
                 <span class="c">// var subs = this.subscribers.slice(), len=subs.length,</span>
 <span class="c"></span>                <span class="k">var</span> <span class="nx">subs</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">subscribers</span><span class="o">),</span> <span class="nx">s</span><span class="o">,</span>
                            <span class="nx">args</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">),</span> <span class="nx">i</span><span class="o">;</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span><span class="o">;</span>
+
+                <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">host</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span><span class="o">;</span>
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">fired</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">args</span><span class="o">;</span>

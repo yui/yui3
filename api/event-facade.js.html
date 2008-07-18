@@ -135,14 +135,14 @@
 <span class="c">     * fixed here.  Provids a security layer when required.</span>
 <span class="c">     * @class Event.Facade</span>
 <span class="c">     * @param ev {Event} the DOM event</span>
-<span class="c">     * @param origTarg {HTMLElement} the element the listener was attached to</span>
+<span class="c">     * @param currentTarget {HTMLElement} the element the listener was attached to</span>
 <span class="c">     * @param wrapper {Event.Custom} the custom event wrapper for this DOM event</span>
 <span class="c">     */</span>
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">,</span> <span class="nx">details</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">,</span> <span class="nx">details</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="c">// @TODO the document should be the target&#39;s owner document</span>
 <span class="c"></span>
-        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">origTarg</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
+        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
             <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">,</span> <span class="nx">isCE</span> <span class="o">=</span> <span class="o">(</span><span class="nx">ev</span><span class="o">.</span><span class="nx">_YUI_EVENT</span><span class="o">);</span>
 
         <span class="c">// copy all primitives ... this is slow in FF</span>
@@ -254,10 +254,10 @@
 
         <span class="c">/**</span>
 <span class="c">         * Node reference for the element that the listener was attached to.</span>
-<span class="c">         * @propery originalTarget</span>
+<span class="c">         * @propery currentTarget</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ot</span> <span class="o">:</span>  <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ot</span> <span class="o">:</span>  <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
 
         <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">;</span>
         <span class="k">if</span> <span class="o">(!</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>

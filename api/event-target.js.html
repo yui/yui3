@@ -261,12 +261,12 @@
             <span class="o">}</span>
 
             <span class="c">// Provide this object&#39;s subscribers the object they are listening to.</span>
-<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
-
+<span class="c"></span>            <span class="c">// ce.currentTarget = this;</span>
+<span class="c"></span>
             <span class="c">// This this the target unless target is current not null</span>
 <span class="c"></span>            <span class="c">// (set in bubble()).</span>
-<span class="c"></span>            <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="o">;</span>
-
+<span class="c"></span>            <span class="c">// ce.target = ce.target || this;</span>
+<span class="c"></span>
             <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="o">(</span><span class="nx">typeIncluded</span><span class="o">)</span> <span class="o">?</span> <span class="m">1</span> <span class="o">:</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
             <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ce</span><span class="o">.</span><span class="nx">fire</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">ce</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
@@ -325,7 +325,7 @@
                         <span class="o">}</span>
 
                         <span class="nx">ce</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">targetProp</span><span class="o">;</span>
-                        <span class="nx">ce</span><span class="o">.</span><span class="nx">originalTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
+                        <span class="nx">ce</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
 
                         <span class="c">// ce.target = evt.target;</span>
 <span class="c"></span>

@@ -19,7 +19,7 @@ YUI.add("event-custom", function(Y) {
             'context',
             'emitFacade',
             'target',
-            'originalTarget',
+            'currentTarget',
             'details',
             'type'
         ]
@@ -361,20 +361,20 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ef = this._facade;
 
             if (!ef) {
-                // Y.log('creating facade ' + Y.stamp(this));
-                ef = new Y.Event.Facade(this, this.originalTarget);
+                ef = new Y.Event.Facade(this, this.currentTarget);
             }
 
             // update the details field with the arguments
             ef.target = this.target;
-            ef.originalTarget = this.originalTarget;
+            ef.currentTarget = this.currentTarget;
             ef.stopped = 0;
             ef.prevented = 0;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
-            if (args && Y.Lang.isObject(args[0], true)) {
-                Y.mix(ef, args[0], true);
+            var o = args && args[0];
+            if (Y.Lang.isObject(o, true) && !o._yuifacade) {
+                Y.mix(ef, o, true);
             }
 
             ef.details = this.details;
@@ -398,7 +398,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ret;
 
             // emit an Event.Facade if this is that sort of event
-            if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
+            // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
+            if (this.emitFacade) {
 
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
@@ -500,6 +501,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // var subs = this.subscribers.slice(), len=subs.length,
                 var subs = Y.merge(this.subscribers), s,
                            args=Y.Array(arguments, 0, true), i;
+
+                this.target = this.target || this.host;
+
+                this.currentTarget = this.host || this.currentTarget;
 
                 this.fired = true;
                 this.details = args;

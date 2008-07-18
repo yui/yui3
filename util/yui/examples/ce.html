@@ -145,7 +145,7 @@ property names rather than e.details[1]
 
     o2.subscribe('o:1', function(e) {
         // Y.log('o2, o:1 from o1: ' + Y.Lang.dump(Y.Array(arguments)));
-        Y.log('o2, o:1 from o1, O2 TARGET: ' + Y.Lang.dump(e.target.id));
+        Y.log('o2, o:1 from o1, O2 TARGET: ' + e.target.id + ', currentTarget ' + e.currentTarget.id);
         //e.halt();
     });
 

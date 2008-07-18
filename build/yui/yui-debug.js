@@ -2028,7 +2028,7 @@ YUI.add("event-custom", function(Y) {
             'context',
             'emitFacade',
             'target',
-            'originalTarget',
+            'currentTarget',
             'details',
             'type'
         ]
@@ -2370,20 +2370,20 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ef = this._facade;
 
             if (!ef) {
-                // Y.log('creating facade ' + Y.stamp(this));
-                ef = new Y.Event.Facade(this, this.originalTarget);
+                ef = new Y.Event.Facade(this, this.currentTarget);
             }
 
             // update the details field with the arguments
             ef.target = this.target;
-            ef.originalTarget = this.originalTarget;
+            ef.currentTarget = this.currentTarget;
             ef.stopped = 0;
             ef.prevented = 0;
 
             // if the first argument is an object literal, apply the
             // properties to the event facade
-            if (args && Y.Lang.isObject(args[0], true)) {
-                Y.mix(ef, args[0], true);
+            var o = args && args[0];
+            if (Y.Lang.isObject(o, true) && !o._yuifacade) {
+                Y.mix(ef, o, true);
             }
 
             ef.details = this.details;
@@ -2407,7 +2407,8 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             var ret;
 
             // emit an Event.Facade if this is that sort of event
-            if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
+            // if (this.emitFacade && (!args[0] || !args[0]._yuifacade)) {
+            if (this.emitFacade) {
 
                 // @TODO object literal support to fire makes it possible for
                 // config info to be passed if we wish.
@@ -2509,6 +2510,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
                 // var subs = this.subscribers.slice(), len=subs.length,
                 var subs = Y.merge(this.subscribers), s,
                            args=Y.Array(arguments, 0, true), i;
+
+                this.target = this.target || this.host;
+
+                this.currentTarget = this.host || this.currentTarget;
 
                 this.fired = true;
                 this.details = args;
@@ -3034,11 +3039,11 @@ YUI.add("event-target", function(Y) {
             }
 
             // Provide this object's subscribers the object they are listening to.
-            ce.originalTarget = this;
+            // ce.currentTarget = this;
 
             // This this the target unless target is current not null
             // (set in bubble()).
-            ce.target = ce.target || this;
+            // ce.target = ce.target || this;
 
             var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             var ret = ce.fire.apply(ce, a);
@@ -3098,7 +3103,7 @@ YUI.add("event-target", function(Y) {
                         }
 
                         ce.target = targetProp;
-                        ce.originalTarget = t;
+                        ce.currentTarget = t;
 
                         // ce.target = evt.target;
 
@@ -4133,14 +4138,14 @@ YUI.add("event-facade", function(Y) {
      * fixed here.  Provids a security layer when required.
      * @class Event.Facade
      * @param ev {Event} the DOM event
-     * @param origTarg {HTMLElement} the element the listener was attached to
+     * @param currentTarget {HTMLElement} the element the listener was attached to
      * @param wrapper {Event.Custom} the custom event wrapper for this DOM event
      */
-    Y.Event.Facade = function(ev, origTarg, wrapper, details) {
+    Y.Event.Facade = function(ev, currentTarget, wrapper, details) {
 
         // @TODO the document should be the target's owner document
 
-        var e = ev, ot = origTarg, d = Y.config.doc, b = d.body,
+        var e = ev, ot = currentTarget, d = Y.config.doc, b = d.body,
             x = e.pageX, y = e.pageY, isCE = (ev._YUI_EVENT);
 
         // copy all primitives ... this is slow in FF
@@ -4252,10 +4257,10 @@ YUI.add("event-facade", function(Y) {
 
         /**
          * Node reference for the element that the listener was attached to.
-         * @propery originalTarget
+         * @propery currentTarget
          * @type Node
          */
-        this.originalTarget = (isCE) ? ot :  resolve(ot);
+        this.currentTarget = (isCE) ? ot :  resolve(ot);
 
         var t = e.relatedTarget;
         if (!t) {

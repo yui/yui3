@@ -224,11 +224,11 @@ YUI.add("event-target", function(Y) {
             }
 
             // Provide this object's subscribers the object they are listening to.
-            ce.originalTarget = this;
+            // ce.currentTarget = this;
 
             // This this the target unless target is current not null
             // (set in bubble()).
-            ce.target = ce.target || this;
+            // ce.target = ce.target || this;
 
             var a = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
             var ret = ce.fire.apply(ce, a);
@@ -288,7 +288,7 @@ YUI.add("event-target", function(Y) {
                         }
 
                         ce.target = targetProp;
-                        ce.originalTarget = t;
+                        ce.currentTarget = t;
 
                         // ce.target = evt.target;
 
