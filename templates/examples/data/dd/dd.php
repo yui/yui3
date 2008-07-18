@@ -44,7 +44,7 @@ $examples["groups-drag"] = array(
 	name => "Interaction Groups",
 	modules => array("dd"),
 	description => "Interaction Groups",
-	sequence => array(3),
+	sequence => array(4),
 	newWindow => "default",
 	requires => array("yui", 'dd-proxy', "dd-drop"),
 	highlightSyntax => true
@@ -54,9 +54,19 @@ $examples["shim-drag"] = array(
 	name => "Using the Drag Shim",
 	modules => array("dd"),
 	description => "Using the drag shim.",
-	sequence => array(3),
+	sequence => array(5),
 	newWindow => "default",
 	requires => array("yui", 'dd-ddm', 'dd-proxy'),
+	highlightSyntax => true
+);
+
+$examples["list-drag"] = array(
+	name => "List reorder w/Bubbling",
+	modules => array("dd"),
+	description => "Reorder a list with Drag & Drop using Event Bubbling",
+	sequence => array(6),
+	newWindow => "default",
+	requires => array("yui", 'dd-drop', 'dd-constrain', 'dd-proxy'),
 	highlightSyntax => true
 );
 
