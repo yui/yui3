@@ -3,20 +3,17 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Portal Example</title>
-    <link type="text/css" rel="stylesheet" href="../../../build/reset-fonts/reset-fonts.css" />
+    <link type="text/css" rel="stylesheet" href="../../build/reset-fonts/reset-fonts.css" />
 
-    <script type="text/javascript" src="../../../build/yui/yui-min.js"></script>
-    <script type="text/javascript" src="../../../build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="../../../build/node/node-min.js"></script>
-    <script type="text/javascript" src="../../../build/attribute/attribute-min.js"></script>
-    <script type="text/javascript" src="../../../build/base/base-min.js"></script>
-    <script type="text/javascript" src="../../../build/animation/animation-min.js"></script>
-    <script type="text/javascript" src="../../../build/io/io-min.js"></script>
-    <script type="text/javascript" src="../../../build/json/json-min.js"></script>
-    <script type="text/javascript" src="../../../build/yuitest/yuitest-min.js"></script>
-    <script type="text/javascript" src="../../../build/profiler/profiler-min.js"></script>
-    <script type="text/javascript" src="../../../build/dd/dd-dragdrop-all.js"></script>
-    <script type="text/javascript" src="../../../build/queue/queue-min.js"></script>
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../build/attribute/attribute-min.js"></script>
+    <script type="text/javascript" src="../../build/base/base-min.js"></script>
+    <script type="text/javascript" src="../../build/animation/animation-min.js"></script>
+    <script type="text/javascript" src="../../build/io/io-min.js"></script>
+    <script type="text/javascript" src="../../build/json/json-min.js"></script>
+    <script type="text/javascript" src="../../build/dd/dd-dragdrop-all.js"></script>
 
     <link rel="stylesheet" type="text/css" href="assets/portal.css"> 
 
