@@ -1,15 +1,6 @@
 <?php
 $docroot = ""; //path to distribution's yui root
 require($docroot."inc/common.php");
-require($loader2x);
-
-//instantiate Loader:
-$loader = new YAHOO_util_Loader();
-if ($buildpath) {$loader->base = $buildpath;}
-
-//always load YUI Loader, Dom and Event -- this provides the foundation for adding
-//additional funcitionality in a flexible way to the site chrome:
-$loader->load("yuiloader", "event", "dom");
 
 $title = "The Yahoo! User Interface Library (YUI)";
 $prepend = "<style type='text/css'>
@@ -43,32 +34,30 @@ include($docroot."inc/header.php");
 	<div class="yui-u first">
     	<h4>CSS:</h4>
         <ul>
-<?php
-//Going to print out the CSS Modules by hand to enforce the logical ordering:
-/*$aUtils = getModulesByType("css",$modules);
-foreach($aUtils as $key=>$aUtil) {
-	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
-}*/
-?>
+            <?php
+                //Going to print out the CSS Modules by hand to enforce the logical ordering:
+                /*$aUtils = getModulesByType("css",$modules);
+                foreach($aUtils as $key=>$aUtil) {
+                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+                }*/
+            ?>
             <li><a href='examples/reset/index.html'>Reset CSS</a></li>
             <li><a href='examples/base/index.html'>Base CSS</a></li>
             <li><a href='examples/fonts/index.html'>Fonts CSS</a></li>
         </ul>
 	    <h4>Developer Tools:</h4>
 	    <ul>
-            <li><a href='examples/placeholder/index.html'>PlaceHolder</a></li>
-<?php
-$aUtils = getModulesByType("tool",$modules);
-foreach($aUtils as $key=>$aUtil) {
-	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
-}
-?>
+            <?php
+                $aUtils = getModulesByType("tool",$modules);
+                foreach($aUtils as $key=>$aUtil) {
+                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+            }
+            ?>
 	    </ul>
 	</div>
 	<div class="yui-u">
         <h4>YUI Core:</h4>
         <ul>
-            <li><a href='examples/placeholder/index.html'>PlaceHolder</a></li>
         <?php
             $aUtils = getModulesByType("core",$modules);
             foreach($aUtils as $key=>$aUtil) {
@@ -78,7 +67,6 @@ foreach($aUtils as $key=>$aUtil) {
         </ul>
 		<h4>Utilities:</h4>
 		<ul>
-            <li><a href='examples/placeholder/index.html'>PlaceHolder</a></li>
         <?php
             $aUtils = getModulesByType("utility",$modules);
             foreach($aUtils as $key=>$aUtil) {

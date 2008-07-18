@@ -17,11 +17,7 @@ body {
 </style>
 
 <?php
-// TODO: loader3x
-//Fonts is always required:
-// $loader->load("fonts");
-// echo ($loader->tags());
-include($docroot."inc/loaderSubstitute.php");
+echo getLoaderIncludes($loader);
 
 //mechanism for adding header content from within source file in templates;
 //add this optional file, examplename_customheader.php, in your examples dir
@@ -63,7 +59,6 @@ include($filename);
 echo '
 <!--MyBlogLog instrumentation-->
 <script type="text/javascript" src="http://track2.mybloglog.com/js/jsserv.php?mblID=2007020704011645"></script>
-
 ';}
 ?>
 </body>

@@ -1,7 +1,7 @@
 <?php
 $docroot = "../../"; //path to distribution's yui root
 require($docroot."inc/common.php");
-require($loader3x);
+require($loaderPath);
 
 $externalLabel = ($ydn) ? "" : " (external)"; //used to stamp external links in dist
 
@@ -46,7 +46,7 @@ if(! $examples[$name]) {
 	//assets directory loads relative to the preview file in preview mode, and
 	//relative to the actual example in the final build.
 	if($preview=="true") {
-		$assetsDirectory = "../".$currentModuleName."/assets/";
+		$assetsDirectory = "../data/".$currentModuleName."/assets/";
 	} else {
 		$assetsDirectory = "assets/";
 	}
@@ -68,7 +68,7 @@ if(! $examples[$name]) {
 	
 		//flag to signal we're in newWindowMode:
 		$newWindowMode = true;
-		
+
 		//clean requested and permitted; include this, with dependencies:
 		foreach ($examples[$name]["requires"] as $requirement) {
 			$loader->load($requirement);
@@ -107,7 +107,7 @@ if(! $examples[$name]) {
 		//check if there is a loggerInclude="require" override in the module
 		//metatdata; if there is, we require logger regardless of the
 		//querystring value.
-		if($currentExample["loggerInclude"] == "require" && $loggerAvailable) {
+		if($loggerAvailable && $currentExample["loggerInclude"] == "require") {
 			$log = "true";
 		}
 		
@@ -198,11 +198,6 @@ if(! $examples[$name]) {
 			}
 		}
 
-		//We use Dom and Button as part of the template:
-		// $loader->load("yuiloader", "event", "dom", "button");
-        // TODO: 3xloader
-		//$loader->load("yuiloader", "event", "dom");
-
 		//Reset, fonts and grids come in via yui.css; tell loader not to load them again:
 		//NOTE: This isn't working as of 7/7/07...defending against this in loader loop above, too.
 		$loader->setLoaded("fonts","reset","grids");
@@ -228,7 +223,7 @@ if(! $examples[$name]) {
 			//YDN PAGE VARIABLES AND HEADER INCLUDE
 			$strHighlightSyntax = ($highlightSyntax) ? "true" : "false";
 			echo '<?php
-$prepend = \''.$loader->tags().str_replace("'", "\\'", $prepend).'\';
+$prepend = \''.getLoaderIncludes($loader).str_replace("'", "\\'", $prepend).'\';
 $section="examples";
 $highlightSyntax = '.$strHighlightSyntax.';
 $assetsDirectory = "'.$assetsDirectory.'";
@@ -240,7 +235,6 @@ include("'.$docroot.'inc/header.inc");
 ';
 	    //END YDN PAGE VARIABLES AND HEADER INCLUDE
 		} else {
-            $loaderSubstitute = true;
 			include($docroot."inc/header.php");
 		}
 	?>
@@ -332,7 +326,7 @@ include("'.$docroot.'inc/header.inc");
 	/*Logger can be suppressed entirely if loggerInclude
 	is set to "suppress"; wrap entire logger section in 
 	conditional:*/
-	if($currentExample["loggerInclude"]!="suppress" && $loggerAvailable) {?>
+	if($loggerAvailable && $currentExample["loggerInclude"]!="suppress") {?>
 					<div id="loggerModule" class="yui-skin-sam">
 						<h3 class="firstContent">YUI Logger Output:</h3>
 	<?php

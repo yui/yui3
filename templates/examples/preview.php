@@ -1,6 +1,8 @@
 <?php 
     $docroot = "../";
     require($docroot."inc/common.php");
+
+    // Setup a default, if buildpath not set, and not present in GET
     if ($buildpath === false) {
         $buildpath = "../../../build/";
     }

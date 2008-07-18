@@ -1,18 +1,9 @@
 <?php
 $docroot = "../"; //path to distribution's yui root
 require($docroot."inc/common.php");
-require($loader2x);
 ?>
 
 <?php
-//instantiate Loader:
-$loader = new YAHOO_util_Loader();
-if ($buildpath) {$loader->base = $buildpath;}
-
-//always load YUI Loader, Dom and Event -- this provides the foundation for adding
-//additional funcitionality in a flexible way to the site chrome:
-$loader->load("yuiloader", "event", "dom");
-
 $section="examples";
 $highlightSyntax = false;
 $releasenotes = false;
@@ -111,9 +102,6 @@ foreach($aTypes as $thisType) {
 
 if ($ydn) {
 
-	echo "<!--Script and CSS includes for YUI dependencies on this page-->\n";
-	echo ($loader->tags());	
-
 	echo '
 <?php 
 include("'.$docroot.'inc/side.inc");
@@ -121,9 +109,7 @@ include("'.$docroot.'inc/footer.inc");
 ?>';
 
 } else {
-
 	include ($docroot."inc/side.php"); 
 	include ($docroot."inc/footer.php"); 
-	
 }
 ?>

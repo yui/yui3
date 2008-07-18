@@ -41,7 +41,7 @@ if ($highlightSyntax) { /*include code for syntax-highlighting boxes, mostly fou
 
 if(isset($loader)) { //this header used by some files with no loader usage
 	echo "<!--Script and CSS includes for YUI dependencies on this page-->\n";
-	echo ($loader->tags());	
+	echo (getLoaderIncludes($loader));	
 	//Note: Logger output will be filtered off by script in the footer for
 	//all sources that are
 	//not explicitly identified in the => logger metadata for this
@@ -49,13 +49,8 @@ if(isset($loader)) { //this header used by some files with no loader usage
 }
 
 if ($prepend) { /*there is additional css or header information for this page -- perhaps some use of YUI and/or custom css -- that is meant to be inserted in the document head*/
-echo $prepend;
+    echo $prepend;
 }
-
-if (isset($loaderSubstitute)) {
-    include($docroot."inc/loaderSubstitute.php");
-}
-
 ?>
 
 </head>
@@ -63,20 +58,22 @@ if (isset($loaderSubstitute)) {
 <div id="custom-doc" class="yui-t2">
 <div id="hd">
 	<div id="ygunav">
-		<p><em>
-			<a href="http://developer.yahoo.com">Yahoo! Developer Network Home</a> <i> - </i>	
-			<a href="http://help.yahoo.com/help/us/ysearch">Help</a>
-			</em>
+		<p>
+            <em>
+                <a href="http://developer.yahoo.com">Yahoo! Developer Network Home</a> <i> - </i>	
+                <a href="http://help.yahoo.com/help/us/ysearch">Help</a>
+            </em>
 		</p>
 		<form action="http://search.yahoo.com/search" id="sitesearchform">
-		<input name="vs" type="hidden" value="developer.yahoo.com">
-		<input name="vs" type="hidden" value="yuiblog.com">
-		<div id="sitesearch">
-			<label for="searchinput">Site Search (YDN &amp; YUIBlog): </label>
-			<input type="text" id="searchinput" name="p">
-			<input type="submit" value="Search" id="searchsubmit" class="ygbt">
-		</div>
-		</form>	</div>
+            <input name="vs" type="hidden" value="developer.yahoo.com">
+            <input name="vs" type="hidden" value="yuiblog.com">
+		    <div id="sitesearch">
+		    	<label for="searchinput">Site Search (YDN &amp; YUIBlog): </label>
+			    <input type="text" id="searchinput" name="p">
+			    <input type="submit" value="Search" id="searchsubmit" class="ygbt">
+		    </div>
+		</form>
+    </div>
 	<div id="ygma"><a href="<?php echo $docroot ?>"><img src="<?php echo $docroot ?>assets/yui.gif"  border="0" width="378" height="28"></a></div>
 	<div id="pagetitle"><h1><?php echo $titlebar ?></h1></div>
 </div>

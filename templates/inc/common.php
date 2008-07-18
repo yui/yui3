@@ -4,11 +4,9 @@ if (!isset($docroot)) { $docroot=""; }
 $dataroot = $docroot."examples/data/";
 
 $developerHome = 'http://developer.yahoo.com/yui/3';
-$loader2x = "/home/y/share/pear/Yahoo/YUI/loader.php";
 
-// TODO: Adam's input on 3x loader
-$loader3x = "/home/y/share/pear/Yahoo/YUI/loader.php";
-
+// TODO: Waiting for 3x PHP Loader, 2x Loader no longer needed in examples
+$loaderPath = "/home/y/share/pear/Yahoo/YUI/loader.php";
 $loggerAvailable = false;
 
 $aTypes = array('css', 'core', 'utility', 'tool');
@@ -37,6 +35,23 @@ if (!isset($yuiCurrentVersion)) {
     } else {
         $yuiCurrentVersion = "[yuiCurrentVersion]";
     }
+}
+
+function getLoaderIncludes($loader) {
+    global $docroot;
+    global $buildpath;
+
+    if (is_file($docroot."inc/loaderSubstitute.php")) {
+        ob_start();
+        include $docroot."inc/loaderSubstitute.php";
+        $contents = ob_get_contents();
+        ob_end_clean();
+        return $contents;
+    } else {
+        return "<!--Error including JS/CSS files-->";
+    }
+
+    // return $loader->tags();
 }
 
 require($docroot."examples/module/modules.php");
