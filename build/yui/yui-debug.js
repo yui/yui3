@@ -2013,22 +2013,6 @@ YUI.add("event-custom", function(Y) {
 
         AFTER = 'after', 
 
-/*
-        CONFIGS = {
-            hasFacade: 1,
-            bubbles: 1,
-            preventable: 1,
-            cancelable: 1,
-            queuable: 1,
-            defaultFn: 1,
-            preventedFn: 1,
-            stoppedFn: 1,
-            fireOnce: 1,
-            silent: 1,
-            type: 1
-        }
-        */
-
         CONFIGS = [
             'hasFacade',
             'bubbles',
@@ -2043,6 +2027,9 @@ YUI.add("event-custom", function(Y) {
             'host',
             'context',
             'emitFacade',
+            'target',
+            'originalTarget',
+            'details',
             'type'
         ]
 
