@@ -1647,6 +1647,25 @@ YUI.add('dd-constrain', function(Y) {
     };
 
     var proto = {
+        start: function() {
+            C.superclass.start.apply(this, arguments);
+            this._regionCache = null;
+        },
+        /**
+        * @private
+        * @property _regionCache
+        * @description Store a cache of the region that we are constraining to
+        * @type Object
+        */
+        _regionCache: null,
+        /**
+        * @private
+        * @method _cacheRegion
+        * @description Get's the region and caches it, called from window.resize and when the cache is null
+        */
+        _cacheRegion: function() {
+            this._regionCache = this.get('constrain2node').get('region');
+        },
         /**
         * @method getRegion
         * @description Get the active region: viewport, node, custom region
@@ -1656,7 +1675,11 @@ YUI.add('dd-constrain', function(Y) {
         getRegion: function(inc) {
             var r = {};
             if (this.get('constrain2node')) {
-                r = this.get('constrain2node').get('region');
+                if (!this._regionCache) {
+                    Y.Event.addListener('window', 'resize', this._cacheRegion, this);
+                    this._cacheRegion();
+                }
+                r = Y.clone(this._regionCache);
             } else if (this.get('constrain2region')) {
                 r = this.get('constrain2region');
             } else if (this.get('constrain2view')) {
