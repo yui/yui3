@@ -1,0 +1,1128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: attribute  Attribute   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>attribute&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_attribute.html">attribute</a>
+                 &gt; Attribute 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>Attribute</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                          - uses 
+                            
+                                <a href="Event.Target.html">Event.Target</a>
+                            
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        <p>
+Attribute provides managed attribute support. 
+</p>
+<p>
+The class is designed to be augmented onto a host class, 
+and allows the host to support get/set methods for attributes,
+initial configuration support and attribute change events.
+</p>
+<p>Attributes added to the host can:</p>
+<ul>
+<li>Be defined as read-only.</li>
+<li>Be defined as write-once.</li>
+<li>Be defined with a set function, which can be used to manipulate
+values passed to Attribute's set method, before they are stored.</li>
+<li>Be defined with a validator function, to validate values before they are stored.</li>
+<li>Be defined with a get function, which can be used to manipulate stored values,
+before they are returned by Attribute's get method.</li>
+<li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
+</ul>
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="property_CLONE">CLONE</a>
+                                        <code>- static final Object
+<p>
+Constants for clone formats supported by Attribute.
+</p>
+<p>
+By default attribute values returned by the get method
+are not cloned. However setting the attribute's "clone"
+property to:
+</p>
+<dl>
+<dt>Attribute.CLONE.DEEP</dt>
+<dd>Will result in a deep cloned value being returned
+(using Y.clone). This can be expensive for complex
+objects.
+</dd>
+<dt>Attribute.CLONE.SHALLOW</dt>
+<dd>Will result in a shallow cloned value being returned
+(using Y.merge).
+</dd>
+<dt>Attribute.CLONE.IMMUTABLE</dt>
+<dd>Will result in a deep cloned value being returned
+when using the get method. Additionally users will
+not be able to set sub values of the attribute 
+using the complex attribute notation (obj.set("x.y.z, 5)).
+However the value of the attribute can be changed, making
+it different from a READONLY attribute.
+</dd>
+<dt>Attribute.CLONE.NONE</dt>
+<dd>
+The value will not be cloned, resulting in a reference
+to the stored value being passed back, if the value is an object.
+This is the default behavior.
+</dd>
+</dl></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__cloneAttVal">_cloneAttVal</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_cloneAttVal</strong>
+                                           (
+                                                
+                                                        
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Clone utility method, which will 
+clone the provided value using YUI's 
+merge, or clone utilities based
+on the clone type provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>val &lt;Any&gt;</code>
+                                                             Value to clone
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;int&gt;</code>
+                                                             Clone type to use, See the CLONE property
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__defAttSet">_defAttSet</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_defAttSet</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Default handler implementation for set events
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;EventFacade&gt;</code>
+                                                             The event object for the custom event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fireAttChange">_fireAttChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fireAttChange</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         currVal
+                                                    
+                                                
+                                                        , 
+                                                         newVal
+                                                    
+                                                
+                                                        , 
+                                                         attrName
+                                                    
+                                                
+                                                        , 
+                                                         strFullPath
+                                                    
+                                                
+                                                        , 
+                                                         defaultFn
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Utility method to help setup the event payload and 
+fire the attribute change event.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The event name
+                                                        </dd>
+                                                        <dd>
+                                                            <code>currVal &lt;Any&gt;</code>
+                                                             The current value of the attribute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>newVal &lt;Any&gt;</code>
+                                                             The new value of the attribute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>attrName &lt;String&gt;</code>
+                                                             The name of the attribute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>strFullPath &lt;String&gt;</code>
+                                                             The full path of the property being changed, 
+if this is a sub-attribute value being change
+                                                        </dd>
+                                                        <dd>
+                                                            <code>defaultFn &lt;Function&gt;</code>
+                                                             The default handler for the change event
+                                                        </dd>
+                                                        <dd>
+                                                            <code>opts &lt;Object&gt;</code>
+                                                             Any additional event data to mix into the attribute change event's event facade.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__getSubAttVal">_getSubAttVal</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong>_getSubAttVal</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves the sub value at the provided path,
+from the value object provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>path &lt;Array&gt;</code>
+                                                              A path array, specifying the object traversal path
+from which to obtain the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;Object&gt;</code>
+                                                              The object from which to extract the property value
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Any
+                                                    </code></dt>
+                                                    <dd>The value stored in the path or undefined if not found.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="protected">
+                                    <h4>
+                                        <a name="method__initAtts">_initAtts</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         protected 
+                                        
+                                        
+                                        void
+                                            <strong>_initAtts</strong>
+                                           (
+                                                
+                                                        
+                                                         cfg
+                                                    
+                                                
+                                                        , 
+                                                         initValues
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Configures attributes, and sets initial values
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>cfg &lt;Object&gt;</code>
+                                                             Attribute configuration object literal
+                                                        </dd>
+                                                        <dd>
+                                                            <code>initValues &lt;Object&gt;</code>
+                                                             Name/value hash of initial values to apply
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__initAttVal">_initAttVal</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Any
+                                            <strong>_initAttVal</strong>
+                                           (
+                                                
+                                                        
+                                                         att
+                                                    
+                                                
+                                                        , 
+                                                         cfg
+                                                    
+                                                
+                                                        , 
+                                                         initVales
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the initial value of the given attribute from
+either the default configuration provided, or the 
+over-ridden value if it exists in the initValues 
+hash provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>att &lt;String&gt;</code>
+                                                             Attribute name
+                                                        </dd>
+                                                        <dd>
+                                                            <code>cfg &lt;Object&gt;</code>
+                                                             Default attribute configuration
+object literal
+                                                        </dd>
+                                                        <dd>
+                                                            <code>initVales &lt;Object&gt;</code>
+                                                             Initial attribute values, provided 
+for the instance
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Any
+                                                    </code></dt>
+                                                    <dd>Initial value of the attribute.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setSubAttVal">_setSubAttVal</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong>_setSubAttVal</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                                        , 
+                                                         subval
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets the sub value at the provided path on the value object.
+Returns the modified value object, or undefined if the path is invalid.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>path &lt;Array&gt;</code>
+                                                              A path array, specifying the object traversal path
+at which to set the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;Object&gt;</code>
+                                                              The object on which to set the sub value.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>subval &lt;Any&gt;</code>
+                                                              The sub value to set.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>The modified object, with the new sub value set, or 
+undefined, if the path was invalid.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__splitAttrValues">_splitAttrValues</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong>_splitAttrValues</strong>
+                                           (
+                                                
+                                                        
+                                                         valueHash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Utility to split out regular attribute values
+from complex attribute values, so that complex
+attributes can be keyed by top level attribute name.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>valueHash &lt;Object&gt;</code>
+                                                             Name/value hash of initial values
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>Object literal with 2 properties - "simple" and "complex",
+containing simple and complex attribute values respectively keyed 
+by attribute the top level attribute name.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addAtt">addAtt</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>addAtt</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         config
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            <p>
+Adds an attribute, with the provided configuration to the host object.
+</p>
+<p>
+The config argument object literal supports the following optional properties:
+</p>
+<dl>
+<dt>value {Any}</dt>
+<dd>The initial value to set on the attribute</dd>
+<dt>readOnly {Boolean}</dt>
+<dd>Whether or not the attribute is read only. Attributes having readOnly set to true
+cannot be set by invoking the set method.</dd>
+<dt>writeOnce {Boolean}</dt>
+<dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
+can only have their values set once, be it through the default configuration, 
+constructor configuration arguments, or by invoking set.</dd>
+<dt>set {Function}</dt>
+<dd>The setter function to be invoked (within the context of the host object) before 
+the attribute is stored by a call to the set method. The value returned by the 
+set function will be the finally stored value.</dd>
+<dt>get {Function}</dt>
+<dd>The getter function to be invoked (within the context of the host object) before
+the stored values is returned to a user invoking the get method for the attribute.
+The value returned by the get function is the final value which will be returned to the 
+user when they invoke get.</dd>
+<dt>validator {Function}</dt>
+<dd>The validator function which is invoked prior to setting the stored value. Returning
+false from the validator function will prevent the value from being stored</dd>
+<dt>clone {int}</dt>
+<dd>If and how the value returned by a call to the get method, should be de-referenced from
+the stored value. By default values are not cloned, and hence a call to get will return
+a reference to the stored value. See Attribute.CLONE for more details about the clone 
+options available</dd>
+</dl>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>name &lt;String&gt;</code>
+                                                             The attribute key
+                                                        </dd>
+                                                        <dd>
+                                                            <code>config &lt;Object&gt;</code>
+                                                             (optional) An object literal specifying the configuration for the attribute.
+<strong>NOTE:</strong> The config object is modified when adding an attribute, 
+so if you need to protect the original values, you will need to merge or clone the object.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_get">get</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>get</strong>
+                                           (
+                                                
+                                                        
+                                                         key
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the current value of the attribute. If the attribute
+has been configured with a 'get' handler, this method will delegate
+to the 'get' handler to obtain the value of the attribute.
+The 'get' handler will be passed the current value of the attribute 
+as the only argument.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>key &lt;String&gt;</code>
+                                                             The attribute whose value will be returned. If
+the value of the attribute is an Object, dot notation can be used to
+obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getAtts">getAtts</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>getAtts</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>A hash of attributes: name/value pairs</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeAtt">removeAtt</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>removeAtt</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes an attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>name &lt;String&gt;</code>
+                                                             The attribute key
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_set">set</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>set</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         value
+                                                    
+                                                
+                                                        , 
+                                                         opts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets the value of an attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>name &lt;String&gt;</code>
+                                                             The name of the attribute. Note, if the 
+value of the attribute is an Object, dot notation can be used
+to set the value of a property within the object 
+(e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
+been declared as an immutable attribute (see Attribute.CLONE).
+                                                        </dd>
+                                                        <dd>
+                                                            <code>value &lt;Any&gt;</code>
+                                                             The value to apply to the attribute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>opts &lt;Object&gt;</code>
+                                                             Optional event data. This object will be mixed into
+the event facade passed as the first argument to subscribers 
+of attribute change events
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setAtts">setAtts</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setAtts</strong>
+                                           (
+                                                
+                                                        
+                                                         atts
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets multiple attribute values.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>atts &lt;Object&gt;</code>
+                                                              A hash of attributes: name/value pairs
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_animation.html">animation</a></li>
+
+                                <li class="selected"><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Attribute.html">Attribute</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Attribute.js.html">Attribute.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_CLONE">CLONE</a>
+                                        <!--<code>&lt;Object
+<p>
+Constants for clone formats supported by Attribute.
+</p>
+<p>
+By default attribute values returned by the get method
+are not cloned. However setting the attribute's "clone"
+property to:
+</p>
+<dl>
+<dt>Attribute.CLONE.DEEP</dt>
+<dd>Will result in a deep cloned value being returned
+(using Y.clone). This can be expensive for complex
+objects.
+</dd>
+<dt>Attribute.CLONE.SHALLOW</dt>
+<dd>Will result in a shallow cloned value being returned
+(using Y.merge).
+</dd>
+<dt>Attribute.CLONE.IMMUTABLE</dt>
+<dd>Will result in a deep cloned value being returned
+when using the get method. Additionally users will
+not be able to set sub values of the attribute 
+using the complex attribute notation (obj.set("x.y.z, 5)).
+However the value of the attribute can be changed, making
+it different from a READONLY attribute.
+</dd>
+<dt>Attribute.CLONE.NONE</dt>
+<dd>
+The value will not be cloned, resulting in a reference
+to the stored value being passed back, if the value is an object.
+This is the default behavior.
+</dd>
+</dl>&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__cloneAttVal">_cloneAttVal</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__defAttSet">_defAttSet</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fireAttChange">_fireAttChange</a>
+                                </li>
+                                <li class="private"><!--<code>Any</code>-->
+                                <a href="#method__getSubAttVal">_getSubAttVal</a>
+                                </li>
+                                <li class="protected"><!--<code>void</code>-->
+                                <a href="#method__initAtts">_initAtts</a>
+                                </li>
+                                <li class="private"><!--<code>Any</code>-->
+                                <a href="#method__initAttVal">_initAttVal</a>
+                                </li>
+                                <li class="private"><!--<code>Object</code>-->
+                                <a href="#method__setSubAttVal">_setSubAttVal</a>
+                                </li>
+                                <li class="private"><!--<code>Object</code>-->
+                                <a href="#method__splitAttrValues">_splitAttrValues</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_addAtt">addAtt</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_get">get</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_getAtts">getAtts</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_removeAtt">removeAtt</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_set">set</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setAtts">setAtts</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

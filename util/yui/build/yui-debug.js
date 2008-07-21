@@ -116,13 +116,13 @@ YUI.prototype = {
         // make a shallow copy of the config.  This won't fix nested configs
         // so we need to determine if we only allow one level (probably) or
         // if we make clone create references for functions and elements.
-        var c = this.merge(this.config);
+        this.config = this.merge(this.config);
         // this.mix(c, {
           //   debug: true,
             // useConsole: true
             // // , throwFail: false
         // });
-        this.config = c;
+        // this.config = c;
 
         // this.publish('yui:load');
         // this.publish('yui:log', {

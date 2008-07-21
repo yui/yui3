@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: animation   ColorAnim.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>animation&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_animation.html">animation</a>
+                
+                 &gt; ColorAnim.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">.</span><span class="nx">color</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">from</span> <span class="o">=</span> <span class="nx">RE_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">from</span><span class="o">));</span>
+        <span class="nx">to</span> <span class="o">=</span> <span class="nx">RE_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">to</span><span class="o">));</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="o">[</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)),</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">2</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">2</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">2</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)),</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">3</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">3</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">3</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">))</span>
+        <span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;, &#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+    
+    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">att</span><span class="o">);</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;transparent&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;rgb(255, 255, 255)&#39;</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span><span class="s1">&#39;backgroundColor&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;borderTopColor&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;borderRightColor&#39;</span><span class="o">,</span> 
+        <span class="s1">&#39;borderBottomColor&#39;</span><span class="o">,</span> 
+        <span class="s1">&#39;borderLeftColor&#39;</span><span class="o">],</span>
+        <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">CUSTOM_ATTRIBUTES</span><span class="o">.</span><span class="nx">color</span><span class="o">;</span>
+        <span class="o">}</span>
+<span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class="selected"><a href="module_animation.html">animation</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Anim.html">Anim</a></li>
+                                <li class=""><a href="Bezier.html">Bezier</a></li>
+                                <li class=""><a href="Easing.html">Easing</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="Anim.js.html">Anim.js</a></li>
+                                <li class=""><a href="Bezier.js.html">Bezier.js</a></li>
+                                <li class="selected"><a href="ColorAnim.js.html">ColorAnim.js</a></li>
+                                <li class=""><a href="Curve.js.html">Curve.js</a></li>
+                                <li class=""><a href="Easing.js.html">Easing.js</a></li>
+                                <li class=""><a href="NodeFXPlugin.js.html">NodeFXPlugin.js</a></li>
+                                <li class=""><a href="Scroll.js.html">Scroll.js</a></li>
+                                <li class=""><a href="XY.js.html">XY.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>
