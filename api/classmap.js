@@ -1,4 +1,4 @@
-YAHOO.env.classMap = {"NodeList": "node", "Bezier": "animation", "YUI": "yui", "Do.Method": "yui", "Node": "node", "Do": "yui", "Anim": "animation", "Get": "yui", "Object": "yui", "JSON": "JSON", "Base": "base", "Event.Target": "yui", "Lang": "yui", "Do.AlterArgs": "yui", "Event.Handle": "yui", "Event.Facade": "yui", "Easing": "animation", "Event.Custom": "yui", "Do.Error": "yui", "Attribute": "attribute", "Event.Subscriber": "yui", "Do.AlterReturn": "yui", "Array": "yui", "UA": "yui", "Event": "yui"};
+YAHOO.env.classMap = {"NodeList": "node", "Bezier": "animation", "YUI": "yui", "Do.Method": "event", "Node": "node", "Do": "event", "Anim": "animation", "Get": "yui", "Object": "yui", "JSON": "JSON", "Base": "base", "Event.Target": "event", "Lang": "yui", "Do.AlterArgs": "event", "Event.Handle": "event", "Event.Facade": "event", "Easing": "animation", "Event.Custom": "event", "Do.Error": "event", "Attribute": "attribute", "Event.Subscriber": "event", "Do.AlterReturn": "event", "Array": "yui", "UA": "yui", "Event": "event"};
 
 YAHOO.env.resolveClass = function(className) {
     var a=className.split('.'), ns=YAHOO.env.classMap;

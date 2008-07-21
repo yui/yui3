@@ -1,8 +1,3 @@
-/**
- * YUI core
- * @module yui
- */
-
 (function() {
 
     var _instances = {},
@@ -675,6 +670,12 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
     };
 
 }, "3.0.0");
+
+
+/**
+ * YUI core
+ * @module yui
+ */
 
 /**
  * Array utilities
@@ -2020,6 +2021,10 @@ YUI.add("aop", function(Y) {
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
 }, "3.0.0");
+/**
+ * The YUI event system
+ * @module event
+ */
 YUI.add("event-custom", function(Y) {
 
     var onsubscribeType = "_event:onsub",
@@ -2058,7 +2063,7 @@ YUI.add("event-custom", function(Y) {
 
             'type'
 
-        ]
+        ];
 
     /**
      * Return value from all subscribe operations
