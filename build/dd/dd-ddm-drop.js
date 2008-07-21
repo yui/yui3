@@ -313,7 +313,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             var drops = [];
             //Only scan drop shims that are in the Viewport
             Y.each(this.validDrops, function(v, k) {
-                if (v.shim.inViewportRegion(false, v.region)) {
+                if (v.shim && v.shim.inViewportRegion(false, v.region)) {
                     drops[drops.length] = v;
                 }
             });
@@ -345,16 +345,25 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @private
         * @method _unregTarget
         * @description Remove the passed in Target from the targets collection
-        * @param {Object} t The Target to remove from the targets collection
+        * @param {Object} drop The Target to remove from the targets collection
         */
-        _unregTarget: function(t) {
+        _unregTarget: function(drop) {
             var targets = [];
             Y.each(this.targets, function(v, k) {
-                if (v != t) {
+                if (v != drop) {
                     targets[targets.length] = v;
                 }
             }, this);
             this.targets = targets;
+
+            var vdrops = [];
+            Y.each(this.validDrops, function(v, k) {
+                if (v !== drop) {
+                    vdrops[vdrops.length] = v
+                }
+            });
+
+            this.validDrops = vdrops;
         },
         /**
         * @method getDrop
