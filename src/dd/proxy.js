@@ -1,5 +1,3 @@
-YUI.add('dd-proxy', function(Y) {
-
     /**
      * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
      * <p>Module Name: <strong>dd-proxy</strong></p>
@@ -167,6 +165,3 @@ YUI.add('dd-proxy', function(Y) {
     //Set this new class as DD.Drag for other extensions
     Y.DD.Drag = Proxy;    
 
-
-
-}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});

@@ -2,12 +2,13 @@ YUI.add('dd-ddm-base', function(Y) {
 
     /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
-     * @module dd-ddm-base
+     * <p>Module Name: <strong>dd-ddm-base</strong></p>
+     * @module dd
      */
 
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
-     * @class DD.DDM
+     * @class DDM
      * @extends Base
      * @constructor
      */
@@ -287,13 +288,14 @@ YUI.add('dd-ddm', function(Y) {
     /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
      * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     * @module dd-ddm
+     * <p>Module Name: <strong>dd-ddm</strong></p>
+     * @module dd
      */
 
      /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
      * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     * @class DD.DDM
+     * @class DDM
      * @extends Base
      * @constructor
      */
@@ -409,11 +411,12 @@ YUI.add('dd-drag', function(Y) {
 
     /**
      * This class provides the ability to drag a Node.
-     * @module dd-drag
+     * <p>Module Name: <strong>dd-drag</strong></p>
+     * @module dd
      */
     /**
      * This class provides the ability to drag a Node.
-     * @class DD.Drag
+     * @class Drag
      * @extends base
      * @constructor
      */
@@ -1344,11 +1347,12 @@ YUI.add('dd-proxy', function(Y) {
 
     /**
      * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * @module dd-proxy
+     * <p>Module Name: <strong>dd-proxy</strong></p>
+     * @module dd
      */
     /**
      * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * @class DD.Proxy
+     * @class Proxy
      * @extends Drag
      * @constructor
      */
@@ -1515,11 +1519,12 @@ YUI.add('dd-plugin', function(Y) {
 
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
+        * <p>Module Name: <strong>dd-plugin</strong></p>
         * @module dd-plugin
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @class Plugin.DragPlugin
+        * @class DragPlugin
         * @extends drag
         * @constructor
         */

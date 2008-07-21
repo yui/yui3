@@ -1,11 +1,11 @@
     /**
      * This class provides the ability to drag a Node.
-     * @module dd-drag
+     * <p>Module Name: <strong>dd-drag</strong></p>
+     * @module dd
      */
     /**
      * This class provides the ability to drag a Node.
      * @class Drag
-     * @namespace DD
      * @extends base
      * @constructor
      */

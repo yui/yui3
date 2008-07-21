@@ -1,11 +1,11 @@
     /**
      * This class provides the ability to create a Drop Target.
-     * @module dd-drop
+     * <p>Module Name: <strong>dd-drop</strong></p>
+     * @module dd
      */
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
-     * @namespace DD
      * @extends base
      * @constructor
      */

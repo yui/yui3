@@ -1,12 +1,12 @@
     /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
-     * @module dd-ddm-base
+     * <p>Module Name: <strong>dd-ddm-base</strong></p>
+     * @module dd
      */
 
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
      * @class DDM
-     * @namespace DD
      * @extends Base
      * @constructor
      */
