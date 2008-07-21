@@ -5,23 +5,37 @@ YUI.add("event-custom", function(Y) {
         AFTER = 'after', 
 
         CONFIGS = [
-            'hasFacade',
+
             'bubbles',
-            'preventable',
-            'cancelable',
-            'queuable',
-            'defaultFn',
-            'preventedFn',
-            'stoppedFn',
-            'fireOnce',
-            'silent',
-            'host',
+
             'context',
-            'emitFacade',
-            'target',
+
             'currentTarget',
+
+            'defaultFn',
+
             'details',
+
+            'emitFacade',
+
+            'fireOnce',
+
+            'host',
+
+            'preventable',
+
+            'preventedFn',
+
+            'queuable',
+
+            'silent',
+
+            'stoppedFn',
+
+            'target',
+
             'type'
+
         ]
 
     /**

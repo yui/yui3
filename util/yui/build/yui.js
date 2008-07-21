@@ -3,6 +3,20 @@
  * @module yui
  */
 
+(function() {
+
+    var _instances = {},
+
+// @TODO: this needs to be created at build time from module metadata
+
+        _APPLY_TO_WHITE_LIST = {
+            'io.start': 1,
+            'io.success': 1,
+            'io.failure': 1,
+            'io.abort': 1
+        };
+        
+
 if (typeof YUI === 'undefined' || !YUI) {
     /**
      * The YUI global namespace object.  If YUI is already defined, the
@@ -16,7 +30,8 @@ if (typeof YUI === 'undefined' || !YUI) {
     YUI = function(o) {
         var Y = this;
         // Allow var yui = YUI() instead of var yui = new YUI()
-        if (window === Y) {
+        // if (!Y instanceof YUI) {
+        if (Y === window) {
             // return new YUI(o).log('creating new instance');
             return new YUI(o);
         } else {
@@ -62,6 +77,8 @@ YUI.prototype = {
         var w = (o.win) ? (o.win.contentWindow) : o.win  || window;
         o.win = w;
         o.doc = w.document;
+        o.debug = ('debug' in o) ? o.debug : true;
+        o.useConsole = ('useConsole' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -70,7 +87,6 @@ YUI.prototype = {
         this.Env = {
             // @todo expand the new module metadata
             mods: {},
-            _instances: {},
             _idx: 0,
             _pre: 'yuid',
             _used: {},
@@ -81,7 +97,7 @@ YUI.prototype = {
         if (YUI.Env) {
             this.Env._yidx = ++YUI.Env._idx;
             this.id = this.stamp(this);
-            YUI.Env._instances[this.id] = this;
+            _instances[this.id] = this;
         }
 
         this.constructor = YUI;
@@ -100,27 +116,17 @@ YUI.prototype = {
         // so we need to determine if we only allow one level (probably) or
         // if we make clone create references for functions and elements.
         var c = this.merge(this.config);
-        this.mix(c, {
-            debug: true,
-            useConsole: true
-            // , throwFail: false
-        });
+        // this.mix(c, {
+          //   debug: true,
+            // useConsole: true
+            // // , throwFail: false
+        // });
         this.config = c;
 
         // this.publish('yui:load');
         // this.publish('yui:log', {
         //     silent: true
         // });
-    },
-
-    /**
-     * Gets a YUI instance with by id
-     * @method getInstance
-     * @param id {string} the instance id
-     * @return {YUI} the matched YUI instance
-     */
-    getInstance: function(id) {
-        return YUI.Env._instances[id];
     },
 
     /**
@@ -135,7 +141,12 @@ YUI.prototype = {
      */
     applyTo: function(id, method, args) {
 
-        var instance = this.getInstance(id);
+        if (!(method in _APPLY_TO_WHITE_LIST)) {
+            this.fail(method + ': applyTo not allowed');
+            return null;
+        }
+
+        var instance = _instances[id];
 
         if (instance) {
 
@@ -421,6 +432,8 @@ YUI.prototype = {
                     var f = (cat && console[cat]) ? cat : 'log',
                         m = (src) ? src + ': ' + msg : msg;
                     console[f](m);
+                } else {
+                    console.log('MSG SKIPPED: ' + msg);
                 }
             }
 
@@ -494,7 +507,7 @@ YUI.prototype = {
 // global was used prior to 3.x.  More importantly, the YUI global
 // provides global metadata, so env needs to be configured.
 // @TODO review
-(function() {
+
     var Y = YUI, p = Y.prototype, i;
 
     // inheritance utilities are not available yet
@@ -1983,23 +1996,37 @@ YUI.add("event-custom", function(Y) {
         AFTER = 'after', 
 
         CONFIGS = [
-            'hasFacade',
+
             'bubbles',
-            'preventable',
-            'cancelable',
-            'queuable',
-            'defaultFn',
-            'preventedFn',
-            'stoppedFn',
-            'fireOnce',
-            'silent',
-            'host',
+
             'context',
-            'emitFacade',
-            'target',
+
             'currentTarget',
+
+            'defaultFn',
+
             'details',
+
+            'emitFacade',
+
+            'fireOnce',
+
+            'host',
+
+            'preventable',
+
+            'preventedFn',
+
+            'queuable',
+
+            'silent',
+
+            'stoppedFn',
+
+            'target',
+
             'type'
+
         ]
 
     /**
