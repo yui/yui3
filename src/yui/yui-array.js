@@ -1,3 +1,9 @@
+
+/**
+ * YUI core
+ * @module yui
+ */
+
 /**
  * Array utilities
  * @TODO investigate using Array subclasses for some of this

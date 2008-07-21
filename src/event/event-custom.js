@@ -1,3 +1,7 @@
+/**
+ * The YUI event system
+ * @module event
+ */
 YUI.add("event-custom", function(Y) {
 
     var onsubscribeType = "_event:onsub",
@@ -36,7 +40,7 @@ YUI.add("event-custom", function(Y) {
 
             'type'
 
-        ]
+        ];
 
     /**
      * Return value from all subscribe operations
