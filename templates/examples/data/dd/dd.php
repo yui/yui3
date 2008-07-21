@@ -90,4 +90,14 @@ $examples["portal-drag"] = array(
 	highlightSyntax => true
 );
 
+$examples["anim-drop"] = array(
+	name => "Animated Drop Targets",
+	modules => array("dd", 'animation'),
+	description => "Animated Drop Targets",
+	sequence => array(9),
+	newWindow => "require",
+	requires => array("yui", 'dd-drop', 'animation'),
+	highlightSyntax => true
+);
+
 ?>
