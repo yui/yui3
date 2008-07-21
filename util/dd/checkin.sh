@@ -23,19 +23,19 @@ echo "****************************************"
 wait
 cvs commit -m "$CMT"
 wait
-cd ../../src
+cd ../../src/dd
 wait
 clear
 echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
-cvs commit -m "$CMT" dd/*.js
+cvs commit -m "$CMT" *.js
 clear
 wait
 echo "****************************************"
 echo "Checking in Test file"
 echo "****************************************"
-cd ../tests
+cd ../../tests
 wait
 cvs commit -m "$CMT" dd.html
 clear
