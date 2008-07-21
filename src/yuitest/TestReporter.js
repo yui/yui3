@@ -8,10 +8,9 @@
          * An object capable of sending test results to a server.
          * @param {String} url The URL to submit the results to.
          * @param {Function} format (Optiona) A function that outputs the results in a specific format.
-         *      Default is Y.Test.Format.XML.
+         *      Default is Test.Format.XML.
          * @constructor
-         * @namespace Y.Test
-         * @class Reporter
+         * @class Test.Reporter
          */
         Y.Test.Reporter = function(url /*:String*/, format /*:Function*/) {
         

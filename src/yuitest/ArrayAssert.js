@@ -8,7 +8,6 @@
          * The ArrayAssert object provides functions to test JavaScript array objects
          * for a variety of cases.
          *
-         * @namespace Y
          * @class ArrayAssert
          * @static
          */

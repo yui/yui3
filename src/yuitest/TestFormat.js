@@ -1,15 +1,14 @@
 (function(){
 
     var M = function(Y){
-        
+      
         Y.namespace("Test.Format");
-        
+ 
         /**
          * Returns test results formatted as a JSON string. Requires JSON utility.
          * @param {Object} result The results object created by TestRunner.
          * @return {String} A JSON-formatted string of results.
-         * @namespace Y.Test.Format
-         * @method JSON
+         * @method Test.Format.JSON
          * @static
          */
         Y.Test.Format.JSON = function(results /*:Object*/) /*:String*/ {
@@ -20,8 +19,7 @@
          * Returns test results formatted as an XML string.
          * @param {Object} result The results object created by TestRunner.
          * @return {String} An XML-formatted string of results.
-         * @namespace YAHOO.tool.TestFormat
-         * @method XML
+         * @method Test.Format.XML
          * @static
          */
         Y.Test.Format.XML = function(results /*:Object*/) /*:String*/ {

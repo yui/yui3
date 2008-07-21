@@ -6,8 +6,7 @@
 
         /**
          * Runs pages containing test suite definitions.
-         * @namespace Y.Test
-         * @class Manager
+         * @class Test.Manager
          * @static
          */
         Y.Test.Manager = {

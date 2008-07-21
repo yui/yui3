@@ -7,7 +7,6 @@
          * known and expected results. Whenever a comparison (assertion) fails,
          * an error is thrown.
          *
-         * @namespace Y
          * @class Assert
          * @static
          */
@@ -357,7 +356,6 @@
          * from which more specific assertion errors can be derived.
          *
          * @param {String} message The message to display when the error occurs.
-         * @namespace Y
          * @class Error
          * @extends Error
          * @constructor
@@ -423,8 +421,7 @@
          * @param {String} message The message to display when the error occurs.
          * @param {Object} expected The expected value.
          * @param {Object} actual The actual value that caused the assertion to fail.
-         * @namespace Y
-         * @extends Y.Assert.Error
+         * @extends Assert.Error
          * @class ComparisonFailure
          * @constructor
          */ 
@@ -480,8 +477,7 @@
          *
          * @param {String} message The message to display when the error occurs.
          * @param {Object} unexpected The unexpected value.
-         * @namespace Y
-         * @extends Y.Assert.Error
+         * @extends Assert.Error
          * @class UnexpectedValue
          * @constructor
          */ 
@@ -526,8 +522,7 @@
          * a test was expected to fail but did not.
          *
          * @param {String} message The message to display when the error occurs.
-         * @namespace Y
-         * @extends Y.Assert.Error
+         * @extends Assert.Error
          * @class ShouldFail
          * @constructor
          */  
@@ -553,8 +548,7 @@
          * a test is expected to throw an error but doesn't.
          *
          * @param {String} message The message to display when the error occurs.
-         * @namespace Y
-         * @extends Y.Assert.Error
+         * @extends Assert.Error
          * @class ShouldError
          * @constructor
          */  
@@ -582,8 +576,7 @@
          *
          * @param {Error} cause The unexpected error that caused this error to be 
          *                      thrown.
-         * @namespace Y
-         * @extends Y.Assert.Error
+         * @extends Assert.Error
          * @class UnexpectedError
          * @constructor
          */  

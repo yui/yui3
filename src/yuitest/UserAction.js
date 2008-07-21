@@ -8,7 +8,6 @@
          * as regular, user-initiated events do, but can be used to test simple
          * user interactions safely.
          *
-         * @namespace YAHOO.util
          * @class UserAction
          * @static
          */

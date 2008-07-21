@@ -8,12 +8,11 @@
          * A test suite that can contain a collection of TestCase and TestSuite objects.
          * @param {String||Object} data The name of the test suite or an object containing
          *      a name property as well as setUp and tearDown methods.
-         * @namespace Y.Test
-         * @class Suite
+         * @class Test.Suite
          * @constructor
          */
         Y.Test.Suite = function (data /*:String||Object*/) {
-        
+ 
             /**
              * The name of the test suite.
              * @type String
