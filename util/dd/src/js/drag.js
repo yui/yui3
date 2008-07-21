@@ -4,8 +4,7 @@
      */
     /**
      * This class provides the ability to drag a Node.
-     * @class Drag
-     * @namespace DD
+     * @class DD.Drag
      * @extends base
      * @constructor
      */

@@ -1,11 +1,10 @@
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @class DropPlugin
-        * @namespace Plugin
+        * @class Plugin.DropPlugin
         * @extends drop
         * @constructor
         */

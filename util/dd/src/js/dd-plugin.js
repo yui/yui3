@@ -4,8 +4,7 @@
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @class DragPlugin
-        * @namespace Plugin
+        * @class Plugin.DragPlugin
         * @extends drag
         * @constructor
         */
