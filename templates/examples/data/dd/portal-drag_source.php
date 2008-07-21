@@ -21,8 +21,8 @@
 
 <div id="play">
     <?php
-    $rowCount = (($_GET['rows']) ? $_GET['rows'] : 3);
-    $itemCount = (($_GET['items']) ? $_GET['items'] : 5);
+    $rowCount = 3;
+    $itemCount = 5;
 
     for ($c = 1; $c <= $rowCount; $c++) {
         echo('<ul id="list'.$c.'" class="list">'."\n");

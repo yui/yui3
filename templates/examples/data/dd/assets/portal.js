@@ -1,8 +1,5 @@
 (function() {
-var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation');
-
-Y.on('event:ready', function() {
-
+var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', function(Y) {
     var goingUp = false, lastY = 0, crossList = false;
  
     //Handle the drop:enter event
@@ -151,7 +148,6 @@ Y.on('event:ready', function() {
     });
 
     //Create simple targets for the main lists..
-    
     var uls = Y.Node.get('#play').queryAll('ul.list');
     Y.each(uls, function(v, k, items) {
         var tar = new Y.DD.Drop({
