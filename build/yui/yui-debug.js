@@ -394,67 +394,9 @@ YUI.prototype = {
         return o;
     },
 
-    /**
-     * If the 'debug' config is true, a 'yui:log' event will be
-     * dispatched, which the logger widget and anything else
-     * can consume.  If the 'useConsole' config is true, it will
-     * write to the browser console if available.
-     *
-     * @method log
-     * @static
-     * @param  {String}  msg  The message to log.
-     * @param  {String}  cat  The log category for the message.  Default
-     *                        categories are "info", "warn", "error", time".
-     *                        Custom categories can be used as well. (opt)
-     * @param  {String}  src  The source of the the message (opt)
-     * @return {YUI}      YUI instance
-     */
-    log: function(msg, cat, src) {
+    // this is replaced if the log module is included
+    log: function() {
 
-        var Y = this, c = Y.config, es = Y.Env._eventstack,
-            bail = (es && es.logging);
-
-        // suppress log message if the config is off or the event stack
-        // or the event call stack contains a consumer of the yui:log event
-        if (c.debug && !bail) {
-
-            if (c.useConsole && typeof console != 'undefined') {
-
-                // apply source filters
-                if (src) {
-
-
-                    var exc = c.logExclude, inc = c.logInclude;
-
-                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
-
-                    if (inc && !(src in inc)) {
-                        // console.log('bail: inc list found, but src is not in list: ' + src);
-                        bail = true;
-                    } else if (exc && (src in exc)) {
-                        // console.log('bail: exc list found, and src is in it: ' + src);
-                        bail = true;
-                    }
-                }
-
-                if (!bail) {
-
-                    var f = (cat && console[cat]) ? cat : 'log',
-                        m = (src) ? src + ': ' + msg : msg;
-                    console[f](m);
-                } else {
-                    console.log('MSG SKIPPED: ' + msg);
-                }
-            }
-
-            // category filters are not used to suppress the log event
-            // so that the data can be stored and displayed later.
-            if (Y.fire) {
-                Y.fire('yui:log', msg, cat, src);
-            }
-        }
-
-        return Y;
     },
 
     /**
@@ -533,6 +475,70 @@ YUI.prototype = {
 
 
 })();
+YUI.add("log", function(instance) {
+
+    /**
+     * If the 'debug' config is true, a 'yui:log' event will be
+     * dispatched, which the logger widget and anything else
+     * can consume.  If the 'useConsole' config is true, it will
+     * write to the browser console if available.
+     *
+     * @method log
+     * @static
+     * @param  {String}  msg  The message to log.
+     * @param  {String}  cat  The log category for the message.  Default
+     *                        categories are "info", "warn", "error", time".
+     *                        Custom categories can be used as well. (opt)
+     * @param  {String}  src  The source of the the message (opt)
+     * @return {YUI}      YUI instance
+     */
+    instance.log = function(msg, cat, src) {
+
+        var Y = instance, c = Y.config, es = Y.Env._eventstack,
+            bail = (es && es.logging);
+
+        // suppress log message if the config is off or the event stack
+        // or the event call stack contains a consumer of the yui:log event
+        if (c.debug && !bail) {
+
+            if (c.useConsole && typeof console != 'undefined') {
+
+                // apply source filters
+                if (src) {
+
+
+                    var exc = c.logExclude, inc = c.logInclude;
+
+                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
+
+                    if (inc && !(src in inc)) {
+                        // console.log('bail: inc list found, but src is not in list: ' + src);
+                        bail = true;
+                    } else if (exc && (src in exc)) {
+                        // console.log('bail: exc list found, and src is in it: ' + src);
+                        bail = true;
+                    }
+                }
+
+                if (!bail) {
+
+                    var f = (cat && console[cat]) ? cat : 'log',
+                        m = (src) ? src + ': ' + msg : msg;
+                    console[f](m);
+                }
+            }
+
+            // category filters are not used to suppress the log event
+            // so that the data can be stored and displayed later.
+            if (Y.fire) {
+                Y.fire('yui:log', msg, cat, src);
+            }
+        }
+
+        return Y;
+    };
+
+}, "3.0.0");
 
 YUI.add("lang", function(Y) {
 
@@ -1534,183 +1540,6 @@ YUI.add("ua", function(Y) {
         
         return o;
     }();
-}, "3.0.0");
-// requires lang
-YUI.add("dump", function(Y) {
-
-    var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ';
-
-    /**
-     * Returns a simple string representation of the object or array.
-     * Other types of objects will be returned unprocessed.  Arrays
-     * are expected to be indexed.  Use object notation for
-     * associative arrays.
-     *
-     * @todo dumping a window is causing an unhandled exception in
-     * FireFox.  Trying to account for it is hanging FireFox.
-     * Could be a FireBug interaction.
-     *
-     * @method dump
-     * @param o {Object} The object to dump
-     * @param d {int} How deep to recurse child objects, default 3
-     * @return {String} the dump result
-     */
-    L.dump = function(o, d) {
-        var i, len, s = [];
-
-
-        // Cast non-objects to string
-        // Skip dates because the std toString is what we want
-        // Skip HTMLElement-like objects because trying to dump 
-        // an element will cause an unhandled exception in FF 2.x
-        if (!L.isObject(o)) {
-            return o + "";
-        } else if (o instanceof Date || ("nodeType" in o && "tagName" in o)) {
-            return o;
-        } else if  (L.isFunction(o)) {
-            return FUN;
-        }
-
-        // dig into child objects the depth specifed. Default 3
-        d = (L.isNumber(d)) ? d : 3;
-
-        // arrays [1, 2, 3]
-        if (L.isArray(o)) {
-            s.push("[");
-            for (i=0,len=o.length;i<len;i=i+1) {
-                if (L.isObject(o[i])) {
-                    s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);
-                } else {
-                    s.push(o[i]);
-                }
-                s.push(COMMA);
-            }
-            if (s.length > 1) {
-                s.pop();
-            }
-            s.push("]");
-        // objects {k1 => v1, k2 => v2}
-        } else {
-            s.push("{");
-            for (i in o) {
-                if (Y.Object.owns(o, i)) {
-                    s.push(i + ARROW);
-                    if (L.isObject(o[i])) {
-                        s.push((d > 0) ? L.dump(o[i], d-1) : OBJ);
-                    } else {
-                        s.push(o[i]);
-                    }
-                    s.push(COMMA);
-                }
-            }
-            if (s.length > 1) {
-                s.pop();
-            }
-            s.push("}");
-        }
-
-        return s.join("");
-    };
-}, "3.0.0");
-// requires lang, dump
-YUI.add("substitute", function(Y) {
-
-    var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}';
-
-    /**
-     * Does variable substitution on a string. It scans through the string 
-     * looking for expressions enclosed in { } braces. If an expression 
-     * is found, it is used a key on the object.  If there is a space in
-     * the key, the first word is used for the key and the rest is provided
-     * to an optional function to be used to programatically determine the
-     * value (the extra information might be used for this decision). If 
-     * the value for the key in the object, or what is returned from the
-     * function has a string value, number value, or object value, it is 
-     * substituted for the bracket expression and it repeats.  If this
-     * value is an object, it uses the Object's toString() if this has
-     * been overridden, otherwise it does a shallow dump of the key/value
-     * pairs.
-     * @method substitute
-     * @param s {String} The string that will be modified.
-     * @param o {Object} An object containing the replacement values
-     * @param f {Function} An optional function that can be used to
-     *                     process each match.  It receives the key,
-     *                     value, and any extra metadata included with
-     *                     the key inside of the braces.
-     * @return {String} the substituted string
-     */
-    L.substitute = function (s, o, f) {
-        var i, j, k, key, v, meta, saved=[], token;
-
-        for (;;) {
-            i = s.lastIndexOf(LBRACE);
-            if (i < 0) {
-                break;
-            }
-            j = s.indexOf(RBRACE, i);
-            if (i + 1 >= j) {
-                break;
-            }
-
-            //Extract key and meta info 
-            token = s.substring(i + 1, j);
-            key = token;
-            meta = null;
-            k = key.indexOf(SPACE);
-            if (k > -1) {
-                meta = key.substring(k + 1);
-                key = key.substring(0, k);
-            }
-
-            // lookup the value
-            v = o[key];
-
-            // if a substitution function was provided, execute it
-            if (f) {
-                v = f(key, v, meta);
-            }
-
-            if (L.isObject(v)) {
-                if (L.isArray(v)) {
-                    v = L.dump(v, parseInt(meta, 10));
-                } else {
-                    meta = meta || "";
-
-                    // look for the keyword 'dump', if found force obj dump
-                    var dump = meta.indexOf(DUMP);
-                    if (dump > -1) {
-                        meta = meta.substring(4);
-                    }
-
-                    // use the toString if it is not the Object toString 
-                    // and the 'dump' meta info was not found
-                    if (v.toString===Object.prototype.toString||dump>-1) {
-                        v = L.dump(v, parseInt(meta, 10));
-                    } else {
-                        v = v.toString();
-                    }
-                }
-            } else if (!L.isString(v) && !L.isNumber(v)) {
-                // This {block} has no replace string. Save it for later.
-                v = "~-" + saved.length + "-~";
-                saved[saved.length] = token;
-
-                // break;
-            }
-
-            s = s.substring(0, i) + v + s.substring(j + 1);
-
-
-        }
-
-        // restore saved {block}s
-        for (i=saved.length-1; i>=0; i=i-1) {
-            s = s.replace(new RegExp("~-" + i + "-~"), "{"  + saved[i] + "}", "g");
-        }
-
-        return s;
-
-    };
 }, "3.0.0");
 // requires lang
 YUI.add("later", function(Y) {
@@ -8156,7 +7985,7 @@ Y.Get = function() {
 }, "3.0.0");
 (function() {
 
-    var min = ['lang', 'array', 'core'], core,
+    var min = ['log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 
@@ -8185,9 +8014,8 @@ Y.Get = function() {
               "dom", 
               "node", 
               "io", 
-              "get",
-              "dump", 
-              "substitute");
+              "get");
+
               // "loader"
 
         }
