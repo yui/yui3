@@ -7,13 +7,11 @@
         /**
          * The YUI JavaScript profiler.
          * @module profiler
-         * @namespace Y
          * @requires yahoo
          */
         
         /**
          * Profiles functions in JavaScript.
-         * @namespace Y
          * @class Profiler
          * @static
          */
