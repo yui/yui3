@@ -7,8 +7,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
-     * @class DDM
-     * @namespace DD
+     * @class DD.DDM
      * @extends Base
      * @constructor
      */
@@ -294,8 +293,7 @@ YUI.add('dd-ddm', function(Y) {
      /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
      * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     * @class DDM
-     * @namespace DD
+     * @class DD.DDM
      * @extends Base
      * @constructor
      */
@@ -415,8 +413,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      */
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     * @class DDM
-     * @namespace DD
+     * @class DD.DDM
      * @extends Base
      * @constructor
      */    
@@ -807,8 +804,7 @@ YUI.add('dd-drag', function(Y) {
      */
     /**
      * This class provides the ability to drag a Node.
-     * @class Drag
-     * @namespace DD
+     * @class DD.Drag
      * @extends base
      * @constructor
      */
@@ -1728,8 +1724,7 @@ YUI.add('dd-proxy', function(Y) {
      */
     /**
      * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * @class Proxy
-     * @namespace DD
+     * @class DD.Proxy
      * @extends Drag
      * @constructor
      */
@@ -1902,8 +1897,7 @@ YUI.add('dd-constrain', function(Y) {
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
-     * @class DragConstained
-     * @namespace DD
+     * @class DD.DragConstained
      * @extends Drag
      * @constructor
      */
@@ -2280,8 +2274,7 @@ YUI.add('dd-plugin', function(Y) {
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * @class DragPlugin
-        * @namespace Plugin
+        * @class Plugin.DragPlugin
         * @extends drag
         * @constructor
         */
@@ -2321,8 +2314,7 @@ YUI.add('dd-drop', function(Y) {
      */
     /**
      * This class provides the ability to create a Drop Target.
-     * @class Drop
-     * @namespace DD
+     * @class DD.Drop
      * @extends base
      * @constructor
      */
@@ -2731,12 +2723,11 @@ YUI.add('dd-drop-plugin', function(Y) {
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @class DropPlugin
-        * @namespace Plugin
+        * @class Plugin.DropPlugin
         * @extends drop
         * @constructor
         */

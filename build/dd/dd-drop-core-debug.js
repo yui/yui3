@@ -6,8 +6,7 @@ YUI.add('dd-ddm-drop', function(Y) {
      */
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     * @class DDM
-     * @namespace DD
+     * @class DD.DDM
      * @extends Base
      * @constructor
      */    
@@ -400,8 +399,7 @@ YUI.add('dd-drop', function(Y) {
      */
     /**
      * This class provides the ability to create a Drop Target.
-     * @class Drop
-     * @namespace DD
+     * @class DD.Drop
      * @extends base
      * @constructor
      */
@@ -810,12 +808,11 @@ YUI.add('dd-drop-plugin', function(Y) {
 
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @module dd-plugin
+        * @module dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * @class DropPlugin
-        * @namespace Plugin
+        * @class Plugin.DropPlugin
         * @extends drop
         * @constructor
         */

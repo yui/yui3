@@ -6,8 +6,7 @@ YUI.add('dd-drop', function(Y) {
      */
     /**
      * This class provides the ability to create a Drop Target.
-     * @class Drop
-     * @namespace DD
+     * @class DD.Drop
      * @extends base
      * @constructor
      */

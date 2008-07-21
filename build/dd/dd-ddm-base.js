@@ -7,8 +7,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
-     * @class DDM
-     * @namespace DD
+     * @class DD.DDM
      * @extends Base
      * @constructor
      */
