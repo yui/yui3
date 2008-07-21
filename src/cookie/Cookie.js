@@ -1,6 +1,5 @@
 /**
  * Utilities for cookie management
- * @namespace Y
  * @module cookie
  * @beta
  */
