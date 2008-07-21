@@ -1,6 +1,6 @@
 (function() {
 
-    var min = ['lang', 'array', 'core'], core,
+    var min = ['log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 
@@ -29,9 +29,8 @@
               "dom", 
               "node", 
               "io", 
-              "get",
-              "dump", 
-              "substitute");
+              "get");
+
               // "loader"
 
         }
