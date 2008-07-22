@@ -417,4 +417,4 @@ YUI.add("compat", function(Y) {
 
     // @todo subscribe register to the module added event to pick
     // modules registered with the new method.
-}, "3.0.0");
+}, "@VERSION@");

@@ -80,4 +80,4 @@ YUI.add("dump", function(Y) {
     Y.dump = dump;
     L.dump = dump;
 
-}, "3.0.0");
+}, "@VERSION@");

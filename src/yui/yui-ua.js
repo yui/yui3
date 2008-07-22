@@ -124,4 +124,4 @@ YUI.add("ua", function(Y) {
         
         return o;
     }();
-}, "3.0.0");
+}, "@VERSION@");

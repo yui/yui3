@@ -134,5 +134,5 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
 return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 

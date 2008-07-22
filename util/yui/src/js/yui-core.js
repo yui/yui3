@@ -516,4 +516,4 @@ YUI.add("core", function(Y) {
         return Y;
     };
 
-}, "3.0.0");
+}, "@VERSION@");

@@ -61,4 +61,4 @@ YUI.add("log", function(instance) {
         return Y;
     };
 
-}, "3.0.0");
+}, "@VERSION@");

@@ -38,7 +38,7 @@
         Y.use.apply(Y, core);
     };
      
-    YUI.add("yui", M, "3.0.0");
+    YUI.add("yui", M, "@VERSION@");
     
     // {
         // the following will be bound automatically when this code is loaded

@@ -105,4 +105,6 @@ YUI.add("substitute", function(Y) {
     Y.substitute = substitute;
     L.substitute = substitute;
 
-}, "3.0.0");
+}, "@VERSION@", {
+    requires: ['dump']
+});

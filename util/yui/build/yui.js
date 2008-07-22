@@ -524,7 +524,7 @@ YUI.add("log", function(instance) {
         return Y;
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 
 YUI.add("lang", function(Y) {
 
@@ -661,7 +661,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
 return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 
 
 /**
@@ -801,7 +801,7 @@ YUI.add("array", function(Y) {
         return -1;
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 // requires lang
 YUI.add("core", function(Y) {
 
@@ -1313,7 +1313,7 @@ YUI.add("core", function(Y) {
         return Y;
     };
 
-}, "3.0.0");
+}, "@VERSION@");
 /**
  * Object utils
  * @class Object
@@ -1392,7 +1392,7 @@ YUI.add("object", function(Y) {
         }
         return Y;
     };
-}, "3.0.0");
+}, "@VERSION@");
 YUI.add("ua", function(Y) {
 
     /**
@@ -1519,7 +1519,7 @@ YUI.add("ua", function(Y) {
         
         return o;
     }();
-}, "3.0.0");
+}, "@VERSION@");
 // requires lang
 YUI.add("later", function(Y) {
 
@@ -1579,7 +1579,7 @@ YUI.add("later", function(Y) {
             }
         };
     };
-}, "3.0.0");
+}, "@VERSION@");
 
 YUI.add("aop", function(Y) {
 
@@ -7965,7 +7965,7 @@ Y.Get = function() {
     };
 }();
 
-}, "3.0.0");
+}, "@VERSION@");
 (function() {
 
     var min = ['log', 'lang', 'array', 'core'], core,
@@ -8005,7 +8005,7 @@ Y.Get = function() {
         Y.use.apply(Y, core);
     };
      
-    YUI.add("yui", M, "3.0.0");
+    YUI.add("yui", M, "@VERSION@");
     
     // {
         // the following will be bound automatically when this code is loaded

@@ -57,4 +57,4 @@ YUI.add("later", function(Y) {
             }
         };
     };
-}, "3.0.0");
+}, "@VERSION@");

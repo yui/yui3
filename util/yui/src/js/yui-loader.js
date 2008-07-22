@@ -37,7 +37,7 @@ YUI.add("loader", function(Y) {
         DATASOURCE = 'datasource',
         SELECTOR = 'selector',
         RESIZE = 'resize',
-        VERSION = '3.0.0',
+        VERSION = '@VERSION@',
         ROOT = VERSION + '/build/';
 
 
@@ -59,9 +59,10 @@ Y.Env.moduleInfo = {
 
     moduleInfo: {
 
-        base: {
+        basecss: {
             type: CSS,
-            after: [RESET, FONTS, GRIDS]
+            after: [RESET, FONTS, GRIDS],
+            path: 'base/base.css'
         },
 
         fonts: {
@@ -98,11 +99,59 @@ Y.Env.moduleInfo = {
             rollup: 2
         },
 
-        substitute: {
-            requires: ['dump']
+// node, dom, event included in the yui dist, so we are not including the metadata for PR1
+
+        animation: {
+            requires: ['base']
         },
 
-        yuitestcore: {
+        // attribute: { },
+
+        base: {
+            requires: ['attribute']
+        },
+        
+        // classnamemanager: { },
+        
+        // compat: { },
+        
+        // cookie: { },
+
+        // css: { },
+
+        // dump: { },
+        
+        // io: { },
+
+        json-parse: {
+            path: json/json-parse-min.js
+        },
+
+        json-stringify: {
+            path: json/json-stringify-min.js
+        },
+
+        json: {
+            supersedes: ['json-parse', 'json-stringify']
+        },
+        
+        logreader: {
+            requires: ['css']
+        },
+
+        // profiler: { },
+
+        // queue: { },
+
+
+        // @TODO evaluate this package
+        substitute: {
+            requires: ['dump'],
+            path: i18n/substitute-min.js
+        },
+
+        yuitestcore: { 
+            path: 'yuitest/yuitest_core-min.js'
         },
 
         yuitest: {
@@ -1317,4 +1366,4 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
     Y.augment(Y.Loader, Y.Event.Target);
 
 
-}, "3.0.0");
+}, "@VERSION@");

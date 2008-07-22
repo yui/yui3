@@ -136,4 +136,4 @@ YUI.add("array", function(Y) {
         return -1;
     };
 
-}, "3.0.0");
+}, "@VERSION@");
