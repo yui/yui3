@@ -3,46 +3,46 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Portal Example</title>
-    <link type="text/css" rel="stylesheet" href="../../build/reset-fonts/reset-fonts.css" />
+    <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 
-    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
-    <script type="text/javascript" src="../../build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="../../build/node/node-min.js"></script>
-    <script type="text/javascript" src="../../build/attribute/attribute-min.js"></script>
-    <script type="text/javascript" src="../../build/base/base-min.js"></script>
-    <script type="text/javascript" src="../../build/animation/animation-min.js"></script>
-    <script type="text/javascript" src="../../build/io/io-min.js"></script>
-    <script type="text/javascript" src="../../build/json/json-min.js"></script>
-    <script type="text/javascript" src="../../build/dd/dd-dragdrop-all.js"></script>
+    <script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../../../build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../../../build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../../../build/attribute/attribute-min.js"></script>
+    <script type="text/javascript" src="../../../../build/base/base-min.js"></script>
+    <script type="text/javascript" src="../../../../build/animation/animation-min.js"></script>
+    <script type="text/javascript" src="../../../../build/io/io-min.js"></script>
+    <script type="text/javascript" src="../../../../build/json/json-min.js"></script>
+    <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js"></script>
 
     <link rel="stylesheet" type="text/css" href="assets/portal.css"> 
 
 <body class="yui-reset yui-fonts">
 
-<div id="play">
-    <?php
-    $rowCount = 3;
-    $itemCount = 5;
 
-    for ($c = 1; $c <= $rowCount; $c++) {
-        echo('<ul id="list'.$c.'" class="list">'."\n");
-            for ($i = 1; $i <= $itemCount; $i++) {
-                echo('<li class="item">');
-                echo('  <div class="mod">');
-                echo('      <h2>Item Title #'.$c.'-'.$i.' <a href="#" class="min" title="minimize module"></a> <a href="#" class="close" title="close module"></a></h2>');
-                echo('  <div class="inner">');
-                echo('<ul>');
-                for ($e = 1; $e <= 5; $e++) {
-                    echo('      <li>Item #'.$i.'-'.$e.'</li>');
-                }
-                echo('</ul>');
-                echo('  </div>');
-                echo('  </div>');
-                echo('</li>');
-            }
-        echo('</ul>'."\n");
-    }
-    ?>
+<div id="doc3" class="yui-t2">
+    <div id="hd"><h1>YUI 3.0 Portal Example</h1></div>
+    <div id="bd">
+        <div id="yui-main">
+	        <div class="yui-b">
+                <div class="yui-g">
+                    <div id="play">
+                        <ul class="list" id="list1"></ul>
+                        <ul class="list" id="list2"></ul>
+                        <ul class="list" id="list3"></ul>
+                    </div>
+	            </div>
+            </div>
+	    </div>
+	    <div class="yui-b">
+            <div id="feeds">
+                <p>Drag a news feed</p>
+                <ul>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="ft">Built with <a href="http://developer.yahoo.com/yui/3/">YUI 3.0</a></div>
 </div>
 
 <script src="assets/portal.js"></script>

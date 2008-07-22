@@ -1,13 +1,49 @@
+#hd {
+    background-image: url(sprite.png);
+    background-position: 0 -1300px;
+    color: #fff;
+    border: 1px solid #CDCDCD;
+    padding: 1em;
+}
+#hd h1 {
+    font-size: 116%;
+    font-weight: bold;
+    color: #000;
+}
+#ft {
+    font-size: 85%;
+    font-style: italic;
+}
 #play {
     border: 1px solid black;
-    padding: 10px;
-    margin: 10px;
+    padding: .5em;
+    margin: .75em;
     zoom: 1;
 }
-#play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}        
+#play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
+
+#feeds {
+    background-color: #CDCDCD;
+    margin: .75em;
+    border: 1px solid #CDCDCD;
+    min-height: 500px;
+}
+
+#feeds ul li {
+    background-repeat: no-repeat;
+    padding-left: 25px;
+    margin: 3px;
+    cursor: move;
+}
+#feeds ul li.disabled {
+    opacity: .5;
+    filter: alpha(opacity=50);
+    cursor: default;
+}
+
 ul.list {
     border: 1px dashed #ccc;
-    margin: 10px;
+    margin: .5em;
     width: 325px;
     float: left;
     min-height: 500px;
@@ -43,11 +79,19 @@ div.mod div.inner {
     overflow: hidden;
     zoom: 1;
 }
-/*
-.yui-dd-proxy div.mod {
-    overflow: visible;
+div.mod div.inner div.loading {
+    background-image: url(progress.gif);
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+    padding: 5px 5px 5px 25px;
+
 }
-*/
+#play div.mod div.inner ul li {
+    padding-left: 20px;
+}
+div.mod div.inner ul li a {
+    color: #000;
+}
 div.mod h2 {
     position: relative;
     zoom: 1;
@@ -56,9 +100,9 @@ div.mod h2 {
     cursor: move;
     padding: 3px;
     font-weight: bold;
-    background-color: #ccc;
+    color: #000;
     background-image: url(sprite.png);
-    background-position: 0 -200px;
+    background-position: 0 -1300px;
     zoom: 1;
 }
 
