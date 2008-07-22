@@ -68,13 +68,15 @@ initial configuration support and attribute change events.
 <ul>
 <li>Be defined as read-only.</li>
 <li>Be defined as write-once.</li>
-<li>Be defined with a set function, which can be used to manipulate
+<li>Be defined with a set function, used to manipulate
 values passed to Attribute's set method, before they are stored.</li>
 <li>Be defined with a validator function, to validate values before they are stored.</li>
 <li>Be defined with a get function, which can be used to manipulate stored values,
 before they are returned by Attribute's get method.</li>
 <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
 </ul>
+<em>See the addAtt method, for details about how to add attributes with
+a specific configuration</em>
                     </div>
 
 
@@ -654,7 +656,8 @@ by attribute the top level attribute name.</dd>
                                         
                                         <div class="description">
                                             <p>
-Adds an attribute, with the provided configuration to the host object.
+Adds an attribute, with the provided configuration to the host object. Intended
+to be used by the host object to setup it's set of available attributes.
 </p>
 <p>
 The config argument object literal supports the following optional properties:
@@ -797,6 +800,40 @@ obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
                                                         Object
                                                     </code></dt>
                                                     <dd>A hash of attributes: name/value pairs</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>on</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Alias for the Event.Target subscribe method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
                                                 </dl>
              
                                         </div>
@@ -996,6 +1033,8 @@ of attribute change events
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
                                 <li class=""><a href="module_event.html">event</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
@@ -1105,6 +1144,9 @@ This is the default behavior.
                                 </li>
                                 <li class=""><!--<code>Object</code>-->
                                 <a href="#method_getAtts">getAtts</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_on">on</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_removeAtt">removeAtt</a>

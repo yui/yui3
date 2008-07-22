@@ -72,8 +72,7 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
-    
-    
+
     <span class="c">/**</span>
 <span class="c">     * Name string to be used to identify instances of </span>
 <span class="c">     * this class, for example in prefixing events.</span>
@@ -403,7 +402,7 @@
         <span class="c">/**</span>
 <span class="c">         * Returns the top down class heirarchy for this object,</span>
 <span class="c">         * with Base being the first class in the array</span>
-<span class="c">         * </span>
+<span class="c">         *</span>
 <span class="c">         * @protected</span>
 <span class="c">         * @return {Array} array of classes</span>
 <span class="c">         */</span>
@@ -477,14 +476,6 @@
 <span class="c">         */</span>
         <span class="nx">toString</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="o">;</span>
-        <span class="o">},</span>
-
-        <span class="c">/**</span>
-<span class="c">         * Alias for the subscribe method.</span>
-<span class="c">         * @method on</span>
-<span class="c">         */</span>
-        <span class="nx">on</span> <span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
         <span class="o">},</span>
 
         <span class="c">/**</span>
@@ -622,7 +613,7 @@
             <span class="o">}</span>
             <span class="k">return</span> <span class="nx">ETP</span><span class="o">.</span><span class="nx">unsubscribe</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
         <span class="o">},</span>
-        
+
         <span class="c">/**</span>
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Removes all listeners from the specified event.  If the event type</span>
@@ -679,6 +670,8 @@
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class="selected"><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 

@@ -28,10 +28,10 @@
               "event-facade",
               "dom", 
               "node", 
-              "io", 
-              "get",
-              "loader");
+              "io");
 
+              // "loader"
+              // "get",
               // "loader"
 
         }
