@@ -32,13 +32,16 @@ YUI.add('attribute', function(Y) {
      * <ul>
      *     <li>Be defined as read-only.</li>
      *     <li>Be defined as write-once.</li>
-     *     <li>Be defined with a set function, which can be used to manipulate
+     *     <li>Be defined with a set function, used to manipulate
      *     values passed to Attribute's set method, before they are stored.</li>
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
      *     <li>Be defined with a get function, which can be used to manipulate stored values,
      *     before they are returned by Attribute's get method.</li>
      *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
      * </ul>
+     *
+     * <em>See the addAtt method, for details about how to add attributes with
+     * a specific configuration</em>
      *
      * @class Attribute
      * @uses Event.Target
@@ -99,7 +102,8 @@ YUI.add('attribute', function(Y) {
     Attribute.prototype = {
         /**
          * <p>
-         * Adds an attribute, with the provided configuration to the host object.
+         * Adds an attribute, with the provided configuration to the host object. Intended
+         * to be used by the host object to setup it's set of available attributes.
          * </p>
          * <p>
          * The config argument object literal supports the following optional properties:
@@ -134,10 +138,12 @@ YUI.add('attribute', function(Y) {
          * </dl>
          *
          * @method addAtt
+         * 
          * @param {String} name The attribute key
          * @param {Object} config (optional) An object literal specifying the configuration for the attribute.
          * <strong>NOTE:</strong> The config object is modified when adding an attribute, 
          * so if you need to protect the original values, you will need to merge or clone the object.
+         * 
          */
         addAtt: function(name, config) {
             var value, hasValue = (VALUE in config);
@@ -259,6 +265,14 @@ YUI.add('attribute', function(Y) {
             this._fireAttChange(name, currVal, val, name, strPath, opts);
 
             return this;
+        },
+
+        /**
+         * Alias for the Event.Target subscribe method.
+         * @method on
+         */
+        on : function() {
+            return this.subscribe.apply(this, arguments);
         },
 
         /**

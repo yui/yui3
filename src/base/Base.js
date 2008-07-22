@@ -34,8 +34,7 @@
         Y.Attribute.call(this);
         this.init.apply(this, arguments);
     };
-    
-    
+
     /**
      * Name string to be used to identify instances of 
      * this class, for example in prefixing events.
@@ -365,7 +364,7 @@
         /**
          * Returns the top down class heirarchy for this object,
          * with Base being the first class in the array
-         * 
+         *
          * @protected
          * @return {Array} array of classes
          */
@@ -439,14 +438,6 @@
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
-        },
-
-        /**
-         * Alias for the subscribe method.
-         * @method on
-         */
-        on : function() {
-            return this.subscribe.apply(this, arguments);
         },
 
         /**
@@ -584,7 +575,7 @@
             }
             return ETP.unsubscribe.apply(this, a);
         },
-        
+
         /**
          * <p>
          * Removes all listeners from the specified event.  If the event type
