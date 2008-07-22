@@ -112,6 +112,59 @@ Y.Get = function() {
             }, win);
     };
 
+    /*
+     * The request failed, execute fail handler with whatever
+     * was accomplished.  There isn't a failure case at the
+     * moment unless you count aborted transactions
+     * @method _fail
+     * @param id {string} the id of the request
+     * @private
+     */
+    var _fail = function(id, msg) {
+        Y.log("get failure: " + msg, "warn", "Get");
+        var q = queues[id];
+        // execute failure callback
+        if (q.onFailure) {
+            var sc=q.scope || q;
+            q.onFailure.call(sc, _returnData(q, msg));
+        }
+    };
+
+    var _get = function(nId, tId) {
+        var q = queues[tId],
+            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
+        if (!n) {
+            _fail(tId, "target node not found: " + nId);
+        }
+
+        return n;
+    };
+
+    /**
+     * Removes the nodes for the specified queue
+     * @method _purge
+     * @private
+     */
+    var _purge = function(tId) {
+        var q=queues[tId];
+        if (q) {
+            var n=q.nodes, l=n.length, d=q.win.document, 
+                h=d.getElementsByTagName("head")[0];
+
+            if (q.insertBefore) {
+                var s = _get(q.insertBefore, tId);
+                if (s) {
+                    h = s.parentNode;
+                }
+            }
+
+            for (var i=0; i<l; i=i+1) {
+                h.removeChild(n[i]);
+            }
+        }
+        q.nodes = [];
+    };
+
     /**
      * Returns the data payload for callback functions
      * @method _returnData
@@ -130,33 +183,6 @@ Y.Get = function() {
             };
     };
 
-    var _get = function(nId, tId) {
-        var q = queues[tId],
-            n = (L.isString(nId)) ? q.win.document.getElementById(nId) : nId;
-        if (!n) {
-            _fail(tId, "target node not found: " + nId);
-        }
-
-        return n;
-    };
-
-    /*
-     * The request failed, execute fail handler with whatever
-     * was accomplished.  There isn't a failure case at the
-     * moment unless you count aborted transactions
-     * @method _fail
-     * @param id {string} the id of the request
-     * @private
-     */
-    var _fail = function(id, msg) {
-        Y.log("get failure: " + msg, "warn", "Get");
-        var q = queues[id];
-        // execute failure callback
-        if (q.onFailure) {
-            var sc=q.scope || q;
-            q.onFailure.call(sc, _returnData(q, msg));
-        }
-    };
 
     /**
      * The request is complete, so executing the requester's callback
@@ -294,39 +320,16 @@ Y.Get = function() {
 
         purging = true;
         for (var i in queues) {
-            var q = queues[i];
-            if (q.autopurge && q.finished) {
-                _purge(q.tId);
-                delete queues[i];
+            if (queues.hasOwnProperty(i)) {
+                var q = queues[i];
+                if (q.autopurge && q.finished) {
+                    _purge(q.tId);
+                    delete queues[i];
+                }
             }
         }
 
         purging = false;
-    };
-
-    /**
-     * Removes the nodes for the specified queue
-     * @method _purge
-     * @private
-     */
-    var _purge = function(tId) {
-        var q=queues[tId];
-        if (q) {
-            var n=q.nodes, l=n.length, d=q.win.document, 
-                h=d.getElementsByTagName("head")[0];
-
-            if (q.insertBefore) {
-                var s = _get(q.insertBefore, tId);
-                if (s) {
-                    h = s.parentNode;
-                }
-            }
-
-            for (var i=0; i<l; i=i+1) {
-                h.removeChild(n[i]);
-            }
-        }
-        q.nodes = [];
     };
 
     /**
