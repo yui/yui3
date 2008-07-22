@@ -356,7 +356,7 @@
          * from which more specific assertion errors can be derived.
          *
          * @param {String} message The message to display when the error occurs.
-         * @class Assets.Error
+         * @class Assert.Error
          * @extends Error
          * @constructor
          */ 
