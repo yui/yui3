@@ -30,8 +30,11 @@ echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
 cvs commit -m "$CMT" *.js
-clear
 wait
+cd ../dd-plugin
+wait
+cvs commit -m "$CMT" *.js
+clear
 echo "****************************************"
 echo "Checking in Test file"
 echo "****************************************"
