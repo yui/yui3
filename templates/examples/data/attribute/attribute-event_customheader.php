@@ -17,12 +17,19 @@
         margin-top:10px;
         border:1px solid #000;
         color:#ffffff;
-        background-color:#004C6D;
+        background-color:#004c6d;
         overflow:auto;
         height:20em;
         width:30em;
     }
 
+    .attrs label {
+        display:block;
+        float:left;
+        clear:left;
+        font-weight:bold;
+        width:5em;
+    }
 </style>
 <script type="text/javascript">
     YUI.namespace("example");

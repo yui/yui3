@@ -41,7 +41,7 @@
     var o1 = new MyClass();
 
     var print = YUI.example.print;
-    print("<strong>o1 values set during construction:</strong>");
+    print("o1 values set during construction:", "header");
     print("foo:" + o1.get("foo"));
     print("bar:" + o1.get("bar"));
     print("foobar:" + o1.get("foobar"));
@@ -50,7 +50,7 @@
     o1.set("bar", "Hello New World!");
     o1.set("foobar", false);
 
-    print("<strong>o1 new values:</strong>");
+    print("o1 new values:", "header");
     print("new foo:" + o1.get("foo"));
     print("new bar:" + o1.get("bar"));
     print("new foobar:" + o1.get("foobar"));
@@ -61,7 +61,7 @@
         foobar: false
     });
 
-    print("<strong>o2 values set during construction:</strong>");
+    print("o2 values set during construction:", "header");
     print("foo:" + o2.get("foo"));
     print("bar:" + o2.get("bar"));
     print("foobar:" + o2.get("foobar"));

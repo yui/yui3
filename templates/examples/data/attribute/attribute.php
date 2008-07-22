@@ -10,7 +10,7 @@ $modules["attribute"] = array(
 );	
 
 $examples["attribute-basic"] = array(
-	name => "Basic attribute configuration",
+	name => "Basic Attribute Configuration",
 	modules => array("attribute"),
 	description => "Use the Attribute API to define, set and get attribute values.",
 	sequence => array(1),
@@ -19,17 +19,17 @@ $examples["attribute-basic"] = array(
 	highlightSyntax => true
 );
 
-/*
-$examples["attribute-events"] = array(
-	name => "Attribute change events",
-	modules => array("attribute"),
-	description => "Listen for changes in attribute values.",
-	sequence => array(1),
+$examples["attribute-event"] = array(
+	name => "Attribute Change Events",
+	modules => array("attribute", "event"),
+	description => "How to listen for changes in attribute values.",
+	sequence => array(2, 50),
 	newWindow => "default",
 	requires => array("yui"),
 	highlightSyntax => true
 );
 
+/*
 $examples["attribute-getset"] = array(
 	name => "Custom getters, setters and validators for attribute values",
 	modules => array("attribute"),

@@ -127,4 +127,4 @@
 </script>
 </textarea>
 
-<p>So, in this example, we see how we can setup a new class with Attribute support and how the end user can perform basic set/get operations on these attribute values on the instances they create.</p>
+<p>So, in this example, we see how we can setup a new class with Attribute support allowing the end user to set/get attribute values on the instances they create.</p>
