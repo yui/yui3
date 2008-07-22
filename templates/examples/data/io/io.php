@@ -10,7 +10,7 @@ $modules["io"] = array(
 
 
 $examples["io-post"] = array(
-	name => "IO POST Transaction",
+	name => "POST Transaction",
 	modules => array("io"),
 	description => "Explores the use of HTTP POST to send data to the server and retrieve the server's response.",
 	sequence => array(1),
@@ -22,11 +22,24 @@ $examples["io-post"] = array(
 	bodyclass => false
 );
 
+$examples["io-weather"] = array(
+	name => "XML Transaction &mdash; Retrieving a Yahoo! Weather RSS (XML) Feed via a Server-Side Proxy",
+	modules => array("io"),
+	description => "Demonstrates how to retrieve XML data from a web service and make use of that information within the page.",
+	sequence => array(4),
+	logger => array("io", "example"),
+	loggerInclude => "default",
+	newWindow => "default",
+	requires => array("io"),
+	highlightSyntax => true,
+	bodyclass => false
+);
+
 $examples["io-xdr"] = array(
-	name => "IO Cross-Domain JSON Transaction",
+	name => "Cross-Domain JSON Transaction &mdash; Retrieving a News Feed from Yahoo! Pipes",
 	modules => array("io"),
 	description => "Fetch a cross-domain, JSON-formatted RSS news feed directly from <a href='http://pipes.yahoo.com'>Yahoo! Pipes</a>.",
-	sequence => array(2),
+	sequence => array(10),
 	logger => array("io", "example"),
 	loggerInclude => "default",
 	newWindow => "default",
@@ -37,18 +50,7 @@ $examples["io-xdr"] = array(
 
 /*
 
-$examples["weather"] = array(
-	name => "Retrieving a Yahoo! Weather RSS Feed",
-	modules => array("connection"),
-	description => "Demonstrates how to retrieve XML data from a web service and make use of that information within the page.",
-	sequence => array(4),
-	logger => array("connection", "example"),
-	loggerInclude => "default",
-	newWindow => "default",
-	requires => array("event", "connection"),
-	highlightSyntax => true,
-	bodyclass => false
-);
+
 
 
 $examples["abort"] = array(
