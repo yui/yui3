@@ -36,7 +36,7 @@ rm ddm.js
 wait
 rm ddm-drop.js
 wait
-#cvs commit -m "$CMT" *.js
+cvs commit -m "$CMT" *.js
 wait
 cd ../dd-plugin
 wait
