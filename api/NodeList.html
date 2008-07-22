@@ -160,6 +160,10 @@
                                                          fn
                                                     
                                                 
+                                                        , 
+                                                         context
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -174,6 +178,11 @@
                                                         <dd>
                                                             <code>fn &lt;Function&gt;</code>
                                                              The function to apply
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;Object&gt;</code>
+                                                             optional An optional context to apply the function with
+Default context is the NodeList instance
                                                         </dd>
                                                 </dl>
 
@@ -276,6 +285,42 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                                         Array
                                                     </code></dt>
                                                     <dd>Array containing the current values mapped to the Node indexes</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getXY">getXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array
+                                            <strong>getXY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets the current position of the node in page coordinates. 
+Nodes must be part of the DOM tree to have page coordinates
+(display:none or nodes not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>The XY position of the node</dd>
                                                 </dl>
              
                                         </div>
@@ -533,6 +578,53 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_setXY">setXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setXY</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the position of a node in page coordinates, regardless of how the node is positioned.
+The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             Contains X & Y values for new position (coordinates are page-based)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_size">size</a></h4>
                                     <div class="detail">
                                         <code>
@@ -696,6 +788,9 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                 <li class=""><!--<code>Array</code>-->
                                 <a href="#method_get">get</a>
                                 </li>
+                                <li class=""><!--<code>Array</code>-->
+                                <a href="#method_getXY">getXY</a>
+                                </li>
                                 <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_hasClass">hasClass</a>
                                 </li>
@@ -710,6 +805,9 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_set">set</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setXY">setXY</a>
                                 </li>
                                 <li class=""><!--<code>Int</code>-->
                                 <a href="#method_size">size</a>

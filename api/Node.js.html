@@ -168,21 +168,21 @@
     <span class="o">};</span>
 
     <span class="k">var</span> <span class="nx">PROPS_WRAP</span> <span class="o">=</span> <span class="o">{</span>
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property parentNode</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;parentNode&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property childNodes</span>
 <span class="c">         * @type NodeList</span>
 <span class="c">         */</span>
         <span class="s1">&#39;childNodes&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property children</span>
 <span class="c">         * @type NodeList</span>
@@ -204,56 +204,56 @@
             <span class="k">return</span> <span class="nx">children</span><span class="o">;</span>
         <span class="o">},</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property firstChild</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;firstChild&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property lastChild</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;lastChild&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property previousSibling</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;previousSibling&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property previousSibling</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;nextSibling&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property ownerDocument</span>
 <span class="c">         * @type Doc</span>
 <span class="c">         */</span>
         <span class="s1">&#39;ownerDocument&#39;</span><span class="o">:</span> <span class="nx">BASE_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property offsetParent</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;offsetParent&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property documentElement</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;documentElement&#39;</span><span class="o">:</span> <span class="nx">DOCUMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property body</span>
 <span class="c">         * @type Node</span>
@@ -261,14 +261,14 @@
         <span class="s1">&#39;body&#39;</span><span class="o">:</span> <span class="nx">DOCUMENT_NODE</span><span class="o">,</span>
 
         <span class="c">// form</span>
-<span class="c"></span>        <span class="c">/**</span>
+<span class="c"></span>        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property elements</span>
 <span class="c">         * @type NodeList</span>
 <span class="c">         */</span>
         <span class="s1">&#39;elements&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property options</span>
 <span class="c">         * @type NodeList</span>
@@ -277,35 +277,35 @@
 
 
         <span class="c">// table</span>
-<span class="c"></span>        <span class="c">/**</span>
+<span class="c"></span>        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property rows</span>
 <span class="c">         * @type NodeList</span>
 <span class="c">         */</span>
         <span class="s1">&#39;rows&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property cells</span>
 <span class="c">         * @type NodeList</span>
 <span class="c">         */</span>
         <span class="s1">&#39;cells&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property tHead</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;tHead&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a Node instance. </span>
 <span class="c">         * @property tFoot</span>
 <span class="c">         * @type Node</span>
 <span class="c">         */</span>
         <span class="s1">&#39;tFoot&#39;</span><span class="o">:</span> <span class="nx">ELEMENT_NODE</span><span class="o">,</span>
 
-        <span class="c">/**</span>
+        <span class="c">/*</span>
 <span class="c">         * Returns a NodeList instance. </span>
 <span class="c">         * @property tBodies</span>
 <span class="c">         * @type NodeList</span>
@@ -766,8 +766,8 @@
             <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">elementByAxis</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">],</span> <span class="nx">NEXT_SIBLING</span><span class="o">,</span> <span class="nx">wrapFn</span><span class="o">(</span><span class="nx">fn</span><span class="o">)));</span>
         <span class="o">},</span>
         
-       <span class="c">/*</span>
-<span class="c">         * Attaches a handler for the given DOM event.</span>
+       <span class="c">/**</span>
+<span class="c">         * Attaches a DOM event handler.</span>
 <span class="c">         * @method attach</span>
 <span class="c">         * @param {String} type The type of DOM Event to listen for </span>
 <span class="c">         * @param {Function} fn The handler to call when the event fires </span>
@@ -776,11 +776,11 @@
 
         <span class="nx">attach</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">arg</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
-            <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+            <span class="nx">args</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">]);</span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">,</span> <span class="nx">args</span><span class="o">);</span>
         <span class="o">},</span>
 
-       <span class="c">/*</span>
+       <span class="c">/**</span>
 <span class="c">         * Alias for attach.</span>
 <span class="c">         * @method on</span>
 <span class="c">         * @param {String} type The type of DOM Event to listen for </span>
@@ -798,7 +798,7 @@
         <span class="o">},</span>
         
        <span class="c">/**</span>
-<span class="c">         * Attaches a handler for the given DOM event.</span>
+<span class="c">         * Detaches a DOM event handler. </span>
 <span class="c">         * @method detach</span>
 <span class="c">         * @param {String} type The type of DOM Event</span>
 <span class="c">         * @param {Function} fn The handler to call when the event fires </span>
@@ -814,9 +814,9 @@
         <span class="o">},</span>
 
        <span class="c">/**</span>
-<span class="c">         * Creates a Node instance from HTML string or jsonml</span>
+<span class="c">         * Creates a Node instance from HTML string</span>
 <span class="c">         * @method create</span>
-<span class="c">         * @param {String|Array} html The string or jsonml to create from </span>
+<span class="c">         * @param {String|Array} html The string of html to create</span>
 <span class="c">         * @return {Node} A new Node instance </span>
 <span class="c">         */</span>
         <span class="nx">create</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">)</span> <span class="o">{</span>
@@ -839,8 +839,16 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">PluginClass</span> <span class="o">&amp;&amp;</span> <span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">[</span><span class="nx">PluginClass</span><span class="o">.</span><span class="nx">NS</span><span class="o">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PluginClass</span><span class="o">(</span><span class="nx">config</span><span class="o">);</span>
             <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
         <span class="o">},</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Determines whether an HTMLElement is attached to a document.</span>
+<span class="c">         * @method inDoc</span>
+<span class="c">         * @param {Node|HTMLElement} doc optional An optional document to check against.</span>
+<span class="c">         * Defaults to current document. </span>
+<span class="c">         * @return {Boolean} Whether or not this node is attached to the document. </span>
+<span class="c">         */</span>
         <span class="nx">inDoc</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">_nodes</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">];</span>
             <span class="nx">doc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">doc</span><span class="o">)</span> <span class="o">?</span> <span class="nx">getDoc</span><span class="o">(</span><span class="nx">doc</span><span class="o">)</span> <span class="o">:</span> <span class="nx">node</span><span class="o">.</span><span class="nx">ownerDocument</span><span class="o">;</span>
@@ -863,15 +871,23 @@
     <span class="o">};</span>
 
     <span class="c">/** </span>
-<span class="c">     *  Creates a Node instance from an HTML string or jsonml</span>
+<span class="c">     *  Creates a Node instance from an HTML string</span>
 <span class="c">     * @method create</span>
-<span class="c">     * @param {String | Array} jsonml HTML string or jsonml</span>
+<span class="c">     * @param {String | Array} html HTML string</span>
 <span class="c">     */</span>
     <span class="nx">Node</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">html</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">//return wrapDOM(_createNode(html));</span>
 <span class="c"></span>        <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">create</span><span class="o">(</span><span class="nx">html</span><span class="o">));</span>
     <span class="o">};</span>
 
+    <span class="c">/** </span>
+<span class="c">     * Returns a node instance wrapping the DOM element with the given ID. </span>
+<span class="c">     * @method getById</span>
+<span class="c">     * @static</span>
+<span class="c">     * @param {String} id The ID to retrieve </span>
+<span class="c">     * @param {Node|HTMLElement} doc optional An optional document to search. </span>
+<span class="c">     * Defaults to current document.</span>
+<span class="c">     */</span>
     <span class="nx">Node</span><span class="o">.</span><span class="nx">getById</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">doc</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">doc</span> <span class="o">=</span> <span class="o">(</span><span class="nx">doc</span> <span class="o">&amp;&amp;</span> <span class="nx">doc</span><span class="o">[</span><span class="nx">NODE_TYPE</span><span class="o">])</span> <span class="o">?</span> <span class="nx">doc</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">;</span>
         <span class="k">return</span> <span class="nx">wrapDOM</span><span class="o">(</span><span class="nx">doc</span><span class="o">.</span><span class="nx">getElementById</span><span class="o">(</span><span class="nx">id</span><span class="o">));</span>
@@ -879,9 +895,9 @@
 
     <span class="c">/**</span>
 <span class="c">     * Retrieves a Node instance for the given object/string. </span>
+<span class="c">     * Note: Use &#39;document&#39; string to retrieve document Node instance from string</span>
 <span class="c">     * @method get</span>
-<span class="c">     *</span>
-<span class="c">     * Use &#39;document&#39; string to retrieve document Node instance from string</span>
+<span class="c">     * @static</span>
 <span class="c">     * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.</span>
 <span class="c">     * @param {document|Node} doc optional The document containing the node. Defaults to current document.</span>
 <span class="c">     * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes</span>
@@ -921,6 +937,7 @@
     <span class="c">/**</span>
 <span class="c">     * Retrieves a NodeList instance for the given object/string. </span>
 <span class="c">     * @method all</span>
+<span class="c">     * @static</span>
 <span class="c">     * @param {HTMLCollection|Array|String} node The object to wrap.</span>
 <span class="c">     * @param {document|Node} doc optional The document containing the node. Defaults to current document.</span>
 <span class="c">     * @return {NodeList} A wrapper instance for the supplied nodes.</span>
@@ -1038,6 +1055,8 @@
 <span class="c">         * Applies the given function to each Node in the NodeList.</span>
 <span class="c">         * @method each</span>
 <span class="c">         * @param {Function} fn The function to apply </span>
+<span class="c">         * @param {Object} context optional An optional context to apply the function with</span>
+<span class="c">         * Default context is the NodeList instance</span>
 <span class="c">         * @return {NodeList} NodeList containing the updated collection </span>
 <span class="c">         * @see Y.each</span>
 <span class="c">         */</span>
@@ -1070,6 +1089,8 @@
 
     <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span> <span class="o">=</span> <span class="nx">Node</span><span class="o">;</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span> <span class="o">=</span> <span class="nx">NodeList</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">all</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">;</span>
 </pre></div>
                     </div>
 			</div>
