@@ -130,21 +130,21 @@
     };
 
     var PROPS_WRAP = {
-        /**
+        /*
          * Returns a Node instance. 
          * @property parentNode
          * @type Node
          */
         'parentNode': BASE_NODE,
 
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property childNodes
          * @type NodeList
          */
         'childNodes': BASE_NODE,
 
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property children
          * @type NodeList
@@ -166,56 +166,56 @@
             return children;
         },
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property firstChild
          * @type Node
          */
         'firstChild': BASE_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property lastChild
          * @type Node
          */
         'lastChild': BASE_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property previousSibling
          * @type Node
          */
         'previousSibling': BASE_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property previousSibling
          * @type Node
          */
         'nextSibling': BASE_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property ownerDocument
          * @type Doc
          */
         'ownerDocument': BASE_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property offsetParent
          * @type Node
          */
         'offsetParent': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property documentElement
          * @type Node
          */
         'documentElement': DOCUMENT_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property body
          * @type Node
@@ -223,14 +223,14 @@
         'body': DOCUMENT_NODE,
 
         // form
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property elements
          * @type NodeList
          */
         'elements': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property options
          * @type NodeList
@@ -239,35 +239,35 @@
 
 
         // table
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property rows
          * @type NodeList
          */
         'rows': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property cells
          * @type NodeList
          */
         'cells': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property tHead
          * @type Node
          */
         'tHead': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a Node instance. 
          * @property tFoot
          * @type Node
          */
         'tFoot': ELEMENT_NODE,
 
-        /**
+        /*
          * Returns a NodeList instance. 
          * @property tBodies
          * @type NodeList
@@ -728,8 +728,8 @@
             return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
         },
         
-       /*
-         * Attaches a handler for the given DOM event.
+       /**
+         * Attaches a DOM event handler.
          * @method attach
          * @param {String} type The type of DOM Event to listen for 
          * @param {Function} fn The handler to call when the event fires 
@@ -738,11 +738,11 @@
 
         attach: function(type, fn, arg) {
             var args = slice.call(arguments, 0);
-            args.unshift(this);
+            args.unshift(_nodes[this._yuid]);
             return Y.Event.addListener.apply(Y.Event, args);
         },
 
-       /*
+       /**
          * Alias for attach.
          * @method on
          * @param {String} type The type of DOM Event to listen for 
@@ -760,7 +760,7 @@
         },
         
        /**
-         * Attaches a handler for the given DOM event.
+         * Detaches a DOM event handler. 
          * @method detach
          * @param {String} type The type of DOM Event
          * @param {Function} fn The handler to call when the event fires 
@@ -776,9 +776,9 @@
         },
 
        /**
-         * Creates a Node instance from HTML string or jsonml
+         * Creates a Node instance from HTML string
          * @method create
-         * @param {String|Array} html The string or jsonml to create from 
+         * @param {String|Array} html The string of html to create
          * @return {Node} A new Node instance 
          */
         create: function(html) {
@@ -801,8 +801,16 @@
             if (PluginClass && PluginClass.NS) {
                 this[PluginClass.NS] = new PluginClass(config);
             }
+            return this;
         },
 
+        /**
+         * Determines whether an HTMLElement is attached to a document.
+         * @method inDoc
+         * @param {Node|HTMLElement} doc optional An optional document to check against.
+         * Defaults to current document. 
+         * @return {Boolean} Whether or not this node is attached to the document. 
+         */
         inDoc: function(doc) {
             var node = _nodes[this._yuid];
             doc = (doc) ? getDoc(doc) : node.ownerDocument;
@@ -825,15 +833,23 @@
     };
 
     /** 
-     *  Creates a Node instance from an HTML string or jsonml
+     *  Creates a Node instance from an HTML string
      * @method create
-     * @param {String | Array} jsonml HTML string or jsonml
+     * @param {String | Array} html HTML string
      */
     Node.create = function(html) {
         //return wrapDOM(_createNode(html));
         return wrapDOM(Y.DOM.create(html));
     };
 
+    /** 
+     * Returns a node instance wrapping the DOM element with the given ID. 
+     * @method getById
+     * @static
+     * @param {String} id The ID to retrieve 
+     * @param {Node|HTMLElement} doc optional An optional document to search. 
+     * Defaults to current document.
+     */
     Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
         return wrapDOM(doc.getElementById(id));
@@ -841,9 +857,9 @@
 
     /**
      * Retrieves a Node instance for the given object/string. 
+     * Note: Use 'document' string to retrieve document Node instance from string
      * @method get
-     *
-     * Use 'document' string to retrieve document Node instance from string
+     * @static
      * @param {document|HTMLElement|HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
      * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes
@@ -883,6 +899,7 @@
     /**
      * Retrieves a NodeList instance for the given object/string. 
      * @method all
+     * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
      * @return {NodeList} A wrapper instance for the supplied nodes.
@@ -1000,6 +1017,8 @@
          * Applies the given function to each Node in the NodeList.
          * @method each
          * @param {Function} fn The function to apply 
+         * @param {Object} context optional An optional context to apply the function with
+         * Default context is the NodeList instance
          * @return {NodeList} NodeList containing the updated collection 
          * @see Y.each
          */
@@ -1032,3 +1051,5 @@
 
     Y.Node = Node;
     Y.NodeList = NodeList;
+    Y.all = Y.Node.all;
+    Y.get = Y.Node.get;

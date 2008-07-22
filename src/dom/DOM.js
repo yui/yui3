@@ -1,8 +1,4 @@
-/**
- * @class DOM
- */
-
-var NODE_TYPE = 'node',
+var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
     DOCUMENT_ELEMENT = 'documentElement',
     DEFAULT_VIEW = 'defaultView',
@@ -26,13 +22,10 @@ var NODE_TYPE = 'node',
 
     UNDEFINED = undefined;
 
-    var re_tag = /<([a-z]+)/i;
-    var fragTags = {
-        option: 'select',
-        td: 'tr',
-        tr: 'table'
-    };
-    
+var re_tag = /<([a-z]+)/i;
+
+var templateCache = {};
+
 Y.DOM = {
     /**
      * Returns the HTMLElement with the given ID (Wrapper for document.getElementById).
@@ -69,7 +62,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, fn); // @tested
+        return Y.DOM._childBy(element, null, fn); // @tested
+    },
+
+    firstChildByTag: function(element, tag, fn) {
+        return Y.DOM._childBy(element, tag, fn); // @tested
     },
 
     /**
@@ -83,7 +80,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, fn, true); // @tested
+        return Y.DOM._childBy(element, null, fn, true); // @tested
+    },
+
+    lastChildByTag: function(element, tag, fn) {
+        return Y.DOM._childBy(element, tag, fn, true); // @tested
     },
 
     /**
@@ -109,7 +110,7 @@ Y.DOM = {
                     }
                 }
 
-                return elements;
+                return elements; // @tested
             };
         } else {
             return function(element, tag, fn) {
@@ -125,7 +126,7 @@ Y.DOM = {
                         };
                     }
 
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn); // @tested
                 }
                 return elements;
             };
@@ -142,45 +143,7 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn);
-    },
-
-    /**
-     * Filters a collection of HTMLElements by the given attributes.
-     * @method filterByAttributes
-     * @param {Array} elements The collection of HTMLElements to filter.
-     * @param {Object} A name/value hash of attributes.
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements with matching attributes are kept.
-     * @return {Array} The filtered collection of elements.
-     */
-    filterByAttributes: function(elements, attr, fn) { // Match one of space seperated words 
-        var s = ' ',
-            pass = false,
-            retNodes = [];
-
-        outer:
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
-            for (var j = 0, attLen = attr[LENGTH]; j < attLen; ++j) {
-                pass = false;
-                if (attr[j][0] === 'class') {
-                    attr[j][0] = 'className';                        
-                }
-                if (!elements[i][attr[j][0]] || 
-                        !( (s + elements[i][attr[j][0]] + s).indexOf(s + attr[j][2] + s) > -1)) {
-                    continue outer;
-                }
-                pass = true;
-            }
-            if ( fn && !fn(elements[i]) ) {
-                pass = false;
-            }
-            if (pass) {
-                retNodes[retNodes[LENGTH]] = elements[i];
-            }
-        }
-        return retNodes;
+        return Y.DOM.childrenByTag(element, null, fn); // @tested
     },
 
     previous: function(element, fn) {
@@ -296,6 +259,31 @@ Y.DOM = {
     },
 
     /**
+     * Finds the first element with the given tag.
+     * @method firstByTag
+     * @param {String} tag The tag being search for. 
+     * @param {HTMLElement} root optional An optional root element to start from.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current HTMLElement being tested as its only argument.
+     * If no function is given, all elements with the given tag are returned.
+     * @return {Array} The collection of matching elements.
+     */
+    firstByTag: function(tag, root, fn) {
+        root = root || Y.config.doc;
+
+        var elements = root.getElementsByTagName(tag),
+            ret = null;
+
+        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+            if ( !fn || fn(elements[i]) ) {
+                ret = elements[i];
+                break;
+            }
+        }
+        return ret;
+    },
+
+    /**
      * Filters a collection of HTMLElements by the given attributes.
      * @method filterElementsBy
      * @param {Array} elements The collection of HTMLElements to filter.
@@ -347,18 +335,30 @@ Y.DOM = {
         return ret;
     },
 
-    create: (Y.UA.ie) ? function(html, doc) {
+    create: function(html, doc) {
         doc = doc || Y.config.doc;
-        return doc.createElement(html);
-        
-    } : function(html, doc) {
-        doc = doc || Y.config.doc;
-        re_tag.exec(html);
-        var tag = (RegExp.$1) ? fragTags[RegExp.$1] : 'div';
-        var frag = doc.createElement(tag);
-        frag.innerHTML = html;
-        return frag.firstChild;
+        var m = re_tag.exec(html);
+        var create = Y.DOM._create,
+            custom = Y.DOM.creators,
+            tag, ret;
 
+        if (m && custom[m[1]]) {
+            if (typeof custom[m[1]] === 'function') {
+                create = custom[m[1]];
+            } else {
+                tag = custom[m[1]];
+            }
+        }
+        ret = create(html, doc, tag);
+        return (ret.childNodes.length > 1) ? ret.childNodes : ret.childNodes[0]; // collection or item
+        //return ret.firstChild;
+    },
+
+    _create: function(html, doc, tag) {
+        tag = tag || 'div';
+        var frag = templateCache[tag] || doc.createElement(tag);
+        frag.innerHTML = html;
+        return frag;
     },
 
     /**
@@ -423,7 +423,7 @@ Y.DOM = {
                                         doc[PARENT_WINDOW] || Y.config.win;
     },
 
-    _childBy: function(element, fn, rev) {
+    _childBy: function(element, tag, fn, rev) {
         var ret = null,
             root, axis;
 
@@ -436,7 +436,7 @@ Y.DOM = {
                 axis = NEXT_SIBLING;
             }
 
-            if (Y.DOM._testElement(root, null, fn)) { // is the matching element
+            if (Y.DOM._testElement(root, tag, fn)) { // is the matching element
                 ret = root;
             } else { // need to scan nextSibling axis of firstChild to find matching element
                 ret = Y.DOM.elementByAxis(root, axis, fn);
@@ -451,6 +451,78 @@ Y.DOM = {
         return (element && element[TAG_NAME] &&
                 (!tag || element[TAG_NAME].toUpperCase() === tag) &&
                 (!fn || fn(element)));
+    },
+
+    creators: {},
+
+    _IESimpleCreate: function(html, doc) {
+        doc = doc || Y.config.doc;
+        return doc.createElement(html);
     }
 };
 
+
+(function() {
+    var creators = Y.DOM.creators,
+        create = Y.DOM.create,
+        re_tbody = /(?:\/(?:thead|tfoot|tbody|caption|col|colgroup)>)+\s*<tbody/;
+
+    var TABLE_OPEN = '<table>',
+        TABLE_CLOSE = '</table>';
+
+    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
+        Y.mix(creators, {
+            option: function(html, doc) {
+                var frag = create('<select>' + html + '</select>');
+                return frag;
+            },
+
+            tr: function(html, doc) {
+                var frag = creators.tbody('<tbody>' + html + '</tbody>', doc);
+                return frag.firstChild;
+            },
+
+            td: function(html, doc) {
+                var frag = creators.tr('<tr>' + html + '</tr>', doc);
+                return frag.firstChild;
+            }, 
+
+            tbody: function(html, doc) {
+                var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
+                return frag;
+            },
+
+            legend: 'fieldset'
+        });
+
+        creators.col = creators.tbody; // IE wraps in colgroup
+    }
+
+    if (Y.UA.ie) {
+        // TODO: allow multiples ("<link><link>")
+        creators.col = creators.script = creators.link = Y.DOM._IESimpleCreate; 
+
+        // TODO: thead/tfoot with nested tbody
+        creators.tbody = function(html, doc) {
+            var frag = create(TABLE_OPEN + html + TABLE_CLOSE, doc);
+            var tb = frag.children.tags('tbody')[0];
+            if (frag.children.length > 1 && tb && !re_tbody.test(html)) {
+                tb.parentNode.removeChild(tb);
+            }
+            return frag;
+        };
+
+    }
+
+    if (Y.UA.gecko || Y.UA.ie) { // require custom creation code for certain element types
+        Y.mix(creators, {
+                th: creators.td,
+                thead: creators.tbody,
+                tfoot: creators.tbody,
+                caption: creators.tbody,
+                colgroup: creators.tbody,
+                col: creators.tbody,
+                optgroup: creators.option
+        });
+    }
+})();

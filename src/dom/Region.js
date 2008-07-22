@@ -38,7 +38,7 @@ Y.mix(Y.DOM, {
                 left: x[0],
                 height: node[OFFSET_HEIGHT],
                 width: node[OFFSET_WIDTH]
-            }
+            };
         }
 
         return ret;

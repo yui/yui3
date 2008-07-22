@@ -21,7 +21,7 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
             } catch(e) {
                 try { // make sure its in the document
                     val = node[FILTERS]('alpha')[OPACITY];
-                } catch(e) {
+                } catch(err) {
                     Y.log('getStyle: IE opacity filter not found; returning 1', 'warn', 'DOM');
                 }
             }

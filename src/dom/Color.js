@@ -1,3 +1,9 @@
+/**
+ * Provides color conversion functionality.
+ * @class Color
+ *
+ */
+
 var TO_STRING = 'toString',
     RE = RegExp,
     re_color = /color$/i,

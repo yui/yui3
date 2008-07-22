@@ -1,3 +1,8 @@
+/**
+ * Add className management functionality to DOM.
+ * @class DOMClassName
+ *
+ */
 
 var CLASS_NAME = 'className';
 
