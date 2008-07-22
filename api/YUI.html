@@ -962,73 +962,6 @@ and throwFail is specified, this error will be re-thrown.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_log">log</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        YUI
-                                            <strong>log</strong>
-                                           (
-                                                
-                                                        
-                                                         msg
-                                                    
-                                                
-                                                        , 
-                                                         cat
-                                                    
-                                                
-                                                        , 
-                                                         src
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            If the 'debug' config is true, a 'yui:log' event will be
-dispatched, which the logger widget and anything else
-can consume.  If the 'useConsole' config is true, it will
-write to the browser console if available.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>msg &lt;String&gt;</code>
-                                                              The message to log.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>cat &lt;String&gt;</code>
-                                                              The log category for the message.  Default
-categories are "info", "warn", "error", time".
-Custom categories can be used as well. (opt)
-                                                        </dd>
-                                                        <dd>
-                                                            <code>src &lt;String&gt;</code>
-                                                              The source of the the message (opt)
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd>YUI instance</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_merge">merge</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1283,6 +1216,82 @@ has one, a new one is not created
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_substitute">substitute</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong>substitute</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Does variable substitution on a string. It scans through the string 
+looking for expressions enclosed in { } braces. If an expression 
+is found, it is used a key on the object.  If there is a space in
+the key, the first word is used for the key and the rest is provided
+to an optional function to be used to programatically determine the
+value (the extra information might be used for this decision). If 
+the value for the key in the object, or what is returned from the
+function has a string value, number value, or object value, it is 
+substituted for the bracket expression and it repeats.  If this
+value is an object, it uses the Object's toString() if this has
+been overridden, otherwise it does a shallow dump of the key/value
+pairs.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>s &lt;String&gt;</code>
+                                                              The string that will be modified.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>o &lt;Object&gt;</code>
+                                                              An object containing the replacement values
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;Function&gt;</code>
+                                                              An optional function that can be used to
+process each match.  It receives the key,
+value, and any extra metadata included with
+the key inside of the braces.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        String
+                                                    </code></dt>
+                                                    <dd>the substituted string</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_use">use</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1363,6 +1372,8 @@ must be the last parameter.
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
+                                <li class=""><a href="module_io.html">io</a></li>
+
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
@@ -1399,6 +1410,7 @@ must be the last parameter.
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
                                 <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
                                 <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
                                 <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
                                 <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
                                 <li class=""><a href="yui.js.html">yui.js</a></li>
@@ -1459,9 +1471,6 @@ must be the last parameter.
                                 <li class=""><!--<code>string</code>-->
                                 <a href="#method_guid">guid</a>
                                 </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_log">log</a>
-                                </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_merge">merge</a>
                                 </li>
@@ -1473,6 +1482,9 @@ must be the last parameter.
                                 </li>
                                 <li class=""><!--<code>string</code>-->
                                 <a href="#method_stamp">stamp</a>
+                                </li>
+                                <li class=""><!--<code>String</code>-->
+                                <a href="#method_substitute">substitute</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_use">use</a>

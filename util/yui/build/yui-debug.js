@@ -19,13 +19,15 @@ if (typeof YUI === 'undefined' || !YUI) {
      * namespaces are preserved.  
      * @class YUI
      * @constructor
+     * @global
      * @param o configuration object
      */
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
         // Allow var yui = YUI() instead of var yui = new YUI()
-        // if (!Y instanceof YUI) {
+        // if (YUI.caller !== YUI) {
+        // if (arguments.callee.caller !== YUI) {
         if (Y === window) {
             // return new YUI(o).log('creating new instance');
             return new YUI(o);

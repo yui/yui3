@@ -57,13 +57,15 @@
 <span class="c">     * namespaces are preserved.  </span>
 <span class="c">     * @class YUI</span>
 <span class="c">     * @constructor</span>
+<span class="c">     * @global</span>
 <span class="c">     * @param o configuration object</span>
 <span class="c">     */</span>
     <span class="c">/*global YUI*/</span>
     <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="c">// Allow var yui = YUI() instead of var yui = new YUI()</span>
-<span class="c"></span>        <span class="c">// if (!Y instanceof YUI) {</span>
+<span class="c"></span>        <span class="c">// if (YUI.caller !== YUI) {</span>
+<span class="c"></span>        <span class="c">// if (arguments.callee.caller !== YUI) {</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">===</span> <span class="nb">window</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// return new YUI(o).log(&#39;creating new instance&#39;);</span>
 <span class="c"></span>            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
@@ -432,67 +434,9 @@
         <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
     <span class="o">},</span>
 
-    <span class="c">/**</span>
-<span class="c">     * If the &#39;debug&#39; config is true, a &#39;yui:log&#39; event will be</span>
-<span class="c">     * dispatched, which the logger widget and anything else</span>
-<span class="c">     * can consume.  If the &#39;useConsole&#39; config is true, it will</span>
-<span class="c">     * write to the browser console if available.</span>
-<span class="c">     *</span>
-<span class="c">     * @method log</span>
-<span class="c">     * @static</span>
-<span class="c">     * @param  {String}  msg  The message to log.</span>
-<span class="c">     * @param  {String}  cat  The log category for the message.  Default</span>
-<span class="c">     *                        categories are &quot;info&quot;, &quot;warn&quot;, &quot;error&quot;, time&quot;.</span>
-<span class="c">     *                        Custom categories can be used as well. (opt)</span>
-<span class="c">     * @param  {String}  src  The source of the the message (opt)</span>
-<span class="c">     * @return {YUI}      YUI instance</span>
-<span class="c">     */</span>
-    <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c">// this is replaced if the log module is included</span>
+<span class="c"></span>    <span class="nx">log</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-        <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">,</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">,</span> <span class="nx">es</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_eventstack</span><span class="o">,</span>
-            <span class="nx">bail</span> <span class="o">=</span> <span class="o">(</span><span class="nx">es</span> <span class="o">&amp;&amp;</span> <span class="nx">es</span><span class="o">.</span><span class="nx">logging</span><span class="o">);</span>
-
-        <span class="c">// suppress log message if the config is off or the event stack</span>
-<span class="c"></span>        <span class="c">// or the event call stack contains a consumer of the yui:log event</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">debug</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">useConsole</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">console</span> <span class="o">!=</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
-
-                <span class="c">// apply source filters</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">{</span>
-
-
-                    <span class="k">var</span> <span class="nx">exc</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logExclude</span><span class="o">,</span> <span class="nx">inc</span> <span class="o">=</span> <span class="nx">c</span><span class="o">.</span><span class="nx">logInclude</span><span class="o">;</span>
-
-                    <span class="c">// console.log(&#39;checking src filter: &#39; + src + &#39;, inc: &#39; + inc + &#39;, exc: &#39; + exc);</span>
-<span class="c"></span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">inc</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">inc</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c">// console.log(&#39;bail: inc list found, but src is not in list: &#39; + src);</span>
-<span class="c"></span>                        <span class="nx">bail</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">exc</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">src</span> <span class="k">in</span> <span class="nx">exc</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="c">// console.log(&#39;bail: exc list found, and src is in it: &#39; + src);</span>
-<span class="c"></span>                        <span class="nx">bail</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-
-                <span class="k">if</span> <span class="o">(!</span><span class="nx">bail</span><span class="o">)</span> <span class="o">{</span>
-
-                    <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="o">(</span><span class="nx">cat</span> <span class="o">&amp;&amp;</span> <span class="nx">console</span><span class="o">[</span><span class="nx">cat</span><span class="o">])</span> <span class="o">?</span> <span class="nx">cat</span> <span class="o">:</span> <span class="s1">&#39;log&#39;</span><span class="o">,</span>
-                        <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">src</span><span class="o">)</span> <span class="o">?</span> <span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="nx">msg</span> <span class="o">:</span> <span class="nx">msg</span><span class="o">;</span>
-                    <span class="nx">console</span><span class="o">[</span><span class="nx">f</span><span class="o">](</span><span class="nx">m</span><span class="o">);</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">console</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;MSG SKIPPED: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">);</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c">// category filters are not used to suppress the log event</span>
-<span class="c"></span>            <span class="c">// so that the data can be stored and displayed later.</span>
-<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:log&#39;</span><span class="o">,</span> <span class="nx">msg</span><span class="o">,</span> <span class="nx">cat</span><span class="o">,</span> <span class="nx">src</span><span class="o">);</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
     <span class="o">},</span>
 
     <span class="c">/**</span>
@@ -590,6 +534,8 @@
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
+                                <li class=""><a href="module_io.html">io</a></li>
+
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
@@ -626,6 +572,7 @@
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
                                 <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
                                 <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
                                 <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
                                 <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
                                 <li class="selected"><a href="yui.js.html">yui.js</a></li>
