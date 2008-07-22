@@ -1,11 +1,10 @@
 <?php
 
-/* Test Module: */
 $modules["dd"] = array(
 		"name" => "Drag &amp; Drop Utility",
 		"type" => "utility",
         /*this description appears on the component's examples index page*/
-		"description" => "DD Description", 
+		"description" => "Drag &amp; Drop Examples", 
 		"cheatsheet" => false 
 );	
 
@@ -97,6 +96,16 @@ $examples["anim-drop"] = array(
 	sequence => array(9),
 	newWindow => "require",
 	requires => array("yui", 'dd-drop', 'animation'),
+	highlightSyntax => true
+);
+
+$examples["drop-code"] = array(
+	name => "Drop Based Coding",
+	modules => array("dd"),
+	description => "Drop based coding example.",
+	sequence => array(10),
+	newWindow => "default",
+	requires => array("yui", 'dd-drop'),
 	highlightSyntax => true
 );
 
