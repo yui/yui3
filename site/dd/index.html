@@ -15,7 +15,9 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p> The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic. </p>
+                    <p>For more information about drag and drop as a design pattern, see the <a href="/ypatterns/parent_dragdrop.php">Yahoo! Design Pattern Libary</a>.</p>
+                    
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -25,6 +27,7 @@ include "../inc/header.inc";
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
 										<li><a href="#modules">Module Descriptions</a></li>
+										<li><a href="#simpledd">Simple Drag &amp; Drop</a></li>
 										<li><a href="#events">Events</a></li>
 										<li><a href="#bubbling">Event Bubbling</a></li>
 										<li><a href="#cssclasses">CSS Class Names</a></li>
@@ -63,6 +66,7 @@ include "../inc/header.inc";
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
 					<li><a href="#modules">Module Descriptions</a></li>
+					<li><a href="#simpledd">Simple Drag &amp; Drop</a></li>
 					<li><a href="#events">Events</a></li>
 					<li><a href="#bubbling">Event Bubbling</a></li>
 					<li><a href="#cssclasses">CSS Class Names</a></li>
@@ -120,6 +124,38 @@ include "../inc/header.inc";
                         </tbody>
                     </table>
                 </div>
+
+				<h4 id="simpledd">Simple Drag &amp; Drop</h4>
+                <h5>Basic Drag</h5>
+                <p>You create a simple Drag instance by including the <code>dd-drag</code> module and using the following code:</p>
+                <textarea name="code" class="JScript">
+                var Y = new YUI().use('dd-drag', function(Y) {
+                    var dd = new Y.DD.Drag({
+                        node: '#drag'
+                    });
+                });
+                </textarea>
+
+                <h5>Basic Proxy Drag</h5>
+                <p>You create a simple Proxy Drag instance by including the <code>dd-drag</code> and <code>dd-proxy</code> modules and using the following code:</p>
+                <textarea name="code" class="JScript">
+                var Y = new YUI().use('dd-drag', 'dd-proxy', function(Y) {
+                    var dd = new Y.DD.Drag({
+                        node: '#drag',
+                        proxy: true
+                    });
+                });
+                </textarea>
+
+                <h5>Basic Drop Target</h5>
+                <p>You create a simple Drop Target instance by including the <code>dd-drop</code> module and using the following code:</p>
+                <textarea name="code" class="JScript">
+                var Y = new YUI().use('dd-drop', function(Y) {
+                    var drop = new Y.DD.Drop({
+                        node: '#drop'
+                    });
+                });
+                </textarea>
 
 				<h4 id="events">Events</h4>
 
