@@ -5,15 +5,15 @@
     <title>Portal Example</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 
-    <script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
-    <script type="text/javascript" src="../../../../build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="../../../../build/node/node-min.js"></script>
-    <script type="text/javascript" src="../../../../build/attribute/attribute-min.js"></script>
-    <script type="text/javascript" src="../../../../build/base/base-min.js"></script>
-    <script type="text/javascript" src="../../../../build/animation/animation-min.js"></script>
-    <script type="text/javascript" src="../../../../build/io/io-min.js"></script>
-    <script type="text/javascript" src="../../../../build/json/json-min.js"></script>
-    <script type="text/javascript" src="../../../../build/dd/dd-dragdrop-all.js"></script>
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom-min.js"></script>
+    <script type="text/javascript" src="../../build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../build/attribute/attribute-min.js"></script>
+    <script type="text/javascript" src="../../build/base/base-min.js"></script>
+    <script type="text/javascript" src="../../build/animation/animation-min.js"></script>
+    <script type="text/javascript" src="../../build/io/io-min.js"></script>
+    <script type="text/javascript" src="../../build/json/json-min.js"></script>
+    <script type="text/javascript" src="../../build/dd/dd-dragdrop-all.js"></script>
 
     <link rel="stylesheet" type="text/css" href="assets/portal.css"> 
 
