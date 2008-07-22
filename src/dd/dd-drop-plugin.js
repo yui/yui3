@@ -6,7 +6,7 @@
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
         * @class DropPlugin
-        * @extends drop
+        * @extends Drop
         * @constructor
         */
 

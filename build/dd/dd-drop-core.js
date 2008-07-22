@@ -400,7 +400,7 @@ YUI.add('dd-drop', function(Y) {
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
-     * @extends base
+     * @extends Base
      * @constructor
      */
 
@@ -814,7 +814,7 @@ YUI.add('dd-drop-plugin', function(Y) {
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
         * @class DropPlugin
-        * @extends drop
+        * @extends Drop
         * @constructor
         */
 

@@ -8,7 +8,7 @@ YUI.add('dd-plugin', function(Y) {
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
         * @class DragPlugin
-        * @extends drag
+        * @extends Drag
         * @constructor
         */
 

@@ -809,7 +809,7 @@ YUI.add('dd-drag', function(Y) {
     /**
      * This class provides the ability to drag a Node.
      * @class Drag
-     * @extends base
+     * @extends Base
      * @constructor
      */
 
@@ -2282,7 +2282,7 @@ YUI.add('dd-plugin', function(Y) {
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
         * @class DragPlugin
-        * @extends drag
+        * @extends Drag
         * @constructor
         */
 
@@ -2323,7 +2323,7 @@ YUI.add('dd-drop', function(Y) {
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
-     * @extends base
+     * @extends Base
      * @constructor
      */
 
@@ -2737,7 +2737,7 @@ YUI.add('dd-drop-plugin', function(Y) {
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
         * @class DropPlugin
-        * @extends drop
+        * @extends Drop
         * @constructor
         */
 
