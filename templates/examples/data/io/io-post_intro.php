@@ -1,0 +1,1 @@
+<p>POSTing data to a server using YUI's IO utility is a simple process.  Click "Send a POST Request" below to try it out, then read the description below to learn how it's done.</p>
