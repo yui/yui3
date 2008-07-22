@@ -1,0 +1,2300 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: io  io   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>io&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_io.html">io</a>
+                 &gt; io 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>io</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        The io class is a utility that brokers HTTP requests through a simplified
+interface.  Specifically, it allows JavaScript to make HTTP requests to
+a resource without a page reload.  The underlying transport for making
+same-domain requests is the XMLHttpRequest object.  YUI.io can also use
+Flash, if specified as a transport, for cross-domain requests.
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__fn">_fn</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Object that stores callback handlers for cross-domain requests,
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__headers">_headers</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Object of default HTTP headers to be initialized and sent
+for all transactions.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__q">_q</a>
+                                        <code>- private static array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Array of transactions queued for processing
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__qMaxSize">_qMaxSize</a>
+                                        <code>- private static int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Queue property to set a maximum queue storage size.  When
+this property is set, the queue will not store any more transactions
+until the queue size os reduced below this threshold. There is no
+maximum queue size until it is explicitly set.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__qState">_qState</a>
+                                        <code>- private static int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Property to determine whether the queue is set to
+1 (active) or 0 (inactive).  When inactive, transactions
+will be stored in the queue until the queue is set to active.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__timeOut">_timeOut</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Object that stores timeout values for any transaction with
+a defined "timeout" configuration property.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__xdr">_xdr</a>
+                                        <code>- private static object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Map of transports created for cross-domain requests.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_transactionId">transactionId</a>
+                                        <code>- private static int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A transaction counter that increments for each transaction.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__abort">_abort</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_abort</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that terminates a transaction, if it is still
+in progress, and fires events io:abort and t:abort.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - Transaction object generated by _create().
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__async">_async</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_async</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         d
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that sends the transaction request, and fires the
+event -- io:start and t:start.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - Transaction object generated by _create().
+                                                        </dd>
+                                                        <dd>
+                                                            <code>d &lt;string&gt;</code>
+                                                             - Transaction data.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__clearTimeout">_clearTimeout</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_clearTimeout</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Clears the timeout interval started by _startTimeout().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;number&gt;</code>
+                                                             - Transaction id.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__concat">_concat</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_concat</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that concatenates string data for HTTP GET transactions.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>s &lt;string&gt;</code>
+                                                             - URI or root data.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>d &lt;string&gt;</code>
+                                                             - data to be concatenated onto URI.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__create">_create</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_create</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that creates a unique transaction object for each
+request..
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>s &lt;number&gt;</code>
+                                                             - URI or root data.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;number&gt;</code>
+                                                             - configuration object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleResponse">_handleResponse</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_handleResponse</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that determines if a transaction response qualifies
+as success or failure, based on the response HTTP status code, and
+fires the appropriate success or failure events.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - Transaction object generated by _create().
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__id">_id</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_id</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that increments _transactionId for each transaction.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__initTransport">_initTransport</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_initTransport</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method to initialize the desired transport medium.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - object of transport configurations.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__io">_io</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_io</strong>
+                                           (
+                                                
+                                                        
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for requesting a transaction. _io() is implemented as
+yui.io().  Each transaction may include a configuration object.  Its
+properties are:
+method: HTTP method verb (e.g., GET or POST). If this property is not
+not defined, the default value will be GET.
+data: This is the name-value string that will be sent as the transaction
+data.  If the request is HTTP GET, the data become part of
+querystring. If HTTP POST, the data are sent in the message body.
+xdr: Defines the transport to be used for cross-domain requests.  By
+setting this property, the transaction will use the specified
+transport instead of XMLHttpRequest.  Currently, the only alternate
+transport supported is Flash (e.g., { xdr: 'flash' }).
+form: This is a defined object used to process HTML form as data.  The
+properties are:
+{
+id: object, //HTML form object or id of HTML form
+useDisabled: boolean, //Allow disabled HTML form field values
+to be sent as part of the data.
+}
+on: This is a defined object used to create and handle specific
+events during a transaction lifecycle.  These events will fire in
+addition to the global io events. The events are:
+start - This event is fired when a request is sent to a resource.
+complete - This event fires when the transaction is complete.
+success - This event fires when the response status resolves to
+HTTP 2xx.
+failure - This event fires when the response status resolves to
+HTTP 4xx, 5xx, and beyond.
+abort - This even is fired when a transaction abort is fire by
+timeout, or when it is manually aborted.
+The properties are:
+{
+start: function(id, args){},
+complete: function(id, responseobject, args){},
+success: function(id, responseobject, args){},
+failure: function(id, responseobject, args){},
+abort: function(id, args){}
+}
+Each property can reference a function or be written as an
+inline function.
+context: Object reference for an event handler when it is implemented
+as a method of a base object. Defining "context" will preserve
+the proper reference of "this" used in the event handler.
+header: This is a defined object of client headers, as many as.
+desired for the transaction.  These headers are sentThe object
+pattern is:
+{
+header: value
+}
+timeout: This value, defined as milliseconds, is a time threshold for the
+transaction. When this threshold is reached, and the resource
+has not responded, the transaction will be aborted.
+arguments: Object, array, string, or number passed to all registered
+event handlers.  This value is available as the second
+argument in the "start" and "abort" event handlers; and, it is
+the third argument in the "complete", "success", and "failure"
+event handlers.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>uri &lt;string&gt;</code>
+                                                             - qualified path to transaction resource.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ioAbort">_ioAbort</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ioAbort</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires event "io:abort" and creates, fires a
+transaction-specific "abort" event, if config.on.abort is
+defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;number&gt;</code>
+                                                             - transaction id.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ioComplete">_ioComplete</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ioComplete</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires event "io:complete" and creates, fires a
+transaction-specific "complete" event, if config.on.complete is
+defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;object&gt;</code>
+                                                             - transaction object.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ioFailure">_ioFailure</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ioFailure</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires event "io:failure" and creates, fires a
+transaction-specific "failure" event, if config.on.failure is
+defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - transaction object.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ioStart">_ioStart</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ioStart</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires event "io:start" and creates, fires a
+transaction-specific start event, if config.on.start is
+defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;number&gt;</code>
+                                                             - transaction id
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ioSuccess">_ioSuccess</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_ioSuccess</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires event "io:success" and creates, fires a
+transaction-specific "success" event, if config.on.success is
+defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - transaction object.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__purge">_purge</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_purge</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for removing a specific, pending transaction from
+the queue.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__queue">_queue</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_queue</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for requesting a transaction, and queueing the
+request before it is sent to the resource.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__readyState">_readyState</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_readyState</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Event handler bound to onreadystatechange.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - Transaction object generated by _create().
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__serialize">_serialize</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_serialize</strong>
+                                           (
+                                                
+                                                        
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method to enumerate through an HTML form's elements collection
+and return a string comprised of key-value pairs.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object specific to form operations..
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>string</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setHeader">_setHeader</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_setHeader</strong>
+                                           (
+                                                
+                                                        
+                                                         l
+                                                    
+                                                
+                                                        , 
+                                                         v
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that stores default client headers for all transactions.
+If a label is passed with no value argument, the header will be deleted.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>l &lt;string&gt;</code>
+                                                             - HTTP header
+                                                        </dd>
+                                                        <dd>
+                                                            <code>v &lt;string&gt;</code>
+                                                             - HTTP header value
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setHeaders">_setHeaders</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_setHeaders</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         h
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that sets all HTTP headers to be sent in a transaction.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - XHR instance for the specific transaction.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>h &lt;object&gt;</code>
+                                                             - HTTP headers for the specific transaction, as defined
+in the configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__shift">_shift</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_shift</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for removing a transaction from the top of the
+queue, and sending the transaction to _io().
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__size">_size</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_size</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method to query the current size of the queue, or to
+set a maximum queue size.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__start">_start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_start</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for setting the queue to active. If there are
+transactions pending in the queue, they will be processed from the
+queue in FIFO order.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__startTimeout">_startTimeout</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_startTimeout</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Starts timeout count if config,timeout is defined.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             - Transaction object generated by _create().
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - Configuration object passed to YUI.io().
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__stop">_stop</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_stop</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for setting queue processing to inactive.
+Transaction requests to YUI.io.queue() will be stored in the queue, but
+not processed until the queue is reset to "active".
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__swf">_swf</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_swf</strong>
+                                           (
+                                                
+                                                        
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         yid
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that creates the Flash transport swf.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>uri &lt;string&gt;</code>
+                                                             - location of IO.swf.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>yid &lt;string&gt;</code>
+                                                             - string representation of YUI instance.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__tPubSub">_tPubSub</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_tPubSub</strong>
+                                           (
+                                                
+                                                        
+                                                         e
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for creating and subscribing transaction events.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>e &lt;string&gt;</code>
+                                                             - event to be published
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__unshift">_unshift</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_unshift</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for promoting a transaction to the top of the queue.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__xhr">_xhr</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                         static 
+                                        
+                                        void
+                                            <strong>_xhr</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that creates the XMLHttpRequest transport
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_header">header</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>header</strong>
+                                           (
+                                                
+                                                        
+                                                         l
+                                                    
+                                                
+                                                        , 
+                                                         v
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method that stores default client headers for all transactions.
+If a label is passed with no value argument, the header will be deleted.
+This is the interface for _setHeader().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>l &lt;string&gt;</code>
+                                                             - HTTP header
+                                                        </dd>
+                                                        <dd>
+                                                            <code>v &lt;string&gt;</code>
+                                                             - HTTP header value
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_io">io</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>io</strong>
+                                           (
+                                                
+                                                        
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for requesting a transaction. This
+is the interface for _io().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>uri &lt;string&gt;</code>
+                                                             - qualified path to transaction resource.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_promote">promote</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>promote</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for promoting a transaction to the top of the queue.
+This is the interface for _unshift().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>i &lt;number&gt;</code>
+                                                             - ID of queued transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_purge">purge</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>purge</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for removing a specific, pending transaction from
+the queue. This is the interface for _purge().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>i &lt;number&gt;</code>
+                                                             - ID of queued transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_queue">queue</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>queue</strong>
+                                           (
+                                                
+                                                        
+                                                         uri
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for requesting a transaction, and queueing the
+request before it is sent to the resource. This is the
+interface for _queue().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>uri &lt;string&gt;</code>
+                                                             - qualified path to transaction resource.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             - configuration object for the transaction.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>int</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_size">size</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>size</strong>
+                                           (
+                                                
+                                                        
+                                                         i
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method to query the current size of the queue, or to
+set a maximum queue size.  This is the interface for _size().
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>i &lt;number&gt;</code>
+                                                             - Specified maximum size of queue.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>number</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_start">start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>start</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for setting the queue to "active". If there are
+transactions pending in the queue, they will be processed from the
+queue in FIFO order. This is the interface for _start().
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stop">stop</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>stop</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for setting queue processing to inactive.
+Transaction requests to YUI.io.queue() will be stored in the queue, but
+not processed until the queue is set to "active". This is the
+interface for _stop().
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>void</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_transport">transport</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>transport</strong>
+                                           (
+                                                
+                                                        
+                                                         t
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method for specifying and initializing a transport
+to facilitate cross-domain HTTP requests.  This is the
+interface for _initTransport
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>t &lt;object&gt;</code>
+                                                             - configuration object for the transport.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>boolean</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_animation.html">animation</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class="selected"><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
+
+                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="io.html">io</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="io.js.html">io.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__fn">_fn</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__headers">_headers</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__q">_q</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__qMaxSize">_qMaxSize</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__qState">_qState</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__timeOut">_timeOut</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__xdr">_xdr</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_transactionId">transactionId</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__abort">_abort</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__async">_async</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__clearTimeout">_clearTimeout</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__concat">_concat</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__create">_create</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleResponse">_handleResponse</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__id">_id</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__initTransport">_initTransport</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__io">_io</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ioAbort">_ioAbort</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ioComplete">_ioComplete</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ioFailure">_ioFailure</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ioStart">_ioStart</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ioSuccess">_ioSuccess</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__purge">_purge</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__queue">_queue</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__readyState">_readyState</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__serialize">_serialize</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setHeader">_setHeader</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setHeaders">_setHeaders</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__shift">_shift</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__size">_size</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__start">_start</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__startTimeout">_startTimeout</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__stop">_stop</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__swf">_swf</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__tPubSub">_tPubSub</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unshift">_unshift</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__xhr">_xhr</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_header">header</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_io">io</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_promote">promote</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_purge">purge</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_queue">queue</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_size">size</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_start">start</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_stop">stop</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_transport">transport</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>
