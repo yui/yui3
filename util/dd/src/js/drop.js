@@ -329,7 +329,7 @@
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                 width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
                 backgroundColor: 'yellow',
-                //opacity: '.5',
+                opacity: '.5',
                 zIndex: 999,
                 overflow: 'hidden',
                 top: '-900px',

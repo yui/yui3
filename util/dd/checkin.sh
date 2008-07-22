@@ -23,13 +23,20 @@ echo "****************************************"
 wait
 cvs commit -m "$CMT"
 wait
-cd ../../src/dd
-wait
 #clear
 echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
-cvs commit -m "$CMT" *.js
+cd ../../src/dd
+cat ddm.js >> ddm-base.js
+wait
+cat ddm-drop.js >> ddm-base.js
+wait
+rm ddm.js
+wait
+rm ddm-drop.js
+wait
+#cvs commit -m "$CMT" *.js
 wait
 cd ../dd-plugin
 wait
