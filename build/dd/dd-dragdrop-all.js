@@ -2580,6 +2580,15 @@ YUI.add('dd-drop', function(Y) {
         * @description Positions and sizes the shim with the raw data from the node, this can be used to programatically adjust the Targets shim for Animation..
         */
         sizeShim: function() {
+            if (!DDM.activeDrag) {
+                return false; //Nothing is dragging, no reason to activate.
+            }
+            if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
+                return false;
+            }
+            if (this.get('lock')) {
+                return false;
+            }
             var node = this.get(NODE),
                 nh = node.get(OFFSET_HEIGHT),
                 nw = node.get(OFFSET_WIDTH),
