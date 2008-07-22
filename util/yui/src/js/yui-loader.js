@@ -123,12 +123,12 @@ Y.Env.moduleInfo = {
         
         // io: { },
 
-        json-parse: {
-            path: json/json-parse-min.js
+        'json-parse': {
+            path: 'json/json-parse-min.js'
         },
 
-        json-stringify: {
-            path: json/json-stringify-min.js
+        'json-stringify': {
+            path: 'json/json-stringify-min.js'
         },
 
         json: {
@@ -147,7 +147,7 @@ Y.Env.moduleInfo = {
         // @TODO evaluate this package
         substitute: {
             requires: ['dump'],
-            path: i18n/substitute-min.js
+            path: 'i18n/substitute-min.js'
         },
 
         yuitestcore: { 

@@ -2347,7 +2347,7 @@ YUI.add("event-custom", function(Y) {
                 var ef = (this.emitFacade) ? this._getFacade(args) : null;
 
                 for (i in subs) {
-                    if (Y.Object.owns(subs, i)) {
+                    if (subs.hasOwnProperty(i)) {
 
                         if (!hasSub) {
                             es.logging = (es.logging || (this.type === 'yui:log'));
@@ -2390,10 +2390,10 @@ YUI.add("event-custom", function(Y) {
 
                 // process after listeners.  If the default behavior was
                 // prevented, the after events don't fire.
-                if (!this.prevented && this.stopped > 1) {
+                if (!this.prevented && this.stopped < 2) {
                     subs = Y.merge(this.afters);
                     for (i in subs) {
-                        if (Y.Object.owns(subs, i)) {
+                        if (subs.hasOwnProperty(i)) {
 
                             if (!hasSub) {
                                 es.logging = (es.logging || (this.type === 'yui:log'));
@@ -7996,7 +7996,8 @@ Y.Get = function() {
               "dom", 
               "node", 
               "io", 
-              "get");
+              "get",
+              "loader");
 
               // "loader"
 

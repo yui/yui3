@@ -29,7 +29,8 @@
               "dom", 
               "node", 
               "io", 
-              "get");
+              "get",
+              "loader");
 
               // "loader"
 

@@ -581,73 +581,6 @@ stop the timer.</dd>
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_log">log</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        YUI
-                                            <strong>log</strong>
-                                           (
-                                                
-                                                        
-                                                         msg
-                                                    
-                                                
-                                                        , 
-                                                         cat
-                                                    
-                                                
-                                                        , 
-                                                         src
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            If the 'debug' config is true, a 'yui:log' event will be
-dispatched, which the logger widget and anything else
-can consume.  If the 'useConsole' config is true, it will
-write to the browser console if available.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>msg &lt;String&gt;</code>
-                                                              The message to log.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>cat &lt;String&gt;</code>
-                                                              The log category for the message.  Default
-categories are "info", "warn", "error", time".
-Custom categories can be used as well. (opt)
-                                                        </dd>
-                                                        <dd>
-                                                            <code>src &lt;String&gt;</code>
-                                                              The source of the the message (opt)
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd>YUI instance</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_trim">trim</a></h4>
                                     <div class="detail">
                                         <code>
@@ -741,6 +674,7 @@ the input is not a string, the input will be returned untouched.
                                 <li class=""><a href="Array.html">Array</a></li>
                                 <li class=""><a href="Get.html">Get</a></li>
                                 <li class="selected"><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Loader.html">Loader</a></li>
                                 <li class=""><a href="Object.html">Object</a></li>
                                 <li class=""><a href="UA.html">UA</a></li>
                                 <li class=""><a href="YUI.html">YUI</a></li>
@@ -757,7 +691,7 @@ the input is not a string, the input will be returned untouched.
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
                                 <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
                                 <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
-                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
+                                <li class=""><a href="yui-loader.js.html">yui-loader.js</a></li>
                                 <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
                                 <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
                                 <li class=""><a href="yui.js.html">yui.js</a></li>
@@ -797,9 +731,6 @@ the input is not a string, the input will be returned untouched.
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_later">later</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_log">log</a>
                                 </li>
                                 <li class=""><!--<code>string</code>-->
                                 <a href="#method_trim">trim</a>
