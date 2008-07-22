@@ -16,6 +16,10 @@ YUI.add("substitute", function(Y) {
      * value is an object, it uses the Object's toString() if this has
      * been overridden, otherwise it does a shallow dump of the key/value
      * pairs.
+     *
+     * This method is included in the 'i18n' module.  It is not included
+     * in the YUI module.
+     *
      * @method substitute
      * @param s {String} The string that will be modified.
      * @param o {Object} An object containing the replacement values

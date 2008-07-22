@@ -12,8 +12,10 @@ YUI.add("dump", function(Y) {
      * FireFox.  Trying to account for it is hanging FireFox.
      * Could be a FireBug interaction.
      *
+     * This method is in the 'dump' module, which is not bundled with
+     * the core YUI object
+     *
      * @method dump
-     * @for YUI
      * @param o {Object} The object to dump
      * @param d {int} How deep to recurse child objects, default 3
      * @return {String} the dump result
