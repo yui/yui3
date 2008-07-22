@@ -6,7 +6,7 @@
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
-     * @extends base
+     * @extends Base
      * @constructor
      */
 

@@ -16,7 +16,7 @@ cvs commit -m "Checking in source files"
 wait
 
 cd ../../build/dd
-#clear
+clear
 echo "****************************************"
 echo "Checking in Build files"
 echo "****************************************"
@@ -25,12 +25,12 @@ cvs commit -m "$CMT"
 wait
 cd ../../src/dd
 wait
-#clear
+clear
 echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
 cvs commit -m "$CMT" *.js
-#clear
+clear
 wait
 echo "****************************************"
 echo "Checking in Test file"
@@ -38,7 +38,7 @@ echo "****************************************"
 cd ../../tests
 wait
 cvs commit -m "$CMT" dd.html
-#clear
+clear
 echo "****************************************"
 echo "Commit Finished"
 echo "****************************************"

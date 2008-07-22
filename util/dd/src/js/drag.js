@@ -6,7 +6,7 @@
     /**
      * This class provides the ability to drag a Node.
      * @class Drag
-     * @extends base
+     * @extends Base
      * @constructor
      */
 
