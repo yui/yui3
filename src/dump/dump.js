@@ -1,4 +1,3 @@
-// requires lang
 YUI.add("dump", function(Y) {
 
     var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ',
@@ -14,6 +13,7 @@ YUI.add("dump", function(Y) {
      * Could be a FireBug interaction.
      *
      * @method dump
+     * @for YUI
      * @param o {Object} The object to dump
      * @param d {int} How deep to recurse child objects, default 3
      * @return {String} the dump result
