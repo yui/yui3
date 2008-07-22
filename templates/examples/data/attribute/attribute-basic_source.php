@@ -4,7 +4,7 @@
     // Get a new instance of YUI and 
     // load it with the attribute module
 
-    var Y = YUI().use("attribute", "example-out");
+    var Y = YUI().use("attribute");
 
     // Setup custom dummy class which is going
     // to support managed attributes
