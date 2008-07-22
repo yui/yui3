@@ -41,7 +41,9 @@ YUI.add("loader", function(Y) {
         ROOT = VERSION + '/build/';
 
 
-Y.Env.moduleInfo = {
+Y.Env.meta = {
+
+    version: VERSION,
 
     root: ROOT,
 
@@ -57,7 +59,7 @@ Y.Env.moduleInfo = {
         rollup: 3
     },
 
-    moduleInfo: {
+    modules: {
 
         basecss: {
             type: CSS,
@@ -105,23 +107,23 @@ Y.Env.moduleInfo = {
             requires: ['base']
         },
 
-        // attribute: { },
+        attribute: { },
 
         base: {
             requires: ['attribute']
         },
         
-        // classnamemanager: { },
+        classnamemanager: { },
         
-        // compat: { },
+        compat: { },
         
-        // cookie: { },
+        cookie: { },
 
-        // css: { },
+        css: { },
 
-        // dump: { },
+        dump: { },
         
-        // io: { },
+        io: { },
 
         'json-parse': {
             path: 'json/json-parse-min.js'
@@ -139,10 +141,9 @@ Y.Env.moduleInfo = {
             requires: ['css']
         },
 
-        // profiler: { },
+        profiler: { },
 
-        // queue: { },
-
+        queue: { },
 
         // @TODO evaluate this package
         substitute: {
@@ -178,7 +179,7 @@ Y.Env.moduleInfo = {
          * @static
          */
         // info: '@yuiinfo@', 
-        info: Y.Env.moduleInfo
+        info: Y.Env.meta
 
     };
 
@@ -333,7 +334,7 @@ Y.Env.moduleInfo = {
         // this.moduleInfo = Y.merge(_Y.info.moduleInfo);
         this.moduleInfo = {};
         
-        var defaults = _Y.info.moduleInfo;
+        var defaults = _Y.info.modules;
 
         for (var i in defaults) {
             if (defaults.hasOwnProperty(i)) {

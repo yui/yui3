@@ -750,6 +750,8 @@ YUI.add("event-custom", function(Y) {
                 var subs = Y.merge(this.subscribers), s,
                            args=Y.Array(arguments, 0, true), i;
 
+                this.stopped = 0;
+                this.prevented = 0;
                 this.target = this.target || this.host;
 
                 this.currentTarget = this.host || this.currentTarget;
@@ -792,13 +794,13 @@ YUI.add("event-custom", function(Y) {
                 // bubble if this is hosted in an event target and propagation has not been stopped
                 // @TODO check if we need to worry about defaultFn order
                 if (this.bubbles && this.host && !this.stopped) {
+                    es.stopped = 0;
+                    es.prevented = 0;
                     ret = this.host.bubble(this);
-                }
 
-                // is.stopped = es.stopped || 0;
-                // this.prevented = es.prevented || 0;
-                this.stopped = 0;
-                this.prevented = 0;
+                    this.stopped = Math.max(this.stopped, es.stopped);
+                    this.prevented = Math.max(this.prevented, es.prevented);
+                }
 
                 // execute the default behavior if not prevented
                 // @TODO need context
