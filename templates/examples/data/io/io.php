@@ -13,6 +13,19 @@ $examples["io-post"] = array(
 	name => "IO POST Transaction",
 	modules => array("io"),
 	description => "Explores the use of HTTP POST to send data to the server and retrieve the server's response.",
+	sequence => array(1),
+	logger => array("io", "example"),
+	loggerInclude => "default",
+	newWindow => "default",
+	requires => array("io"),
+	highlightSyntax => true,
+	bodyclass => false
+);
+
+$examples["io-xdr"] = array(
+	name => "IO Cross-Domain JSON Transaction",
+	modules => array("io"),
+	description => "Fetch a cross-domain, JSON-formatted RSS news feed directly from <a href='http://pipes.yahoo.com'>Yahoo! Pipes</a>.",
 	sequence => array(2),
 	logger => array("io", "example"),
 	loggerInclude => "default",
