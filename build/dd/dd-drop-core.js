@@ -3,13 +3,9 @@ YUI.add('dd-ddm-drop', function(Y) {
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * <p>Module Name: <strong>dd-ddm-drop</strong></p>
-     * @module dd
      */
     /**
      * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     * @class DDM
-     * @extends Base
-     * @constructor
      */    
     //TODO CSS class name for the bestMatch..
     Y.mix(Y.DD.DDM, {
@@ -723,7 +719,7 @@ YUI.add('dd-drop', function(Y) {
                 height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
                 width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
                 backgroundColor: 'yellow',
-                //opacity: '.5',
+                opacity: '.5',
                 zIndex: 999,
                 overflow: 'hidden',
                 top: '-900px',

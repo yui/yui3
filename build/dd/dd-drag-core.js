@@ -289,15 +289,11 @@ YUI.add('dd-ddm', function(Y) {
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
      * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
      * <p>Module Name: <strong>dd-ddm</strong></p>
-     * @module dd
      */
 
      /**
      * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
      * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     * @class DDM
-     * @extends Base
-     * @constructor
      */
 
     Y.mix(Y.DD.DDM, {
