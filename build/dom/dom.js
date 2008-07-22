@@ -261,6 +261,31 @@ Y.DOM = {
     },
 
     /**
+     * Finds the first element with the given tag.
+     * @method firstByTag
+     * @param {String} tag The tag being search for. 
+     * @param {HTMLElement} root optional An optional root element to start from.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current HTMLElement being tested as its only argument.
+     * If no function is given, all elements with the given tag are returned.
+     * @return {Array} The collection of matching elements.
+     */
+    firstByTag: function(tag, root, fn) {
+        root = root || Y.config.doc;
+
+        var elements = root.getElementsByTagName(tag),
+            ret = null;
+
+        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+            if ( !fn || fn(elements[i]) ) {
+                ret = elements[i];
+                break;
+            }
+        }
+        return ret;
+    },
+
+    /**
      * Filters a collection of HTMLElements by the given attributes.
      * @method filterElementsBy
      * @param {Array} elements The collection of HTMLElements to filter.
@@ -1378,6 +1403,7 @@ Y.mix(Y.DOM, {
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getXY
+     * @param element The target element
      * @return {Array} The XY position of the element
 
      TODO: test inDocument/display
@@ -1491,6 +1517,7 @@ Y.mix(Y.DOM, {
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getX
+     * @param element The target element
      * @return {Int} The X position of the element
      */
 
@@ -1503,6 +1530,7 @@ Y.mix(Y.DOM, {
      * Element must be part of the DOM tree to have page coordinates
      * (display:none or elements not appended return false).
      * @method getY
+     * @param element The target element
      * @return {Int} The Y position of the element
      */
 
@@ -1512,8 +1540,9 @@ Y.mix(Y.DOM, {
 
     /**
      * Set the position of an html element in page coordinates, regardless of how the element is positioned.
-     * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+     * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
+     * @param element The target element
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
      * @param {Boolean} noRetry By default we try and set the position a second time if the first fails
      */
@@ -1567,6 +1596,7 @@ Y.mix(Y.DOM, {
      * Set the X position of an html element in page coordinates, regardless of how the element is positioned.
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
+     * @param element The target element
      * @param {Int} x The X values for new position (coordinates are page-based)
      */
     setX: function(node, x) {
@@ -1577,6 +1607,7 @@ Y.mix(Y.DOM, {
      * Set the Y position of an html element in page coordinates, regardless of how the element is positioned.
      * The element(s) must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
+     * @param element The target element
      * @param {Int} y The Y values for new position (coordinates are page-based)
      */
     setY: function(node, y) {
