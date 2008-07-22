@@ -1,11 +1,9 @@
 <?php
 
-/* Test Module: */
 $modules["attribute"] = array(
 		"name" => "Attribute Utility",
 		"type" => "utility",
-        /*this description appears on the component's examples index page*/
-		"description" => "The YUI Attribute Utility adds managed attribute support to objects being augmented with it.", 
+		"description" => "The YUI Attribute Utility adds managed attribute support to classes which get augmented with it.", 
 		"cheatsheet" => false 
 );	
 
