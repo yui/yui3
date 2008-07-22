@@ -9,4 +9,5 @@
    include($dataroot."/event/event.php");
    include($dataroot."/io/io.php");
    include($dataroot."/json/json.php");
+   include($dataroot."/node/node.php");
 ?>
