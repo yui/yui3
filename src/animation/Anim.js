@@ -3,10 +3,6 @@
  * @module animation
  */
     /**
-     * Handles animation _queueing and threading.
-     */
-
-    /**
      * Provides an API for animating objects.
      * Usage:
      * <pre>

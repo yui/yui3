@@ -1,3 +1,6 @@
+/**
+ * @module yuitest
+ */
 (function() {
 
     // object utils

@@ -1,3 +1,6 @@
+/**
+ * @class DOM
+ */
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
     DOCUMENT_ELEMENT = 'documentElement',
