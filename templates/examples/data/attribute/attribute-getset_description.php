@@ -1,8 +1,8 @@
-<h3>Get and Set functions</h3>
+<h3>Get And Set Functions</h3>
 
 <p>Attribute lets you define get and set functions for each attribute. These functions are invoked when the user calls Attribute's <code>get</code> and <code>set</code> methods, and provide a way to modify the value returned or the value stored respectively.</p>
 
-<h3>Setting up the Box class attributes</h3>
+<h3>Setting Up The Box Class Attributes</h3>
 
 <p>In this example, we'll set up a Box class, with width and height attributes. We'll define a <code>set</code> function for these attributes, which appends a default unit suffix ("em") to the value passed to the Attribute <code>set</code> method, if none is provided by the caller:</p>
 
@@ -95,7 +95,7 @@
     ...
 </textarea>
 
-<h3>Syncing up Changes using Events</h3>
+<h3>Syncing Up Changes Using Events</h3>
 
 <p>We use attribute change events, to listen for changes in the <code>width, height and content</code> attributes, and update the respective areas of the rendered DOM for the box:</p>
 

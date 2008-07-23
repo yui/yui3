@@ -1,8 +1,8 @@
-<h3>Setting up your own class to use Attribute</h3>
+<h3>Setting Up Your Own Class To Use Attribute</h3>
 
 <p>In this example, we'll show how you can use the Attribute utility to add managed attributes to your own object classes. Later examples will walk you through listening for attribute change events and some of the more advanced attribute configuration properties.</p>
 
-<h3>A word about sandboxing YUI</h3>
+<h3>Sandboxing YUI</h3>
 <p>Before we get into attribute, a quick note on sandboxing YUI. For all of the attribute examples, we'll be writing the example code inside an anonymous function wrapper, and using our own YUI instance inside that anonymous function wrapper, which is recommended when working with YUI:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -33,7 +33,7 @@
 </script>
 </textarea>
 
-<h3>Setting up your custom class</h3>
+<h3>Setting Up Your Custom Class</h3>
 
 <p>The first step in the example is to create the constructor function for the new class, which we want to make into in a managed attribute provider. In our example, this class is called <code>MyClass</code>. We then augment this class with <code>Attribute</code> so that it recieves all of <code>Attribute's</code> methods, supporting managed attributes:</p>
 
@@ -47,7 +47,7 @@
 </script>
 </textarea>
 
-<h3>Adding attributes to your custom class</h3>
+<h3>Adding Attributes To Your Custom Class</h3>
 
 <p>We can now setup any attributes we need for <code>MyClass</code>. We can setup multiple attributes in one call using the using the <code>_initAtts</code> method (a protected method, designed to be used by the augmented class, as opposed to end users of your class). For the basic example we add 3 attributes - <code>foo, bar, and foobar</code>, and provide an initial  <code>value</code> for each. The same object literal we use to provide the value for the attribute, will also be used in the other examples to setup specific properties for the attribute such as <code>readOnly</code>, <code>writeOnce</code>, <code>validator</code> etc..</p>
 
@@ -84,7 +84,7 @@
 
 <p><strong>NOTE:</strong> The <code>_initAtts</code> method, in addition to the default attribute configurarion, also accepts an object literal (associative array) of name value pairs which can be used to over-ride the default values of the attributes. This is useful for classes which wish to allow the user the set the value of attributes as part of object construction, as shown by the use of the <code>cfg</code> argument above.</p>
 
-<h3>Using attributes on instances of MyClass</h3>
+<h3>Using Attributes On Instances Of MyClass</h3>
 
 <p>Now that we have <code>MyClass</code> defined with a set of attributes it supports, we can get and set attribute values on instances of <code>MyClass</code>:
 

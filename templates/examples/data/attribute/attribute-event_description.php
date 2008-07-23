@@ -1,8 +1,8 @@
-<h3>Listening for attribute change events</h3>
+<h3>Listening For Attribute Change Events</h3>
 
 <p>In this example, we'll show how you can listen for attribute change events, and interact with the event payload.</p>
 
-<h4>Setting up a custom class with Attribute</h4>
+<h4>Setting Up A Custom Class With Attribute</h4>
 
 <p>First, we setup the same custom class we created for the basic example with 3 attributes <code>foo, bar and foobar</code>, using the code below:</p>
 
@@ -32,7 +32,7 @@
 </script>
 </textarea>
 
-<h4>Setting up event listeners</h4>
+<h4>Setting Up Event Listeners</h4>
 
 <p>Once we have an instance of the custom class, we can use the <code>on</code> and <code>after</code> methods provided by Attribute, to listen for changes in the value of each of the attributes:</p>
 
