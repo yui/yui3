@@ -78,9 +78,9 @@
         printEvt(e);
     });
 
-
-    Y.Event.onDOMReady(function() {
-        
+    // event:ready is fired when the DOM is ready
+    Y.on("event:ready", function() {
+ 
         var attrSel = Y.Node.get("#attr");
         var attrOpts = attrSel.get("options");
         var newValTxt = Y.Node.get("#newVal");
@@ -96,7 +96,6 @@
         function populateCurrentValue() {
             var selIndex = attrSel.get("selectedIndex");
             var attr = attrOpts.item(selIndex).get("value");
-
             newValTxt.set("value", o1.get(attr));
         }
 

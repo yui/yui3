@@ -114,7 +114,8 @@
 
     Y.augment(Box, Y.Attribute);
 
-    Y.Event.onDOMReady(function() { 
+    // event:ready is fired when the DOM is ready
+    Y.on("event:ready", function() { 
 
         var b = new Box();
 
