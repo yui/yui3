@@ -15,7 +15,8 @@ YUI.add("substitute", function(Y) {
      * substituted for the bracket expression and it repeats.  If this
      * value is an object, it uses the Object's toString() if this has
      * been overridden, otherwise it does a shallow dump of the key/value
-     * pairs.
+     * pairs if Y.dump is available (if dump isn't available, toString()
+     * is used).
      *
      * This method is included in the 'i18n' module.  It is not included
      * in the YUI module.
