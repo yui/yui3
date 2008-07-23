@@ -70,8 +70,8 @@ Y.Env.meta = {
 
         log: {
             optional: [DRAGDROP],
-            path: 'log/logreader-min.js',
-            skinnable: 1
+            path: 'log/logreader-min.js'
+            // skinnable: 1
         },
 
         reset: {
@@ -211,7 +211,7 @@ Y.Env.meta = {
 
         yuitest: {
             requires: ['log'],
-            skinnable: 1,
+            // skinnable: 1,
             supersedes: ['yuitestcore']
         }
     }
