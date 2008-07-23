@@ -5,6 +5,7 @@
 // @TODO: this needs to be created at build time from module metadata
 
         _APPLY_TO_WHITE_LIST = {
+            'io.xdrReady': 1,
             'io.start': 1,
             'io.success': 1,
             'io.failure': 1,
