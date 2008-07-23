@@ -1,4 +1,4 @@
-<button id="fetch">Load JSON RSS news feed from Yahoo! Pipes.</button>
+<button id="fetch" disabled="disabled">Load JSON RSS news feed from Yahoo! Pipes.</button>
 
 <div id="output">
 	<ul>
@@ -11,7 +11,7 @@
 (function() {
 
 	//Create YUI instance using io and JSON modules:
-	var Y = new YUI().use("io", "json-parse");
+	var Y = new YUI().use("*");
 	
 	//Data fetched will be displayed in a UL in the
 	//element #output:
@@ -55,6 +55,7 @@
 			
 			//Output the string to the page:
 			output.set("innerHTML", s);
+			output.addClass("yui-null"); // !@#?#!!! opera....
 		
 		} else {
 			//No news stories were found in the feed.
@@ -73,9 +74,7 @@
 	var cfg = {
 		method: "GET",
 		xdr: { 
-			use:'flash', //This is the xdrConfig id we referenced above.
-			responseXML:false //we're using JSON -- marginally faster, and
-							  //supported by the Pipes API
+			use:'flash' //This is the xdrConfig id we referenced above.
 		},
 		on: { 
 			//Our event handlers previously defined:
@@ -95,7 +94,14 @@
 			cfg
 		);
 	}	
-	Y.on("click", handleClick, "#fetch");
+	
+	//add the clickHandler as soon as the xdr Flash module has 
+	//loaded:
+	Y.on('io:xdrReady', function() {
+		var fetch = Y.Node.get("#fetch");
+		fetch.set("disabled", false);
+		Y.on("click", handleClick, fetch);
+	});
 	
 })();
 </script>

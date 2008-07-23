@@ -3,12 +3,13 @@
     	<li>IO POST response data will appear here.</li>
     </ul>
 </div>
+<form><input type="button" id="requestButton" value="Send a POST Request"></form>
 
 <script>
 (function() {
 	
 	//Create a YUI instance including support for IO:
-	var Y = YUI().use("io");
+	var Y = YUI().use("*");
 	
 	//Get a reference to the Node that we are using
 	//to report results:
@@ -27,7 +28,7 @@
 			s += "<li>PHP response: " + o.responseText + "</li>";
 			div.set("innerHTML", s);
 		}
-	};
+	}
 	
 	//A function handler to use for failed requests:
 	var handleFailure = function(ioId, o){
@@ -39,7 +40,7 @@
 			s += "<li>Status code message: " + o.statusText + "</li>";
 			div.set("innerHTML", s);
 		}
-	};
+	}
 	
 	//Subscribe our handlers to IO's global custom events:
 	Y.on('io:success', handleSuccess);
@@ -50,7 +51,7 @@
 	var cfg = {
 		method: "POST",
 		data: "user=YDN&password=API",
-		headers: { 'X-Transaction': 'POST Example'},
+		headers: { 'X-Transaction': 'POST Example'}
 	};
 	
 	//The URL of the resource to which we're POSTing data:
@@ -73,4 +74,3 @@
 })();
 </script>
 
-<form><input type="button" id="requestButton" value="Send a POST Request"></form>

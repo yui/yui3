@@ -138,6 +138,13 @@ Y.io.transport(xdrConfig);</textarea>
 			cfg
 		);
 	}	
-	Y.on("click", handleClick, "#fetch");
+	
+	//add the clickHandler as soon as the xdr Flash module has 
+	//loaded:
+	Y.on('io:xdrReady', function() {
+		var fetch = Y.Node.get("#fetch");
+		fetch.set("disabled", false);
+		Y.on("click", handleClick, fetch);
+	});
 	
 })();</textarea>
