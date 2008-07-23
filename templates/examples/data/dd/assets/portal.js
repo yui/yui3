@@ -45,7 +45,7 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
             id: 'techcrunch',
             title: 'TechCrunch',
             url: 'feeds.feedburner.com/Techcrunch',
-            icon: 'techcrunch.com/favicon.ico',
+            icon: 'techcrunch.com/favicon.ico'
         },
         'smashing': {
             id: 'smashing',
@@ -54,6 +54,17 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
             icon: 'www.smashingmagazine.com/favicon.ico'
         }
     };
+
+	Y.io.transport({
+		id: 'flash',
+		yid: Y.id,
+		src: 'assets/io.swf'
+    });
+
+    var stopper = function(e) {
+        e.stopPropagation();
+    };
+
 
     var _setCookies = function() {
         var dds = Y.DD.DDM._drags;
@@ -79,8 +90,169 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
         Y.Cookie.setSub('yui', 'portal', cookie);
     };
 
-    var stopper = function(e) {
-        e.stopPropagation();
+
+    //Handle the node:click event
+    /* {{{ */
+    var _nodeClick = function(e) {
+        if (e.target.test('a')) {
+            //e.halt();
+            var a = e.target;
+            var anim = null;
+            var div = a.get('parentNode').get('parentNode');
+            if (a.hasClass('min')) {
+                var ul = div.query('ul'),
+                    h2 = div.query('h2'),
+                h = h2.get('offsetHeight'),
+                hUL = ul.get('offsetHeight'),
+                inner = div.query('div.inner');
+
+                anim = new Y.Anim({
+                    node: inner
+                });
+                if (!div.hasClass('minned')) {
+                    anim.setAtts({
+                        to: {
+                            height: 0
+                        },
+                        duration: '.25',
+                        easing: Y.Easing.easeOut,
+                        iteration: 1
+                    });
+                    anim.on('end', function() {
+                        div.toggleClass('minned');
+                        _setCookies();
+                    });
+                } else {
+                    anim.setAtts({
+                        to: {
+                            height: (hUL)
+                        },
+                        duration: '.25',
+                        easing: Y.Easing.easeOut,
+                        iteration: 1
+                    });
+                    div.toggleClass('minned');
+                    _setCookies();
+                }
+                anim.run();
+
+            }
+            if (a.hasClass('close')) {
+                var li = div.get('parentNode');
+                var id = li.get('id');
+                var dd = Y.DD.DDM.getDrag('#' + id);
+                var data = dd.get('data');
+                var item = Y.Node.get('#' + data.id);
+
+
+                dd.destroy();
+                anim = new Y.Anim({
+                    node: div,
+                    to: {
+                        opacity: 0
+                    },
+                    duration: '.25',
+                    easing: Y.Easing.easeOut
+                });
+                anim.on('end', function() {
+                    var anim = new Y.Anim({
+                        node: div,
+                        to: {
+                            height: 0
+                        },
+                        duration: '.25',
+                        easing: Y.Easing.easeOut
+                    });
+                    anim.on('end', function() {
+                        li.get('parentNode').removeChild(li);
+                        item.removeClass('disabled');
+
+                        var dd2 = new Y.DD.Drag({
+                            node: item,
+                            proxy: true,
+                            moveOnEnd: false,
+                            data: data
+                        });
+                        dd2.on('drag:start', stopper);
+                        dd2.on('drag:end', stopper);
+                        dd2.on('drag:drophit', stopper);
+                        _setCookies();
+
+                    });
+                    anim.run();
+                });
+                anim.run();
+            }
+            e.halt();
+        }
+    };
+    /* }}} */
+    
+    
+    var setupModDD = function(mod, data, dd) {
+        var node = mod;
+        node.query('h2').on('click', _nodeClick);
+        
+        dd.set('target', true);
+        dd.unsubscribe('drag:start', stopper);
+        dd.unsubscribe('drag:end', stopper);
+        dd.unsubscribe('drag:drophit', stopper);
+
+        dd.addHandle('h2').addInvalid('a');
+        dd._unprep();
+        dd.set('node', mod);
+        dd._prep();
+
+        
+        var url = 'http:/'+'/pipes.yahooapis.com/pipes/pipe.run?_id=6b7b2c6a32f5a12e7259c36967052387&_render=json&url=http:/'+'/' + data.url;
+        var id = Y.io(url, {
+            method: 'GET',
+            xdr: { 
+			    use:'flash',
+			    responseXML:false
+		    },
+		    on: { 
+			    success: function(id, data) {
+                    var d = feeds[trans[id]];
+                    var inner = d.mod.query('div.inner');
+                    var oRSS = Y.JSON.parse(data.responseText);
+                    var html = '';
+		            if (oRSS && oRSS.count) {
+			            Y.each(oRSS.value.items, function(v, k) {
+                            if (k < 5) {
+                                html += '<li><a href="' + v.link + '" target="_blank">' + v.title + '</a>';//<p>' + v.description + '</p></li>';
+                            }
+                        });
+		            }
+                    inner.set('innerHTML', '<ul>' + html + '</ul>');
+                    if (Y.DD.DDM.activeDrag) {
+                        var proxy_inner = Y.DD.DDM.activeDrag.get('dragNode').query('div.inner');
+                        proxy_inner.set('innerHTML', '<ul>' + html + '</ul>');
+                        
+                    }
+                },
+			    failure: console.log
+		    }
+        });
+        feeds[data.id].trans = id;
+        feeds[data.id].mod = mod;
+        trans[id.id] = data.id;
+        
+    };
+    
+
+
+    var createMod = function(feed) {
+        var str = '<li class="item">' +
+                    '<div class="mod">' + 
+                        '<h2>' + feed.title + ' <a title="minimize module" class="min" href="#"> </a>' +
+                        '<a title="close module" class="close" href="#"></a></h2>' +
+                        '<div class="inner">' +
+                        '    <div class="loading">Feed loading, please wait..</div>' + 
+                        '</div>' +
+                    '</div>' +
+                '</li>';
+        return Y.Node.create(str);
     };
 
     var _handleStart = function(e) {
@@ -124,18 +296,6 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
         dd.on('drag:drophit', stopper);
     });
 
-    var createMod = function(feed) {
-        var str = '<li class="item">' +
-                    '<div class="mod">' + 
-                        '<h2>' + feed.title + ' <a title="minimize module" class="min" href="#"> </a>' +
-                        '<a title="close module" class="close" href="#"></a></h2>' +
-                        '<div class="inner">' +
-                        '    <div class="loading">Feed loading, please wait..</div>' + 
-                        '</div>' +
-                    '</div>' +
-                '</li>';
-        return Y.Node.create(str);
-    };
  
     //Handle the drop:enter event
     Y.DD.DDM.on('drop:enter', function(e) {
@@ -211,101 +371,6 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
         _setCookies();
     });
     
-    //Handle the node:click event
-    /* {{{ */
-    var _nodeClick = function(e) {
-        if (e.target.test('a')) {
-            //e.halt();
-            var a = e.target;
-            var div = a.get('parentNode').get('parentNode');
-            if (a.hasClass('min')) {
-                var ul = div.query('ul'),
-                    h2 = div.query('h2'),
-                h = h2.get('offsetHeight'),
-                hUL = ul.get('offsetHeight'),
-                inner = div.query('div.inner');
-
-                var anim = new Y.Anim({
-                    node: inner
-                });
-                if (!div.hasClass('minned')) {
-                    anim.setAtts({
-                        to: {
-                            height: 0
-                        },
-                        duration: .25,
-                        easing: Y.Easing.easeOut,
-                        iteration: 1
-                    });
-                    anim.on('end', function() {
-                        div.toggleClass('minned');
-                        _setCookies();
-                    });
-                } else {
-                    anim.setAtts({
-                        to: {
-                            height: (hUL)
-                        },
-                        duration: .25,
-                        easing: Y.Easing.easeOut,
-                        iteration: 1
-                    });
-                    div.toggleClass('minned');
-                    _setCookies();
-                }
-                anim.run();
-
-            }
-            if (a.hasClass('close')) {
-                var li = div.get('parentNode');
-                var id = li.get('id');
-                var dd = Y.DD.DDM.getDrag('#' + id);
-                var data = dd.get('data');
-                var item = Y.Node.get('#' + data.id);
-
-
-                dd.destroy();
-                var anim = new Y.Anim({
-                    node: div,
-                    to: {
-                        opacity: 0
-                    },
-                    duration: .25,
-                    easing: Y.Easing.easeOut
-                });
-                anim.on('end', function() {
-                    var anim = new Y.Anim({
-                        node: div,
-                        to: {
-                            height: 0
-                        },
-                        duration: .25,
-                        easing: Y.Easing.easeOut
-                    });
-                    anim.on('end', function() {
-                        li.get('parentNode').removeChild(li);
-                        item.removeClass('disabled');
-
-                        var dd2 = new Y.DD.Drag({
-                            node: item,
-                            proxy: true,
-                            moveOnEnd: false,
-                            data: data
-                        });
-                        dd2.on('drag:start', stopper);
-                        dd2.on('drag:end', stopper);
-                        dd2.on('drag:drophit', stopper);
-                        _setCookies();
-
-                    });
-                    anim.run();
-                });
-                anim.run();
-            }
-            e.halt();
-        }
-    };
-    /* }}} */
 
 
     Y.DD.DDM.on('drop:over', function(e) {
@@ -331,67 +396,6 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
         });
     });
     
-
-	Y.io.transport({
-		id: 'flash',
-		yid: Y.id,
-		src: 'assets/io.swf'
-    });
-
-    
-    
-    var setupModDD = function(mod, data, dd) {
-        var node = mod;
-        node.query('h2').on('click', _nodeClick);
-        
-        dd.set('target', true);
-        dd.unsubscribe('drag:start', stopper);
-        dd.unsubscribe('drag:end', stopper);
-        dd.unsubscribe('drag:drophit', stopper);
-
-        dd.addHandle('h2').addInvalid('a');
-        dd._unprep();
-        dd.set('node', mod);
-        dd._prep();
-
-        
-        var url = 'http:/'+'/pipes.yahooapis.com/pipes/pipe.run?_id=6b7b2c6a32f5a12e7259c36967052387&_render=json&url=http:/'+'/' + data.url;
-        var id = Y.io(url, {
-            method: 'GET',
-            xdr: { 
-			    use:'flash',
-			    responseXML:false
-		    },
-		    on: { 
-			    success: function(id, data) {
-                    var d = feeds[trans[id]];
-                    var inner = d.mod.query('div.inner');
-                    var oRSS = Y.JSON.parse(data.responseText);
-                    var html = '';
-		            if (oRSS && oRSS.count) {
-			            Y.each(oRSS.value.items, function(v, k) {
-                            if (k < 5) {
-                                html += '<li><a href="' + v.link + '" target="_blank">' + v.title + '</a>';//<p>' + v.description + '</p></li>';
-                            }
-                        });
-		            }
-                    inner.set('innerHTML', '<ul>' + html + '</ul>');
-                    if (Y.DD.DDM.activeDrag) {
-                        var inner = Y.DD.DDM.activeDrag.get('dragNode').query('div.inner');
-                        inner.set('innerHTML', '<ul>' + html + '</ul>');
-                        
-                    }
-                },
-			    failure: console.log
-		    }
-        });
-        feeds[data.id].trans = id;
-        feeds[data.id].mod = mod;
-        trans[id.id] = data.id;
-        
-    };
-    
-
     Y.Event.addListener(window, 'load', function() {
         Y.Lang.later(500, this, function() {
             var cookie = Y.Cookie.getSub('yui', 'portal');
