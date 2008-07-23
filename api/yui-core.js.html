@@ -448,7 +448,7 @@
 <span class="c">     * supplied parameters to the end of the arguments the function</span>
 <span class="c">     * is executed with.</span>
 <span class="c">     * @TODO review param order for PR2</span>
-<span class="c">     *</span>
+<span class="c">     * @method bind</span>
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to append to the arguments collection for the function</span>
@@ -466,19 +466,36 @@
         <span class="o">};</span>
     <span class="o">};</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Subscribes to the yui:load event, which fires when a Y.use operation</span>
+<span class="c">     * is complete.</span>
+<span class="c">     * @method ready</span>
+<span class="c">     * @param f {Function} the function to execute</span>
+<span class="c">     * @param c Optional execution context</span>
+<span class="c">     * @param args* 0..n Additional arguments to append </span>
+<span class="c">     * to the signature provided when the event fires.</span>
+<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">ready</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">arguments</span><span class="o">,</span> <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">)</span> <span class="o">:</span> <span class="nx">f</span><span class="o">;</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s2">&quot;yui:load&quot;</span><span class="o">,</span> <span class="nx">m</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">};</span>
 
-    <span class="c">// Overload specs: element/selector?/widget?</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
-    <span class="o">};</span>
-
-    <span class="c">// DOM events and custom events</span>
-<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c">/**</span>
+<span class="c">     * Attach an event listener, either to a DOM object</span>
+<span class="c">     * or to an Event.Target.</span>
+<span class="c">     * @param type {string} the event type</span>
+<span class="c">     * @param f {Function} the function to execute</span>
+<span class="c">     * @param o the Event.Target or element to attach to</span>
+<span class="c">     * @param context Optional execution context</span>
+<span class="c">     * @param args* 0..n additional arguments to append</span>
+<span class="c">     * to the signature provided when the event fires.</span>
+<span class="c">     * @method on</span>
+<span class="c">     * @return {Event.Handle} a handle object for </span>
+<span class="c">     * unsubscribing to this event.</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
 
         <span class="k">if</span> <span class="o">(</span><span class="nx">type</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">cat</span> <span class="o">=</span> <span class="nx">type</span><span class="o">.</span><span class="nx">split</span><span class="o">(</span><span class="s1">&#39;:&#39;</span><span class="o">);</span>
@@ -492,6 +509,19 @@
 
     <span class="o">};</span>
 
+    <span class="c">/**</span>
+<span class="c">     * Detach an event listener (either a custom event or a</span>
+<span class="c">     * DOM event</span>
+<span class="c">     * @method detach</span>
+<span class="c">     * @param type the type of event, or a Event.Handle to</span>
+<span class="c">     * for the subscription.  If the Event.Handle is passed</span>
+<span class="c">     * in, the other parameters are not used.</span>
+<span class="c">     * @param f {Function} the subscribed function</span>
+<span class="c">     * @param o the object or element the listener is subscribed</span>
+<span class="c">     * to.</span>
+<span class="c">     * @method detach</span>
+<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">detach</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">type</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">type</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">return</span> <span class="nx">type</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>

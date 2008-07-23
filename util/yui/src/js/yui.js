@@ -21,6 +21,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @class YUI
      * @constructor
      * @global
+     * @uses Event.Target
      * @param o configuration object
      */
     /*global YUI*/
@@ -365,6 +366,10 @@ YUI.prototype = {
 
             if (callback) {
                 callback(Y);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y);
             }
         };
 

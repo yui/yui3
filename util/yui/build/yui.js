@@ -21,6 +21,7 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @class YUI
      * @constructor
      * @global
+     * @uses Event.Target
      * @param o configuration object
      */
     /*global YUI*/
@@ -353,6 +354,10 @@ YUI.prototype = {
 
             if (callback) {
                 callback(Y);
+            }
+
+            if (Y.fire) {
+                Y.fire('yui:load', Y);
             }
         };
 
@@ -1234,7 +1239,7 @@ YUI.add("core", function(Y) {
      * supplied parameters to the end of the arguments the function
      * is executed with.
      * @TODO review param order for PR2
-     *
+     * @method bind
      * @param f {Function} the function to bind
      * @param c the execution context
      * @param args* 0..n arguments to append to the arguments collection for the function
@@ -1251,18 +1256,35 @@ YUI.add("core", function(Y) {
         };
     };
 
+    /**
+     * Subscribes to the yui:load event, which fires when a Y.use operation
+     * is complete.
+     * @method ready
+     * @param f {Function} the function to execute
+     * @param c Optional execution context
+     * @param args* 0..n Additional arguments to append 
+     * to the signature provided when the event fires.
+     * @return {YUI} the YUI instance
+     */
     Y.ready = function(f, c) {
         var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
         Y.on("yui:load", m);
         return this;
     };
 
-    // Overload specs: element/selector?/widget?
-    Y.get = function() {
-        return Y.Node.get.apply(Y.Node, arguments);
-    };
-
-    // DOM events and custom events
+    /**
+     * Attach an event listener, either to a DOM object
+     * or to an Event.Target.
+     * @param type {string} the event type
+     * @param f {Function} the function to execute
+     * @param o the Event.Target or element to attach to
+     * @param context Optional execution context
+     * @param args* 0..n additional arguments to append
+     * to the signature provided when the event fires.
+     * @method on
+     * @return {Event.Handle} a handle object for 
+     * unsubscribing to this event.
+     */
     Y.on = function(type, f, o) {
 
         if (type.indexOf(':') > -1) {
@@ -1277,6 +1299,19 @@ YUI.add("core", function(Y) {
 
     };
 
+    /**
+     * Detach an event listener (either a custom event or a
+     * DOM event
+     * @method detach
+     * @param type the type of event, or a Event.Handle to
+     * for the subscription.  If the Event.Handle is passed
+     * in, the other parameters are not used.
+     * @param f {Function} the subscribed function
+     * @param o the object or element the listener is subscribed
+     * to.
+     * @method detach
+     * @return {YUI} the YUI instance
+     */
     Y.detach = function(type, f, o) {
         if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
