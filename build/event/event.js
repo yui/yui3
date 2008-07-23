@@ -1757,6 +1757,8 @@ YUI.add("event-dom", function(Y) {
 
                         var handles=[], h, i, l, proc = function(v, k) {
                             // handles.push(this.addListener(el[i], type, fn, obj, override));
+                            // var node = el.item(k);
+                            
                             var b = a.slice();
                             b.unshift(v);
                             h = E.addListener.apply(E, b);
@@ -1770,7 +1772,7 @@ YUI.add("event-dom", function(Y) {
 
 
                     } else if (Y.Lang.isString(el)) {
-                        var oEl = Y.get(el);
+                        var oEl = Y.all(el);
                         // If the el argument is a string, we assume it is 
                         // actually the id of the element.  If the page is loaded
                         // we convert el to the actual element, otherwise we 
@@ -1779,7 +1781,12 @@ YUI.add("event-dom", function(Y) {
                         // check to see if we need to delay hooking up the event 
                         // until after the page loads.
                         if (oEl) {
-                            el = oEl;
+                            if (oEl.size() > 1) {
+                                aa[0] = oEl;
+                                return E.addListener.apply(E, aa);
+                            } else {
+                                el = oEl.item(0);
+                            }
                         } else {
                             //
                             // defer adding the event until the element is available
@@ -1963,12 +1970,16 @@ YUI.add("event-dom", function(Y) {
                  */
                 _isValidCollection: function(o) {
                     try {
-                        return ( o                     && // o is something
-                                 typeof o !== "string" && // o is not a string
-                                 (o.each || o.length)              && // o is indexed
-                                 !o.tagName            && // o is not an HTML element
-                                 !o.alert              && // o is not a window
-                                 (o.item || typeof o[0] !== "undefined") );
+                        if (o instanceof Y.NodeList) {
+                            return true;
+                        } else {
+                            return ( o                     && // o is something
+                                     typeof o !== "string" && // o is not a string
+                                     (o.each || o.length)              && // o is indexed
+                                     !o.tagName            && // o is not an HTML element
+                                     !o.alert              && // o is not a window
+                                     (o.item || typeof o[0] !== "undefined") );
+                        }
                     } catch(ex) {
                         return false;
                     }
