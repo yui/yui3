@@ -37,11 +37,10 @@ $examples["attribute-getset"] = array(
 	highlightSyntax => true
 );
 
-
 $examples["attribute-clone"] = array(
 	name => "Value Clone Configuration",
 	modules => array("attribute"),
-	description => "",
+	description => "Specify how attributes should be cloned, when returning values through get.",
 	sequence => array(4),
 	newWindow => "default",
 	requires => array("yui", "dump", "attribute"),
@@ -51,10 +50,11 @@ $examples["attribute-clone"] = array(
 $examples["attribute-rw"] = array(
 	name => "readOnly and writeOnce Configuration",
 	modules => array("attribute"),
-	description => "",
+	description => "Configure attributes to be readOnly or writeOnce.",
 	sequence => array(5),
 	newWindow => "default",
 	requires => array("yui", "attribute"),
 	highlightSyntax => true
 );
+
 ?>
