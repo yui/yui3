@@ -15,11 +15,18 @@ YUI.add("io", function (Y) {
 	*/
 
   /**
+	* @event io:xdrReady
+	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @type Event Custom
+	*/
+	var E_XDR_READY = 'io:xdrReady',
+
+  /**
 	* @event io:start
 	* @description This event is fired by YUI.io when a transaction is initiated..
 	* @type Event Custom
 	*/
-	var E_START = 'io:start',
+	E_START = 'io:start',
 
   /**
 	* @event io:complete
@@ -113,7 +120,6 @@ YUI.add("io", function (Y) {
 	* @type object
 	*/
 	_xdr = {
-		yid:null,
 		flash:null
 	},
 
@@ -344,7 +350,7 @@ YUI.add("io", function (Y) {
 	* context: Object reference for an event handler when it is implemented
 	*          as a method of a base object. Defining "context" will preserve
 	*          the proper reference of "this" used in the event handler.
-	* header: This is a defined object of client headers, as many as.
+	* headers: This is a defined object of client headers, as many as.
 	*         desired for the transaction.  These headers are sentThe object
 	*         pattern is:
 	*		  {
@@ -352,8 +358,8 @@ YUI.add("io", function (Y) {
 	*         }
 	*
 	* timeout: This value, defined as milliseconds, is a time threshold for the
-	*          transaction. When this threshold is reached, and the resource
-	*          has not responded, the transaction will be aborted.
+	*          transaction. When this threshold is reached, and the transaction's
+	*          Complete event has not yet fired, the transaction will be aborted.
 	* arguments: Object, array, string, or number passed to all registered
 	*            event handlers.  This value is available as the second
 	*            argument in the "start" and "abort" event handlers; and, it is
@@ -405,7 +411,7 @@ YUI.add("io", function (Y) {
 			if (d && m !== 'GET') {
 				c.data = d;
 			}
-			o.c.send(uri, c, o.id, _xdr.yid);
+			o.c.send(uri, c, o.id);
 
 			return o;
 		}
@@ -451,6 +457,10 @@ YUI.add("io", function (Y) {
 
 			return event;
 	};
+
+	function _ioXdrReady(id) {
+		Y.fire(E_XDR_READY, id);
+	}
 
    /**
 	* @description Fires event "io:start" and creates, fires a
@@ -648,12 +658,11 @@ YUI.add("io", function (Y) {
 		var b = Y.Node.get("body");
 		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">';
 		swf += '<param name="movie" value="' + uri + '">';
+		swf += '<param name="FlashVars" value="yid=' + yid + '">';
 		swf += '<param name="allowScriptAccess" value="sameDomain">';
 		swf += '</object>';
 		b.appendChild(Y.Node.create(swf))
-
 		_xdr.flash = d.getElementById('yuiSwfIo');
-		_xdr.yid = yid;
 	};
 
    /**
@@ -956,6 +965,7 @@ YUI.add("io", function (Y) {
 		return str.substr(0, str.length - 1);
 	};
 
+	_io.xdrReady = _ioXdrReady;
 	_io.start = _ioStart;
 	_io.success = _ioSuccess;
 	_io.failure = _ioFailure;
