@@ -12,7 +12,7 @@
 
 <script>
 
-var Y = new YUI().use('dd-drag', 'dd-proxy');
+var Y = YUI().use('dd-drag', 'dd-proxy');
 Y.on('event:ready', function() {
     var dd = new Y.DD.Drag({
         //Selector of the node to make draggable

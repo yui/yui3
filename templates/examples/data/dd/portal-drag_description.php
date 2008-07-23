@@ -26,7 +26,7 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-proxy</code>, <code>dd-constrain</code> and <code>animation</code> modules.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation');
+var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation');
 </textarea>
 
 <h3>Setting up the Drag</h3>
@@ -235,7 +235,7 @@ var _nodeClick = function(e) {
 <h3>Full Source</h3>
 <textarea name="code" class="JScript">
 (function() {
-var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', function(Y) {
+var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', function(Y) {
     var goingUp = false, lastY = 0, crossList = false;
  
     //Handle the drop:enter event

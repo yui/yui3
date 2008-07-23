@@ -65,7 +65,7 @@
 </div>
 
 <script>
-var Y = new YUI().use('dd-constrain');
+var Y = YUI().use('dd-constrain');
 Y.on('event:ready', function() {
     var dd1 = new Y.DD.Drag({
         node: '#dd-demo-1',

@@ -45,6 +45,7 @@
 #workarea {
     position: relative;
     height: 300px;
+    width: 500px;
 }
 #workarea .yui-dd-drop-active-valid {
     border: 2px solid green;
@@ -77,7 +78,7 @@
 </div>
 
 <script>
-var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
+var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
 Y.on('event:ready', function() {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');

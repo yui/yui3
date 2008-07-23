@@ -24,7 +24,7 @@
 
 <script>
 
-var Y = new YUI().use('dd-plugin');
+var Y = YUI().use('dd-plugin');
 Y.on('event:ready', function() {
     var node = Y.Node.get('#demo');
     node.plug(Y.Plugin.Drag);

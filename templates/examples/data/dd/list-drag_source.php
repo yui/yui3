@@ -6,6 +6,7 @@
         border: 1px solid black;
         padding: 10px;
         margin: 10px;
+        zoom: 1;
     }
     #play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
     #play ul li {
@@ -56,7 +57,7 @@
 </div>
 
 <script type="text/javascript">
-var Y = new YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
+var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     //Listen for all drop:over events
     Y.DD.DDM.on('drop:over', function(e) {
         //Get a reference to out drag and drop nodes

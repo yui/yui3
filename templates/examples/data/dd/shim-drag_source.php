@@ -19,7 +19,7 @@
 
 <script>
 
-var Y = new YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
+var Y = YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
     //Toggling the buttons
     Y.Node.get('#shim').on('click', function(e) {
         var value = e.target.get('value');

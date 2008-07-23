@@ -6,11 +6,11 @@
     <link type="text/css" rel="stylesheet" href="../../build/reset-fonts/reset-fonts.css" />
 
     <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
-    <script type="text/javascript" src="../../build/dom/dom-min.js"></script>
-    <script type="text/javascript" src="../../build/node/node-min.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom.js"></script>
+    <script type="text/javascript" src="../../build/node/node.js"></script>
     <script type="text/javascript" src="../../build/attribute/attribute-min.js"></script>
     <script type="text/javascript" src="../../build/base/base-min.js"></script>
-    <script type="text/javascript" src="../../build/animation/animation-min.js"></script>
+    <script type="text/javascript" src="../../build/animation/animation.js"></script>
     <script type="text/javascript" src="../../build/io/io-min.js"></script>
     <script type="text/javascript" src="../../build/json/json-min.js"></script>
     <script type="text/javascript" src="../../build/dd/dd-dragdrop-all.js"></script>
@@ -67,7 +67,7 @@
         <div id="anim5" class="anim">Anim #5</div>
 
 <script type="text/javascript">
-var Y = new YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
     d.plug(Y.Plugin.Drag, { /*dragMode: 'intersect'*/ });
@@ -86,7 +86,7 @@ var Y = new YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', fun
         a.fx.setAtts({
             from: {
                 left: 0,
-                from: 50
+                height: 50
             },
             to: {
                 left: function() {
@@ -94,6 +94,7 @@ var Y = new YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', fun
                     var dW = Y.Node.get('body').get('viewportRegion').right;
                     //Subtract the width of the dock and the node's width
                     var aW = a.get('offsetWidth');
+                    //alert(dW + ' :: ' + aW);
                     //This is the far right side we want to animate to
                     return ((dW - aW) - 75); //Minus 75 for the dock
                 },

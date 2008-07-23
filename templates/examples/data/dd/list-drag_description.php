@@ -22,7 +22,7 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-constrain</code>, <code>dd-proxy</code> and <code>dd-drop</code>, modules.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
+var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
 </textarea>
 
 <h3>Making the Nodes Drag Instances and Drop Targets</h3>
@@ -157,7 +157,7 @@ Y.DD.DDM.on('drag:drophit', function(e) {
 
 <h3>Full Javascript Source</h3>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
+var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     //Listen for all drop:over events
     Y.DD.DDM.on('drop:over', function(e) {
         //Get a reference to out drag and drop nodes
