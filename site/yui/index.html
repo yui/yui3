@@ -74,7 +74,7 @@ include "../inc/header.inc";
 
 				<p>For example, if you only needed to use the <code>node</code> module, you could use it like this:</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('node');
+                    var myNameSpace = new YUI().use('node');
                     myNameSpace.Node.get('#demo');
                 </textarea>
 
@@ -83,13 +83,13 @@ include "../inc/header.inc";
 				<p>The use method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('node', 'animation');
+                    var myNameSpace = new YUI().use('node', 'animation');
                     //myNameSpace.Node is available
                     //myNameSpace.Anim is available
                 </textarea>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('node');
+                    var myNameSpace = new YUI().use('node');
                     //myNameSpace.Node is available
                     //myNameSpace.Anim is NOT available
                 </textarea>
@@ -98,7 +98,7 @@ include "../inc/header.inc";
                 <p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.</p>
                 <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('node', function(myNameSpace) {
+                    new YUI().use('node', function(myNameSpace) {
                         //myNameSpace.node is available
                     });
                 </textarea>
@@ -107,7 +107,7 @@ include "../inc/header.inc";
                 <p>The use method contains a shorthand reference for all modules on the page. It uses the <code>*</code> as the module name.</p>
                 <p>This will load every module that is included on the page.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('*');
+                    var myNameSpace = new YUI().use('*');
                 </textarea>
 				
 				<h4 id="modulelist">Module List</h4>
@@ -198,7 +198,7 @@ include "../inc/header.inc";
                 <p>Loader is now built into the YUI Global Object and puts it power behind the <code>YUI.use</code> method</p>
                 <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and it's dependencies) and load them into this YUI instance.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = new YUI.use('node', 'animation', function(myNameSpace) {
+                    var myNameSpace = new YUI().use('node', 'animation', function(myNameSpace) {
                         //myNameSpace.Node is available
                         //myNameSpace.Anim is available
                     });
