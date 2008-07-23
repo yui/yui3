@@ -8,6 +8,7 @@ YUI.add("cookie", function(Y){
 
     //shortcuts
     var L       = Y.Lang,
+        O       = Y.Object,
         NULL    = null,
         
         //shortcuts to functions
@@ -23,8 +24,7 @@ YUI.add("cookie", function(Y){
      */
     function error(message){
         throw new TypeError(message);
-    }
-        
+    }        
     
     /**
      * Cookie utility.
@@ -93,7 +93,7 @@ YUI.add("cookie", function(Y){
             
             var text /*:Array*/ = [];
             
-            Y.Object.each(hash, function(value, key){
+            O.each(hash, function(value, key){
                 if (!isFunction(value) && !isUndefined(value)){
                     text.push(encode(key) + "=" + encode(String(value)));
                 }            
@@ -127,19 +127,19 @@ YUI.add("cookie", function(Y){
         /**
          * Parses a cookie string into an object representing all accessible cookies.
          * @param {String} text The cookie string to parse.
-         * @param {Boolean} decode (Optional) Indicates if the cookie values should be decoded or not. Default is true.
+         * @param {Boolean} shouldDecode (Optional) Indicates if the cookie values should be decoded or not. Default is true.
          * @return {Object} An object containing entries for each accessible cookie.
          * @method _parseCookieString
          * @private
          * @static
          */
-        _parseCookieString : function (text /*:String*/, decode /*:Boolean*/) /*:Object*/ {
+        _parseCookieString : function (text /*:String*/, shouldDecode /*:Boolean*/) /*:Object*/ {
         
             var cookies /*:Object*/ = {};        
             
             if (isString(text) && text.length > 0) {
             
-                var decodeValue = (decode === false ? function(s){return s;} : decode);
+                var decodeValue = (shouldDecode === false ? function(s){return s;} : decode);
             
                 if (/[^=]+=[^=;]?(?:; [^=]+=[^=]?)?/.test(text)){            
                     var cookieParts /*:Array*/ = text.split(/;\s/g),
@@ -153,7 +153,7 @@ YUI.add("cookie", function(Y){
                         cookieNameValue = cookieParts[i].match(/([^=]+)=/i);
                         if (cookieNameValue instanceof Array){
                             cookieName = decode(cookieNameValue[1]);
-                            cookieValue = decodeValue(cookieParts[i].substring(cookieName.length+1));
+                            cookieValue = decodeValue(cookieParts[i].substring(cookieNameValue[1].length+1));
                         } else {
                             //means the cookie does not have an "=", so treat it as a boolean flag
                             cookieName = decode(cookieParts[i]);
@@ -316,7 +316,7 @@ YUI.add("cookie", function(Y){
             var subs = this.getSubs(name);
             
             //delete the indicated subcookie
-            if (isObject(subs) && Y.Object.owns(subs, subName)){
+            if (isObject(subs) && O.owns(subs, subName)){
                 delete subs[subName];
                 
                 //reset the cookie
