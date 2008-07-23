@@ -1,5 +1,16 @@
 YUI.add('dom', function(Y) {
 
+/** 
+ * Provides helper functions for common DOM tasks.
+ * @module dom
+ *
+ */
+
+/** 
+ * Provides helper functions for common DOM tasks.
+ * @class DOM
+ *
+ */
 var NODE_TYPE = 'nodeType',
     OWNER_DOCUMENT = 'ownerDocument',
     DOCUMENT_ELEMENT = 'documentElement',
@@ -196,40 +207,19 @@ Y.DOM = {
     },
 
     /**
-     * Searches the element by the given axis for matching elements.
-     * @method elementsByAxis
-     * @param {HTMLElement} element The html element.
-     * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
-     * @param {String} tag optional An optional tag to restrict the search to. 
-     * @param {Function} fn optional An optional boolean test to apply.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements along the axis are collected.
-     * @return {Array} The collection of elements.
-     */
-    elementsByAxis: function(element, axis, fn) {
-        var ret = [];
-
-        while (element && (element = element[axis])) { // NOTE: assignment
-            if ( element[TAG_NAME] && (!fn || fn(element)) ) {
-                ret[ret[LENGTH]] = element;
-            }
-        }
-        return ret;
-    },
-
-    /**
      * Searches the element by the given axis for the first matching element.
      * @method elementByAxis
      * @param {HTMLElement} element The html element.
      * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
      * @param {Function} fn optional An optional boolean test to apply.
+     * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.
      */
-    elementByAxis: function(element, axis, fn) {
+    elementByAxis: function(element, axis, fn, all) {
         while (element && (element = element[axis])) { // NOTE: assignment
-                if ( element[TAG_NAME] && (!fn || fn(element)) ) { // TODO: all nodeTypes option?
+                if ( (all || element[TAG_NAME]) && (!fn || fn(element)) ) {
                     return element;
                 }
         }
@@ -1083,8 +1073,11 @@ if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
 
 /**
  * Add className management functionality to DOM.
- * @class DOMClassName
- *
+ * @module dom-class
+ */
+
+/** 
+ * @class DOM
  */
 
 var CLASS_NAME = 'className';
@@ -1162,6 +1155,12 @@ Y.mix(Y.DOM, {
 
 /**
  * Provides color conversion functionality.
+ * @module color
+ *
+ */
+
+/**
+ * Provides color conversion functionality.
  * @class Color
  *
  */
@@ -1223,6 +1222,16 @@ Y.Color = {
         return (val.indexOf('#') < 0 ? val = '#' + val : val).toLowerCase();
     }
 };
+
+/**
+ * Adds region management functionality to DOM.
+ * @module dom-style
+ */
+
+/**
+ * @class DOM
+ *
+ */
 
 var STYLE = 'style',
     FLOAT = 'float',
@@ -1329,8 +1338,13 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
 }
 
 /**
+ * This module add support for positioning elements window/document size normalization.
+ * @module dom-screen
+ */
+
+/**
  * Add position and window/document size detection functionality to DOM.
- * @class DOMScreen
+ * @class DOM
  */
 
 var OFFSET_TOP = 'offsetTop',
@@ -1549,7 +1563,7 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Set the position of an html element in page coordinates, regardless of how the element is positioned.
+     * Set the position of an html element in page coordinates.
      * The element must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param element The target element
@@ -1672,9 +1686,14 @@ Y.mix(Y.DOM, {
 
 /**
  * Adds region management functionality to DOM.
- * @class DOMRegion
+ * @module dom-region
+ */
+
+/**
+ * @class DOM
  *
  */
+
 var getOffsets = function(r1, r2) {
 
     var t = Math.max(r1.top,    r2.top   ),
@@ -1809,6 +1828,16 @@ Y.mix(Y.DOM, {
         return r;
     }
 });
+/**
+ * Adds opacity and currentStyle support for IE. 
+ * @module dom-ie-style
+ */
+
+/** 
+ * @class DOM
+ */
+
+
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
     RIGHT = 'right',
