@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+<head>
+<title>YUI 3.0</title>
+<script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
+<script type="text/javascript" src="../../build3x/compat/compat-debug.js"></script>
+<script type="text/javascript" src="../../build3x/dump/dump-debug.js"></script>
+<script type="text/javascript" src="../../build3x/i18n/i18n-debug.js"></script>
+<script type="text/javascript" src="../../build3x/get/get-debug.js"></script>
+<script type="text/javascript" src="../../build3x/loader/loader-debug.js"></script>
+
+<body>
+
+<input id="button1" type="button" value="Button 1" class="button" />
+<input id="button2" type="button" value="Button 2" class="button" />
+<input id="text1" type="text" value="something" class="nothing" />
+
+<script>
+
+
+YUI().use('*', function(Y) {
+
+    var loader = new Y.Loader();
+
+    loader.subscribe('success', function() {
+        Y.log('custom event success');
+    })
+
+    loader.subscribe('failure', function() {
+        Y.log('custom event failure');
+    })
+
+
+    loader.subscribe('timeout', function() {
+        Y.log('custom event timeout');
+    })
+
+    loader.insert({
+        // require: ["tabview", "treeview"],
+        // require: ["uploader"],
+        // require: ["datatable", "dragdrop"],
+        // require: ["substitute"],
+        // require: ["cookie", "fonts"],
+        require: ["animation"],
+        // require: ["yuitest"],
+        //require: ["charts", "simpleeditor"],
+        base: '../../build3x/',
+        root: '2.5.2/build/',
+        insertBefore: 'styleoverrides',
+        //charset: 'utf-8',
+        //loadOptional: true,
+        // combine: true,
+        timeout: 2000,
+
+        onSuccess: function() {
+            Y.log('legacy onSuccess');
+        },
+
+        onFailure: function(o) {
+            Y.log("legacy onFailure: " + o);
+        },
+
+        onTimeout: function(o) {
+            Y.log("legacy onTimeout: " + o);
+        },
+
+        //ignore: "skin-sam-treeview",
+        //ignore: "skin-sam-tabview",
+
+        filter: 'raw'
+     }
+        //, "js"
+     
+     );
+
+    Y.log(loader.sorted);
+    //jY.log(Y.Lang.dump(loader.moduleInfo));
+});
+
+</script> 
+<style id="styleoverrides">
+    body {
+        background-color: #f7f7f7
+    }
+</style>
+</head>
+
+<body id="yahoo">
+
+</body>
+</html>
+
