@@ -287,7 +287,6 @@ YUI.prototype = {
             if (m) {
                 used[name] = true;
 
-                //
                 if (dynamic) {
                     // Y.mix(l, YUI.Env.mods);
                     m.fn(Y);
