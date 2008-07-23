@@ -555,9 +555,9 @@ Y.Env.meta = {
          */
         addModule: function(o, name) {
 
-            name = name || o.name;
+            o.name = o.name || name;
 
-            if (!o || !name) {
+            if (!o || !o.name) {
                 return false;
             }
 
@@ -648,35 +648,45 @@ Y.Env.meta = {
         getRequires: function(mod) {
 
             if (!mod) {
-                Y.log('getRequires, no module');
+                // Y.log('getRequires, no module');
                 return [];
             }
 
             if (!this.dirty && mod.expanded) {
-                Y.log('already expanded');
+                // Y.log('already expanded');
                 return mod.expanded;
             }
 
 
             var i, d=[], r=mod.requires, o=mod.optional, 
-                info=this.moduleInfo, m;
+                info=this.moduleInfo, m, j, add;
 
             for (i=0; i<r.length; i=i+1) {
-                Y.log('requiring ' + r[i]);
+                // Y.log(mod.name + ' requiring ' + r[i]);
                 d.push(r[i]);
                 m = this.getModule(r[i]);
                 // AU.appendArray(d, this.getRequires(m));
-                d.concat(this.getRequires(m));
+                // d.concat(this.getRequires(m));
                 // Y.log(d);
+                add = this.getRequires(m);
+                for (j=0;j<add.length;j=j+1) {
+                    d.push(add[j]);
+                }
             }
 
             if (o && this.loadOptional) {
                 for (i=0; i<o.length; i=i+1) {
                     d.push(o[i]);
                     // AU.appendArray(d, this.getRequires(info[o[i]]));
-                    d.concat(this.getRequires(info[o[i]]));
+                    // d.concat(this.getRequires(info[o[i]]));
+                    add = this.getRequires(info[o[i]]);
+                    for (j=0;j<add.length;j=j+1) {
+                        d.push(add[j]);
+                    }
                 }
             }
+
+            // Y.log(d);
 
             // mod.expanded = AU.uniq(d);
             mod.expanded = Y.Object.keys(Y.Array.hash(d));
@@ -713,7 +723,7 @@ Y.Env.meta = {
             // use worker to break cycles
             var add = function(mm) {
                 if (!done[mm]) {
-                    Y.log(name + ' provides worker trying: ' + mm);
+                    // Y.log(name + ' provides worker trying: ' + mm);
                     done[mm] = true;
                     // we always want the return value normal behavior 
                     // (provides) for superseded modules.
@@ -739,7 +749,7 @@ Y.Env.meta = {
             m[PROV][name] = true;
 
 // Y.log(name + " supersedes " + L.dump(m[SUPER], 0));
-Y.log(name + " provides " + L.dump(m[PROV], 0));
+// Y.log(name + " provides " + L.dump(m[PROV], 0));
 
             return m[ckey];
         },
@@ -762,7 +772,7 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
                 this._reduce();
                 this._sort();
 
-                Y.log("after calculate: " + this.sorted);
+                // Y.log("after calculate: " + this.sorted);
 
                 this.dirty = false;
             }
@@ -848,12 +858,12 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             for (i in r) {
                 if (r.hasOwnProperty(i)) {
                     mod = this.getModule(i);
-                    Y.log('exploding ' + i);
+                    // Y.log('exploding ' + i);
 
                     var req = this.getRequires(mod);
 
                     if (req) {
-                        Y.log('via explode: ' + req);
+                        // Y.log('via explode: ' + req);
                         Y.mix(r, Y.Array.hash(req));
                     }
                 }
@@ -1410,9 +1420,12 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             } else {
                 this._pushEvents();
 
+                Y.use.apply(Y, this.sorted);
+
                 this.fire('success', {
                     data: this.data
                 });
+
             }
 
         },

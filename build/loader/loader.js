@@ -553,9 +553,9 @@ Y.Env.meta = {
          */
         addModule: function(o, name) {
 
-            name = name || o.name;
+            o.name = o.name || name;
 
-            if (!o || !name) {
+            if (!o || !o.name) {
                 return false;
             }
 
@@ -651,22 +651,31 @@ Y.Env.meta = {
 
 
             var i, d=[], r=mod.requires, o=mod.optional, 
-                info=this.moduleInfo, m;
+                info=this.moduleInfo, m, j, add;
 
             for (i=0; i<r.length; i=i+1) {
                 d.push(r[i]);
                 m = this.getModule(r[i]);
                 // AU.appendArray(d, this.getRequires(m));
-                d.concat(this.getRequires(m));
+                // d.concat(this.getRequires(m));
+                add = this.getRequires(m);
+                for (j=0;j<add.length;j=j+1) {
+                    d.push(add[j]);
+                }
             }
 
             if (o && this.loadOptional) {
                 for (i=0; i<o.length; i=i+1) {
                     d.push(o[i]);
                     // AU.appendArray(d, this.getRequires(info[o[i]]));
-                    d.concat(this.getRequires(info[o[i]]));
+                    // d.concat(this.getRequires(info[o[i]]));
+                    add = this.getRequires(info[o[i]]);
+                    for (j=0;j<add.length;j=j+1) {
+                        d.push(add[j]);
+                    }
                 }
             }
+
 
             // mod.expanded = AU.uniq(d);
             mod.expanded = Y.Object.keys(Y.Array.hash(d));
@@ -1369,9 +1378,12 @@ Y.Env.meta = {
             } else {
                 this._pushEvents();
 
+                Y.use.apply(Y, this.sorted);
+
                 this.fire('success', {
                     data: this.data
                 });
+
             }
 
         },
