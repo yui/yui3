@@ -27,19 +27,10 @@ YUI.add("loader", function(Y) {
         RESET = 'reset',
         FONTS = 'fonts',
         GRIDS = 'grids',
-        CONNECTION = 'connection',
         DRAGDROP = 'dragdrop',
-        BUTTON = 'button',
-        MENU = 'menu',
-        CALENDAR = 'calendar',
-        SLIDER = 'slider',
         JSON = 'json',
-        DATASOURCE = 'datasource',
-        SELECTOR = 'selector',
-        RESIZE = 'resize',
         VERSION = '@VERSION@',
         ROOT = VERSION + '/build/';
-
 
 Y.Env.meta = {
 
@@ -271,6 +262,41 @@ Y.Env.meta = {
         this.base = _Y.info.base;
 
         /**
+         * Base path for the combo service
+         * @property comboBase
+         * @type string
+         * @default http://yui.yahooapis.com/combo?
+         */
+        this.comboBase = _Y.info.comboBase;
+
+        /**
+         * If configured, YUI JS resources will use the combo
+         * handler
+         * @property combine
+         * @type boolean
+         * @default false
+         */
+        this.combine = false;
+
+        /**
+         * Root path to prepend to module path for the combo
+         * service
+         * @property root
+         * @type string
+         * @default [YUI VERSION]/build/
+         */
+        this.root = _Y.info.root;
+
+        /**
+         * Timeout value in milliseconds.  If set, this value will be used by
+         * the get utility.  the timeout event will fire if
+         * a timeout occurs.
+         * @property timeout
+         * @type int
+         */
+        this.timeout = 0;
+
+        /**
          * A list of modules that should not be loaded, even if
          * they turn up in the dependency tree
          * @property ignore
@@ -338,7 +364,9 @@ Y.Env.meta = {
 
         for (var i in defaults) {
             if (defaults.hasOwnProperty(i)) {
+                this._internal = true;
                 this.addModule(defaults[i], i);
+                this._internal = false;
             }
         }
 
@@ -541,7 +569,7 @@ Y.Env.meta = {
                 o.path = name + "/" + name + "-min." + o.type;
             }
 
-            o.ext = ('ext' in o) ? o.ext : true;
+            o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
             o.requires = o.requires || [];
 
             this.moduleInfo[name] = o;
@@ -839,7 +867,7 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             // create the default module
             if (!m) {
                 Y.log('Module does not exist: ' + name + ', creating with defaults');
-                m = this.addModule({}, name);
+                m = this.addModule({ext: false}, name);
             }
 
             return m;
@@ -1034,6 +1062,20 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
                 }
             }
         },
+
+        _onFailure: function(msg) {
+            this.fire('failure', {
+                msg: 'operation failed: ' + msg,
+                data: this.data
+            });
+        },
+
+        _onTimeout: function(msg) {
+            this.fire('timeout', {
+                msg: 'operation timed out: ' + msg,
+                data: this.data
+            });
+        },
         
         /**
          * Sorts the dependency tree.  The last step of calculate()
@@ -1170,6 +1212,11 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             // set a flag to indicate the load has started
             this._loading = true;
 
+            // flag to indicate we are done with the combo service
+            // and any additional files will need to be loaded
+            // individually
+            this._combineComplete = false;
+
             // keep the loadType (js, css or undefined) cached
             this.loadType = type;
 
@@ -1195,6 +1242,61 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             // are actively loading something
             if (!this._loading) {
                 return;
+            }
+
+            var s, len, i, m, url;
+
+            if (this.combine && !this._combineComplete) {
+
+                this._combining = []; 
+
+                var s=this.sorted, len=s.length, i, m,
+                    url=this.comboBase;
+
+                for (i=0; i<len; i=i+1) {
+                    m = this.getModule(s[i]);
+                    // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
+                    // Do not try to combine non-yui JS
+                    if (m.type == JS && !m.ext) {
+                        url += this.root + m.path;
+                        if (i < len) {
+                            url += '&';
+                        }
+
+                        this._combining.push(s[i]);
+                    }
+                }
+
+                if (this._combining.length) {
+
+                    var self=this, 
+                        c=function(o) {
+                            Y.log('loading combo, just loaded' + o.data);
+                            self._combineComplete = true;
+
+                            var c=self._combining, len=c.length, i, m;
+                            for (i=0; i<len; i=i+1) {
+                                self.inserted[c[i]] = true;
+                            }
+
+                            self.loadNext(o.data);
+                        };
+
+                    Y.Get.script(url, {
+                        data: s[i],
+                        onSuccess: c,
+                        onFailure: this._onFailure,
+                        onTimeout: this._onTimeout,
+                        insertBefore: this.insertBefore,
+                        charset: this.charset,
+                        timeout: this.timeout,
+                        scope: self 
+                    });
+
+                    return;
+                } else {
+                    this._combineComplete = true;
+                }
             }
 
             if (mname) {
@@ -1278,21 +1380,15 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
                             self.loadNext(o.data);
                         };
 
-                    // safari 2.x or lower, script, and part of YUI
-                    if (Y.UA.webkit && Y.UA.webkit < 420 && m.type === JS && 
-                          !m.varName) {
-                          //YUI.info.moduleInfo[s[i]]) {
-                          //Y.log("using Y env " + s[i] + ", " + m.varName);
-                        c = null;
-                        this._useYahooListener = true;
-                    }
-
                     fn(url, {
                         data: s[i],
                         onSuccess: c,
                         insertBefore: this.insertBefore,
                         charset: this.charset,
                         varName: m.varName,
+                        onFailure: this._onFailure,
+                        onTimeout: this._onTimeout,
+                        timeout: this.timeout,
                         scope: self 
                     });
 
@@ -1314,12 +1410,8 @@ Y.log(name + " provides " + L.dump(m[PROV], 0));
             } else {
                 this._pushEvents();
 
-                // this.onSuccess.call(this.scope, {
-                //       data: this.data
-                // });
-
                 this.fire('success', {
-                        data: this.data
+                    data: this.data
                 });
             }
 
