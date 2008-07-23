@@ -1,4 +1,4 @@
-var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easing', 'io', 'cookie', 'json', function(Y) {
+var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easing', 'io', 'cookie', 'json', function(Y) {
     var goingUp = false, lastY = 0, crossList = false;
     //Y.DD.DDM._debugShim = true;
     
@@ -231,7 +231,9 @@ var Y = new YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'easin
                         
                     }
                 },
-			    failure: console.log
+			    failure: function(id, data) {
+                    alert('Feed failed to load..' + id + ' :: ' + data);
+                }
 		    }
         });
         feeds[data.id].trans = id;

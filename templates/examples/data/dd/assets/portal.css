@@ -31,6 +31,7 @@
 
 #feeds ul li {
     background-repeat: no-repeat;
+    background-color: #B3D4FF;
     padding-left: 25px;
     margin: 3px;
     cursor: move;
