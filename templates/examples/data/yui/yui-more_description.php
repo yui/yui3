@@ -2,13 +2,13 @@
 <p>Here we will create our YUI instance and tell it to load the <code>*</code> module.</p>
 <p>The <code>*</code> module is a shorthand module name for all modules on the page. So you don't need to add all the modules to the <code>use</code> method.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('*');
+var Y = YUI().use('*');
 </textarea>
 
 <h3>Using the Ready Event</h3>
 <p>In this example, we will use the <code>ready</code> event to determine when we can interact with the modules.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('*');
+var Y = YUI().use('*');
 Y.on('event:ready', function() {
     //All of our code is loaded, now we can use it.
 });
@@ -16,7 +16,7 @@ Y.on('event:ready', function() {
 
 <p>Now that we know all of the modules are loaded, we will show a list of the modules loaded in this <code>YUI</code> instance.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('*');
+var Y = YUI().use('*');
 Y.on('event:ready', function() {
     var node = Y.get('#demo');
     var used = [];

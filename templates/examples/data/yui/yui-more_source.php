@@ -12,7 +12,7 @@
 
 <script>
 
-var Y = new YUI().use('*');
+var Y = YUI().use('*');
 Y.on('event:ready', function() {
     var node = Y.get('#demo');
     var used = [];

@@ -11,7 +11,7 @@
 
 <script>
 
-var Y = new YUI().use('node', function(Y) {
+var Y = YUI().use('node', function(Y) {
     var node = Y.get('#demo');
     Y.log('Found node.. Setting style');
     node.setStyle('backgroundColor', '#D00050');
