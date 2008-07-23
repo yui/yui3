@@ -106,5 +106,5 @@ YUI.add("substitute", function(Y) {
     L.substitute = substitute;
 
 }, "@VERSION@", {
-    requires: ['dump']
+    optional: ['dump']
 });

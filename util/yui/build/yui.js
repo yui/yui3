@@ -28,10 +28,7 @@ if (typeof YUI === 'undefined' || !YUI) {
     YUI = function(o) {
         var Y = this;
         // Allow var yui = YUI() instead of var yui = new YUI()
-        // if (YUI.caller !== YUI) {
-        // if (arguments.callee.caller !== YUI) {
         if (Y == window) {
-            // return new YUI(o).log('creating new instance');
             return new YUI(o);
         } else {
             // set up the core environment

@@ -66,11 +66,8 @@
     <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
         <span class="c">// Allow var yui = YUI() instead of var yui = new YUI()</span>
-<span class="c"></span>        <span class="c">// if (YUI.caller !== YUI) {</span>
-<span class="c"></span>        <span class="c">// if (arguments.callee.caller !== YUI) {</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span> <span class="o">==</span> <span class="nb">window</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// return new YUI(o).log(&#39;creating new instance&#39;);</span>
-<span class="c"></span>            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nx">YUI</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="c">// set up the core environment</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_init</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>

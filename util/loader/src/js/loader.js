@@ -199,10 +199,8 @@ Y.Env.meta = {
 
         queue: { },
 
-        // @TODO evaluate this package
         substitute: {
-            requires: ['dump'],
-            path: 'i18n/substitute-min.js'
+            optional: ['dump']
         },
 
         yuitestcore: { 
@@ -1357,6 +1355,5 @@ Y.Env.meta = {
     };
 
     Y.augment(Y.Loader, Y.Event.Target);
-
 
 }, "@VERSION@");
