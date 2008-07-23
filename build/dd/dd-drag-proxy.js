@@ -807,8 +807,6 @@ YUI.add('dd-drag', function(Y) {
         * @type {Event}
         */
         _ev_md: null,
-        __ev_md: null,
-        __ev_mu: null,
         /**
         * @private
         * @property _startTime
@@ -1146,11 +1144,30 @@ YUI.add('dd-drag', function(Y) {
             if (!this.get(DRAG_NODE)) {
                 this.set(DRAG_NODE, this.get(NODE));
             }
-            
-            this.get(NODE).addClass(DDM.CSS_PREFIX + '-draggable');
-            this.__ev_md = this.get(NODE).on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            this.__ev_mu = this.get(NODE).on(MOUSE_UP, this._handleMouseUp, this, true);
+            this._prep();
             this._dragThreshMet = false;
+        },
+        /**
+        * @private
+        * @method _prep
+        * @description Attach event listners and add classname
+        */
+        _prep: function() {
+            var node = this.get(NODE);
+            node.addClass(DDM.CSS_PREFIX + '-draggable');
+            node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            node.on(MOUSE_UP, this._handleMouseUp, this, true);
+        },
+        /**
+        * @private
+        * @method _unprep
+        * @description Detach event listners and remove classname
+        */
+        _unprep: function() {
+            var node = this.get(NODE);
+            node.removeClass(DDM.CSS_PREFIX + '-draggable');
+            node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
+            node.detach(MOUSE_UP, this._handleMouseUp, this, true);
         },
         /**
         * @method start
@@ -1307,12 +1324,7 @@ YUI.add('dd-drag', function(Y) {
         destructor: function() {
             DDM._unregDrag(this);
 
-            this.get(NODE).removeClass(DDM.CSS_PREFIX + '-draggable');
-            //TODO this doesn't work properly!!
-            //this.get(NODE).detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
-            //this.get(NODE).detach(MOUSE_UP, this._handleMouseUp, this, true);
-            this.__ev_mu.detach();
-            this.__ev_md.detach();
+            this._unprep();
             if (this.target) {
                 this.target.destroy();
             }
