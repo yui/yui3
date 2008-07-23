@@ -278,6 +278,8 @@ Y.Env.meta = {
          */
         this.combine = false;
 
+        this.ignoreRegistered = false;
+
         /**
          * Root path to prepend to module path for the combo
          * service
@@ -457,19 +459,10 @@ Y.Env.meta = {
          *   </code>
          *   @property skin
          */
+        this.skin = Y.merge(_Y.info.skin); 
 
         Y.on('yui:load', this.loadNext, this);
 
-        // var self = this;
-
-        // env.listeners.push(function(m) {
-            // if (self._useYahooListener) {
-                // //Y.log("YUI listener: " + m.name);
-                // self.loadNext(m.name);
-            // }
-        // });
-
-        this.skin = Y.merge(_Y.info.skin); 
 
         this._config(o);
 
@@ -811,6 +804,11 @@ Y.Env.meta = {
             }
 
             var l = Y.merge(this.inserted); // shallow clone
+
+            // available modules
+            if (!this.ignoreRegistered) {
+                Y.mix(l, YUI.Env.mods);
+            }
             
             // Y.log("Already loaded stuff: " + L.dump(l, 0));
 
@@ -875,10 +873,10 @@ Y.Env.meta = {
             var m = this.moduleInfo[name];
 
             // create the default module
-            if (!m) {
-                Y.log('Module does not exist: ' + name + ', creating with defaults');
-                m = this.addModule({ext: false}, name);
-            }
+            // if (!m) {
+                // Y.log('Module does not exist: ' + name + ', creating with defaults');
+                // m = this.addModule({ext: false}, name);
+            // }
 
             return m;
         },
@@ -1325,17 +1323,11 @@ Y.Env.meta = {
                 // data to avoid loading the same module multiple times
                 this.inserted[mname] = true;
 
-                // if (this.onProgress) {
-                  //   this.onProgress.call(this.scope, );
-                // }
-
                 this.fire('progress', {
                     name: mname,
                     data: this.data
                 });
 
-                //var o = this.getProvides(mname);
-                //this.inserted = Y.merge(this.inserted, o);
             }
 
             var s=this.sorted, len=s.length, i, m;
@@ -1362,10 +1354,6 @@ Y.Env.meta = {
                 m = this.getModule(s[i]);
 
                 if (!m) {
-                    // this.onFailure.call(this.scope, {
-                        // msg: "undefined module " + m,
-                        // data: this.data
-                    // });
                     var msg = "undefined module " + m;
                     Y.log(msg, 'warn', 'Loader');
 
@@ -1421,7 +1409,8 @@ Y.Env.meta = {
             } else {
                 this._pushEvents();
 
-                // Y.use.apply(Y, this.sorted);
+                // call Y.use passing this instance. Y will use the sorted
+                // dependency list.
                 Y.use(this);
 
                 this.fire('success', {
