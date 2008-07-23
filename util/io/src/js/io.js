@@ -14,9 +14,55 @@ YUI.add("io", function (Y) {
 	* @class io
 	*/
 
+  /**
+	* @event io:xdrReady
+	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @type Event Custom
+	*/
+	var E_XDR_READY = 'io:xdrReady',
+
+  /**
+	* @event io:start
+	* @description This event is fired by YUI.io when a transaction is initiated..
+	* @type Event Custom
+	*/
+	E_START = 'io:start',
+
+  /**
+	* @event io:complete
+	* @description This event is fired by YUI.io when a transaction is complete and
+	* all response data are available.
+	* @type Event Custom
+	*/
+	E_COMPLETE = 'io:complete',
+
+  /**
+	* @event io:success
+	* @description This event is fired by YUI.io when a transaction is complete and
+	* the HTTP status resolves to HTTP2xx.
+	* @type Event Custom
+	*/
+	E_SUCCESS = 'io:success',
+
+  /**
+	* @event io:failure
+	* @description This event is fired by YUI.io when a transaction is complete and
+	* the HTTP status resolves to HTTP4xx, 5xx and above.
+	* @type Event Custom
+	*/
+	E_FAILURE = 'io:failure',
+
+  /**
+	* @event io:abort
+	* @description This event is fired by YUI.io when a transaction is aborted
+	* explicitly or by a defined config.timeout.
+	* @type Event Custom
+	*/
+	E_ABORT = 'io:abort',
+
 	// Window reference
-	var w = Y.config.win;
-	var d = Y.config.doc;
+	w = Y.config.win,
+	d = Y.config.doc,
 
 	//--------------------------------------
 	//  Properties
@@ -29,7 +75,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type int
 	*/
-	var transactionId = 0;
+	transactionId = 0,
 
    /**
 	* @description Object of default HTTP headers to be initialized and sent
@@ -40,9 +86,9 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type object
 	*/
-	var _headers = {
+	_headers = {
 		'X-Requested-With' : 'XMLHttpRequest'
-	};
+	},
 
    /**
 	* @description Object that stores timeout values for any transaction with
@@ -53,7 +99,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type object
 	*/
-	var _timeout = {};
+	_timeout = {},
 
    /**
 	* @description Object that stores callback handlers for cross-domain requests,
@@ -63,7 +109,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type object
 	*/
-	var _fn = {};
+	_fn = {},
 
    /**
 	* @description Map of transports created for cross-domain requests.
@@ -73,10 +119,9 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type object
 	*/
-	var _xdr = {
-		yid:null,
+	_xdr = {
 		flash:null
-	}
+	},
 
    /**
 	* @description Array of transactions queued for processing
@@ -86,7 +131,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type array
 	*/
-	var _q = [];
+	_q = [],
 
    /**
 	* @description Property to determine whether the queue is set to
@@ -98,7 +143,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type int
 	*/
-	var _qState = 1;
+	_qState = 1,
 
    /**
 	* @description Queue property to set a maximum queue storage size.  When
@@ -111,7 +156,7 @@ YUI.add("io", function (Y) {
 	* @static
 	* @type int
 	*/
-	var _qMaxSize = false;
+	_qMaxSize = false;
 
 	//--------------------------------------
 	//  Methods
@@ -312,7 +357,7 @@ YUI.add("io", function (Y) {
 	* context: Object reference for an event handler when it is implemented
 	*          as a method of a base object. Defining "context" will preserve
 	*          the proper reference of "this" used in the event handler.
-	* header: This is a defined object of client headers, as many as.
+	* headers: This is a defined object of client headers, as many as.
 	*         desired for the transaction.  These headers are sentThe object
 	*         pattern is:
 	*		  {
@@ -320,8 +365,8 @@ YUI.add("io", function (Y) {
 	*         }
 	*
 	* timeout: This value, defined as milliseconds, is a time threshold for the
-	*          transaction. When this threshold is reached, and the resource
-	*          has not responded, the transaction will be aborted.
+	*          transaction. When this threshold is reached, and the transaction's
+	*          Complete event has not yet fired, the transaction will be aborted.
 	* arguments: Object, array, string, or number passed to all registered
 	*            event handlers.  This value is available as the second
 	*            argument in the "start" and "abort" event handlers; and, it is
@@ -340,15 +385,6 @@ YUI.add("io", function (Y) {
 		var o = _create((arguments.length = 3) ? arguments[2] : null, c);
 		var m = (c.method) ? c.method.toUpperCase() : 'GET';
 		var d = (c.data) ? c.data : null;
-
-		if (c.xdr) {
-			if (c.on) {
-				_fn[o.id] = c.on;
-			}
-			o.c.send(uri, c, o.id, _xdr.yid);
-
-			return o;
-		}
 
 		/* Determine configuration properties */
 		// If config.form is defined, perform data operations.
@@ -378,6 +414,18 @@ YUI.add("io", function (Y) {
 			_setHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 		}
 
+		if (c.xdr) {
+			if (c.on) {
+				_fn[o.id] = c.on;
+			}
+			if (d && m !== 'GET') {
+				c.data = d;
+			}
+			o.c.send(uri, c, o.id);
+
+			return o;
+		}
+
 		// If config.timeout is defined, initialize timeout poll.
 		if (c.timeout) {
 			_startTimeout(o, c);
@@ -387,12 +435,15 @@ YUI.add("io", function (Y) {
 		o.c.onreadystatechange = function() { _readyState(o, c); };
 		_open(o.c, m, uri);
 		_setHeaders(o.c, (c.headers || {}));
+		// Do not pass null, in the absence of data, as this
+		// results in a POST request with no Content-Length
+		// defined.
 		_async(o, (d || ''), c);
 
 		o.abort = function () {
-			_abort(o, c);
+			_ioAbort(o, c);
 		}
-		o.inProgress = function() {
+		o.isInProgress = function() {
 			return o.c.readyState !== 4 && o.c.readyState !== 0;
 		}
 
@@ -417,6 +468,10 @@ YUI.add("io", function (Y) {
 			return event;
 	};
 
+	function _ioXdrReady(id) {
+		Y.fire(E_XDR_READY, id);
+	}
+
    /**
 	* @description Fires event "io:start" and creates, fires a
 	* transaction-specific start event, if config.on.start is
@@ -439,8 +494,8 @@ YUI.add("io", function (Y) {
 		if (_fn[id] && _fn[id].start) {
 			c.on.start = _fn[id].start;
 		}
-		// Fire "io:start" event
-		Y.fire('io:start', id);
+
+		Y.fire(E_START, id);
 		if (c.on.start) {
 			event = _tPubSub('start', c);
 			event.fire(id);
@@ -466,8 +521,8 @@ YUI.add("io", function (Y) {
 		// the property is null or undefined.
 		c.on = c.on || {};
 		var event;
-		// Fire "io:complete" event
-		Y.fire('io:complete', o.id, o.c);
+
+		Y.fire(E_COMPLETE, o.id, o.c);
 		if (c.on.complete) {
 			event = _tPubSub('complete', c);
 			event.fire(o.id, o.c);
@@ -501,8 +556,7 @@ YUI.add("io", function (Y) {
 			o.c.responseText = decodeURI(o.c.responseText);
 		}
 
-		// Fire "io:success" event
-		Y.fire('io:success', o.id, o.c);
+		Y.fire(E_SUCCESS, o.id, o.c);
 		if (c.on.success) {
 			event = _tPubSub('success', c);
 			event.fire(o.id, o.c);
@@ -538,8 +592,7 @@ YUI.add("io", function (Y) {
 			o.c.responseText = decodeURI(o.c.responseText);
 		}
 
-		// Fire "io:failure" event
-		Y.fire('io:failure', o.id, o.c);
+		Y.fire(E_FAILURE, o.id, o.c);
 		if (c.on.failure) {
 			event = _tPubSub('failure', c);
 			event.fire(o.id, o.c);
@@ -557,31 +610,41 @@ YUI.add("io", function (Y) {
 	* @method _ioAbort
 	* @private
 	* @static
-	* @param {number} id - transaction id.
-	* @param {object} c - configuration object for the transaction.
+    * @param {object} o - Transaction object generated by _create().
+    * @param {object} c - Configuration object passed to YUI.io().
 	*
     * @return void
 	*/
-	function _ioAbort(id, c) {
+	function _ioAbort(o, c) {
 		// Set default value of argument c, property "on" to Object if
 		// the property is null or undefined.
 		c.on = c.on || {};
 		var event;
 
-		if (_fn[id] && _fn[o.id].abort) {
+		if(o && o.c  && !c.xdr) {
+			// Terminate the transaction
+			o.c.abort();
+			if (c) {
+				// Clear the timeout poll for this specific transaction.
+				if (c.timeout) {
+					_clearTimeout(o.id);
+				}
+			}
+		}
+
+		if (_fn[o.id] && _fn[o.id].abort) {
 			c.on.abort = _fn[o.id].abort;
 			delete _fn[o.id];
 		}
 
-		// Fire global "io:abort" event
-		Y.fire('io:abort', o.id);
+		Y.fire(E_ABORT, o.id);
 		if (c.on.abort) {
 			event = _tPubSub('abort', c);
 			event.fire(id);
 		}
 
 		_destroy(o, (c.xdr) ? true : false );
-		Y.log('Transaction timeout or explicit abort. The transaction is: ' + id, 'info', 'io');
+		Y.log('Transaction timeout or explicit abort. The transaction is: ' + o.id, 'info', 'io');
 	}
 
    /**
@@ -610,12 +673,11 @@ YUI.add("io", function (Y) {
 		var b = Y.Node.get("body");
 		var swf = '<object id="yuiSwfIo" type="application/x-shockwave-flash" data="' + uri + '" width="0" height="0">';
 		swf += '<param name="movie" value="' + uri + '">';
+		swf += '<param name="FlashVars" value="yid=' + yid + '">';
 		swf += '<param name="allowScriptAccess" value="sameDomain">';
 		swf += '</object>';
 		b.appendChild(Y.Node.create(swf))
-
 		_xdr.flash = d.getElementById('yuiSwfIo');
-		_xdr.yid = yid;
 	};
 
    /**
@@ -745,8 +807,7 @@ YUI.add("io", function (Y) {
 	};
 
    /**
-	* @description Method that sends the transaction request, and fires the
-	*              event -- io:start and t:start.
+	* @description Method that sends the transaction request.
 	*
 	* @method _async
 	* @private
@@ -772,7 +833,7 @@ YUI.add("io", function (Y) {
     * @return void
 	*/
 	function _startTimeout(o, c) {
-		_timeout[o.id] = w.setTimeout(function() { _abort(o, c); }, c.timeout);
+		_timeout[o.id] = w.setTimeout(function() { _ioAbort(o, c); }, c.timeout);
 	};
 
    /**
@@ -845,29 +906,6 @@ YUI.add("io", function (Y) {
 		}
 		else {
 			_ioFailure(o, c);
-		}
-	};
-
-   /**
-	* @description Method that terminates a transaction, if it is still
-	* in progress, and fires events io:abort and t:abort.
-	*
-	* @method _abort
-	* @private
-	* @static
-    * @param {object} o - Transaction object generated by _create().
-    * @param {object} c - Configuration object passed to YUI.io().
-    * @return void
-	*/
-	function _abort(o, c) {
-		if(o && o.c) {
-			o.c.abort();
-			if (c) {
-				if (c.timeout) {
-					_clearTimeout(o.id);
-				}
-			}
-			_ioAbort(o.id, c);
 		}
 	};
 
@@ -947,6 +985,7 @@ YUI.add("io", function (Y) {
 		return str.substr(0, str.length - 1);
 	};
 
+	_io.xdrReady = _ioXdrReady;
 	_io.start = _ioStart;
 	_io.success = _ioSuccess;
 	_io.failure = _ioFailure;
