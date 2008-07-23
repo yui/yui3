@@ -15,7 +15,8 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>The YUI Global Object provides a single global starting point which all of the YUI Library code interacts with. It must be included on every page that utilizes the YUI Library, and it must appear before any of the other YUI components.</p>
+                    <p>The YUI Global Object also contains a number of methods that are used throughout the library, however it should not be used in it's default state. The YUI Global Object is an instatiatable object used to create YUI instances.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -24,9 +25,10 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+										<li><a href="#newyui">Creating a YUI instance</a></li>
+										<li><a href="#use">Use method</a></li>
+					                    <li><a href="#modulelist">Module List</a></li>
+					                    <li><a href="#loader">Loader</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -48,75 +50,159 @@ include "../inc/header.inc";
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;!-- TODO --&gt;
+				&lt;!-- TODO --&gt;
+				&lt;!-- TODO --&gt;
 				</textarea>
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
+					<li><a href="#newyui">Creating a YUI instance</a></li>
+					<li><a href="#use">Use method</a></li>
+					<li><a href="#modulelist">Module List</a></li>
+					<li><a href="#loader">Loader</a></li>
 				</ul>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+				<h4 id="newyui">Creating a YUI instance</h4>
+				<p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>For example, if you only needed to use the <code>node</code> module, you could use it like this:</p>
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('node');
+                    myNameSpace.Node.get('#demo');
+                </textarea>
+
+
+				<h4 id="use">Use method</h4>
+				<p>The use method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
+
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('node', 'animation');
+                    //myNameSpace.Node is available
+                    //myNameSpace.Anim is available
+                </textarea>
+
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('node');
+                    //myNameSpace.Node is available
+                    //myNameSpace.Anim is NOT available
+                </textarea>
+
+				<h5>Use callback</h5>
+                <p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.</p>
+                <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('node', function(myNameSpace) {
+                        //myNameSpace.node is available
+                    });
+                </textarea>
+
+				<h5>Use shorthand</h5>
+                <p>The use method contains a shorthand reference for all modules on the page. It uses the <code>*</code> as the module name.</p>
+                <p>This will load every module that is included on the page.</p>
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('*');
+                </textarea>
 				
+				<h4 id="modulelist">Module List</h4>
+                <p>Here is a partial list of the modules and their descriptions.</p>
+                <div class="apisummary">
 				<table>
 					<thead>
 						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
+							<th>YUI 3 Component</th>
+							<th>Module</th>
 						</tr>
 					</tbody>
 					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
+                        <tr>
+                            <td>Animation</td><td>animation</td>
+                        </tr>
+                        <tr>
+                            <td>Array Operations</td><td>array</td>
+                        </tr>
+                        <tr>
+                            <td>Common Attribute</td><td>attribute</td>
+                        </tr>
+                        <tr>
+                            <td>Common Class</td><td>base</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Core</td><td>core</td>
+                        </tr>
+                        <tr>
+                            <td>Drag &amp; Drop</td><td>dd-(see dd page for more)</td>
+                        </tr>
+                        <tr>
+                            <td>DOM Wrappers</td><td>dom</td>
+                        </tr>
+                        <tr>
+                            <td>Event</td><td>event-(see event page for more)</td>
+                        </tr>
+                        <tr>
+                            <td>IO</td><td>io</td>
+                        </tr>
+                        <tr>
+                            <td>JSON</td><td>json</td>
+                        </tr>
+                        <tr>
+                            <td>JSON parse only</td><td>json-parse</td>
+                        </tr>
+                        <tr>
+                            <td>JSON stringify only</td><td>json-stringify</td>
+                        </tr>
+                        <tr>
+                            <td>Language helper methods</td><td>lang</td>
+                        </tr>
+                        <tr>
+                            <td>Timeout method</td><td>later</td>
+                        </tr>
+                        <tr>
+                            <td>Logging support</td><td>log</td>
+                        </tr>
+                        <tr>
+                            <td>Node Support</td><td>node</td>
+                        </tr>
+                        <tr>
+                            <td>Object Operations</td><td>object</td>
+                        </tr>
+                        <tr>
+                            <td>Profiler</td><td>profiler</td>
+                        </tr>
+                        <tr>
+                            <td>Queue Support</td><td>queue</td>
+                        </tr>
+                        <tr>
+                            <td>State Management</td><td>state</td>
+                        </tr>
+                        <tr>
+                            <td>Browser Sniffing</td><td>ua</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Object</td><td>yui</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Test</td><td>yuitest</td>
+                        </tr>
+                    </tbody>
 				</table>
+                </div>
 				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
+				<h4 id="loader">Loader</h4>
+                <p>Loader is now built into the YUI Global Object and puts it power behind the <code>YUI.use</code> method</p>
+                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and it's dependencies) and load them into this YUI instance.</p>
+                <textarea name="code" class="JScript">
+                    var myNameSpace = new YUI.use('node', 'animation', function(myNameSpace) {
+                        //myNameSpace.Node is available
+                        //myNameSpace.Anim is available
+                    });
+                </textarea>
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
@@ -128,16 +214,16 @@ include "../inc/support.inc";
 <div class="yui-u sidebar">
 
 	<?php 
-	include "../inc/cheatsheet.inc";
+	//include "../inc/cheatsheet.inc";
 	?>
 			
 			<div id="examples">
 <?php 
-	include("../inc/examplesNav/".$section.".inc");
+	//include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
 		   
-		   	<div id="morereading">
+		   	<!--div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
 				
 				<ul>
@@ -146,10 +232,10 @@ include "../inc/support.inc";
 					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
 
 			   </ul>
-		   </div>
+		   </div-->
 		   
 <?php 
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
+$thisURI="http://developer.yahoo.com/yui/3/$section/";
 require_once('../inc/badge.inc');
 ?>
 <h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
