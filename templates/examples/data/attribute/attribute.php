@@ -27,17 +27,17 @@ $examples["attribute-event"] = array(
 	highlightSyntax => true
 );
 
-/*
 $examples["attribute-getset"] = array(
 	name => "Custom getters, setters and validators for attribute values",
 	modules => array("attribute"),
 	description => "Add customized methods to get and set attribute values and add validation support.",
-	sequence => array(1),
+	sequence => array(3),
 	newWindow => "default",
 	requires => array("yui"),
 	highlightSyntax => true
 );
 
+/*
 $examples["attribute-clone"] = array(
 	name => "Explore the clone attribute configuration option",
 	modules => array("attribute"),
