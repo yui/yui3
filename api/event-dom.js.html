@@ -315,11 +315,14 @@
 <span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_isValidCollection</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
 
                         <span class="c">// Y.log(&#39;collection: &#39; + el);</span>
+<span class="c"></span>                        <span class="c">// Y.log(&#39;collection: &#39; + el.item(0) + &#39;, &#39; + el.item(1));</span>
 <span class="c"></span>
                         <span class="k">var</span> <span class="nx">handles</span><span class="o">=[],</span> <span class="nx">h</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">l</span><span class="o">,</span> <span class="nx">proc</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
                             <span class="c">// handles.push(this.addListener(el[i], type, fn, obj, override));</span>
-<span class="c"></span>                            <span class="c">// Y.log(&#39;collection stuff: &#39; + v);</span>
-<span class="c"></span>                            <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">slice</span><span class="o">();</span>
+<span class="c"></span>                            <span class="c">// var node = el.item(k);</span>
+<span class="c"></span>                            <span class="c">// Y.log(&#39;collection stuff: &#39; + node);</span>
+<span class="c"></span>                            
+                            <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">slice</span><span class="o">();</span>
                             <span class="nx">b</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
                             <span class="nx">h</span> <span class="o">=</span> <span class="nx">E</span><span class="o">.</span><span class="nx">addListener</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">b</span><span class="o">);</span>
                             <span class="nx">handles</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">h</span><span class="o">);</span>
@@ -332,7 +335,7 @@
 
 
                     <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">el</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="k">var</span> <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
+                        <span class="k">var</span> <span class="nx">oEl</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">all</span><span class="o">(</span><span class="nx">el</span><span class="o">);</span>
                         <span class="c">// If the el argument is a string, we assume it is </span>
 <span class="c"></span>                        <span class="c">// actually the id of the element.  If the page is loaded</span>
 <span class="c"></span>                        <span class="c">// we convert el to the actual element, otherwise we </span>
@@ -341,7 +344,12 @@
                         <span class="c">// check to see if we need to delay hooking up the event </span>
 <span class="c"></span>                        <span class="c">// until after the page loads.</span>
 <span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">aa</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
+                                <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">addListener</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">aa</span><span class="o">);</span>
+                            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                <span class="nx">el</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">.</span><span class="nx">item</span><span class="o">(</span><span class="m">0</span><span class="o">);</span>
+                            <span class="o">}</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                             <span class="c">//</span>
 <span class="c"></span>                            <span class="c">// defer adding the event until the element is available</span>
@@ -528,12 +536,17 @@
 <span class="c">                 */</span>
                 <span class="nx">_isValidCollection</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">try</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="o">(</span> <span class="nx">o</span>                     <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
-<span class="c"></span>                                 <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="c">// o is not a string</span>
-<span class="c"></span>                                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">each</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
-<span class="c"></span>                                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span>            <span class="o">&amp;&amp;</span> <span class="c">// o is not an HTML element</span>
-<span class="c"></span>                                 <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is not a window</span>
-<span class="c"></span>                                 <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">)</span> <span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">NodeList</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Found NodeList&#39;</span><span class="o">);</span>
+                            <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="o">(</span> <span class="nx">o</span>                     <span class="o">&amp;&amp;</span> <span class="c">// o is something</span>
+<span class="c"></span>                                     <span class="k">typeof</span> <span class="nx">o</span> <span class="o">!==</span> <span class="s2">&quot;string&quot;</span> <span class="o">&amp;&amp;</span> <span class="c">// o is not a string</span>
+<span class="c"></span>                                     <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">each</span> <span class="o">||</span> <span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is indexed</span>
+<span class="c"></span>                                     <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">tagName</span>            <span class="o">&amp;&amp;</span> <span class="c">// o is not an HTML element</span>
+<span class="c"></span>                                     <span class="o">!</span><span class="nx">o</span><span class="o">.</span><span class="nx">alert</span>              <span class="o">&amp;&amp;</span> <span class="c">// o is not a window</span>
+<span class="c"></span>                                     <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">item</span> <span class="o">||</span> <span class="k">typeof</span> <span class="nx">o</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">!==</span> <span class="s2">&quot;undefined&quot;</span><span class="o">)</span> <span class="o">);</span>
+                        <span class="o">}</span>
                     <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;collection check failure&quot;</span><span class="o">,</span> <span class="s2">&quot;warn&quot;</span><span class="o">);</span>
                         <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
@@ -859,14 +872,6 @@
                                 <li class=""><a href="module_io.html">io</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
-
-                                <li class=""><a href="module_node.html">node</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
-
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

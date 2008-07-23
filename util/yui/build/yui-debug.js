@@ -3410,10 +3410,13 @@ YUI.add("event-dom", function(Y) {
                     if (this._isValidCollection(el)) {
 
                         // Y.log('collection: ' + el);
+                        // Y.log('collection: ' + el.item(0) + ', ' + el.item(1));
 
                         var handles=[], h, i, l, proc = function(v, k) {
                             // handles.push(this.addListener(el[i], type, fn, obj, override));
-                            // Y.log('collection stuff: ' + v);
+                            // var node = el.item(k);
+                            // Y.log('collection stuff: ' + node);
+                            
                             var b = a.slice();
                             b.unshift(v);
                             h = E.addListener.apply(E, b);
@@ -3427,7 +3430,7 @@ YUI.add("event-dom", function(Y) {
 
 
                     } else if (Y.Lang.isString(el)) {
-                        var oEl = Y.get(el);
+                        var oEl = Y.all(el);
                         // If the el argument is a string, we assume it is 
                         // actually the id of the element.  If the page is loaded
                         // we convert el to the actual element, otherwise we 
@@ -3436,7 +3439,12 @@ YUI.add("event-dom", function(Y) {
                         // check to see if we need to delay hooking up the event 
                         // until after the page loads.
                         if (oEl) {
-                            el = oEl;
+                            if (oEl.size() > 1) {
+                                aa[0] = oEl;
+                                return E.addListener.apply(E, aa);
+                            } else {
+                                el = oEl.item(0);
+                            }
                         } else {
                             //
                             // defer adding the event until the element is available
@@ -3623,12 +3631,17 @@ YUI.add("event-dom", function(Y) {
                  */
                 _isValidCollection: function(o) {
                     try {
-                        return ( o                     && // o is something
-                                 typeof o !== "string" && // o is not a string
-                                 (o.each || o.length)              && // o is indexed
-                                 !o.tagName            && // o is not an HTML element
-                                 !o.alert              && // o is not a window
-                                 (o.item || typeof o[0] !== "undefined") );
+                        if (o instanceof Y.NodeList) {
+                            Y.log('Found NodeList');
+                            return true;
+                        } else {
+                            return ( o                     && // o is something
+                                     typeof o !== "string" && // o is not a string
+                                     (o.each || o.length)              && // o is indexed
+                                     !o.tagName            && // o is not an HTML element
+                                     !o.alert              && // o is not a window
+                                     (o.item || typeof o[0] !== "undefined") );
+                        }
                     } catch(ex) {
                         Y.log("collection check failure", "warn");
                         return false;
@@ -4244,7 +4257,7 @@ YUI.add("event-facade", function(Y) {
 YUI.add('node', function(Y) {
 
 /**
- * DOM Abstractions.
+ * Provides a wrapper for dom nodes that supports selector queries normalizes x-browser differences.
  * @module node
  */
 
@@ -4253,7 +4266,7 @@ YUI.add('node', function(Y) {
      * Node properties can be accessed via the set/get methods.
      * With the exception of the noted properties,
      * only strings, numbers, and booleans are passed through. 
-     * Use Y.get() or Y.Node.get() to create Node instances.
+     * Use Y.get() or Y.Node.get() to retrieve Node instances.
      *
      * @class Node
      */
@@ -4313,7 +4326,7 @@ YUI.add('node', function(Y) {
 */
             ret = new Node(node);
         } else if (node && ('item' in node || 'push' in node) && 'length' in node) {
-            ret = new NodeList(node);
+            ret = new Y.NodeList(node);
         }
 
         return ret;
@@ -4375,23 +4388,23 @@ YUI.add('node', function(Y) {
     };
 
     var PROPS_WRAP = {
-        /*
+        /**
          * Returns a Node instance. 
-         * @property parentNode
+         * @attribute parentNode
          * @type Node
          */
         'parentNode': BASE_NODE,
 
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property childNodes
+         * @attribute childNodes
          * @type NodeList
          */
         'childNodes': BASE_NODE,
 
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property children
+         * @attribute children
          * @type NodeList
          */
         'children': function(node) {
@@ -4411,124 +4424,116 @@ YUI.add('node', function(Y) {
             return children;
         },
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property firstChild
+         * @attribute firstChild
          * @type Node
          */
         'firstChild': BASE_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property lastChild
+         * @attribute lastChild
          * @type Node
          */
         'lastChild': BASE_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property previousSibling
+         * @attribute previousSibling
          * @type Node
          */
         'previousSibling': BASE_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property previousSibling
+         * @attribute previousSibling
          * @type Node
          */
         'nextSibling': BASE_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property ownerDocument
+         * @attribute ownerDocument
          * @type Doc
          */
         'ownerDocument': BASE_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property offsetParent
+         * @attribute offsetParent
          * @type Node
          */
         'offsetParent': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property documentElement
+         * @attribute documentElement
          * @type Node
          */
         'documentElement': DOCUMENT_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property body
+         * @attribute body
          * @type Node
          */
         'body': DOCUMENT_NODE,
 
         // form
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property elements
+         * @attribute elements
          * @type NodeList
          */
         'elements': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property options
+         * @attribute options
          * @type NodeList
          */
         'options': ELEMENT_NODE,
 
 
         // table
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property rows
+         * @attribute rows
          * @type NodeList
          */
         'rows': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property cells
+         * @attribute cells
          * @type NodeList
          */
         'cells': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property tHead
+         * @attribute tHead
          * @type Node
          */
         'tHead': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a Node instance. 
-         * @property tFoot
+         * @attribute tFoot
          * @type Node
          */
         'tFoot': ELEMENT_NODE,
 
-        /*
+        /**
          * Returns a NodeList instance. 
-         * @property tBodies
+         * @attribute tBodies
          * @type NodeList
          */
         'tBodies': ELEMENT_NODE
     };
 
     var METHODS = {
-        /**
-         * Passes through to DOM method.
-         * @method insertBefore
-         * @param {String | HTMLElement | Node} node Node to be inserted 
-         * @param {String | HTMLElement | Node} refNode Node to be inserted before
-         */
-        insertBefore: nodeInOut,
-
         /**
          * Passes through to DOM method.
          * @method replaceChild
@@ -4761,18 +4766,6 @@ YUI.add('node', function(Y) {
     };
 
     Node.prototype = {
-        getById: function(id) {
-            var node = getDoc(this).getElementById(id);
-            var root = _nodes[this._yuid];
-
-            // contrain to root unless doc
-            if ( root[NODE_TYPE] !== 9 && !this[CONTAINS](node)) {
-                node = null;
-            }
-
-            return wrapDOM(node);
-        },
-
         /**
          * Set the value of the property/attribute on the HTMLElement bound to this Node.
          * Only strings/numbers/booleans are passed through unless a SETTER exists.
@@ -4801,9 +4794,9 @@ YUI.add('node', function(Y) {
             var val;
             var node = _nodes[this._yuid];
             if (prop in GETTERS) { // use custom getter
-                val = GETTERS[prop](this, prop); // passing Node instance
+                val = GETTERS[prop](this, prop);
             } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                if (Y.Lang.isFunction(PROPS_WRAP[prop])) {
+                if (typeof PROPS_WRAP[prop] === 'function') {
                     val = PROPS_WRAP[prop](this);
                 } else {
                     val = node[prop];
@@ -4834,12 +4827,6 @@ YUI.add('node', function(Y) {
             return null;
         },
 
-        /**
-         * Tests whether or not the bound HTMLElement can use the given method. 
-         * @method hasMethod
-         * @param {String} method The method to check for 
-         * @return {Boolean} Whether or not the HTMLElement can use the method 
-         */
         hasMethod: function(method) {
             return !!(METHODS_INVOKE[method] && _nodes[this._yuid][method]);
         },
@@ -4954,23 +4941,53 @@ YUI.add('node', function(Y) {
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method previous
          * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument
+         * that receives the sibling node being tested as its only argument.
+         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
          * @return {Node} Node instance or null if not found
          */
-        previous: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)));
+        previous: function(fn, all) {
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)), all);
         }, 
 
         /**
-         * Returns the next HTMLElement sibling that passes the boolean method. 
+         * Returns the next sibling that passes the boolean method. 
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method next
          * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument
+         * that receives the sibling node being tested as its only argument.
+         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
          * @return {Object} HTMLElement or null if not found
          */
-        next: function(node, fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)));
+        next: function(fn, all) {
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)), all);
+        },
+        
+        /**
+         * @method insertBefore 
+         * @param {String | HTMLElement} node The node to insert 
+         * @param {String | HTMLElement} refNode The node to insert the new node before  
+         * @return {Node} The node that was inserted (or null if insert fails)  
+         */ 
+        insertBefore: function(node, refNode) {
+            if (typeof node === 'string') {
+                node = Y.Node.create(node);
+            }
+            return wrapDOM(Y.DOM.insertBefore(Y.Node.getDOMNode(node),
+                    Y.Node.getDOMNode(refNode), _nodes[this._yuid]));
+        },
+        
+        /**
+         * @method insertAfter 
+         * @param {String | HTMLElement} node The node to insert 
+         * @param {String | HTMLElement} refNode The node to insert the new node before  
+         * @return {Node} The node that was inserted (or null if insert fails)  
+         */ 
+        insertAfter: function(node, refNode) {
+            if (typeof node === 'string') {
+                node = Y.Node.create(node);
+            }
+            return wrapDOM(Y.DOM.insertAfter(Y.Node.getDOMNode(node),
+                    Y.Node.getDOMNode(refNode), _nodes[this._yuid]));
         },
         
        /**
@@ -5169,7 +5186,7 @@ YUI.add('node', function(Y) {
     };
 
     /** 
-     * A wrapper for interacting with DOM elements
+     * A wrapper for manipulating multiple DOM elements
      * @class NodeList
      */
     var NodeList = function(nodes) {
@@ -5270,9 +5287,9 @@ YUI.add('node', function(Y) {
         each: function(fn, context) {
             context = context || this;
             var nodes = _nodes[this._yuid];
-            var node = _tmpNode; // reusing single instance for each node
+            var node;
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[node._yuid] = nodes[i]; // remap Node instance to current node
+                node = Y.get(nodes[i]);
                 fn.call(context, node, i, this);
             }
             return this;
@@ -5300,7 +5317,7 @@ YUI.add('node', function(Y) {
     Y.get = Y.Node.get;
 /**
  * Extended Node interface for managing classNames.
- * @module nodeclassname
+ * @module node-class
  */
 
     /**
@@ -5347,20 +5364,23 @@ YUI.add('node', function(Y) {
         'toggleClass'
     ]);
 /**
- * Extended interface for Node
- * @interface nodescreen
+ * This module applies adds support for positioning elements and
+ * normalizes window size and scroll detection. 
+ * @module node-screen
  */
 
-    /**
-     * An interface for Node positioning.
-     * @interface nodescreen
-     */
-
-    var ATTR = ['winWidth', 'winHeight', 'docWidth', 'docHeight', 'docScrollX', 'docScrollY'];
-
-    Y.each(ATTR, function(v, n) {
-        Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-    });
+    Y.each([
+        'winWidth',
+        'winHeight',
+        'docWidth',
+        'docHeight',
+        'docScrollX',
+        'docScrollY'
+        ],
+        function(v, n) {
+            Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
+        }
+    );
 
     Y.Node.addDOMMethods([
     /**
@@ -5382,13 +5402,8 @@ YUI.add('node', function(Y) {
     ]);
 
 /**
- * Extended Node interface for managing classNames.
+ * Extended Node interface for managing regions.
  * @module node-region
- */
-
-/**
- * A Region interface for Node.
- * @interface NodeRegion
  */
 
 var ATTR = ['region', 'viewportRegion'],
