@@ -6,6 +6,7 @@
 <script type="text/javascript" src="<?php echo $buildpath."node/node-min.js" ?>"></script>
 <script type="text/javascript" src="<?php echo $buildpath."attribute/attribute-min.js" ?>"></script>
 <script type="text/javascript" src="<?php echo $buildpath."dump/dump-min.js" ?>"></script>
+<script type="text/javascript" src="<?php echo $buildpath."substitute/substitute-min.js" ?>"></script>
 <script type="text/javascript" src="<?php echo $buildpath."get/get-min.js" ?>"></script>
 <script type="text/javascript" src="<?php echo $buildpath."base/base.js" ?>"></script>
 <script type="text/javascript" src="<?php echo $buildpath."animation/animation.js" ?>"></script>
