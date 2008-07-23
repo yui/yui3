@@ -48,15 +48,13 @@ $examples["attribute-clone"] = array(
 	highlightSyntax => true
 );
 
-/*
 $examples["attribute-rw"] = array(
-	name => "Explore the readOnly and writeOnce attribute configuration options",
+	name => "readOnly and writeOnce Configuration",
 	modules => array("attribute"),
 	description => "",
-	sequence => array(1),
+	sequence => array(5),
 	newWindow => "default",
-	requires => array("yui"),
+	requires => array("yui", "attribute"),
 	highlightSyntax => true
 );
-*/
 ?>

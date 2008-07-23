@@ -1,0 +1,1 @@
+Attributes can be configured to be readOnly, stopping them from being modified by the end user, or writeOnce allowing them to only be written once by the end user. This example demonstrates how to setup attributes as readOnly or writeOnce attributes, and shows how they differ.

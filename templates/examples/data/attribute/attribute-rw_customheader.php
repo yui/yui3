@@ -27,7 +27,8 @@
         color:#ffffff;
         background-color:#004c6d;
         overflow:auto;
-        height:35em;
+        width:30em;
+        height:22em;
         padding:2px 5px;
     }
 </style>
