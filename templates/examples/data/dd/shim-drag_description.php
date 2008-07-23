@@ -1,12 +1,38 @@
 <h3>Using the shim</h3>
 <p>Here is the code for this example.</p>
 <textarea name="code" class="JScript">
-var Y = new YUI().use('dd-ddm', 'dd-drag', 'dd-proxy');
-Y.on('event:ready', function() {
-    Y.Node.get('#shim').on('click', function() {
-        var checked = this.get('checked');
-        dd.set('useShim', checked);
+var Y = new YUI().use('dd-ddm', 'dd-drag', 'dd-proxy, function(Y) {
+
+    //Toggling the buttons
+    Y.Node.get('#shim').on('click', function(e) {
+        var value = e.target.get('value');
+        if (value == 'off' || value == 'Shim Off') {
+            dd.set('useShim', true);
+            e.target.set('value', 'on');
+            e.target.set('innerHTML', 'Shim On');
+            Y.Node.get('#debugShim').set('disabled', false);
+        } else {
+            dd.set('useShim', false);
+            e.target.set('value', 'off');
+            e.target.set('innerHTML', 'Shim Off');
+            Y.Node.get('#debugShim').set('disabled', true);
+        }
     });
+    
+    Y.Node.get('#debugShim').on('click', function(e) {
+        var value = e.target.get('value');
+        if (value == 'off' || value == 'Debug Off') {
+            Y.DD.DDM._debugShim = true;
+            e.target.set('value', 'on');
+            e.target.set('innerHTML', 'Debug On');
+        } else {
+            Y.DD.DDM._debugShim = false;
+            e.target.set('value', 'off');
+            e.target.set('innerHTML', 'Debug Off');
+        }
+    });
+
+
     var dd = new Y.DD.Drag({
         //Selector of the node to make draggable
         node: '#demo',

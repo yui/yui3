@@ -11,19 +11,44 @@
         height: 300px;
     }
 </style>
-<p>Try dragging the proxy element over the iframe below, in most browsers this will not happen. Now check the box and drag again. Now you can drag over the iframe.</p>
-<p><input type="checkbox" value="on" id="shim"> <label for="shim">Use the shim</label></p>
+<p>Try dragging the proxy element over the iframe below, in most browsers this will not happen. Now click the <code>Shim off</code> button and drag again. Now you can drag over the iframe.</p>
+<p>You can see the shim by clicking the <code>Debug Off</code> button.</p>
+<p><button id="shim" value="off">Shim Off</button> <button id="debugShim" value="off" disabled>Debug Off</button></p>
 <div id="demo">Drag Me</div>
 <iframe id="ifrm" src="<?php echo $assetsDirectory; ?>blank.htm"></iframe>
 
 <script>
 
-var Y = new YUI().use('dd-ddm', 'dd-drag', 'dd-proxy');
-Y.on('event:ready', function() {
-    Y.Node.get('#shim').on('click', function() {
-        var checked = this.get('checked');
-        dd.set('useShim', checked);
+var Y = new YUI().use('dd-ddm', 'dd-drag', 'dd-proxy', function(Y) {
+    //Toggling the buttons
+    Y.Node.get('#shim').on('click', function(e) {
+        var value = e.target.get('value');
+        if (value == 'off' || value == 'Shim Off') {
+            dd.set('useShim', true);
+            e.target.set('value', 'on');
+            e.target.set('innerHTML', 'Shim On');
+            Y.Node.get('#debugShim').set('disabled', false);
+        } else {
+            dd.set('useShim', false);
+            e.target.set('value', 'off');
+            e.target.set('innerHTML', 'Shim Off');
+            Y.Node.get('#debugShim').set('disabled', true);
+        }
     });
+    
+    Y.Node.get('#debugShim').on('click', function(e) {
+        var value = e.target.get('value');
+        if (value == 'off' || value == 'Debug Off') {
+            Y.DD.DDM._debugShim = true;
+            e.target.set('value', 'on');
+            e.target.set('innerHTML', 'Debug On');
+        } else {
+            Y.DD.DDM._debugShim = false;
+            e.target.set('value', 'off');
+            e.target.set('innerHTML', 'Debug Off');
+        }
+    });
+    
     var dd = new Y.DD.Drag({
         //Selector of the node to make draggable
         node: '#demo',
