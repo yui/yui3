@@ -28,9 +28,9 @@ $examples["attribute-event"] = array(
 );
 
 $examples["attribute-getset"] = array(
-	name => "Custom getters, setters and validators for attribute values",
+	name => "Custom getters, setters and validators",
 	modules => array("attribute"),
-	description => "Add customized methods to get and set attribute values and add validation support.",
+	description => "Add custom methods to get and set attribute values and provide validation support.",
 	sequence => array(3),
 	newWindow => "default",
 	requires => array("yui"),
