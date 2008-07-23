@@ -3631,17 +3631,12 @@ YUI.add("event-dom", function(Y) {
                  */
                 _isValidCollection: function(o) {
                     try {
-                        if (o instanceof Y.NodeList) {
-                            Y.log('Found NodeList');
-                            return true;
-                        } else {
-                            return ( o                     && // o is something
-                                     typeof o !== "string" && // o is not a string
-                                     (o.each || o.length)              && // o is indexed
-                                     !o.tagName            && // o is not an HTML element
-                                     !o.alert              && // o is not a window
-                                     (o.item || typeof o[0] !== "undefined") );
-                        }
+                        return ( o                     && // o is something
+                                 typeof o !== "string" && // o is not a string
+                                 (o.each || o.length)  && // o is indexed
+                                 !o.tagName            && // o is not an HTML element
+                                 !o.alert              && // o is not a window
+                                 (o.item || typeof o[0] !== "undefined") );
                     } catch(ex) {
                         Y.log("collection check failure", "warn");
                         return false;
