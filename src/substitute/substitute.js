@@ -61,23 +61,27 @@ YUI.add("substitute", function(Y) {
             }
 
             if (L.isObject(v)) {
-                if (L.isArray(v)) {
-                    v = L.dump(v, parseInt(meta, 10));
+                if (!Y.dump) {
+                    v = v.toString();
                 } else {
-                    meta = meta || "";
-
-                    // look for the keyword 'dump', if found force obj dump
-                    var dump = meta.indexOf(DUMP);
-                    if (dump > -1) {
-                        meta = meta.substring(4);
-                    }
-
-                    // use the toString if it is not the Object toString 
-                    // and the 'dump' meta info was not found
-                    if (v.toString===Object.prototype.toString||dump>-1) {
-                        v = L.dump(v, parseInt(meta, 10));
+                    if (L.isArray(v)) {
+                        v = Y.dump(v, parseInt(meta, 10));
                     } else {
-                        v = v.toString();
+                        meta = meta || "";
+
+                        // look for the keyword 'dump', if found force obj dump
+                        var dump = meta.indexOf(DUMP);
+                        if (dump > -1) {
+                            meta = meta.substring(4);
+                        }
+
+                        // use the toString if it is not the Object toString 
+                        // and the 'dump' meta info was not found
+                        if (v.toString===Object.prototype.toString||dump>-1) {
+                            v = Y.dump(v, parseInt(meta, 10));
+                        } else {
+                            v = v.toString();
+                        }
                     }
                 }
             } else if (!L.isString(v) && !L.isNumber(v)) {
