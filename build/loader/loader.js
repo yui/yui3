@@ -1230,7 +1230,7 @@ Y.Env.meta = {
 
                 for (i=0; i<len; i=i+1) {
                     m = this.getModule(s[i]);
-                    // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
+// @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                     // Do not try to combine non-yui JS
                     if (m.type == JS && !m.ext) {
                         url += this.root + m.path;
@@ -1256,6 +1256,7 @@ Y.Env.meta = {
                             self.loadNext(o.data);
                         };
 
+                    // @TODO get rid of the redundant Get code
                     Y.Get.script(url, {
                         data: s[i],
                         onSuccess: c,
@@ -1378,7 +1379,8 @@ Y.Env.meta = {
             } else {
                 this._pushEvents();
 
-                Y.use.apply(Y, this.sorted);
+                // Y.use.apply(Y, this.sorted);
+                Y.use(this);
 
                 this.fire('success', {
                     data: this.data
