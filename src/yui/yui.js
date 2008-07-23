@@ -328,15 +328,19 @@ YUI.prototype = {
 
         // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
-        var attach = function() {
+        var attach = function(fromLoader) {
 
             // Y.log('ATTACH ' + arguments[0]);
+            //
 
-            for (i=0, l=r.length; i<l; i=i+1) {
-                var m = mods[r[i]];
-                if (m) {
-                    Y.log('attaching ' + r[i], 'info', 'YUI');
-                    m.fn(Y);
+            if (!fromLoader) {
+
+                for (i=0, l=r.length; i<l; i=i+1) {
+                    var m = mods[r[i]];
+                    if (m) {
+                        Y.log('attaching ' + r[i], 'info', 'YUI');
+                        m.fn(Y);
+                    }
                 }
             }
 
@@ -352,7 +356,7 @@ YUI.prototype = {
             loader.require(missing);
             loader.insert();
             // loader calls use to automatically attach when finished
-            // loader.subscribe('success', attach, loader, 'loader');
+            loader.subscribe('success', attach, loader, 'loader');
             // loader.subscribe('failure', function() {
                 // Y.log('asdf');
                 // });

@@ -319,13 +319,17 @@ YUI.prototype = {
         }
 
 
-        var attach = function() {
+        var attach = function(fromLoader) {
 
+            //
 
-            for (i=0, l=r.length; i<l; i=i+1) {
-                var m = mods[r[i]];
-                if (m) {
-                    m.fn(Y);
+            if (!fromLoader) {
+
+                for (i=0, l=r.length; i<l; i=i+1) {
+                    var m = mods[r[i]];
+                    if (m) {
+                        m.fn(Y);
+                    }
                 }
             }
 
@@ -340,7 +344,7 @@ YUI.prototype = {
             loader.require(missing);
             loader.insert();
             // loader calls use to automatically attach when finished
-            // loader.subscribe('success', attach, loader, 'loader');
+            loader.subscribe('success', attach, loader, 'loader');
             // loader.subscribe('failure', function() {
                 // });
         } else {
