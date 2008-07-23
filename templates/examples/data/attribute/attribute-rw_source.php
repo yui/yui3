@@ -28,7 +28,7 @@
 
     MyClass.prototype.doSomething = function() {
         // ... Do something which requires
-        // the MyClass to change the value
+        // MyClass to change the value
         // of foo ...
         
         // Host code can reset value of 
