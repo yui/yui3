@@ -10,10 +10,11 @@
     <script type="text/javascript" src="../../build/node/node-min.js"></script>
     <script type="text/javascript" src="../../build/attribute/attribute-min.js"></script>
     <script type="text/javascript" src="../../build/base/base-min.js"></script>
+    <script type="text/javascript" src="../../build/cookie/cookie-debug.js"></script>
     <script type="text/javascript" src="../../build/animation/animation-min.js"></script>
     <script type="text/javascript" src="../../build/io/io-min.js"></script>
     <script type="text/javascript" src="../../build/json/json-min.js"></script>
-    <script type="text/javascript" src="../../build/dd/dd-dragdrop-all.js"></script>
+    <script type="text/javascript" src="../../build/dd/dd-dragdrop-all-min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="assets/portal.css"> 
 
@@ -36,13 +37,13 @@
 	    </div>
 	    <div class="yui-b">
             <div id="feeds">
-                <p>Drag a news feed</p>
+                <p>Drag a news feed into one of the columns.</p>
                 <ul>
                 </ul>
             </div>
         </div>
     </div>
-    <div id="ft">Built with <a href="http://developer.yahoo.com/yui/3/">YUI 3.0</a></div>
+    <div id="ft">Built with <a href="http://developer.yahoo.com/yui/3/">YUI 3.0</a>: <a href="http://developer.yahoo.com/yui/3/yui">Core</a>, <a href="http://developer.yahoo.com/yui/3/cookie">Cookie</a>, <a href="http://developer.yahoo.com/yui/3/animation">Animation</a>, <a href="http://developer.yahoo.com/yui/3/io">IO</a>, <a href="http://developer.yahoo.com/yui/3/json">JSON</a> &amp; <a href="http://developer.yahoo.com/yui/3/dd">DD</a>.</div>
 </div>
 
 <script src="assets/portal.js"></script>

@@ -15,18 +15,18 @@
     font-style: italic;
 }
 #play {
-    border: 1px solid black;
-    padding: .5em;
-    margin: .75em;
+    margin-top: .75em;
     zoom: 1;
 }
 #play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
 
 #feeds {
-    background-color: #CDCDCD;
-    margin: .75em;
+    background-color: #B3D4FF;
+    margin-top: .75em;
     border: 1px solid #CDCDCD;
     min-height: 500px;
+    padding: .5em;
+    position: relative;
 }
 
 #feeds ul li {
