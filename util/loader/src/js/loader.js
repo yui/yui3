@@ -42,13 +42,13 @@ Y.Env.meta = {
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
-    skin: {
-        defaultSkin: 'sam',
-        base: 'assets/skins/',
-        path: 'skin.css',
-        after: [RESET, FONTS, GRIDS, BASE],
-        rollup: 3
-    },
+    // skin: {
+    //     defaultSkin: 'sam',
+    //     base: 'assets/skins/',
+    //     path: 'skin.css',
+    //     after: [RESET, FONTS, GRIDS, BASE],
+    //     rollup: 3
+    // },
 
     modules: {
 
@@ -70,8 +70,8 @@ Y.Env.meta = {
 
         log: {
             optional: [DRAGDROP],
-            path: 'log/logreader-min.js'
-            // skinnable: 1
+            path: 'log/logreader-min.js',
+            skinnable: 1
         },
 
         reset: {
@@ -489,48 +489,7 @@ Y.Env.meta = {
          */
         this.inserted = {};
 
-        /**
-         * Provides the information used to skin the skinnable components.
-         * The following skin definition would result in 'skin1' and 'skin2'
-         * being loaded for calendar (if calendar was requested), and
-         * 'sam' for all other skinnable components:
-         *
-         *   <code>
-         *   skin: {
-         *
-         *      // The default skin, which is automatically applied if not
-         *      // overriden by a component-specific skin definition.
-         *      // Change this in to apply a different skin globally
-         *      defaultSkin: 'sam', 
-         *
-         *      // This is combined with the loader base property to get
-         *      // the default root directory for a skin. ex:
-         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
-         *      base: 'assets/skins/',
-         *
-         *      // The name of the rollup css file for the skin
-         *      path: 'skin.css',
-         *
-         *      // The number of skinnable components requested that are
-         *      // required before using the rollup file rather than the
-         *      // individual component css files
-         *      rollup: 3,
-         *
-         *      // Any component-specific overrides can be specified here,
-         *      // making it possible to load different skins for different
-         *      // components.  It is possible to load more than one skin
-         *      // for a given component as well.
-         *      overrides: {
-         *          calendar: ['skin1', 'skin2']
-         *      }
-         *   }
-         *   </code>
-         *   @property skin
-         */
-        this.skin = Y.merge(_Y.info.skin); 
-
-        Y.on('yui:load', this.loadNext, this);
-
+        // Y.on('yui:load', this.loadNext, this);
 
         this._config(o);
 
@@ -548,8 +507,6 @@ Y.Env.meta = {
                 'replaceStr': "-debug.js"
             }
         },
-
-        SKIN_PREFIX: "skin-",
 
         _config: function(o) {
 
@@ -651,53 +608,6 @@ Y.Env.meta = {
             this.dirty = true;
             //OU.appendArray(this.required, a);
             Y.mix(this.required, Y.Array.hash(a));
-        },
-
-        /**
-         * Adds the skin def to the module info
-         * @method _addSkin
-         * @param skin {string} the name of the skin
-         * @param mod {string} the name of the module
-         * @return {string} the module name for the skin
-         * @private
-         */
-        _addSkin: function(skin, mod) {
-
-            // Add a module definition for the skin rollup css
-            var name = this.formatSkin(skin), info = this.moduleInfo,
-                sinf = this.skin, ext = info[mod] && info[mod].ext;
-
-            // Y.log('ext? ' + mod + ": " + ext);
-            if (!info[name]) {
-                // Y.log('adding skin ' + name);
-                this.addModule({
-                    'name': name,
-                    'type': 'css',
-                    'path': sinf.base + skin + '/' + sinf.path,
-                    //'supersedes': '*',
-                    'after': sinf.after,
-                    'rollup': sinf.rollup,
-                    'ext': ext
-                });
-            }
-
-            // Add a module definition for the module-specific skin css
-            if (mod) {
-                name = this.formatSkin(skin, mod);
-                if (!info[name]) {
-                    var mdef = info[mod], pkg = mdef.pkg || mod;
-                    // Y.log('adding skin ' + name);
-                    this.addModule({
-                        'name': name,
-                        'type': 'css',
-                        'after': sinf.after,
-                        'path': pkg + '/' + sinf.base + skin + '/' + mod + '.css',
-                        'ext': ext
-                    });
-                }
-            }
-
-            return name;
         },
 
         /**
@@ -868,27 +778,6 @@ Y.Env.meta = {
 
             var info = this.moduleInfo, name, i, j;
 
-            // Create skin modules
-            for (name in info) {
-                if (info.hasOwnProperty(name)) {
-                    var m = this.getModule(name);
-                    if (m && m.skinnable) {
-                        // Y.log("skinning: " + name);
-                        var o=this.skin.overrides, smod;
-                        if (o && o[name]) {
-                            for (i=0; i<o[name].length; i=i+1) {
-                                smod = this._addSkin(o[name][i], name);
-                            }
-                        } else {
-                            smod = this._addSkin(this.skin.defaultSkin, name);
-                        }
-
-                        m.requires.push(smod);
-                    }
-                }
-
-            }
-
             var l = Y.merge(this.inserted); // shallow clone
 
             // available modules
@@ -968,43 +857,6 @@ Y.Env.meta = {
         },
 
         /**
-         * Returns the skin module name for the specified skin name.  If a
-         * module name is supplied, the returned skin module name is 
-         * specific to the module passed in.
-         * @method formatSkin
-         * @param skin {string} the name of the skin
-         * @param mod {string} optional: the name of a module to skin
-         * @return {string} the full skin module name
-         */
-        formatSkin: function(skin, mod) {
-            var s = this.SKIN_PREFIX + skin;
-            if (mod) {
-                s = s + "-" + mod;
-            }
-
-            return s;
-        },
-        
-        /**
-         * Reverses <code>formatSkin</code>, providing the skin name and
-         * module name if the string matches the pattern for skins.
-         * @method parseSkin
-         * @param mod {string} the module name to parse
-         * @return {skin: string, module: string} the parsed skin name 
-         * and module name, or null if the supplied string does not match
-         * the skin pattern
-         */
-        parseSkin: function(mod) {
-            
-            if (mod.indexOf(this.SKIN_PREFIX) === 0) {
-                var a = mod.split("-");
-                return {skin: a[1], module: a[2]};
-            } 
-
-            return null;
-        },
-
-        /**
          * Look for rollup packages to determine if all of the modules a
          * rollup supersedes are required.  If so, include the rollup to
          * help reduce the total number of connections required.  Called
@@ -1046,41 +898,21 @@ Y.Env.meta = {
                             continue;
                         }
 
-                        var skin = (m.ext) ? false : this.parseSkin(i), c = 0;
+                        // check the threshold
+                        for (j=0;j<s.length;j=j+1) {
 
-                        // Y.log('skin? ' + i + ": " + skin);
-                        if (skin) {
-                            for (j in r) {
-                                if (r.hasOwnProperty(j)) {
-                                    if (i !== j && this.parseSkin(j)) {
-                                        c++;
-                                        roll = (c >= m.rollup);
-                                        if (roll) {
-                                            // Y.log("skin rollup " + L.dump(r));
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                        } else {
-
-                            // check the threshold
-                            for (j=0;j<s.length;j=j+1) {
-
-                                // if the superseded module is loaded, we can't load the rollup
-                                if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                                    roll = false;
+                            // if the superseded module is loaded, we can't load the rollup
+                            if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                                roll = false;
+                                break;
+                            // increment the counter if this module is required.  if we are
+                            // beyond the rollup threshold, we will use the rollup module
+                            } else if (r[s[j]]) {
+                                c++;
+                                roll = (c >= m.rollup);
+                                if (roll) {
+                                    // Y.log("over thresh " + c + ", " + L.dump(r));
                                     break;
-                                // increment the counter if this module is required.  if we are
-                                // beyond the rollup threshold, we will use the rollup module
-                                } else if (r[s[j]]) {
-                                    c++;
-                                    roll = (c >= m.rollup);
-                                    if (roll) {
-                                        // Y.log("over thresh " + c + ", " + L.dump(r));
-                                        break;
-                                    }
                                 }
                             }
                         }
@@ -1122,37 +954,15 @@ Y.Env.meta = {
                 // remove anything this module supersedes
                 } else {
 
-                    var skinDef = this.parseSkin(i);
-
-                    if (skinDef) {
-                        //Y.log("skin found in reduce: " + skinDef.skin + ", " + skinDef.module);
-                        // the skin rollup will not have a module name
-                        if (!skinDef.module) {
-                            var skin_pre = this.SKIN_PREFIX + skinDef.skin;
-                            //Y.log("skin_pre: " + skin_pre);
-                            for (j in r) {
-                                if (r.hasOwnProperty(j)) {
-                                    m = this.getModule(j);
-                                    var ext = m && m.ext;
-                                    if (!ext && j !== i && j.indexOf(skin_pre) > -1) {
-                                        // Y.log ("removing component skin: " + j);
-                                        delete r[j];
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-
-                         m = this.getModule(i);
-                         s = m && m.supersedes;
-                         if (s) {
-                             for (j=0; j<s.length; j=j+1) {
-                                 if (s[j] in r) {
-                                     delete r[s[j]];
-                                 }
+                     m = this.getModule(i);
+                     s = m && m.supersedes;
+                     if (s) {
+                         for (j=0; j<s.length; j=j+1) {
+                             if (s[j] in r) {
+                                 delete r[s[j]];
                              }
                          }
-                    }
+                     }
                 }
             }
         },
