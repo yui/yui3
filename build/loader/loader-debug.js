@@ -112,6 +112,69 @@ Y.Env.meta = {
 
         css: { },
 
+        'dd-ddm-base': {
+            path: 'dd/dd-ddm-base-min.js',
+            requires: [BASE]
+        }, 
+        'dd-ddm':{
+            path: 'dd/dd-ddm-min.js',
+            requires: ['dd-ddm-base']
+        }, 
+        'dd-ddm-drop':{
+            path: 'dd/dd-ddm-drop-min.js',
+            requires: ['dd-ddm']
+        }, 
+        'dd-drag':{
+            path: 'dd/dd-drag-min.js',
+            requires: ['dd-ddm-base']
+        }, 
+        'dd-drop':{
+            path: 'dd/dd-drop-min.js',
+            requires: ['dd-ddm-drop']
+        }, 
+        'dd-proxy':{
+            path: 'dd/dd-proxy-min.js',
+            requires: ['dd-drag']
+        }, 
+        'dd-constrain':{
+            path: 'dd/dd-constrain-min.js',
+            requires: ['dd-drag', 'dd-proxy']
+        }, 
+        'dd-plugin':{
+            path: 'dd/dd-plugin-min.js',
+            requires: ['dd-drag'],
+            optional: ['dd-constrain', 'dd-proxy']
+        },
+        'dd-drop-plugin':{
+            path: 'dd/dd-drop-plugin-min.js',
+            requires: ['dd-drop']
+        },
+
+        'dd-drag-all':{
+            path: 'dd/dd-drag-all-min.js',
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drag-core', 'dd-drag-proxy']
+        },
+
+        'dd-dragdrop-all':{
+            path: 'dd/dd-dragdrop-all-min.js',
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-core', 'dd-drag-proxy']
+        },
+
+        'dd-drop-core':{
+            path: 'dd/dd-drop-core-min.js',
+            supersedes: ['dd-ddm-drop', 'dd-drop', 'dd-plugin-drop']
+        },
+
+        'dd-drag-core':{
+            path: 'dd/dd-drag-core-min.js',
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-plugin']
+        },
+
+        'dd-drag-proxy':{
+            path: 'dd/dd-drag-proxy-min.js',
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-plugin']
+        },
+
         dump: { },
         
         io: { },
@@ -278,6 +341,11 @@ Y.Env.meta = {
          */
         this.combine = false;
 
+        /**
+         * Ignore modules registered on the YUI global
+         * @property ignoreRegistered
+         * @default false
+         */
         this.ignoreRegistered = false;
 
         /**
@@ -666,6 +734,24 @@ Y.Env.meta = {
                     d.push(add[j]);
                 }
             }
+
+            // get the requirements from superseded modules, if any
+            r=mod.supersedes;
+            if (r) {
+                for (i=0; i<r.length; i=i+1) {
+                    // Y.log(mod.name + ' requiring ' + r[i]);
+                    d.push(r[i]);
+                    m = this.getModule(r[i]);
+                    // AU.appendArray(d, this.getRequires(m));
+                    // d.concat(this.getRequires(m));
+                    // Y.log(d);
+                    add = this.getRequires(m);
+                    for (j=0;j<add.length;j=j+1) {
+                        d.push(add[j]);
+                    }
+                }
+            }
+
 
             if (o && this.loadOptional) {
                 for (i=0; i<o.length; i=i+1) {
