@@ -273,10 +273,10 @@
             <span class="nx">a</span><span class="o">=</span><span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span> <span class="m">0</span><span class="o">),</span> 
             <span class="nx">mods</span><span class="o">=</span><span class="nx">YUI</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">mods</span><span class="o">,</span> 
             <span class="nx">used</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_used</span><span class="o">,</span>
-            <span class="nx">loader</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">,</span> <span class="nx">firstArg</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">sorted</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
         <span class="c">// YUI().use(&#39;*&#39;); // bind everything available</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">firstArg</span> <span class="o">===</span> <span class="s2">&quot;*&quot;</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// a = Y.Object.keys(mods);</span>
 <span class="c"></span>            <span class="c">// //return Y.use.apply(Y, Y.Object.keys(mods));</span>
 <span class="c"></span>            <span class="nx">a</span> <span class="o">=</span> <span class="o">[];</span>
@@ -287,14 +287,23 @@
             <span class="o">}</span>
 
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">firstArg</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">firstArg</span><span class="o">.</span><span class="nx">sorted</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">firstArg</span><span class="o">.</span><span class="nx">sorted</span><span class="o">;</span>
+            <span class="nx">sorted</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
         <span class="o">}</span>
 
         <span class="c">// Y.log(&#39;loader before: &#39; + a.join(&#39;,&#39;));</span>
-<span class="c"></span>        
+<span class="c"></span>       
+        <span class="k">var</span> <span class="nx">callbackHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">];</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">callback</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">a</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">callback</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
 
         <span class="c">// use loader to optimize and sort the requirements if it</span>
 <span class="c"></span>        <span class="c">// is available.</span>
-<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(!</span><span class="nx">sorted</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">a</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">calculate</span><span class="o">();</span>
@@ -350,24 +359,16 @@
             <span class="o">}</span>
         <span class="o">};</span>
 
-
-        <span class="k">var</span> <span class="nx">callbackHandle</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-
         <span class="c">// iterate arguments</span>
 <span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">((</span><span class="nx">i</span> <span class="o">===</span> <span class="nx">l</span><span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Y.log(&#39;found loaded listener&#39;);</span>
-<span class="c"></span>                <span class="nx">callbackHandle</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">on</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
-            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-            <span class="o">}</span>
+            <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
         <span class="o">}</span>
 
         <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing);</span>
 <span class="c"></span>
         <span class="k">var</span> <span class="nx">attach</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
-            <span class="c">// Y.log(&#39;attach &#39; + arguments[0]);</span>
+            <span class="c">// Y.log(&#39;ATTACH &#39; + arguments[0]);</span>
 <span class="c"></span>
             <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">,</span> <span class="nx">l</span><span class="o">=</span><span class="nx">r</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">mods</span><span class="o">[</span><span class="nx">r</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
@@ -377,23 +378,20 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Y.log(&#39;firing loaded event&#39;);</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">callbackHandle</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="nx">callbackHandle</span><span class="o">.</span><span class="nx">detach</span><span class="o">();</span>
-                <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">callback</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">};</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">sorted</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
             <span class="c">// dynamic load</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;trying to get the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">);</span>
-            <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">();</span>
+            <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">missing</span><span class="o">);</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="nx">attach</span><span class="o">,</span> <span class="nx">loader</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">);</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
-            <span class="c">// loader.subscribe(&#39;failure&#39;, function() {</span>
+            <span class="c">// loader calls use to automatically attach when finished</span>
+<span class="c"></span>            <span class="c">// loader.subscribe(&#39;success&#39;, attach, loader, &#39;loader&#39;);</span>
+<span class="c"></span>            <span class="c">// loader.subscribe(&#39;failure&#39;, function() {</span>
 <span class="c"></span>                <span class="c">// Y.log(&#39;asdf&#39;);</span>
 <span class="c"></span>                <span class="c">// });</span>
 <span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
