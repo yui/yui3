@@ -231,11 +231,20 @@ YUI.prototype = {
 
         var Y = this, 
             a=Array.prototype.slice.call(arguments, 0), 
-            mods=YUI.Env.mods, 
+            mods = YUI.Env.mods, 
             used = Y.Env._used,
-            loader, firstArg = a[0], 
-            dynamic = false;
-            sorted = false;
+            loader, 
+            firstArg = a[0], 
+            dynamic = false,
+            sorted = false,
+            callback = a[a.length-1];
+
+        // The last argument supplied to use can be a load complete callback
+        if (typeof callback === 'function') {
+            a.pop();
+        } else {
+            callback = null;
+        }
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
@@ -244,6 +253,10 @@ YUI.prototype = {
                 if (mods.hasOwnProperty(k)) {
                     a.push(k);
                 }
+            }
+
+            if (callback) {
+                a.push(callback);
             }
 
             return Y.use.apply(Y, a);
@@ -255,13 +268,6 @@ YUI.prototype = {
         }
 
        
-        // The last argument supplied to use can be a load complete callback
-        var callback = a[a.length-1];
-        if (typeof callback === 'function') {
-            a.pop();
-        } else {
-            callback = null;
-        }
 
         // use loader to optimize and sort the requirements if it
         // is available.
