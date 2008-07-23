@@ -15,7 +15,13 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					<p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The Attribute interface
+                       provides <code>get</code> and <code>set</code> methods for attribute access, in addition to supporting Attribute value change events, 
+                       allowing you listen for changes in attribute values, and optionally prevent changes from occuring.</p>
+
+                    <p>Attributes added through the Attribute interface can be configured to with custom get, set and validation handlers and can also be specified as 
+                    read-only or write-once. It also provides the ability to configure attibutes to protect their stored values, using a deep or shallow clone when returning
+                    values through <code>get</code></p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -24,9 +30,11 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+										<li><a href="#apply">Applying The Attribute Interface</a></li>
+										<li><a href="#adding">Adding Attributes</a></li>
+                                        <li><a href="#configuration">Attributes Configuration</a></li>
+										<li><a href="#events">Attribute Change Events</a></li>
+										<li><a href="#subattrs">Setting Sub Attribute Values</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -41,50 +49,48 @@ include "../inc/header.inc";
 					</div>				
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
+
 				<h3 id="start">Getting Started</h3>
-				
+
 				<h4 id="dependencies">Include Dependencies</h4>
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
 				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 				</textarea>
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+				<h4 id="yui">The YUI Instance</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<p>Talk a little about sandboxing and YUI.use here.</p>
 
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
+                    <li><a href="#apply">Applying The Attribute Interface</a></li>
+                    <li><a href="#adding">Adding Attributes</a></li>
+                    <li><a href="#configuration">Attributes Configuration</a></li>
+                    <li><a href="#events">Attribute Change Events</a></li>
+                    <li><a href="#subattrs">Setting Sub Attribute Values</a></li>
 				</ul>
 				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+            <h4 id="apply">Applying The Attribute Interface</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Augment</p>
 				
+				
+               <h4 id="adding">Adding Attributes</h4>
+                <p>addAtt, _initAtts</p>
+               <h4 id="configuration">Attributes Configuration</h4>
+                <p>Configuration Property Table</p>
 				<table>
 					<thead>
 						<tr>
@@ -111,12 +117,38 @@ include "../inc/header.inc";
 						</tr>
 					</tbody>
 				</table>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
+                <h5 id="clone">Cloning</h5>
+                <p>Deep, Shallow, Immutable, None Table</p>
+				<table>
+					<thead>
+						<tr>
+							<th>your</th>
+							<th>headers</th>
+							<th>here</th>
+						</tr>
+					</tbody>
+					<tbody>
+						<tr>
+							<td><code>your</code></td>
+							<td>data</td>
+							<td>here</td>
+						</tr>
+						<tr>
+							<td><code>your</code></td>
+							<td>data</td>
+							<td>here</td>
+						</tr>
+						<tr>
+							<td><code>your</code></td>
+							<td>data</td>
+							<td>here</td>
+						</tr>
+					</tbody>
+				</table>
+               <h4 id="events">Attribute Change Events</h4>
+                <p>on/after, event payload, preventDefault, stopImmediatePropagation</p>
+               <h4 id="subattrs">Setting Sub Attribute Values</h4>
+                <p>set("x.y.z")</p>
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
@@ -127,8 +159,8 @@ include "../inc/support.inc";
 		</div>
 <div class="yui-u sidebar">
 
-	<?php 
-	include "../inc/cheatsheet.inc";
+    <?php 
+	 // include "../inc/cheatsheet.inc";
 	?>
 		 	
 			<div id="examples">
@@ -136,8 +168,8 @@ include "../inc/support.inc";
 	include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		   
-		   	<div id="morereading">
+		   <!-- 
+		   <div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
 				
 				<ul>
@@ -147,6 +179,7 @@ include "../inc/support.inc";
 
 			   </ul>
 		   </div>
+           -->
 		   
 <?php 
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
