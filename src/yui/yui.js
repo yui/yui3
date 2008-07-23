@@ -235,12 +235,12 @@ YUI.prototype = {
             a=Array.prototype.slice.call(arguments, 0), 
             mods=YUI.Env.mods, 
             used = Y.Env._used,
-            loader, firstArg = a[0], sorted = false;
+            loader, firstArg = a[0], 
+            dynamic = false;
+            sorted = false;
 
         // YUI().use('*'); // bind everything available
         if (firstArg === "*") {
-            // a = Y.Object.keys(mods);
-            // //return Y.use.apply(Y, Y.Object.keys(mods));
             a = [];
             for (var k in mods) {
                 if (mods.hasOwnProperty(k)) {
@@ -249,6 +249,8 @@ YUI.prototype = {
             }
 
             return Y.use.apply(Y, a);
+
+        // Accept a loader instance with a pre-sorted list of dependencies
         } else if (typeof firstArg === 'object' && firstArg.sorted) {
             a = firstArg.sorted;
             sorted = true;
@@ -256,7 +258,8 @@ YUI.prototype = {
 
         // Y.log('loader before: ' + a.join(','));
        
-        var callbackHandle = null, callback = a[a.length-1];
+        // The last argument supplied to use can be a load complete callback
+        var callback = a[a.length-1];
         if (typeof callback === 'function') {
             a.pop();
         } else {
@@ -266,8 +269,10 @@ YUI.prototype = {
         // use loader to optimize and sort the requirements if it
         // is available.
         if (!sorted && Y.Loader) {
+            dynamic = true;
             loader = new Y.Loader(Y.config);
             loader.require(a);
+            loader.ignoreRegistered = true;
             loader.calculate();
             a = loader.sorted;
         }
@@ -286,6 +291,13 @@ YUI.prototype = {
 
             if (m) {
                 used[name] = true;
+
+                //
+                if (dynamic) {
+                    // Y.mix(l, YUI.Env.mods);
+                    m.fn(Y);
+                }
+
                 // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
@@ -321,7 +333,8 @@ YUI.prototype = {
             }
         };
 
-        // iterate arguments
+        // process each requirement and any additional requirements 
+        // the module metadata specifies
         for (var i=0, l=a.length; i<l; i=i+1) {
             f(a[i]);
         }
@@ -331,7 +344,6 @@ YUI.prototype = {
         var attach = function(fromLoader) {
 
             // Y.log('ATTACH ' + arguments[0]);
-            //
 
             if (!fromLoader) {
 
@@ -356,6 +368,7 @@ YUI.prototype = {
             loader.require(missing);
             loader.insert();
             // loader calls use to automatically attach when finished
+            // but we still need to execute the callback.
             loader.subscribe('success', attach, loader, 'loader');
             // loader.subscribe('failure', function() {
                 // Y.log('asdf');

@@ -26,6 +26,8 @@
               "event-ready",
               "event-dom", 
               "event-facade",
+              "get", 
+              "loader", 
               "dom", 
               "node", 
               "io");
