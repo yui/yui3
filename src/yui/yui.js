@@ -184,7 +184,7 @@ YUI.prototype = {
      */
     add: function(name, fn, version, details) {
 
-        this.log('Adding a new component' + name);
+        // this.log('Adding a new component ' + name);
 
         // @todo expand this to include version mapping
         
@@ -252,11 +252,11 @@ YUI.prototype = {
         }
 
         // Y.log('loader before: ' + a.join(','));
+        
 
         // use loader to optimize and sort the requirements if it
         // is available.
         if (Y.Loader) {
-
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.calculate();
@@ -269,14 +269,14 @@ YUI.prototype = {
 
             // only attach a module once
             if (used[name]) {
+                // Y.log(name + ' already used');
                 return;
             }
-
-            used[name] = true;
 
             var m = mods[name], j, req, use;
 
             if (m) {
+                used[name] = true;
                 // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
@@ -312,12 +312,14 @@ YUI.prototype = {
             }
         };
 
+
+        var callbackHandle = null;
+
         // iterate arguments
         for (var i=0, l=a.length; i<l; i=i+1) {
-            // th
             if ((i === l-1) && typeof a[i] === 'function') {
                 // Y.log('found loaded listener');
-                Y.on('yui:load', a[i], Y, Y);
+                callbackHandle = Y.on('yui:load', a[i], Y, Y);
             } else {
                 f(a[i]);
             }
@@ -332,7 +334,7 @@ YUI.prototype = {
             for (i=0, l=r.length; i<l; i=i+1) {
                 var m = mods[r[i]];
                 if (m) {
-                    // Y.log('attaching ' + r[i], 'info', 'YUI');
+                    Y.log('attaching ' + r[i], 'info', 'YUI');
                     m.fn(Y);
                 }
             }
@@ -340,8 +342,9 @@ YUI.prototype = {
             if (Y.fire) {
                 // Y.log('firing loaded event');
                 Y.fire('yui:load', Y);
-            } else {
-                // Y.log('loaded event not fired.');
+                if (callbackHandle) {
+                    callbackHandle.detach();
+                }
             }
         };
 

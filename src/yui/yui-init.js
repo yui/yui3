@@ -29,11 +29,6 @@
               "dom", 
               "node", 
               "io");
-
-              // "loader"
-              // "get",
-              // "loader"
-
         }
 
         Y.use.apply(Y, core);

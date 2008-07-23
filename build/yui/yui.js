@@ -249,11 +249,11 @@ YUI.prototype = {
             return Y.use.apply(Y, a);
         }
 
+        
 
         // use loader to optimize and sort the requirements if it
         // is available.
         if (Y.Loader) {
-
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.calculate();
@@ -268,11 +268,10 @@ YUI.prototype = {
                 return;
             }
 
-            used[name] = true;
-
             var m = mods[name], j, req, use;
 
             if (m) {
+                used[name] = true;
                 req = m.details.requires;
                 use = m.details.use;
             } else {
@@ -305,11 +304,13 @@ YUI.prototype = {
             }
         };
 
+
+        var callbackHandle = null;
+
         // iterate arguments
         for (var i=0, l=a.length; i<l; i=i+1) {
-            // th
             if ((i === l-1) && typeof a[i] === 'function') {
-                Y.on('yui:load', a[i], Y, Y);
+                callbackHandle = Y.on('yui:load', a[i], Y, Y);
             } else {
                 f(a[i]);
             }
@@ -328,7 +329,9 @@ YUI.prototype = {
 
             if (Y.fire) {
                 Y.fire('yui:load', Y);
-            } else {
+                if (callbackHandle) {
+                    callbackHandle.detach();
+                }
             }
         };
 
@@ -7377,11 +7380,6 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
               "dom", 
               "node", 
               "io");
-
-              // "loader"
-              // "get",
-              // "loader"
-
         }
 
         Y.use.apply(Y, core);
