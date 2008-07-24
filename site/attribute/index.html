@@ -166,7 +166,8 @@ include "../inc/header.inc";
 
                <h4 id="configuration">Attribute Configuration</h4>
 
-               <p>Attributes can be configured with the properties listed in the table below (all properties are optional and case-sensitive):
+               <p>Each attribute you add can be configured with the properties listed in the table below (all properties are optional and case-sensitive):</p>
+
 			    <table>
                     <caption>Attribute Configuration Properties</caption>
 					<thead>
@@ -262,16 +263,16 @@ include "../inc/header.inc";
                                     if the value is an object. This is the default behavior if the attribute is not configured with a clone value.</dd>
                              </dl>
                             </td>
-						</tr>
-					</tbody>
-				</table>
+                        </tr>
+                    </tbody>
+                </table>
 
                 <h5 id="howtoconfig">How To Set Attribute Configuration</h5>
 
                 <p>The above attribute properties are set using an object literal, which is passed to either <code>_initAtts</code> or <code>addAtt</code> as the 
                 configuration argument. For example, expanding on the code snippet above:</p>
 
-			    <textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     this._initAtts( {
 
                         attrA : {
@@ -297,7 +298,7 @@ include "../inc/header.inc";
 
                 <p>Or, if using <code>addAtt</code>:</p>
 
-			    <textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     this.addAtt("attrA", {
                         // Configuration for attribute "attrA"
 
@@ -314,7 +315,105 @@ include "../inc/header.inc";
                 </textarea> 
 
                 <h4 id="events">Attribute Change Events</h4>
-                <p>on/after, event payload, preventDefault, stopImmediatePropagation</p>
+
+                <p>The availability of attribute change events are one of the key benefits of using 
+                attributes to store state for your objects, instead of regular object properties. 
+                Attribute change events are fired whenever <code>set</code> is invoked for an 
+                attribute, allowing you to execute code in response to a change in the attribute's 
+                value.</p>
+
+                <h5>Listening for Change Events</h5>
+
+                <p>Attribute change events are Custom Events, having the type: "[attributeName]Change", where
+                [attributeName] is the name of the attribute which you're monitoring for changes.</p>
+
+                <p>For example, if you were interested in listening for changes to an attribute named 
+                "enabled", you would subscribe to events of type "enabledChange".</p>
+
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    o.on("enabledChange", function(event) {
+                        // Do something just before "enabled" is about to be set
+                    });
+                </textarea> 
+
+                <p><em>NOTE:</em> Context and additional arguments for the listener function can either be 
+                defined using YUI's <code>bind()</code> method, or by passing in the context and 
+                additional arguments to the <code>on()</code> method.</p>
+
+                <p>Attribute change event listeners can be registered using either the <code>on()</code> 
+                (as shown above) or <code>after()</code> Attribute methods.</p>
+ 
+                <h5>On vs. After</h5>
+
+                <h6>On</h6>
+
+                <p>Listeners registered using the <code>on()</code> method, are notifed <strong>before</strong> the stored state of the attribute has been updated. 
+                Funtions registered as "on" listeners recieve an <code>Event</code> object as the first argument (actually an
+                instance of <a href="Event.Facade.html"><code>Event.Facade</code></a>) which contains information 
+                about the attribute being modified.</p>
+
+                <p>Since these listeners are invoked before any state change has occured, they have the ability to
+                prevent the change in state from occuring, by invoking <code>event.preventDefault()</code> on 
+                the event object passed to them</p>
+
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    o.on("enabledChange", function(event) {
+
+                        // get, will return the current attribute value
+                        var currentVal = this.get("enabled");
+
+                        if (someCondition) {
+                            // Prevent "enabled" from being changed
+                            event.preventDefault();
+                        }
+
+                    });
+                </textarea>
+
+                <h6>After</h6>
+
+                <p>Listeners registered using the <code>after()</code> method, are notified <strong>after</strong> 
+                the stored state of the attribute has been updated. As with "on" listeners, the subscribed Function 
+                receives an <code>Event</code> object as the first parameter.</p>
+
+                <p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
+                for example, by one of the "on" listeners calling <code>preventDefault()</code> on the event object</p>
+
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    o.after("enabledChange", function(event) {
+
+                        // get, will return the updated attribute value
+                        var updatedVal = this.get("enabled");
+
+                        // Calling preventDefault() in an "after" listener has no impact
+                        event.preventDefault();
+
+                    });
+                </textarea>
+
+                <h5>The Event Object</h5>
+
+                <p>The event facade passed to attribute change event listeners, has a number of attributes which provide information about the attribute being modified,
+                as well methods used to manage event propagation. These are described below:</p>
+
+                <dl>
+                    <dt>newVal</dt>
+                    <dd>The value which the attribute will be set to (in the case of "on" listeners), or has been set to (in the case of "after" listeners)</dd>
+                    <dt>prevVal</dt>
+                    <dd>The value which the attribute is currently set to (in the case of "on" listeners), or was previously set to (in the case of "after" listeners)</dd>
+                    <dt>attrName</dt>
+                    <dd>The name of the attribute which is being set</dd>
+                    <dt>subAttrName</dt>
+                    <dd>Attribute also allows you to set individual properties of attributes having values which are objects through the 
+                    <code>set</code> method (e.g. <code>o.set("X.a.b", 5)</code>, discussed below). This event property will contain the complete dot notation path for the object property which was changed
+                    <p>For example, during <code>o.set("X.a.b", 5);</code>, <code>event.subAttrName</code> will be "X.a.b", the path of the property modified, and <code>event.attrName</code> will be "X", the attribute name.</dd>
+                    <dt>preventDefault()<dt>
+                    <dd>This method can be called in an "on" listener function to prevent the attribute's value from being updated (the default behavior). Calling this method in an "after" listener has no impact, since the default behavior has already been invoked.</dd>
+                    <dt>stopImmediatePropagation()</dt>
+                    <dd>This method can be called in "on" or "after" listener functions, and will prevent the rest of the listener stack from
+                    being notified, but will not prevent the attribute's value from being updated (viz. will not prevent the default behavior).</dd>
+                </dl>
+
                 <h4 id="subattrs">Setting Sub Attribute Values</h4>
                 <p>set("x.y.z")</p>
 
