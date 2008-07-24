@@ -86,6 +86,7 @@ YUI.prototype = {
             _idx: 0,
             _pre: 'yuid',
             _used: {},
+            _attached: {},
             _yidx: 0,
             _uidx: 0
         };
@@ -205,6 +206,35 @@ YUI.prototype = {
         return this; // chain support
     },
 
+    _attach: function(r, fromLoader) {
+
+        var mods = YUI.Env.mods,
+            attached = this.Env._attached;
+
+        for (var i=0, l=r.length; i<l; i=i+1) {
+            var name = r[i], m = mods[name], mm;
+            if (!attached[name] && m) {
+
+                attached[name] = true;
+
+                var d = m.details, req = d.requires, use = d.use;
+
+                if (req) {
+                    this._attach(this.Array(req));
+                }
+
+                this.log('attaching ' + name, 'info', 'YUI');
+
+                m.fn(this);
+
+                if (use) {
+                    this._attach(this.Array(use));
+                }
+            }
+        }
+
+    },
+
     /**
      * Bind a module to a YUI instance
      * @param modules* {string} 1-n modules to bind (uses arguments array)
@@ -237,12 +267,14 @@ YUI.prototype = {
             loader, 
             firstArg = a[0], 
             dynamic = false,
-            sorted = false,
             callback = a[a.length-1];
+
+        Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
             a.pop();
+            Y.Env._callback = callback;
         } else {
             callback = null;
         }
@@ -256,24 +288,19 @@ YUI.prototype = {
                 }
             }
 
-            if (callback) {
-                a.push(callback);
-            }
+            // if (callback) {
+                // a.push(callback);
+            // }
 
             return Y.use.apply(Y, a);
 
-        // Accept a loader instance with a pre-sorted list of dependencies
-        } else if (typeof firstArg === 'object' && firstArg.sorted) {
-            a = firstArg.sorted;
-            sorted = true;
         }
-
         // Y.log('loader before: ' + a.join(','));
        
 
         // use loader to optimize and sort the requirements if it
         // is available.
-        if (!sorted && Y.Loader) {
+        if (Y.Loader) {
             dynamic = true;
             loader = new Y.Loader(Y.config);
             loader.require(a);
@@ -327,15 +354,17 @@ YUI.prototype = {
             r.push(name);
 
             // auto-attach sub-modules
+            /*
             if (use) {
                 if (Y.Lang.isString(use)) {
-                    f(req);
+                    f(use);
                 } else {
                     for (j = 0; j < use.length; j = j + 1) {
                         f(use[j]);
                     }
                 }
             }
+            */
         };
 
         // process each requirement and any additional requirements 
@@ -344,25 +373,15 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
-        var attach = function(fromLoader) {
+        var onComplete = function(fromLoader) {
 
-            // Y.log('ATTACH ' + arguments[0]);
+            Y.log('Use complete');
 
-            if (!fromLoader) {
-
-                for (i=0, l=r.length; i<l; i=i+1) {
-                    var m = mods[r[i]];
-                    if (m) {
-                        Y.log('attaching ' + r[i], 'info', 'YUI');
-                        m.fn(Y);
-                    }
-                }
-            }
-
-            if (callback) {
-                callback(Y, fromLoader);
+            if (Y.Env._callback) {
+                Y.Env._callback(Y, fromLoader);
+                // Y.Env._callback = null;
             }
 
             if (Y.fire) {
@@ -370,23 +389,26 @@ YUI.prototype = {
             }
         };
 
-        if (!sorted && Y.Loader && missing.length) {
+
+        if (Y.Loader && missing.length) {
             // dynamic load
             Y.log('trying to get the missing modules ' + missing);
             loader = new Y.Loader(Y.config);
+            loader.subscribe('success', onComplete, Y);
+            loader.subscribe('failure', onComplete, Y);
+            loader.subscribe('timeout', onComplete, Y);
             loader.require(missing);
-            loader.insert();
             // loader calls use to automatically attach when finished
             // but we still need to execute the callback.
-            loader.subscribe('success', attach, loader);
-            loader.subscribe('failure', attach, loader);
-            loader.subscribe('timeout', attach, loader);
+            loader.insert();
         } else {
-            attach();
+            Y._attach(r);
+            onComplete();
         }
 
         return Y; // chain support var yui = YUI().use('dragdrop');
     },
+
 
     /**
      * Returns the namespace specified and creates it if it doesn't exist
