@@ -32,9 +32,9 @@ include "../inc/header.inc";
 										<ul class="topspace">
 										<li><a href="#apply">Applying The Attribute Interface</a></li>
 										<li><a href="#adding">Adding Attributes</a></li>
-                                        <li><a href="#configuration">Attributes Configuration</a></li>
+                                        <li><a href="#configuration">Attribute Configuration</a></li>
 										<li><a href="#events">Attribute Change Events</a></li>
-										<li><a href="#subattrs">Setting Sub Attribute Values</a></li>
+										<li><a href="#subattrs">Getting/Setting Sub Attribute Values</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -69,7 +69,21 @@ include "../inc/header.inc";
 				
 				<h4 id="yui">The YUI Instance</h4>
 
-				<p>Talk a little about sandboxing and YUI.use here.</p>
+				<p>Once you have the source and dependancy files for Attribute on your page, you can create a new YUI instance (it is recommended you create this in your own 
+                sandboxed anonymous function to avoid polluting the global namespace), and populate it with the modules you need. In the case of Attribute,
+                you only need to include the "attribute" module as shown below:</p>
+
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                    (function() {
+                        var Y = YUI().use("attribute");
+                        ... 
+                    })();
+                </textarea>
+
+                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>), with the classes which make up Attribute (e.g. Y.Attribute); which you 
+                can then apply to any custom classes which you need to add Attribute support to.</p>
+
+                <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <code>use</code> method.</p>
 
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
@@ -77,77 +91,231 @@ include "../inc/header.inc";
 				<ul class="topspace">
                     <li><a href="#apply">Applying The Attribute Interface</a></li>
                     <li><a href="#adding">Adding Attributes</a></li>
-                    <li><a href="#configuration">Attributes Configuration</a></li>
+                    <li><a href="#configuration">Attribute Configuration</a></li>
                     <li><a href="#events">Attribute Change Events</a></li>
-                    <li><a href="#subattrs">Setting Sub Attribute Values</a></li>
+                    <li><a href="#subattrs">Setting/Getting Sub Attribute Values</a></li>
 				</ul>
 				
             <h4 id="apply">Applying The Attribute Interface</h4>
 
-                <p>Augment</p>
-				
-				
+                <p>The Attribute class is designed to be augmented to an existing class (referred to as the 'host' class throughout this document) to add attribute 
+                support to it. For example, assuming you have a class constructor, <code>MyClass</code>, to which you'd like to add attribute support, 
+                you can simply augment your class with Attribute, as shown below:</p>
+
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                    (function() {
+                        var Y = YUI().use("attribute");
+
+                        function MyClass() {
+                            ...
+                        }
+
+                        Y.augment(MyClass, Y.Attribute);
+                    })();
+                </textarea>
+
+                <p>Instances of your class will now have Attribute methods available, which your class can use to add/configure attributes and which users of your
+                class can use to get and set attribute values. See the <a href="../api/Attribute.html">Attribute api documentation</a> for a complete list of 
+                methods which Attribute will add to your class.</p>
+
                <h4 id="adding">Adding Attributes</h4>
-                <p>addAtt, _initAtts</p>
-               <h4 id="configuration">Attributes Configuration</h4>
-                <p>Configuration Property Table</p>
-				<table>
+
+               <p>Once augmented with Attribute, your class can either use the protected <code>_initAtts</code> method to setup attributes en mass, or use the 
+               public <code>addAtt</code> method, to add them individually. <code>_initAtts</code> is tailored towards use by host classes, since in addition
+               to being able to initialize multiple attributes in one call, it also accepts an additional name/value hash, which can be used to allow the 
+               user to set multiple attribute values when instantiating Attribute driven classes, as shown below:</p>
+
+			    <textarea name="code" class="JScript" cols="60" rows="1">
+                    ...
+                    function MyClass(userValues) {
+                            
+                        // Use _initAtts, to setup default attributes for
+                        // your class, and merge in user provided values.
+
+                        this._initAtts(MyClass.ATTRIBUTE_CONFIG, userValues);
+                    }
+
+                    MyClass.ATTRIBUTE_CONFIG = {
+                        attrA : {
+                            // ... Configuration for attribute "attrA" ...
+                        },
+
+                        attrB : {
+                            // ... Configuration for attribute "attrB" ...
+                        }
+                    };
+               </textarea>
+
+               <p><strong>NOTE:</strong> The default attribute configuration is not required 
+               to be a static property (<code>ATTRIBUTE_CONFIG</code> above) on the host class, 
+               but it's a logical place to define it, since we're defining the default set 
+               of attributes for this particular class.</p>
+
+               <p>Users of your class, can now pass attribute values into the constructor,
+               or set values using the <code>set</code> method as shown below:
+
+			    <textarea name="code" class="JScript" cols="60" rows="1">
+                    // Set attrA during instantiation
+                    var o = new MyClass({
+                        attrA:5
+                    });
+
+                    // Set attrB later on
+                    o.set("attrB", "Hello World!");
+                </textarea>
+
+               <h4 id="configuration">Attribute Configuration</h4>
+
+               <p>Attributes can be configured with the properties listed in the table below (all properties are optional and case-sensitive):
+			    <table>
+                    <caption>Attribute Configuration Properties</caption>
 					<thead>
 						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
+							<th>Property Name</th>
+							<th>Type</th>
+							<th>Description</th>
 						</tr>
 					</tbody>
 					<tbody>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>value</code></td>
+							<td>Any</td>
+							<td>The default value for this attribute</td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>get</code></td>
+							<td>Function</td>
+							<td>
+                                Custom 'get' handler, which is invoked when the user calls Attribute's get method. It can
+                                be used to manipulate the stored value returned to the user. The function will be passed 
+                                the currently stored value of the attribute as the only argument. If configured, the value 
+                                returned by this function, will be the value returned to the user.
+                            </td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td><code>set</code></td>
+							<td>Function</td>
+							<td>
+                                Custom 'set' handler, which is invoked when the user calls Attribute's set method. It can
+                                be used to manipulate the value which is stored for the attribute. The function will be passed 
+                                the value which the user passed to the set method, as the only argument. If configured, the value 
+                                returned by this function, will be the value stored as the attribute value.
+
+                                <p>get and set can be used to normalize values on input/output for the user while storing the 
+                                value in a format most effective for internal operation.</p>
+                            </td>
+						</tr>
+						<tr>
+							<td><code>validator</code></td>
+							<td>Function</td>
+							<td>
+                                Validation function, which if defined, is called after the custom 'set' handler, but before the attribute value is 
+                                stored. The validation function is passed the value which the user is trying to set (after any modification by the 
+                                'set' handler. If the function returns <code>false</code> the attribute's stored value is not updated. If it returns
+                                true, the attribute's stored value is updated.
+                            </td>
+						</tr>
+						<tr>
+							<td><code>readOnly</code></td>
+							<td>boolean</td>
+							<td>
+                                Configures the attribute to be read-only. Users will not be able to set the value of the attribute using
+                                Attribute's public API.
+                            </td>
+						</tr>
+						<tr>
+							<td><code>writeOnce</code></td>
+							<td>boolean</td>
+							<td>
+                                Configures the attribute to be write-once. Users will only be able to set the value of the attribute using
+                                Attribute's set method once. Once a value has been set for the attribute, calling set will not change it's value.
+                            </td>
+						</tr>
+						<tr>
+							<td><code>clone</code></td>
+							<td>int</td>
+							<td>
+                             By default attribute values returned by the get method
+                             are not cloned. If you wish to protect stored object
+                             values from being changed by reference, you can configure the attribute
+                             to clone the value returned by get. The clone property accepts the following
+                             values (defined as static constants on the Attribute class):
+                             <dl>
+                                <dt>Attribute.CLONE.DEEP</dt>
+                                <dd>Will result in a deep cloned value being returned
+                                (using YUI's clone method). The entire object will be protected, but can 
+                                be expensive for complex objects.</dd>
+
+                                <dt>Attribute.CLONE.SHALLOW</dt>
+                                <dd>Will result in a shallow cloned value being returned (using YUI's merge method). Only top level
+                                properties of the object will be protected.</dd>
+
+                                <dt>Attribute.CLONE.IMMUTABLE</dt>
+                                <dd>Will result in a deep cloned value being returned when using the get method. 
+                                Additionally users will not be able to set sub values of the attribute using set's sub-attribute 
+                                notation (obj.set("x.y.z, 5)). However the value of the attribute can be changed, making it different from a readOnly 
+                                attribute.</dd>
+
+                                <dt>Attribute.CLONE.NONE</dt>
+                                <dd>
+                                    The value will not be cloned, resulting in a reference to the stored value being passed back, 
+                                    if the value is an object. This is the default behavior if the attribute is not configured with a clone value.</dd>
+                             </dl>
+                            </td>
 						</tr>
 					</tbody>
 				</table>
-                <h5 id="clone">Cloning</h5>
-                <p>Deep, Shallow, Immutable, None Table</p>
-				<table>
-					<thead>
-						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
-				</table>
-               <h4 id="events">Attribute Change Events</h4>
+
+                <h5 id="howtoconfig">How To Set Attribute Configuration</h5>
+
+                <p>The above attribute properties are set using an object literal, which is passed to either <code>_initAtts</code> or <code>addAtt</code> as the 
+                configuration argument. For example, expanding on the code snippet above:</p>
+
+			    <textarea name="code" class="JScript" cols="60" rows="1">
+                    this._initAtts( {
+
+                        attrA : {
+                            // Configuration for attribute "attrA"
+
+                            value: 5,
+
+                            set: function(val) {
+                                return Math.min(val, 10); 
+                            },
+
+                            validator: function(val) {
+                                return Y.Lang.isNumber(val);
+                            }
+                        },
+
+                        attrB : {
+                            // Configuration for attribute "attrB"
+                        }
+
+                    }, userValues);
+                </textarea>
+
+                <p>Or, if using <code>addAtt</code>:</p>
+
+			    <textarea name="code" class="JScript" cols="60" rows="1">
+                    this.addAtt("attrA", {
+                        // Configuration for attribute "attrA"
+
+                        value: 5,
+
+                        set: function(val) {
+                            return Math.min(val, 10); 
+                        },
+
+                        validator: function(val) {
+                            return Y.Lang.isNumber(val);
+                        }
+                    });
+                </textarea> 
+
+                <h4 id="events">Attribute Change Events</h4>
                 <p>on/after, event payload, preventDefault, stopImmediatePropagation</p>
-               <h4 id="subattrs">Setting Sub Attribute Values</h4>
+                <h4 id="subattrs">Setting Sub Attribute Values</h4>
                 <p>set("x.y.z")</p>
 
 <?php # include "../inc/mobileSection.inc";?>
