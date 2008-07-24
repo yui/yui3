@@ -179,6 +179,7 @@ YUI.add("event-target", function(Y) {
          */
         addTarget: function(o) {
             this._yuievt.targets[Y.stamp(o)] = o;
+            this._yuievt.hasTargets = true;
         },
 
         /**
@@ -216,10 +217,17 @@ YUI.add("event-target", function(Y) {
 
             var ce = this.getEvent(t);
 
+            // this event has not been published or subscribed to
             if (!ce) {
-                // if (!(type in SILENT)) {
-// Y.log(type + ' fire did nothing (not published, no subscribers)', 'info', 'Event');
-                // }
+                
+                // if this object has bubble targets, we need to publish the
+                // event in order for it to bubble.
+                if (this._yuievt.hasTargets) {
+                    ce = this.publish(t);
+                    return this.bubble(ce);
+                }
+
+                // otherwise there is nothing to be done
                 return true;
             }
 
