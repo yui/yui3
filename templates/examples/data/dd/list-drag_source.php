@@ -12,7 +12,7 @@
     #play ul li {
         margin: 2px;
     }
-    #list1, #list2 {
+    #play ul {
         border: 1px solid black;
         margin: 10px;
         width: 200px;
@@ -21,7 +21,7 @@
         padding: 0;
 
     }
-    #list1 li, #list2 li {
+    #play ul li {
         list-style-type: none;
         padding-left: 20px;
         padding: 5px;
@@ -130,7 +130,7 @@ var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     var goingUp = false, lastY = 0;
 
     //Get the list of li's in the lists and make them draggable
-    var lis = Y.Node.all('#list1 li, #list2 li');
+    var lis = Y.Node.all('#play ul li');
     lis.each(function(v, k, items) {
         var dd = new Y.DD.Drag({
             node: items.item(k),
@@ -144,7 +144,7 @@ var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     });
 
     //Create simple targets for the 2 lists..
-    var uls = Y.Node.all('#list1, #list2');
+    var uls = Y.Node.all('#play ul');
     uls.each(function(v, k, items) {
         var tar = new Y.DD.Drop({
             node: items.item(k)

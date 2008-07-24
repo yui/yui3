@@ -27,12 +27,13 @@ var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
 
 <h3>Making the Nodes Drag Instances and Drop Targets</h3>
 <p>Now we have our YUI instance ready, we can make the list items draggable. We will do this using <code>Y.Node.all</code></p>
-<p>We will be passing the selector string <code>#list1 li, #list2 li</code> to <code>Y.Node.all</code> to have it return us a <code>NodeList</code> of the li's in our 2 lists.</p>
+<p>We will be passing the selector string <code>#play ul li</code> to <code>Y.Node.all</code> to have it return us a <code>NodeList</code> of the li's in our 2 lists.
+Using this selector syntax we will be able to add new list markup to the <code>#play</code> div and not have to change our code.</p>
 <p>Then we will walk that <code>NodeList</code> and create our draggable Nodes.</p>
 <p>Note that we are setting the following configs on the Drag instance: <code>proxy, moveOnEnd, constrain2node, target</code>.</p>
 <textarea name="code" class="JScript">
 //Get the list of li's in the lists and make them draggable
-var lis = Y.Node.all('#list1 li, #list2 li');
+var lis = Y.Node.all('#play ul li');
 lis.each(function(v, k, items) {
     var dd = new Y.DD.Drag({
         node: items.item(k),
@@ -50,10 +51,11 @@ lis.each(function(v, k, items) {
 </textarea>
 
 <h3>Making the List Drop Target's too</h3>
-<p>We need to make the UL nodes a Drop Target so we can catch drops on the empty space of the list.</p>
+<p>We need to make the UL nodes a Drop Target so we can catch drops on the empty space of the list. 
+Using this selector syntax we will be able to add new list markup to the <code>#play</code> div and not have to change our code.</p>
 <textarea name="code" class="JScript">
 //Create simple targets for the 2 lists..
-var uls = Y.Node.all('#list1, #list2');
+var uls = Y.Node.all('#play ul');
 uls.each(function(v, k, items) {
     var tar = new Y.DD.Drop({
         node: items.item(k)
@@ -230,7 +232,7 @@ var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     var goingUp = false, lastY = 0;
 
     //Get the list of li's in the lists and make them draggable
-    var lis = Y.Node.all('#list1 li, #list2 li');
+    var lis = Y.Node.all('#play ul li');    
     lis.each(function(v, k, items) {
         var dd = new Y.DD.Drag({
             node: items.item(k),
@@ -244,7 +246,7 @@ var Y = YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     });
 
     //Create simple targets for the 2 lists..
-    var uls = Y.Node.all('#list1, #list2');
+    var uls = Y.Node.all('#play ul');    
     uls.each(function(v, k, items) {
         var tar = new Y.DD.Drop({
             node: items.item(k)
