@@ -49,5 +49,15 @@ $examples["yui-multi"] = array(
 	highlightSyntax => true
 );
 
+$examples["yui-compat"] = array(
+	name => "YUI 2.x and 3.x",
+	modules => array("yui"),
+	description => "Working with YUI 2.x and 3.x.",
+	sequence => array(4),
+	newWindow => "default",
+	requires => array("yui", 'dd'),
+	highlightSyntax => true
+);
+
 
 ?>

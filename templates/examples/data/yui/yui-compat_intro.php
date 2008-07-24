@@ -1,0 +1,1 @@
+<p>This example shows how to use YUI 2.x and 3.x at the same time as well as interacting with each other. We will make a 2.x Calendar Control draggable with 3.x Drag &amp; Drop and use 3.x's Node to handle the Calendars Select Event.</p>
