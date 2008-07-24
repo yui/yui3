@@ -5,19 +5,20 @@
 var Y = YUI().use('*');
 </textarea>
 
-<h3>Using the Ready Event</h3>
-<p>In this example, we will use the <code>ready</code> event to determine when we can interact with the modules.</p>
+<h3>Using the callback</h3>
+<p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.</p>
+<p>The callback method has one argument passed, the <code>YUI</code> instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('*');
-Y.on('event:ready', function() {
-    //All of our code is loaded, now we can use it.
+YUI().use('*', function(Y) {
+    //the Y var passed in here will be our Y instance
 });
 </textarea>
 
+
+
 <p>Now that we know all of the modules are loaded, we will show a list of the modules loaded in this <code>YUI</code> instance.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('*');
-Y.on('event:ready', function() {
+YUI().use('*', function(Y) {
     var node = Y.get('#demo');
     var used = [];
     Y.each(Y.Env._used, function(v, k) {

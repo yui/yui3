@@ -9,10 +9,20 @@ $modules["yui"] = array(
 );	
 
 
-$examples["yui-simple"] = array(
-	name => "Simple YUI Usage",
+$examples["yui-core"] = array(
+	name => "YUI Core",
 	modules => array("yui"),
-	description => "Simple YUI Usage",
+	description => "YUI Core",
+	sequence => array(0),
+	newWindow => "default",
+	requires => array("yui"),
+	highlightSyntax => true
+);
+
+$examples["yui-simple"] = array(
+	name => "Simple YUI Use",
+	modules => array("yui"),
+	description => "Simple YUI Use",
 	sequence => array(1),
 	newWindow => "default",
 	requires => array("yui", 'node'),
