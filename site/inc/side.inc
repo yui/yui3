@@ -5,27 +5,26 @@ $galleryLink = "<h2><a name=\"gallery\"></a>Built Something Cool? Please Share I
 if (!isset($docroot)) { $docroot=""; }
 if (!isset($section)) { $section = ""; }
 
-$nav[]=array('', '', 'YUI 3.x', '');
-$nav[]=array('yui','/yui/','3.x Home', 'The Yahoo! User Interface Library (YUI)');
-$nav[]=array('faq','/yui/articles/3.x/overview/','3.x Introduction', 'Introduction to YUI ');
-$nav[]=array('faq','/yui/articles/faq/','YUI FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('examples','/yui/examples/','Examples', 'Examples of every YUI utility and control in action');
-$nav[]=array('docs','/yui/docs/','API Documentation', 'Instantly searchable API documentation for the entire YUI library.');
-$nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','Source code (SVN)', 'The YUI Library can be downloaded from SourceForge');
-$nav[]=array('license','/yui/license.html','YUI License (BSD)', 'YUI is free and open, offered under a BSD license.');
+$nav[]=array('', '', 'YUI 3.x Project', '');
+$nav[]=array('home','/','YUI 3 Intro and FAQ', 'The Yahoo! User Interface Library (YUI)');
+$nav[]=array('home','/','YUI 3 versus YUI 2.x', 'The Yahoo! User Interface Library (YUI)');
+$nav[]=array('faq','/yui/articles/3.x/overview/','YUI 3 Goals &amp; Philosophy', 'Introduction to YUI ');
+$nav[]=array('faq','/yui/articles/faq/','YUI 3 FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
+$nav[]=array('examples','/yui/examples/','YUI 3 Examples', 'Examples of every YUI utility and control in action');
+$nav[]=array('docs','/yui/docs/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
+$nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source Code (SVN)', 'The YUI Library can be downloaded from SourceForge');
+$nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
-$nav[]=array('', '', 'Core', '');
-$nav[]=array('yui','/yui/','YUI Global Object', 'YUI Global Object');
+$nav[]=array('', '', 'YUI 3 Core', '');
+$nav[]=array('yui','/yui/','YUI (Global Object)', 'YUI Global Object');
 $nav[]=array('dom','/dom/','DOM', 'DOM');
-$nav[]=array('event','/event/','Event', 'Event');
 $nav[]=array('node','/node/','Node', 'Node');
-$nav[]=array('selector','/selector/','Selector', 'Selector');
-
-$nav[]=array('', '', 'Utilities', '');
-$nav[]=array('animation','/animation/','Animation', 'Animation');
 $nav[]=array('attribute','/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/base/','Base', 'Base');
+
+$nav[]=array('', '', 'YUI 3 Utilities', '');
+$nav[]=array('animation','/animation/','Animation', 'Animation');
 $nav[]=array('compat','/compat/','Compat', 'Compat');
 $nav[]=array('cookie','/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/dd/','Drag & Drop', 'Drag & Drop');
@@ -41,10 +40,10 @@ $nav[]=array('profiler','/profiler/','YUI Profiler', 'Global YUI Object');
 $nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
-$nav[]=array('base','/base/','CSS Base', 'CSS Base');
-$nav[]=array('fonts','/fonts/','CSS Fonts', 'CSS Fonts');
 $nav[]=array('reset','/reset/','CSS Reset', 'CSS Reset');
-$nav[]=array('grids','/grids/','CSS Grids', 'CSS Grids');
+$nav[]=array('fonts','/fonts/','CSS Fonts', 'CSS Fonts');
+// $nav[]=array('grids','/grids/','CSS Grids', 'CSS Grids');
+// $nav[]=array('base','/base/','CSS Base', 'CSS Base');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog', 'The Yahoo! User Interface Blog');
@@ -67,7 +66,7 @@ $nav[]=array('roadmap','/yui/articles/roadmap/','YUI Roadmap', 'Learn about plan
 
 ?>
 
-<div class="yui-b" id="tocWrapper">
+<div class="yui-b toc3" id="tocWrapper">
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
 <ul>
