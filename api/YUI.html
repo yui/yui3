@@ -1468,7 +1468,8 @@ function has a string value, number value, or object value, it is
 substituted for the bracket expression and it repeats.  If this
 value is an object, it uses the Object's toString() if this has
 been overridden, otherwise it does a shallow dump of the key/value
-pairs.
+pairs if Y.dump is available (if dump isn't available, toString()
+is used).
 This method is included in the 'i18n' module.  It is not included
 in the YUI module.
                                         </div>
@@ -1602,6 +1603,14 @@ must be the last parameter.
                                 <li class=""><a href="module_io.html">io</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
                                 <li class="selected"><a href="module_yui.html">yui</a></li>
                         </ul>

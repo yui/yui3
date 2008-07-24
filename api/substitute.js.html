@@ -53,7 +53,8 @@
 <span class="c">     * substituted for the bracket expression and it repeats.  If this</span>
 <span class="c">     * value is an object, it uses the Object&#39;s toString() if this has</span>
 <span class="c">     * been overridden, otherwise it does a shallow dump of the key/value</span>
-<span class="c">     * pairs.</span>
+<span class="c">     * pairs if Y.dump is available (if dump isn&#39;t available, toString()</span>
+<span class="c">     * is used).</span>
 <span class="c">     *</span>
 <span class="c">     * This method is included in the &#39;i18n&#39; module.  It is not included</span>
 <span class="c">     * in the YUI module.</span>
@@ -99,23 +100,27 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
-
-                    <span class="c">// look for the keyword &#39;dump&#39;, if found force obj dump</span>
-<span class="c"></span>                    <span class="k">var</span> <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DUMP</span><span class="o">);</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">dump</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">4</span><span class="o">);</span>
-                    <span class="o">}</span>
-
-                    <span class="c">// use the toString if it is not the Object toString </span>
-<span class="c"></span>                    <span class="c">// and the &#39;dump&#39; meta info was not found</span>
-<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">===</span><span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">toString</span><span class="o">||</span><span class="nx">dump</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">L</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
                     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                        <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
+                        <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="o">;</span>
+
+                        <span class="c">// look for the keyword &#39;dump&#39;, if found force obj dump</span>
+<span class="c"></span>                        <span class="k">var</span> <span class="nx">dump</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="nx">DUMP</span><span class="o">);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">dump</span> <span class="o">&gt;</span> <span class="o">-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">meta</span> <span class="o">=</span> <span class="nx">meta</span><span class="o">.</span><span class="nx">substring</span><span class="o">(</span><span class="m">4</span><span class="o">);</span>
+                        <span class="o">}</span>
+
+                        <span class="c">// use the toString if it is not the Object toString </span>
+<span class="c"></span>                        <span class="c">// and the &#39;dump&#39; meta info was not found</span>
+<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">===</span><span class="nb">Object</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">toString</span><span class="o">||</span><span class="nx">dump</span><span class="o">&gt;-</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">dump</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nb">parseInt</span><span class="o">(</span><span class="nx">meta</span><span class="o">,</span> <span class="m">10</span><span class="o">));</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="nx">v</span> <span class="o">=</span> <span class="nx">v</span><span class="o">.</span><span class="nx">toString</span><span class="o">();</span>
+                        <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
             <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isString</span><span class="o">(</span><span class="nx">v</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">L</span><span class="o">.</span><span class="nx">isNumber</span><span class="o">(</span><span class="nx">v</span><span class="o">))</span> <span class="o">{</span>
@@ -170,6 +175,14 @@
                                 <li class=""><a href="module_io.html">io</a></li>
 
                                 <li class="selected"><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

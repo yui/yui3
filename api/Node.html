@@ -56,7 +56,7 @@
 Node properties can be accessed via the set/get methods.
 With the exception of the noted properties,
 only strings, numbers, and booleans are passed through. 
-Use Y.get() or Y.Node.get() to create Node instances.
+Use Y.get() or Y.Node.get() to retrieve Node instances.
                     </div>
 
 
@@ -169,7 +169,7 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>node &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
                                                              Node to be appended
                                                         </dd>
                                                 </dl>
@@ -311,7 +311,7 @@ Use Y.get() or Y.Node.get() to create Node instances.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>node &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
                                                              Node to be cloned
                                                         </dd>
                                                 </dl>
@@ -924,52 +924,6 @@ Defaults to current document.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_hasMethod">hasMethod</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Boolean
-                                            <strong>hasMethod</strong>
-                                           (
-                                                
-                                                        
-                                                         method
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Tests whether or not the bound HTMLElement can use the given method.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>method &lt;String&gt;</code>
-                                                             The method to check for
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Boolean
-                                                    </code></dt>
-                                                    <dd>Whether or not the HTMLElement can use the method</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="method_inDoc">inDoc</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1023,12 +977,12 @@ Defaults to current document.
                                         
                                         
                                         
-                                        void
+                                        Node
                                             <strong>insertBefore</strong>
                                            (
                                                 
                                                         
-                                                         node
+                                                         newNode
                                                     
                                                 
                                                         , 
@@ -1047,11 +1001,11 @@ Defaults to current document.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>node &lt;String | HTMLElement | Node&gt;</code>
-                                                             Node to be inserted
+                                                            <code>newNode &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be appended
                                                         </dd>
                                                         <dd>
-                                                            <code>refNode &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>refNode &lt;HTMLElement | Node&gt;</code>
                                                              Node to be inserted before
                                                         </dd>
                                                 </dl>
@@ -1059,9 +1013,9 @@ Defaults to current document.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        Node
                                                     </code></dt>
-                                                    <dd></dd>
+                                                    <dd>The inserted node</dd>
                                                 </dl>
              
                                         </div>
@@ -1085,11 +1039,15 @@ Defaults to current document.
                                                          fn
                                                     
                                                 
+                                                        , 
+                                                         all
+                                                    
+                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Returns the next HTMLElement sibling that passes the boolean method. 
+                                            Returns the next sibling that passes the boolean method. 
 Returns the nearest HTMLElement sibling if no method provided.
                                         </div>
 
@@ -1100,7 +1058,11 @@ Returns the nearest HTMLElement sibling if no method provided.
                                                         <dd>
                                                             <code>fn &lt;Function&gt;</code>
                                                              A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
+that receives the sibling node being tested as its only argument.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             optional Whether all node types should be returned, or just element nodes.
                                                         </dd>
                                                 </dl>
 
@@ -1229,6 +1191,10 @@ that receives the sibling node being tested as its only argument
                                                          fn
                                                     
                                                 
+                                                        , 
+                                                         all
+                                                    
+                                                
                                             )
                                         </code>
                                         
@@ -1244,7 +1210,11 @@ Returns the nearest HTMLElement sibling if no method provided.
                                                         <dd>
                                                             <code>fn &lt;Function&gt;</code>
                                                              A boolean function used to test siblings
-that receives the sibling node being tested as its only argument
+that receives the sibling node being tested as its only argument.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             optional Whether all node types should be returned, or just element nodes.
                                                         </dd>
                                                 </dl>
 
@@ -1381,7 +1351,7 @@ that receives the sibling node being tested as its only argument
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>node &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
                                                              Node to be removed
                                                         </dd>
                                                 </dl>
@@ -1431,11 +1401,11 @@ that receives the sibling node being tested as its only argument
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>node &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
                                                              Node to be inserted
                                                         </dd>
                                                         <dd>
-                                                            <code>refNode &lt;String | HTMLElement | Node&gt;</code>
+                                                            <code>refNode &lt;HTMLElement | Node&gt;</code>
                                                              Node to be replaced
                                                         </dd>
                                                 </dl>
@@ -1816,9 +1786,1556 @@ Only valid on FORM elements
                         </div>
 
 
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeBodyChange">beforeBodyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeBodyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'body' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeCellsChange">beforeCellsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeCellsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'cells' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeChildNodesChange">beforeChildNodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeChildNodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'childNodes' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeChildrenChange">beforeChildrenChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeChildrenChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'children' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDocumentElementChange">beforeDocumentElementChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDocumentElementChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'documentElement' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeElementsChange">beforeElementsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeElementsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'elements' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeFirstChildChange">beforeFirstChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeFirstChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'firstChild' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeLastChildChange">beforeLastChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeLastChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'lastChild' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeOffsetParentChange">beforeOffsetParentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeOffsetParentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'offsetParent' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeOwnerDocumentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'ownerDocument' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeParentNodeChange">beforeParentNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeParentNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'parentNode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforePreviousSiblingChange">beforePreviousSiblingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforePreviousSiblingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'previousSibling' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeRowsChange">beforeRowsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeRowsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'rows' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTBodiesChange">beforeTBodiesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTBodiesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tBodies' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTFootChange">beforeTFootChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTFootChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tFoot' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTHeadChange">beforeTHeadChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTHeadChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tHead' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_bodyChange">bodyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>bodyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'body' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_cellsChange">cellsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>cellsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'cells' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_childNodesChange">childNodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>childNodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'childNodes' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_childrenChange">childrenChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>childrenChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'children' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_documentElementChange">documentElementChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>documentElementChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'documentElement' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_elementsChange">elementsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>elementsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'elements' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_firstChildChange">firstChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>firstChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'firstChild' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_lastChildChange">lastChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>lastChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'lastChild' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_offsetParentChange">offsetParentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>offsetParentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'offsetParent' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_ownerDocumentChange">ownerDocumentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>ownerDocumentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'ownerDocument' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_parentNodeChange">parentNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>parentNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'parentNode' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_previousSiblingChange">previousSiblingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>previousSiblingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'previousSibling' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_rowsChange">rowsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>rowsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'rows' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tBodiesChange">tBodiesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tBodiesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tBodies' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tFootChange">tFootChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tFootChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tFoot' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tHeadChange">tHeadChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tHeadChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tHead' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
 
 
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="config_body">body</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_cells">cells</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_childNodes">childNodes</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_children">children</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_documentElement">documentElement</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_elements">elements</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_firstChild">firstChild</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_lastChild">lastChild</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_offsetParent">offsetParent</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_ownerDocument">ownerDocument</a>
+                                        <code>- Doc</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_parentNode">parentNode</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_previousSibling">previousSibling</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_rows">rows</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tBodies">tBodies</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tFoot">tFoot</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tHead">tHead</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
 
 
 			</div>
@@ -1846,11 +3363,11 @@ Only valid on FORM elements
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
 
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
                                 <li class=""><a href="module_node-region.html">node-region</a></li>
 
-                                <li class=""><a href="module_nodeclassname.html">nodeclassname</a></li>
-
-                                <li class=""><a href="module_nodeextras.html">nodeextras</a></li>
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1867,8 +3384,7 @@ Only valid on FORM elements
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="Node.js.html">Node.js</a></li>
-                                <li class=""><a href="NodeClassName.js.html">NodeClassName.js</a></li>
+                                <li class=""><a href="node.js.html">node.js</a></li>
                         </ul>
                     </div>
 
@@ -1939,12 +3455,9 @@ Only valid on FORM elements
                                 <a href="#method_hasChildNodes">hasChildNodes</a>
                                 </li>
                                 <li class=""><!--<code>Boolean</code>-->
-                                <a href="#method_hasMethod">hasMethod</a>
-                                </li>
-                                <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_inDoc">inDoc</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>Node</code>-->
                                 <a href="#method_insertBefore">insertBefore</a>
                                 </li>
                                 <li class=""><!--<code>Object</code>-->
@@ -1998,7 +3511,161 @@ Only valid on FORM elements
                         </ul>
                     </div>
 
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_beforeBodyChange">beforeBodyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeCellsChange">beforeCellsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeChildNodesChange">beforeChildNodesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeChildrenChange">beforeChildrenChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDocumentElementChange">beforeDocumentElementChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeElementsChange">beforeElementsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeFirstChildChange">beforeFirstChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeLastChildChange">beforeLastChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeOffsetParentChange">beforeOffsetParentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeParentNodeChange">beforeParentNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforePreviousSiblingChange">beforePreviousSiblingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeRowsChange">beforeRowsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTBodiesChange">beforeTBodiesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTFootChange">beforeTFootChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTHeadChange">beforeTHeadChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_bodyChange">bodyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_cellsChange">cellsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_childNodesChange">childNodesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_childrenChange">childrenChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_documentElementChange">documentElementChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_elementsChange">elementsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_firstChildChange">firstChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_lastChildChange">lastChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_offsetParentChange">offsetParentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_ownerDocumentChange">ownerDocumentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_parentNodeChange">parentNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_previousSiblingChange">previousSiblingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_rowsChange">rowsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tBodiesChange">tBodiesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tFootChange">tFootChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tHeadChange">tHeadChange</a>
+                                </li>
+                        </ul>
+                    </div>
 
+                    <div class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#config_body">body</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_cells">cells</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_childNodes">childNodes</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_children">children</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_documentElement">documentElement</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_elements">elements</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_firstChild">firstChild</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_lastChild">lastChild</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_offsetParent">offsetParent</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_ownerDocument">ownerDocument</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_parentNode">parentNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_previousSibling">previousSibling</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_rows">rows</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tBodies">tBodies</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tFoot">tFoot</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tHead">tHead</a>
+                                </li>
+                        </ul>
+                    </div>
 
             </div>
 		</div>
