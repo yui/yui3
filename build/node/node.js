@@ -34,6 +34,7 @@ YUI.add('node', function(Y) {
         DEFAULT_VIEW = 'defaultView',
         PARENT_WINDOW = 'parentWindow',
         DOCUMENT_ELEMENT = 'documentElement',
+        TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
         NODE_TYPE = 'nodeType',
         COMPAT_MODE = 'compatMode',
@@ -50,29 +51,29 @@ YUI.add('node', function(Y) {
     var Selector = Y.Selector;
     var _instances = {};
     var _nodes = {};
-    var _styles = {};
+    var _nodelists = {};
     var _restrict = null;
 
     var slice = [].slice;
 
     // private factory
     var wrapDOM = function(node) {
-        var ret = null;
+        var ret = null,
+            yuid = (node) ? node._yuid : null,
+            instance = _instances[yuid],
+            existingNode = _nodes[yuid];
 
-        if (node && NODE_TYPE in node) {
-/*
-            var instance = _instances[node.id];
-            if (instance) {
-                if (node === _nodes[instance._yuid]) {
+        if (node) {
+            if (NODE_TYPE in node) {
+                if (instance && existingNode && node === existingNode) {
                     ret = instance; // reuse existing Nodes if nodes match
+                } else {
+                    ret = new Node(node);
                 }
+            } else if ('item' in node || 'push' in node) {
+                ret = new Y.NodeList(node);
             }
-*/
-            ret = new Node(node);
-        } else if (node && ('item' in node || 'push' in node) && 'length' in node) {
-            ret = new Y.NodeList(node);
         }
-
         return ret;
     };
 
@@ -160,7 +161,7 @@ YUI.add('node', function(Y) {
                 children = [];
 
                 for (var i = 0, len = childNodes.length; i < len; ++i) {
-                    if (childNodes[i].tagName) {
+                    if (childNodes[i][TAG_NAME]) {
                         children[children.length] = childNodes[i];
                     }
                 }
@@ -232,14 +233,6 @@ YUI.add('node', function(Y) {
          */
         'elements': ELEMENT_NODE,
 
-        /**
-         * Returns a NodeList instance. 
-         * @attribute options
-         * @type NodeList
-         */
-        'options': ELEMENT_NODE,
-
-
         // table
         /**
          * Returns a NodeList instance. 
@@ -281,27 +274,36 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method replaceChild
-         * @param {String | HTMLElement | Node} node Node to be inserted 
-         * @param {String | HTMLElement | Node} refNode Node to be replaced 
+         * @param {HTMLElement | Node} node Node to be inserted 
+         * @param {HTMLElement | Node} refNode Node to be replaced 
          * @return {Node} The replaced node 
          */
         replaceChild: nodeInOut,
 
         /**
          * Passes through to DOM method.
-         * @method removeChild
-         * @param {String | HTMLElement | Node} node Node to be removed 
-         * @return {Node} The removed node 
-         */
-        removeChild: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
          * @method appendChild
-         * @param {String | HTMLElement | Node} node Node to be appended 
+         * @param {HTMLElement | Node} node Node to be appended 
          * @return {Node} The appended node 
          */
         appendChild: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method insertBefore
+         * @param {HTMLElement | Node} newNode Node to be appended 
+         * @param {HTMLElement | Node} refNode Node to be inserted before 
+         * @return {Node} The inserted node 
+         */
+        insertBefore: nodeInOut,
+
+        /**
+         * Passes through to DOM method.
+         * @method removeChild
+         * @param {HTMLElement | Node} node Node to be removed 
+         * @return {Node} The removed node 
+         */
+        removeChild: nodeInOut,
 
         /**
          * Passes through to DOM method.
@@ -313,7 +315,7 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method cloneNode
-         * @param {String | HTMLElement | Node} node Node to be cloned 
+         * @param {HTMLElement | Node} node Node to be cloned 
          * @return {Node} The clone 
          */
         cloneNode: nodeOut,
@@ -391,16 +393,14 @@ YUI.add('node', function(Y) {
         if (!node || !node[NODE_TYPE]) {
             return null;
         }
-
-/*
-        if (!node.id) {
-            node.id = Y.guid();
-        }
-*/
-
-        _nodes[Y.stamp(this)] = node;
-        _styles[Y.stamp(this)] = node.style;
-        //_instances[node.id] = this;
+        
+        var yuid = Y.guid();
+        try { // IE errors on non-element expandos (cant be reused)
+            node._yuid = yuid;
+        } catch(e) {};
+        this._yuid = yuid;
+        _nodes[yuid] = node;
+        _instances[yuid] = this;
 
     };
 
@@ -413,7 +413,13 @@ YUI.add('node', function(Y) {
          */
         'text': function(node) {
             return node.get('innerText') || node.get('textContent') || '';
+        },
+
+        'options': function(node) {
+            return (node) ? node.getElementsByTagName('option') : [];
         }
+
+
     };
 
     Node.setters = function(prop, fn) {
@@ -461,14 +467,13 @@ YUI.add('node', function(Y) {
     var addNodeListMethod = function(name) {
         NodeList.prototype[name] = function() {
             var a = [],
-                nodes = _nodes[this._yuid],
-                node = _tmpNode,
+                nodes = _nodelists[this._yuid],
                 ret;
 
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                updateTmp(nodes[i]);
-                ret = node[name].apply(node, arguments);
-                if (ret !== node) {
+                _nodes[_tmpNode._yuid] = nodes[i];
+                ret = _tmpNode[name].apply(nodes[i], arguments);
+                if (ret !== _tmpNode) {
                     a[i] = ret;
                 }
             }
@@ -705,34 +710,6 @@ YUI.add('node', function(Y) {
             return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)), all);
         },
         
-        /**
-         * @method insertBefore 
-         * @param {String | HTMLElement} node The node to insert 
-         * @param {String | HTMLElement} refNode The node to insert the new node before  
-         * @return {Node} The node that was inserted (or null if insert fails)  
-         */ 
-        insertBefore: function(node, refNode) {
-            if (typeof node === 'string') {
-                node = Y.Node.create(node);
-            }
-            return wrapDOM(Y.DOM.insertBefore(Y.Node.getDOMNode(node),
-                    Y.Node.getDOMNode(refNode), _nodes[this._yuid]));
-        },
-        
-        /**
-         * @method insertAfter 
-         * @param {String | HTMLElement} node The node to insert 
-         * @param {String | HTMLElement} refNode The node to insert the new node before  
-         * @return {Node} The node that was inserted (or null if insert fails)  
-         */ 
-        insertAfter: function(node, refNode) {
-            if (typeof node === 'string') {
-                node = Y.Node.create(node);
-            }
-            return wrapDOM(Y.DOM.insertAfter(Y.Node.getDOMNode(node),
-                    Y.Node.getDOMNode(refNode), _nodes[this._yuid]));
-        },
-        
        /**
          * Attaches a DOM event handler.
          * @method attach
@@ -831,19 +808,12 @@ YUI.add('node', function(Y) {
         };
     });
 
-    var _createNode = function(data) {
-        var frag = Y.config.doc.createElement('div');
-        frag.innerHTML = _createHTML(data);
-        return frag.firstChild;
-    };
-
     /** 
      *  Creates a Node instance from an HTML string
      * @method create
      * @param {String | Array} html HTML string
      */
     Node.create = function(html) {
-        //return wrapDOM(_createNode(html));
         return wrapDOM(Y.DOM.create(html));
     };
 
@@ -882,7 +852,7 @@ YUI.add('node', function(Y) {
             doc = _nodes[doc._yuid]; 
         }
     
-        if (node && typeof node == 'string') {
+        if (node && typeof node === 'string') {
             switch(node) {
                 case 'document':
                     node = Y.config.doc;
@@ -891,6 +861,7 @@ YUI.add('node', function(Y) {
                     node = Y.Selector.query(node, doc, true);
             }
         }
+
         node = wrapDOM(node);
 
         if (isRoot) {
@@ -934,16 +905,11 @@ YUI.add('node', function(Y) {
      */
     var NodeList = function(nodes) {
         // TODO: input validation
-        _nodes[Y.stamp(this)] = nodes;
+        _nodelists[Y.stamp(this)] = nodes;
     };
 
     // used to call Node methods against NodeList nodes
     var _tmpNode = Node.create('<div></div>');
-    var updateTmp = function(node) {
-        _nodes[_tmpNode._yuid] = node;
-        _styles[_tmpNode._yuid] = node.style;
-    };
-
     NodeList.prototype = {};
 
     Y.each(Node.prototype, function(fn, name) {
@@ -961,8 +927,8 @@ YUI.add('node', function(Y) {
          * @return {Node} The Node instance at the given index.
          */
         item: function(index) {
-            var node = _nodes[this._yuid][index];
-            return (node && node.tagName) ? wrapDOM(node) : (node && node.get) ? node : null;
+            var node = _nodelists[this._yuid][index];
+            return (node && node[TAG_NAME]) ? wrapDOM(node) : (node && node.get) ? node : null;
         },
 
         /**
@@ -974,11 +940,10 @@ YUI.add('node', function(Y) {
          * @see Node
          */
         set: function(name, val) {
-            var nodes = _nodes[this._yuid];
-            var node = _tmpNode;
+            var nodes = _nodelists[this._yuid];
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[node._yuid] = nodes[i];
-                node.set(name, val);
+                _nodes[_tmpNode._yuid] = nodes[i];
+                _tmpNode.set(name, val);
             }
 
             return this;
@@ -993,14 +958,14 @@ YUI.add('node', function(Y) {
          * @see Node
          */
         get: function(name) {
-            if (name == 'length') {
-                return _nodes[this._yuid].length;
+            if (name == 'length') { // TODO: remove
+                return _nodelists[this._yuid].length;
             }
-            var nodes = _nodes[this._yuid];
-            var node = _tmpNode;
+            var nodes = _nodelists[this._yuid];
             var ret = [];
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                ret[i] = node.get(name);
+                _nodes[_tmpNode._yuid] = nodes[i];
+                ret[i] = _tmpNode.get(name);
             }
 
             return ret;
@@ -1014,7 +979,7 @@ YUI.add('node', function(Y) {
          * @see Selector
          */
         filter: function(selector) {
-            return wrapDOM(Selector.filter(_nodes[this._yuid], selector));
+            return wrapDOM(Selector.filter(_nodelists[this._yuid], selector));
         },
 
         /**
@@ -1028,11 +993,9 @@ YUI.add('node', function(Y) {
          */
         each: function(fn, context) {
             context = context || this;
-            var nodes = _nodes[this._yuid];
-            var node;
+            var nodes = _nodelists[this._yuid];
             for (var i = 0, len = nodes.length; i < len; ++i) {
-                node = Y.get(nodes[i]);
-                fn.call(context, node, i, this);
+                fn.call(context, Y.Node.get(nodes[i]), i, this);
             }
             return this;
         },
@@ -1043,12 +1006,12 @@ YUI.add('node', function(Y) {
          * @return {Int} The number of items in the NodeList. 
          */
         size: function() {
-            return _nodes[this._yuid].length;
+            return _nodelists[this._yuid].length;
         },
 
         toString: function() {
-            var node = _nodes[this._yuid] || [];
-            return 'NodeList (' + node.length + ' items)';
+            var nodes = _nodelists[this._yuid] || [];
+            return 'NodeList (' + nodes.length + ' items)';
         }
 
     }, true);
