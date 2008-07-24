@@ -890,6 +890,8 @@ Y.Env.meta = {
                             continue;
                         }
 
+                        var c=0;
+
                         // check the threshold
                         for (j=0;j<s.length;j=j+1) {
 
@@ -957,7 +959,19 @@ Y.Env.meta = {
             }
         },
 
+        _onSuccess: function() {
+
+            this._pushEvents();
+            // Y._attach(Y.Object.keys(this.inserted));
+            Y._attach(this.sorted);
+            this.fire('success', {
+                data: this.data
+            });
+        },
+
         _onFailure: function(msg) {
+            // Y._attach(Y.Object.keys(this.inserted));
+            Y._attach(this.sorted);
             this.fire('failure', {
                 msg: 'operation failed: ' + msg,
                 data: this.data
@@ -965,6 +979,8 @@ Y.Env.meta = {
         },
 
         _onTimeout: function(msg) {
+            // Y._attach(Y.Object.keys(this.inserted));
+            Y._attach(this.sorted);
             this.fire('timeout', {
                 msg: 'operation timed out: ' + msg,
                 data: this.data
@@ -1135,14 +1151,14 @@ Y.Env.meta = {
                 return;
             }
 
-            var s, len, i, m, url;
+            var s, len, i, m, url, self=this;
 
             if (this.combine && !this._combineComplete) {
 
                 this._combining = []; 
-
-                var s=this.sorted, len=s.length, i, m,
-                    url=this.comboBase;
+                s=this.sorted;
+                len=s.length;
+                url=this.comboBase;
 
                 for (i=0; i<len; i=i+1) {
                     m = this.getModule(s[i]);
@@ -1160,22 +1176,21 @@ Y.Env.meta = {
 
                 if (this._combining.length) {
 
-                    var self=this, 
-                        c=function(o) {
-                            self._combineComplete = true;
+                    var callback=function(o) {
+                        self._combineComplete = true;
 
-                            var c=self._combining, len=c.length, i, m;
-                            for (i=0; i<len; i=i+1) {
-                                self.inserted[c[i]] = true;
-                            }
+                        var c=self._combining, len=c.length, i, m;
+                        for (i=0; i<len; i=i+1) {
+                            self.inserted[c[i]] = true;
+                        }
 
-                            self.loadNext(o.data);
-                        };
+                        self.loadNext(o.data);
+                    };
 
                     // @TODO get rid of the redundant Get code
                     Y.Get.script(url, {
                         data: s[i],
-                        onSuccess: c,
+                        onSuccess: callback,
                         onFailure: this._onFailure,
                         onTimeout: this._onTimeout,
                         insertBefore: this.insertBefore,
@@ -1211,7 +1226,8 @@ Y.Env.meta = {
 
             }
 
-            var s=this.sorted, len=s.length, i, m;
+            s=this.sorted;
+            len=s.length;
 
             for (i=0; i<len; i=i+1) {
 
@@ -1251,14 +1267,16 @@ Y.Env.meta = {
                     this._loading = s[i];
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
-                        url=m.fullpath || this._url(m.path), self=this, 
-                        c=function(o) {
+                        onsuccess=function(o) {
                             self.loadNext(o.data);
                         };
+                        
+                    url=m.fullpath || this._url(m.path);
+                    self=this; 
 
                     fn(url, {
                         data: s[i],
-                        onSuccess: c,
+                        onSuccess: onsuccess,
                         insertBefore: this.insertBefore,
                         charset: this.charset,
                         varName: m.varName,
@@ -1284,15 +1302,11 @@ Y.Env.meta = {
 
             // } else if (this.onSuccess) {
             } else {
-                this._pushEvents();
 
                 // call Y.use passing this instance. Y will use the sorted
                 // dependency list.
-                Y.use(this);
 
-                this.fire('success', {
-                    data: this.data
-                });
+                this._onSuccess();
 
             }
 
