@@ -337,7 +337,7 @@
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
                     <span class="c">// Y.mix(l, YUI.Env.mods);</span>
-<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">);</span>
+<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
                     <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
                 <span class="o">}</span>
 
@@ -400,11 +400,11 @@
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">callback</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">callback</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
+                <span class="nx">callback</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
             <span class="o">}</span>
 
             <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">)</span> <span class="o">{</span>
-                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;yui:load&#39;</span><span class="o">,</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">fromLoader</span><span class="o">);</span>
             <span class="o">}</span>
         <span class="o">};</span>
 
@@ -416,11 +416,10 @@
             <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
             <span class="c">// loader calls use to automatically attach when finished</span>
 <span class="c"></span>            <span class="c">// but we still need to execute the callback.</span>
-<span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="nx">attach</span><span class="o">,</span> <span class="nx">loader</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">);</span>
-            <span class="c">// loader.subscribe(&#39;failure&#39;, function() {</span>
-<span class="c"></span>                <span class="c">// Y.log(&#39;asdf&#39;);</span>
-<span class="c"></span>                <span class="c">// });</span>
-<span class="c"></span>        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+<span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="nx">attach</span><span class="o">,</span> <span class="nx">loader</span><span class="o">);</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;failure&#39;</span><span class="o">,</span> <span class="nx">attach</span><span class="o">,</span> <span class="nx">loader</span><span class="o">);</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;timeout&#39;</span><span class="o">,</span> <span class="nx">attach</span><span class="o">,</span> <span class="nx">loader</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
             <span class="nx">attach</span><span class="o">();</span>
         <span class="o">}</span>
 
@@ -566,6 +565,8 @@
                                 <li class=""><a href="module_io.html">io</a></li>
 
                                 <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 

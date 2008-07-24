@@ -299,7 +299,7 @@ YUI.prototype = {
 
                 if (dynamic) {
                     // Y.mix(l, YUI.Env.mods);
-                    Y.log('attaching ' + name);
+                    Y.log('attaching ' + name, 'info', 'YUI');
                     m.fn(Y);
                 }
 
@@ -362,11 +362,11 @@ YUI.prototype = {
             }
 
             if (callback) {
-                callback(Y);
+                callback(Y, fromLoader);
             }
 
             if (Y.fire) {
-                Y.fire('yui:load', Y);
+                Y.fire('yui:load', Y, fromLoader);
             }
         };
 
@@ -378,10 +378,9 @@ YUI.prototype = {
             loader.insert();
             // loader calls use to automatically attach when finished
             // but we still need to execute the callback.
-            loader.subscribe('success', attach, loader, 'loader');
-            // loader.subscribe('failure', function() {
-                // Y.log('asdf');
-                // });
+            loader.subscribe('success', attach, loader);
+            loader.subscribe('failure', attach, loader);
+            loader.subscribe('timeout', attach, loader);
         } else {
             attach();
         }
