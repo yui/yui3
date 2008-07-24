@@ -25,7 +25,8 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#newyui">Creating a YUI instance</a></li>
+										<li><a href="#why">Why the namespace change?</a></li>
+										<li><a href="#core">YUI Core</a></li>
 										<li><a href="#use">Use method</a></li>
 					                    <li><a href="#modulelist">Module List</a></li>
 					                    <li><a href="#loader">Loader</a></li>
@@ -63,43 +64,107 @@ include "../inc/header.inc";
 			
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#newyui">Creating a YUI instance</a></li>
+					<li><a href="#why">Why the namespace change?</a></li>
+					<li><a href="#core">YUI Core</a></li>
 					<li><a href="#use">Use method</a></li>
 					<li><a href="#modulelist">Module List</a></li>
 					<li><a href="#loader">Loader</a></li>
 				</ul>
 				
-				<h4 id="newyui">Creating a YUI instance</h4>
-				<p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
+				<h4 id="why">Why the namespace change?</h4>
+                <style>
+                #whyinfo li strong {
+                    font-weight: bold;
+                }
+                #whyinfo li em {
+                    font-style: italic;
+                }
+                </style>
+                <ol id="whyinfo">
+                    <li><strong>Backward Compatibility</strong>: With the change from <code>YAHOO</code> to <code>YUI</code> we are guaranteed not to break backward compatibility. This allows you to use both YUI 2/x and YUI 3.x on 
+                    the same page without fear of breaking existing code.</li>
+                    <li><strong>Sandboxing</strong>: The new YUI Global Object is now smarter than ever, allowing you to create an instance of YUI in your own namespace and only load the modules that you need.
+                    It makes it easier for multiple developers to work on different parts of the page with different modules with less worry of them stepping on each others toes.</li>
+                    <li><strong>Versioning</strong> <em>(future)</em>: In the future YUI modules will be version stamped. For easier mixing of old and new modules on the same page.</li>
+                    <li><strong>More Dynamic</strong>: With Loader built into the core, loading files when you need them just got easier.</li>
+                </ol>
 
-				<p>For example, if you only needed to use the <code>node</code> module, you could use it like this:</p>
+				<h4 id="core">YUI Core</h4>
+				<p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = YUI().use('node');
+                    var myNameSpace = YUI();
                     myNameSpace.Node.get('#demo');
                 </textarea>
 
+                <p>All of this functionality is available in the YUI Core:</p>
+
+                <div class="apisummary">
+				<table>
+					<thead>
+						<tr>
+							<th>YUI 3 Component</th>
+							<th>Module</th>
+						</tr>
+					</tbody>
+					<tbody>
+                        <tr>
+                            <td>Array Operations</td><td>array</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Core</td><td>core</td>
+                        </tr>
+                        <tr>
+                            <td>DOM Wrappers</td><td>dom</td>
+                        </tr>
+                        <tr>
+                            <td>Event</td><td>event-(see event page for more)</td>
+                        </tr>
+                        <tr>
+                            <td>Language helper methods</td><td>lang</td>
+                        </tr>
+                        <tr>
+                            <td>Timeout method</td><td>later</td>
+                        </tr>
+                        <tr>
+                            <td>Logging support</td><td>log</td>
+                        </tr>
+                        <tr>
+                            <td>Node Support</td><td>node</td>
+                        </tr>
+                        <tr>
+                            <td>Object Operations</td><td>object</td>
+                        </tr>
+                        <tr>
+                            <td>Browser Sniffing</td><td>ua</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Object</td><td>yui</td>
+                        </tr>
+                    </tbody>
+				</table>
+                </div>
 
 				<h4 id="use">Use method</h4>
 				<p>The use method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace = YUI().use('node', 'animation');
-                    //myNameSpace.Node is available
-                    //myNameSpace.Anim is available
+                    var myNameSpace1 = YUI().use('dd-drop', 'animation');
+                    //myNameSpace1.DD is available
+                    //myNameSpace1.Anim is available
                 </textarea>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace = YUI().use('node');
-                    //myNameSpace.Node is available
-                    //myNameSpace.Anim is NOT available
+                    var myNameSpace2 = YUI().use('animation');
+                    //myNameSpace2.DD is NOT available
+                    //myNameSpace2.Anim is available
                 </textarea>
 
 				<h5>Use callback</h5>
                 <p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.</p>
                 <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
                 <textarea name="code" class="JScript">
-                    YUI().use('node', function(myNameSpace) {
-                        //myNameSpace.node is available
+                    YUI().use('animation', function(myNameSpace) {
+                        //myNameSpace.Anim is available
                     });
                 </textarea>
 
