@@ -1,18 +1,42 @@
 /**
  * Provides dynamic loading for the YUI library.  It includes the dependency
  * info for the library, and will automatically pull in dependencies for
- * the modules requested.  It supports rollup files (such as utilities.js
- * and yahoo-dom-event.js), and will automatically use these when
- * appropriate in order to minimize the number of http connections
- * required to load all of the dependencies.
+ * the modules requested.  It supports rollup files (such as utilities.js, and 
+ * will automatically use these when appropriate in order to minimize the 
+ * number of http connections required to load all of the dependencies.  It
+ * can load the files from the Yahoo! CDN, and it can use the combo service
+ * provided on that network.
+ *
+ * @module loader
  */
 
 /**
- * YUILoader provides dynamic loading for YUI.
+ * Loader provides dynamic loading for YUI.
  * @class Loader
- * @TODO version management
  */
 
+/**
+ * Executed when the loader successfully completes an insert operation
+ * This can be subscribed to normally, or a listener can be passed
+ * as an onSuccess config option.
+ * @event success
+ */
+
+/**
+ * Executed when the loader fails to complete an insert operation.
+ * This can be subscribed to normally, or a listener can be passed
+ * as an onFailure config option.
+ *
+ * @event failure
+ */
+
+/**
+ * Executed when a Get operation times out.
+ * This can be subscribed to normally, or a listener can be passed
+ * as an onTimeout config option.
+ *
+ * @event timeout
+ */
 
 // http://yui.yahooapis.com/combo?2.5.2/build/yahoo/yahoo-min.js&2.5.2/build/dom/dom-min.js&2.5.2/build/event/event-min.js&2.5.2/build/autocomplete/autocomplete-min.js"
 
@@ -41,14 +65,6 @@ Y.Env.meta = {
     base: 'http://yui.yahooapis.com/' + ROOT,
 
     comboBase: 'http://yui.yahooapis.com/combo?',
-
-    // skin: {
-    //     defaultSkin: 'sam',
-    //     base: 'assets/skins/',
-    //     path: 'skin.css',
-    //     after: [RESET, FONTS, GRIDS, BASE],
-    //     rollup: 3
-    // },
 
     modules: {
 
@@ -1248,15 +1264,16 @@ Y.Env.meta = {
                 m = this.getModule(s[i]);
 
                 if (!m) {
-                    var msg = "undefined module " + m;
+
+                    var msg = "Undefined module " + s[i] + " skipped";
                     Y.log(msg, 'warn', 'Loader');
+                    this.inserted[s[i]] = true;
+                    continue;
 
-                    this.fire('failure', {
-                        msg: msg,
-                        data: this.data
-                    });
-
-                    return;
+                    // this.fire('failure', {
+                        // msg: msg,
+                        // data: this.data
+                    // });
                 }
 
 

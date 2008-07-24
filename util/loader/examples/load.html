@@ -5,7 +5,7 @@
 <script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
 <script type="text/javascript" src="../../build3x/compat/compat-debug.js"></script>
 <script type="text/javascript" src="../../build3x/dump/dump-debug.js"></script>
-<script type="text/javascript" src="../../build3x/i18n/i18n-debug.js"></script>
+<script type="text/javascript" src="../../build3x/substitute/substitute-debug.js"></script>
 <script type="text/javascript" src="../../build3x/get/get-debug.js"></script>
 <script type="text/javascript" src="../../build3x/loader/loader-debug.js"></script>
 
@@ -41,7 +41,7 @@ YUI().use('*', function(Y) {
         // require: ["datatable", "dragdrop"],
         // require: ["substitute"],
         // require: ["cookie", "fonts"],
-        require: ["animation"],
+        require: ["animation", "foo"],
         // require: ["yuitest"],
         //require: ["charts", "simpleeditor"],
         base: '../../build3x/',
@@ -75,6 +75,101 @@ YUI().use('*', function(Y) {
 
     Y.log(loader.sorted);
     //jY.log(Y.Lang.dump(loader.moduleInfo));
+
+
+        var obj = {
+            level1_1: 1.1,
+            level1_2: 1.2,
+            level1_3: {
+                level2_1: 2.1,
+                level2_2: 2.2,
+                level2_3: {
+                    level3_1: 3.1,
+                    level3_2: 3.2,
+                    level3_3: 3.3,
+                    level3_4: 3.4
+                },
+                level2_4: 2.4
+            },
+            level1_4: 1.4
+        };
+
+        var tostr = {
+            custom1_1: 1.1,
+            custom1_2: 1.2,
+            custom1_3: {
+                custom2_1: 2.1,
+                custom2_2: 2.2,
+                custom2_3: {
+                    custom3_1: 3.1,
+                    custom3_2: 3.2,
+                    custom3_3: 3.3,
+                    custom3_4: 3.4
+                },
+                custom2_4: 2.4
+            },
+            custom1_4: 1.4,
+            toString: function() {
+                return "custom toString executed";
+            }
+        };
+
+        var arr = [
+            1.1,
+            1.2,
+            [
+                2.1,
+                2.2,
+                [
+                    3.1,
+                    3.2,
+                    3.3,
+                    3.4
+                ],
+                2.4
+            ],
+            1.4
+        ];
+
+        var mix = [
+            1.1,
+            new Date(),
+            {
+                level2_1: 2.1,
+                level2_2: 2.2,
+                level2_3: [
+                    3.1,
+                    3.2,
+                    3.3,
+                    3.4
+                ],
+                level2_4: 2.4
+            },
+            1.4,
+            function(){}
+        ];
+
+
+        Y.log(Y.substitute("the first level of my object looks like: {testobj 0}", { testobj: obj }));
+        Y.log(Y.substitute("the first two levels of my object looks like: {testobj 1}", { testobj: obj }));
+        Y.log(Y.substitute("my entire object looks like: {testobj 10}", { testobj: obj }));
+        Y.log(Y.substitute("the first two levels of my array looks like: {testarr 1}", { testarr: arr }));
+        Y.log(Y.substitute("the first two levels of my mixed obj looks like: {testmix 1}", { testmix: mix }));
+
+        var el = document.getElementById("yahoo");
+
+        Y.log(Y.dump(el, 0));
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        Y.log(Y.substitute("If the object has a toString, that is used rather than dump.  " +
+                         "This does not apply to objects encountered during a dump: {customtostr 1}", 
+                         { customtostr:  tostr }));
+
+        Y.log(Y.substitute("Supplying 'dump' meta info, we can force the dump rather than using the " +
+                         "custom toString: {customtostr dump 1}", 
+                         { customtostr:  tostr }));
+
 });
 
 </script> 
