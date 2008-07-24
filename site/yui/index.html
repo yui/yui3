@@ -262,13 +262,12 @@ include "../inc/header.inc";
                 </div>
 				
 				<h4 id="loader">Loader</h4>
-                <p>Loader is now built into the YUI Global Object and puts it power behind the <code>YUI.use</code> method</p>
-                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and it's dependencies) and load them into this YUI instance.</p>
+                <p>Loader's functionality is now built into the YUI Global Object (as long as it's on the page) and puts its power behind the <code>YUI.use</code> method.</p>
+                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and it's dependencies) and load them into your YUI instance.</p>
+                <p>You need to include <code>yui.js</code>, <code>loader.js</code> and <code>get.js</code> for this to function properly.</p>
                 <textarea name="code" class="JScript">
                     YUI({
-                           base: '../../build3x/',
-                           root: '2.5.2/build/',
-                           insertBefore: 'styleoverrides',
+                           base: '../../3x/build/',
                            //charset: 'utf-8',
                            //loadOptional: true,
                            //combine: true,
