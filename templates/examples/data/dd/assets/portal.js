@@ -1,6 +1,6 @@
 //Use loader to grab the modules needed
 YUI({
-    base: '../../build/',
+    base: '../../../../build/',
     timeout: 1000
 }).use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'io', 'cookie', 'json', function(Y) {
     //TODO - Pending loader fix
