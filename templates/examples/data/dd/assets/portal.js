@@ -1,9 +1,10 @@
 //Use loader to grab the modules needed
 YUI({
-    base: '../../../../build/',
+    base: '../../build/',
     timeout: 1000
-}).use('dd-drop', 'dd-proxy', 'dd-constrain', 'animation', 'io', 'cookie', 'json', function(Y) {
-    //TODO - Pending loader fix
+}).use('dd-dragdrop-all', 'animation', 'io', 'cookie', 'json', function(Y) {
+    //Y.DD.DDM._debugShim = true;
+    //TODO - Pending loader/anim fix
     Y.use('easing');
 
     //Setup some private variables..
@@ -354,6 +355,69 @@ YUI({
     });
 
  
+    var _moveMod = function(drag, drop) {
+        if (drag.get('node').hasClass('item')) {
+            var dragNode = drag.get('node'),
+                dropNode = drop.get('node'),
+                append = false,
+                padding = 30,
+                xy = drag.mouseXY,
+                region = drop.region,
+                middle1 = region.top + ((region.bottom - region.top) / 2),
+                middle2 = region.left + ((region.right - region.left) / 2),
+                dir = false,
+                dir1 = false,
+                dir2 = false;
+                
+                //We could do something a little more fancy here, but we won't ;)
+                if ((xy[1] < (region.top + padding))) {
+                    dir1 = 'top';
+                }
+                if ((region.bottom - padding) < xy[1]) {
+                    dir1 = 'bottom';
+                }
+                if ((region.right - padding) < xy[0]) {
+                    dir2 = 'right';
+                }
+                if ((xy[0] < (region.left + padding))) {
+                    dir2 = 'left';
+                }
+                dir = dir2;
+                if (dir2 === false) {
+                    dir = dir1;
+                }
+                switch (dir) {
+                    case 'top':
+                        var next = dropNode.get('nextSibling');
+                        if (next) {
+                            dropNode = next;
+                        } else {
+                            append = true;
+                        }
+                        break;
+                    case 'bottom':
+                        break;
+                    case 'right':
+                    case 'left':
+                        break;
+                }
+            
+
+            if ((dropNode !== null) && dir) {
+                if (dropNode && dropNode.get('parentNode')) {
+                    if (!append) {
+                        dropNode.get('parentNode').insertBefore(dragNode, dropNode);
+                    } else {
+                        dropNode.get('parentNode').appendChild(dragNode);
+                    }
+                }
+            }
+            Y.Lang.later(50, Y, function() {
+                Y.DD.DDM.syncActiveShims(true);
+            });
+        }
+    };
+
     /*
     Handle the drop:enter event
     Now when we get a drop enter event, we check to see if the target is an LI, then we know it's out module.
@@ -363,24 +427,8 @@ YUI({
         if (!e.drag || !e.drop || (e.drop !== e.target)) {
             return false;
         }
-        if (e.drag.get('node').hasClass('item')) {
-            var drag = e.drag, drop = e.drop,
-                dragNode = drag.get('node'),
-                dropNode = drop.get('node'),
-                middle = drop.region.top + ((drop.region.bottom - drop.region.top) / 2);
-            
-            if (dropNode !== null) {
-                if (!goingUp && (drag.mouseXY[1] < middle) && !crossList) {
-                    dropNode = dropNode.get('nextSibling');
-                }
-                crossList = false;
-                if (dropNode && dropNode.get('parentNode')) {
-                    dropNode.get('parentNode').insertBefore(dragNode, dropNode);
-                }
-            }
-            Y.Lang.later(50, Y, function() {
-                Y.DD.DDM.syncActiveShims(true);
-            });
+        if (e.drop.get('node').get('tagName').toLowerCase() === 'li') {
+            _moveMod(e.drag, e.drop);
         }
     });
 
@@ -448,21 +496,24 @@ YUI({
         if (drop.get('tagName').toLowerCase() !== 'li') {
             if (!drop.contains(drag)) {
                 drop.appendChild(drag);
+                Y.Lang.later(50, Y, function() {
+                    Y.DD.DDM.syncActiveShims(true);
+                });
             }
         }
     });
 
     //Create simple targets for the main lists..
+    
     var uls = Y.Node.get('#play').queryAll('ul.list');
     Y.each(uls, function(v, k, items) {
         var tar = new Y.DD.Drop({
             node: items.item(k),
-            padding: '10'
-        });
-        tar.on('drop:enter', function() {
-            crossList = true;
+            padding: '20 0'
         });
     });
+    
+    
     
     Y.on('io:xdrReady', function() {
         //Get the cookie data
