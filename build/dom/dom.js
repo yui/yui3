@@ -1381,7 +1381,7 @@ var patterns = {
     combinator: /^\s*([>+~]|\s)\s*/
 };
 
-Y.Selector = {
+var Selector = {
     /**
      * Default document for use queries 
      * @property document
@@ -1395,8 +1395,7 @@ Y.Selector = {
      * @property attrAliases
      * @type object
      */
-    attrAliases: {
-    },
+    attrAliases: {},
 
     /**
      * Mapping of shorthand tokens to corresponding attribute selector 
@@ -1404,7 +1403,6 @@ Y.Selector = {
      * @type object
      */
     shorthand: {
-        //'(?:(?:[^\\)\\]\\s*>+~,]+)(?:-?[_a-z]+[-\\w]))+#(-?[_a-z]+[-\\w]*)': '[id=$1]',
         '\\#(-?[_a-z]+[-\\w]*)': '[id=$1]',
         '\\.(-?[_a-z]+[-\\w]*)': '[class~=$1]'
     },
@@ -1441,19 +1439,19 @@ Y.Selector = {
         },
 
         'nth-child': function(node, val) {
-            return Y.Selector.getNth(node, val);
+            return Selector.getNth(node, val);
         },
 
         'nth-last-child': function(node, val) {
-            return Y.Selector.getNth(node, val, null, true);
+            return Selector.getNth(node, val, null, true);
         },
 
         'nth-of-type': function(node, val) {
-            return Y.Selector.getNth(node, val, node[TAG_NAME]);
+            return Selector.getNth(node, val, node[TAG_NAME]);
         },
          
         'nth-last-of-type': function(node, val) {
-            return Y.Selector.getNth(node, val, node[TAG_NAME], true);
+            return Selector.getNth(node, val, node[TAG_NAME], true);
         },
          
         'first-child': function(node) {
@@ -1486,7 +1484,7 @@ Y.Selector = {
         },
 
         'not': function(node, simple) {
-            return !Y.Selector.test(node, simple);
+            return !Selector.test(node, simple);
         },
 
         'contains': function(node, str) {
@@ -1516,13 +1514,13 @@ Y.Selector = {
         var groups = selector ? selector.split(',') : [];
         if (groups[LENGTH]) {
             for (var i = 0, len = groups[LENGTH]; i < len; ++i) {
-                if ( Y.Selector._testNode(node, groups[i]) ) { // passes if ANY group matches
+                if ( Selector._testNode(node, groups[i]) ) { // passes if ANY group matches
                     return true;
                 }
             }
             return false;
         }
-        return Y.Selector._testNode(node, selector);
+        return Selector._testNode(node, selector);
     },
 
     /**
@@ -1537,7 +1535,7 @@ Y.Selector = {
     filter: function(nodes, selector) {
         nodes = nodes || [];
 
-        var result = Y.Selector._filter(nodes, Y.Selector._tokenize(selector)[0]);
+        var result = Selector._filter(nodes, Selector._tokenize(selector)[0]);
         return result;
     },
 
@@ -1552,7 +1550,7 @@ Y.Selector = {
      * @static
      */
     query: function(selector, root, firstOnly) {
-        var result = Y.Selector._query(selector, root, firstOnly);
+        var result = Selector._query(selector, root, firstOnly);
         return result;
     },
 
@@ -1562,7 +1560,7 @@ Y.Selector = {
             return result;
         }
 
-        root = root || Y.Selector.document;
+        root = root || Selector.document;
         var groups = selector.split(','); // TODO: handle comma in attribute/pseudo
 
         if (groups[LENGTH] > 1) {
@@ -1571,27 +1569,27 @@ Y.Selector = {
                 found = arguments.callee(groups[i], root, firstOnly, true);
                 result = firstOnly ? found : result.concat(found); 
             }
-            Y.Selector._clearFoundCache();
+            Selector._clearFoundCache();
             return result;
         }
 
-        var tokens = Y.Selector._tokenize(selector);
-        var idToken = tokens[Y.Selector._getIdTokenIndex(tokens)],
+        var tokens = Selector._tokenize(selector);
+        var idToken = tokens[Selector._getIdTokenIndex(tokens)],
             nodes = [],
             node,
             id,
             token = tokens.pop() || {};
             
         if (idToken) {
-            id = Y.Selector._getId(idToken[ATTRIBUTES]);
+            id = Selector._getId(idToken[ATTRIBUTES]);
         }
 
         // use id shortcut when possible
         if (id) {
-            node = Y.Selector.document.getElementById(id);
+            node = Selector.document.getElementById(id);
 
             if (node && (root[NODE_TYPE] === 9 || Y.DOM.contains(root, node))) {
-                if ( Y.Selector._testNode(node, null, idToken) ) {
+                if ( Selector._testNode(node, null, idToken) ) {
                     if (idToken === token) {
                         nodes = [node]; // simple selector
                     } else {
@@ -1608,7 +1606,7 @@ Y.Selector = {
         }
 
         if (nodes[LENGTH]) {
-            result = Y.Selector._filter(nodes, token, firstOnly, deDupe); 
+            result = Selector._filter(nodes, token, firstOnly, deDupe); 
         }
         return result;
     },
@@ -1617,7 +1615,7 @@ Y.Selector = {
         var result = firstOnly ? null : [];
 
         result = Y.DOM.filterElementsBy(nodes, function(node) {
-            if (! Y.Selector._testNode(node, '', token, deDupe)) {
+            if (! Selector._testNode(node, '', token, deDupe)) {
                 return false;
             }
 
@@ -1626,7 +1624,7 @@ Y.Selector = {
                     return false;
                 }
                 node._found = true;
-                Y.Selector._foundCache[Y.Selector._foundCache[LENGTH]] = node;
+                Selector._foundCache[Selector._foundCache[LENGTH]] = node;
             }
             return true;
         }, firstOnly);
@@ -1635,9 +1633,9 @@ Y.Selector = {
     },
 
     _testNode: function(node, selector, token, deDupe) {
-        token = token || Y.Selector._tokenize(selector).pop() || {};
-        var ops = Y.Selector.operators,
-            pseudos = Y.Selector.pseudos,
+        token = token || Selector._tokenize(selector).pop() || {};
+        var ops = Selector.operators,
+            pseudos = Selector.pseudos,
             prev = token.previous,
             i, len;
 
@@ -1670,7 +1668,7 @@ Y.Selector = {
             }
         }
         return (prev && prev[COMBINATOR] !== ',') ?
-                Y.Selector.combinators[prev[COMBINATOR]](node, token) :
+                Selector.combinators[prev[COMBINATOR]](node, token) :
                 true;
     },
 
@@ -1679,20 +1677,20 @@ Y.Selector = {
     _regexCache: {},
 
     _clearFoundCache: function() {
-        for (var i = 0, len = Y.Selector._foundCache[LENGTH]; i < len; ++i) {
+        for (var i = 0, len = Selector._foundCache[LENGTH]; i < len; ++i) {
             try { // IE no like delete
-                delete Y.Selector._foundCache[i]._found;
+                delete Selector._foundCache[i]._found;
             } catch(e) {
-                Y.Selector._foundCache[i].removeAttribute('_found');
+                Selector._foundCache[i].removeAttribute('_found');
             }
         }
-        Y.Selector._foundCache = [];
+        Selector._foundCache = [];
     },
 
     combinators: {
         ' ': function(node, token) {
             while ((node = node[PARENT_NODE])) {
-                if (Y.Selector._testNode(node, '', token.previous)) {
+                if (Selector._testNode(node, '', token.previous)) {
                     return true;
                 }
             }  
@@ -1700,7 +1698,7 @@ Y.Selector = {
         },
 
         '>': function(node, token) {
-            return Y.Selector._testNode(node[PARENT_NODE], null, token.previous);
+            return Selector._testNode(node[PARENT_NODE], null, token.previous);
         },
         '+': function(node, token) {
             var sib = node[PREVIOUS_SIBLING];
@@ -1708,7 +1706,7 @@ Y.Selector = {
                 sib = sib[PREVIOUS_SIBLING];
             }
 
-            if (sib && Y.Selector._testNode(sib, null, token.previous)) {
+            if (sib && Selector._testNode(sib, null, token.previous)) {
                 return true; 
             }
             return false;
@@ -1717,7 +1715,7 @@ Y.Selector = {
         '~': function(node, token) {
             var sib = node[PREVIOUS_SIBLING];
             while (sib) {
-                if (sib[NODE_TYPE] === 1 && Y.Selector._testNode(sib, null, token.previous)) {
+                if (sib[NODE_TYPE] === 1 && Selector._testNode(sib, null, token.previous)) {
                     return true;
                 }
                 sib = sib[PREVIOUS_SIBLING];
@@ -1800,7 +1798,7 @@ Y.Selector = {
 
     _getIdTokenIndex: function(tokens) {
         for (var i = 0, len = tokens[LENGTH]; i < len; ++i) {
-            if (Y.Selector._getId(tokens[i][ATTRIBUTES])) {
+            if (Selector._getId(tokens[i][ATTRIBUTES])) {
                 return i;
             }
         }
@@ -1817,7 +1815,7 @@ Y.Selector = {
             found = false,  // whether or not any matches were found this pass
             match;          // the regex match
 
-        selector = Y.Selector._replaceShorthand(selector); // convert ID and CLASS shortcuts to attributes
+        selector = Selector._replaceShorthand(selector); // convert ID and CLASS shortcuts to attributes
 
         /*
             Search for selector patterns, store, and strip them from the selector string
@@ -1850,7 +1848,7 @@ Y.Selector = {
                         }
                         selector = selector.replace(match[0], ''); // strip current match from selector
                         if (re === COMBINATOR || !selector[LENGTH]) { // next token or done
-                            token[ATTRIBUTES] = Y.Selector._fixAttributes(token[ATTRIBUTES]);
+                            token[ATTRIBUTES] = Selector._fixAttributes(token[ATTRIBUTES]);
                             token[PSEUDOS] = token[PSEUDOS] || [];
                             token[TAG] = token[TAG] ? token[TAG].toUpperCase() : '*';
                             tokens.push(token);
@@ -1868,7 +1866,7 @@ Y.Selector = {
     },
 
     _fixAttributes: function(attr) {
-        var aliases = Y.Selector.attrAliases;
+        var aliases = Selector.attrAliases;
         attr = attr || [];
         for (var i = 0, len = attr[LENGTH]; i < len; ++i) {
             if (aliases[attr[i][0]]) { // convert reserved words, etc
@@ -1882,7 +1880,7 @@ Y.Selector = {
     },
 
     _replaceShorthand: function(selector) {
-        var shorthand = Y.Selector.shorthand;
+        var shorthand = Selector.shorthand;
         var attrs = selector.match(patterns[ATTRIBUTES]); // pull attributes to avoid false pos on "." and "#"
         if (attrs) {
             selector = selector.replace(patterns[ATTRIBUTES], 'REPLACED_ATTRIBUTE');
@@ -1903,12 +1901,13 @@ Y.Selector = {
 
 };
 
-Y.Selector.patterns = patterns;
-
 if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
-    Y.Selector.attrAliases['class'] = 'className';
-    Y.Selector.attrAliases['for'] = 'htmlFor';
+    Selector.attrAliases['class'] = 'className';
+    Selector.attrAliases['for'] = 'htmlFor';
 }
+
+Y.Selector = Selector;
+Y.Selector.patterns = patterns;
 
 /**
  * Provides color conversion functionality.
