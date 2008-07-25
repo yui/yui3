@@ -104,14 +104,15 @@ include "../inc/header.inc";
 				&lt;/script&gt;
 				</textarea>
 
-				<h3 id="configuration">Using IO</h3>
+				<h3 id="IO">Using IO</h3>
 
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">The Configuration Object</a></li>
-					<li><a href="#[you id here]">Events</a></li>
-					<li><a href="#[you id here]">Cross-Domain Requests</a></li>
-					<li><a href="#[you id here]">Setting HTTP Headers</a></li>
+					<li><a href="#configuration">The Configuration Object</a></li>
+					<li><a href="#events">Events</a></li>
+					<li><a href="#xdr">Cross-Domain Requests</a></li>
+					<li><a href="#headers">Setting HTTP Headers</a></li>
+					<li><a href="#queue">Queue</a></li>
 				</ul>
 
 				<h4 id="configuration">The Configuration Object</h4>
@@ -142,11 +143,11 @@ include "../inc/header.inc";
 							<td>on (object)</td>
 							<td>This object defines the events and event handlers to be used for the transaction.  These events fire in addition to the global IO events.  Define as many events as desired for the transaction; all events handlers are optional.
 								<ul class="topspace">
-									<li><strong>start</strong></li>
-									<li><strong>complete</strong></li>
-									<li><strong>success</strong></li>
-									<li><strong>failure</strong></li>
-									<li><strong>abort</strong></li>
+									<li><strong>start:</strong></li>
+									<li><strong>complete:</strong></li>
+									<li><strong>success:</strong></li>
+									<li><strong>failure:</strong></li>
+									<li><strong>abort:</strong></li>
 								</ul>
 							NOTE: These events are accessible only to the transaction's subscribers, whereas global IO events are accessible by all subscribers.
 							</td>
@@ -166,7 +167,7 @@ include "../inc/header.inc";
 						</tr>
 						<tr>
 							<td>xdr (object)</td>
-							<td>Defines the transport to be used for cross-domain requests (e.g., <code>{ use:'flash' }</code> ).  The transaction will use the specified transport instead of XMLHttpRequest.  Currently, the only alternate transport supported is Flash, requiring Flash Player 9.
+							<td>Defines the transport to be used for cross-domain requests (e.g., <code>{ use:'flash' }</code> ).  The transaction will use the specified transport instead of XMLHttpRequest.  Currently, the only alternate transport supported is Flash, requiring Flash Player 9 (player 9.0.124 is recommended).
 							</td>
 						</tr>
 						<tr>
@@ -238,44 +239,44 @@ include "../inc/header.inc";
 				<table>
 					<thead>
 						<tr>
-							<th>Event</th>
+							<th>Field</th>
 							<th>Description</th>
 						</tr>
 					</thead>
 					<tbody>
 					<tr>
-					  <td>status</td>
+					  <td><strong>status</strong></td>
 
 					  <td>The HTTP status code of the transaction.</td>
 					</tr>
 					<tr>
-					  <td>statusText</td>
+					  <td><strong>statusText</strong></td>
 					  <td>The HTTP status message.</td>
 					</tr>
 					<tr>
 
-					  <td>getResponseHeader(<em>headername</em>)</td>
+					  <td><strong>getResponseHeader(<em>headername</em>)</strong></td>
 					  <td>Returns the string value of the specified header label.</td>
 					</tr>
 					<tr>
-					  <td>getAllResponseHeaders</td>
+					  <td><strong>getAllResponseHeaders</strong></td>
 					  <td>All response HTTP headers are available as a string.  Each label-value pair is delimited by "\n".</td>
 
 					</tr>
 					<tr>
-					  <td>responseText</td>
-					  <td>If the response data is non-XML, it will be accessible in this property.</td>
+					  <td><strong>responseText</strong></td>
+					  <td>The response data as a unicode string.</td>
 					</tr>
 					<tr>
-					  <td>responseXML</td>
-					  <td>If the response data is an XML document, it will be accessible in this property.</td>
+					  <td><strong>responseXML</strong></td>
+					  <td>The response data as an XML document object.</td>
 					</tr>
 					</tbody>
 				  </table>
 
 				<h4 id="events">Events</h4>
 				<p>
-					IO events provide access to data during a transaction's lifecycle.  There are two aspects to IO events: global and transaction.  Global events are fired by IO for every transaction, and these events are accessible to all event subscribers.  Transaction events are fired only if the requisite event handlers are defined in the configuration object.  Global events are identified by the <code>io:eventname</code> pattern.  The following example describes the event subscription syntax for global events:
+					IO events provide access to data during a transaction's lifecycle.  There are two aspects to IO events: global and transaction.  Global events are fired by IO for all transactions, and these events are accessible to all event subscribers.  Transaction events are created and fired only if their event handlers are defined in the configuration object.  Global events are identified by the <code>io:eventname</code> pattern.  The following example describes the event subscription syntax for global events:
 				</p>
 				<p>
 				The following table describes the available IO events:
@@ -295,9 +296,11 @@ include "../inc/header.inc";
 							<textarea name="code" class="HTML" cols="60" rows="1">
 							function onStart(transactionid, arguments) {
 							  // transactionid : The transaction's ID.
-							  // arguments: This is defined in the configuration object's
-							  //            "arguments" property.
+							  // arguments: Array ['foo','bar'].
 							}
+
+							// Subscribe to "io.start".
+							Y.on('io:start', onStart, this, { start: ['foo','bar']; );
 							</textarea>
 							</td>
 						</tr>
@@ -309,9 +312,11 @@ include "../inc/header.inc";
 							function onComplete(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
-							  // arguments: This is defined in the configuration object's
-							  //            "arguments" property.
+							  // arguments: Object containing an array { complete: ['foo', 'bar'] }.
 							}
+
+							// Subscribe to "io.complete".
+							Y.on('io:complete', onComplete, this, { complete: ['foo', 'bar'] } );
 							</textarea>
 							</td>
 						</tr>
@@ -323,9 +328,11 @@ include "../inc/header.inc";
 							function onSuccess(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
-							  // arguments: This is defined in the configuration object's
-							  //            "arguments" property.
+							  // arguments: Boolean "true".
 							}
+
+							// Subscribe to "io.success".
+							Y.on('io:success', onSuccess, this, true);
 							</textarea>
 							</td>
 						</tr>
@@ -337,9 +344,10 @@ include "../inc/header.inc";
 							function onFailure(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
-							  // arguments: This is defined in the configuration object's
-							  //            "arguments" property.
+							  // arguments: String "Transaction Failed".
 							}
+							// Subscribe to "io.failure".
+							Y.on('io:failure', onFailure, this, 'Transaction Failed');
 							</textarea>
 							</td>
 						</tr>
@@ -350,9 +358,11 @@ include "../inc/header.inc";
 							<textarea name="code" class="HTML" cols="60" rows="1">
 							function onFailure(transactionid, arguments) {
 							  // transactionid : The transaction's ID.
-							  // arguments: This value is defined in the configuration object's
-							  //            "arguments" property.
+							  // arguments: Number 0.
 							}
+
+							// Subscribe to "io.abort".
+							Y.on('io:abort', onAbort, this, 0);
 							</textarea>
 							</td>
 						</tr>
@@ -365,9 +375,7 @@ include "../inc/header.inc";
 					</tbody>
 				</table>
 
-				<p>
-
-				</p>
+				<p>The following example demonstrates an IO transaction with an event handler subscribed to "io:event".</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				// Create a YUI instance using IO module.
 				var Y = new YUI().use("io");
@@ -408,6 +416,9 @@ include "../inc/header.inc";
 				 *           Additional arguments can be defined, as desired.
 				 */
 				Y.on('io:complete', onComplete, this, "foo", "bar");
+
+				// Starts the transaction.
+				var request = Y.io(uri);
 				</textarea>
 
 				<h4 id="xdr">Cross-Domain Transactions</h4>
@@ -498,13 +509,13 @@ include "../inc/header.inc";
 				Y.on('io:abort', GlobalEventHandler.abort, this);
 				&lt;/script&gt;
 
-				// Start the trasnaction
+				// Start the transaction
 				var request = Y.io(uri, cfg);
 				</textarea>
 
 				<h4 id="headers">Setting HTTP Headers</h4>
 				<p>
-				IO can be configured to send default HTTP Headers for all transactions, in addition to any specific HTTP headers set in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
+				IO can be configured to send default HTTP Headers for all transactions, in addition to any HTTP headers defined in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
 				</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;script&gt;
@@ -518,6 +529,75 @@ include "../inc/header.inc";
 				Y.io.header('Content-Type');
 				&lt;/script&gt;
 				</textarea>
+
+				<h4 id="queue">Queue</h4>
+				<p>
+				IO provides a basic mechanism for storing transactions for future processing.  The queue can be configured to store a set number of transactions, and transactions can be promoted to the front of the queue, or they can be purged from the queue.
+				</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Field</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr>
+					  <td><strong>queue(uri, configuration)</strong></td>
+					  <td>Method signature is identical to IO, but returns the id of the transaction, or false if the transaction cannot be placed in the queue.</td>
+					</tr>
+					<tr>
+					  <td><strong>queue.start()</strong></td>
+					  <td>Activates the queue, and begins processing transactions in the queue.  This is the default state of the queue.</td>
+					</tr>
+					<tr>
+
+					  <td><strong>queue.stop()</strong></td>
+					  <td>Deactivates the queue.  Transactions sent to queue() will be stored until the queue is started.</td>
+					</tr>
+					<tr>
+					  <td><strong>queue.size(n)</strong></td>
+					  <td>Sets the maximum number of transactions that can be stored in the queue, when the queue is stopped.  When this limit is reached, additional transactions sent to queue() will return false.</td>
+					</tr>
+					<tr>
+					  <td><strong>queue.promote(id)</strong></td>
+					  <td>Moves the specified transaction stored in the queue to the head of the queue.</td>
+					</tr>
+					<tr>
+					  <td><strong>queue.purge(id)</strong></td>
+					  <td>Deletes the specified transaction stored in the queue.</td>
+					</tr>
+					</tbody>
+				</table>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				&lt;script&gt;
+				// Create a YUI instance using IO.
+				var Y = new YUI().use('io');
+
+				// Stop the queue so transactions can be stored.
+				Y.queue.stop();
+
+				// Send three transactions into the queue for storage.
+				var task0 = Y.queue(uri);
+				var task1 = Y.queue(uri);
+				var task2 = Y.queue(uri);
+
+				// This IO request is processed immediately.
+				var task3 = Y.io(uri);
+
+				// Promote task2 to the top of the queue.
+				Y.queue.promote(task2);
+
+				// Purge task1 from the queue.
+				Y.queue.purge(task1);
+
+				// Re-start the queue.
+				// Transactions are sent in the following order: task2, task0.
+				Y.queue.start();
+
+				&lt;/script&gt;
+				</textarea>
+
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
