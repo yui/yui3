@@ -1936,10 +1936,7 @@ if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
  */
 
 var TO_STRING = 'toString',
-    RE = RegExp,
-    re_rgb = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
-    re_hex = /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
-    re_hex3 = /([0-9A-F])/gi;
+    RE = RegExp;
 
 Y.Color = {
     KEYWORDS: {
@@ -1961,10 +1958,16 @@ Y.Color = {
         aqua: '0ff'
     },
 
-    toRGB: function(val) {
-        val = Y.Color.toHex(val);
+    re_RGB: /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
+    re_hex: /^#?([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i,
+    re_hex3: /([0-9A-F])/gi,
 
-        if(re_hex.exec(val)) {
+    toRGB: function(val) {
+        if (!Y.Color.re_RGB.test(val)) {
+            val = Y.Color.toHex(val);
+        }
+
+        if(Y.Color.re_hex.exec(val)) {
             val = 'rgb(' + [
                 parseInt(RE.$1, 16),
                 parseInt(RE.$2, 16),
@@ -1976,16 +1979,20 @@ Y.Color = {
 
     toHex: function(val) {
         val = Y.Color.KEYWORDS[val] || val;
-        if (re_rgb.exec(val)) {
+        if (Y.Color.re_RGB.exec(val)) {
+            var r = (RE.$1.length === 1) ? '0' + RE.$1 : Number(RE.$1),
+                g = (RE.$2.length === 1) ? '0' + RE.$2 : Number(RE.$2),
+                b = (RE.$3.length === 1) ? '0' + RE.$3 : Number(RE.$3);
+
             val = [
-                Number(RE.$1)[TO_STRING](16),
-                Number(RE.$2)[TO_STRING](16),
-                Number(RE.$3)[TO_STRING](16)
+                r[TO_STRING](16),
+                g[TO_STRING](16),
+                b[TO_STRING](16)
             ].join('');
         }
 
         if (val[LENGTH] < 6) {
-            val = val.replace(re_hex3, '$1$1');
+            val = val.replace(Y.Color.re_hex3, '$1$1');
         }
 
         return (val.indexOf('#') < 0 ? val = '#' + val : val).toLowerCase();
