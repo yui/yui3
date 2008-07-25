@@ -31,4 +31,16 @@ $examples["event-timing"] = array(
 	requires => array("yui"),
 	highlightSyntax => true
 );
+
+$examples["event-ce"] = array(
+	name => "Using Custom Events",
+	modules => array("event"),
+	description => "Use the Event Utility to create Custom Events that are bubbleable, preventable, cancelable and much more.",
+	sequence => array(4),
+	newWindow => "default",
+	requires => array("yui"),
+	logger => array("event", "example"),
+	highlightSyntax => true
+);
+
 ?>
