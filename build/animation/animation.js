@@ -2,27 +2,29 @@ YUI.add('animation', function(Y) {
 
 /**
  * Y.Animation Utility.
- * @module animation
+ * @module anim
  */
+
     /**
      * Handles animation _queueing and threading.
      * @class Anim
      */
 
-    var IS_ANIMATED = 'isAnimated',
+    var RUNNING = 'running',
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
         START = 'start',
         TWEEN = 'tween',
         END = 'end',
         NODE = 'node',
+        PAUSED = 'paused',
+        REVERSED = 'reversed',
         ITERATION_COUNT = 'iterationCount',
 
-        RE_RGB = /^rgb\(([0-9]+)\s*,\s*([0-9]+)\s*,\s*([0-9]+)\)$/i,
         NUM = Number;
 
-    var _queue = [],
-        _fx = {},
+    var _running = {},
+        _instances = {},
         _timer;
 
     var _setPrivate = function(anim, prop, val) {
@@ -34,7 +36,6 @@ YUI.add('animation', function(Y) {
             });
         }
     };
-
 
     /**
      * Provides an API for animating objects.
@@ -67,6 +68,7 @@ YUI.add('animation', function(Y) {
      */
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
+        _instances[Y.stamp(this)] = this;
     };
 
     /**
@@ -93,13 +95,35 @@ YUI.add('animation', function(Y) {
      */
     Y.Anim.DEFAULT_UNIT = 'px';
 
+    // TODO: move to computedStyle? (browsers dont agree on default computed offsets)
+    var _getOffset = function(node, attr) {
+        var val = node.getComputedStyle(attr),
+            get = (attr === 'left') ? 'getX': 'getY',
+            set = (attr === 'left') ? 'setX': 'setY';
+
+        if (val === 'auto') {
+            var position = node.getStyle('position');
+            if (position === 'absolute' || position === 'fixed') {
+                val = node[get]();
+                node[set](val);
+            } else {
+                val = 0;
+            }
+        }
+
+        return val;
+    };
+
     /**
      * Bucket for custom getters and setters
      *
-     * @property CUSTOM_ATTRIBUTES
+     * @property behaviors
      * @static
      */
-    Y.Anim.CUSTOM_ATTRIBUTES = {};
+    Y.Anim.behaviors = {
+        left: { get: _getOffset },
+        top: { get: _getOffset }
+    };
 
     /**
      * The default setter to use when setting object properties.
@@ -108,7 +132,6 @@ YUI.add('animation', function(Y) {
      * @static
      */
     Y.Anim.DEFAULT_SETTER = function(node, att, from, to, elapsed, duration, fn, unit) {
-
         unit = unit || '';
         node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
     };
@@ -131,7 +154,11 @@ YUI.add('animation', function(Y) {
          */
         node: {
             set: function(node) {
-                return Y.Node.get(node);
+                node = Y.Node.get(node);
+                if (!node) {
+                    Y.fail('Y.Anim: invalid node: ' + node);
+                }
+                return node;
             }
         },
 
@@ -146,7 +173,7 @@ YUI.add('animation', function(Y) {
 
         /**
          * The method that will provide values to the attribute(s) during the animation. 
-         * Defaults to "YAHOO.util.Easing.easeNone".
+         * Defaults to "Easing.easeNone".
          * @attribute easing
          * @type Function
          */
@@ -184,7 +211,7 @@ YUI.add('animation', function(Y) {
          */
         startTime: {
             value: 0,
-            readonly: true
+            readOnly: true
         },
 
         /**
@@ -195,18 +222,21 @@ YUI.add('animation', function(Y) {
          */
         elapsedTime: {
             value: 0,
-            readonly: true
+            readOnly: true
         },
 
         /**
-         * Whether or not the animation is currently animated.
-         * @attribute isY.Animated
+         * Whether or not the animation is currently running.
+         * @attribute running 
          * @type Boolean
          * @default false 
          */
-        isAnimated: {
+        running: {
+            get: function() {
+                return !!_running[Y.stamp(this)];
+            },
             value: false,
-            readonly: true
+            readOnly: true
         },
 
         /**
@@ -228,7 +258,7 @@ YUI.add('animation', function(Y) {
          */
         iterationCount: {
             value: 0,
-            readonly: true
+            readOnly: true
         },
 
         /**
@@ -242,64 +272,104 @@ YUI.add('animation', function(Y) {
          */
         direction: {
             value: 'normal' // | alternate (fwd on odd, rev on even per spec)
+        },
+
+        /**
+         * Whether or not the animation is currently paused.
+         * @attribute running 
+         * @type Boolean
+         * @default false 
+         */
+        paused: {
+            readOnly: true,
+            value: false
+        },
+
+        /**
+         * Whether or not the animation is currently reversed.
+         * Only applies when iterations is greater than 1 and direction is "alternate"
+         * @attribute reversed 
+         * @type Boolean
+         * @default false 
+         */
+        reversed: {
+            readOnly: true,
+            value: false
         }
+
 
     };
 
     /**
-     * Starts the animation thread.
+     * Starts all animation instances.
      * Only one thread can run at a time.
      * @method start
      * @static
      */    
-    Y.Anim.start = function() {
-        if (!_timer) {
-            _timer = setInterval(this.run, 1);
-        }
-    };
-
-    /**
-     * Stops the _timer.
-     * @method stop
-     * @static
-     */    
-    Y.Anim.pause = function() {
-        for (var i = 0, len = _queue.length; i < len; ++i) {
-            if (_queue[i].get(IS_ANIMATED)) {
-                _queue[i].pause();
+    Y.Anim.run = function() {
+        for (var i in _instances) {
+            if (_instances[i].run) {
+                _instances[i].run();
             }
         }
     };
 
     /**
-     * Stops the _timer.
+     * Pauses all animation instances.
+     * @method pause
+     * @static
+     */    
+    Y.Anim.pause = function() {
+        for (var i in _running) { // stop timer if nothing running
+            if (_running[i].pause) {
+                _running[i].pause();
+            }
+        }
+        Y.Anim._stopTimer();
+    };
+
+    /**
+     * Stops all animation instances.
      * @method stop
      * @static
      */    
     Y.Anim.stop = function() {
-        clearInterval(_timer);
-
-        for (var i = 0, len = _queue.length; i < len; ++i) {
-            if (_queue[i].get(IS_ANIMATED)) {
-                _queue[i].stop();
+        for (var i in _running) { // stop timer if nothing running
+            if (_running[i].stop) {
+                _running[i].stop();
             }
         }
+        Y.Anim._stopTimer();
     };
     
+    Y.Anim._startTimer = function() {
+        if (!_timer) {
+            _timer = setInterval(Y.Anim._runFrame, 1);
+        }
+    };
+
+    Y.Anim._stopTimer = function() {
+        clearInterval(_timer);
+        _timer = 0;
+    };
+
     /**
      * Called per Interval to handle each animation frame.
-     * @method run
+     * @method _runFrame
+     * @private
      * @static
      */    
-    Y.Anim.run = function() {
-        var anim;
-
-        for (var i = 0, len = _queue.length; i < len; ++i) {
-            anim = _queue[i];
-            if ( anim && anim.get(IS_ANIMATED)) {
-                anim._runFrame();
-                anim.fire(TWEEN);
+    Y.Anim._runFrame = function() {
+        var done = true;
+        for (var anim in _running) {
+            if (_running[anim]._runFrame) {
+                done = false;
+                _running[anim]._runFrame(new Date() - _running[anim].get(START_TIME));
             }
+        }
+
+        if (done) {
+            Y.Anim._stopTimer();
         }
     };
 
@@ -313,22 +383,13 @@ YUI.add('animation', function(Y) {
          * @method run
          */    
         run: function() {
-            if (!this.get(IS_ANIMATED)) {
+            if (!this.get(RUNNING)) {
                 this._start();
+            } else if (this.get(PAUSED)) {
+                this._resume();
             }
         },
 
-        /**
-         * Starts or resumes an animation.
-         * @param {NUM|String} elapsed optional Millisecond or
-         * percent start time marker.
-         * @method run
-         */    
-        resume: function() { // TODO: test case
-            if (!this.get(IS_ANIMATED)) {
-                this._start();
-            }
-        },
         /**
          * Pauses the animation and
          * freezes it in its current state and time.
@@ -336,7 +397,7 @@ YUI.add('animation', function(Y) {
          * @method pause
          */    
         pause: function() {
-            if (this.get(IS_ANIMATED)) {
+            if (this.get(RUNNING)) {
                 this._pause();
             }
         },
@@ -346,57 +407,56 @@ YUI.add('animation', function(Y) {
          * Calling run() will restart from the beginning.
          * @method stop
          */    
-        stop: function() {
-            if (this.get(IS_ANIMATED) || this.get(ELAPSED_TIME)) { // end if paused
-                this._end();
+        stop: function(finish) {
+            if (this.get(RUNNING) || this.get(PAUSED)) {
+                this._end(finish);
             }
         },
 
         _added: false,
 
         _start: function() {
-            _setPrivate(this, IS_ANIMATED, true);
             _setPrivate(this, START_TIME, new Date() - this.get(ELAPSED_TIME));
-            Y.Anim.start(); // start animator
-
-            if (!this.get(ELAPSED_TIME)) {
-                this._actualFrames = 0;
+            this._actualFrames = 0;
+            if (!this.get(PAUSED)) {
                 this._initAttr();
-                this.fire(START);
-            } else {
-                this.fire('resume');
             }
+            _running[Y.stamp(this)] = this;
+            Y.Anim._startTimer();
 
-            if (!this._added) {
-                _queue[_queue.length] = this;
-                this._added = true;
-            }
+            this.fire(START);
         },
 
-        _pause: function(silent) {
+        _pause: function() {
             _setPrivate(this, START_TIME, null);
-            _setPrivate(this, IS_ANIMATED, false);
+            _setPrivate(this, PAUSED, true);
+            delete _running[Y.stamp(this)];
             this.fire('pause');
         },
 
-        _end: function() {
-            var elapsed = this.get(ELAPSED_TIME);
-            _setPrivate(this, IS_ANIMATED, false);
-            _setPrivate(this, START_TIME, null);
-            _setPrivate(this, ELAPSED_TIME, 0);
-
-            this.fire(END, {elapsed: elapsed});
+        _resume: function() {
+            _setPrivate(this, PAUSED, false);
+            _running[Y.stamp(this)] = this;
+            this.fire('resume');
         },
 
-        _runFrame: function() {
-            var t = new Date() - this.get(START_TIME),
-                attr = this._runtimeAttr,
-                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
-                node = this.get('node'),
+        _end: function(finish) {
+            _setPrivate(this, START_TIME, null);
+            _setPrivate(this, ELAPSED_TIME, 0);
+            _setPrivate(this, PAUSED, false);
+            _setPrivate(this, REVERSED, false);
+
+            delete _running[Y.stamp(this)];
+            this.fire(END, {elapsed: this.get(ELAPSED_TIME)});
+        },
+
+        _runFrame: function(t) {
+            var attr = this._runtimeAttr,
+                customAttr = Y.Anim.behaviors,
+                node = this.get(NODE),
                 attribute,
                 setter,
-                d,
-                val;
+                d;
                 
             for (var i in attr) {
                 if (attr.hasOwnProperty(i)) {
@@ -418,6 +478,7 @@ YUI.add('animation', function(Y) {
             this._actualFrames += 1;
             _setPrivate(this, ELAPSED_TIME, t);
 
+            this.fire(TWEEN);
             if (t >= d) {
                 this._lastFrame();
             }
@@ -425,7 +486,6 @@ YUI.add('animation', function(Y) {
 
         _lastFrame: function() {
             var iter = this.get('iterations'),
-                elapsed = this.get(ELAPSED_TIME),
                 iterCount = this.get(ITERATION_COUNT);
 
             iterCount += 1;
@@ -444,21 +504,15 @@ YUI.add('animation', function(Y) {
         },
 
         _flip: function() {
-            var from = this.get('from') || {},
-                to = this.get('to') || {},
-                duration = this.get('duration'),
-                node = this.get('node'),
-                easing = this.get('easing') || {},
+            var to = this.get('to') || {},
                 keyframes = this.get('keyframes') || {},
                 attr = Y.merge(this._attr, {}),
-                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
-                unit, begin, end;
+                customAttr = Y.Anim.behaviors;
 
             if (to) {
                 keyframes[100] = to;
             }
 
-            var prev = {};
             Y.each(attr, function(val, name) {
                 Y.each(val, function(v, n) {
                     if (name in customAttr && customAttr[name].reverse) {
@@ -471,21 +525,21 @@ YUI.add('animation', function(Y) {
                     }
                 });
 
-            }); // to is required TODO: by
+            }); // to is required TODO: by?
 
             this._runtimeAttr = Y.merge(attr, {});
+            _setPrivate(this, REVERSED, !this.get(REVERSED)); // flip reverse flag
         },
 
-        // TODO: support reverse in API?
         _initAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
                 duration = this.get('duration'),
-                node = this.get('node'),
+                node = this.get(NODE),
                 easing = this.get('easing') || {},
                 keyframes = this.get('keyframes') || {},
                 attr = {},
-                customAttr = Y.Anim.CUSTOM_ATTRIBUTES,
+                customAttr = Y.Anim.behaviors,
                 unit, begin, end;
 
             if (to) {
@@ -502,7 +556,7 @@ YUI.add('animation', function(Y) {
                     var dur = duration * (parseInt(frame, 10) / 100) * 1000;
                     var begin = prev[name] ? prev[name].to : from[name];
 
-                    if (!begin) {
+                    if (begin === undefined) {
                         begin = (name in customAttr && 'get' in customAttr[name])  ?
                                 customAttr[name].get(node, name) : Y.Anim.DEFAULT_GETTER(node, name);
                     } else if (Y.Lang.isFunction(begin)) {
@@ -537,7 +591,6 @@ YUI.add('animation', function(Y) {
             this._attr = attr;
             this._runtimeAttr = Y.merge(attr, {});
         }
-
     };
 
     Y.extend(Y.Anim, Y.Base, proto);
@@ -880,8 +933,12 @@ YUI.add('easing', function(Y) {
         }
     };
 }, '3.0.0');
+/**
+ * Adds xy position behaviors to Y.Anim.
+ * @module anim-xy
+ */
 
-Y.Anim.CUSTOM_ATTRIBUTES.xy = {
+Y.Anim.behaviors.xy = {
     set: function(node, att, from, to, elapsed, duration, fn) {
         node.setXY([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
@@ -893,11 +950,17 @@ Y.Anim.CUSTOM_ATTRIBUTES.xy = {
     }
 };
 
+/**
+ * Adds color behaviors to Y.Anim.
+ * @module anim-color
+ */
 
-Y.Anim.CUSTOM_ATTRIBUTES.color = {
+
+Y.Anim.behaviors.color = {
     set: function(node, att, from, to, elapsed, duration, fn) {
-        from = RE_RGB.exec(Y.Color.toRGB(from));
-        to = RE_RGB.exec(Y.Color.toRGB(to));
+        from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
+        to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
+
         node.setStyle(att, 'rgb(' + [
             Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
             Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
@@ -905,9 +968,11 @@ Y.Anim.CUSTOM_ATTRIBUTES.color = {
         ].join(', ') + ')');
     },
     
+    // TODO: default bgcolor const
     get: function(node, att) {
         var val = node.getComputedStyle(att);
-        return (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+        val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
+        return val;
     }
 };
 
@@ -917,10 +982,14 @@ Y.each(['backgroundColor',
         'borderBottomColor', 
         'borderLeftColor'],
         function(v, i) {
-            Y.Anim.CUSTOM_ATTRIBUTES[v] = Y.Anim.CUSTOM_ATTRIBUTES.color;
+            Y.Anim.behaviors[v] = Y.Anim.behaviors.color;
         }
 );
-Y.Anim.CUSTOM_ATTRIBUTES.scroll = {
+/**
+ * Adds scroll behaviors to Y.Anim.
+ * @module anim-scroll
+ */
+Y.Anim.behaviors.scroll = {
     set: function(node, att, from, to, elapsed, duration, fn) {
         var val = ([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
@@ -935,24 +1004,28 @@ Y.Anim.CUSTOM_ATTRIBUTES.scroll = {
     }
 };
 
+/**
+ * Adds bezier curve behaviors to Y.Anim.
+ * @module anim-curve
+ */
 
-    /**
-     * Usage:
-     * <pre>
-     *  var anim = new Y.Anim({
-     *      node: '#foo',
-     *
-     *      to: {
-     *          curve: [ [0, 100], [500, 200], [800, 300] ]
-     *       }
-     *  });
-     *   
-     *  anim.run(); 
-     * </pre>
-     *
-     */
+/**
+ * Usage:
+ * <pre>
+ *  var anim = new Y.Anim({
+ *      node: '#foo',
+ *
+ *      to: {
+ *          curve: [ [0, 100], [500, 200], [800, 300] ]
+ *       }
+ *  });
+ *   
+ *  anim.run(); 
+ * </pre>
+ *
+ */
 
-Y.Anim.CUSTOM_ATTRIBUTES.curve = {
+Y.Anim.behaviors.curve = {
     set: function(node, att, from, to, elapsed, duration, fn) {
         var t = fn(elapsed, 0, 100, duration) / 100;
         node.setXY(Y.Anim.getBezier(to, t));
