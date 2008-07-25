@@ -1,7 +1,7 @@
 <?php 
 $title="The Event Utility";
-$section="io";
-$component="Event Utility";
+$section="event";
+$component=" Event Utility";
 $highlightSyntax = true;
 $releasenotes = true;
 include "../inc/header.inc";
@@ -15,61 +15,7 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-                
-<!--3.x:
-
-accepts an array of selector strings;
-selectors are a powerful way of binding multiple event handlers;
-
-DOM events:
-	
-	normalization: normalization no longer method-based but facade-based
-	all DOM events wrapped in Custom Events
-		-stopImmediatePropagation
-		-enforce listener order in IE
-		-return object on subscribe is a handle object
-			-can be passed to remove listener
-			-detach method
-
-	delegation tba
-
-	dispatch event may move in here tba (may be in node extras)
-
-	mousewheel normalization tba
-		- browsers handle this differently
-
-	keylistener needs to be redone tba
-
-Facade:
-
-	whitelist for event facade (how to document outside of the API?)
-	currentTarget is transparently reliable
-
-Custom Events:
-
-	can be used a la carte, but they're not supposed to be; no reason to create global custom events
-	EventProviders are now EventTarget; EventTarget has all the properties of an object that receives or generates events.
-	Bubbleable
-	Config for a custom event
-		bubbles -- true by default -- bubbles to the EventTarget
-		silent only controls log
-		emit facade -- by default false
-	Intrinsic after moment for all custom events --
-	Custom events are categorized and referenced by categoryname:eventname
-
-Examples:
-
-	event attachment y.on
-		attachment via selectors and node, nodelist, elref, elcollection, el array
-	facade use (target, current target, related target)
-		halt replaces stopEvent
-		anything in the API for the facade is potentialy interesting
-	handle use
-	custom event creation -- config properties
-	bubbling of custom events
-	event firing schematic
-	don't do a delegation example; this will be an api-->
-				  <p>YUI's Event Utility facilitates the creation of event-driven applications in the browser by giving you a simplified interface for responding DOM events. The Event Utility package also includes the Custom Event object; Custom Events allow you to publish the interesting moments or events in your own code so that other components on the page can subscribe to those events and respond to them.</p>
+					 <p>YUI's Event Utility facilitates the creation of event-driven applications in the browser by giving you a simplified interface for responding DOM events. The Event Utility package also includes the Custom Event object; Custom Events allow you to publish the interesting moments or events in your own code so that other components on the page can subscribe to those events and respond to them.</p>
                     
                     <p>The Event Utility package provides the following features: </p>
 
@@ -82,18 +28,19 @@ Examples:
       <li>Pageload timing events (<code>onAvailable</code> and <code>onContentReady</code> at the element level and <code>event:ready</code> at the DOM level)
       <li>Custom events that are bubbleable, cancelable, and have intrinsic AOP qualities</li>
    </ul>
+   
+   
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
 								<h4>On This Page</h4>
 								<ul>
 									<li><a href="#start">Getting Started</a></li>
-									<li><a href="#using">Using the <?php echo $component;?></a>
-										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										</ul></li>
+									<li><a href="#using">DOM Events</a></li>
+									<li><a href="#removeevent">Removing Events</a></li>
+									<li><a href="#onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</a></li>
+									<li><a href="#ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
+									<li><a href="#customevent">Using the CustomEvent Object</a></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
 								</ul>
@@ -106,7 +53,7 @@ Examples:
 						</div>
 					</div>				
 					<div class="clear"></div>
-				</div></div><!-- /promo -->
+				</div><!-- /promo -->
 				
 				<h3 id="start">Getting Started</h3>
 				
@@ -114,18 +61,15 @@ Examples:
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+<!-- -->
 				</textarea>
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
+               
 				
-              <h4>Basic Events</h4>
+              <h3 id="domEvents">DOM Events</h3>
                 <p>To attach an event handler to the DOM, simply define your event handler and pass the event handler to the Event Utility along with a reference to the event for which you want to listen and the element to which you want attach the handler: </p>
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
 //the function we'll use to handle the event:
@@ -149,180 +93,128 @@ Y.on("click", handleClick, "#foo");</textarea></pre>
           bind an event to the DOM element. The <code>on</code> method requires three
           arguments: the event to bind (<code>"click"</code>, as a string), the callback function  (<code>handleClick</code>), and the element the event is bound to (<code>"#foo"</code>, assuming an element whose ID attribute is <code>foo</code>).</li>
   </ul>
-    <p>Because we are identifying the element by its HTML ID (<code>"elementid"</code> as a string) rather than by passing in a Node instance or a direct HTMLElement reference, it is possible to refer to an element that does not yet exist on the page. The Event Utility attempts to find the DOM element by its <code>id</code> value; should it fail to find the element immediately, it continues to seek the element for up to 15 seconds after the page has loaded. This "automatic deferral" enables you, in some cases, to write your event attachment code directly into your script rather than separating it out in a function that runs only after the page has loaded.</p>
+    <p>Because we are identifying the element by its HTML ID (<code>"#foo"</code> as a string) rather than by passing in a Node instance or a direct HTMLElement reference, it is possible to refer to an element that does not yet exist on the page. The Event Utility attempts to find the DOM element by its <code>id</code> value; should it fail to find the element immediately, it continues to seek the element for up to 15 seconds after the page has loaded. This "automatic deferral" enables you, in some cases, to write your event attachment code directly into your script rather than separating it out in a function that runs only after the page has loaded.</p>
    
-    <p>To attach an event handler to multiple elements, use this code:</p>
+    <p>To attach an event handler to multiple elements, use CSS selector syntax (as above) that selects multiple elements, pass in multiple selector strings as an array, pass in an array of Node instances, or pass in an array of direct element references:</p>
 
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-// array can contain object references, element ids, or both
-var ids = ["el1", "el2", "el3"];
-function fnCallback(e) { alert(this.id); }
-YAHOO.util.Event.addListener(ids, "click", fnCallback);
-</textarea></pre>
-    
-    
-    
-    <p>These lines: </p>
-    <ul>
-        <li>Declare an array of ids corresponding to the HTML ID attributes of elements on the page. The array can contain HTML IDs as strings (as shown above); it can also accept variable object references.</li>
-        <li>Define a callback function, <code>fnCallback(e)</code>, to handle the specified event.</li>
-        <li>Call the <code>addListener</code> method of <code>YAHOO.util.Event</code> to bind an event to the
-          DOM element. In this case the first argument to the <code>addListener</code> method
-          is the ids array rather than a single element or ID. </li>
-    </ul>
-  <p>See the examples in <a href="#event">Using Event</a> and <a href="#customevent">Using
-  CustomEvent</a> or the <a href="../docs/YAHOO.util.CustomEvent.html">API Documentation</a> for more details.  See also <a href="../examples/event/eventsimple.html">the first Event Utility example</a> for a tutorial on how to attach events using <code>addListener</code>.</p>
+<pre><textarea name="code" class="JScript" cols="60" rows="1">var Y = YUI();
+
+//elements can be targeted using selector syntax:
+Y.on("click", handleClick, "#foo p"); //targets all p elements that are descendants
+									  //of #foo
+                                      
+//elements can be targeted by Node references:
+var foo = Y.Node.get("#foo");
+Y.on("click", handleClick, foo);
+foo.on("click", handleClick); //same as above
+
+//elements can be passed in as direct references:
+var foo = document.getElementById("foo");
+Y.on("click", handleClick, foo);
+
+//In all cases, you can pass in an array instead of a
+//single item:
+Y.on("click", handleClick, ["#foo p", "#bar"])</textarea></pre>
+<h4 id="on">Using <code>on</code>: Controlling Context and Arguments</h4>
+
+<p>When you call <code>Y.on</code>, you have the following arguments to work with:</p>
+<ol>
+  <li><strong>Event name:</strong> This is the string reference to the DOM event to which you want to respond (e.g., &quot;<code>click</code>&quot; or &quot;<code>mouseover</code>&quot;). Developers often wonder where they can find a comprehensive list of DOM events that shows in which browsers each event is supported. As far as we know, no perfect list exists.  Danny Goodman's <em><a href="http://www.oreillynet.com/catalog/9780596527402/">DHTML: The Definitive Reference</a></em> may have the most comprehensive information of this kind; PPK's <a href="http://www.quirksmode.org/js/events_compinfo.html">Event Compatibility Table</a> on quirksmode may have the best compatibility assessment online.  The Event Utility does not place any constraints on the events for which you attach handlers; it will attempt to attach listeners for any event name you provide.  It's your responsibility to make sure that the event you're using is one that is supported in the browsers for which you're developing.</li>
+  <li><strong>Handler: </strong>A reference to the function that should be called when the specified event takes place.</li>
+  <li><strong>Element(s):</strong> As noted above, this can be one or more elements referenced using selector syntax, Node instances, or direct element references.</li>
+  <li><strong>Context object:</strong> A reference to the object that will provide the context for the event handler &mdash; the object to which <code>this</code> will refer when the handler executes. If this is omitted, the context object will be a Node instance based on the target element.</li>
+  <li><strong>Argument 1 ... <em>n</em>:</strong> The fifth thru <em>n</em>th arguments passed to on will be passed to the event handler.</li>
+  </ol>
   
-  <p><strong>Note:</strong> Developers often wonder where they can find a comprehensive list of DOM events (e.g., "click", "mousemove", etc.) that shows in which browsers each event is supported. As far as we know, no perfect list exists.  Danny Goodman's <em><a href="http://www.oreillynet.com/catalog/9780596527402/">DHTML: The Definitive Reference</a></em> may have the most comprehensive information of this kind; PPK's <a href="http://www.quirksmode.org/js/events_compinfo.html">Event Compatibility Table</a> on quirksmode may have the best compatibility assessment online.  The Event Utility does not place any constraints on the events for which you attach handlers; it will attempt to attach listeners for any event name you provide.  It's your responsibility to make sure that the event you're using is one that is supported in the browsers for which you're developing.</p>
+<p>The following code shows these arguments in use.  HTML:</p>
 
-<h2 id="event">Using Event</h2>
+<textarea name="code" class="HTML" cols="60" rows="1"><div id="list">
+	<ul>
+		<li id="one" class="odd">Item one</li>
+        <li id="two" class="even">Item two</li>
+	    <li id="three" class="odd">Item three</li>
+	    <li id="four" class="even">Item four</li>
+	</ul>
+</div></textarea>
 
-  <p>This section describes several common features and uses of the Event Utility.  It contains these sections: </p>
-  <ul>
-    <li><a href="#deferral">Handler Attachment Deferral</a></li>
-    <li><a href="#scope">Automatic Scope Correction</a></li>
+<p>Script:</p>
 
-    <li><a href="#abstraction">Automatic Event Object Browser Abstraction</a></li>
-    <li><a href="#customobject">Send an Arbitrary Object to the Event Handler</a></li>
+<textarea name="code" class="JScript" cols="60" rows="1">//Create YUI instance:
+var Y = new YUI().use("dump");
 
-  </ul>
-
-<h3 id="deferral">Handler Attachment Deferral</h3>
-
-<p>
-If you attempt to attach a handler to an element before the page is fully loaded,
-  the Event Utility attempts to locate the element. If the element is not
-  available, Event periodically checks for the element until the <code>window.onload</code>
-  event is triggered. Handler deferral only works when attaching handlers by
-  element id; if you attempt to attach to a DOM object reference that is not
-  yet available, the component has no way of knowing what object you are trying
-  to access.
-</p>
-
-<h3 id="scope">Automatic Scope Correction</h3>
-<p>
-Event handlers added with Internet Explorer's <code>attachEvent</code> method are executed
-  in the <code>window</code> scope, so the special variable <code>this</code> in your callback references
-  the <code>window</code> object. This is not very useful. Even more vexing is the fact that
-  the event object in Internet Explorer does not provide a reliable way of identifying
-  the element on which the event was registered; standards-based browsers supply
-  this as the <code>currentTarget</code> property, but this property is not present in IE.</p>
-  <p>By default, the Event Utility automatically adjusts the execution scope so that <code>this</code>
-  refers
-  to the DOM element to which the event was attached, conforming to the
-  behavior of <code>addEventListener</code> in W3C-compliant browsers. Moreover, the event
-  subscriber can override the scope so that <code>this</code> refers to a <a
-  href="#customobject">custom object</a> passed into the <code>addListener</code> call.
-  </p>
-
-<h3>Automatic Event Object Browser Abstraction <a name="abstraction"></a></h3>
-<p>
-The first parameter your callback receives when the event fires is always the
-actual event object.  There is no need to look at <code>window.event</code>.
-</p>
-
-<h3 id="customobject">Send an Arbitrary Object to the Event Handler</h3>
-<p>
-It is common in object-oriented JavaScript development to assign a custom object's member method to listen for
-  an event, access internal properties and execute internal methods in
-  response.  Because the event handler is (by default) executed in the scope of
-  the element, not in the scope of the listener method's parent object, the
-  custom object's properties are not available through the <code>this</code> property as
-  one might expect. You can work around this in a number of ways: (1) by creating
-  closures or (2) creating circular references between your custom object and the
-  element.</p>
-
-<p>The
-Event Utility  enables you to pass your custom objects directly to the event
-handler so you don't have to use any of these (potentially leaky) methods to
-gain access to that custom object. Pass your custom object as
-the fourth parameter to the <code>addListener</code> method, and that object is passed in
-as the second parameter to your callback function (the first is the event object itself):
-</p>
-
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-function MyObj(elementId, customProp, callback) {
-   this.elementId = elementId;
-   this.customProp = customProp;
-   this.callback = callback;
-}
-
-MyObj.prototype.addClickHandler = function() {
-   YAHOO.util.Event.addListener(this.elementId, "click", this.callback, this);
+//create arbitrary context object:
+var contextObj = {
+	name: "context"
 };
 
-function fnCallback1(e, obj) {
-  // the execution context is the html element ("myelementid")
-  alert(this.id + " click event: " + obj.customProp);
+//function to handle click events and report information about them:
+function handleClick(e, arg1, arg2) {
+	Y.log("Context object:" + Y.dump(this));
+	Y.log("Event facade object:" + Y.dump(e));
+	Y.log(arguments);
 }
 
-function fnCallback2(e, obj) {
-  // the execution context is the custom object
-  alert("click event: " + this.customProp);
+//subscribe odd numbered list items to the click event
+Y.on("click", handleClick, "#list .odd", contextObj, "argumentOne", "argumentTwo");</textarea>
+
+<p>When you run this code and click on "Item one" or "Item three", the following information will be sent to <code>Y.log</code>:</p>
+
+<textarea name="code" class="JScript" cols="60" rows="1">Context object: {name => context}
+Event facade object: {
+	altKey => false, 
+    cancelBubble => false, 
+    ctrlKey => false, 
+    //and remaining event facade properties
+    ...}</textarea>
+    
+<p>The final object logged, the <code>arguments</code> object, will contain three items: <code>e</code> (the event facade), "argumentOne" (string), and "argumentTwo" (string).</p>
+
+
+<h4>Legacy Methods: <code>Event.addListener</code> and <code>Event.on</code></h4>
+
+<p>The Event Utility contains two legacy methods for attaching event listeners; these are located in the <code>Event</code> package and follow the syntax of the Event Utility from previous versions of YUI.  If you are writing code using YUI 3.x, you should avoid using these methods and instead use the syntax described above.</p>
+
+<h3 id="removeevent">Removing Events</h3>
+
+<p>There are two ways to remove an event listener:</p>
+<ol>
+  <li><strong>Call detach on the event's handle:</strong> The return value of on is an event handle object; that object contains a detach method that can be used to remove the event.</li>
+  <li><strong>Call the YUI detach method, passing in event type, handler, and element:</strong> detach is available as a method on your YUI instance and can be used when you don't have access to the event handle.</li>
+</ol>
+<p>Sample code for each of these methods:</p>
+<textarea name="code" class="JScript" cols="60" rows="1">//Get a YUI instance:
+var Y = YUI();
+
+//an event handler:
+function handleClick(e) {
+	Y.log(e);
 }
 
-var myobj = new MyObj("myelementid", "hello world", fnCallback1);
-var mydata = {id: 10 };
+//attach an event handler to element foo:
+var fooHandle = Y.on("click", handleClick, "#foo");
 
-// One way to add the handler:
-myobj.addClickHandler();
+//detach the handler using the handle:
+fooHandle.detach();
 
-// This will do the same thing:
-YAHOO.util.Event.addListener("myelementid", "click", fnCallback1, myobj);
+//detach the handler via detach:
+Y.detach("click", handleClick, "#foo");
 
-// If we pass true as the final parameter, the custom object that is passed
-// is used for the execution scope (so it becomes "this" in the callback).
-YAHOO.util.Event.addListener("myelementid", "click", fnCallback2, myobj, true);
+//or pass the event handle to detach:
+Y.detach(fooHandle);</textarea>
 
-
-// Alternatively, we can assign a completely different object to be the
-// execution scope:
-YAHOO.util.Event.addListener("myelementid", "click", fnCallback2, mydata, myobj);
-
-</textarea></pre>
-
-<h2 id="removeevent">Removing Events</h2>
-
-<p>You can remove event listeners by calling <code>YAHOO.util.Event.removeListener</code> with the same event
-signature that you used to create the event.</p>
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-YAHOO.util.Event.removeListener("myelementid", "click", fnCallback1);
-</textarea></pre>
-
-<p>If it is not convenient to save a reference to the original callback you
-used to register the event, and you know you are the only listener to the
-event, you can call <code>removeListener</code> without the function argument.  Doing so
-will remove all listeners added via <code>addListener</code> for the specified element and event type.
+<p><code>Event.purgeElement</code> lets you remove all listeners that were registered via <code>on</code> from an element. Optionally, a specific type of listener can be specified. In addition, The element's children can also be purged.
 </p>
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-YAHOO.util.Event.removeListener("myelementid", "click");
-</textarea></pre>
+<textarea name="code" class="JScript" cols="60" rows="1">//get a YUI instance:
+var Y = YUI();
 
+// purge all listeners:
+Y.Event.purgeElement("#foo");
+// all listeners and recurse children:
+Y.Event.purgeElement("#foo", true);
+// only click listeners, and don't recurse:
+Y.Event.purgeElement("#foo", false, "click");</textarea>
 
-
-<p><code>YAHOO.util.Event.getListeners</code> lets you retrieve all of the listeners that were attached to an element via
-<code>addListener</code>.  Optionally, you can retrieve all bound listeners of a given type:
-</p>
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-// all listeners
-var listeners = YAHOO.util.Event.getListeners(myelement);
-for (var i=0; i</textarea></pre>
-
-<p><code>YAHOO.util.Event.purgeElement</code> lets you remove all listeners that were registered via <code>addListener</code> from an element.
-Optionally, a specific type of listener can be specified. In addition, The element's children can
-also be purged.
-</p>
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-// all listeners
-YAHOO.util.Event.purgeElement(myelement);
-// all listeners and recurse children
-YAHOO.util.Event.purgeElement(myelement, true);
-// only click listeners
-YAHOO.util.Event.purgeElement(myelement, false, "click");
-
-</textarea></pre>
-
-<h2 id="onavailable">Using the onAvailable and onContentReady Methods</h2>
+<h3 id="onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</h3>
 <p><code>onAvailable</code> lets you define a function that will execute as soon as an element
   is detected in the DOM. The intent is to reduce the occurrence of timing issues
   when rendering script and html inline. It is not meant to be used to define
@@ -330,17 +222,20 @@ YAHOO.util.Event.purgeElement(myelement, false, "click");
   be used to detect elements you are in the process of loading.
 </p>
 <p>
-    The argument signature for <code>onAvailable</code> is similar to that of <code>addListener</code>, omitting only the event type.
-</p>
+    The argument signature for <code>onAvailable</code> is illustrated here:</p>
+    
+  
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
  &lt;script type="text/javascript"&gt;
+ 
+ var Y = YUI();
 
  function TestObj(id) {
-   YAHOO.util.Event.onAvailable(id, this.handleOnAvailable, this); 
+   Y.Event.onAvailable(id, this.handleOnAvailable, this); 
  }
 
  TestObj.prototype.handleOnAvailable = function(me) {
-   alert(this.id + " is available");
+   Y.log(this.id + " is available");
  }
 
  var obj = new TestObj("myelementid");
@@ -352,154 +247,74 @@ YAHOO.util.Event.purgeElement(myelement, false, "click");
 
 <p>The <code>onContentReady</code> method shares an identical syntax with <code>onAvailable</code>.  The material difference between the two methods is that <code>onContentReady</code> waits until both the target element and its <code>nextSibling</code> in the DOM respond to <code>getElementById</code>.  This guarantees that the target element's contents will have loaded fully (excepting any dynamic content you might add later via script).  If <code>onContentReady</code> never detects a <code>nextSibling</code>, it fires with the <code>window.load</code> event.</p>
 
-<h2 id="ondomready">Using the onDOMReady Method</h2>
-<p><code>onDOMReady</code> lets you define a function that will execute as soon as the DOM is in a usable state.  The DOM is is not deemed "usable" until it is structurally complete; a number of bugs, primarily in IE, can lead to the browser crashing or failing to load the page successfully if scripts attempt to insert information into the DOM prior to the DOM being in a complete state.</p>
+<h3 id="ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</h3>
+<p>The <code>event:ready</code> custom event lets you define a function that will execute as soon as the DOM is in a usable state.  The DOM is is not deemed "usable" until it is structurally complete; a number of bugs, primarily in IE, can lead to the browser crashing or failing to load the page successfully if scripts attempt to insert information into the DOM prior to the DOM being in a complete state.</p>
 
-<p>DOM readiness is achieved before images have finished loading, however, so <code>onDOMReady</code> is often an excellent alternative to using the <code>window</code> object's <code>load</code> event.</p>
+<p>DOM readiness is achieved before images have finished loading, however, so <code>event:ready</code> is often an excellent alternative to using the <code>window</code> object's <code>load</code> event.</p>
 
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
- &lt;script type="text/javascript"&gt;
+<textarea name="code" class="JScript" cols="60" rows="1">
+var Y = YUI();
 
  function init() {
-    YAHOO.util.Dom.setStyle("hidden_element", "visibility", "");
+    Y.Node.get("#hidden_element").set("visibility", "");
  }
- YAHOO.util.Event.onDOMReady(init);
+ Y.on("event:ready", init);
 
- // As with addListener, onAvailable, and onContentReady, you can pass a data object and adjust the scope
- // YAHOO.util.Event.onDOMReady(init, data, scope);
+ // As with all custom events, you can pass
+ // a context object and arguments that will be
+ // passed to your handlers:
+ // Y.on("event:ready", init, contexObject, argumentOne, argumentTwo, argumentN);
+</textarea>
 
- &lt;/script&gt;
-</textarea></pre>
 
-
-<h2 id="customevent">Using the CustomEvent Object </h2>
-<p>The CustomEvent object enables you to define and use events not available
-  by default in the DOM &mdash; events that are specific to and of interest in your own
-  application. This section describes several common uses of the CustomEvent component and provides some examples.  It contains these sections: </p>
+<h3 id="customevent">Using the CustomEvent Object </h3>
+<p>The CustomEvent object enables you to define and use events beyond those available in the DOM &mdash; events that are specific to and of interest in your own application. Custom Events are designed to work much like DOM events.  They can bubble, pass event facades, have their propagation and default behaviors suppressed, etc.  This section describes several common uses of YUI Custom Events and provides some sample code.  It contains these sections: </p>
 <ul>
 <li> <a href="#customdefine">Defining a Custom Event </a></li>
 <li> <a href="#customsubscribe">Subscribing (Listening) to a Custom Event </a></li>
-<li> <a href="#customcallback">Creating a Callback </a></li>
-<li><a href="#customfire"> Triggering the Event </a></li>
+<li><a href="#customfire">Firing the Event </a></li>
 </ul>
 
-<h3 id="customdefine">Defining a Custom Event</h3>
-<p>To define a custom event type, create a new instance of CustomEvent: </p>
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-// custom object
-function TestObj(name) {
-    this.name = name;
-    // define a custom event
-    this.event1 = new YAHOO.util.CustomEvent("event1", this);
-}
-</textarea></pre>
+<h4 id="customdefine">Defining a Custom Event</h4>
+<p>The most common way to create a Custom Event is to <code>augment</code> an object with <code>Event.Target</code>, making it able to host Custom Events and be a target Custom Events that are bubbling from other hosts.: </p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+//Create a YUI instance:
+var Y = YUI();
 
+//Define a constructor:
+function CustomObject() {
+	//create a custom event:
+    this.publish("CustomObject:testEvent");
+}
+//augment the CustomObject with Event.Target:
+Y.augment(Publisher, Y.Event.Target);
+</textarea>
 <p>
-The CustomEvent constructor creates a new Custom Event; it takes one required parameter and three optional parameters:
+The <code>publish</code> constructor creates a new Custom Event; it takes one required parameter and one optional parameters:
 </p>
   
 <ul>
 <li><strong>type</strong> &mdash; The type of event. This string is returned to listeners
   that receive this event so that they know what event occurred.</li> 
- <li><strong>scope</strong> &mdash; The scope in which listener methods should fire; if you do
-  not specify a scope here, the default scope will be the <code>window</code> object.</li>
-  <li><strong>silent</strong> &mdash; false by default.  If true, the activity for this event will
-      not be logged when in debug mode.</li>
-  <li><strong>signature</strong> &mdash; specifies the signature for the event listeners.  The choices are:
-     <ul>
-     <li><code>YAHOO.util.CustomEvent.LIST</code> (the default): 
-       <ul>
-       <li><strong>param1:</strong> event name</li>
-       <li><strong>param2:</strong> array of arguments sent to fire</li>
-       <li><strong>param3:</strong> (optional) a custom object supplied by the subscriber</li>
-       </ul>
-     </li>
-     <li><code>YAHOO.util.CustomEvent.FLAT</code>
-       <ul>
-       <li><strong>param1:</strong> the first argument passed to fire.  If you need to
-               pass multiple parameters, use and array or object literal</li>
-       <li><strong>param2:</strong> <optional> a custom object supplied by the subscriber</li>
-       </ul>
-     </li>
-     </ul>
-  </li>
-  
-  </ul>
+ <li><strong>options</strong> &mdash; The specific configuration options you want to define for this Custom Event.  Most properties of the Custom Event class can be set at this time.</li>
+ </ul>
 <p>
-The event subscriber can override the scope so that <code>this</code> refers to the custom object that was passed into the <code>subscribe</code> method.
-</p>
+
 
 <h3 id="customsubscribe">Subscribing (Listening) to a Custom Event</h3>
-<p>To subscribe to a custom event, use its <code>subscribe</code> method: </p>
+<p>To subscribe to a custom event, use its <code>subscribe</code> method.  Following the code above, you would subscribe to the <code>CustomObject:testEvent</code> as follows:</p>
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
-// a custom consumer object that will listen to "event1"
-function Consumer(name, testObj) {
-    this.name = name;
-    this.testObj = testObj;
-    this.testObj.event1.subscribe(this.onEvent1, this);
-}
+var customObject = new CustomObject();
+customObject.subscribe("CustomObject:testEvent", function() {
+	//event handler code
+});
 </textarea></pre>
 
-<p>
-In this example, <code>event1</code> is the Custom Event object that was created in the previous
-  section. Use the <code>subscribe</code> method to listen to that event. The <code>subscribe</code> method
-  takes two parameters. The first  is the callback; the second is a custom
-  object you can define (see <a href="#customobject">Send an Arbitrary Object
-  to the Event Handler</a>, earlier in this document). When the event is triggered, the callback is called
-  and the custom object is passed to that callback as the third argument (when using the default argument signature; when using the flat signature, the custom object is the second argument). </p>
-<h3 id="customcallback">Creating a Callback</h3>
-<p>To create a callback for a custom event: </p>
+<h4 id="customfire">Firing the Event</h4>
+<p>To trigger or <code>fire</code> a custom event, simpy call its <code>fire</code> method:</p>
 
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
-Consumer.prototype.onEvent1 = function(type, args, me) {
-    alert(" this: " + this +
-          "\n this.name: " + this.name +
-          "\n type: " + type +
-          "\n args[0].data: " + args[0].data +
-          "\n me.name: " + me.name);
-}
-</textarea></pre>
-
-<p>
-In this example the type argument is the event type (<code>"event1"</code> in this case),
-args is an array of all of the arguments that were passed to the Custom Event's
-<code>fire</code> method, and <code>me</code> is the custom object we passed in when we subscribed to
-the event.
-</p>
-<h3 id="customfire">Triggering the Event</h3>
-<p>To trigger or <code>fire</code> a custom event: </p>
-
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
-// random test data to be used as an event argument
-function TestData(data) {
-    this.data = data;
-}
-
-// create an instance of our test object
-var t1 = new TestObj("mytestobj1");
-
-// create the event consumer, passing in the custom 
-// object so that it can subscribe to the custom event
-var c1 = new Consumer("mytestconsumer1", t1);
-
-// create a data object that will be passed to the consumer when the event fires
-var d1 = new TestData("mydata1");
-
-// fire the test object's event1 event, passing the data object as a parameter
-t1.event1.fire(d1);
-</textarea></pre>
-
-<p>
-In this example <code>t1</code> is the test object we created, <code>event1</code> is the CustomEvent instance
-  and <code>d1</code> is our test data. This example produces the following output:
-</p>
-
-<pre><textarea name="code" class="JScript" cols="60" rows="1">
- this: [object Object]
- this.name: mytestobj1
- type: event1
- args[0].data: mydata1
- me.name: mytestconsumer1
+customObject.fire("CustomObject:testEvent");
 </textarea></pre>
 
 <?php include "../inc/mobileSection.inc";?>
@@ -520,56 +335,6 @@ being the most obvious.</p>
 no mouse cursor.  This means that there are no hover states for elements, and
 no mouseover events.</p>
 
-				
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
-				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-				</ul>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
-
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<table>
-					<thead>
-						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
-				</table>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
-
-<?php # include "../inc/mobileSection.inc";?>
-<!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
 <?php 
 include "../inc/support.inc";
 ?>
