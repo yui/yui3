@@ -201,8 +201,9 @@ Y.mix(Y.JSON,{
      * be stringified as empty.
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
-     * @param w {Array} (optional) whitelist of acceptable object keys to
-     *                  include
+     * @param w {Array|Function} (optional) whitelist of acceptable object
+     *                  keys to include, or a replacer function to modify the
+     *                  raw value before serialization
      * @param d {number} (optional) depth limit to recurse objects/arrays
      *                   (practical minimum 1)
      * @return {string} JSON string representation of the input
