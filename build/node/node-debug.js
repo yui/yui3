@@ -1105,7 +1105,41 @@ YUI.add('node', function(Y) {
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
      */
-        'setXY'
+        'setXY',
+
+    /**
+     * Gets the current position of the node in page coordinates. 
+     * Nodes must be part of the DOM tree to have page coordinates
+     * (display:none or nodes not appended return false).
+     * @method getX
+     * @return {Int} The X position of the node
+    */
+        'getX',
+
+    /**
+     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+     * @method setX
+     * @param {Int} x X value for new position (coordinates are page-based)
+     */
+        'setX',
+
+    /**
+     * Gets the current position of the node in page coordinates. 
+     * Nodes must be part of the DOM tree to have page coordinates
+     * (display:none or nodes not appended return false).
+     * @method getY
+     * @return {Int} The Y position of the node
+    */
+        'getY',
+
+    /**
+     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+     * @method setY
+     * @param {Int} y Y value for new position (coordinates are page-based)
+     */
+        'setY'
     ]);
 
 /**
