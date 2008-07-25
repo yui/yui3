@@ -129,7 +129,7 @@ YUI.prototype = {
 
     /**
      * Executes a method on a YUI instance with
-     * the specified id.
+     * the specified id if the specified method is whitelisted.
      * @method applyTo
      * @param id {string} the YUI instance id
      * @param method {string} the name of the method to exectute.
@@ -381,7 +381,7 @@ YUI.prototype = {
 
             if (Y.Env._callback) {
                 Y.Env._callback(Y, fromLoader);
-                // Y.Env._callback = null;
+                Y.Env._callback = null;
             }
 
             if (Y.fire) {

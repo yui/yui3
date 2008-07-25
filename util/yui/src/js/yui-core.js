@@ -331,6 +331,19 @@ YUI.add("core", function(Y) {
         return r;
     };
 
+    /**
+     * Executes the supplied function for each item in
+     * a collection.  Supports arrays, objects, and
+     * Y.NodeLists
+     * @method each
+     * @param o the object to iterate
+     * @param f the function to execute.  This function
+     * receives the value, key, and object as parameters
+     * @param proto if true, prototype properties are
+     * iterated on objects
+     * @return the return value from the appropriate method
+     * in Node, Object or Array
+     */
     Y.each = function(o, f, c, proto) {
 
         if (o.each && o.item) {
