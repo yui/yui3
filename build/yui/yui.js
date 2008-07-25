@@ -367,8 +367,10 @@ YUI.prototype = {
 
 
             if (Y.Env._callback) {
-                Y.Env._callback(Y, fromLoader);
+
+                var cb = Y.Env._callback;
                 Y.Env._callback = null;
+                cb(Y, fromLoader);
             }
 
             if (Y.fire) {
