@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: yui   yui-array.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html">yui</a>
+                
+                 &gt; yui-array.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * YUI core</span>
+<span class="c"> * @module yui</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * Array utilities</span>
+<span class="c"> * @TODO investigate using Array subclasses for some of this</span>
+<span class="c"> * @class Array</span>
+<span class="c"> * @static</span>
+<span class="c"> */</span>
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;array&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">Native</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
+
+    <span class="c">/** </span>
+<span class="c">     * Returns an array:</span>
+<span class="c">     * - Arrays are return unmodified unless the start position is specified.</span>
+<span class="c">     * - &quot;Array-like&quot; collections (@see Array.test) are converted to arrays</span>
+<span class="c">     * - For everything else, a new array is created with the input as the sole item</span>
+<span class="c">     * - The start position is used if the input is or is like an array to return</span>
+<span class="c">     *   a subset of the collection.</span>
+<span class="c">     *</span>
+<span class="c">     *   @todo this will not automatically convert elements that are also collections</span>
+<span class="c">     *   such as forms and selects.  Passing true as the third param will</span>
+<span class="c">     *   force a conversion.</span>
+<span class="c">     *</span>
+<span class="c">     *   @param o the item to arrayify</span>
+<span class="c">     *   @param i {int} if an array or array-like, this is the start index</span>
+<span class="c">     *   @param al {boolean} if true, it forces the array-like fork.  This</span>
+<span class="c">     *   can be used to avoid multiple array.test calls.</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">al</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="o">(</span><span class="nx">al</span><span class="o">)</span> <span class="o">?</span> <span class="m">2</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
+        <span class="nx">switch</span> <span class="o">(</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">case</span> <span class="m">1</span><span class="o">:</span>
+                <span class="k">return</span> <span class="o">(</span><span class="nx">i</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">slice</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">:</span> <span class="nx">o</span><span class="o">;</span>
+            <span class="nx">case</span> <span class="m">2</span><span class="o">:</span>
+                <span class="k">return</span> <span class="nx">Native</span><span class="o">.</span><span class="nx">slice</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span> <span class="o">||</span> <span class="m">0</span><span class="o">);</span>
+            <span class="nx">default</span><span class="o">:</span>
+                <span class="k">return</span> <span class="o">[</span><span class="nx">o</span><span class="o">];</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="k">var</span> <span class="nx">A</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">;</span>
+    
+    <span class="c">// YUI array utilities.  The current plan is to make a few useful</span>
+<span class="c"></span>    <span class="c">// ones &#39;core&#39;, and to have the rest of the array extras an optional</span>
+<span class="c"></span>    <span class="c">// module</span>
+<span class="c"></span>
+    <span class="c">/** </span>
+<span class="c">     * Evaluates the input to determine if it is an array, array-like, or </span>
+<span class="c">     * something else.  This is used to handle the arguments collection </span>
+<span class="c">     * available within functions, and HTMLElement collections</span>
+<span class="c">     *</span>
+<span class="c">     * @todo current implementation (intenionally) will not implicitly </span>
+<span class="c">     * handle html elements that are array-like (forms, selects, etc).  </span>
+<span class="c">     *</span>
+<span class="c">     * @return {int} a number indicating the results:</span>
+<span class="c">     * 0: Not an array or an array-like collection</span>
+<span class="c">     * 1: A real array. </span>
+<span class="c">     * 2: array-like collection.</span>
+<span class="c">     */</span>
+    <span class="nx">A</span><span class="o">.</span><span class="nx">test</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="kc">true</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">L</span><span class="o">.</span><span class="nx">isArray</span><span class="o">(</span><span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> 
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">try</span> <span class="o">{</span>
+                    <span class="c">// indexed, but no tagName (element) or alert (window)</span>
+<span class="c"></span>                    <span class="k">if</span> <span class="o">(</span><span class="s2">&quot;length&quot;</span> <span class="k">in</span> <span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="s2">&quot;tagName&quot;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span>  <span class="o">&amp;&amp;</span> <span class="o">!(</span><span class="s2">&quot;alert&quot;</span> <span class="k">in</span> <span class="nx">o</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">r</span> <span class="o">=</span> <span class="m">2</span><span class="o">;</span>
+                    <span class="o">}</span>
+                        
+                <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes the supplied function on each item in the array.</span>
+<span class="c">     * @method each</span>
+<span class="c">     */</span>
+    <span class="nx">A</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="o">(</span><span class="nx">Native</span><span class="o">.</span><span class="nx">forEach</span><span class="o">)</span> <span class="o">?</span>
+        <span class="k">function</span> <span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
+            <span class="nx">Native</span><span class="o">.</span><span class="nx">forEach</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
+        <span class="o">}</span> <span class="o">:</span>
+        <span class="k">function</span> <span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span> 
+            <span class="k">var</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+            <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">o</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
+        <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns an object using the first array as keys, and</span>
+<span class="c">     * the second as values.  If the second array is not</span>
+<span class="c">     * provided the value is set to true for each.</span>
+<span class="c">     * @method hash</span>
+<span class="c">     * @param k {Array} keyset</span>
+<span class="c">     * @param v {Array} optional valueset</span>
+<span class="c">     * @return the hash</span>
+<span class="c">     */</span>
+    <span class="nx">A</span><span class="o">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">k</span><span class="o">,</span> <span class="nx">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{},</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">k</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">vl</span> <span class="o">=</span> <span class="nx">v</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">l</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">o</span><span class="o">[</span><span class="nx">k</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">vl</span> <span class="o">&amp;&amp;</span> <span class="nx">vl</span> <span class="o">&gt;</span> <span class="nx">i</span><span class="o">)</span> <span class="o">?</span> <span class="nx">v</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">:</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+    <span class="o">};</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Returns the index of the first item in the array</span>
+<span class="c">     * that contains the specified value, -1 if the</span>
+<span class="c">     * value isn&#39;t found.</span>
+<span class="c">     * @TODO use native method if avail</span>
+<span class="c">     * @method indexOf</span>
+<span class="c">     * @param a {Array} the array to search</span>
+<span class="c">     * @param val the value to search for</span>
+<span class="c">     * @return the index of the item that contains the value or -1</span>
+<span class="c">     */</span>
+    <span class="nx">A</span><span class="o">.</span><span class="nx">indexOf</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">a</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">===</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">i</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="o">-</span><span class="m">1</span><span class="o">;</span>
+    <span class="o">};</span>
+
+<span class="o">},</span> <span class="s2">&quot;@VERSION@&quot;</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Object.html">Object</a></li>
+                                <li class=""><a href="UA.html">UA</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
+                                <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
+                                <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
+                                <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
+                                <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html">yui.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

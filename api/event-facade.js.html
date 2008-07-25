@@ -1,0 +1,441 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: event   event-facade.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>event&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_event.html">event</a>
+                
+                 &gt; event-facade.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;event-facade&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+
+    <span class="k">var</span> <span class="nx">whitelist</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="s2">&quot;altKey&quot;</span>          <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;button&quot;          : 1, // we supply</span>
+<span class="c"></span>        <span class="c">// &quot;bubbles&quot;         : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;cancelable&quot;      : 1, // needed? </span>
+<span class="c"></span>        <span class="c">// &quot;charCode&quot;        : 1, // we supply</span>
+<span class="c"></span>        <span class="s2">&quot;cancelBubble&quot;</span>    <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;currentTarget&quot;   : 1, // we supply</span>
+<span class="c"></span>        <span class="s2">&quot;ctrlKey&quot;</span>         <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="s2">&quot;clientX&quot;</span>         <span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="c">// needed?</span>
+<span class="c"></span>        <span class="s2">&quot;clientY&quot;</span>         <span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="c">// needed?</span>
+<span class="c"></span>        <span class="s2">&quot;detail&quot;</span>          <span class="o">:</span> <span class="m">1</span><span class="o">,</span> <span class="c">// not fully implemented</span>
+<span class="c"></span>        <span class="c">// &quot;fromElement&quot;     : 1,</span>
+<span class="c"></span>        <span class="s2">&quot;keyCode&quot;</span>         <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;height&quot;          : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;initEvent&quot;       : 1, // need the init events?</span>
+<span class="c"></span>        <span class="c">// &quot;initMouseEvent&quot;  : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;initUIEvent&quot;     : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;layerX&quot;          : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;layerY&quot;          : 1, // needed?</span>
+<span class="c"></span>        <span class="s2">&quot;metaKey&quot;</span>         <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;modifiers&quot;       : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;offsetX&quot;         : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;offsetY&quot;         : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;preventDefault&quot;  : 1, // we supply</span>
+<span class="c"></span>        <span class="c">// &quot;reason&quot;          : 1, // IE proprietary</span>
+<span class="c"></span>        <span class="c">// &quot;relatedTarget&quot;   : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;returnValue&quot;     : 1, // needed?</span>
+<span class="c"></span>        <span class="s2">&quot;shiftKey&quot;</span>        <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;srcUrn&quot;          : 1, // IE proprietary</span>
+<span class="c"></span>        <span class="c">// &quot;srcElement&quot;      : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;srcFilter&quot;       : 1, IE proprietary</span>
+<span class="c"></span>        <span class="c">// &quot;stopPropagation&quot; : 1, // we supply</span>
+<span class="c"></span>        <span class="c">// &quot;target&quot;          : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;timeStamp&quot;       : 1, // needed?</span>
+<span class="c"></span>        <span class="c">// &quot;toElement&quot;       : 1,</span>
+<span class="c"></span>        <span class="s2">&quot;type&quot;</span>            <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">// &quot;view&quot;            : 1,</span>
+<span class="c"></span>        <span class="c">// &quot;which&quot;           : 1, // we supply</span>
+<span class="c"></span>        <span class="c">// &quot;width&quot;           : 1, // needed?</span>
+<span class="c"></span>        <span class="s2">&quot;x&quot;</span>               <span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="s2">&quot;y&quot;</span>               <span class="o">:</span> <span class="m">1</span>
+    <span class="o">};</span>
+
+    <span class="k">var</span> <span class="nx">ua</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span>
+
+        <span class="c">/**</span>
+<span class="c">         * webkit key remapping required for Safari &lt; 3.1</span>
+<span class="c">         * @property webkitKeymap</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">webkitKeymap</span> <span class="o">=</span> <span class="o">{</span>
+            <span class="m">63232</span><span class="o">:</span> <span class="m">38</span><span class="o">,</span> <span class="c">// up</span>
+<span class="c"></span>            <span class="m">63233</span><span class="o">:</span> <span class="m">40</span><span class="o">,</span> <span class="c">// down</span>
+<span class="c"></span>            <span class="m">63234</span><span class="o">:</span> <span class="m">37</span><span class="o">,</span> <span class="c">// left</span>
+<span class="c"></span>            <span class="m">63235</span><span class="o">:</span> <span class="m">39</span><span class="o">,</span> <span class="c">// right</span>
+<span class="c"></span>            <span class="m">63276</span><span class="o">:</span> <span class="m">33</span><span class="o">,</span> <span class="c">// page up</span>
+<span class="c"></span>            <span class="m">63277</span><span class="o">:</span> <span class="m">34</span><span class="o">,</span> <span class="c">// page down</span>
+<span class="c"></span>            <span class="m">25</span><span class="o">:</span> <span class="m">9</span>      <span class="c">// SHIFT-TAB (Safari provides a different key code in</span>
+<span class="c"></span>                       <span class="c">// this case, even though the shiftKey modifier is set)</span>
+<span class="c"></span>        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Returns a wrapped node.  Intended to be used on event targets,</span>
+<span class="c">         * so it will return the node&#39;s parent if the target is a text</span>
+<span class="c">         * node</span>
+<span class="c">         * @method resolve</span>
+<span class="c">         * @private</span>
+<span class="c">         */</span>
+        <span class="nx">resolve</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="m">3</span> <span class="o">==</span> <span class="nx">n</span><span class="o">.</span><span class="nx">nodeType</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">n</span> <span class="o">=</span> <span class="nx">n</span><span class="o">.</span><span class="nx">parentNode</span><span class="o">;</span>
+                <span class="o">}</span> 
+            <span class="o">}</span> <span class="k">catch</span><span class="o">(</span><span class="nx">ex</span><span class="o">)</span> <span class="o">{</span> <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+        <span class="o">};</span>
+
+
+    <span class="c">// provide a single event with browser abstractions resolved</span>
+<span class="c"></span>    <span class="c">//</span>
+<span class="c"></span>    <span class="c">// include all properties for both browers?</span>
+<span class="c"></span>    <span class="c">// include only DOM2 spec properties?</span>
+<span class="c"></span>    <span class="c">// provide browser-specific facade?</span>
+<span class="c"></span>
+    <span class="c">/**</span>
+<span class="c">     * Wraps a DOM event, properties requiring browser abstraction are</span>
+<span class="c">     * fixed here.  Provids a security layer when required.</span>
+<span class="c">     * @class Event.Facade</span>
+<span class="c">     * @param ev {Event} the DOM event</span>
+<span class="c">     * @param currentTarget {HTMLElement} the element the listener was attached to</span>
+<span class="c">     * @param wrapper {Event.Custom} the custom event wrapper for this DOM event</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Facade</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">ev</span><span class="o">,</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">wrapper</span><span class="o">,</span> <span class="nx">details</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="c">// @TODO the document should be the target&#39;s owner document</span>
+<span class="c"></span>
+        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">ev</span><span class="o">,</span> <span class="nx">ot</span> <span class="o">=</span> <span class="nx">currentTarget</span><span class="o">,</span> <span class="nx">d</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">doc</span><span class="o">,</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">d</span><span class="o">.</span><span class="nx">body</span><span class="o">,</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageX</span><span class="o">,</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">pageY</span><span class="o">,</span> <span class="nx">isCE</span> <span class="o">=</span> <span class="o">(</span><span class="nx">ev</span><span class="o">.</span><span class="nx">_YUI_EVENT</span><span class="o">);</span>
+
+        <span class="c">// copy all primitives ... this is slow in FF</span>
+<span class="c"></span>        <span class="c">// for (var i in e) {</span>
+<span class="c"></span>        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">whitelist</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">// if (!Y.Lang.isObject(e[i])) {</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">whitelist</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">e</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="m">0</span> <span class="o">!==</span> <span class="nx">x</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">x</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">clientX</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+            <span class="nx">y</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">clientY</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">ie</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">x</span> <span class="o">+=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">scrollLeft</span><span class="o">,</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollLeft</span><span class="o">);</span>
+                <span class="nx">y</span> <span class="o">+=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">max</span><span class="o">(</span><span class="nx">d</span><span class="o">.</span><span class="nx">documentElement</span><span class="o">.</span><span class="nx">scrollTop</span><span class="o">,</span> <span class="nx">b</span><span class="o">.</span><span class="nx">scrollTop</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">this</span><span class="o">.</span><span class="nx">_yuifacade</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The X location of the event on the page (including scroll)</span>
+<span class="c">         * @property pageX</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">pageX</span> <span class="o">=</span> <span class="nx">x</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The Y location of the event on the page (including scroll)</span>
+<span class="c">         * @property pageY</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">pageY</span> <span class="o">=</span> <span class="nx">y</span><span class="o">;</span>
+
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * The keyCode for key events.  Uses charCode if keyCode is not available</span>
+<span class="c">         * @property keyCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">ua</span><span class="o">.</span><span class="nx">webkit</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">c</span> <span class="k">in</span> <span class="nx">webkitKeymap</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">c</span> <span class="o">=</span> <span class="nx">webkitKeymap</span><span class="o">[</span><span class="nx">c</span><span class="o">];</span>
+        <span class="o">}</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The keyCode for key events.  Uses charCode if keyCode is not available</span>
+<span class="c">         * @property keyCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">keyCode</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The charCode for key events.  Same as keyCode</span>
+<span class="c">         * @property charCode</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">charCode</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * The button that was pushed.</span>
+<span class="c">         * @property button</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">button</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">which</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">button</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The button that was pushed.  Same as button.</span>
+<span class="c">         * @property which</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">which</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">button</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The event details.  Currently supported for Custom</span>
+<span class="c">         * Events only, where it contains the arguments that</span>
+<span class="c">         * were passed to fire().</span>
+<span class="c">         * @property details</span>
+<span class="c">         * @type Array</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">details</span> <span class="o">=</span> <span class="nx">details</span><span class="o">;</span>
+
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * Timestamp for the event</span>
+<span class="c">         * @property time</span>
+<span class="c">         * @type Date</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">time</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">time</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">().</span><span class="nx">getTime</span><span class="o">();</span>
+
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>        
+        <span class="c">/**</span>
+<span class="c">         * Node reference for the targeted element</span>
+<span class="c">         * @propery target</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">target</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">:</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">e</span><span class="o">.</span><span class="nx">srcElement</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Node reference for the element that the listener was attached to.</span>
+<span class="c">         * @propery currentTarget</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">currentTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ot</span> <span class="o">:</span>  <span class="nx">resolve</span><span class="o">(</span><span class="nx">ot</span><span class="o">);</span>
+
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">relatedTarget</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;mouseout&quot;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">toElement</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;mouseover&quot;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">t</span> <span class="o">=</span> <span class="nx">e</span><span class="o">.</span><span class="nx">fromElement</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Node reference to the relatedTarget</span>
+<span class="c">         * @propery relatedTarget</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">relatedTarget</span> <span class="o">=</span> <span class="o">(</span><span class="nx">isCE</span><span class="o">)</span> <span class="o">?</span> <span class="nx">t</span> <span class="o">:</span> <span class="nx">resolve</span><span class="o">(</span><span class="nx">t</span><span class="o">);</span>
+        
+        <span class="c">//////////////////////////////////////////////////////</span>
+<span class="c"></span>        <span class="c">// methods</span>
+<span class="c"></span>
+        <span class="c">/**</span>
+<span class="c">         * Stops the propagation to the next bubble target</span>
+<span class="c">         * @method stopPropagation</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">cancelBubble</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Stops the propagation to the next bubble target and</span>
+<span class="c">         * prevents any additional listeners from being exectued</span>
+<span class="c">         * on the current target.</span>
+<span class="c">         * @method stopImmediatePropagation</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">wrapper</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+            <span class="o">}</span>
+
+        <span class="o">};</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Prevents the event&#39;s default behavior</span>
+<span class="c">         * @method preventDefault</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">preventDefault</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">e</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">e</span><span class="o">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">wrapper</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">wrapper</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Stops the event propagation and prevents the default</span>
+<span class="c">         * event behavior.</span>
+<span class="c">         * @method halt</span>
+<span class="c">         * @param immediate {boolean} if true additional listeners</span>
+<span class="c">         * on the current target will not be executed</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">halt</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">immediate</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">immediate</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">stopImmediatePropagation</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">stopPropagation</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">preventDefault</span><span class="o">();</span>
+        <span class="o">};</span>
+
+    <span class="o">};</span>
+
+<span class="o">},</span> <span class="s2">&quot;3.0.0&quot;</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class="selected"><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Do.html">Do</a></li>
+                                <li class=""><a href="Do.AlterArgs.html">Do.AlterArgs</a></li>
+                                <li class=""><a href="Do.AlterReturn.html">Do.AlterReturn</a></li>
+                                <li class=""><a href="Do.Error.html">Do.Error</a></li>
+                                <li class=""><a href="Do.Method.html">Do.Method</a></li>
+                                <li class=""><a href="Event.html">Event</a></li>
+                                <li class=""><a href="Event.Custom.html">Event.Custom</a></li>
+                                <li class=""><a href="Event.Facade.html">Event.Facade</a></li>
+                                <li class=""><a href="Event.Handle.html">Event.Handle</a></li>
+                                <li class=""><a href="Event.Subscriber.html">Event.Subscriber</a></li>
+                                <li class=""><a href="Event.Target.html">Event.Target</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="event-custom.js.html">event-custom.js</a></li>
+                                <li class=""><a href="event-do.js.html">event-do.js</a></li>
+                                <li class=""><a href="event-dom.js.html">event-dom.js</a></li>
+                                <li class="selected"><a href="event-facade.js.html">event-facade.js</a></li>
+                                <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
+                                <li class=""><a href="event-target.js.html">event-target.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

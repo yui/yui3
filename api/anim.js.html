@@ -1,0 +1,1211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: anim   anim.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>anim&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_anim.html">anim</a>
+                
+                 &gt; anim.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s1">&#39;animation&#39;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+<span class="c">/**</span>
+<span class="c"> * Y.Animation Utility.</span>
+<span class="c"> * @module anim</span>
+<span class="c"> */</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Handles animation _queueing and threading.</span>
+<span class="c">     * @class Anim</span>
+<span class="c">     */</span>
+
+    <span class="k">var</span> <span class="nx">RUNNING</span> <span class="o">=</span> <span class="s1">&#39;running&#39;</span><span class="o">,</span>
+        <span class="nx">START_TIME</span> <span class="o">=</span> <span class="s1">&#39;startTime&#39;</span><span class="o">,</span>
+        <span class="nx">ELAPSED_TIME</span> <span class="o">=</span> <span class="s1">&#39;elapsedTime&#39;</span><span class="o">,</span>
+        <span class="nx">START</span> <span class="o">=</span> <span class="s1">&#39;start&#39;</span><span class="o">,</span>
+        <span class="nx">TWEEN</span> <span class="o">=</span> <span class="s1">&#39;tween&#39;</span><span class="o">,</span>
+        <span class="nx">END</span> <span class="o">=</span> <span class="s1">&#39;end&#39;</span><span class="o">,</span>
+        <span class="nx">NODE</span> <span class="o">=</span> <span class="s1">&#39;node&#39;</span><span class="o">,</span>
+        <span class="nx">PAUSED</span> <span class="o">=</span> <span class="s1">&#39;paused&#39;</span><span class="o">,</span>
+        <span class="nx">REVERSED</span> <span class="o">=</span> <span class="s1">&#39;reversed&#39;</span><span class="o">,</span>
+        <span class="nx">ITERATION_COUNT</span> <span class="o">=</span> <span class="s1">&#39;iterationCount&#39;</span><span class="o">,</span>
+
+        <span class="nx">NUM</span> <span class="o">=</span> <span class="nb">Number</span><span class="o">;</span>
+
+    <span class="k">var</span> <span class="nx">_running</span> <span class="o">=</span> <span class="o">{},</span>
+        <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span>
+        <span class="nx">_timer</span><span class="o">;</span>
+
+    <span class="k">var</span> <span class="nx">_setPrivate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">anim</span><span class="o">,</span> <span class="nx">prop</span><span class="o">,</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">prop</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">anim</span><span class="o">.</span><span class="nx">_conf</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="nx">prop</span><span class="o">,</span> <span class="o">{</span> <span class="nx">value</span><span class="o">:</span> <span class="nx">val</span> <span class="o">});</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">prop</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_setPrivate</span><span class="o">(</span><span class="nx">anim</span><span class="o">,</span> <span class="nx">n</span><span class="o">,</span> <span class="nx">v</span><span class="o">);</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Provides an API for animating objects.</span>
+<span class="c">     * Usage:</span>
+<span class="c">     * &lt;pre&gt;</span>
+<span class="c">     *  var anim = new Y.Anim({</span>
+<span class="c">     *      node: &#39;#foo&#39;,</span>
+<span class="c">     *</span>
+<span class="c">     *      from: {</span>
+<span class="c">     *          opacity: 0</span>
+<span class="c">     *      },</span>
+<span class="c">     *</span>
+<span class="c">     *      to: {</span>
+<span class="c">     *          height: 200,</span>
+<span class="c">     *</span>
+<span class="c">     *          width: function(node) {</span>
+<span class="c">     *              return node.get(&#39;offsetHeight&#39;) / 2;</span>
+<span class="c">     *          },</span>
+<span class="c">     *</span>
+<span class="c">     *          opacity: 1</span>
+<span class="c">     *       },</span>
+<span class="c">     *</span>
+<span class="c">     *       easing: Y.Easing.easeOut</span>
+<span class="c">     *  });</span>
+<span class="c">     *   </span>
+<span class="c">     *  anim.run(); </span>
+<span class="c">     * &lt;/pre&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * @class Y.Anim</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+        <span class="nx">_instances</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The lowercase name of the class.</span>
+<span class="c">     *</span>
+<span class="c">     * @property NAME</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;anim&#39;</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Regex of properties that should use the default unit.</span>
+<span class="c">     *</span>
+<span class="c">     * @property RE_DEFAULT_UNIT</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">RE_DEFAULT_UNIT</span> <span class="o">=</span> <span class="sr">/^width|height|top|right|bottom|left|margin.*|padding.*|border.*$/i</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The default unit to use with properties that pass the RE_DEFAULT_UNIT test.</span>
+<span class="c">     *</span>
+<span class="c">     * @property DEFAULT_UNIT</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_UNIT</span> <span class="o">=</span> <span class="s1">&#39;px&#39;</span><span class="o">;</span>
+
+    <span class="c">// TODO: move to computedStyle? (browsers dont agree on default computed offsets)</span>
+<span class="c"></span>    <span class="k">var</span> <span class="nx">_getOffset</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">attr</span><span class="o">),</span>
+            <span class="nx">get</span> <span class="o">=</span> <span class="o">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;getX&#39;</span><span class="o">:</span> <span class="s1">&#39;getY&#39;</span><span class="o">,</span>
+            <span class="nx">set</span> <span class="o">=</span> <span class="o">(</span><span class="nx">attr</span> <span class="o">===</span> <span class="s1">&#39;left&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;setX&#39;</span><span class="o">:</span> <span class="s1">&#39;setY&#39;</span><span class="o">;</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;auto&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">position</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getStyle</span><span class="o">(</span><span class="s1">&#39;position&#39;</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;absolute&#39;</span> <span class="o">||</span> <span class="nx">position</span> <span class="o">===</span> <span class="s1">&#39;fixed&#39;</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">[</span><span class="nx">get</span><span class="o">]();</span>
+                <span class="nx">node</span><span class="o">[</span><span class="nx">set</span><span class="o">](</span><span class="nx">val</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">val</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Bucket for custom getters and setters</span>
+<span class="c">     *</span>
+<span class="c">     * @property behaviors</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">left</span><span class="o">:</span> <span class="o">{</span> <span class="nx">get</span><span class="o">:</span> <span class="nx">_getOffset</span> <span class="o">},</span>
+        <span class="nx">top</span><span class="o">:</span> <span class="o">{</span> <span class="nx">get</span><span class="o">:</span> <span class="nx">_getOffset</span> <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The default setter to use when setting object properties.</span>
+<span class="c">     *</span>
+<span class="c">     * @property DEFAULT_SETTER</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">unit</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">unit</span> <span class="o">=</span> <span class="nx">unit</span> <span class="o">||</span> <span class="s1">&#39;&#39;</span><span class="o">;</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">)</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">),</span> <span class="nx">duration</span><span class="o">)</span> <span class="o">+</span> <span class="nx">unit</span><span class="o">);</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The default getter to use when getting object properties.</span>
+<span class="c">     *</span>
+<span class="c">     * @property DEFAULT_GETTER</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">prop</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">prop</span><span class="o">);</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * The object to be animated.</span>
+<span class="c">         * @attribute node</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="nx">node</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;Y.Anim: invalid node: &#39;</span> <span class="o">+</span> <span class="nx">node</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="nx">node</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The length of the animation.  Defaults to &quot;1&quot; (second).</span>
+<span class="c">         * @attribute duration</span>
+<span class="c">         * @type NUM</span>
+<span class="c">         */</span>
+        <span class="nx">duration</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">1</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The method that will provide values to the attribute(s) during the animation. </span>
+<span class="c">         * Defaults to &quot;Easing.easeNone&quot;.</span>
+<span class="c">         * @attribute easing</span>
+<span class="c">         * @type Function</span>
+<span class="c">         */</span>
+        <span class="nx">easing</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">c</span> <span class="o">*</span> <span class="nx">t</span> <span class="sr">/ d + b; /</span><span class="o">/</span> <span class="nx">linear</span> <span class="nx">easing</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The starting values for the animated properties. </span>
+<span class="c">         * Fields may be strings, numbers, or functions.</span>
+<span class="c">         * If a function is used, the return value becomes the from value.</span>
+<span class="c">         * If no from value is specified, the DEFAULT_GETTER will be used. </span>
+<span class="c">         * @attribute from</span>
+<span class="c">         * @type Object</span>
+<span class="c">         */</span>
+        <span class="nx">from</span><span class="o">:</span> <span class="o">{},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The ending values for the animated properties. </span>
+<span class="c">         * Fields may be strings, numbers, or functions.</span>
+<span class="c">         * @attribute to</span>
+<span class="c">         * @type Object</span>
+<span class="c">         */</span>
+        <span class="nx">to</span><span class="o">:</span> <span class="o">{},</span>
+
+        <span class="nx">keyframes</span><span class="o">:</span> <span class="o">{},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Date stamp for the first frame of the animation.</span>
+<span class="c">         * @attribute startTime</span>
+<span class="c">         * @type Int</span>
+<span class="c">         * @default 0 </span>
+<span class="c">         */</span>
+        <span class="nx">startTime</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Current time the animation has been running.</span>
+<span class="c">         * @attribute elapsedTime</span>
+<span class="c">         * @type Int</span>
+<span class="c">         * @default 0 </span>
+<span class="c">         */</span>
+        <span class="nx">elapsedTime</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Whether or not the animation is currently running.</span>
+<span class="c">         * @attribute running </span>
+<span class="c">         * @type Boolean</span>
+<span class="c">         * @default false </span>
+<span class="c">         */</span>
+        <span class="nx">running</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="o">!!</span><span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)];</span>
+            <span class="o">},</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The number of times the animation should run </span>
+<span class="c">         * @attribute iterations</span>
+<span class="c">         * @type Int</span>
+<span class="c">         * @default 1 </span>
+<span class="c">         */</span>
+        <span class="nx">iterations</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">1</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * The number of iterations that have occurred.</span>
+<span class="c">         * Resets when an animation ends (reaches iteration count or stop() called). </span>
+<span class="c">         * @attribute iterationCount</span>
+<span class="c">         * @type Int</span>
+<span class="c">         * @default 0</span>
+<span class="c">         */</span>
+        <span class="nx">iterationCount</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * How iterations of the animation should behave. </span>
+<span class="c">         * Possible values are &quot;normal&quot; and &quot;alternate&quot;.</span>
+<span class="c">         * Normal will repeat the animation, alternate will reverse on every other pass.</span>
+<span class="c">         *</span>
+<span class="c">         * @attribute direction</span>
+<span class="c">         * @type String</span>
+<span class="c">         * @default &quot;normal&quot;</span>
+<span class="c">         */</span>
+        <span class="nx">direction</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;normal&#39;</span> <span class="c">// | alternate (fwd on odd, rev on even per spec)</span>
+<span class="c"></span>        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Whether or not the animation is currently paused.</span>
+<span class="c">         * @attribute running </span>
+<span class="c">         * @type Boolean</span>
+<span class="c">         * @default false </span>
+<span class="c">         */</span>
+        <span class="nx">paused</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Whether or not the animation is currently reversed.</span>
+<span class="c">         * Only applies when iterations is greater than 1 and direction is &quot;alternate&quot;</span>
+<span class="c">         * @attribute reversed </span>
+<span class="c">         * @type Boolean</span>
+<span class="c">         * @default false </span>
+<span class="c">         */</span>
+        <span class="nx">reversed</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">readOnly</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">}</span>
+
+
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Starts all animation instances.</span>
+<span class="c">     * Only one thread can run at a time.</span>
+<span class="c">     * @method start</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">run</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">_instances</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">_instances</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">run</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_instances</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">run</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Pauses all animation instances.</span>
+<span class="c">     * @method pause</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">pause</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">_running</span><span class="o">)</span> <span class="o">{</span> <span class="c">// stop timer if nothing running</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">_running</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">pause</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_running</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">pause</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_stopTimer</span><span class="o">();</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Stops all animation instances.</span>
+<span class="c">     * @method stop</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">_running</span><span class="o">)</span> <span class="o">{</span> <span class="c">// stop timer if nothing running</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">_running</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">stop</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_running</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">stop</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_stopTimer</span><span class="o">();</span>
+    <span class="o">};</span>
+    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_startTimer</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">_timer</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">_timer</span> <span class="o">=</span> <span class="nx">setInterval</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_runFrame</span><span class="o">,</span> <span class="m">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_stopTimer</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">clearInterval</span><span class="o">(</span><span class="nx">_timer</span><span class="o">);</span>
+        <span class="nx">_timer</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Called per Interval to handle each animation frame.</span>
+<span class="c">     * @method _runFrame</span>
+<span class="c">     * @private</span>
+<span class="c">     * @static</span>
+<span class="c">     */</span>    
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_runFrame</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">anim</span> <span class="k">in</span> <span class="nx">_running</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">_running</span><span class="o">[</span><span class="nx">anim</span><span class="o">].</span><span class="nx">_runFrame</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">done</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="nx">_running</span><span class="o">[</span><span class="nx">anim</span><span class="o">].</span><span class="nx">_runFrame</span><span class="o">(</span><span class="k">new</span> <span class="nb">Date</span><span class="o">()</span> <span class="o">-</span> <span class="nx">_running</span><span class="o">[</span><span class="nx">anim</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">START_TIME</span><span class="o">));</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">done</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_stopTimer</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">RE_UNITS</span> <span class="o">=</span> <span class="sr">/^(-?\d*\.?\d*){1}(em|ex|px|in|cm|mm|pt|pc|%)*$/</span><span class="o">;</span>
+
+    <span class="k">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Starts or resumes an animation.</span>
+<span class="c">         * @param {NUM|String} elapsed optional Millisecond or</span>
+<span class="c">         * percent start time marker.</span>
+<span class="c">         * @method run</span>
+<span class="c">         */</span>    
+        <span class="nx">run</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RUNNING</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_start</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_resume</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Pauses the animation and</span>
+<span class="c">         * freezes it in its current state and time.</span>
+<span class="c">         * Calling run() will continue where it left off.</span>
+<span class="c">         * @method pause</span>
+<span class="c">         */</span>    
+        <span class="nx">pause</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RUNNING</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_pause</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Stops the animation and resets its state.</span>
+<span class="c">         * Calling run() will restart from the beginning.</span>
+<span class="c">         * @method stop</span>
+<span class="c">         */</span>    
+        <span class="nx">stop</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">finish</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">RUNNING</span><span class="o">)</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">(</span><span class="nx">finish</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">_added</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+
+        <span class="nx">_start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">START_TIME</span><span class="o">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">()</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ELAPSED_TIME</span><span class="o">));</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_actualFrames</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">PAUSED</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_initAttr</span><span class="o">();</span>
+            <span class="o">}</span>
+            <span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">_startTimer</span><span class="o">();</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">START</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_pause</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">START_TIME</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">PAUSED</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+            <span class="nx">delete</span> <span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)];</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;pause&#39;</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_resume</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">PAUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)]</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;resume&#39;</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_end</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">finish</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">START_TIME</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">ELAPSED_TIME</span><span class="o">,</span> <span class="m">0</span><span class="o">);</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">PAUSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">REVERSED</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+
+            <span class="nx">delete</span> <span class="nx">_running</span><span class="o">[</span><span class="nx">Y</span><span class="o">.</span><span class="nx">stamp</span><span class="o">(</span><span class="k">this</span><span class="o">)];</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">END</span><span class="o">,</span> <span class="o">{</span><span class="nx">elapsed</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ELAPSED_TIME</span><span class="o">)});</span>
+        <span class="o">},</span>
+
+        <span class="nx">_runFrame</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">attr</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_runtimeAttr</span><span class="o">,</span>
+                <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">,</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">),</span>
+                <span class="nx">attribute</span><span class="o">,</span>
+                <span class="nx">setter</span><span class="o">,</span>
+                <span class="nx">d</span><span class="o">;</span>
+                
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">attr</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">attr</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">attribute</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">];</span>
+                    <span class="nx">d</span> <span class="o">=</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">duration</span><span class="o">;</span>
+
+                    <span class="nx">setter</span> <span class="o">=</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;set&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">?</span>
+                            <span class="nx">customAttr</span><span class="o">[</span><span class="nx">i</span><span class="o">].</span><span class="nx">set</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_SETTER</span><span class="o">;</span>
+
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">setter</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">from</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">to</span><span class="o">,</span> <span class="nx">t</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">easing</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">unit</span><span class="o">);</span> 
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span> <span class="c">// set to final value</span>
+<span class="c"></span>                       <span class="c">// TODO: handle keyframes </span>
+<span class="c"></span>                        <span class="nx">setter</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">from</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">to</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">easing</span><span class="o">,</span> <span class="nx">attribute</span><span class="o">.</span><span class="nx">unit</span><span class="o">);</span> 
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_actualFrames</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">ELAPSED_TIME</span><span class="o">,</span> <span class="nx">t</span><span class="o">);</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="nx">TWEEN</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&gt;=</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_lastFrame</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="nx">_lastFrame</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">iter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;iterations&#39;</span><span class="o">),</span>
+                <span class="nx">iterCount</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">ITERATION_COUNT</span><span class="o">);</span>
+
+            <span class="nx">iterCount</span> <span class="o">+=</span> <span class="m">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">iter</span> <span class="o">==</span> <span class="s1">&#39;infinite&#39;</span> <span class="o">||</span> <span class="nx">iterCount</span> <span class="o">&lt;</span> <span class="nx">iter</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;direction&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="s1">&#39;alternate&#39;</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_flip</span><span class="o">();</span>
+                <span class="o">}</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;iteration&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">frames</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_actualFrames</span> <span class="o">});</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">iterCount</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">_end</span><span class="o">();</span>
+            <span class="o">}</span>
+
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">START_TIME</span><span class="o">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="o">());</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">ITERATION_COUNT</span><span class="o">,</span> <span class="nx">iterCount</span><span class="o">);</span>
+        <span class="o">},</span>
+
+        <span class="nx">_flip</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">to</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;to&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">keyframes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;keyframes&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">attr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_attr</span><span class="o">,</span> <span class="o">{}),</span>
+                <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">to</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">keyframes</span><span class="o">[</span><span class="m">100</span><span class="o">]</span> <span class="o">=</span> <span class="nx">to</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="nx">customAttr</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">reverse</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">val</span><span class="o">[</span><span class="nx">n</span><span class="o">]</span> <span class="o">=</span> <span class="nx">customAttr</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">reverse</span><span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="nx">n</span><span class="o">]);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="k">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">n</span><span class="o">].</span><span class="nx">to</span><span class="o">;</span>
+                        <span class="k">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">val</span><span class="o">[</span><span class="nx">n</span><span class="o">].</span><span class="nx">from</span><span class="o">;</span>
+                        <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">][</span><span class="nx">n</span><span class="o">].</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">b</span><span class="o">;</span>
+                        <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">][</span><span class="nx">n</span><span class="o">].</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">e</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+
+            <span class="o">});</span> <span class="c">// to is required TODO: by?</span>
+<span class="c"></span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_runtimeAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="o">{});</span>
+            <span class="nx">_setPrivate</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">REVERSED</span><span class="o">,</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">REVERSED</span><span class="o">));</span> <span class="c">// flip reverse flag</span>
+<span class="c"></span>        <span class="o">},</span>
+
+        <span class="nx">_initAttr</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">from</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;from&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">to</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;to&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">duration</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;duration&#39;</span><span class="o">),</span>
+                <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">NODE</span><span class="o">),</span>
+                <span class="nx">easing</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;easing&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">keyframes</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;keyframes&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">{},</span>
+                <span class="nx">attr</span> <span class="o">=</span> <span class="o">{},</span>
+                <span class="nx">customAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">,</span>
+                <span class="nx">unit</span><span class="o">,</span> <span class="nx">begin</span><span class="o">,</span> <span class="nx">end</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">to</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">keyframes</span><span class="o">[</span><span class="m">100</span><span class="o">]</span> <span class="o">=</span> <span class="nx">to</span><span class="o">;</span>
+            <span class="o">}</span>
+
+            <span class="k">var</span> <span class="nx">prev</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">keyframes</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">frame</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">val</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
+                    <span class="o">}</span>
+
+                    <span class="k">var</span> <span class="nx">dur</span> <span class="o">=</span> <span class="nx">duration</span> <span class="o">*</span> <span class="o">(</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">frame</span><span class="o">,</span> <span class="m">10</span><span class="o">)</span> <span class="o">/</span> <span class="m">100</span><span class="o">)</span> <span class="o">*</span> <span class="m">1000</span><span class="o">;</span>
+                    <span class="k">var</span> <span class="nx">begin</span> <span class="o">=</span> <span class="nx">prev</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">?</span> <span class="nx">prev</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">to</span> <span class="o">:</span> <span class="nx">from</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">begin</span> <span class="o">===</span> <span class="kc">undefined</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">begin</span> <span class="o">=</span> <span class="o">(</span><span class="nx">name</span> <span class="k">in</span> <span class="nx">customAttr</span> <span class="o">&amp;&amp;</span> <span class="s1">&#39;get&#39;</span> <span class="k">in</span> <span class="nx">customAttr</span><span class="o">[</span><span class="nx">name</span><span class="o">])</span>  <span class="o">?</span>
+                                <span class="nx">customAttr</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">name</span><span class="o">)</span> <span class="o">:</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_GETTER</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">name</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isFunction</span><span class="o">(</span><span class="nx">begin</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">begin</span> <span class="o">=</span> <span class="nx">begin</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">node</span><span class="o">);</span>
+                    <span class="o">}</span>
+
+                    <span class="k">var</span> <span class="nx">mFrom</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">RE_UNITS</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">begin</span><span class="o">);</span>
+                    <span class="k">var</span> <span class="nx">mTo</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">RE_UNITS</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
+
+                    <span class="nx">begin</span> <span class="o">=</span> <span class="nx">mFrom</span> <span class="o">?</span> <span class="nx">mFrom</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">:</span> <span class="nx">begin</span><span class="o">;</span>
+                    <span class="k">var</span> <span class="nx">end</span> <span class="o">=</span> <span class="nx">mTo</span> <span class="o">?</span> <span class="nx">mTo</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">:</span> <span class="nx">val</span><span class="o">,</span>
+                        <span class="nx">unit</span> <span class="o">=</span> <span class="nx">mTo</span> <span class="o">?</span> <span class="nx">mTo</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">:</span> <span class="nx">mFrom</span> <span class="o">?</span>  <span class="nx">mFrom</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="o">;</span> <span class="c">// one might be zero TODO: mixed units</span>
+<span class="c"></span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="nx">unit</span> <span class="o">&amp;&amp;</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">RE_DEFAULT_UNIT</span><span class="o">.</span><span class="nx">test</span><span class="o">(</span><span class="nx">name</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">unit</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">DEFAULT_UNIT</span><span class="o">;</span>
+                    <span class="o">}</span>
+
+                    <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">||</span> <span class="o">[];</span>
+                    <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">].</span><span class="nx">push</span><span class="o">({</span>
+                        <span class="nx">easing</span><span class="o">:</span> <span class="nx">v</span><span class="o">.</span><span class="nx">easing</span> <span class="o">||</span> <span class="nx">easing</span><span class="o">,</span>
+                        <span class="nx">to</span><span class="o">:</span> <span class="nx">end</span><span class="o">,</span>
+                        <span class="nx">duration</span><span class="o">:</span> <span class="nx">dur</span><span class="o">,</span>
+                        <span class="nx">unit</span><span class="o">:</span> <span class="nx">unit</span><span class="o">,</span>
+                        <span class="nx">from</span><span class="o">:</span> <span class="nx">begin</span>
+                    <span class="o">});</span>
+
+                    <span class="nx">prev</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">[</span><span class="nx">name</span><span class="o">];</span>
+
+                <span class="o">});</span>
+            <span class="o">});</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attr</span> <span class="o">=</span> <span class="nx">attr</span><span class="o">;</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_runtimeAttr</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="nx">attr</span><span class="o">,</span> <span class="o">{});</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Base</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
+<span class="c">/*</span>
+<span class="c">TERMS OF USE - EASING EQUATIONS</span>
+<span class="c">Open source under the BSD License.</span>
+<span class="c">Copyright 2001 Robert Penner All rights reserved.</span>
+<span class="c"></span>
+<span class="c">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</span>
+<span class="c"></span>
+<span class="c"> * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</span>
+<span class="c"> * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</span>
+<span class="c"> * Neither the name of the author nor the names of contributors may be used to endorse or promote products derived from this software without specific prior written permission.</span>
+<span class="c"></span>
+<span class="c">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="c">*/</span>
+
+<span class="c">/**</span>
+<span class="c"> * Singleton that determines how an animation proceeds from start to end.</span>
+<span class="c"> * @module anim-easing</span>
+<span class="c">*/</span>
+<span class="c">/**</span>
+<span class="c"> * Singleton that determines how an animation proceeds from start to end.</span>
+<span class="c"> * @class Easing</span>
+<span class="c">*/</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span> <span class="o">=</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Uniform speed between points.</span>
+<span class="c">     * @method easeNone</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeNone</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Begins slowly and accelerates towards end. (quadratic)</span>
+<span class="c">     * @method easeIn</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Begins quickly and decelerates towards end.  (quadratic)</span>
+<span class="c">     * @method easeOut</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*(</span><span class="nx">t</span><span class="o">-</span><span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Begins slowly and decelerates towards end. (quadratic)</span>
+<span class="c">     * @method easeBoth</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d/</span><span class="m">2</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="m">2</span> <span class="o">*</span> <span class="o">((--</span><span class="nx">t</span><span class="o">)*(</span><span class="nx">t</span><span class="o">-</span><span class="m">2</span><span class="o">)</span> <span class="o">-</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Begins slowly and accelerates towards end. (quartic)</span>
+<span class="c">     * @method easeInStrong</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeInStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Begins quickly and decelerates towards end.  (quartic)</span>
+<span class="c">     * @method easeOutStrong</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeOutStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span> <span class="o">*</span> <span class="o">((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Begins slowly and decelerates towards end. (quartic)</span>
+<span class="c">     * @method easeBothStrong</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">easeBothStrong</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d/</span><span class="m">2</span><span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="o">-</span><span class="nx">c</span><span class="o">/</span><span class="m">2</span> <span class="o">*</span> <span class="o">((</span><span class="nx">t</span><span class="o">-=</span><span class="m">2</span><span class="o">)*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span> <span class="o">-</span> <span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Snap in elastic effect.</span>
+<span class="c">     * @method elasticIn</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} a Amplitude (optional)</span>
+<span class="c">     * @param {Number} p Period (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+
+    <span class="nx">elasticIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">)</span> <span class="o">===</span> <span class="m">1</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span> 
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="m">4</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="o">-(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Snap out elastic effect.</span>
+<span class="c">     * @method elasticOut</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} a Amplitude (optional)</span>
+<span class="c">     * @param {Number} p Period (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">elasticOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="o">/=</span> <span class="nx">d</span><span class="o">)</span> <span class="o">===</span> <span class="m">1</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">p</span><span class="o">=</span><span class="nx">d</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">/</span> <span class="m">4</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,-</span><span class="m">10</span><span class="o">*</span><span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">)</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Snap both elastic effect.</span>
+<span class="c">     * @method elasticBoth</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} a Amplitude (optional)</span>
+<span class="c">     * @param {Number} p Period (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">elasticBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">a</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(</span> <span class="o">(</span><span class="nx">t</span> <span class="sr">/= d/</span><span class="m">2</span><span class="o">)</span> <span class="o">===</span> <span class="m">2</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">b</span><span class="o">+</span><span class="nx">c</span><span class="o">;</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(!</span><span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">p</span> <span class="o">=</span> <span class="nx">d</span><span class="o">*(</span><span class="m">0</span><span class="o">.</span><span class="m">3</span><span class="o">*</span><span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(</span> <span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="nx">a</span> <span class="o">&lt;</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">abs</span><span class="o">(</span><span class="nx">c</span><span class="o">)</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="nx">a</span> <span class="o">=</span> <span class="nx">c</span><span class="o">;</span> 
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="o">/</span><span class="m">4</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">else</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="nx">p</span><span class="sr">/(2*Math.PI) * Math.asin (c/</span><span class="nx">a</span><span class="o">);</span>
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-.</span><span class="m">5</span><span class="o">*(</span><span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> 
+                    <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">pow</span><span class="o">(</span><span class="m">2</span><span class="o">,-</span><span class="m">10</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=</span><span class="m">1</span><span class="o">))</span> <span class="o">*</span> 
+                <span class="nb">Math</span><span class="o">.</span><span class="nx">sin</span><span class="o">(</span> <span class="o">(</span><span class="nx">t</span><span class="o">*</span><span class="nx">d</span><span class="o">-</span><span class="nx">s</span><span class="o">)*(</span><span class="m">2</span><span class="o">*</span><span class="nb">Math</span><span class="o">.</span><span class="nx">PI</span><span class="o">)/</span><span class="nx">p</span> <span class="o">)*.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+
+    <span class="c">/**</span>
+<span class="c">     * Backtracks slightly, then reverses direction and moves to end.</span>
+<span class="c">     * @method backIn</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} s Overshoot (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">backIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="nx">t</span><span class="o">/=</span><span class="nx">d</span><span class="o">)*</span><span class="nx">t</span><span class="o">*((</span><span class="nx">s</span><span class="o">+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Overshoots end, then reverses and comes back to end.</span>
+<span class="c">     * @method backOut</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} s Overshoot (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">backOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*((</span><span class="nx">t</span><span class="o">=</span><span class="nx">t</span><span class="o">/</span><span class="nx">d</span><span class="o">-</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span><span class="o">*((</span><span class="nx">s</span><span class="o">+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="m">1</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Backtracks slightly, then reverses direction, overshoots end, </span>
+<span class="c">     * then reverses and comes back to end.</span>
+<span class="c">     * @method backBoth</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @param {Number} s Overshoot (optional)</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">backBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">,</span> <span class="nx">s</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">s</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">s</span> <span class="o">=</span> <span class="m">1</span><span class="o">.</span><span class="m">70158</span><span class="o">;</span> 
+        <span class="o">}</span>
+        
+        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span> <span class="sr">/= d/</span><span class="m">2</span> <span class="o">)</span> <span class="o">&lt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*(</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">*(((</span><span class="nx">s</span><span class="o">*=(</span><span class="m">1</span><span class="o">.</span><span class="m">525</span><span class="o">))+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">-</span> <span class="nx">s</span><span class="o">))</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">/</span><span class="m">2</span><span class="o">*((</span><span class="nx">t</span><span class="o">-=</span><span class="m">2</span><span class="o">)*</span><span class="nx">t</span><span class="o">*(((</span><span class="nx">s</span><span class="o">*=(</span><span class="m">1</span><span class="o">.</span><span class="m">525</span><span class="o">))+</span><span class="m">1</span><span class="o">)*</span><span class="nx">t</span> <span class="o">+</span> <span class="nx">s</span><span class="o">)</span> <span class="o">+</span> <span class="m">2</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Bounce off of start.</span>
+<span class="c">     * @method bounceIn</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">bounceIn</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">c</span> <span class="o">-</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceOut</span><span class="o">(</span><span class="nx">d</span><span class="o">-</span><span class="nx">t</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Bounces off end.</span>
+<span class="c">     * @method bounceOut</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">bounceOut</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">((</span><span class="nx">t</span><span class="sr">/=d) &lt; (1/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*</span><span class="nx">t</span><span class="o">*</span><span class="nx">t</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="o">(</span><span class="m">2</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">1</span><span class="o">.</span><span class="m">5</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="o">.</span><span class="m">75</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="o">(</span><span class="m">2</span><span class="o">.</span><span class="m">5</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">2</span><span class="o">.</span><span class="m">25</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="o">.</span><span class="m">9375</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">c</span><span class="o">*(</span><span class="m">7</span><span class="o">.</span><span class="m">5625</span><span class="o">*(</span><span class="nx">t</span><span class="o">-=(</span><span class="m">2</span><span class="o">.</span><span class="m">625</span><span class="o">/</span><span class="m">2</span><span class="o">.</span><span class="m">75</span><span class="o">))*</span><span class="nx">t</span> <span class="o">+</span> <span class="o">.</span><span class="m">984375</span><span class="o">)</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">},</span>
+    
+    <span class="c">/**</span>
+<span class="c">     * Bounces off start and end.</span>
+<span class="c">     * @method bounceBoth</span>
+<span class="c">     * @param {Number} t Time value used to compute current value</span>
+<span class="c">     * @param {Number} b Starting value</span>
+<span class="c">     * @param {Number} c Delta between start and end values</span>
+<span class="c">     * @param {Number} d Total length of animation</span>
+<span class="c">     * @return {Number} The computed value for the current animation frame</span>
+<span class="c">     */</span>
+    <span class="nx">bounceBoth</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">t</span><span class="o">,</span> <span class="nx">b</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">t</span> <span class="o">&lt;</span> <span class="nx">d</span><span class="o">/</span><span class="m">2</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceIn</span><span class="o">(</span><span class="nx">t</span> <span class="o">*</span> <span class="m">2</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Easing</span><span class="o">.</span><span class="nx">bounceOut</span><span class="o">(</span><span class="nx">t</span> <span class="o">*</span> <span class="m">2</span> <span class="o">-</span> <span class="nx">d</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">d</span><span class="o">)</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">c</span> <span class="o">*</span> <span class="m">0</span><span class="o">.</span><span class="m">5</span> <span class="o">+</span> <span class="nx">b</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+<span class="c">/**</span>
+<span class="c"> * Adds xy position behaviors to Y.Anim.</span>
+<span class="c"> * @module anim-xy</span>
+<span class="c"> */</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">xy</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">([</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">),</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)</span>
+        <span class="o">]);</span>
+    <span class="o">},</span>
+    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getXY</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Adds color behaviors to Y.Anim.</span>
+<span class="c"> * @module anim-color</span>
+<span class="c"> */</span>
+
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">color</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nx">from</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">from</span><span class="o">));</span>
+        <span class="nx">to</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">re_RGB</span><span class="o">.</span><span class="nx">exec</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Color</span><span class="o">.</span><span class="nx">toRGB</span><span class="o">(</span><span class="nx">to</span><span class="o">));</span>
+
+        <span class="nx">node</span><span class="o">.</span><span class="nx">setStyle</span><span class="o">(</span><span class="nx">att</span><span class="o">,</span> <span class="s1">&#39;rgb(&#39;</span> <span class="o">+</span> <span class="o">[</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)),</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">2</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">2</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">2</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)),</span>
+            <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">3</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">3</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">3</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">))</span>
+        <span class="o">].</span><span class="nx">join</span><span class="o">(</span><span class="s1">&#39;, &#39;</span><span class="o">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="o">);</span>
+    <span class="o">},</span>
+    
+    <span class="c">// TODO: default bgcolor const</span>
+<span class="c"></span>    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getComputedStyle</span><span class="o">(</span><span class="nx">att</span><span class="o">);</span>
+        <span class="nx">val</span> <span class="o">=</span> <span class="o">(</span><span class="nx">val</span> <span class="o">===</span> <span class="s1">&#39;transparent&#39;</span><span class="o">)</span> <span class="o">?</span> <span class="s1">&#39;rgb(255, 255, 255)&#39;</span> <span class="o">:</span> <span class="nx">val</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">([</span><span class="s1">&#39;backgroundColor&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;borderTopColor&#39;</span><span class="o">,</span>
+        <span class="s1">&#39;borderRightColor&#39;</span><span class="o">,</span> 
+        <span class="s1">&#39;borderBottomColor&#39;</span><span class="o">,</span> 
+        <span class="s1">&#39;borderLeftColor&#39;</span><span class="o">],</span>
+        <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">[</span><span class="nx">v</span><span class="o">]</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">color</span><span class="o">;</span>
+        <span class="o">}</span>
+<span class="o">);</span>
+<span class="c">/**</span>
+<span class="c"> * Adds scroll behaviors to Y.Anim.</span>
+<span class="c"> * @module anim-scroll</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">scroll</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="o">([</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">),</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)</span>
+        <span class="o">]);</span>
+
+        <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="o">,</span> <span class="nx">val</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="o">,</span> <span class="nx">val</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+    <span class="o">},</span>
+    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="o">),</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="o">)];</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Adds bezier curve behaviors to Y.Anim.</span>
+<span class="c"> * @module anim-curve</span>
+<span class="c"> */</span>
+
+<span class="c">/**</span>
+<span class="c"> * Usage:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *  var anim = new Y.Anim({</span>
+<span class="c"> *      node: &#39;#foo&#39;,</span>
+<span class="c"> *</span>
+<span class="c"> *      to: {</span>
+<span class="c"> *          curve: [ [0, 100], [500, 200], [800, 300] ]</span>
+<span class="c"> *       }</span>
+<span class="c"> *  });</span>
+<span class="c"> *   </span>
+<span class="c"> *  anim.run(); </span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> *</span>
+<span class="c"> */</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">curve</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">t</span> <span class="o">=</span> <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">100</span><span class="o">,</span> <span class="nx">duration</span><span class="o">)</span> <span class="o">/</span> <span class="m">100</span><span class="o">;</span>
+        <span class="nx">node</span><span class="o">.</span><span class="nx">setXY</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">getBezier</span><span class="o">(</span><span class="nx">to</span><span class="o">,</span> <span class="nx">t</span><span class="o">));</span>
+    <span class="o">},</span>
+
+    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">,</span> <span class="nx">att</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nx">node</span><span class="o">.</span><span class="nx">getXY</span><span class="o">();</span>
+    <span class="o">},</span>
+
+    <span class="nx">reverse</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">to</span> <span class="o">=</span> <span class="o">[],</span>
+            <span class="nx">from</span>  <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">from</span><span class="o">;</span>
+       <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">to</span><span class="o">.</span><span class="nx">unshift</span><span class="o">(</span><span class="nx">val</span><span class="o">.</span><span class="nx">to</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span> 
+        <span class="o">}</span> 
+
+        <span class="nx">val</span><span class="o">.</span><span class="nx">from</span> <span class="o">=</span> <span class="nx">val</span><span class="o">.</span><span class="nx">to</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
+        <span class="nx">val</span><span class="o">.</span><span class="nx">to</span> <span class="o">=</span> <span class="nx">to</span><span class="o">;</span>
+        <span class="k">return</span> <span class="nx">val</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="c">/**</span>
+<span class="c"> * Get the current position of the animated element based on t.</span>
+<span class="c"> * Each point is an array of &quot;x&quot; and &quot;y&quot; values (0 = x, 1 = y)</span>
+<span class="c"> * At least 2 points are required (start and end).</span>
+<span class="c"> * First point is start. Last point is end.</span>
+<span class="c"> * Additional control points are optional.     </span>
+<span class="c"> * @method getBezier</span>
+<span class="c"> * @static</span>
+<span class="c"> * @param {Array} points An array containing Bezier points</span>
+<span class="c"> * @param {Number} t A number between 0 and 1 which is the basis for determining current position</span>
+<span class="c"> * @return {Array} An array containing int x and y member data</span>
+<span class="c"> */</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">getBezier</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">points</span><span class="o">,</span> <span class="nx">t</span><span class="o">)</span> <span class="o">{</span>  
+    <span class="k">var</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">points</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+    <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="o">[];</span>
+
+    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">){</span>
+        <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span><span class="nx">points</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">],</span> <span class="nx">points</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]];</span> <span class="c">// save input</span>
+<span class="c"></span>    <span class="o">}</span>
+    
+    <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">j</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="o">;</span> <span class="o">++</span><span class="nx">j</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">n</span> <span class="o">-</span> <span class="nx">j</span><span class="o">;</span> <span class="o">++</span><span class="nx">i</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="m">1</span> <span class="o">-</span> <span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">0</span><span class="o">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">,</span> <span class="m">10</span><span class="o">)][</span><span class="m">0</span><span class="o">];</span>
+            <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="m">1</span> <span class="o">-</span> <span class="nx">t</span><span class="o">)</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nx">i</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">+</span> <span class="nx">t</span> <span class="o">*</span> <span class="nx">tmp</span><span class="o">[</span><span class="nb">parseInt</span><span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">,</span> <span class="m">10</span><span class="o">)][</span><span class="m">1</span><span class="o">];</span> 
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="k">return</span> <span class="o">[</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">0</span><span class="o">],</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">0</span><span class="o">][</span><span class="m">1</span><span class="o">]</span> <span class="o">];</span> 
+
+<span class="o">};</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">namespace</span><span class="o">(</span><span class="s1">&#39;Plugin&#39;</span><span class="o">);</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFX</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">config</span><span class="o">.</span><span class="nx">node</span> <span class="o">=</span> <span class="nx">config</span><span class="o">.</span><span class="nx">owner</span><span class="o">;</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFX</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+<span class="o">};</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFX</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s2">&quot;nodefxplugin&quot;</span><span class="o">;</span>
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFX</span><span class="o">.</span><span class="nx">NS</span> <span class="o">=</span> <span class="s2">&quot;fx&quot;</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Plugin</span><span class="o">.</span><span class="nx">NodeFX</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">);</span>
+
+
+
+<span class="o">},</span> <span class="s1">&#39;@VERSION@&#39;</span> <span class="o">,{</span><span class="nx">requires</span><span class="o">:[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">]});</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class="selected"><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Anim.html">Anim</a></li>
+                                <li class=""><a href="Y.Anim.html">Y.Anim</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="anim.js.html">anim.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

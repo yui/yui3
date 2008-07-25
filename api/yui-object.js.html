@@ -1,0 +1,207 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: yui   yui-object.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_yui.html">yui</a>
+                
+                 &gt; yui-object.js (source view) 
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Object utils</span>
+<span class="c"> * @class Object</span>
+<span class="c"> */</span>
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns a new object based upon the supplied object.  By</span>
+<span class="c">     * default the new object&#39;s prototype will have all members</span>
+<span class="c">     * on the object.tructor prototype.</span>
+<span class="c">     * @param The supplier object</span>
+<span class="c">     * @return the new object</span>
+<span class="c">     */</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">F</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{};</span>
+        <span class="nx">F</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="nx">o</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">F</span><span class="o">();</span>
+    <span class="o">};</span> 
+
+    <span class="k">var</span> <span class="nx">O</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">,</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Determines whether or not the property was added</span>
+<span class="c">     * to the object instance.  Returns false if the property is not present</span>
+<span class="c">     * in the object, or was inherited from the prototype.</span>
+<span class="c">     *</span>
+<span class="c">     * @deprecated Safari 1.x support has been removed, so this is simply a </span>
+<span class="c">     * wrapper for the native implementation.  Use the native implementation</span>
+<span class="c">     * directly instead.</span>
+<span class="c">     *</span>
+<span class="c">     * @TODO Remove in PR2</span>
+<span class="c">     *</span>
+<span class="c">     * @method owns</span>
+<span class="c">     * @param o {any} The object being testing</span>
+<span class="c">     * @parma p {string} the property to look for</span>
+<span class="c">     * @return {boolean} true if the object has the property on the instance</span>
+<span class="c">     */</span>
+    <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">p</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">)</span> <span class="o">?</span> <span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">p</span><span class="o">)</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Returns an array containing the object&#39;s keys</span>
+<span class="c">     * @method keys</span>
+<span class="c">     * @param o an object</span>
+<span class="c">     * @return {string[]} the keys</span>
+<span class="c">     */</span>
+    <span class="nx">O</span><span class="o">.</span><span class="nx">keys</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">a</span><span class="o">=[],</span> <span class="nx">i</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">a</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">i</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="nx">a</span><span class="o">;</span>
+    <span class="o">};</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Executes a function on each item. The function</span>
+<span class="c">     * receives the value, the key, and the object</span>
+<span class="c">     * as paramters (in that order).</span>
+<span class="c">     * @param o the object to iterate</span>
+<span class="c">     * @param f {function} the function to execute</span>
+<span class="c">     * @param c the execution context</span>
+<span class="c">     * @param proto {boolean} include proto</span>
+<span class="c">     * @return {YUI} the YUI instance</span>
+<span class="c">     */</span>
+    <span class="nx">O</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span> <span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">;</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">proto</span> <span class="o">||</span> <span class="nx">O</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">s</span><span class="o">,</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">o</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span>
+    <span class="o">};</span>
+<span class="o">},</span> <span class="s2">&quot;@VERSION@&quot;</span><span class="o">);</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Object.html">Object</a></li>
+                                <li class=""><a href="UA.html">UA</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
+                                <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
+                                <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
+                                <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
+                                <li class="selected"><a href="yui-object.js.html">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html">yui.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

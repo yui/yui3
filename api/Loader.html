@@ -1,0 +1,1477 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: loader  Loader   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>loader&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_loader.html">loader</a>
+                 &gt; Loader 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>Loader</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        Loader provides dynamic loading for YUI.
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__internalCallback">_internalCallback</a>
+                                        <code>- private object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Internal callback to handle multiple internal insert() calls
+so that css is inserted prior to js
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__useYahooListener">_useYahooListener</a>
+                                        <code>- private object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Use the YUI environment listener to detect script load.  This
+is only switched on for Safari 2.x and below.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_allowRollup">allowRollup</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Should we allow rollups
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_base">base</a>
+                                        <code>- string</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The base directory.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: http://yui.yahooapis.com/[YUI VERSION]/build/
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_charset">charset</a>
+                                        <code>- string</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The charset attribute for inserted nodes
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: utf-8
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_combine">combine</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            If configured, YUI JS resources will use the combo
+handler
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_comboBase">comboBase</a>
+                                        <code>- string</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Base path for the combo service
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: http://yui.yahooapis.com/combo?
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_data">data</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Data that is passed to all callbacks
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_dirty">dirty</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag to indicate the dependency tree needs to be recomputed
+if insert is called again.
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_filter">filter</a>
+                                        <code>- string|{searchExp: string, replaceStr: string}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined 
+filters are:
+<dl>
+<dt>DEBUG</dt>
+<dd>Selects the debug versions of the library (e.g., event-debug.js).
+This option will automatically include the logger widget</dd>
+<dt>RAW</dt>
+<dd>Selects the non-minified version of the library (e.g., event.js).
+</dl>
+You can also define a custom filter, which must be an object literal 
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123; 
+'searchExp': "-min\\.js", 
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_force">force</a>
+                                        <code>- string[]</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A list of modules that should always be loaded, even
+if they have already been inserted into the page.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_ignore">ignore</a>
+                                        <code>- string[]</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A list of modules that should not be loaded, even if
+they turn up in the dependency tree
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_ignoreRegistered">ignoreRegistered</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Ignore modules registered on the YUI global
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_insertBefore">insertBefore</a>
+                                        <code>- string|HTMLElement</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Node reference or id where new nodes should be inserted before
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_inserted">inserted</a>
+                                        <code>- {string: boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            List of modules inserted by the utility
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_loaded">loaded</a>
+                                        <code>- {string: boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Set when beginning to compute the dependency tree. 
+Composed of what YUI reports to be loaded combined
+with what has been loaded by the tool
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_loadOptional">loadOptional</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Whether or not to load optional dependencies for 
+the requested modules
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: false
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_moduleInfo">moduleInfo</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The library metadata
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_required">required</a>
+                                        <code>- {string: boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The list of requested modules
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_rollups">rollups</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            List of rollup files found in the library metadata
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_root">root</a>
+                                        <code>- string</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Root path to prepend to module path for the combo
+service
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: [YUI VERSION]/build/
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_scope">scope</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The execution scope for all callbacks
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: this
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_sorted">sorted</a>
+                                        <code>- string[]</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            All of the derived dependencies in sorted order, which
+will be populated when either calculate() or insert()
+is called
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_timeout">timeout</a>
+                                        <code>- int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Timeout value in milliseconds.  If set, this value will be used by
+the get utility.  the timeout event will fire if
+a timeout occurs.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_varName">varName</a>
+                                        <code>- string</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The name of a script node 
+(for external script support in Safari 2.x and earlier)
+to reference when the load is complete.  If this variable 
+is not available in the specified scripts, the operation will 
+fail.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__explode">_explode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_explode</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Inspects the required modules list looking for additional 
+dependencies.  Expands the required list to include all 
+required modules.  Called by calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__pushEvents">_pushEvents</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_pushEvents</strong>
+                                           (
+                                                
+                                                        
+                                                         optional
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            In IE, the onAvailable/onDOMReady events need help when Event is
+loaded dynamically
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>optional &lt;Function&gt;</code>
+                                                             function reference
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__reduce">_reduce</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_reduce</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove superceded modules and loaded modules.  Called by
+calculate() after we have the mega list of all dependencies
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__rollup">_rollup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_rollup</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Look for rollup packages to determine if all of the modules a
+rollup supersedes are required.  If so, include the rollup to
+help reduce the total number of connections required.  Called
+by calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setup">_setup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_setup</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Investigates the current YUI configuration on the page.  By default,
+modules already detected will not be loaded again unless a force
+option is encountered.  Called by calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__sort">_sort</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_sort</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sorts the dependency tree.  The last step of calculate()
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__url">_url</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        string
+                                            <strong>_url</strong>
+                                           (
+                                                
+                                                        
+                                                         path
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Generates the full url for a module
+method _url
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>path &lt;string&gt;</code>
+                                                              the path fragment
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        string
+                                                    </code></dt>
+                                                    <dd>the full url</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addModule">addModule</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong>addModule</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         name
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a new module to the component metadata.         
+<dl>
+<dt>name:</dt>       <dd>required, the component name</dd>
+<dt>type:</dt>       <dd>required, the component type (js or css)</dd>
+<dt>path:</dt>       <dd>required, the path to the script from "base"</dd>
+<dt>requires:</dt>   <dd>array of modules required by this component</dd>
+<dt>optional:</dt>   <dd>array of optional modules for this component</dd>
+<dt>supersedes:</dt> <dd>array of the modules this component replaces</dd>
+<dt>after:</dt>      <dd>array of modules the components which, if present, should be sorted above this one</dd>
+<dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
+<dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
+<dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
+</dl>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             An object containing the module data
+                                                        </dd>
+                                                        <dd>
+                                                            <code>name &lt;object&gt;</code>
+                                                             the module name (optional), required if not in the module data
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>true if the module was added, false if 
+the object passed in did not provide all required attributes</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_calculate">calculate</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>calculate</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Calculates the dependency tree, the result is stored in the sorted 
+property
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             optional options object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getProvides">getProvides</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>getProvides</strong>
+                                           (
+                                                
+                                                        
+                                                         name
+                                                    
+                                                
+                                                        , 
+                                                         notMe
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns an object literal of the modules the supplied module satisfies
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>name &lt;string&gt;</code>
+                                                             The name of the module
+                                                        </dd>
+                                                        <dd>
+                                                            <code>notMe &lt;string&gt;</code>
+                                                              don't add this module name, only include superseded modules
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>what this module provides</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getRequires">getRequires</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>getRequires</strong>
+                                           (
+                                                
+                                                        
+                                                         mod
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns an object containing properties for all modules required
+in order to load the requested module
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>mod &lt;object&gt;</code>
+                                                             The module definition from moduleInfo
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_insert">insert</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>insert</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         type
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            inserts the requested modules and their dependencies.  
+<code>type</code> can be "js" or "css".  Both script and 
+css are inserted if type is not provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             optional options object
+                                                        </dd>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                              the type of dependency to insert
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_loadNext">loadNext</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>loadNext</strong>
+                                           (
+                                                
+                                                        
+                                                         mname
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executed every time a module is loaded, and if we are in a load
+cycle, we attempt to load the next script.  Public so that it
+is possible to call this if using a method other than
+Y.register to determine when scripts are fully loaded
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>mname &lt;string&gt;</code>
+                                                              optional the name of the module that has
+been loaded (which is usually why it is time to load the next
+one)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_require">require</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>require</strong>
+                                           (
+                                                
+                                                        
+                                                         what
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a requirement for one or more module
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>what &lt;string[] | string*&gt;</code>
+                                                              the modules to load
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_failure">failure</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>failure</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executed when the loader fails to complete an insert operation.
+This can be subscribed to normally, or a listener can be passed
+as an onFailure config option.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_success">success</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>success</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executed when the loader successfully completes an insert operation
+This can be subscribed to normally, or a listener can be passed
+as an onSuccess config option.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_timeout">timeout</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>timeout</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executed when a Get operation times out.
+This can be subscribed to normally, or a listener can be passed
+as an onTimeout config option.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class="selected"><a href="module_loader.html">loader</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Get.html">Get</a></li>
+                                <li class="selected"><a href="Loader.html">Loader</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="get.js.html">get.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__internalCallback">_internalCallback</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__useYahooListener">_useYahooListener</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_allowRollup">allowRollup</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_base">base</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_charset">charset</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_combine">combine</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_comboBase">comboBase</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_data">data</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_dirty">dirty</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_filter">filter</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_force">force</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_ignore">ignore</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_ignoreRegistered">ignoreRegistered</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_insertBefore">insertBefore</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_inserted">inserted</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_loaded">loaded</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_loadOptional">loadOptional</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_moduleInfo">moduleInfo</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_required">required</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_rollups">rollups</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_root">root</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_scope">scope</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_sorted">sorted</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_timeout">timeout</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_varName">varName</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__explode">_explode</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__pushEvents">_pushEvents</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__reduce">_reduce</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__rollup">_rollup</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setup">_setup</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__sort">_sort</a>
+                                </li>
+                                <li class="private"><!--<code>string</code>-->
+                                <a href="#method__url">_url</a>
+                                </li>
+                                <li class=""><!--<code>boolean</code>-->
+                                <a href="#method_addModule">addModule</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_calculate">calculate</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_getProvides">getProvides</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_getRequires">getRequires</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_insert">insert</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_loadNext">loadNext</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_require">require</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_failure">failure</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_success">success</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_timeout">timeout</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

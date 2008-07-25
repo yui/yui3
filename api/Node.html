@@ -1,0 +1,3691 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: node  Node   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>node&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_node.html">node</a>
+                 &gt; Node 
+                
+            </p>
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>Node</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        A wrapper for DOM Nodes.
+Node properties can be accessed via the set/get methods.
+With the exception of the noted properties,
+only strings, numbers, and booleans are passed through. 
+Use Y.get() or Y.Node.get() to retrieve Node instances.
+                    </div>
+
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="property_text">text</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Normalizes nodeInnerText and textContent.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_all">all</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        NodeList
+                                            <strong>all</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         doc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves a NodeList instance for the given object/string.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLCollection|Array|String&gt;</code>
+                                                             The object to wrap.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>doc &lt;document|Node&gt;</code>
+                                                             optional The document containing the node. Defaults to current document.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd>A wrapper instance for the supplied nodes.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_appendChild">appendChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>appendChild</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be appended
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>The appended node</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_attach">attach</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>attach</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         arg
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Attaches a DOM event handler.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The type of DOM Event to listen for
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             The handler to call when the event fires
+                                                        </dd>
+                                                        <dd>
+                                                            <code>arg &lt;Object&gt;</code>
+                                                             An argument object to pass to the handler
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_blur">blur</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>blur</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_cloneNode">cloneNode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>cloneNode</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be cloned
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>The clone</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_compareTo">compareTo</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>compareTo</strong>
+                                           (
+                                                
+                                                        
+                                                         refNode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Compares nodes to determine if they match.
+Node instances can be compared to each other and/or HTMLElements/selectors.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>refNode &lt;String | HTMLElement | Node&gt;</code>
+                                                             The reference node to compare to the node.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>True if the nodes match, false if they do not.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_contains">contains</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>contains</strong>
+                                           (
+                                                
+                                                        
+                                                         needle
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>needle &lt;String | HTMLElement&gt;</code>
+                                                             The possible descendent
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not this node is an ancestor of needle</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_create">create</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>create</strong>
+                                           (
+                                                
+                                                        
+                                                         html
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Creates a Node instance from HTML string
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>html &lt;String|Array&gt;</code>
+                                                             The string of html to create
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>A new Node instance</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_detach">detach</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>detach</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Detaches a DOM event handler.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The type of DOM Event
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             The handler to call when the event fires
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_focus">focus</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>focus</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_get">get</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        any
+                                            <strong>get</strong>
+                                           (
+                                                
+                                                        
+                                                         prop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Get the value of the property/attribute on the HTMLElement bound to this Node.
+Only strings/numbers/booleans are passed through unless a GETTER exists.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>prop &lt;String&gt;</code>
+                                                             Property to get
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        any
+                                                    </code></dt>
+                                                    <dd>Current value of the property</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getAttribute">getAttribute</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong>getAttribute</strong>
+                                           (
+                                                
+                                                        
+                                                         attribute
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attribute &lt;String&gt;</code>
+                                                             The attribute to retrieve
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        String
+                                                    </code></dt>
+                                                    <dd>The current value of the attribute</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getById">getById</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        void
+                                            <strong>getById</strong>
+                                           (
+                                                
+                                                        
+                                                         id
+                                                    
+                                                
+                                                        , 
+                                                         doc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns a node instance wrapping the DOM element with the given ID.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>id &lt;String&gt;</code>
+                                                             The ID to retrieve
+                                                        </dd>
+                                                        <dd>
+                                                            <code>doc &lt;Node|HTMLElement&gt;</code>
+                                                             optional An optional document to search. 
+Defaults to current document.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getComputedStyle">getComputedStyle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong>getComputedStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves the computed value for the given style attribute.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attr &lt;String&gt;</code>
+                                                             The style attribute to retrieve.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        String
+                                                    </code></dt>
+                                                    <dd>The computed value of the style property for the element.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getElementsByTagName">getElementsByTagName</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong>getElementsByTagName</strong>
+                                           (
+                                                
+                                                        
+                                                         tagName
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>tagName &lt;String&gt;</code>
+                                                             The tagName to collect
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd>A NodeList representing the HTMLCollection</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getStyle">getStyle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        String
+                                            <strong>getStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves a style attribute from the given node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attr &lt;String&gt;</code>
+                                                             The style attribute to retrieve.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        String
+                                                    </code></dt>
+                                                    <dd>The current value of the style property for the element.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_hasAttribute">hasAttribute</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>hasAttribute</strong>
+                                           (
+                                                
+                                                        
+                                                         attribute
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attribute &lt;String&gt;</code>
+                                                             The attribute to test for
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not the attribute is present</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_hasChildNodes">hasChildNodes</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>hasChildNodes</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not the node has any childNodes</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_inDoc">inDoc</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>inDoc</strong>
+                                           (
+                                                
+                                                        
+                                                         doc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement is attached to a document.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>doc &lt;Node|HTMLElement&gt;</code>
+                                                             optional An optional document to check against.
+Defaults to current document.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not this node is attached to the document.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_insertBefore">insertBefore</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>insertBefore</strong>
+                                           (
+                                                
+                                                        
+                                                         newNode
+                                                    
+                                                
+                                                        , 
+                                                         refNode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>newNode &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be appended
+                                                        </dd>
+                                                        <dd>
+                                                            <code>refNode &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be inserted before
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>The inserted node</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_next">next</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>next</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         all
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the next sibling that passes the boolean method. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             optional Whether all node types should be returned, or just element nodes.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>HTMLElement or null if not found</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_nodeInOut">nodeInOut</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>nodeInOut</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Wraps the input and outputs of a node instance
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>on</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         arg
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Alias for attach.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;String&gt;</code>
+                                                             The type of DOM Event to listen for
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             The handler to call when the event fires
+                                                        </dd>
+                                                        <dd>
+                                                            <code>arg &lt;Object&gt;</code>
+                                                             An argument object to pass to the handler
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_previous">previous</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>previous</strong>
+                                           (
+                                                
+                                                        
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         all
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns the previous sibling that is an HTMLElement. 
+Returns the nearest HTMLElement sibling if no method provided.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>fn &lt;Function&gt;</code>
+                                                             A boolean function used to test siblings
+that receives the sibling node being tested as its only argument.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             optional Whether all node types should be returned, or just element nodes.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>Node instance or null if not found</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_query">query</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>query</strong>
+                                           (
+                                                
+                                                        
+                                                         selector
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves a single node based on the given CSS selector.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The CSS selector to test against.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>A Node instance for the matching HTMLElement.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_queryAll">queryAll</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        NodeList
+                                            <strong>queryAll</strong>
+                                           (
+                                                
+                                                        
+                                                         selector
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Retrieves a nodeList based on the given CSS selector.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The CSS selector to test against.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        NodeList
+                                                    </code></dt>
+                                                    <dd>A NodeList instance for the matching HTMLCollection/Array.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeChild">removeChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>removeChild</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be removed
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>The removed node</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_replaceChild">replaceChild</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Node
+                                            <strong>replaceChild</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         refNode
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be inserted
+                                                        </dd>
+                                                        <dd>
+                                                            <code>refNode &lt;HTMLElement | Node&gt;</code>
+                                                             Node to be replaced
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Node
+                                                    </code></dt>
+                                                    <dd>The replaced node</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_reset">reset</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>reset</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+Only valid on FORM elements
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_scrollIntoView">scrollIntoView</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>scrollIntoView</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_set">set</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>set</strong>
+                                           (
+                                                
+                                                        
+                                                         prop
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the value of the property/attribute on the HTMLElement bound to this Node.
+Only strings/numbers/booleans are passed through unless a SETTER exists.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>prop &lt;String&gt;</code>
+                                                             Property to set
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;any&gt;</code>
+                                                             Value to apply to the given property
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setAttribute">setAttribute</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setAttribute</strong>
+                                           (
+                                                
+                                                        
+                                                         attribute
+                                                    
+                                                
+                                                        , 
+                                                         The
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attribute &lt;String&gt;</code>
+                                                             The attribute to set
+                                                        </dd>
+                                                        <dd>
+                                                            <code>The &lt;String&gt;</code>
+                                                             value to apply to the attribute
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setStyle">setStyle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setStyle</strong>
+                                           (
+                                                
+                                                        
+                                                         attr
+                                                    
+                                                
+                                                        , 
+                                                         val
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Applies a CSS style to a given node.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>attr &lt;String&gt;</code>
+                                                             The style attribute to set.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>val &lt;String|Number&gt;</code>
+                                                             The value.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setStyles">setStyles</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setStyles</strong>
+                                           (
+                                                
+                                                        
+                                                         hash
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets multiple style properties.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>hash &lt;Object&gt;</code>
+                                                             An object literal of property:value pairs.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_submit">submit</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>submit</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Passes through to DOM method.
+Only valid on FORM elements
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_test">test</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        boolean
+                                            <strong>test</strong>
+                                           (
+                                                
+                                                        
+                                                         selector
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Test if the supplied node matches the supplied selector.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>selector &lt;string&gt;</code>
+                                                             The CSS selector to test against.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not the node matches the selector.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeBodyChange">beforeBodyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeBodyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'body' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeCellsChange">beforeCellsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeCellsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'cells' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeChildNodesChange">beforeChildNodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeChildNodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'childNodes' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeChildrenChange">beforeChildrenChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeChildrenChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'children' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeDocumentElementChange">beforeDocumentElementChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeDocumentElementChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'documentElement' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeElementsChange">beforeElementsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeElementsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'elements' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeFirstChildChange">beforeFirstChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeFirstChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'firstChild' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeLastChildChange">beforeLastChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeLastChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'lastChild' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeOffsetParentChange">beforeOffsetParentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeOffsetParentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'offsetParent' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeOwnerDocumentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'ownerDocument' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeParentNodeChange">beforeParentNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeParentNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'parentNode' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforePreviousSiblingChange">beforePreviousSiblingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforePreviousSiblingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'previousSibling' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeRowsChange">beforeRowsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeRowsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'rows' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTBodiesChange">beforeTBodiesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTBodiesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tBodies' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTFootChange">beforeTFootChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTFootChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tFoot' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_beforeTHeadChange">beforeTHeadChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>beforeTHeadChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires before the value for the configuration attribute 'tHead' changes. Return false to cancel the attribute change.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the current attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_bodyChange">bodyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>bodyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'body' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_cellsChange">cellsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>cellsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'cells' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_childNodesChange">childNodesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>childNodesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'childNodes' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_childrenChange">childrenChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>childrenChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'children' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_documentElementChange">documentElementChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>documentElementChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'documentElement' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_elementsChange">elementsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>elementsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'elements' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_firstChildChange">firstChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>firstChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'firstChild' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_lastChildChange">lastChildChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>lastChildChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'lastChild' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_offsetParentChange">offsetParentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>offsetParentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'offsetParent' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_ownerDocumentChange">ownerDocumentChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>ownerDocumentChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'ownerDocument' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_parentNodeChange">parentNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>parentNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'parentNode' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_previousSiblingChange">previousSiblingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>previousSiblingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'previousSibling' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_rowsChange">rowsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>rowsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'rows' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tBodiesChange">tBodiesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tBodiesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tBodies' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tFootChange">tFootChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tFootChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tFoot' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_tHeadChange">tHeadChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>tHeadChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         eventInfo
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'tHead' changes.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
+                                                            An object containing the previous attribute value and the new value.
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="config_body">body</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_cells">cells</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_childNodes">childNodes</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_children">children</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_documentElement">documentElement</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_elements">elements</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_firstChild">firstChild</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_lastChild">lastChild</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_offsetParent">offsetParent</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_ownerDocument">ownerDocument</a>
+                                        <code>- Doc</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_parentNode">parentNode</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_previousSibling">previousSibling</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_rows">rows</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tBodies">tBodies</a>
+                                        <code>- NodeList</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tFoot">tFoot</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_tHead">tHead</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a Node instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
+
+                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
+
+                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
+
+                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
+
+                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_JSON.html">JSON</a></li>
+
+                                <li class=""><a href="module_loader.html">loader</a></li>
+
+                                <li class="selected"><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_node-class.html">node-class</a></li>
+
+                                <li class=""><a href="module_node-region.html">node-region</a></li>
+
+                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="Node.html">Node</a></li>
+                                <li class=""><a href="NodeList.html">NodeList</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="node.js.html">node.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_text">text</a>
+                                        <!--<code>&lt;String&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><!--<code>NodeList</code>-->
+                                <a href="#method_all">all</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_appendChild">appendChild</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_attach">attach</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_blur">blur</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_cloneNode">cloneNode</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_compareTo">compareTo</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_contains">contains</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_create">create</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_detach">detach</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_focus">focus</a>
+                                </li>
+                                <li class=""><!--<code>any</code>-->
+                                <a href="#method_get">get</a>
+                                </li>
+                                <li class=""><!--<code>String</code>-->
+                                <a href="#method_getAttribute">getAttribute</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_getById">getById</a>
+                                </li>
+                                <li class=""><!--<code>String</code>-->
+                                <a href="#method_getComputedStyle">getComputedStyle</a>
+                                </li>
+                                <li class=""><!--<code>NodeList</code>-->
+                                <a href="#method_getElementsByTagName">getElementsByTagName</a>
+                                </li>
+                                <li class=""><!--<code>String</code>-->
+                                <a href="#method_getStyle">getStyle</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_hasAttribute">hasAttribute</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_hasChildNodes">hasChildNodes</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_inDoc">inDoc</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_insertBefore">insertBefore</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_next">next</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_nodeInOut">nodeInOut</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_on">on</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_previous">previous</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_query">query</a>
+                                </li>
+                                <li class=""><!--<code>NodeList</code>-->
+                                <a href="#method_queryAll">queryAll</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_removeChild">removeChild</a>
+                                </li>
+                                <li class=""><!--<code>Node</code>-->
+                                <a href="#method_replaceChild">replaceChild</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_reset">reset</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_scrollIntoView">scrollIntoView</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_set">set</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setAttribute">setAttribute</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setStyle">setStyle</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setStyles">setStyles</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_submit">submit</a>
+                                </li>
+                                <li class=""><!--<code>boolean</code>-->
+                                <a href="#method_test">test</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_beforeBodyChange">beforeBodyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeCellsChange">beforeCellsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeChildNodesChange">beforeChildNodesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeChildrenChange">beforeChildrenChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeDocumentElementChange">beforeDocumentElementChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeElementsChange">beforeElementsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeFirstChildChange">beforeFirstChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeLastChildChange">beforeLastChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeOffsetParentChange">beforeOffsetParentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeParentNodeChange">beforeParentNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforePreviousSiblingChange">beforePreviousSiblingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeRowsChange">beforeRowsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTBodiesChange">beforeTBodiesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTFootChange">beforeTFootChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_beforeTHeadChange">beforeTHeadChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_bodyChange">bodyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_cellsChange">cellsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_childNodesChange">childNodesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_childrenChange">childrenChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_documentElementChange">documentElementChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_elementsChange">elementsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_firstChildChange">firstChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_lastChildChange">lastChildChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_offsetParentChange">offsetParentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_ownerDocumentChange">ownerDocumentChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_parentNodeChange">parentNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_previousSiblingChange">previousSiblingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_rowsChange">rowsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tBodiesChange">tBodiesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tFootChange">tFootChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_tHeadChange">tHeadChange</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#config_body">body</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_cells">cells</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_childNodes">childNodes</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_children">children</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_documentElement">documentElement</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_elements">elements</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_firstChild">firstChild</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_lastChild">lastChild</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_offsetParent">offsetParent</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_ownerDocument">ownerDocument</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_parentNode">parentNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_previousSibling">previousSibling</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_rows">rows</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tBodies">tBodies</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tFoot">tFoot</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_tHead">tHead</a>
+                                </li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>
