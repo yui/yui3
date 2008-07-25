@@ -1,4 +1,4 @@
-<?php 
+<?php
 $title="The IO Utility";
 $section="io";
 $component="IO Utility";
@@ -11,11 +11,11 @@ include "../inc/header.inc";
 		<div class="yui-ge">
 			<div class="yui-u first" id="main">
 			<!-- main column -->
-			
+
 				<h2><?php echo $component;?></h2>
-			
+
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					<p></p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -24,9 +24,8 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+										<li><a href="#[you id here]">Using YUI.io</a></li>
+										<li><a href="#[you id here]">Known Issues</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -38,108 +37,510 @@ include "../inc/header.inc";
 							include('../inc/quicklinks.inc');
 							?>
 						</div>
-					</div>				
+					</div>
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
+
 				<h3 id="start">Getting Started</h3>
-				
+
 				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
+
+				<p>To use <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
 				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/io.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 				</textarea>
+				<p>NOTE: Cross-domain transactions with YUI.io require the use of io.swf.  Make sure this dependency is deployed and accessible by io.js.
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
+				<h4 id="your id here">A Simple Transaction</h4>
+				<p>
+				<code>io()</code> is the primary method for making an HTTP request.  This method accepts two arguments: uri and the configuration object.
+				</p>
 				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
+					<li><strong>uri:</strong> This parameter specifies the URI for the transaction</li>
+					<li><strong>configuration:</strong> This parameter is an object of keys and values of configurations specific to the transaction.  Please see: <a href="">The Configuration Object</a> for more information on all available configuration properties.</li>
 				</ul>
+				<p>
+				YUI.io returns an object with the following members:
+				</p>
+				<ul>
+					<li><strong>id:</strong> This is the unique identifier of the transaction.</li>
+					<li><strong>abort():</strong> Aborts the specific transaction.</li>
+					<li><strong>isInProgress:</strong> A boolean value indicating whether the transaction has completed.</li>
+				</ul>
+				<p>
+				This is an example GET transaction, handling the response at the earliest opportunity.
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				&lt;script&gt;
+				// Create a YUI instance using IO module.
+				var Y = new YUI().use("io");
+				var uri = "get.php?foo=bar";
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				// Define a function to handle the response data.
+				function complete(id, o, args) {
+				  var id = id; // Transaction ID.
+				  var data = o.responseText; // Response data.
+				  var args = args[1]; // 'ipsum'.
+				};
 
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
+				// Subscribe to event "io:complete", and pass an array
+				// as an argument to the event handler "complete". Since
+				// "complete" is global.
+				// At this point in the transaction lifecycle, success or
+				// failure is not yet know.
+				Y.on('io:complete', complete, this, ['lorem', 'ipsum']);
+
+				// Make an HTTP request to 'get.php'.
+				// NOTE: This transaction does not use a configuration object.
+				var request = Y.io(uri);
+				&lt;/script&gt;
+				</textarea>
+
+				<h3 id="configuration">Using IO</h3>
+
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
+					<li><a href="#[you id here]">The Configuration Object</a></li>
+					<li><a href="#[you id here]">Events</a></li>
+					<li><a href="#[you id here]">Cross-Domain Requests</a></li>
+					<li><a href="#[you id here]">Setting HTTP Headers</a></li>
 				</ul>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
+				<h4 id="configuration">The Configuration Object</h4>
+
+				<p>This object is the second argument of <code>YUI.io()</code>.  Its configurations help define transaction parameters and transaction response handling.  All configuration properties are optional.  The following table describes all configuration properties used by <code>YUI.io.</code></p>
+
 				<table>
 					<thead>
 						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
+							<th>Property</th>
+							<th>Description</th>
 						</tr>
-					</tbody>
+					</thead>
 					<tbody>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td>method (string)</td>
+							<td>Defines the HTTP method for the transaction.  If this property is undefined or omitted, the default value is GET.</td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td>data (string)</td>
+							<td>Transaction data as a string of key-value pairs (e.g., <code>"foo=bar&baz=boo"</code>).  If the HTTP method is GET, the data are appended to the URI to form a querystring.  If HTTP POST, the data are passed as the message body.</td>
 						</tr>
 						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
+							<td>headers (object)</td>
+							<td>Specific HTTP headers and values to be sent with the transaction (e.g., <code>{ 'Content-Type': 'application/xml; charset=utf-8' } </code>).</td>
+						</tr>
+						<tr>
+							<td>on (object)</td>
+							<td>This object defines the events and event handlers to be used for the transaction.  These events fire in addition to the global IO events.  Define as many events as desired for the transaction; all events handlers are optional.
+								<ul class="topspace">
+									<li><strong>start</strong></li>
+									<li><strong>complete</strong></li>
+									<li><strong>success</strong></li>
+									<li><strong>failure</strong></li>
+									<li><strong>abort</strong></li>
+								</ul>
+							NOTE: These events are accessible only to the transaction's subscribers, whereas global IO events are accessible by all subscribers.
+							</td>
+						</tr>
+						<tr>
+							<td>context</td>
+							<td>Defines the execution context of the event handler functions for the transaction. If undefined, a default value of <code>window</code> is used.</td>
+						</tr>
+						<tr>
+							<td>form (object)</td>
+							<td>This object instructs YUI.io to use the specified HTML form as data.
+								<ul class="topspace">
+									<li><strong>id:</strong> This property can be defined as the id(String) of an HTML form or an object reference of the HTML form.</li>
+									<li><strong>useDisabled:</strong> When defined as true, disabled field values are included as data.  The default value is false.</li>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>xdr (object)</td>
+							<td>Defines the transport to be used for cross-domain requests (e.g., <code>{ use:'flash' }</code> ).  The transaction will use the specified transport instead of XMLHttpRequest.  Currently, the only alternate transport supported is Flash, requiring Flash Player 9.
+							</td>
+						</tr>
+						<tr>
+							<td>arguments (object)</td>
+							<td><p>Object, array, string, or number passed to all registered, transaction event handlers.  This value is available as the second argument in the "start" and "abort" event handlers; and, it is the third argument in the "complete", "success", and "failure" event handlers.</p></td>
+						</tr>
+						<tr>
+							<td>timeout</td>
+							<td>This value, defined as milliseconds, is a time threshold for the transaction (e.g., <code>{ timeout: 2000 }</code> ). When this limit is reached, and the transaction's Complete event has not yet fired, the transaction will be aborted.</td>
 						</tr>
 					</tbody>
 				</table>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
+				<p>
+				This is an example of a configuration object, with all properties defined.
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				/*
+				 * This is an example configuration object will all properties defined.
+				 *
+				 * method: This transaction will use HTTP POST.
+				 * data: "user=yahoo" will comprise the POST message.
+				 * headers: Object of HTTP request headers for this transaction.  The
+				 *          first header defines "Content-Type" and the second is a
+				 *          custom header.
+				 * on: Object of defined event handlers for "start", "complete",
+				 *     and "abort".  These handlers are methods of an object
+				 *     named "Dispatch".
+				 * context: Event handlers will execute in the propert object context,
+				 *          so usage 'this' will reference Dispatch.
+				 * form: Object specifying the HTML form to be serialized into a key-value
+				 *       string and sent as data; and, informing IO to include disabled
+				 *       HTML form fields as part of the data.
+				 * xdr: Informs IO to use the defined transport, in this case Flash,
+				 *      to make a cross-domain request for this transaction.
+				 * arguments: Object of data, passed as an argument to the event
+				 *            handlers.
+				 */
+				var cfg = {
+					method: 'POST',
+					data: 'user=yahoo',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-TRANSPORT-TYPE': 'Flash'
+					},
+					on: {
+						start: Dispatch.start,
+						complete: Dispatch.complete,
+						abort: Dispatch.abort
+						}
+					},
+					context: Dispatch,
+					form: {
+						id: formObject,
+						useDisabled: true
+					},
+					xdr: { use: 'flash' },
+					arguments: {
+						start: 'foo',
+						complete: 'bar',
+						abort: 'baz'
+					}
+				};
+				</textarea>
+
+				<h4 id="response">The Response Object</h4>
+				<p>
+				When a transaction is complete, the response data are passed as an object to the event handler.
+				</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Event</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					<tr>
+					  <td>status</td>
+
+					  <td>The HTTP status code of the transaction.</td>
+					</tr>
+					<tr>
+					  <td>statusText</td>
+					  <td>The HTTP status message.</td>
+					</tr>
+					<tr>
+
+					  <td>getResponseHeader(<em>headername</em>)</td>
+					  <td>Returns the string value of the specified header label.</td>
+					</tr>
+					<tr>
+					  <td>getAllResponseHeaders</td>
+					  <td>All response HTTP headers are available as a string.  Each label-value pair is delimited by "\n".</td>
+
+					</tr>
+					<tr>
+					  <td>responseText</td>
+					  <td>If the response data is non-XML, it will be accessible in this property.</td>
+					</tr>
+					<tr>
+					  <td>responseXML</td>
+					  <td>If the response data is an XML document, it will be accessible in this property.</td>
+					</tr>
+					</tbody>
+				  </table>
+
+				<h4 id="events">Events</h4>
+				<p>
+					IO events provide access to data during a transaction's lifecycle.  There are two aspects to IO events: global and transaction.  Global events are fired by IO for every transaction, and these events are accessible to all event subscribers.  Transaction events are fired only if the requisite event handlers are defined in the configuration object.  Global events are identified by the <code>io:eventname</code> pattern.  The following example describes the event subscription syntax for global events:
+				</p>
+				<p>
+				The following table describes the available IO events:
+				</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Event</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><strong>io:start</strong></td>
+							<td>
+							<p>Fires when a request is made to a resource.  The event handler's arguments signature is:</p>
+							<textarea name="code" class="HTML" cols="60" rows="1">
+							function onStart(transactionid, arguments) {
+							  // transactionid : The transaction's ID.
+							  // arguments: This is defined in the configuration object's
+							  //            "arguments" property.
+							}
+							</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>io:complete</strong></td>
+							<td>
+							<p>Fires after "io:start", when the transaction is complete and response data are available.  This is the earliest opportunity to access any response data.  The event handler's arguments signature is:</p>
+							<textarea name="code" class="HTML" cols="60" rows="1">
+							function onComplete(transactionid, response, arguments) {
+							  // transactionid : The transaction's ID.
+							  // response: The response object.
+							  // arguments: This is defined in the configuration object's
+							  //            "arguments" property.
+							}
+							</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>io:success</strong></td>
+							<td>
+							<p>Fires after the "complete" event, when the response HTTP status resolves to 2xx.  The event handler's arguments signature is:</p>
+							<textarea name="code" class="HTML" cols="60" rows="1">
+							function onSuccess(transactionid, response, arguments) {
+							  // transactionid : The transaction's ID.
+							  // response: The response object.
+							  // arguments: This is defined in the configuration object's
+							  //            "arguments" property.
+							}
+							</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>io:failure</strong></td>
+							<td>
+							<p>Fires after the "complete" event, when the response HTTP status resolves to 4xx. 5xx, or any undefined HTTP status.  The event handler's arguments signature is:</p>
+							<textarea name="code" class="HTML" cols="60" rows="1">
+							function onFailure(transactionid, response, arguments) {
+							  // transactionid : The transaction's ID.
+							  // response: The response object.
+							  // arguments: This is defined in the configuration object's
+							  //            "arguments" property.
+							}
+							</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>io:abort</strong></td>
+							<td>
+							<p>Fires when a request times out, or when the transaction is explicitly aborted.  The event handler's arguments signature is:</p>
+							<textarea name="code" class="HTML" cols="60" rows="1">
+							function onFailure(transactionid, arguments) {
+							  // transactionid : The transaction's ID.
+							  // arguments: This value is defined in the configuration object's
+							  //            "arguments" property.
+							}
+							</textarea>
+							</td>
+						</tr>
+						<tr>
+							<td><strong>io:xdrReady</strong></td>
+							<td>
+							Fires when the XDR transport is ready for use.  This event only fires once when the transport initialization is complete.
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p>
+
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				// Create a YUI instance using IO module.
+				var Y = new YUI().use("io");
+
+				/*
+				 * Create a function as the event handler for the event "io:complete".
+				 *
+				 * The function will receive the following arguments:
+				 * - The ID of the transaction
+				 * - Object containing the response data.
+				 * - Argument one defined when subscribing to the event(e.g., "foo").
+				 * - Argument two defined when subscribing to the event(e.g., "bar").
+				 */
+				function onComplete(transactionId, responseObject, arg1, arg2) {
+					/*
+					 * The argument 'responseObject' is the response object.  Its
+					 * properties are:
+					 * - status
+					 * - statusText
+					 * - getResponseHeader(headerName)
+					 * - getAllResponseHeaders
+					 * - responseText
+					 * - responseXML
+					 *
+					 * NOTE: In an XDR transaction, only the responseText property is defined.
+					 */
+				};
+
+				/*
+				 * Subscribe to the event "io:complete", using Y.on.
+				 *
+				 * - 'io:complete' : Subscribe to this IO event.
+				 * - onComplete : The event handler to be subscribed to 'io:complete'.
+				 * - this : The execution context of the event handler, in this case 'this'
+				 *          since the doComplete is defined as a global function.
+				 * - 'foo' : The first argument received by the event handler.
+				 * - 'bar' : The second argument received by the event handler.
+				 *           Additional arguments can be defined, as desired.
+				 */
+				Y.on('io:complete', onComplete, this, "foo", "bar");
+				</textarea>
+
+				<h4 id="xdr">Cross-Domain Transactions</h4>
+				<p>By default, IO uses the XMLHttpRequest object as the transport for HTTP transactions.  IO can also be instructed to use an alternate transport to make cross-domain, HTTP transactions.  Currently, IO can make use of Flash as an alternate transport for such requests.  To prepare IO for cross-domain transactions, the transport must be initialized and the file "io.swf" is deployed and accessible.  For each transaction, the configuration object's <code>xdr</code> property must be defined with <code>{ use: 'flash' }</code> so IO use the alternate transport, instead of using the default transport of XMLHttpRequest.</p>
+				<p>
+				As <code>io.swf</code> is written in ActionScript 3, Flash Player 9 or better is required (version 9.0.124 is recommended).  Additionally, a cross-domain policy file must be deployed at the resource to grant the client access to the remote domain.  A cross-domain request will not be successful without this policy file hosted at the resource.  The following example file grants permissive access to the host from all requests, but the host will only accept custom HTTP headers from originating from <code>yahoo.com</code>.
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				&lt;?xml version="1.0"?&gt;
+				&lt;!DOCTYPE cross-domain-policy SYSTEM
+				"http://www.adobe.com/xml/dtds/cross-domain-policy.dtd"&gt;
+				&lt;cross-domain-policy&gt;
+					&lt;allow-access-from domain="*"/&gt;
+					&lt;allow-http-request-headers-from domain="*.yahoo.com" headers="*"/&gt;
+				&lt;/cross-domain-policy&gt;
+				</textarea>
+				<p>
+				For more information on cross-domain policy file specifications, see the following articles at Adobe Developer Connection.
+				</p>
+				<ul>
+					<li><a href="http://www.adobe.com/devnet/articles/crossdomain_policy_file_spec.html">Cross-Domain Policy File Specifications</a>.</li>
+					<li><a href="http://kb.adobe.com/selfservice/viewContent.do?externalId=kb403030">HTTP Headers Blacklist</a>.</li>
+				</ul>
+				<p>
+				The following example demonstrates a cross-domain transaction, starting with the initialization of the XDR transport, and subscribing to three global IO events.
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				&lt;script&gt;
+				// Create a YUI instance using IO.
+				var Y = new YUI().use('io');
+
+				// Create a configuration object containing three defined properties:
+				// id: Identifies the transport to be used.
+				// yid: The ID of the YUI instance.
+				// src: The path to the Flash file.
+				var xdrCfg = {
+					id:'flash',
+					yid: Y.id,
+					src:'io.swf'
+				};
+
+				// Initialize the define transport
+				Y.io.transport(xdrCfg);
+
+				// Define the configurations to be used for each transaciton.
+				// Since cfg.method isn't defined, the HTTP method will
+				// default to GET.
+				var cfg = {
+				  data: "xdr=true", // Transaction data sent to the URI.
+				  use: 'flash', // Instruct IO to use the XDR transport.
+				  timeout: 3000, // Abort the transaction, if it is still pending, after 3000ms.
+				  arguments: {
+				    start: 'foo',
+				    complete: 'bar',
+				    abort: 'baz'
+				  } // An object passed, as an argument, to the event handlers.
+				};
+
+				/*
+				 * GlobalEventHandler is an example object that encapsulates
+				 * event handlers for "io:start", "io:complete", and "io:abort".
+				 *
+				 * start( ) // Event handler for "io:start"
+				 * complete( ) // Event handler for "io:complete".
+				 * abort( ) // Event handler for "io:abort".
+				 */
+				var GlobalEventHandler = {
+				  start: function(id, args) {
+				    var args = args.start // 'foo'
+				  },
+				  complete: function(id, o, args) {
+				    var args = args.complete // 'bar'
+
+				    // Note: Only strings are supported in an XDR response.
+				    // o.responseXML is not supported at this time.
+				    var data = o.responseText;
+				  },
+				  abort: function(id, args) {
+				    var args = args.abort // args = 'baz'
+				  }
+				};
+
+				// Subscribe GlobalEventHandler.start to event "io:start".
+				Y.on('io:start', GlobalEventHandler.start, this);
+				// Subscribe GlobalEventHandler.complete to event "io:complete".
+				Y.on('io:complete', GlobalEventHandler.complete, this);
+				// Subscribe GlobalEventHandler to event "io:abort".
+				Y.on('io:abort', GlobalEventHandler.abort, this);
+				&lt;/script&gt;
+
+				// Start the trasnaction
+				var request = Y.io(uri, cfg);
+				</textarea>
+
+				<h4 id="headers">Setting HTTP Headers</h4>
+				<p>
+				IO can be set to send default HTTP Headers for all requests, in addition to any headers set in the configuration object. Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
+				</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
+				&lt;script&gt;
+				// Create a YUI instance using IO.
+				var Y = new YUI().use('io');
+
+				// Set a new default HTTP header.
+				Y.io.header('Content-Type', 'application/json');
+
+				// To remove an existing header, use the same method, but omit the value.
+				Y.io.header('Content-Type');
+				&lt;/script&gt;
+				</textarea>
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
-<?php 
+<?php
 include "../inc/support.inc";
 ?>
 
 		</div>
 <div class="yui-u sidebar">
 
-	<?php 
+	<?php
 	include "../inc/cheatsheet.inc";
 	?>
-			
+
 			<div id="examples">
-<?php 
+<?php
 	include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		   
+
 		   	<div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-				
+
 				<ul>
 					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
 				  	<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
@@ -147,8 +548,8 @@ include "../inc/support.inc";
 
 			   </ul>
 		   </div>
-		   
-<?php 
+
+<?php
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
 require_once('../inc/badge.inc');
 ?>
