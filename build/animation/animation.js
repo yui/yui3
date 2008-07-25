@@ -201,8 +201,6 @@ YUI.add('animation', function(Y) {
          */
         to: {},
 
-        keyframes: {},
-
         /**
          * Date stamp for the first frame of the animation.
          * @attribute startTime
@@ -460,7 +458,7 @@ YUI.add('animation', function(Y) {
                 
             for (var i in attr) {
                 if (attr.hasOwnProperty(i)) {
-                    attribute = attr[i][0];
+                    attribute = attr[i];
                     d = attribute.duration;
 
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
@@ -489,8 +487,8 @@ YUI.add('animation', function(Y) {
                 iterCount = this.get(ITERATION_COUNT);
 
             iterCount += 1;
-            if (iter == 'infinite' || iterCount < iter) {
-                if (this.get('direction') == 'alternate') {
+            if (iter === 'infinite' || iterCount < iter) {
+                if (this.get('direction') === 'alternate') {
                     this._flip();
                 }
                 this.fire('iteration', { frames: this._actualFrames });
@@ -504,92 +502,73 @@ YUI.add('animation', function(Y) {
         },
 
         _flip: function() {
-            var to = this.get('to') || {},
-                keyframes = this.get('keyframes') || {},
-                attr = Y.merge(this._attr, {}),
+            var attr = this._runtimeAttr,
                 customAttr = Y.Anim.behaviors;
 
-            if (to) {
-                keyframes[100] = to;
-            }
-
             Y.each(attr, function(val, name) {
-                Y.each(val, function(v, n) {
-                    if (name in customAttr && customAttr[name].reverse) {
-                        val[n] = customAttr[name].reverse(val[n]);
-                    } else {
-                        var b = val[n].to;
-                        var e = val[n].from;
-                        attr[name][n].from = b;
-                        attr[name][n].to = e;
-                    }
-                });
+                if (name in customAttr && customAttr[name].reverse) {
+                    val = customAttr[name].reverse(val);
+                } else {
+                    var b = val.to;
+                    var e = val.from;
+                    attr[name].from = b;
+                    attr[name].to = e;
+                }
+            });
 
-            }); // to is required TODO: by?
-
-            this._runtimeAttr = Y.merge(attr, {});
             _setPrivate(this, REVERSED, !this.get(REVERSED)); // flip reverse flag
         },
 
         _initAttr: function() {
             var from = this.get('from') || {},
                 to = this.get('to') || {},
-                duration = this.get('duration'),
+                dur = this.get('duration') * 1000,
                 node = this.get(NODE),
                 easing = this.get('easing') || {},
-                keyframes = this.get('keyframes') || {},
                 attr = {},
                 customAttr = Y.Anim.behaviors,
                 unit, begin, end;
 
-            if (to) {
-                keyframes[100] = to;
-            }
+            Y.each(to, function(val, name) {
+                if (typeof val === 'function') {
+                    val = val.call(this, node);
+                }
 
-            var prev = {};
-            Y.each(keyframes, function(v, frame) {
-                Y.each(v, function(val, name) {
-                    if (Y.Lang.isFunction(val)) {
-                        val = val.call(this, node);
-                    }
+                begin = from[name];
+                if (begin === undefined) {
+                    begin = (name in customAttr && 'get' in customAttr[name])  ?
+                            customAttr[name].get(node, name) : Y.Anim.DEFAULT_GETTER(node, name);
+                } else if (typeof begin === 'function') {
+                    begin = begin.call(this, node);
+                }
 
-                    var dur = duration * (parseInt(frame, 10) / 100) * 1000;
-                    var begin = prev[name] ? prev[name].to : from[name];
+                var mFrom = Y.Anim.RE_UNITS.exec(begin);
+                var mTo = Y.Anim.RE_UNITS.exec(val);
 
-                    if (begin === undefined) {
-                        begin = (name in customAttr && 'get' in customAttr[name])  ?
-                                customAttr[name].get(node, name) : Y.Anim.DEFAULT_GETTER(node, name);
-                    } else if (Y.Lang.isFunction(begin)) {
-                        begin = begin.call(this, node);
-                    }
+                begin = mFrom ? mFrom[1] : begin;
+                var end = mTo ? mTo[1] : val,
+                    unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
 
-                    var mFrom = Y.Anim.RE_UNITS.exec(begin);
-                    var mTo = Y.Anim.RE_UNITS.exec(val);
+                if (!unit && Y.Anim.RE_DEFAULT_UNIT.test(name)) {
+                    unit = Y.Anim.DEFAULT_UNIT;
+                }
 
-                    begin = mFrom ? mFrom[1] : begin;
-                    var end = mTo ? mTo[1] : val,
-                        unit = mTo ? mTo[2] : mFrom ?  mFrom[2] : ''; // one might be zero TODO: mixed units
+                if (!from || !to) {
+                    Y.fail('invalid from or to passed given for ' + name, 'Anim');
+                    return;
+                }
 
-                    if (!unit && Y.Anim.RE_DEFAULT_UNIT.test(name)) {
-                        unit = Y.Anim.DEFAULT_UNIT;
-                    }
+                attr[name] = {
+                    easing: easing,
+                    from: begin,
+                    to: end,
+                    duration: dur,
+                    unit: unit
+                };
 
-                    attr[name] = attr[name] || [];
-                    attr[name].push({
-                        easing: v.easing || easing,
-                        to: end,
-                        duration: dur,
-                        unit: unit,
-                        from: begin
-                    });
-
-                    prev[name] = attr[name];
-
-                });
             });
 
-            this._attr = attr;
-            this._runtimeAttr = Y.merge(attr, {});
+            this._runtimeAttr = attr;
         }
     };
 
@@ -1028,7 +1007,10 @@ Y.Anim.behaviors.scroll = {
 
 Y.Anim.behaviors.curve = {
     set: function(node, att, from, to, elapsed, duration, fn) {
+        from = from.slice.call(from);
+        to = to.slice.call(to);
         var t = fn(elapsed, 0, 100, duration) / 100;
+        to.unshift(from);
         node.setXY(Y.Anim.getBezier(to, t));
     },
 
@@ -1037,14 +1019,9 @@ Y.Anim.behaviors.curve = {
     },
 
     reverse: function(val) {
-        var to = [],
-            from  = val.from;
-       for (var i = 0, len = val.to.length; i < len; ++i) {
-            to.unshift(val.to[i]); 
-        } 
-
-        val.from = val.to.pop();
-        val.to = to;
+        val.to.reverse();
+        val.to.push(val.from);
+        val.from = val.to.shift();
         return val;
     }
 };
