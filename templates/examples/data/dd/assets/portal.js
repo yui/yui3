@@ -5,7 +5,7 @@ YUI({
 }).use('dd-dragdrop-all', 'animation', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
     //TODO - Pending loader/anim fix
-    Y.use('easing');
+    //Y.use('easing');
 
     //Setup some private variables..
     var goingUp = false, lastY = 0, crossList = false, trans = {};
@@ -145,7 +145,7 @@ YUI({
                             height: 0
                         },
                         duration: '.25',
-                        easing: Y.Easing.easeOut,
+                        //easing: Y.Easing.easeOut,
                         iteration: 1
                     });
                     //On the end, toggle the minned class
@@ -161,7 +161,7 @@ YUI({
                             height: (hUL)
                         },
                         duration: '.25',
-                        easing: Y.Easing.easeOut,
+                        //easing: Y.Easing.easeOut,
                         iteration: 1
                     });
                     //Toggle the minned class
@@ -191,7 +191,7 @@ YUI({
                         opacity: 0
                     },
                     duration: '.25',
-                    easing: Y.Easing.easeOut
+                    //easing: Y.Easing.easeOut
                 });
                 anim.on('end', function() {
                     //On end of the first anim, setup another to make it collapse
@@ -201,7 +201,7 @@ YUI({
                             height: 0
                         },
                         duration: '.25',
-                        easing: Y.Easing.easeOut
+                        //easing: Y.Easing.easeOut
                     });
                     anim.on('end', function() {
                         //Remove it from the document
