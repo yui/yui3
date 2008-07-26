@@ -2,13 +2,11 @@
 YUI({
     base: '../../build/',
     timeout: 1000
-}).use('dd-dragdrop-all', 'animation', 'io', 'cookie', 'json', function(Y) {
+}).use('dd-dragdrop-all', 'animation', 'easing', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
-    //TODO - Pending loader/anim fix
-    //Y.use('easing');
 
     //Setup some private variables..
-    var goingUp = false, lastY = 0, crossList = false, trans = {};
+    var goingUp = false, lastY = 0, trans = {};
 
     //The list of feeds that we are going to use
     var feeds = {
@@ -145,7 +143,7 @@ YUI({
                             height: 0
                         },
                         duration: '.25',
-                        //easing: Y.Easing.easeOut,
+                        easing: Y.Easing.easeOut,
                         iteration: 1
                     });
                     //On the end, toggle the minned class
@@ -161,7 +159,7 @@ YUI({
                             height: (hUL)
                         },
                         duration: '.25',
-                        //easing: Y.Easing.easeOut,
+                        easing: Y.Easing.easeOut,
                         iteration: 1
                     });
                     //Toggle the minned class
@@ -191,7 +189,7 @@ YUI({
                         opacity: 0
                     },
                     duration: '.25',
-                    //easing: Y.Easing.easeOut
+                    easing: Y.Easing.easeOut
                 });
                 anim.on('end', function() {
                     //On end of the first anim, setup another to make it collapse
@@ -201,7 +199,7 @@ YUI({
                             height: 0
                         },
                         duration: '.25',
-                        //easing: Y.Easing.easeOut
+                        easing: Y.Easing.easeOut
                     });
                     anim.on('end', function() {
                         //Remove it from the document
@@ -354,7 +352,7 @@ YUI({
         _createFeedDD(li, v);
     });
 
- 
+    //This does the calculations for when and where to move a module
     var _moveMod = function(drag, drop) {
         if (drag.get('node').hasClass('item')) {
             var dragNode = drag.get('node'),
@@ -412,6 +410,7 @@ YUI({
                     }
                 }
             }
+            //Resync all the targets because something moved..
             Y.Lang.later(50, Y, function() {
                 Y.DD.DDM.syncActiveShims(true);
             });
