@@ -285,6 +285,25 @@
                     this._groups[v] = true;
                 }, this);
             }
+        },
+        /**
+        * @attribute handles
+        * @description Array of valid handles to add. Adding something here will set all handles, even if previously added with addHandle
+        * @type Array
+        */
+        handles: {
+            value: null,
+            set: function(g) {
+                if (g) {
+                    this._handles = {};
+                    Y.each(g, function(v, k) {
+                        this._handles[v] = true;
+                    }, this);
+                } else {
+                    this._handles = null;
+                }
+                return g;
+            }
         }
     };
 
@@ -418,7 +437,7 @@
         * @private
         * @property _handles
         * @description A private hash of the valid drag handles
-        * @type {Array}
+        * @type {Object}
         */
         _handles: null,
         /**

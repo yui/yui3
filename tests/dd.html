@@ -95,6 +95,17 @@
                     Y.Assert.isInstanceOf(Y.DD.Drag, dd, 'dd: Drag Instance');
                     Y.Assert.isTrue(dd.get('node').hasClass('yui-dd-draggable'), 'dd: Drag Instance ClassName');
                 },
+                test_drag_add_handle: function() {
+                    Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
+                    dd.set('handles', ['h2']);
+                    Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
+                    Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+                    dd.set('handles', false);
+                    Y.Assert.isNull(dd._handles, 'dd: Handles NOT Null');
+                    dd.addHandle('h2');
+                    Y.Assert.isObject(dd._handles, 'dd: Handles not an object');
+                    Y.Assert.isTrue(dd._handles.h2, 'dd: Handles H2 not there');
+                },
                 test_drag_setup_events: function() {
                     Y.each(dd._yuievt.events, function(v, k) {
                         var handle = dd.on(k, _handleCount);
