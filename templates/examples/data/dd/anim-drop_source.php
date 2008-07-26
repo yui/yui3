@@ -76,7 +76,7 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
     var anims = Y.Node.all('div.anim');
     anims.each(function(v, k, items) {
         //Get a reference to the Node instance
-        var a = items.item(k);
+        var a = v; 
         //Add the FX plugin
         a.plug(Y.Plugin.NodeFX);
         //Add the Drop plugin
@@ -89,6 +89,20 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
                 height: 50
             },
             to: {
+<<<<<<< anim-drop_source.php
+                curve: function() {
+                    var points = [],
+                        n = 10;
+
+                    for (var i = 0; i < n; ++i) {
+                        points.push([
+                            Math.floor(Math.random()*Y.DOM.winWidth() - 60 - a.get('offsetWidth')),
+                            Math.floor(Math.random()*Y.DOM.winHeight() - a.get('offsetHeight'))
+                        ]);
+                    }
+                    return points;
+                }
+=======
                 left: function() {
                     //Get the width of the window
                     var dW = Y.Node.get('body').get('viewportRegion').right;
@@ -99,6 +113,7 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
                     return ((dW - aW) - 75); //Minus 75 for the dock
                 },
                 height: 100
+>>>>>>> 1.2
             },
             //Do the animation 20 times
             iterations: 20,
