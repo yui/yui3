@@ -1,4 +1,4 @@
-<?php 
+<?php
 $title="The Node Utility";
 $section="node";
 $component="Node Utility";
@@ -11,11 +11,11 @@ include "../inc/header.inc";
 		<div class="yui-ge">
 			<div class="yui-u first" id="main">
 			<!-- main column -->
-			
+
 				<h2><?php echo $component;?></h2>
-			
+
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					<p></p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -24,9 +24,8 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+										<li><a href="#node-using">Using YUI.Node</a></li>
+										<li><a href="#node-issues">Known Issues</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -38,108 +37,157 @@ include "../inc/header.inc";
 							include('../inc/quicklinks.inc');
 							?>
 						</div>
-					</div>				
+					</div>
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
-				<h3 id="start">Getting Started</h3>
-				
-				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
+				<h3 id="start">Getting Started</h3>
+
+				<h4 id="dependencies">Include Dependencies</h4>
+
+				<p>To use <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
+				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 				</textarea>
 
 				<?php
 				include "../inc/include-notice.inc";
 				?>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
+				<h4 id="using-node">Getting a Node</h4>
+				<p>
+                                <code>Node</code> is the primary method for interacting with DOM elements in YUI 3.  It works much the same as a normal HTMLElement.  The simplest way to get a <code>Node</code> instance is using your YUI instance's <code>get</code> method.
+				</p>
+				<p>
+                                <code>Y.get</code> accepts either an existing DOM element or a selector query.  If a selector query is used, the first matching element is used.
+				</p>
+				<p>
+                                This example demonstrates the two ways to <code>get</code> a node.
+				</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    var node1 = Y.get('#main');
+                                    var node2 = Y.get(document.body);
+                                });
+				</textarea>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<h3 id="node-using">Using Node</h3>
 
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
+					<li><a href="#node-properties">Accessing Node Properties</a></li>
+					<li><a href="#node-events">DOM Events</a></li>
+					<li><a href="#node-methods">DOM Methods</a></li>
+					<li><a href="#nodelist">NodeList</a></li>
+					<li><a href="#node-query">Node Queries</a></li>
 				</ul>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<table>
-					<thead>
-						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
-				</table>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
+				<h4 id="node-properties">Accessing Node Properties</h4>
 
+                                <p>Properties of the underlying DOM node are accessed via the <code>Y.Node</code> instance's <code>set</code> and <code>get</code> methods.  For simple property types (strings, numbers, booleans), these pass directly to/from the underlying node, but properties that normally return DOM nodes return <code>Y.Node</code> instances instead.</p>
+
+				<p>
+                                This is an example of getting and setting various properties.
+				</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    var node = Y.get('#foo');
+                                    var parent = node.get('parentNode'); // Node instance
+
+                                    var html = 'I am "' + node.get('id') + '".';
+                                    html += 'My parent is "' + parent.get('id') + '"';
+
+                                    node.set('innerHTML', html);
+                                });
+				</textarea>
+
+				<h4 id="node-events">DOM Events</h4>
+                                <p>DOM events can be listened for using the <code>on</code> method (an alias for <code>attach</code>).</p>
+                                <p>Event handlers receive a normalized event object as their argument.</p>
+                                <p>Note that all fields of the event object that would normally be DOM elements are now <code>Y.Node</code> instances.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    Y.get('#demo', on('click', function(e) {
+                                        e.preventDefault();
+                                        alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
+                                    });
+                                });
+				</textarea>
+
+
+				<h4 id="node-methods">DOM Methods</h4>
+                                <p>The <code>Y.Node</code> api provides all of the DOM methods you would expect, plus a few extras to help with common tasks.</p>
+                                <p>As with properties and events, any methods that would normally return DOM nodes instead return <code>Y.Node</code> instances.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    var node = Y.get('#demo');
+                                    var node2 = node.appendChild(Y.get('#foo p'));
+                                    node2.addClass('bar');
+                                });
+				</textarea>
+
+
+				<h4 id="nodelist">Using NodeList</h4>
+                                <p>The <code>Y.NodeList</code> provides a node-like interface for manipulating multiple nodes through a single interface.</p>
+                                <p>The <code>Y.all</code> method is the simplest way to get a <code>NodeList</code>.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    Y.all('#demo li').addClass('bar');
+                                });
+				</textarea>
+
+                                <p><code>Y.Node</code> api returns <code>Y.NodeList</code> instances when the DOM would normally return a collection of elements.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    Y.get('#demo').get('children').addClass('bar');
+                                });
+				</textarea>
+
+				<h4 id="node-query">Node Queries</h4>
+                                <p>Selector queries are a powerful way to test and manipulate nodes.  All <code>Y.Node</code> instances support <code>query</code>, <code>queryAll</code>, and <code>test</code>.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                YUI().use('*', function(Y)) {
+                                    var node = Y.get('#demo');
+
+                                    var node2 = node.query('p');
+                                    node2.addClass('bar'); // adds "bar" to the first P descendant of #demo
+
+                                    var nodeList = node.queryAll('p');
+                                    nodeList.addClass('bar'); // adds "bar" to all P descendants of #demo
+
+                                    if (node.test('.foo.bar')) { // "if node has both foo and bar classNames"
+                                        node.removeClass('bar');
+                                    }
+                                });
+				</textarea>
+
+				<p>For more information on selector queries, see the following W3C specifications:</p> 
+				<ul>
+					<li><a href="http://www.w3.org/TR/css3-selectors/">CSS Level 3 Selectors</a></li>
+					<li><a href="http://www.w3.org/TR/selectors-api/">Selectors API</a></li>
+				</ul>
 <?php # include "../inc/mobileSection.inc";?>
-<!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
-<?php 
+<?php
 include "../inc/support.inc";
 ?>
 
 		</div>
 <div class="yui-u sidebar">
 
-	<?php 
+	<?php
 	include "../inc/cheatsheet.inc";
 	?>
-			
+
 			<div id="examples">
-<?php 
+<?php
 	include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		   
+
 		   	<div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-				
+
 				<ul>
 					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
 				  	<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
@@ -147,8 +195,8 @@ include "../inc/support.inc";
 
 			   </ul>
 		   </div>
-		   
-<?php 
+
+<?php
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
 require_once('../inc/badge.inc');
 ?>
