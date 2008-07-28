@@ -17,6 +17,7 @@ span#demo {
 }
 
 div#demo {
+    position:relative;
     width:22em;
     overflow:hidden;
 }

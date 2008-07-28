@@ -1,1 +1,1 @@
-<link href="../data/animation/assets/anim.css" rel="stylesheet" type="text/css">
+<link href="<?php echo $assetsDirectory ?>/anim.css" rel="stylesheet" type="text/css">
