@@ -183,6 +183,24 @@ handler
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_context">context</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The execution context for all callbacks
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: this
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_data">data</a>
                                         <code>- object</code>
                                     </h4>
@@ -232,7 +250,7 @@ filters are:
 <dd>Selects the debug versions of the library (e.g., event-debug.js).
 This option will automatically include the logger widget</dd>
 <dt>RAW</dt>
-<dd>Selects the non-minified version of the library (e.g., event.js).
+<dd>Selects the non-minified version of the library (e.g., event.js).</dd>
 </dl>
 You can also define a custom filter, which must be an object literal 
 containing a search expression and a replace string:
@@ -431,24 +449,6 @@ service
                                     <hr />
                                     </div>
                                     <div class="">
-                                    <h4><a name="property_scope">scope</a>
-                                        <code>- object</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            The execution scope for all callbacks
-                                        </div>
-                                    </div>
-     
-                                        
-                                    <div class="default">
-                                        Default Value: this
-                                    </div>        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
                                     <h4><a name="property_sorted">sorted</a>
                                         <code>- string[]</code>
                                     </h4>
@@ -474,25 +474,6 @@ is called
                                             Timeout value in milliseconds.  If set, this value will be used by
 the get utility.  the timeout event will fire if
 a timeout occurs.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4><a name="property_varName">varName</a>
-                                        <code>- string</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            The name of a script node 
-(for external script support in Safari 2.x and earlier)
-to reference when the load is complete.  If this variable 
-is not available in the specified scripts, the operation will 
-fail.
                                         </div>
                                     </div>
      
@@ -1324,79 +1305,76 @@ as an onTimeout config option.
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class="private"><a href="#property__internalCallback">_internalCallback</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class="private"><a href="#property__useYahooListener">_useYahooListener</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_allowRollup">allowRollup</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_base">base</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_charset">charset</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_combine">combine</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_comboBase">comboBase</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_context">context</a>
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_data">data</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_dirty">dirty</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_filter">filter</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_force">force</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_ignore">ignore</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_ignoreRegistered">ignoreRegistered</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_insertBefore">insertBefore</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_inserted">inserted</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_loaded">loaded</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_loadOptional">loadOptional</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_moduleInfo">moduleInfo</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_required">required</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_rollups">rollups</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_root">root</a>
-                                        <!--<code>&lt;string&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_scope">scope</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_sorted">sorted</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_timeout">timeout</a>
-                                        <!--<code>&lt;string&gt;</code>-->
-                                </li>
-                                <li class=""><a href="#property_varName">varName</a>
-                                        <!--<code>&lt;string&gt;</code>-->
+                                        <!--<code>&lt;int&gt;</code>-->
                                 </li>
                         </ul>
                     </div>

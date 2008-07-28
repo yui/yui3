@@ -52,16 +52,99 @@
         
 
 <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">YUI</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span> <span class="o">||</span> <span class="o">!</span><span class="nx">YUI</span><span class="o">)</span> <span class="o">{</span>
+
     <span class="c">/**</span>
 <span class="c">     * The YUI global namespace object.  If YUI is already defined, the</span>
 <span class="c">     * existing YUI object will not be overwritten so that defined</span>
 <span class="c">     * namespaces are preserved.  </span>
+<span class="c">     *</span>
 <span class="c">     * @class YUI</span>
 <span class="c">     * @constructor</span>
 <span class="c">     * @global</span>
 <span class="c">     * @uses Event.Target</span>
-<span class="c">     * @param o configuration object</span>
+<span class="c">     * @param o Optional configuration object.  Options:</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     *  &lt;dt&gt;debug&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Turn debug statements on or off&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;useConsole&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Log to the browser console if debug is on and the console is available&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;logInclude&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;logExclude&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;throwFail&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.</span>
+<span class="c">     *  &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The target window/frame&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;doc&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The target document&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;core&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;A list of modules that defines the YUI core (overrides the default)&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;For event and get:&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;pollInterval&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The default poll interval&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;For loader&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;base&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The base dir&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;secureBase&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The secure base dir (not implemented)&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;comboBase&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;root&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;filter&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * A filter to apply to result urls.  This filter will modify the default</span>
+<span class="c">     * path for all modules.  The default path for the YUI library is the</span>
+<span class="c">     * minified version of the files (e.g., event-min.js).  The filter property</span>
+<span class="c">     * can be a predefined filter or a custom filter.  The valid predefined </span>
+<span class="c">     * filters are:</span>
+<span class="c">     * &lt;dl&gt;</span>
+<span class="c">     *  &lt;dt&gt;DEBUG&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Selects the debug versions of the library (e.g., event-debug.js).</span>
+<span class="c">     *      This option will automatically include the logger widget&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;RAW&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Selects the non-minified version of the library (e.g., event.js).&lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     * You can also define a custom filter, which must be an object literal </span>
+<span class="c">     * containing a search expression and a replace string:</span>
+<span class="c">     * &lt;pre&gt;</span>
+<span class="c">     *  myFilter: &amp;#123; </span>
+<span class="c">     *      &#39;searchExp&#39;: &quot;-min\\.js&quot;, </span>
+<span class="c">     *      &#39;replaceStr&#39;: &quot;-debug.js&quot;</span>
+<span class="c">     *  &amp;#125;</span>
+<span class="c">     * &lt;/pre&gt;</span>
+<span class="c">     *</span>
+<span class="c">     *  &lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;combine&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;ignore&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;A list of modules that should never be dynamically loaded&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;force&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;A list of modules that should always be loaded when required, even if already present on the page&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;Node or id for a node that should be used as the insertion point for new nodes&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;charset&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;charset for dynamic nodes&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;timeout&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;context&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;execution context for all callbacks&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;success&#39; event&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;onFailure&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;failure&#39; event&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;onTimeout&lt;/dt&gt;</span>
+<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;timeout&#39; event&lt;/dd&gt;</span>
+<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
+<span class="c">     * &lt;/dl&gt;</span>
 <span class="c">     */</span>
+
     <span class="c">/*global YUI*/</span>
     <span class="nx">YUI</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">Y</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
@@ -89,22 +172,7 @@
 <span class="c">     */</span>
     <span class="nx">_init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         
-    <span class="c">// @todo</span>
-<span class="c"></span>    <span class="c">// loadcfg {</span>
-<span class="c"></span>    <span class="c">//    base</span>
-<span class="c"></span>    <span class="c">//    securebase</span>
-<span class="c"></span>    <span class="c">//    filter</span>
-<span class="c"></span>    <span class="c">//    win</span>
-<span class="c"></span>    <span class="c">//    doc</span>
-<span class="c"></span>    <span class="c">//    debug</span>
-<span class="c"></span>    <span class="c">//    useConsole</span>
-<span class="c"></span>    <span class="c">//    logInclude</span>
-<span class="c"></span>    <span class="c">//    logExclude</span>
-<span class="c"></span>    <span class="c">//    throwFail</span>
-<span class="c"></span>    <span class="c">//    pollInterval</span>
-<span class="c"></span>    <span class="c">//    core</span>
-<span class="c"></span>    <span class="c">// }</span>
-<span class="c"></span>
+
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
 
         <span class="c">// find targeted window and @TODO create facades</span>
@@ -148,22 +216,9 @@
 <span class="c">     */</span>
     <span class="nx">_setup</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">use</span><span class="o">(</span><span class="s2">&quot;yui&quot;</span><span class="o">);</span>
-        <span class="c">// make a shallow copy of the config.  This won&#39;t fix nested configs</span>
-<span class="c"></span>        <span class="c">// so we need to determine if we only allow one level (probably) or</span>
-<span class="c"></span>        <span class="c">// if we make clone create references for functions and elements.</span>
+        <span class="c">// @TODO eval the need to copy the config</span>
 <span class="c"></span>        <span class="k">this</span><span class="o">.</span><span class="nx">config</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">merge</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
-        <span class="c">// this.mix(c, {</span>
-<span class="c"></span>          <span class="c">//   debug: true,</span>
-<span class="c"></span>            <span class="c">// useConsole: true</span>
-<span class="c"></span>            <span class="c">// // , throwFail: false</span>
-<span class="c"></span>        <span class="c">// });</span>
-<span class="c"></span>        <span class="c">// this.config = c;</span>
-<span class="c"></span>
-        <span class="c">// this.publish(&#39;yui:load&#39;);</span>
-<span class="c"></span>        <span class="c">// this.publish(&#39;yui:log&#39;, {</span>
-<span class="c"></span>        <span class="c">//     silent: true</span>
-<span class="c"></span>        <span class="c">// });</span>
-<span class="c"></span>    <span class="o">},</span>
+    <span class="o">},</span>
 
     <span class="c">/**</span>
 <span class="c">     * Executes a method on a YUI instance with</span>
@@ -193,7 +248,7 @@
                 <span class="nx">m</span> <span class="o">=</span> <span class="nx">m</span><span class="o">[</span><span class="nx">nest</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
 
                 <span class="k">if</span> <span class="o">(!</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">this</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;applyTo failure: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">fail</span><span class="o">(</span><span class="s1">&#39;applyTo not found: &#39;</span> <span class="o">+</span> <span class="nx">method</span><span class="o">);</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
@@ -501,8 +556,9 @@
 <span class="c">     * @return {YUI} this YUI instance</span>
 <span class="c">     */</span>
     <span class="nx">fail</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="nx">e</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">);</span>
-
+        <span class="k">var</span> <span class="nx">instance</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+        <span class="nx">instance</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s2">&quot;error&quot;</span><span class="o">);</span> <span class="c">// don&#39;t scrub this one</span>
+<span class="c"></span>
         <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">throwFail</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">throw</span> <span class="nx">e</span> <span class="o">||</span> <span class="k">new</span> <span class="nb">Error</span><span class="o">(</span><span class="nx">msg</span><span class="o">);</span>
         <span class="o">}</span>

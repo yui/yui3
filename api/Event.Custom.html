@@ -127,6 +127,24 @@ the debug system
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_broadcast">broadcast</a>
+                                        <code>- int</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            If 0, this event does not broadcast.  If 1, the YUI instance is notified
+every time this event fires.  If 2, the YUI instance and the YUI global
+(if event is enabled on the global) are notified every time this event
+fires.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_bubbles">bubbles</a>
                                         <code>- boolean</code>
                                     </h4>
@@ -703,6 +721,40 @@ true otherwise</dd>
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_preventDefault">preventDefault</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>preventDefault</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Prevents the execution of this event's defaultFn
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_stopImmediatePropagation">stopImmediatePropagation</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1119,6 +1171,9 @@ the execution context.
                                 <li class=""><a href="#property_afters">afters</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
+                                <li class=""><a href="#property_broadcast">broadcast</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
                                 <li class=""><a href="#property_bubbles">bubbles</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
@@ -1184,6 +1239,9 @@ the execution context.
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_log">log</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_preventDefault">preventDefault</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_stopImmediatePropagation">stopImmediatePropagation</a>

@@ -330,11 +330,11 @@
         <span class="c">// this.onProgress = null;</span>
 <span class="c"></span>
         <span class="c">/**</span>
-<span class="c">         * The execution scope for all callbacks</span>
-<span class="c">         * @property scope</span>
+<span class="c">         * The execution context for all callbacks</span>
+<span class="c">         * @property context</span>
 <span class="c">         * @default this</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * Data that is passed to all callbacks</span>
@@ -356,17 +356,6 @@
 <span class="c">         * @default utf-8</span>
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">charset</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
-
-        <span class="c">/**</span>
-<span class="c">         * The name of a script node </span>
-<span class="c">         * (for external script support in Safari 2.x and earlier)</span>
-<span class="c">         * to reference when the load is complete.  If this variable </span>
-<span class="c">         * is not available in the specified scripts, the operation will </span>
-<span class="c">         * fail.  </span>
-<span class="c">         * @property varName</span>
-<span class="c">         * @type string</span>
-<span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">varName</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * The base directory.</span>
@@ -453,7 +442,7 @@
 <span class="c">         *  &lt;dd&gt;Selects the debug versions of the library (e.g., event-debug.js).</span>
 <span class="c">         *      This option will automatically include the logger widget&lt;/dd&gt;</span>
 <span class="c">         *  &lt;dt&gt;RAW&lt;/dt&gt;</span>
-<span class="c">         *  &lt;dd&gt;Selects the non-minified version of the library (e.g., event.js).</span>
+<span class="c">         *  &lt;dd&gt;Selects the non-minified version of the library (e.g., event.js).&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * You can also define a custom filter, which must be an object literal </span>
 <span class="c">         * containing a search expression and a replace string:</span>
@@ -570,7 +559,7 @@
                             <span class="k">this</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                         <span class="c">// support the old callback syntax</span>
 <span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">i</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;on&#39;</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="nx">i</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">2</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">(),</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                            <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="nx">i</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">2</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">(),</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">o</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">);</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                             <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                         <span class="o">}</span>
@@ -1262,7 +1251,7 @@
                         <span class="nx">insertBefore</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">,</span>
                         <span class="nx">charset</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">charset</span><span class="o">,</span>
                         <span class="nx">timeout</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">timeout</span><span class="o">,</span>
-                        <span class="nx">scope</span><span class="o">:</span> <span class="nx">self</span> 
+                        <span class="nx">context</span><span class="o">:</span> <span class="nx">self</span> 
                     <span class="o">});</span>
 
                     <span class="k">return</span><span class="o">;</span>
@@ -1351,11 +1340,10 @@
                         <span class="nx">onSuccess</span><span class="o">:</span> <span class="nx">onsuccess</span><span class="o">,</span>
                         <span class="nx">insertBefore</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">insertBefore</span><span class="o">,</span>
                         <span class="nx">charset</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">charset</span><span class="o">,</span>
-                        <span class="nx">varName</span><span class="o">:</span> <span class="nx">m</span><span class="o">.</span><span class="nx">varName</span><span class="o">,</span>
                         <span class="nx">onFailure</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onFailure</span><span class="o">,</span>
                         <span class="nx">onTimeout</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_onTimeout</span><span class="o">,</span>
                         <span class="nx">timeout</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">timeout</span><span class="o">,</span>
-                        <span class="nx">scope</span><span class="o">:</span> <span class="nx">self</span> 
+                        <span class="nx">context</span><span class="o">:</span> <span class="nx">self</span> 
                     <span class="o">});</span>
 
                     <span class="k">return</span><span class="o">;</span>

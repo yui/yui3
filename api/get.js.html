@@ -162,7 +162,7 @@
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="c">// execute failure callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
             <span class="nx">q</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">,</span> <span class="nx">msg</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -240,7 +240,7 @@
 
         <span class="c">// execute success callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
             <span class="nx">q</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -255,7 +255,7 @@
         <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Get utility timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">)</span> <span class="o">{</span>
-            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+            <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
             <span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">sc</span><span class="o">,</span> <span class="nx">_returnData</span><span class="o">(</span><span class="nx">q</span><span class="o">));</span>
         <span class="o">}</span>
     <span class="o">};</span>
@@ -397,7 +397,7 @@
 
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">win</span> <span class="o">||</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">.</span><span class="nx">win</span><span class="o">;</span>
-        <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">scope</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
+        <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">=</span> <span class="o">(</span><span class="s2">&quot;autopurge&quot;</span> <span class="k">in</span> <span class="nx">q</span><span class="o">)</span> <span class="o">?</span> <span class="nx">q</span><span class="o">.</span><span class="nx">autopurge</span> <span class="o">:</span> 
                       <span class="o">(</span><span class="nx">type</span> <span class="o">===</span> <span class="s2">&quot;script&quot;</span><span class="o">)</span> <span class="o">?</span> <span class="kc">true</span> <span class="o">:</span> <span class="kc">false</span><span class="o">;</span>
 
@@ -562,7 +562,7 @@
 <span class="c">         * &lt;dt&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;scope&lt;/dt&gt;</span>
+<span class="c">         * &lt;dt&gt;context&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>
@@ -599,7 +599,7 @@
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onSuccess: function(o) &amp;#123;</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;console.log(o.data); // foo</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;new Y.DDProxy(&quot;dd1&quot;); // also new o.reference(&quot;dd1&quot;); would work</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(&quot;won&#39;t cause error because Y is the scope&quot;);</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(&quot;won&#39;t cause error because Y is the context&quot;);</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(o.nodes.length === 2) // true</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// o.purge(); // optionally remove the script nodes immediately</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
@@ -607,7 +607,7 @@
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;console.log(&quot;transaction failed&quot;);</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;data: &quot;foo&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;scope: Y,</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;context: Y,</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// win: otherframe // target another window/frame</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;autopurge: true // allow the utility to choose when to remove the nodes</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
@@ -645,7 +645,7 @@
 <span class="c">         * &lt;dt&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;scope&lt;/dt&gt;</span>
+<span class="c">         * &lt;dt&gt;context&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;the execution context for the callbacks&lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;a window other than the one the utility occupies&lt;/dd&gt;</span>

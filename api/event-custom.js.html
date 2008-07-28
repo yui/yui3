@@ -48,6 +48,8 @@
 
         <span class="nx">CONFIGS</span> <span class="o">=</span> <span class="o">[</span>
 
+            <span class="s1">&#39;broadcast&#39;</span><span class="o">,</span>
+
             <span class="s1">&#39;bubbles&#39;</span><span class="o">,</span>
 
             <span class="s1">&#39;context&#39;</span><span class="o">,</span>
@@ -155,6 +157,16 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">;</span>
 
         <span class="k">this</span><span class="o">.</span><span class="nx">logSystem</span> <span class="o">=</span> <span class="o">(</span><span class="nx">type</span> <span class="o">==</span> <span class="s2">&quot;yui:log&quot;</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * If 0, this event does not broadcast.  If 1, the YUI instance is notified</span>
+<span class="c">         * every time this event fires.  If 2, the YUI instance and the YUI global</span>
+<span class="c">         * (if event is enabled on the global) are notified every time this event</span>
+<span class="c">         * fires.</span>
+<span class="c">         * @property broadcast</span>
+<span class="c">         * @type int</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">broadcast</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * By default all custom events are logged in the debug build, set silent</span>
@@ -741,6 +753,10 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
+        <span class="c">/**</span>
+<span class="c">         * Prevents the execution of this event&#39;s defaultFn</span>
+<span class="c">         * @method preventDefault</span>
+<span class="c">         */</span>
         <span class="nx">preventDefault</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
             <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">preventable</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">this</span><span class="o">.</span><span class="nx">prevented</span> <span class="o">=</span> <span class="m">1</span><span class="o">;</span>

@@ -14,16 +14,99 @@
         
 
 if (typeof YUI === 'undefined' || !YUI) {
+
     /**
      * The YUI global namespace object.  If YUI is already defined, the
      * existing YUI object will not be overwritten so that defined
      * namespaces are preserved.  
+     *
      * @class YUI
      * @constructor
      * @global
      * @uses Event.Target
-     * @param o configuration object
+     * @param o Optional configuration object.  Options:
+     * <dl>
+     *  <dt>debug</dt>
+     *  <dd>Turn debug statements on or off</dd>
+     *  <dt>useConsole</dt>
+     *  <dd>Log to the browser console if debug is on and the console is available</dd>
+     *  <dt>logInclude</dt>
+     *  <dd>A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</dd>
+     *  <dt>logExclude</dt>
+     *  <dd>A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</dd>
+     *  <dt>throwFail</dt>
+     *  <dd>If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
+     *  <dt>win</dt>
+     *  <dd>The target window/frame</dd>
+     *  <dt>doc</dt>
+     *  <dd>The target document</dd>
+     *  <dt>core</dt>
+     *  <dd>A list of modules that defines the YUI core (overrides the default)</dd>
+     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
+     *  <dt>For event and get:</dt>
+     *  <dd>-------------------------------------------------------------------</dd>
+     *  <dt>pollInterval</dt>
+     *  <dd>The default poll interval</dd>
+     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
+     *  <dt>For loader</dt>
+     *  <dd>-------------------------------------------------------------------</dd>
+     *  <dt>base</dt>
+     *  <dd>The base dir</dd>
+     *  <dt>secureBase</dt>
+     *  <dd>The secure base dir (not implemented)</dd>
+     *  <dt>comboBase</dt>
+     *  <dd>The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</dd>
+     *  <dt>root</dt>
+     *  <dd>The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</dd>
+     *  <dt>filter</dt>
+     *  <dd>
+     *
+     * A filter to apply to result urls.  This filter will modify the default
+     * path for all modules.  The default path for the YUI library is the
+     * minified version of the files (e.g., event-min.js).  The filter property
+     * can be a predefined filter or a custom filter.  The valid predefined 
+     * filters are:
+     * <dl>
+     *  <dt>DEBUG</dt>
+     *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
+     *      This option will automatically include the logger widget</dd>
+     *  <dt>RAW</dt>
+     *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+     * </dl>
+     * You can also define a custom filter, which must be an object literal 
+     * containing a search expression and a replace string:
+     * <pre>
+     *  myFilter: &#123; 
+     *      'searchExp': "-min\\.js", 
+     *      'replaceStr': "-debug.js"
+     *  &#125;
+     * </pre>
+     *
+     *  </dd>
+     *  <dt>combine</dt>
+     *  <dd>Use the YUI combo service to reduce the number of http connections required to load your dependencies</dd>
+     *  <dt>ignore</dt>
+     *  <dd>A list of modules that should never be dynamically loaded</dd>
+     *  <dt>force</dt>
+     *  <dd>A list of modules that should always be loaded when required, even if already present on the page</dd>
+     *  <dt>insertBefore</dt>
+     *  <dd>Node or id for a node that should be used as the insertion point for new nodes</dd>
+     *  <dt>charset</dt>
+     *  <dd>charset for dynamic nodes</dd>
+     *  <dt>timeout</dt>
+     *  <dd>number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</dd>
+     *  <dt>context</dt>
+     *  <dd>execution context for all callbacks</dd>
+     *  <dt>onSuccess</dt>
+     *  <dd>callback to subscribe to the 'success' event</dd>
+     *  <dt>onFailure</dt>
+     *  <dd>callback to subscribe to the 'failure' event</dd>
+     *  <dt>onTimeout</dt>
+     *  <dd>callback to subscribe to the 'timeout' event</dd>
+     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
+     * </dl>
      */
+
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
@@ -51,21 +134,6 @@ YUI.prototype = {
      */
     _init: function(o) {
         
-    // @todo
-    // loadcfg {
-    //    base
-    //    securebase
-    //    filter
-    //    win
-    //    doc
-    //    debug
-    //    useConsole
-    //    logInclude
-    //    logExclude
-    //    throwFail
-    //    pollInterval
-    //    core
-    // }
 
         o = o || {};
 
@@ -109,21 +177,8 @@ YUI.prototype = {
      */
     _setup: function(o) {
         this.use("yui");
-        // make a shallow copy of the config.  This won't fix nested configs
-        // so we need to determine if we only allow one level (probably) or
-        // if we make clone create references for functions and elements.
+        // @TODO eval the need to copy the config
         this.config = this.merge(this.config);
-        // this.mix(c, {
-          //   debug: true,
-            // useConsole: true
-            // // , throwFail: false
-        // });
-        // this.config = c;
-
-        // this.publish('yui:load');
-        // this.publish('yui:log', {
-        //     silent: true
-        // });
     },
 
     /**
@@ -154,7 +209,7 @@ YUI.prototype = {
                 m = m[nest[i]];
 
                 if (!m) {
-                    this.fail('applyTo failure: ' + method);
+                    this.fail('applyTo not found: ' + method);
                 }
             }
 
@@ -449,6 +504,8 @@ YUI.prototype = {
      * @return {YUI} this YUI instance
      */
     fail: function(msg, e) {
+        var instance = this;
+        instance.log(msg, "error"); // don't scrub this one
 
         if (this.config.throwFail) {
             throw e || new Error(msg);
@@ -1927,6 +1984,8 @@ YUI.add("event-custom", function(Y) {
 
         CONFIGS = [
 
+            'broadcast',
+
             'bubbles',
 
             'context',
@@ -2032,6 +2091,16 @@ YUI.add("event-custom", function(Y) {
          */
         this.context = Y;
 
+
+        /**
+         * If 0, this event does not broadcast.  If 1, the YUI instance is notified
+         * every time this event fires.  If 2, the YUI instance and the YUI global
+         * (if event is enabled on the global) are notified every time this event
+         * fires.
+         * @property broadcast
+         * @type int
+         */
+        this.broadcast = 0;
 
         /**
          * By default all custom events are logged in the debug build, set silent
@@ -2607,6 +2676,10 @@ YUI.add("event-custom", function(Y) {
             }
         },
 
+        /**
+         * Prevents the execution of this event's defaultFn
+         * @method preventDefault
+         */
         preventDefault: function() {
             if (this.preventable) {
                 this.prevented = 1;
@@ -2855,18 +2928,41 @@ YUI.add("event-target", function(Y) {
          *
          *  <ul>
          *    <li>
-         *      context: defines the default execution context.  If not defined
-         *      the default context will be this instance.
+         *   'broadcast': whether or not the YUI instance and YUI global are notified when the event is fired (false)
          *    </li>
          *    <li>
-         *      silent: if true, the custom event will not generate log messages.
-         *      This is false by default.
+         *   'bubbles': whether or not this event bubbles (true)
          *    </li>
          *    <li>
-         *      onSubscribeCallback: specifies a callback to execute when the
-         *      event has a new subscriber.  This will fire immediately for
-         *      each queued subscriber if any exist prior to the creation of
-         *      the event.
+         *   'context': the default execution context for the listeners (this)
+         *    </li>
+         *    <li>
+         *   'defaultFn': the default function to execute when this event fires if preventDefault was not called
+         *    </li>
+         *    <li>
+         *   'emitFacade': whether or not this event emits a facade (false)
+         *    </li>
+         *    <li>
+         *   'fireOnce': if an event is configured to fire once, new subscribers after
+         *   the fire will be notified immediately.
+         *    </li>
+         *    <li>
+         *   'preventable': whether or not preventDefault() has an effect (true)
+         *    </li>
+         *    <li>
+         *   'preventedFn': a function that is executed when preventDefault is called
+         *    </li>
+         *    <li>
+         *   'queuable': whether or not this event can be queued during bubbling (false)
+         *    </li>
+         *    <li>
+         *   'silent': if silent is true, debug messages are not provided for this event.
+         *    </li>
+         *    <li>
+         *   'stoppedFn': a function that is executed when stopPropagation is called
+         *    </li>
+         *    <li>
+         *   'type': the event type (valid option if not provided as the first parameter to publish)
          *    </li>
          *  </ul>
          *
