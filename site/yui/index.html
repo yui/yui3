@@ -16,7 +16,7 @@ include "../inc/header.inc";
 			
 				<div id="promo" class="component">
                     <p>The YUI Global Object provides a single global starting point which all of the YUI Library code interacts with. It must be included on every page that utilizes the YUI Library, and it must appear before any of the other YUI components.</p>
-                    <p>The YUI Global Object also contains a number of methods that are used throughout the library, however it should not be used in it's default state. The YUI Global Object is an instatiatable object used to create YUI instances.</p>
+                    <p>The YUI Global Object also contains a number of methods that are used throughout the library, however it should not be used in its default state. The YUI Global Object is an instatiatable object used to create YUI instances.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -84,10 +84,10 @@ include "../inc/header.inc";
                     <li><strong>Backward Compatibility</strong>: With the change from <code>YAHOO</code> to <code>YUI</code> we are guaranteed not to break backward compatibility. This allows you to use both YUI 2.x and YUI 3.x on 
                     the same page without fear of breaking existing code.</li>
                     <li><strong>Sandboxing</strong>: The new YUI Global Object is now smarter than ever, allowing you to create an instance of YUI in your own namespace and only load the modules that you need.
-                    It makes it easier for multiple developers to work on different parts of the page with different modules with less worry of them stepping on each others toes.</li>
+                    It makes it easier for multiple developers to work on different parts of the page with different modules with less worry of them stepping on each other's toes.</li>
                     <li><strong>Versioning</strong> <em>(future)</em>: In the future YUI modules will be version stamped. For easier mixing of old and new modules on the same page.</li>
                     <li><strong>More Dynamic</strong>: With Loader built into the core, loading files when you need them just got easier.</li>
-                    <li><strong>Selector Powered</strong>: Using Selector as it's base for node handling, you now get more power and ease of use for free.</li>
+                    <li><strong>Selector Powered</strong>: Using Selector as its base for node handling, you now get more power and ease of use for free.</li>
                     <li><strong>Event Normalization</strong>: With the new Event Facade, you get maximum event normalization for cleaner cross browser code.</li>
                 </ol>
 
@@ -263,7 +263,7 @@ include "../inc/header.inc";
 				
 				<h4 id="loader">Loader</h4>
                 <p>Loader's functionality is now built into the YUI Global Object (as long as it's on the page) and puts its power behind the <code>YUI.use</code> method.</p>
-                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and it's dependencies) and load them into your YUI instance.</p>
+                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and its dependencies) and load them into your YUI instance.</p>
                 <p>You need to include <code>yui.js</code>, <code>loader.js</code> and <code>get.js</code> for this to function properly.</p>
                 <textarea name="code" class="JScript">
                     YUI({
