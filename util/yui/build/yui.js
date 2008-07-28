@@ -3561,8 +3561,9 @@ YUI.add("event-dom", function(Y) {
 
                         // check to see if we need to delay hooking up the event 
                         // until after the page loads.
-                        if (oEl) {
-                            if (oEl.size() > 1) {
+                        var size = oEl.size();
+                        if (size) {
+                            if (size > 1) {
                                 aa[0] = oEl;
                                 return E.addListener.apply(E, aa);
                             } else {

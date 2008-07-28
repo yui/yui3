@@ -343,8 +343,9 @@
 <span class="c"></span>
                         <span class="c">// check to see if we need to delay hooking up the event </span>
 <span class="c"></span>                        <span class="c">// until after the page loads.</span>
-<span class="c"></span>                        <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">if</span> <span class="o">(</span><span class="nx">oEl</span><span class="o">.</span><span class="nx">size</span><span class="o">()</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
+<span class="c"></span>                        <span class="k">var</span> <span class="nx">size</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">.</span><span class="nx">size</span><span class="o">();</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">size</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                                 <span class="nx">aa</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">oEl</span><span class="o">;</span>
                                 <span class="k">return</span> <span class="nx">E</span><span class="o">.</span><span class="nx">addListener</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">E</span><span class="o">,</span> <span class="nx">aa</span><span class="o">);</span>
                             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
