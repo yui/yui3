@@ -210,7 +210,11 @@ if(! $examples[$name]) {
 			if (file_exists($filename)) {
 
 				$prepend .= "\n\n<!--begin custom header content for this example-->\n";
-				$prepend .= file_get_contents($filename);
+				if($ydn) {
+					$prepend .= file_get_contents($filename);
+				} else {
+					$customHeader = $filename;
+				}
 				$prepend .= "\n<!--end custom header content for this example-->\n\n";
 				
 			} else {

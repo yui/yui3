@@ -51,6 +51,10 @@ if(isset($loader)) { //this header used by some files with no loader usage
 if ($prepend) { /*there is additional css or header information for this page -- perhaps some use of YUI and/or custom css -- that is meant to be inserted in the document head*/
     echo $prepend;
 }
+
+if ($customHeader) {
+	include($customHeader);
+}
 ?>
 
 </head>
