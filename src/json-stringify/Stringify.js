@@ -1,6 +1,6 @@
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
- * @module JSON
+ * @module json
  * @class JSON
  * @static
  */
