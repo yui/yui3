@@ -20,11 +20,11 @@ $nav[]=array('', '', 'YUI 3 Core', '');
 $nav[]=array('yui','/yui/','YUI (Global Object)', 'YUI Global Object');
 $nav[]=array('dom','/dom/','DOM', 'DOM');
 $nav[]=array('node','/node/','Node', 'Node');
-$nav[]=array('attribute','/attribute/','Attribute', 'Attribute');
-$nav[]=array('base','/base/','Base', 'Base');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
+$nav[]=array('attribute','/attribute/','Attribute', 'Attribute');
 $nav[]=array('animation','/animation/','Animation', 'Animation');
+$nav[]=array('base','/base/','Base', 'Base');
 $nav[]=array('compat','/compat/','Compat', 'Compat');
 $nav[]=array('cookie','/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/dd/','Drag & Drop', 'Drag & Drop');
@@ -111,7 +111,8 @@ for ($i=0; $i<count($nav); $i++)
 		if($sect=="groups") {
 			echo " <img src='http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/bsc/post12_1.gif'>";
 		}
-		$aBeta = array("selector", "profiler", "profilerviewer", "imagecropper", "resize", "layout",  "element", "editor", "datasource", "datatable", "yuiloader", "cookie");
+		$aBeta = array();
+//		$aBeta = array("selector", "profiler", "profilerviewer", "imagecropper", "resize", "layout",  "element", "editor", "datasource", "datatable", "yuiloader", "cookie");
 		if(in_array($sect, $aBeta)) {
 			echo " <img src='http://us.i1.yimg.com/us.yimg.com/i/not/beta_1.gif'>";
 		}
