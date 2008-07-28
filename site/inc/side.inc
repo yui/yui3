@@ -42,8 +42,8 @@ $nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
 $nav[]=array('', '', 'CSS', '');
 $nav[]=array('reset','/reset/','CSS Reset', 'CSS Reset');
 $nav[]=array('fonts','/fonts/','CSS Fonts', 'CSS Fonts');
-// $nav[]=array('grids','/grids/','CSS Grids', 'CSS Grids');
-// $nav[]=array('base','/base/','CSS Base', 'CSS Base');
+$nav[]=array('grids','/grids/','CSS Grids', 'CSS Grids');
+$nav[]=array('base','/base/','CSS Base', 'CSS Base');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog', 'The Yahoo! User Interface Blog');
