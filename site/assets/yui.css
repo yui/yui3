@@ -382,13 +382,27 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 #toc ul li.sect { font-weight:bold; color:#fff; background:#89d; padding:2px 0; text-indent:2px; margin-top:2px;}
 #toc ul li.first {margin-top:0;}*/
 
+
+.apisummary table,
 table {width:100%;margin-bottom:1em;}
+ 
+.apisummary table tr,
 table tr {vertical-align:top;}
+
+.apisummary table caption,
 table caption {display:none;}
+
+.apisummary table th,
 table th {background-color:#6c8ea1;color:#FFF;text-transform:uppercase;font-weight:bold;}
+
+.apisummary table td,
 table td {background-color:#e5edf1;}
+
+.apisummary table th,
+.apisummary table td,
 table th, table td {padding:5px;border:2px solid #fff;}
-tr {background-color:#f5f8f9;}
+
+.apisummary table tr {background-color:#f5f8f9;}
 dl {margin:0;}
 dl dt {
 	/*giving UL's LIs generated numbers*/
