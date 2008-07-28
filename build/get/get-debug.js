@@ -125,7 +125,7 @@ Y.Get = function() {
         var q = queues[id];
         // execute failure callback
         if (q.onFailure) {
-            var sc=q.scope || q;
+            var sc=q.context || q;
             q.onFailure.call(sc, _returnData(q, msg));
         }
     };
@@ -203,7 +203,7 @@ Y.Get = function() {
 
         // execute success callback
         if (q.onSuccess) {
-            var sc=q.scope || q;
+            var sc=q.context || q;
             q.onSuccess.call(sc, _returnData(q));
         }
     };
@@ -218,7 +218,7 @@ Y.Get = function() {
         Y.log("Get utility timeout " + id);
         var q = queues[id];
         if (q.onTimeout) {
-            var sc=q.scope || q;
+            var sc=q.context || q;
             q.onTimeout.call(sc, _returnData(q));
         }
     };
@@ -360,7 +360,7 @@ Y.Get = function() {
 
         var q = queues[id];
         q.win = q.win || Y.config.win;
-        q.scope = q.scope || q;
+        q.context = q.context || q;
         q.autopurge = ("autopurge" in q) ? q.autopurge : 
                       (type === "script") ? true : false;
 
@@ -525,7 +525,7 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
-         * <dt>scope</dt>
+         * <dt>context</dt>
          * <dd>the execution context for the callbacks</dd>
          * <dt>win</dt>
          * <dd>a window other than the one the utility occupies</dd>
@@ -562,7 +562,7 @@ Y.Get = function() {
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(o.data); // foo
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new Y.DDProxy("dd1"); // also new o.reference("dd1"); would work
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the scope");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the context");
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log(o.nodes.length === 2) // true
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
@@ -570,7 +570,7 @@ Y.Get = function() {
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("transaction failed");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
-         * &nbsp;&nbsp;&nbsp;&nbsp;scope: Y,
+         * &nbsp;&nbsp;&nbsp;&nbsp;context: Y,
          * &nbsp;&nbsp;&nbsp;&nbsp;// win: otherframe // target another window/frame
          * &nbsp;&nbsp;&nbsp;&nbsp;autopurge: true // allow the utility to choose when to remove the nodes
          * &nbsp;&nbsp;&#125;);
@@ -608,7 +608,7 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
-         * <dt>scope</dt>
+         * <dt>context</dt>
          * <dd>the execution context for the callbacks</dd>
          * <dt>win</dt>
          * <dd>a window other than the one the utility occupies</dd>
