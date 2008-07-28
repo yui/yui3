@@ -7,21 +7,22 @@ $releasenotes = true;
 include "../inc/header.inc";
 ?>
 <div id="yui-main">
-	<div class="yui-b">
-		<div class="yui-ge">
-			<div class="yui-u first" id="main">
-			<!-- main column -->
-			
-				<h2><?php echo $component;?></h2>
-			
-				<div id="promo" class="component">
-					<p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The Attribute interface
+    <div class="yui-b">
+        <div class="yui-ge">
+            <div class="yui-u first" id="main">
+            <!-- main column -->
+
+                <h2><?php echo $component;?></h2>
+
+                <div id="promo" class="component">
+                    <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The Attribute interface
                        provides <code>get</code> and <code>set</code> methods for attribute access, in addition to supporting Attribute value change events, 
                        allowing you listen for changes in attribute values, and optionally prevent changes from occuring.</p>
 
                     <p>Attributes added through the Attribute interface can be configured to with custom get, set and validation handlers and can also be specified as 
                     read-only or write-once. It also provides the ability to configure attibutes to protect their stored values, using a deep or shallow clone when returning
                     values through <code>get</code></p>
+
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -30,9 +31,9 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#apply">Applying The Attribute Interface</a></li>
+										<li><a href="#augment">Augmenting Your Class With Attribute</a></li>
 										<li><a href="#adding">Adding Attributes</a></li>
-                                        <li><a href="#configuration">Attribute Configuration</a></li>
+                                        <li><a href="#configuration">Attribute Configuration Properties</a></li>
 										<li><a href="#events">Attribute Change Events</a></li>
 										<li><a href="#subattrs">Getting/Setting Sub Attribute Values</a></li>
 										</ul></li>
@@ -46,14 +47,14 @@ include "../inc/header.inc";
 							include('../inc/quicklinks.inc');
 							?>
 						</div>
-					</div>				
+					</div>
 					<div class="clear"></div>
 				</div><!-- /promo -->
 
 				<h3 id="start">Getting Started</h3>
 
 				<h4 id="dependencies">Include Dependencies</h4>
-				
+
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Dependencies --&gt;
@@ -63,17 +64,17 @@ include "../inc/header.inc";
 				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 				</textarea>
 
-				<?php
-				include "../inc/include-notice.inc";
-				?>
-				
-				<h4 id="yui">The YUI Instance</h4>
+                <?php
+                include "../inc/include-notice.inc";
+                ?>
 
-				<p>Once you have the source and dependancy files for Attribute on your page, you can create a new YUI instance (it is recommended you create this in your own 
+                <h4 id="yui">The YUI Instance</h4>
+
+                <p>Once you have the source and dependancy files for Attribute on your page, you can create a new YUI instance (it is recommended you create this in your own 
                 sandboxed anonymous function to avoid polluting the global namespace), and populate it with the modules you need. In the case of Attribute,
-                you only need to include the "attribute" module as shown below:</p>
+                you only need to include the "attribute" module as shown below, using YUI's <code>use</code> method:</p>
 
-				<textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     (function() {
                         var Y = YUI().use("attribute");
                         ... 
@@ -81,28 +82,28 @@ include "../inc/header.inc";
                 </textarea>
 
                 <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>), with the classes which make up Attribute (e.g. Y.Attribute); which you 
-                can then apply to any custom classes which you need to add Attribute support to.</p>
+                can then augment to any custom classes which you need to add Attribute support to.</p>
 
                 <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <code>use</code> method.</p>
 
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
-				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-				<ul class="topspace">
-                    <li><a href="#apply">Applying The Attribute Interface</a></li>
+                <h3 id="using">Using the <?php echo $component;?></h3>
+
+                <p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
+                <ul class="topspace">
+                    <li><a href="#augment">Augmenting Your Class With Attribute</a></li>
                     <li><a href="#adding">Adding Attributes</a></li>
-                    <li><a href="#configuration">Attribute Configuration</a></li>
+                    <li><a href="#configuration">Attribute Configuration Properties</a></li>
                     <li><a href="#events">Attribute Change Events</a></li>
                     <li><a href="#subattrs">Setting/Getting Sub Attribute Values</a></li>
-				</ul>
-				
-            <h4 id="apply">Applying The Attribute Interface</h4>
+                </ul>
 
-                <p>The Attribute class is designed to be augmented to an existing class (referred to as the 'host' class throughout this document) to add attribute 
-                support to it. For example, assuming you have a class constructor, <code>MyClass</code>, to which you'd like to add attribute support, 
+            <h4 id="apply">Augmenting Your Class With Attribute</h4>
+
+                <p>The Attribute class is designed to be augmented to an existing class (referred to as the 'host' class throughout this document) and adds attribute 
+                management support to it. For example, assuming you have a class constructor, <code>MyClass</code>, to which you'd like to add attribute support, 
                 you can simply augment your class with Attribute, as shown below:</p>
 
-				<textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     (function() {
                         var Y = YUI().use("attribute");
 
@@ -125,7 +126,7 @@ include "../inc/header.inc";
                to being able to initialize multiple attributes in one call, it also accepts an additional name/value hash, which can be used to allow the 
                user to set multiple attribute values when instantiating Attribute driven classes, as shown below:</p>
 
-			    <textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     ...
                     function MyClass(userValues) {
                             
@@ -154,7 +155,7 @@ include "../inc/header.inc";
                <p>Users of your class, can now pass attribute values into the constructor,
                or set values using the <code>set</code> method as shown below:
 
-			    <textarea name="code" class="JScript" cols="60" rows="1">
+                <textarea name="code" class="JScript" cols="60" rows="1">
                     // Set attrA during instantiation
                     var o = new MyClass({
                         attrA:5
@@ -164,13 +165,13 @@ include "../inc/header.inc";
                     o.set("attrB", "Hello World!");
                 </textarea>
 
-               <h4 id="configuration">Attribute Configuration</h4>
+               <h4 id="configuration">Attribute Configuration Properties</h4>
 
                <p>Each attribute you add can be configured with the properties listed in the table below (all properties are optional and case-sensitive):</p>
 
-			    <table>
+                <table>
                     <caption>Attribute Configuration Properties</caption>
-					<thead>
+                    <thead>
 						<tr>
 							<th>Property Name</th>
 							<th>Type</th>
@@ -231,11 +232,11 @@ include "../inc/header.inc";
                                 Configures the attribute to be write-once. Users will only be able to set the value of the attribute using
                                 Attribute's set method once. Once a value has been set for the attribute, calling set will not change it's value.
                             </td>
-						</tr>
-						<tr>
-							<td><code>clone</code></td>
-							<td>int</td>
-							<td>
+                        </tr>
+                        <tr>
+                            <td><code>clone</code></td>
+                            <td>int</td>
+                            <td>
                              By default attribute values returned by the get method
                              are not cloned. If you wish to protect stored object
                              values from being changed by reference, you can configure the attribute
@@ -267,7 +268,7 @@ include "../inc/header.inc";
                     </tbody>
                 </table>
 
-                <h5 id="howtoconfig">How To Set Attribute Configuration</h5>
+                <h5 id="howtoconfig">Configuring Attributes</h5>
 
                 <p>The above attribute properties are set using an object literal, which is passed to either <code>_initAtts</code> or <code>addAtt</code> as the 
                 configuration argument. For example, expanding on the code snippet above:</p>
@@ -337,17 +338,17 @@ include "../inc/header.inc";
                 </textarea>
 
                 <p><em>NOTE:</em> Context and additional arguments for the listener function can either be 
-                defined using YUI's <code>bind()</code> method, or by passing in the context and 
-                additional arguments to the <code>on()</code> method.</p>
+                defined using YUI's <code>bind</code> method, or by passing in the context and 
+                additional arguments to the <code>on</code> method.</p>
 
-                <p>Attribute change event listeners can be registered using either the <code>on()</code> 
-                (as shown above) or <code>after()</code> Attribute methods.</p>
+                <p>Attribute change event listeners can be registered using either the <code>on</code> 
+                (as shown above) or <code>after</code> Attribute methods.</p>
  
                 <h5>On vs. After</h5>
 
                 <h6>On</h6>
 
-                <p>Listeners registered using the <code>on()</code> method, are notifed <strong>before</strong> the stored state of the attribute has been updated. 
+                <p>Listeners registered using the <code>on</code> method, are notifed <strong>before</strong> the stored state of the attribute has been updated. 
                 Funtions registered as "on" listeners recieve an <code>Event</code> object as the first argument (actually an
                 instance of <a href="../api/Event.Facade.html"><code>Event.Facade</code></a>) which contains information 
                 about the attribute being modified.</p>
@@ -372,12 +373,12 @@ include "../inc/header.inc";
 
                 <h6>After</h6>
 
-                <p>Listeners registered using the <code>after()</code> method, are notified <strong>after</strong> 
+                <p>Listeners registered using the <code>after</code> method, are notified <strong>after</strong> 
                 the stored state of the attribute has been updated. As with "on" listeners, the subscribed Function 
                 receives an <code>Event</code> object as the first parameter.</p>
 
                 <p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
-                for example, by one of the "on" listeners calling <code>preventDefault()</code> on the event object</p>
+                for example, by one of the "on" listeners calling <code>preventDefault</code> on the event object</p>
 
                 <textarea name="code" class="JScript" cols="60" rows="1">
                     o.after("enabledChange", function(event) {
@@ -416,7 +417,7 @@ include "../inc/header.inc";
 
                 <h4 id="subattrs">Getting/Setting Sub Attribute Values</h4>
 
-                <p>If you have attribute values which are objects (as opposed to primitive values, such as numbers or booleans), the <code>set()</code> method will let
+                <p>If you have attribute values which are objects (as opposed to primitive values, such as numbers or booleans), the <code>set</code> method will let
                 you set properties of the object directly, using a dot notation syntax. For example, if you have an attribute, "strings" with the following value:</p>
 
                 <textarea name="code" class="JScript" cols="60" rows="1">
