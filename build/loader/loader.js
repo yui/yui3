@@ -291,11 +291,11 @@ Y.Env.meta = {
         // this.onProgress = null;
 
         /**
-         * The execution scope for all callbacks
-         * @property scope
+         * The execution context for all callbacks
+         * @property context
          * @default this
          */
-        this.scope = this;
+        this.context = this;
 
         /**
          * Data that is passed to all callbacks
@@ -317,17 +317,6 @@ Y.Env.meta = {
          * @default utf-8
          */
         this.charset = null;
-
-        /**
-         * The name of a script node 
-         * (for external script support in Safari 2.x and earlier)
-         * to reference when the load is complete.  If this variable 
-         * is not available in the specified scripts, the operation will 
-         * fail.  
-         * @property varName
-         * @type string
-         */
-        this.varName = null;
 
         /**
          * The base directory.
@@ -414,7 +403,7 @@ Y.Env.meta = {
          *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
          *      This option will automatically include the logger widget</dd>
          *  <dt>RAW</dt>
-         *  <dd>Selects the non-minified version of the library (e.g., event.js).
+         *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
          * </dl>
          * You can also define a custom filter, which must be an object literal 
          * containing a search expression and a replace string:
@@ -531,7 +520,7 @@ Y.Env.meta = {
                             this.require(o[i]);
                         // support the old callback syntax
                         } else if (i.indexOf('on') === 0) {
-                            this.subscribe(i.substr(2).toLowerCase(), o[i]);
+                            this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else {
                             this[i] = o[i];
                         }
@@ -1196,7 +1185,7 @@ Y.Env.meta = {
                         insertBefore: this.insertBefore,
                         charset: this.charset,
                         timeout: this.timeout,
-                        scope: self 
+                        context: self 
                     });
 
                     return;
@@ -1279,11 +1268,10 @@ Y.Env.meta = {
                         onSuccess: onsuccess,
                         insertBefore: this.insertBefore,
                         charset: this.charset,
-                        varName: m.varName,
                         onFailure: this._onFailure,
                         onTimeout: this._onTimeout,
                         timeout: this.timeout,
-                        scope: self 
+                        context: self 
                     });
 
                     return;

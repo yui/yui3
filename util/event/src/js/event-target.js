@@ -124,18 +124,41 @@ YUI.add("event-target", function(Y) {
          *
          *  <ul>
          *    <li>
-         *      context: defines the default execution context.  If not defined
-         *      the default context will be this instance.
+         *   'broadcast': whether or not the YUI instance and YUI global are notified when the event is fired (false)
          *    </li>
          *    <li>
-         *      silent: if true, the custom event will not generate log messages.
-         *      This is false by default.
+         *   'bubbles': whether or not this event bubbles (true)
          *    </li>
          *    <li>
-         *      onSubscribeCallback: specifies a callback to execute when the
-         *      event has a new subscriber.  This will fire immediately for
-         *      each queued subscriber if any exist prior to the creation of
-         *      the event.
+         *   'context': the default execution context for the listeners (this)
+         *    </li>
+         *    <li>
+         *   'defaultFn': the default function to execute when this event fires if preventDefault was not called
+         *    </li>
+         *    <li>
+         *   'emitFacade': whether or not this event emits a facade (false)
+         *    </li>
+         *    <li>
+         *   'fireOnce': if an event is configured to fire once, new subscribers after
+         *   the fire will be notified immediately.
+         *    </li>
+         *    <li>
+         *   'preventable': whether or not preventDefault() has an effect (true)
+         *    </li>
+         *    <li>
+         *   'preventedFn': a function that is executed when preventDefault is called
+         *    </li>
+         *    <li>
+         *   'queuable': whether or not this event can be queued during bubbling (false)
+         *    </li>
+         *    <li>
+         *   'silent': if silent is true, debug messages are not provided for this event.
+         *    </li>
+         *    <li>
+         *   'stoppedFn': a function that is executed when stopPropagation is called
+         *    </li>
+         *    <li>
+         *   'type': the event type (valid option if not provided as the first parameter to publish)
          *    </li>
          *  </ul>
          *

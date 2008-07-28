@@ -10,6 +10,8 @@ YUI.add("event-custom", function(Y) {
 
         CONFIGS = [
 
+            'broadcast',
+
             'bubbles',
 
             'context',
@@ -117,6 +119,16 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
         this.context = Y;
 
         this.logSystem = (type == "yui:log");
+
+        /**
+         * If 0, this event does not broadcast.  If 1, the YUI instance is notified
+         * every time this event fires.  If 2, the YUI instance and the YUI global
+         * (if event is enabled on the global) are notified every time this event
+         * fires.
+         * @property broadcast
+         * @type int
+         */
+        this.broadcast = 0;
 
         /**
          * By default all custom events are logged in the debug build, set silent
@@ -703,6 +715,10 @@ this.log('CustomEvent context and silent are now in the config', 'warn', 'Event'
             }
         },
 
+        /**
+         * Prevents the execution of this event's defaultFn
+         * @method preventDefault
+         */
         preventDefault: function() {
             if (this.preventable) {
                 this.prevented = 1;
