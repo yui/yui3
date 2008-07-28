@@ -1,5 +1,3 @@
-<h2 class="first">Creating a Simple Animation</h2>
-
 <h3>Setting up the HTML</h3>
 <p>First we add some HTML to animate.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -16,7 +14,7 @@
 </textarea>
 
 <h3>Creating the Anim Instance</h3>
-<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the properties to be transitioned and final values.</p>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the final properties and their values.</p>
 <p>Setting the <code>from</code> attribute to the expanded height of the element allows us to toggle the effect using the <code>reverse</code> attribute, which we will see below (<code>from</code> uses current value when omitted).</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -35,12 +33,10 @@ YUI().use('animation', function(Y) {
 </textarea>
 
 <h3>Toggling Animation Behavior</h3>
-<p>In this example the behavior depends on the state of the element.  Before we call <code>run</code>, we will set some attributes based on the current state of the element.</p>
-
-<p>Using the <code>reverse</code> attribute, we can reverse the direction of the animation.</p>
+<p>Before calling <code>run</code> in our <code>click</code> handler, we will use the <code>reverse</code> attribute toggle the direction of the animation depending on whether its opening or closing.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-var run = function() {
+var onClick = function() {
     var className = 'yui-closed',
         reverse = false,
         toggleChar = '+';
@@ -64,10 +60,10 @@ var run = function() {
 <h3>Running the Animation</h3>
 <p>Finally we add an event handler to run the animation.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
-Y.get('#demo .yui-toggle').on('click', run, anim);
+Y.get('#demo .yui-toggle').on('click', onClick, anim);
 </textarea>
 
-<h3>Full Example Source</h3>
+<h3>Full Script Source</h3>
 <textarea name="code" class="JScript" cols="60" rows="1">
 YUI().use('animation', function(Y) {
     var anim = new Y.Anim({
@@ -81,7 +77,7 @@ YUI().use('animation', function(Y) {
         easing: Y.Easing.backIn
     });
 
-    var run = function() {
+    var onClick = function() {
         var className = 'yui-closed',
             reverse = false,
             toggleChar = '+';
@@ -101,7 +97,7 @@ YUI().use('animation', function(Y) {
         this.run();
     };
 
-    Y.get('#demo .yui-toggle').on('click', run, anim);
+    Y.get('#demo .yui-toggle').on('click', onClick, anim);
 
 });
 </textarea>

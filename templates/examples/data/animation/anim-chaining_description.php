@@ -1,5 +1,3 @@
-<h2 class="first">Creating a Simple Animation</h2>
-
 <h3>Setting up the HTML</h3>
 <p>First we add some HTML to animate.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -19,13 +17,12 @@
 <p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the properties to be transitioned and final values.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI().use('animation', function(Y) {
-    var anim = new Y.Anim({
-        node: '#demo',
-        to: {
-            opacity: 0
-        }
-    });
+var anim = new Y.Anim({
+    node: '#demo',
+    to: {
+        opacity: 0
+    }
+});
 </textarea>
 
 <h3>Handling the End Event</h3>
@@ -53,3 +50,26 @@ anim.on('end', onEnd);
 Y.get('#demo .yui-remove').on('click', anim.run, anim);
 </textarea>
 
+<h3>Full Script Source</h3>
+<textarea name="code" class="JScript" cols="60" rows="1">
+YUI().use('animation', function(Y) {
+    var anim = new Y.Anim({
+        node: '#demo',
+        to: { opacity: 0 }
+    });
+
+    var onEnd = function() {
+        this.unsubscribe('end', onEnd);
+        this.setAtts({
+            to: { height: 0 },
+            easing: Y.Easing.bounceOut
+        });
+        this.run();
+    };
+
+    anim.on('end', onEnd);
+
+    Y.get('#demo .yui-remove').on('click', anim.run, anim);
+
+});
+</textarea>

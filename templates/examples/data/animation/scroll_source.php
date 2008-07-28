@@ -28,7 +28,7 @@ YUI().use('animation', function(Y) {
         easing: Y.Easing.easeOut
     });
 
-    var run = function(e) {
+    var onClick = function(e) {
         var y = node.get('offsetHeight');
         if (e.currentTarget.hasClass('yui-scrollup')) {
             y = 0 - y;
@@ -38,9 +38,7 @@ YUI().use('animation', function(Y) {
         anim.run();
     };
 
-    Y.get('#demo .yui-scrollup').on('click', run);
-    Y.get('#demo .yui-scrolldown').on('click', run);
-
+    Y.all('#demo .yui-hd a').on('click', onClick);
 });
 
 </script>

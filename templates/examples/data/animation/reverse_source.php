@@ -23,7 +23,7 @@ YUI().use('animation', function(Y) {
         easing: Y.Easing.backIn
     });
 
-    var run = function() {
+    var onClick = function() {
         var className = 'yui-closed',
             reverse = false,
             toggleChar = '+';
@@ -43,7 +43,7 @@ YUI().use('animation', function(Y) {
         this.run();
     };
 
-    Y.get('#demo .yui-toggle').on('click', run, anim);
+    Y.get('#demo .yui-toggle').on('click', onClick, anim);
 
 });
 

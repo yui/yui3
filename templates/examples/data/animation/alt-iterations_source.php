@@ -1,6 +1,5 @@
     
 <a href="#" id="demo">hover me</a>
-<p>Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken.</p> 
 <script type="text/javascript">
 YUI().use('animation', function(Y) {
     var node = Y.get('#demo');
@@ -8,11 +7,15 @@ YUI().use('animation', function(Y) {
     var anim = new Y.Anim({
         node: node,
         from: {
-            backgroundColor: node.getStyle('backgroundColor'),
+            backgroundColor:node.getStyle('backgroundColor'),
+            color: node.getStyle('color'),
+            borderColor: node.getStyle('borderTopColor')
         },
 
         to: {
-            backgroundColor: '#ffa928',
+            color: '#fff',
+            backgroundColor:'#ffa928',
+            borderColor: '#71241a'
         },
 
         duration: 0.5,

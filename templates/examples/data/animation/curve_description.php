@@ -5,7 +5,7 @@
 </textarea>
 
 <h3>Creating the Anim Instance</h3>
-<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the properties to be transitioned and final values.</p>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 var node = Y.get('#demo');
@@ -18,7 +18,7 @@ var anim = new Y.Anim({
 </textarea>
 
 <h3>Changing Attributes</h3>
-<p>Just for fun, we will generate a random curve before <code>run</code> is called.</p>
+<p>A click handler will set the <code>to</code> value before <code>run</code> is called.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
 var onClick = function(e) {
     anim.set('to', {

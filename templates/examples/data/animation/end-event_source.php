@@ -17,10 +17,6 @@ YUI().use('animation', function(Y) {
         to: { opacity: 0 }
     });
 
-    var remove = function(node) {
-
-    };
-
     var onEnd = function() {
         var node = this.get('node');
         node.get('parentNode').removeChild(node);

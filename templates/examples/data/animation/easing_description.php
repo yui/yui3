@@ -1,5 +1,3 @@
-<h2 class="first">Creating a Simple Animation</h2>
-
 <h3>Setting up the HTML</h3>
 <p>First we add some HTML to animate.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -16,18 +14,11 @@
 </textarea>
 
 <h3>Creating the Anim Instance</h3>
-<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the properties to be transitioned and final values.</p>
-<p>Adding a <code>from</code> attribute set the expanded height of the element toggle the effect using the <code>reverse</code> attribute, which we will see below.</p>
+<p>Now we create an instance of <code>Y.Anim</code>, passing it a configuration object that includes the <code>node</code> we wish to animate and the <code>to</code> attribute containing the final properties and their values.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI().use('animation', function(Y) {
     var anim = new Y.Anim({
         node: '#demo .yui-bd',
-        from: {
-            height: function(node) {
-                return node.get('scrollHeight'); 
-            }
-        },
         to: { height: 0 },
         easing: Y.Easing.backIn
     });
@@ -37,6 +28,19 @@ YUI().use('animation', function(Y) {
 <h3>Running the Animation</h3>
 <p>Finally we add an event handler to run the animation.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
-Y.get('#demo .yui-remove').on('click', run, anim);
+Y.get('#demo .yui-toggle').on('click', anim.run, anim);
 </textarea>
 
+<h3>Full Script Source</h3>
+<textarea name="code" class="JScript" cols="60" rows="1">
+YUI().use('animation', function(Y) {
+    var anim = new Y.Anim({
+        node: '#demo .yui-bd',
+        to: { height: 0 },
+        easing: Y.Easing.backIn
+    });
+
+    Y.get('#demo .yui-toggle').on('click', anim.run, anim);
+
+});
+</textarea>
