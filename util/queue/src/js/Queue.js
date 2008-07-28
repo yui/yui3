@@ -15,7 +15,7 @@
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
-*/
+ */
 Y.Queue = function () {
     // Factory or Constructor
     var me = this instanceof Y.Queue ? this : new Y.Queue();
