@@ -52,17 +52,17 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-plugin</code>, <code>dd-drop-plugin</code> and <code>animation</code> modules.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin');
+YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin');
 </textarea>
 
 <h3>Making the Node draggable</h3>
 <p>Now that we have a YUI instance with the modules loaded, we need to instantiate the <code>Drag</code> instance on this Node.</p>
 <p>In this example we will be using Node plugins to accomplish our tasks.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
-    d.plug(Y.Plugin.Drag, { /*dragMode: 'intersect'*/ });
+    d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
 });
 </textarea>
 
@@ -73,35 +73,39 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
     var anims = Y.Node.all('div.anim');
     anims.each(function(v, k, items) {
         //Get a reference to the Node instance
-        var a = items.item(k);
+        var a = v; 
         //Add the FX plugin
         a.plug(Y.Plugin.NodeFX);
+        //Add the Drop plugin
+        a.plug(Y.Plugin.Drop);
 
         //Set the attributes on the animation
         a.fx.setAtts({
             from: {
-                left: 0,
-                from: 50
+                left: 0
             },
             to: {
-                left: function() {
-                    //Get the width of the window
-                    var dW = Y.Node.get('body').get('viewportRegion').right;
-                    //Subtract the width of the dock and the node's width
-                    var aW = a.get('offsetWidth');
-                    //This is the far right side we want to animate to
-                    return ((dW - aW) - 75); //Minus 75 for the dock
-                },
-                height: 100
+                curve: function() {
+                    var points = [],
+                        n = 10;
+
+                    for (var i = 0; i < n; ++i) {
+                        points.push([
+                            Math.floor(Math.random()*Y.DOM.winWidth() - 60 - a.get('offsetWidth')),
+                            Math.floor(Math.random()*Y.DOM.winHeight() - a.get('offsetHeight'))
+                        ]);
+                    }
+                    return points;
+                }
             },
             //Do the animation 20 times
             iterations: 20,
             //Alternate it so it "bounces" across the screen
             direction: 'alternate',
             //Give all of them a different duration so we get different speeds.
-            duration: ((k * 2) + 1)
+            duration: ((k * 1.75) + 1)
         });
-});
+    });
 </textarea>
 
 <h3>Making the Node A Target</h3>
@@ -134,16 +138,16 @@ a.fx.on('tween', function() {
 
 <h3>Full example source</h3>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
-    d.plug(Y.Plugin.Drag, { /*dragMode: 'intersect'*/ });
+    d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
     
     //Get all the div's with the class anim
     var anims = Y.Node.all('div.anim');
     anims.each(function(v, k, items) {
         //Get a reference to the Node instance
-        var a = items.item(k);
+        var a = v; 
         //Add the FX plugin
         a.plug(Y.Plugin.NodeFX);
         //Add the Drop plugin
@@ -152,26 +156,28 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
         //Set the attributes on the animation
         a.fx.setAtts({
             from: {
-                left: 0,
-                from: 50
+                left: 0
             },
             to: {
-                left: function() {
-                    //Get the width of the window
-                    var dW = Y.Node.get('body').get('viewportRegion').right;
-                    //Subtract the width of the dock and the node's width
-                    var aW = a.get('offsetWidth');
-                    //This is the far right side we want to animate to
-                    return ((dW - aW) - 75); //Minus 75 for the dock
-                },
-                height: 100
+                curve: function() {
+                    var points = [],
+                        n = 10;
+
+                    for (var i = 0; i < n; ++i) {
+                        points.push([
+                            Math.floor(Math.random()*Y.DOM.winWidth() - 60 - a.get('offsetWidth')),
+                            Math.floor(Math.random()*Y.DOM.winHeight() - a.get('offsetHeight'))
+                        ]);
+                    }
+                    return points;
+                }
             },
             //Do the animation 20 times
             iterations: 20,
             //Alternate it so it "bounces" across the screen
             direction: 'alternate',
             //Give all of them a different duration so we get different speeds.
-            duration: ((k * 2) + 1)
+            duration: ((k * 1.75) + 1)
         });
 
         //When this drop is entered, pause the fx
@@ -183,7 +189,7 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
             this.fx.run();
         }, a);
         //When a drop is on the node, do something special
-        a.drop.on('drop:hit', function() {
+        a.drop.on('drop:hit', function(e) {
             //Stop the animation
             this.fx.stop();
             //remove the tween listener
@@ -213,6 +219,12 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
             }, this);
             //Run this animation
             this.fx.run();
+            
+            //others that where dropped on..
+            Y.each(e.others, function(v, k) {
+                var node = v.get('node');
+                node.fx.run();
+            });
 
         }, a);
         

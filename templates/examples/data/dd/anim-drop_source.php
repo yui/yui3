@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Animated Drop Targets</title>
-    <link type="text/css" rel="stylesheet" href="../../build/reset-fonts/reset-fonts.css" />
+    <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 
     <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
     <script type="text/javascript" src="../../build/dom/dom.js"></script>
@@ -67,10 +67,10 @@
         <div id="anim5" class="anim">Anim #5</div>
 
 <script type="text/javascript">
-var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
-    d.plug(Y.Plugin.Drag, { /*dragMode: 'intersect'*/ });
+    d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
     
     //Get all the div's with the class anim
     var anims = Y.Node.all('div.anim');
@@ -85,11 +85,9 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
         //Set the attributes on the animation
         a.fx.setAtts({
             from: {
-                left: 0,
-                height: 50
+                left: 0
             },
             to: {
-<<<<<<< anim-drop_source.php
                 curve: function() {
                     var points = [],
                         n = 10;
@@ -102,25 +100,13 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
                     }
                     return points;
                 }
-=======
-                left: function() {
-                    //Get the width of the window
-                    var dW = Y.Node.get('body').get('viewportRegion').right;
-                    //Subtract the width of the dock and the node's width
-                    var aW = a.get('offsetWidth');
-                    //alert(dW + ' :: ' + aW);
-                    //This is the far right side we want to animate to
-                    return ((dW - aW) - 75); //Minus 75 for the dock
-                },
-                height: 100
->>>>>>> 1.2
             },
             //Do the animation 20 times
             iterations: 20,
             //Alternate it so it "bounces" across the screen
             direction: 'alternate',
             //Give all of them a different duration so we get different speeds.
-            duration: ((k * 2) + 1)
+            duration: ((k * 1.75) + 1)
         });
 
         //When this drop is entered, pause the fx
@@ -132,7 +118,7 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
             this.fx.run();
         }, a);
         //When a drop is on the node, do something special
-        a.drop.on('drop:hit', function() {
+        a.drop.on('drop:hit', function(e) {
             //Stop the animation
             this.fx.stop();
             //remove the tween listener
@@ -162,6 +148,12 @@ var Y = YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', functio
             }, this);
             //Run this animation
             this.fx.run();
+            
+            //others that where dropped on..
+            Y.each(e.others, function(v, k) {
+                var node = v.get('node');
+                node.fx.run();
+            });
 
         }, a);
         
