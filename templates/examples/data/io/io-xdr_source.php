@@ -10,8 +10,8 @@
 
 (function() {
 
-	//Create YUI instance using io and JSON modules:
-	var Y = new YUI().use("*");
+	//Create YUI instance using io, substitute, and JSON modules:
+	var Y = new YUI().use("io", "substitute", "json-parse");
 	
 	//Data fetched will be displayed in a UL in the
 	//element #output:
