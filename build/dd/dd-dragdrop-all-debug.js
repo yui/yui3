@@ -581,14 +581,17 @@ YUI.add('dd-ddm-drop', function(Y) {
                     if (this.activeDrag.get('dragMode') == this.STRICT) {
                         return this.activeDrag.get('dragNode').inRegion(drop.region, true, this.activeDrag.region);
                     } else {
-                        return drop.shim.intersect({
-                            top: xy[1],
-                            bottom: xy[1],
-                            left: xy[0], 
-                            right: xy[0]
-                        }, drop.region).inRegion;
+                        if (drop && drop.shim) {
+                            return drop.shim.intersect({
+                                top: xy[1],
+                                bottom: xy[1],
+                                left: xy[0], 
+                                right: xy[0]
+                            }, drop.region).inRegion;
+                        } else {
+                            return false;
+                        }
                     }
-                    
                 } else {
                     return false;
                 }
