@@ -282,7 +282,8 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #main h2 {font-size:212%;color:#89B31F;font-weight:normal;margin:0 0 12px 0;padding:0;}
 #main h3 {font-size:153.9%;color:#FF8800;font-weight:normal;margin:0 0 12px 0;padding:0;}
 #main h4 {font-size:108%;font-weight:normal;color:#FF8800;;margin-bottom:10px;}
-#main h5 {font-size:93%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:10px;}
+#main h5 {font-size:93%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:12px;}
+#main h6 {font-size:93%;font-weight:normal;color:#FF8800;margin-bottom:10px;font-weight:bold;}
 #main p,
 #main form {margin-bottom:1em;}
 #main div.clear {clear:both;}
@@ -353,7 +354,7 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 	
 #bd .toc3 {border:1px solid #D9D9D9;background-color:#F5F5F5;}
 #bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;}
-#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 8px;}
+#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 7px;}
 #bd .toc3 li.sect {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;
 	border-bottom:1px solid #D9D9D9;margin:6px 6px 6px 6px;padding:4px 5px 4px 0;background:none;}
 #bd .toc3 li a {color:#2288BB;text-decoration:none;display:block;padding:2px 5px 2px 16px;}
@@ -381,21 +382,18 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 #toc ul li.sect { font-weight:bold; color:#fff; background:#89d; padding:2px 0; text-indent:2px; margin-top:2px;}
 #toc ul li.first {margin-top:0;}*/
 
-
-/* main examples page */
-#main table.examplesTable,
-.apisummary table {width:100%;background:url(../assets/gradient-mod.png) repeat-x 0 0;margin-bottom:1.5em;}
-#main table.examplesTable h4,
-.apisummary table h4 {margin:0;color:#89B31F;}
-#main table.examplesTable thead tr,
-.apisummary table thead tr {border:none;}
-#main table.examplesTable tbody tr,
-.apisummary table tbody tr {border-top:1px solid #D9D9D9;margin:0 10px;}
-#main table.examplesTable tbody td,
-.apisummary table tbody td {font-size:85%;}
-#main table.examplesTable tbody td a,
-.apisummary table tbody td a {font-size:109.44%;}
-#main table.examplesTable th,
-#main table.examplesTable td,
-.apisummary table th,
-.apisummary table td {padding:5px;}
+table {width:100%;margin-bottom:1em;}
+table tr {vertical-align:top;}
+table caption {display:none;}
+table th {background-color:#6c8ea1;color:#FFF;text-transform:uppercase;font-weight:bold;}
+table td {background-color:#e5edf1;}
+table th, table td {padding:5px;border:2px solid #fff;}
+tr {background-color:#f5f8f9;}
+dl {margin:0;}
+dl dt {
+	/*giving UL's LIs generated numbers*/
+	font-weight:bold;}
+dl dd {margin:.5em 0 1.5em 1em;}
+.dp-highlighter table tr, .dp-highlighter table td {border:0;padding:0;background-color:#FFF;}
+table tr {background-color:#fff;}
+table td dl {margin:1em 0;}
