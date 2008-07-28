@@ -1,11 +1,17 @@
-<div id="demo">
-    <h4>Demo Element</h4>
-    <p>This is a demo of Node in action.</p>
-    <p>This paragraph will be removed dynamically.</p>
-</div>
+<ul id="demo">
+    <li>lorem</li>
+    <li>ispum</li>
+    <li>dolor</li>
+    <li>sit</li>
+</ul>
 
 <script type="text/javascript">
-var Y = YUI().use('*');
-var node = Y.get('#demo');
-var removedNode = node.removeChild(Y.get('#demo p:last-child'));
+YUI().use('*', function(Y) {
+    var onClick = function(e) {
+        var node = e.currentTarget;
+        node.get('parentNode').removeChild(node);
+    };
+
+    Y.all('#demo li').on('click', onClick);
+});
 </script>

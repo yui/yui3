@@ -1,36 +1,33 @@
 <h3>Setting up the Node</h3>
 <p>First we need some HTML to work with.</p>
 <textarea name="code" class="HTML">
-<button id="yui-run">run</button>
+<ul id="demo">
+    <li>lorem</li>
+    <li>ispum</li>
+</ul>
 </textarea>
-<h3>Getting a Node Instance</h3>
-<p>Now we need to create our YUI instance and get a node instance for the button.</p>
-<textarea name="code" class="JScript">
-var Y = YUI().use('*');
-var node = Y.get('#yui-run');
-</textarea>
-
 <h3>Handling Events</h3>
-<p>Next we will add a handler to run when the event is fired. In our handler we will pop an alert as well as detach the handler so that it only runs once.</p>
-<p>Note that the event handler receives an event object with a Node instance as its <code>target</code> property.</p>
+<p>Next we will add a handler to run when the event is fired. In our handler we will update the <code>currentTarget</code> with the <code>type</code> of the event.</p>
+<p>Note that the event handler receives an event object with a Node instance as its <code>currentTarget</code> property.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('*');
-var node = Y.get('#yui-run');
-var onclick = function(e) {
-    alert('you clicked a ' + e.target.get('tagName'));
-    node.detach('click', onclick);
+var onClick = function(e) {
+    e.currentTarget.set('innerHTML', e.type);
 };
 </textarea>
 
 <h3>Attaching Events</h3>
-<p>Finally we will add a handler to run when the event is fired.
+<p>We can assign our handler to all of the items by using the <code>all</code> method to get a <code>NodeList</code> instance and using the <code>on</code> method to subscribe to the event.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('*');
-var node = Y.get('#yui-run');
-var onclick = function(e) {
-    alert('you clicked a ' + e.target.get('tagName'));
-    node.detach('click', onclick);
-};
+Y.all('#demo li').on('click', onClick);
+</textarea>
 
-node.on('click', onclick);
+<h3>Full Script Source</h3>
+<textarea name="code" class="JScript">
+YUI().use('*', function(Y) {
+    var onClick = function(e) {
+        e.currentTarget.set('innerHTML', e.type);
+    };
+
+    Y.all('#demo li').on('click', onClick);
+});
 </textarea>

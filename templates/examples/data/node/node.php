@@ -49,4 +49,43 @@ $examples["nodelist"] = array(
 	highlightSyntax => true
 );
 
+$examples["node-evt-delegation"] = array(
+	name => "Delegating Node Events",
+	modules => array("node"),
+	description => "Using a single event listener to handle events on multiple nodes.",
+	sequence => array(5),
+	newWindow => "default",
+	requires => array("yui"),
+	highlightSyntax => true
+);
+
+$examples["node-screen"] = array(
+	name => "Measuring the Window and Document",
+	modules => array("node"),
+	description => "This example demonstrates how to measure the window and document.",
+	sequence => array(6),
+	newWindow => "default",
+	requires => array("yui"),
+	highlightSyntax => true
+);
+
+$examples["node-xy"] = array(
+	name => "Node Positioning",
+	modules => array("node"),
+	description => "This example demonstrates how to position an element in page coordinates.",
+	sequence => array(7),
+	newWindow => "default",
+	requires => array("yui"),
+	highlightSyntax => true
+);
+
+$examples["node-style"] = array(
+	name => "Node Styling",
+	modules => array("node"),
+	description => "This example demonstrates how to set styles and get style information.",
+	sequence => array(7),
+	newWindow => "default",
+	requires => array("yui"),
+	highlightSyntax => true
+);
 ?>

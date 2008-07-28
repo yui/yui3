@@ -1,0 +1,43 @@
+div#demo,
+ul#demo li {
+    background: #cfb192;
+    border: 1px solid #71241a;
+}
+
+div#demo p,
+ul#demo li {
+    list-style: none;
+    padding: 0.5em 1em;
+}
+
+ul#demo {
+    width: 10em;
+}
+
+.yui-fail {
+    background:red;
+}
+
+#demo .yui-pass {
+    background:green;
+}
+
+#demo dt {
+    font-weight:bold;
+}
+
+#demo dt::after {
+    content':';
+}
+
+#demo dd {
+    margin-bottom:0.5em;
+}
+
+span#demo {
+    background:#ffa928;
+    display:block;
+    height:10px;
+    width:10px;
+}
+

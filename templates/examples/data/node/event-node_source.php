@@ -1,13 +1,15 @@
-<button id="yui-run">run</button>
+<ul id="demo">
+    <li>lorem</li>
+    <li>ispum</li>
+</ul>
 
 <script type="text/javascript">
-var Y = YUI().use('*');
-var node = Y.get('#yui-run');
+YUI().use('*', function(Y) {
+    var onClick = function(e) {
+        e.currentTarget.set('innerHTML', e.type);
+    };
 
-var onclick = function(e) {
-    alert('you clicked a ' + e.target.get('tagName'));
-    node.detach('click', onclick);
-};
-
-node.on('click', onclick);
+    Y.all('#demo li').on('click', onClick);
+});
 </script>
+
