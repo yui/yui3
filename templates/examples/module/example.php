@@ -208,14 +208,15 @@ if(! $examples[$name]) {
 		if(isset($currentModuleName) && isset($name)) {//header appears on some non-example pages, too
 			$filename = $dataroot.$currentModuleName."/".$name."_customheader.php";
 			if (file_exists($filename)) {
-
-				$prepend .= "\n\n<!--begin custom header content for this example-->\n";
+				//Allow php in custom header to execute for dist build, but not for
+				//YDN site.  
 				if($ydn) {
+					$prepend .= "\n\n<!--begin custom header content for this example-->\n";
 					$prepend .= file_get_contents($filename);
+					$prepend .= "\n<!--end custom header content for this example-->\n\n";
 				} else {
 					$customHeader = $filename;
 				}
-				$prepend .= "\n<!--end custom header content for this example-->\n\n";
 				
 			} else {
 				$prepend .= "\n<!--there is no custom header content for this example-->\n\n";
