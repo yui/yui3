@@ -1,8 +1,5 @@
 YUI.add('queue', function(Y) {
 
-var _SL = Array.prototype.slice,
-    _SP = Array.prototype.splice;
-
 /**
  * Mechanism to execute a series of callbacks in a non-blocking queue.  Each
  * callback is executed via setTimout unless configured with a negative
@@ -16,6 +13,7 @@ var _SL = Array.prototype.slice,
  *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
  * </ul>
  *
+ * @module Queue
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
@@ -28,7 +26,7 @@ Y.Queue = function () {
      * The callback queue
      * @property q
      * @type {Array}
-     * @private
+     * @protected
      */
     me.q = [];
 
@@ -42,7 +40,7 @@ Y.Queue.prototype = {
      * blocking execution, and positives indicate non-blocking execution.
      * @property id
      * @type {number}
-     * @private
+     * @protected
      */
     id   : 0,
 
@@ -62,7 +60,7 @@ Y.Queue.prototype = {
             /**
              * Event fired when the callback queue is emptied via execution
              * (not via a call to chain.stop()).
-             * @event end
+             * @event complete
              */
             this.fire('complete');
             return this;
@@ -127,11 +125,31 @@ Y.Queue.prototype = {
      * @method _exec
      * @param fn {Function} the function to execute
      * @param c {Object|Function} the callback as defined during add(c)
-     * @private
+     * @protected
      */
     _exec : function (fn,c) {
+        /**
+         * Fired before a callback is executed
+         * @event beforeCallback
+         * @param o {Object} Object literal with the following keys:
+         * <dl>
+         * <dt>fn</dt><dd>The function about to be executed</dd>
+         * <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
+         * </dl>
+         */
         this.fire('beforeCallback',{fn:fn,callback:c});
+
         fn.call(this);
+
+        /**
+         * Fired before a callback is executed
+         * @event afterCallback
+         * @param o {Object} Object literal with the following keys:
+         * <dl>
+         * <dt>fn</dt><dd>The function just executed</dd>
+         * <dt>callback</dt><dd>The callback as provided to <code>add(..)</code></dd>
+         * </dl>
+         */
         this.fire('afterCallback',{fn:fn,callback:c});
     },
 
@@ -141,6 +159,11 @@ Y.Queue.prototype = {
      * @private
      */
     _shift : function () {
+        /**
+         * Fired after a callback is shifted from the Queue
+         * @event shiftCallback
+         * @param callback {Function|Object} The callback passed to <code>add(..)</code>
+         */
         this.fire('shiftCallback',this.q.shift());
     },
     
@@ -151,9 +174,15 @@ Y.Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     add  : function () {
-        var c = Y.Array(arguments,0,true);
-        _SP.apply(this.q,[this.q.length,0].concat(c));
-        this.fire('addCallback',c);
+        var callbacks = Y.Array(arguments,0,true);
+        this.q.splice.apply(this.q,[this.q.length,0].concat(callbacks));
+
+        /**
+         * Fired from within <code>add(..)</code> after callbacks are queued
+         * @event addCallback
+         * @param callbacks {Array} Array of callbacks passed to <code>add(..)</code>
+         */
+        this.fire('addCallback',callbacks);
         return this;
     },
 
@@ -168,6 +197,11 @@ Y.Queue.prototype = {
     pause: function () {
         clearTimeout(this.id);
         this.id = 0;
+
+        /**
+         * Fired after Queue is paused
+         * @event pause
+         */
         this.fire('pause');
         return this;
     },
@@ -181,6 +215,11 @@ Y.Queue.prototype = {
     stop : function () { 
         this.pause();
         this.q = [];
+
+        /**
+         * Fired after Queue is stopped
+         * @event stop
+         */
         this.fire('stop');
         return this;
     }
