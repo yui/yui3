@@ -75,38 +75,38 @@ Y.Queue.prototype = {
         if (typeof fn === 'function') {
             var ms   = c.timeout || 0,
                 me   = this;
-                
+
             // Execute immediately if the callback timeout is negative.
             if (ms < 0) {
                 this.id = ms;
                 if (c.until) { // test .until condition
                     for (;!c.until();) {
-                        fn();
+                        this._exec(fn,c);
                     }
                 } else if (c.iterations) { // test .iterations
                     for (;c.iterations-- > 0;) {
-                        fn();
+                        this._exec(fn,c);
                     }
                 } else { // single shot callback
-                    fn();
+                    this._exec(fn,c);
                 }
-                this.q.shift();
+                this._shift();
                 this.id = 0;
                 return this.run();
             } else {
                 if (c.until) { // test .until condition
                     if (c.until()) {
                         // Move to the next callback
-                        this.q.shift();
+                        this._shift();
                         return this.run();
                     }
                 } else if (!c.iterations || !--c.iterations) { // .iterations
-                    this.q.shift();
+                    this._shift();
                 }
 
                 // Set to execute after the configured timeout
                 this.id = setTimeout(function () {
-                    fn();
+                    me._exec(fn,c);
 
                     // Loop unless the Queue was paused from inside the callback
                     if (me.id) {
@@ -121,6 +121,28 @@ Y.Queue.prototype = {
 
         return this;
     },
+
+    /**
+     * Executes the callback function
+     * @method _exec
+     * @param fn {Function} the function to execute
+     * @param c {Object|Function} the callback as defined during add(c)
+     * @private
+     */
+    _exec : function (fn,c) {
+        this.fire('beforeCallback',{fn:fn,callback:c});
+        fn.call(this);
+        this.fire('afterCallback',{fn:fn,callback:c});
+    },
+
+    /**
+     * Shifts the first callback off the Queue
+     * @method _shift
+     * @private
+     */
+    _shift : function () {
+        this.fire('shiftCallback',this.q.shift());
+    },
     
     /**
      * Add any number of callbacks to the end of the queue
@@ -129,7 +151,9 @@ Y.Queue.prototype = {
      * @return {Queue} the Queue instance
      */
     add  : function () {
-        _SP.apply(this.q,[this.q.length,0].concat(_SL.call(arguments)));
+        var c = Y.Array(arguments,0,true);
+        _SP.apply(this.q,[this.q.length,0].concat(c));
+        this.fire('addCallback',c);
         return this;
     },
 
@@ -144,6 +168,7 @@ Y.Queue.prototype = {
     pause: function () {
         clearTimeout(this.id);
         this.id = 0;
+        this.fire('pause');
         return this;
     },
 
@@ -156,6 +181,7 @@ Y.Queue.prototype = {
     stop : function () { 
         this.pause();
         this.q = [];
+        this.fire('stop');
         return this;
     }
 };
