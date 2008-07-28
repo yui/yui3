@@ -1,0 +1,105 @@
+a#demo {
+    background:#8dd5e7;
+    border:1px solid #004c6d;
+    color:#004c6d;
+    display:block;
+    height:2em;
+    line-height:2em;
+    width:6em;
+    text-align:center;
+}
+
+span#demo {
+    background:#ffa928;
+    display:block;
+    height:10px;
+    width:10px;
+}
+
+div#demo {
+    width:22em;
+    overflow:hidden;
+}
+
+div#demo .yui-scroll {
+    height:10em;
+    overflow:hidden;
+}
+
+div#demo .yui-bd p {
+    margin:0.3em 0;
+    width:20em; /* keep text from reflowing during animation */
+}
+
+div#demo .yui-bd p em {
+    font-weight:bold;
+}
+
+div#demo .yui-hd {
+    background: #406ed9;
+    border:1px solid #243356;
+    position:relative;
+    white-space:nowrap;
+    zoom:1;
+}
+
+div#demo .yui-hd h4 {
+    margin:0;
+}
+
+div#demo .yui-hd,
+div#demo .yui-hd h4,
+div#demo .yui-hd a {
+    color:#fff;
+}
+
+div#demo .yui-hd a { /* module control (close remove, etc) */
+    color:#abceff;
+    cursor:pointer;
+    cursor:hand;
+    font:90%/1 arial;
+    padding:0.25em;
+    right:5px;
+    top:5px;
+    position:absolute;
+    text-decoration:none;
+}
+
+#demo .yui-hd .yui-scrollup {
+    right: 2em;
+}
+
+div#demo .yui-hd a em {
+    display:-moz-inline-stack;
+    display:inline-block;
+    border:1px solid #abceff;
+    padding:0 0 0.1em;
+    text-align:center;
+    width:1em;
+}
+
+div#demo .yui-hd a:hover {
+    color:#fff;
+}
+
+div#demo .yui-hd a:hover em {
+    border-color:#fff;
+}
+
+div#demo .yui-bd {
+    background:#abceff;
+    border:solid #7a97bb;
+    border-width:0 1px;
+    overflow:hidden;
+}
+
+div#demo {
+    border-bottom:1px solid #7a97bb;
+}
+
+div#demo .yui-hd,
+div#demo .yui-bd p {
+    margin:0;
+    padding:0.5em 1em;
+}
+
