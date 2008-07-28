@@ -1,5 +1,3 @@
-var _SL = Array.prototype.slice,
-    _SP = Array.prototype.splice;
 
 /**
  * Mechanism to execute a series of callbacks in a non-blocking queue.  Each
@@ -32,6 +30,9 @@ Y.Queue = function () {
 
     return me.add.apply(me,arguments);
 };
+
+var _SL = Array.prototype.slice,
+    _SP = Array.prototype.splice;
 
 Y.Queue.prototype = {
     /**
