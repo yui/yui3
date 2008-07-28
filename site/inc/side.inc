@@ -28,7 +28,7 @@ $nav[]=array('animation','/animation/','Animation', 'Animation');
 $nav[]=array('compat','/compat/','Compat', 'Compat');
 $nav[]=array('cookie','/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/dd/','Drag & Drop', 'Drag & Drop');
-$nav[]=array('io','/io/','I/O', 'I/O');
+$nav[]=array('io','/io/','IO', 'IO');
 $nav[]=array('json','/json/','JSON', 'JSON (JavaScript Object Notation)');
 $nav[]=array('queue','/queue/','Queue', 'Queue');
 
