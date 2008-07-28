@@ -1,3 +1,7 @@
+/**
+ * Executes a series of callbacks in a non-blocking queue
+ * @module queue
+ */
 
 /**
  * Mechanism to execute a series of callbacks in a non-blocking queue.  Each
