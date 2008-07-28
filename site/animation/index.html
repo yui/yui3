@@ -15,7 +15,7 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					<p>The <?php echo $component;?> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					<p>The <?php echo $component;?> provides an API for creating advanced transitions between property values.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -25,13 +25,9 @@ include "../inc/header.inc";
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
 										<li><a href="#attributes">Using Animation Attributes</a></li>
-										<li><a href="#relative">Using Relative Values</a></li>
-										<li><a href="#start">Setting a Starting Value</a></li>
-										<li><a href="#units">Specifying Attribute Units</a></li>
-										<li><a href="#events">Listening for Events</a></li>
-										<li><a href="#motion">Creating Animation with Motion</a></li>
-										<li><a href="#curve">Creating Animation with Motion along a Curve</a></li>
-										<li><a href="#scroll">Creating Animation with Scroll</a></li>
+                                                                                <li><a href="#anim-to">Setting a To Value</a></li>
+                                                                                <li><a href="#anim-from">Setting a From Value</a></li>
+                                                                                <li><a href="#anim-events">Listening for Events</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -54,7 +50,7 @@ include "../inc/header.inc";
 				<p>To use the Animation Utility, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/bbb	build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
 				&lt;!-- Source file --&gt;
 				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
@@ -66,44 +62,23 @@ include "../inc/header.inc";
 				
 				<h4 id="instantiating">Instantiating an Animation Object <span class="permalink"><a href="#instantiating">#</a></span></h4>
 
-				<p>Your Animation implementation will consist of one or more instances of the <code>Anim</code> object or its subclasses (Motion, Scroll).</p>
-				<p>To create an  Animation instance on your page, use the following code:</p>
+				<p>Your Animation implementation will consist of one or more instances of the <code>Anim</code>.</p>
+                                <p>To create an <code>Anim</code> instance on your page, pass it a configuration object including the <code>node</code> or selector query for the node that you wish to animate and a <code>to</code> containing the properties you wish to animate.</p>
 
 				<textarea name="code" class="JScript" cols="60" rows="1">
-					&lt;div id=&quot;test&quot;&gt;&lt;/div&gt;
-
-					&lt;script&gt;
-					 var myAnim = new YAHOO.util.Anim('test', {
-					  	width: { to: 400 } 
-						}, 1, YAHOO.util.Easing.easeOut);
-					&lt;/script&gt;
+                                var myAnim = new Y.Anim({
+                                        node: '#demo',
+                                        to: {
+                                            width: 0,
+                                            height: 0
+                                        }
+                                });
 				</textarea>
 
-				<p>The Anim object constructor has one required parameter: the ID string or element reference to the element that will be animated. Optional parameters are:</p>
-
-				<ul class="topspace">
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
-
-				<p>We'll explore the optional parameters in more detail later in this document.</p>
-
-				<p>To initiate the actual animation, call the animate method on your Animation instance:</p>
+                                <p>To begin the actual animation, call the <code>run</code> method on your <code>Anim</code> instance.</p>
 
 				<textarea name="code" class="JScript" cols="60" rows="1">
-					myAnim.animate();
-				</textarea>
-
-				<h4>Setting Animation Properties</h4>
-
-				<p>In addition to passing detailed arguments to the Anim constructor, you can set the other parameters on your Animation instance via their respective properties:</p>
-
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var myAnim = new YAHOO.util.Anim('test');
-				myAnim.attributes.width = { to: 400 };
-				myAnim.duration = 0.5;
-				myAnim.method = YAHOO.util.Easing.easeOut;
+					myAnim.run();
 				</textarea>
 
 				<p>See <a href="../docs/module_animation.html">the API documentation for the Anim object</a> for more information about its methods and properties.</p>
@@ -112,181 +87,83 @@ include "../inc/header.inc";
 			
 				<p>This section describes how to use the Animation utility in further detail.  It contains these subsections:</p>
 				<ul class="topspace">
-				<li><a href="#attributes">Using Animation Attributes</a></li>
-				<li><a href="#relative">Using Relative Values</a></li>
-				<li><a href="#start">Setting a Starting Value</a></li>
-				<li><a href="#units">Specifying Attribute Units</a></li>
-				<li><a href="#events">Listening for Events</a></li>
-				<li><a href="#motion">Creating Animation with Motion</a></li>
-				<li><a href="#curve">Creating Animation with Motion along a Curve</a></li>
-				<li><a href="#scroll">Creating Animation with Scroll</a></li>
+				<li><a href="#attributes">Accessing Attributes</a></li>
+				<li><a href="#anim-to">Setting a To Value</a></li>
+				<li><a href="#anim-from">Setting a From Value</a></li>
+				<li><a href="#anim-events">Listening for Events</a></li>
 				</ul>
 
-				<h4>Using Attributes<a name="attributes"></a></h4>
-			
-				<p>An attributes object is required to tell the Animation instance what to animate.  The members of this object comprise one or more style properties that accept a numeric value (<code>width</code>, <code>height</code>, <code>opacity</code>, <code>top</code>, <code>left</code>, <code>borderWidth</code>, <code>padding</code>, <code>margin</code>, and so on).</p>
-				
-				<p>An attribute consists of the attribute name (&quot;width&quot;, for example) and the value at which the animation should end, specified with the &quot;to&quot; or &quot;by&quot; properties.  By default, the Animation will attempt to start from the current value, although in some cases, this is not as reliable as providing the starting value explicitly (with the <code>from</code> property).</p>
+				<h4 id="attributes">Accessing Animation Attributes</h4>
 
-				<p>The following code animates an element from its current size to 400 by 400:</p>
-	
+                                <p>In addition to passing a configuration object to the <code>Anim</code> constructor, you can access the attributes of your <code>Anim</code> instance via the <code>set</code> and <code>get</code> methods.</p>
+
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				var attributes = {
-				   width: { to: 400 },
-				   height: { to: 400 }
-				};
+                                var myAnim = new Y.Anim({
+                                    node: '#demo',
+                                    to: {
+                                    width: 0,
+                                    height: 0
+                                    }
+                                });
 
-				var myAnim = new YAHOO.util.Anim('test', attributes);
-				myAnim.animate();
+                                myAnim.set('duration', 0.5);
+                                myAnim.set('easing', Y.Easing.easeOut);
 				</textarea>
 
-				<h4 id="relative">Using Relative Values</h4>
-				
-				<p>To animate an element <em>by</em> a given value rather than <em>to</em> a given value, use the <code>by</code> property, rather than <code>to</code>.</p>
+				<h4 id="anim-to">Setting a To Value</h4>
+                                <p>A <code>node</code> attribute and a <code>to</code> attribute containing one or more properties to animate are the minimum reuqirements for running an animation.</p>
 
-				<p>The following will expand the element with the id of test from its current size by 200 pixels:</p>
-			
+                                <p>The value of a <code>to</code> can optionally be a function.  If a function is used, it receives the <code>node</code> as its only argument.  The return value of the function becomes the to value for that <code>run</code> of the animation.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				var attributes = {
-				   width: { by: 200 },
-				   height: { by: 200 }
-				};
+                                var myAnim = new Y.Anim({
+                                        node: '#demo',
+                                        to: {
+                                            width: function(node) {
+                                                return node.get('offsetWidth') / 2; 
+                                            },
+                                            height: 0
+                                        }
+                                });
+				</textarea>
+				<h4 id="anim-from">Setting a From Value</h4>
+				
+                                <p>Use the optional <code>from</code> attribute to start the animation from a specific value.  When <code>from</code> is omitted, the current value is used.</p>
+				
+                                <p>Like the <code>to</code> attribute, the value of a <code>from</code> property can optionally be a function.  If a function is used, it receives the <code>node</code> as its only argument.  The return value of the function becomes the to value for that <code>run</code> of the animation.</p>
+				<textarea name="code" class="JScript" cols="60" rows="1">
+                                var myAnim = new Y.Anim({
+                                        node: '#demo',
+                                        from: {
+                                            width: 0,
+                                            height: function(node) {
+                                                return node.get('winHeight');
+                                            } 
+                                        },
 
-				var myAnim = new YAHOO.util.Anim('test', attributes);
-				myAnim.animate();
+                                        to: {
+                                            width: 0,
+                                            height: 0
+                                        }
+                                });
 				</textarea>
 
-				<h4 id="startingvalue">Setting a Starting Value</h4>
-				
-				<p>Use the optional &quot;from&quot; attribute property  to start the animation from a specific size:</p>
-				
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var attributes = {
-				   width: { from: 10, by: 200 },
-				   height: { from: 10, by: 200 }
-				};
-
-				var myAnim = new YAHOO.util.Anim('test', attributes);
-				myAnim.animate();
-				</textarea>
-
-				<h4 id="units">Specifying Attribute Units</h4>
+				<h4 id="anim-events">Listening for Events<a name="events"></a></h4>
 			
-				<p>By default, all attributes (except opacity) use pixels as the unit of measurement.  You can override this with the &quot;unit&quot; property.</p>
-
-				<p>The following will animate the element's size from 1 to 20 EMs:</p>
-			
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var attributes = {
-				   width: { from: 1, to: 20, unit: 'em' },
-				   height: { from: 1, to: 20, unit: 'em' }
-				};
-
-				var myAnim = new YAHOO.util.Anim('test', attributes);
-				myAnim.animate();
-				</textarea>
-
-				<h4 id="events">Listening for Events<a name="events"></a></h4>
-			
-				<p>The Animation Utility defines three events: <code>onStart</code>, <code>onTween</code>, and <code>onComplete</code>. Each of these events expose a subscribe method, enabling you to bind a callback function to that event.</p>
+                                <p>The Animation Utility defines events useful for hooking into the various stages of an animation.  The <code>on</code> method is used to attach event listeners.</p>
 								
-				<table>
-					<thead>
-						<tr>
-							<th>Event</th>
-							<th>Fires...</th>
-							<th>Arguments</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>onStart</code></td>
-							<td>...when anim begins</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td><code>onTween</code></td>
-							<td>...on every frame</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td><code>onComplete</code></td>
-							<td>...when anim ends</td>
-							<td>[0] {frames: total frames, fps: frames per second, duration: of animation in milliseconds}</td>
-						</tr>
-					</tbody>
-				</table>				
-
-				<p>The following will remove the animated element (whose HTML ID is <code>test</code>) from its parent node upon completion of the animation:</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-				var removeElement = function() {
-				   var el = this.getEl();
-				   el.parentNode.removeChild(el);
-				}
-				var myAnim = new YAHOO.util.Anim('test', { 
-					  height: {to: 10} 
-					}, 1, YAHOO.util.Easing.easeOut);
-				myAnim.onComplete.subscribe(removeElement);
-				myAnim.animate();</textarea>
+                                var myAnim = new Y.Anim({
+                                        node: '#demo',
+                                        to: {
+                                            width: 0,
+                                            height: 0
+                                        }
+                                });
 
-				<p>To avoid any potential race conditions, events should be subscribed to prior to calling the animate method.</p>
-
-				<h4>Animating with ColorAnim</h4>
-
-				<p>The YAHOO.util.ColorAnim subclass extends the Anim base class to allow animation of colors, including background, border, and color.  Colors can be specified either as hex or rgb.</p>
-
-
-				<p>The following creates a ColorAnim animation that changes the background color of the element from its current background color to "#dcdcdc":</p>
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var element = document.getElementById('test');
-				var myAnim = new YAHOO.util.ColorAnim(element, {backgroundColor: { to: '#dcdcdc' } });
-				myAnim.animate();
+                                myAnim.on('end', function() {
+                                    myAnim.get('node').addClass('yui-hidden');
+                                });
 				</textarea>
-
-
-				<h4 id="motion">Creating Animation with Motion</h4>
-
-				<p>The <code>YAHOO.util.Motion</code> subclass extends the <code>ColorAnim</code> class to move the animated element along a set of points. Points are defined by arrays of x,y coordinates.</p>
-
-				<p>The following creates a Motion animation that moves from its current position to [400, 400] in page coordinates:</p>
-		
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var myAnim = new YAHOO.util.Motion('test', {points: 
-					   { to: [400, 400] } 
-					});
-				myAnim.animate();
-				</textarea>
-
-				<h4 id="curve">Creating Animation with Motion along a Curve</h4>
-
-				<p>The <code>YAHOO.util.Motion</code> class also provides for curved animations.  A curve can be defined by one or more control points.  Control points are added to the points attribute via the &quot;control&quot; property.</p>
-
-				<p>The following creates a Motion animation in which the animated element moves along a curved path from its current position to [400, 400]; the curved path is defined by two control points:</p>
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var attributes = {
-				   points: {
-				      to: [400, 400],
-				      control: [[800, 300], [-200, 400]]
-				   }
-				};
-				var myAnim = new YAHOO.util.Motion('test', attributes);
-				myAnim.animate();
-				</textarea>
-
-				<h4 id="scroll">Creating Animation with Scroll</h4>
-
-				<p>Like Motion, The <code>YAHOO.util.Scroll</code> subclass extends the ColorAnim class to scroll an overflowed element. Scroll values are defined as arrays of <code>scrollTop</code> and <code>scrollLeft</code> values.</p>
-
-
-				<p>The following creates a Scroll animation that scrolls the element left from its current left-scroll position to 500:</p>
-				<textarea name="code" class="JScript" cols="60" rows="1">
-				var element = document.getElementById('test');
-				var myAnim = new YAHOO.util.Scroll(element, {
-					   scroll: { to: [500, test.scrollTop] } 
-					});
-				myAnim.animate();
-				</textarea>
-
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
