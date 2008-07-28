@@ -18,7 +18,7 @@ YUI.add('animation', function(Y) {
         END = 'end',
         NODE = 'node',
         PAUSED = 'paused',
-        REVERSED = 'reversed',
+        REVERSE = 'reverse', // TODO: cleanup
         ITERATION_COUNT = 'iterationCount',
 
         NUM = Number;
@@ -95,24 +95,6 @@ YUI.add('animation', function(Y) {
      */
     Y.Anim.DEFAULT_UNIT = 'px';
 
-    // TODO: move to computedStyle? (browsers dont agree on default computed offsets)
-    var _getOffset = function(node, attr) {
-        var val = node.getComputedStyle(attr),
-            get = (attr === 'left') ? 'getX': 'getY',
-            set = (attr === 'left') ? 'setX': 'setY';
-
-        if (val === 'auto') {
-            var position = node.getStyle('position');
-            if (position === 'absolute' || position === 'fixed') {
-                val = node[get]();
-                node[set](val);
-            } else {
-                val = 0;
-            }
-        }
-
-        return val;
-    };
 
     /**
      * Bucket for custom getters and setters
@@ -121,9 +103,14 @@ YUI.add('animation', function(Y) {
      * @static
      */
     Y.Anim.behaviors = {
-        left: { get: _getOffset },
-        top: { get: _getOffset }
+        left: {
+            get: function(anim, attr) {
+                return anim._getOffset(attr);
+            }
+        }
     };
+
+    Y.Anim.behaviors.top = Y.Anim.behaviors.left;
 
     /**
      * The default setter to use when setting object properties.
@@ -131,9 +118,9 @@ YUI.add('animation', function(Y) {
      * @property DEFAULT_SETTER
      * @static
      */
-    Y.Anim.DEFAULT_SETTER = function(node, att, from, to, elapsed, duration, fn, unit) {
+    Y.Anim.DEFAULT_SETTER = function(anim, att, from, to, elapsed, duration, fn, unit) {
         unit = unit || '';
-        node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
+        anim._node.setStyle(att, fn(elapsed, NUM(from), NUM(to) - NUM(from), duration) + unit);
     };
 
     /**
@@ -142,8 +129,8 @@ YUI.add('animation', function(Y) {
      * @property DEFAULT_GETTER
      * @static
      */
-    Y.Anim.DEFAULT_GETTER = function(node, prop) {
-        return node.getComputedStyle(prop);
+    Y.Anim.DEFAULT_GETTER = function(anim, prop) {
+        return anim._node.getComputedStyle(prop);
     };
 
     Y.Anim.ATTRS = {
@@ -155,6 +142,7 @@ YUI.add('animation', function(Y) {
         node: {
             set: function(node) {
                 node = Y.Node.get(node);
+                this._node = node;
                 if (!node) {
                     Y.fail('Y.Anim: invalid node: ' + node);
                 }
@@ -285,13 +273,11 @@ YUI.add('animation', function(Y) {
 
         /**
          * Whether or not the animation is currently reversed.
-         * Only applies when iterations is greater than 1 and direction is "alternate"
-         * @attribute reversed 
+         * @attribute reverse
          * @type Boolean
          * @default false 
          */
-        reversed: {
-            readOnly: true,
+        reverse: {
             value: false
         }
 
@@ -362,7 +348,7 @@ YUI.add('animation', function(Y) {
         for (var anim in _running) {
             if (_running[anim]._runFrame) {
                 done = false;
-                _running[anim]._runFrame(new Date() - _running[anim].get(START_TIME));
+                _running[anim]._runFrame();
             }
         }
 
@@ -442,33 +428,41 @@ YUI.add('animation', function(Y) {
             _setPrivate(this, START_TIME, null);
             _setPrivate(this, ELAPSED_TIME, 0);
             _setPrivate(this, PAUSED, false);
-            _setPrivate(this, REVERSED, false);
+            _setPrivate(this, REVERSE, false);
 
             delete _running[Y.stamp(this)];
             this.fire(END, {elapsed: this.get(ELAPSED_TIME)});
         },
 
-        _runFrame: function(t) {
+        _runFrame: function() {
             var attr = this._runtimeAttr,
                 customAttr = Y.Anim.behaviors,
-                node = this.get(NODE),
+                easing = attr.easing,
+                d = attr.duration,
+                t = new Date() - this.get(START_TIME),
+                reversed = this.get('reverse'),
+                done = (t >= d),
+                lastFrame = d,
                 attribute,
-                setter,
-                d;
+                setter;
                 
-            for (var i in attr) {
-                if (attr.hasOwnProperty(i)) {
-                    attribute = attr[i];
-                    d = attribute.duration;
+            if (reversed) {
+                t = d - t;
+                done = (t <= 0);
+                lastFrame = 0;
+            }
 
+            for (var i in attr) {
+                if (attr[i].to) { // testing if attribute
+                    attribute = attr[i];
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
-                    if (t < d) {
-                        setter(node, i, attribute.from, attribute.to, t, d, attribute.easing, attribute.unit); 
-                    } else { // set to final value
+                    if (!done) {
+                        setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
+                    } else { // ensure final value is set
                        // TODO: handle keyframes 
-                        setter(node, i, attribute.from, attribute.to, d, d, attribute.easing, attribute.unit); 
+                        setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
                     }
                 }
             }
@@ -477,7 +471,7 @@ YUI.add('animation', function(Y) {
             _setPrivate(this, ELAPSED_TIME, t);
 
             this.fire(TWEEN);
-            if (t >= d) {
+            if (done) {
                 this._lastFrame();
             }
         },
@@ -489,7 +483,7 @@ YUI.add('animation', function(Y) {
             iterCount += 1;
             if (iter === 'infinite' || iterCount < iter) {
                 if (this.get('direction') === 'alternate') {
-                    this._flip();
+                    this.set(REVERSE, !this.get(REVERSE)); // flip it
                 }
                 this.fire('iteration', { frames: this._actualFrames });
             } else {
@@ -499,24 +493,6 @@ YUI.add('animation', function(Y) {
 
             _setPrivate(this, START_TIME, new Date());
             _setPrivate(this, ITERATION_COUNT, iterCount);
-        },
-
-        _flip: function() {
-            var attr = this._runtimeAttr,
-                customAttr = Y.Anim.behaviors;
-
-            Y.each(attr, function(val, name) {
-                if (name in customAttr && customAttr[name].reverse) {
-                    val = customAttr[name].reverse(val);
-                } else {
-                    var b = val.to;
-                    var e = val.from;
-                    attr[name].from = b;
-                    attr[name].to = e;
-                }
-            });
-
-            _setPrivate(this, REVERSED, !this.get(REVERSED)); // flip reverse flag
         },
 
         _initAttr: function() {
@@ -537,7 +513,7 @@ YUI.add('animation', function(Y) {
                 begin = from[name];
                 if (begin === undefined) {
                     begin = (name in customAttr && 'get' in customAttr[name])  ?
-                            customAttr[name].get(node, name) : Y.Anim.DEFAULT_GETTER(node, name);
+                            customAttr[name].get(this, name) : Y.Anim.DEFAULT_GETTER(this, name);
                 } else if (typeof begin === 'function') {
                     begin = begin.call(this, node);
                 }
@@ -553,22 +529,43 @@ YUI.add('animation', function(Y) {
                     unit = Y.Anim.DEFAULT_UNIT;
                 }
 
-                if (!from || !to) {
+                if (!begin || !end) {
                     Y.fail('invalid from or to passed given for ' + name, 'Anim');
                     return;
                 }
 
                 attr[name] = {
-                    easing: easing,
                     from: begin,
                     to: end,
-                    duration: dur,
                     unit: unit
-                };
+                }
+                attr.duration = dur;
+                attr.easing = easing;
 
-            });
+            }, this);
 
             this._runtimeAttr = attr;
+        },
+
+
+        // TODO: move to computedStyle? (browsers dont agree on default computed offsets)
+        _getOffset: function(attr) {
+            var node = this._node,
+                val = node.getComputedStyle(attr),
+                get = (attr === 'left') ? 'getX': 'getY',
+                set = (attr === 'left') ? 'setX': 'setY';
+
+            if (val === 'auto') {
+                var position = node.getStyle('position');
+                if (position === 'absolute' || position === 'fixed') {
+                    val = node[get]();
+                    node[set](val);
+                } else {
+                    val = 0;
+                }
+            }
+
+            return val;
         }
     };
 
@@ -822,6 +819,9 @@ Y.Easing = {
         if (typeof s === 'undefined') {
             s = 1.70158;
         }
+        if (t === d) {
+            t -= .001;
+        }
         return c*(t/=d)*t*((s+1)*t - s) + b;
     },
 
@@ -919,14 +919,14 @@ Y.Easing = {
  */
 
 Y.Anim.behaviors.xy = {
-    set: function(node, att, from, to, elapsed, duration, fn) {
-        node.setXY([
+    set: function(anim, att, from, to, elapsed, duration, fn) {
+        anim._node.setXY([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
             fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
         ]);
     },
-    get: function(node) {
-        return node.getXY();
+    get: function(anim) {
+        return anim._node.getXY();
     }
 };
 
@@ -937,11 +937,16 @@ Y.Anim.behaviors.xy = {
 
 
 Y.Anim.behaviors.color = {
-    set: function(node, att, from, to, elapsed, duration, fn) {
+    set: function(anim, att, from, to, elapsed, duration, fn) {
         from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
         to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
 
-        node.setStyle(att, 'rgb(' + [
+
+        if (!from || !to) {
+            Y.fail('invalid from or to passed to color behavior');
+        }
+
+        anim._node.setStyle(att, 'rgb(' + [
             Math.floor(fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)),
             Math.floor(fn(elapsed, NUM(from[2]), NUM(to[2]) - NUM(from[2]), duration)),
             Math.floor(fn(elapsed, NUM(from[3]), NUM(to[3]) - NUM(from[3]), duration))
@@ -949,8 +954,8 @@ Y.Anim.behaviors.color = {
     },
     
     // TODO: default bgcolor const
-    get: function(node, att) {
-        var val = node.getComputedStyle(att);
+    get: function(anim, att) {
+        var val = anim._node.getComputedStyle(att);
         val = (val === 'transparent') ? 'rgb(255, 255, 255)' : val;
         return val;
     }
@@ -970,16 +975,24 @@ Y.each(['backgroundColor',
  * @module anim-scroll
  */
 Y.Anim.behaviors.scroll = {
-    set: function(node, att, from, to, elapsed, duration, fn) {
-        var val = ([
+    set: function(anim, att, from, to, elapsed, duration, fn) {
+        var
+            node = anim._node, 
+            val = ([
             fn(elapsed, NUM(from[0]), NUM(to[0]) - NUM(from[0]), duration),
             fn(elapsed, NUM(from[1]), NUM(to[1]) - NUM(from[1]), duration)
         ]);
 
-        node.set('scrollLeft', val[0]);
-        node.set('scrollTop', val[1]);
+        if (val[0]) {
+            node.set('scrollLeft', val[0]);
+        }
+
+        if (val[1]) {
+            node.set('scrollTop', val[1]);
+        }
     },
-    get: function(node) {
+    get: function(anim) {
+        var node = anim._node;
         return [node.get('scrollLeft'), node.get('scrollTop')];
     }
 };
@@ -1006,23 +1019,16 @@ Y.Anim.behaviors.scroll = {
  */
 
 Y.Anim.behaviors.curve = {
-    set: function(node, att, from, to, elapsed, duration, fn) {
+    set: function(anim, att, from, to, elapsed, duration, fn) {
         from = from.slice.call(from);
         to = to.slice.call(to);
         var t = fn(elapsed, 0, 100, duration) / 100;
         to.unshift(from);
-        node.setXY(Y.Anim.getBezier(to, t));
+        anim._node.setXY(Y.Anim.getBezier(to, t));
     },
 
-    get: function(node, att) {
-        return node.getXY();
-    },
-
-    reverse: function(val) {
-        val.to.reverse();
-        val.to.push(val.from);
-        val.from = val.to.shift();
-        return val;
+    get: function(anim, att) {
+        return anim._node.getXY();
     }
 };
 
