@@ -63,7 +63,7 @@ Y.Env.meta = {
     root: ROOT,
 
     // base: 'http://yui.yahooapis.com/' + ROOT,
-    base: '../../' + ROOT,
+    base: '../../build/',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
