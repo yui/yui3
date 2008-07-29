@@ -1,10 +1,4 @@
 /*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 3.0.0
-*/
-/*
 	TODO will need to remove settings on HTML since we can't namespace it.
 	TODO with the prefix, should I group by selector or property for weight savings?
 */
@@ -20,120 +14,113 @@ html{
 		- Fails on FF. 
 */
 body,
-.yui-reset div,
-.yui-reset dl,
-.yui-reset dt,
-.yui-reset dd,
-.yui-reset ul,
-.yui-reset ol,
-.yui-reset li,
-.yui-reset h1,
-.yui-reset h2,
-.yui-reset h3,
-.yui-reset h4,
-.yui-reset h5,
-.yui-reset h6,
-.yui-reset pre,
-.yui-reset code,
-.yui-reset form,
-.yui-reset fieldset,
-.yui-reset legend,
-.yui-reset input,
-.yui-reset textarea,
-.yui-reset p,
-.yui-reset blockquote,
-.yui-reset th,
-.yui-reset td {
+div,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+form,
+fieldset,
+legend,
+input,
+textarea,
+p,
+blockquote,
+th,
+td {
 	margin:0;
 	padding:0;
 }
-.yui-reset table {
+table {
 	border-collapse:collapse;
 	border-spacing:0;
 }
-.yui-reset fieldset,
-.yui-reset img {
+fieldset,
+img {
 	border:0;
 }
 /*
 	TODO think about hanlding inheritence differently, maybe letting IE6 fail a bit...
 */
-.yui-reset address,
-.yui-reset caption,
-.yui-reset cite,
-.yui-reset code,
-.yui-reset dfn,
-.yui-reset em,
-.yui-reset strong,
-.yui-reset th,
-.yui-reset var {
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+strong,
+th,
+var {
 	font-style:normal;
 	font-weight:normal;
 }
 /*
 	TODO Figure out where this list-style rule is best set. Hedger has a request to investigate.
 */
-.yui-reset li {
+li {
 	list-style:none;
 }
 
-.yui-reset caption,
-.yui-reset th {
+caption,
+th {
 	text-align:left;
 }
-.yui-reset h1,
-.yui-reset h2,
-.yui-reset h3,
-.yui-reset h4,
-.yui-reset h5,
-.yui-reset h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-size:100%;
 	font-weight:normal;
 }
-.yui-reset q:before,
-.yui-reset q:after {
+q:before,
+q:after {
 	content:'';
 }
-.yui-reset abbr,
-.yui-reset acronym {
+abbr,
+acronym {
 	border:0;
 	font-variant:normal;
 }
 /* to preserve line-height and selector appearance */
-.yui-reset sup {
+sup {
 	vertical-align:text-top;
 }
-.yui-reset sub {
+sub {
 	vertical-align:text-bottom;
 }
-.yui-reset input,
-.yui-reset textarea,
-.yui-reset select {
+input,
+textarea,
+select {
 	font-family:inherit;
 	font-size:inherit;
 	font-weight:inherit;
 }
 /*to enable resizing for IE*/
-.yui-reset input,
-.yui-reset textarea,
-.yui-reset select {
+input,
+textarea,
+select {
 	*font-size:100%;
 }
 /*because legend doesn't inherit in IE */
-.yui-reset legend {
+legend {
 	color:#000;
-}/*
-Copyright (c) 2008, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 3.0.0
-*/
-
-/**
+}/**
  * Percents could work for IE, but for backCompat purposes, we are using keywords.
  * x-small is for IE6/7 quirks mode.
  */
-.yui-fonts body {
+body {
 	font:13px/1.231 arial,helvetica,clean,sans-serif;
 	*font-size:small; /* for IE */
 	*font:x-small; /* for IE in quirks mode */
@@ -142,17 +129,17 @@ version: 3.0.0
 /**
  * Nudge down to get to 13px equivalent for these form elements
  */ 
-.yui-fonts select,
-.yui-fonts input,
-.yui-fonts button,
-.yui-fonts textarea {
+select,
+input,
+button,
+textarea {
 	font:99% arial,helvetica,clean,sans-serif;
 }
 
 /**
  * To help tables remember to inherit
  */
-.yui-fonts table {
+table {
 	font-size:inherit;
 	font:100%;
 }
@@ -160,11 +147,11 @@ version: 3.0.0
 /**
  * Bump up IE to get to 13px equivalent for these fixed-width elements
  */
-.yui-fonts pre,
-.yui-fonts code,
-.yui-fonts kbd,
-.yui-fonts samp,
-.yui-fonts tt {
+pre,
+code,
+kbd,
+samp,
+tt {
 	font-family:monospace;
 	*font-size:108%;
 	line-height:100%;
