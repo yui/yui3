@@ -12,11 +12,10 @@
 
 <script>
 
-var Y = YUI();
-Y.on('event:ready', function() {
+YUI().use('node', function(Y) {
     var node = Y.get('#demo');
     var used = [];
-    Y.each(Y.Env._used, function(v, k) {
+    Y.each(Y.Env._attached, function(v, k) {
         used[used.length] = k;
     });
     used.sort();
