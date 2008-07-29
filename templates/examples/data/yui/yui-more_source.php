@@ -1,3 +1,11 @@
+
+
+    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+    <script type="text/javascript" src="../../build/oop/oop.js"></script>
+    <script type="text/javascript" src="../../build/event/event.js"></script>
+    <script type="text/javascript" src="../../build/dom/dom.js"></script>
+    <script type="text/javascript" src="../../build/node/node.js"></script>
+
 <style>
     #demo {
         border: 1px solid black;

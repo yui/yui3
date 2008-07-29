@@ -34,7 +34,7 @@ $examples["yui-more"] = array(
 	modules => array("yui"),
 	description => "Load All Modules",
 	sequence => array(2),
-	newWindow => "default",
+    newWindow => "require",
 	requires => array("yui", 'node', 'io', 'animation', 'dd-drag'),
 	highlightSyntax => true
 );
