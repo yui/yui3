@@ -1,12 +1,21 @@
-YUI.add('json-parse', function(Y) {
-
 /**
- * Provides Y.JSON.parse method to take JSON strings and return native
- * JavaScript objects.
- * @module json-parse
+ * The JSON Utility provides methods to serialize JavaScript objects into
+ * JSON strings and parse JavaScript objects from strings containing JSON data.
+ * Three modules are available for inclusion:
+ * <ol>
+ * <li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
+ * <li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
+ * <li>3. <code>json</code> for both parsing and stringification</li>
+ * </ol>
+ * 
+ * Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+ * @module json
  * @class JSON
  * @static
  */
+
+YUI.add('json-parse', function(Y) {
+
 Y.JSON = Y.JSON || {};
 
 // All internals kept private for security reasons
@@ -97,6 +106,9 @@ var _UNICODE_EXCEPTIONS = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u
 
 /**
  * Parse a JSON string, returning the native JavaScript representation.
+ *
+ * Provided by <code>json-parse</code> module
+ * Throws SyntaxError when supplied with invalid JSON string.
  * @param s {string} JSON string data
  * @param reviver {function} (optional) function(k,v) passed each key value pair of object literals, allowing pruning or altering values
  * @return {MIXED} the native JavaScript representation of the JSON string
@@ -134,12 +146,6 @@ Y.JSON.parse = function (s,reviver) {
 }, '@VERSION@' );
 YUI.add('json-stringify', function(Y) {
 
-/**
- * Provides Y.JSON.stringify method for converting objects to JSON strings.
- * @module json-stringify
- * @class JSON
- * @static
- */
 var isA = Y.Lang.isArray;
 
 Y.JSON = Y.JSON || {};
@@ -175,6 +181,8 @@ Y.mix(Y.JSON,{
      * Serializes a Date instance as a UTC date string.  Used internally by
      * stringify.  Override this method if you need Dates serialized in a
      * different format.
+     *
+     * Provided by <code>json-stringify</code> module
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
@@ -199,6 +207,8 @@ Y.mix(Y.JSON,{
      * If a whitelist is provided, only matching object keys will be included.
      * If a depth limit is provided, objects and arrays at that depth will
      * be stringified as empty.
+     *
+     * Provided by <code>json-stringify</code> module
      * @method stringify
      * @param o {MIXED} any arbitrary object to convert to JSON string
      * @param w {Array|Function} (optional) whitelist of acceptable object

@@ -3,7 +3,7 @@ YUI.add('json-parse', function(Y) {
 /**
  * Provides Y.JSON.parse method to take JSON strings and return native
  * JavaScript objects.
- * @module JSON
+ * @module json-parse
  * @class JSON
  * @static
  */
@@ -136,7 +136,7 @@ YUI.add('json-stringify', function(Y) {
 
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
- * @module JSON
+ * @module json-stringify
  * @class JSON
  * @static
  */
