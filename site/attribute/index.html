@@ -21,7 +21,7 @@ include "../inc/header.inc";
 
                     <p>Attributes added through the Attribute interface can be configured to with custom get, set and validation handlers and can also be specified as 
                     read-only or write-once. It also provides the ability to configure attibutes to protect their stored values, using a deep or shallow clone when returning
-                    values through <code>get</code></p>
+                    values through <code>get</code>.</p>
 
 					<div class="yui-g">
 						<div class="yui-u first">
@@ -56,13 +56,12 @@ include "../inc/header.inc";
 				<h4 id="dependencies">Include Dependencies</h4>
 
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+<textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- Dependencies --&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-				</textarea>
+&lt;!-- Source file --&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+</textarea>
 
                 <?php
                 include "../inc/include-notice.inc";
@@ -74,12 +73,11 @@ include "../inc/header.inc";
                 sandboxed anonymous function to avoid polluting the global namespace), and populate it with the modules you need. In the case of Attribute,
                 you only need to include the "attribute" module as shown below, using YUI's <code>use</code> method:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    (function() {
-                        var Y = YUI().use("attribute");
-                        ... 
-                    })();
-                </textarea>
+<textarea name="code" class="JScript" cols="60" rows="1">(function() {
+    var Y = YUI().use("attribute");
+    ... 
+})();
+</textarea>
 
                 <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>), with the classes which make up Attribute (e.g. Y.Attribute); which you 
                 can then augment to any custom classes which you need to add Attribute support to.</p>
@@ -103,17 +101,16 @@ include "../inc/header.inc";
                 management support to it. For example, assuming you have a class constructor, <code>MyClass</code>, to which you'd like to add attribute support, 
                 you can simply augment your class with Attribute, as shown below:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    (function() {
-                        var Y = YUI().use("attribute");
+<textarea name="code" class="JScript" cols="60" rows="1">(function() {
+    var Y = YUI().use("attribute");
 
-                        function MyClass() {
-                            ...
-                        }
+    function MyClass() {
+        ...
+    }
 
-                        Y.augment(MyClass, Y.Attribute);
-                    })();
-                </textarea>
+    Y.augment(MyClass, Y.Attribute);
+})();
+</textarea>
 
                 <p>Instances of your class will now have Attribute methods available, which your class can use to add/configure attributes and which users of your
                 class can use to get and set attribute values. See the <a href="../api/Attribute.html">Attribute api documentation</a> for a complete list of 
@@ -126,26 +123,25 @@ include "../inc/header.inc";
                to being able to initialize multiple attributes in one call, it also accepts an additional name/value hash, which can be used to allow the 
                user to set multiple attribute values when instantiating Attribute driven classes, as shown below:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    ...
-                    function MyClass(userValues) {
-                            
-                        // Use _initAtts, to setup default attributes for
-                        // your class, and merge in user provided values.
+<textarea name="code" class="JScript" cols="60" rows="1">...
+function MyClass(userValues) {
+        
+    // Use _initAtts, to setup default attributes for
+    // your class, and merge in user provided values.
 
-                        this._initAtts(MyClass.ATTRIBUTE_CONFIG, userValues);
-                    }
+    this._initAtts(MyClass.ATTRIBUTE_CONFIG, userValues);
+}
 
-                    MyClass.ATTRIBUTE_CONFIG = {
-                        attrA : {
-                            // ... Configuration for attribute "attrA" ...
-                        },
+MyClass.ATTRIBUTE_CONFIG = {
+    attrA : {
+        // ... Configuration for attribute "attrA" ...
+    },
 
-                        attrB : {
-                            // ... Configuration for attribute "attrB" ...
-                        }
-                    };
-               </textarea>
+    attrB : {
+        // ... Configuration for attribute "attrB" ...
+    }
+};
+</textarea>
 
                <p><strong>NOTE:</strong> The default attribute configuration is not required 
                to be a static property (<code>ATTRIBUTE_CONFIG</code> above) on the host class, 
@@ -155,15 +151,14 @@ include "../inc/header.inc";
                <p>Users of your class, can now pass attribute values into the constructor,
                or set values using the <code>set</code> method as shown below:
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    // Set attrA during instantiation
-                    var o = new MyClass({
-                        attrA:5
-                    });
+<textarea name="code" class="JScript" cols="60" rows="1">// Set attrA during instantiation
+var o = new MyClass({
+    attrA:5
+});
 
-                    // Set attrB later on
-                    o.set("attrB", "Hello World!");
-                </textarea>
+// Set attrB later on
+o.set("attrB", "Hello World!");
+</textarea>
 
                <h4 id="configuration">Attribute Configuration Properties</h4>
 
@@ -273,47 +268,45 @@ include "../inc/header.inc";
                 <p>The above attribute properties are set using an object literal, which is passed to either <code>_initAtts</code> or <code>addAtt</code> as the 
                 configuration argument. For example, expanding on the code snippet above:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    this._initAtts( {
+<textarea name="code" class="JScript" cols="60" rows="1">this._initAtts( {
 
-                        attrA : {
-                            // Configuration for attribute "attrA"
+    attrA : {
+        // Configuration for attribute "attrA"
 
-                            value: 5,
+        value: 5,
 
-                            set: function(val) {
-                                return Math.min(val, 10); 
-                            },
+        set: function(val) {
+            return Math.min(val, 10); 
+        },
 
-                            validator: function(val) {
-                                return Y.Lang.isNumber(val);
-                            }
-                        },
+        validator: function(val) {
+            return Y.Lang.isNumber(val);
+        }
+    },
 
-                        attrB : {
-                            // Configuration for attribute "attrB"
-                        }
+    attrB : {
+        // Configuration for attribute "attrB"
+    }
 
-                    }, userValues);
-                </textarea>
+}, userValues);
+</textarea>
 
                 <p>Or, if using <code>addAtt</code>:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    this.addAtt("attrA", {
-                        // Configuration for attribute "attrA"
+<textarea name="code" class="JScript" cols="60" rows="1">this.addAtt("attrA", {
+    // Configuration for attribute "attrA"
 
-                        value: 5,
+    value: 5,
 
-                        set: function(val) {
-                            return Math.min(val, 10); 
-                        },
+    set: function(val) {
+        return Math.min(val, 10); 
+    },
 
-                        validator: function(val) {
-                            return Y.Lang.isNumber(val);
-                        }
-                    });
-                </textarea> 
+    validator: function(val) {
+        return Y.Lang.isNumber(val);
+    }
+});
+</textarea> 
 
                 <h4 id="events">Attribute Change Events</h4>
 
@@ -331,11 +324,10 @@ include "../inc/header.inc";
                 <p>For example, if you were interested in listening for changes to an attribute named 
                 "enabled", you would subscribe to events of type "enabledChange".</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    o.on("enabledChange", function(event) {
-                        // Do something just before "enabled" is about to be set
-                    });
-                </textarea>
+<textarea name="code" class="JScript" cols="60" rows="1">o.on("enabledChange", function(event) {
+    // Do something just before "enabled" is about to be set
+});
+</textarea>
 
                 <p><em>NOTE:</em> Context and additional arguments for the listener function can either be 
                 defined using YUI's <code>bind</code> method, or by passing in the context and 
@@ -357,19 +349,18 @@ include "../inc/header.inc";
                 prevent the change in state from occuring, by invoking <code>event.preventDefault()</code> on 
                 the event object passed to them</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    o.on("enabledChange", function(event) {
+<textarea name="code" class="JScript" cols="60" rows="1">o.on("enabledChange", function(event) {
 
-                        // get, will return the current attribute value
-                        var currentVal = this.get("enabled");
+    // get, will return the current attribute value
+    var currentVal = this.get("enabled");
 
-                        if (someCondition) {
-                            // Prevent "enabled" from being changed
-                            event.preventDefault();
-                        }
+    if (someCondition) {
+        // Prevent "enabled" from being changed
+        event.preventDefault();
+    }
 
-                    });
-                </textarea>
+});
+</textarea>
 
                 <h6>After</h6>
 
@@ -380,17 +371,16 @@ include "../inc/header.inc";
                 <p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
                 for example, by one of the "on" listeners calling <code>preventDefault</code> on the event object</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    o.after("enabledChange", function(event) {
+<textarea name="code" class="JScript" cols="60" rows="1">o.after("enabledChange", function(event) {
 
-                        // get, will return the updated attribute value
-                        var updatedVal = this.get("enabled");
+    // get, will return the updated attribute value
+    var updatedVal = this.get("enabled");
 
-                        // Calling preventDefault() in an "after" listener has no impact
-                        event.preventDefault();
+    // Calling preventDefault() in an "after" listener has no impact
+    event.preventDefault();
 
-                    });
-                </textarea>
+});
+</textarea>
 
                 <h5>The Event Object</h5>
 
@@ -420,35 +410,33 @@ include "../inc/header.inc";
                 <p>If you have attribute values which are objects (as opposed to primitive values, such as numbers or booleans), the <code>set</code> method will let
                 you set properties of the object directly, using a dot notation syntax. For example, if you have an attribute, "strings" with the following value:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    o.set("strings", {
-                        ui : {
-                            acccept_label : "OK",
-                            decline_label : "Cancel",
-                        },
-                        errors : {
-                            e1000 : "Not Supported",
-                            e1001 : "Network Error"
-                        }
-                    });
-                </textarea>
+<textarea name="code" class="JScript" cols="60" rows="1">o.set("strings", {
+    ui : {
+        acccept_label : "OK",
+        decline_label : "Cancel",
+    },
+    errors : {
+        e1000 : "Not Supported",
+        e1001 : "Network Error"
+    }
+});
+</textarea>
                 
                 <p>You can set individual properties on the "strings" attribute value object, without having to get and reset the whole strings attribute. This is done
                 by using the dot notation to reference properties within the attribute's value:</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    // Set existing properties
-                    o.set("strings.ui.accept_label", "Yes");
-                    o.set("strings.ui.decline_label", "No");
+<textarea name="code" class="JScript" cols="60" rows="1">// Set existing properties
+o.set("strings.ui.accept_label", "Yes");
+o.set("strings.ui.decline_label", "No");
 
-                    // Add a new property
-                    o.set("strings.errors.e2000", "New Error");
-                    
-                    // Cannot set new intermediate properties:
-                    // "strings.messages" does not exist so can't set
-                    // "strings.messages.intro"
-                    o.set("strings.messages.intro", "Welcome");
-                </textarea>
+// Add a new property
+o.set("strings.errors.e2000", "New Error");
+
+// Cannot set new intermediate properties:
+// "strings.messages" does not exist so can't set
+// "strings.messages.intro"
+o.set("strings.messages.intro", "Welcome");
+</textarea>
 
                 <p>Setting sub attribute values, will fire an attribute change event for the 
                 main attribute ("stringsChange" in the above example), however the event object passed
@@ -458,46 +446,25 @@ include "../inc/header.inc";
 
                 <p>You can also retrieve sub attribute values using the same dot notation syntax</p>
 
-                <textarea name="code" class="JScript" cols="60" rows="1">
-                    // Get the string for the accept label
-                    var lbl = o.get("strings.ui.accept_label");
-                </textarea>
+<textarea name="code" class="JScript" cols="60" rows="1">// Get the string for the accept label
+var lbl = o.get("strings.ui.accept_label");
+</textarea>
 
                 <p>It should be noted that get, set and validator attribute configuration functions are 
                 only defined for the top level attribute ("string" in this case) and will get invoked 
                 when getting/setting sub attribute values</p>
 
 <?php # include "../inc/mobileSection.inc";?>
-<!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
-<?php 
-include "../inc/support.inc";
-?>
+<?php include "../inc/support.inc"; ?>
 
 		</div>
 <div class="yui-u sidebar">
 
-    <?php 
-	 // include "../inc/cheatsheet.inc";
-	?>
+<?php # include "../inc/cheatsheet.inc"; ?>
 		 	
 			<div id="examples">
-<?php 
-	include("../inc/examplesNav/".$section.".inc");
-?>
+<?php include("../inc/examplesNav/".$section.".inc"); ?>
 		   </div>
-		   <!-- 
-		   <div id="morereading">
-				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-				
-				<ul>
-					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-				  	<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-
-			   </ul>
-		   </div>
-           -->
-		   
 <?php 
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
 require_once('../inc/badge.inc');
@@ -509,13 +476,8 @@ require_once('../inc/badge.inc');
 
 		 </div>
       </div>
-
 </div>
 </div>
 
 <?php include "../inc/side.inc" ?>
 <?php include "../inc/footer.inc" ?>
-
-
-
-
