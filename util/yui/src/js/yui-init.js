@@ -21,13 +21,7 @@
 
             core.push(
               "get", 
-              "loader", 
-              "oop",
-              "aop", 
-              "event", 
-              "dom", 
-              "node", 
-              "io");
+              "loader");
         }
 
         Y.use.apply(Y, core);

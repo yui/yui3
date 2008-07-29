@@ -76,8 +76,6 @@
 <span class="c">     *  &lt;dd&gt;If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.</span>
 <span class="c">     *  &lt;dt&gt;win&lt;/dt&gt;</span>
 <span class="c">     *  &lt;dd&gt;The target window/frame&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;doc&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The target document&lt;/dd&gt;</span>
 <span class="c">     *  &lt;dt&gt;core&lt;/dt&gt;</span>
 <span class="c">     *  &lt;dd&gt;A list of modules that defines the YUI core (overrides the default)&lt;/dd&gt;</span>
 <span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
@@ -362,8 +360,8 @@
             <span class="nx">dynamic</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
             <span class="nx">callback</span> <span class="o">=</span> <span class="nx">a</span><span class="o">[</span><span class="nx">a</span><span class="o">.</span><span class="nx">length</span><span class="o">-</span><span class="m">1</span><span class="o">];</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;: use called: &#39;</span> <span class="o">+</span> <span class="nx">a</span> <span class="o">+</span> <span class="s1">&#39; :: &#39;</span> <span class="o">+</span> <span class="nx">callback</span><span class="o">);</span>
-
+        <span class="c">// Y.log(Y.id + &#39;: use called: &#39; + a + &#39; :: &#39; + callback);</span>
+<span class="c"></span>
         <span class="c">// The last argument supplied to use can be a load complete callback</span>
 <span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="k">typeof</span> <span class="nx">callback</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">)</span> <span class="o">{</span>
             <span class="nx">a</span><span class="o">.</span><span class="nx">pop</span><span class="o">();</span>
@@ -489,9 +487,12 @@
             <span class="c">// dynamic load</span>
 <span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;trying to get the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">);</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="nx">onComplete</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;failure&#39;</span><span class="o">,</span> <span class="nx">onComplete</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
-            <span class="nx">loader</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="s1">&#39;timeout&#39;</span><span class="o">,</span> <span class="nx">onComplete</span><span class="o">,</span> <span class="nx">Y</span><span class="o">);</span>
+            <span class="c">// loader.subscribe(&#39;success&#39;, onComplete, Y);</span>
+<span class="c"></span>            <span class="c">// loader.subscribe(&#39;failure&#39;, onComplete, Y);</span>
+<span class="c"></span>            <span class="c">// loader.subscribe(&#39;timeout&#39;, onComplete, Y);</span>
+<span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">onTimeout</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">missing</span><span class="o">);</span>
             <span class="c">// loader calls use to automatically attach when finished</span>
 <span class="c"></span>            <span class="c">// but we still need to execute the callback.</span>

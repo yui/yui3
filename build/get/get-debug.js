@@ -425,15 +425,6 @@ Y.Get = function() {
     return {
 
         /**
-         * The default poll freqency in ms, when needed
-         * @property POLL_FREQ
-         * @static
-         * @type int
-         * @default 10
-         */
-        POLL_FREQ: 10,
-
-        /**
          * The number of request required before an automatic purge.
          * property PURGE_THRESH
          * @static
@@ -442,16 +433,6 @@ Y.Get = function() {
          */
         PURGE_THRESH: 20,
 
-        /**
-         * The length time to poll for varName when loading a script in
-         * Safari 2.x before the transaction fails.
-         * property TIMEOUT
-         * @static
-         * @type int
-         * @default 2000
-         */
-        TIMEOUT: 2000,
-        
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
@@ -506,6 +487,25 @@ Y.Get = function() {
          * <dt>
          * </dl>
          * </dd>
+         * <dt>onTimeout</dt>
+         * <dd>
+         * callback to execute when a timeout occurs.
+         * The callback receives an object back with the following
+         * data:
+         * <dl>
+         * <dt>win</dt>
+         * <dd>the window the script(s) were inserted into</dd>
+         * <dt>data</dt>
+         * <dd>the data object passed in when the request was made</dd>
+         * <dt>nodes</dt>
+         * <dd>An array containing references to the nodes that were
+         * inserted</dd>
+         * <dt>purge</dt>
+         * <dd>A function that, when executed, will remove the nodes
+         * that were inserted</dd>
+         * <dt>
+         * </dl>
+         * </dd>
          * <dt>onFailure</dt>
          * <dd>
          * callback to execute when the script load operation fails
@@ -539,23 +539,14 @@ Y.Get = function() {
          * data that is supplied to the callback when the script(s) are
          * loaded.
          * </dd>
-         * <dt>varName</dt>
-         * <dd>
-         * variable that should be available when a script is finished
-         * loading.  Used to help Safari 2.x and below with script load 
-         * detection.  The type of this property should match what was
-         * passed into the url parameter: if loading a single url, a
-         * string can be supplied.  If loading multiple scripts, you
-         * must supply an array that contains the variable name for
-         * each script.
-         * </dd>
          * <dt>insertBefore</dt>
          * <dd>node or node id that will become the new node's nextSibling</dd>
          * </dl>
          * <dt>charset</dt>
          * <dd>Node charset, default utf-8</dd>
+         * <dt>timeout</dt>
+         * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
-         * // assumes yahoo, dom, and event are already on the page
          * &nbsp;&nbsp;Y.Get.script(
          * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js",
          * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"], &#123;

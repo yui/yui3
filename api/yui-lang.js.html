@@ -86,6 +86,11 @@
         <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="o">;</span>
     <span class="o">};</span>
         
+    <span class="c">/**</span>
+<span class="c">     * Determines whether or not the supplied object is a date instance</span>
+<span class="c">     * @method isDate</span>
+<span class="c">     * @return {boolean} true if it is a date</span>
+<span class="c">     */</span>
     <span class="nx">L</span><span class="o">.</span><span class="nx">isDate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">o</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="o">;</span>
     <span class="o">};</span>
@@ -142,7 +147,6 @@
         <span class="k">return</span> <span class="k">typeof</span> <span class="nx">o</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="o">;</span>
     <span class="o">};</span>
     
-
     <span class="c">/**</span>
 <span class="c">     * Returns a string without any leading or trailing whitespace.  If </span>
 <span class="c">     * the input is not a string, the input will be returned untouched.</span>

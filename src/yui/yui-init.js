@@ -20,20 +20,12 @@
             core = ["object", "ua", "later"];
 
             core.push(
-              "aop", 
-              "event-custom", 
-              "event-target", 
-              "event-ready",
-              "event-dom", 
-              "event-facade",
               "get", 
-              "loader", 
-              "dom", 
-              "node", 
-              "io");
+              "loader");
         }
 
         Y.use.apply(Y, core);
+
     };
      
     YUI.add("yui", M, "@VERSION@");

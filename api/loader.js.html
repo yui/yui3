@@ -152,7 +152,9 @@
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
-        <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">base</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;attribute&#39;</span><span class="o">]</span>
@@ -168,7 +170,7 @@
 
         <span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;dd/dd-ddm-base-min.js&#39;</span><span class="o">,</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">BASE</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">,</span> <span class="nx">BASE</span><span class="o">]</span>
         <span class="o">},</span> 
         <span class="s1">&#39;dd-ddm&#39;</span><span class="o">:{</span>
             <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;dd/dd-ddm-min.js&#39;</span><span class="o">,</span>
@@ -229,7 +231,13 @@
             <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-ddm&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-drag&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-proxy&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-plugin&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
+        <span class="nx">dom</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+
         <span class="nx">dump</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+
+        <span class="nx">event</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;oop&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
         
         <span class="nx">io</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
@@ -248,6 +256,12 @@
         <span class="nx">logreader</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;css&#39;</span><span class="o">]</span>
         <span class="o">},</span>
+
+        <span class="nx">node</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
+
+        <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
@@ -332,9 +346,9 @@
         <span class="c">/**</span>
 <span class="c">         * The execution context for all callbacks</span>
 <span class="c">         * @property context</span>
-<span class="c">         * @default this</span>
+<span class="c">         * @default {YUI} the YUI instance</span>
 <span class="c">         */</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="k">this</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">context</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">;</span>
 
         <span class="c">/**</span>
 <span class="c">         * Data that is passed to all callbacks</span>
@@ -530,6 +544,8 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span> <span class="o">=</span> <span class="o">{};</span>
 
+        <span class="k">this</span><span class="o">.</span><span class="nx">skipped</span> <span class="o">=</span> <span class="o">{};</span>
+
         <span class="c">// Y.on(&#39;yui:load&#39;, this.loadNext, this);</span>
 <span class="c"></span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_config</span><span class="o">(</span><span class="nx">o</span><span class="o">);</span>
@@ -554,7 +570,7 @@
             <span class="c">// apply config values</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nb">Object</span><span class="o">.</span><span class="nx">owns</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
                         <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s2">&quot;require&quot;</span><span class="o">)</span> <span class="o">{</span>
                             <span class="k">this</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
                         <span class="c">// support the old callback syntax</span>
@@ -669,7 +685,6 @@
 <span class="c"></span>                <span class="k">return</span> <span class="nx">mod</span><span class="o">.</span><span class="nx">expanded</span><span class="o">;</span>
             <span class="o">}</span>
 
-
             <span class="k">var</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">d</span><span class="o">=[],</span> <span class="nx">r</span><span class="o">=</span><span class="nx">mod</span><span class="o">.</span><span class="nx">requires</span><span class="o">,</span> <span class="nx">o</span><span class="o">=</span><span class="nx">mod</span><span class="o">.</span><span class="nx">optional</span><span class="o">,</span> 
                 <span class="nx">info</span><span class="o">=</span><span class="k">this</span><span class="o">.</span><span class="nx">moduleInfo</span><span class="o">,</span> <span class="nx">m</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">add</span><span class="o">;</span>
 
@@ -703,13 +718,10 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-
             <span class="k">if</span> <span class="o">(</span><span class="nx">o</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">loadOptional</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">o</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                     <span class="nx">d</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
-                    <span class="c">// AU.appendArray(d, this.getRequires(info[o[i]]));</span>
-<span class="c"></span>                    <span class="c">// d.concat(this.getRequires(info[o[i]]));</span>
-<span class="c"></span>                    <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">info</span><span class="o">[</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]]);</span>
+                    <span class="nx">add</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRequires</span><span class="o">(</span><span class="nx">info</span><span class="o">[</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]]);</span>
                     <span class="k">for</span> <span class="o">(</span><span class="nx">j</span><span class="o">=</span><span class="m">0</span><span class="o">;</span><span class="nx">j</span><span class="o">&lt;</span><span class="nx">add</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span><span class="nx">j</span><span class="o">=</span><span class="nx">j</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">d</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">add</span><span class="o">[</span><span class="nx">j</span><span class="o">]);</span>
                     <span class="o">}</span>
@@ -1013,29 +1025,56 @@
         <span class="nx">_onSuccess</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_pushEvents</span><span class="o">();</span>
-            <span class="c">// Y._attach(Y.Object.keys(this.inserted));</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;success&#39;</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
-            <span class="o">});</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">skipped</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+            <span class="o">}</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">skipped</span> <span class="o">=</span> <span class="o">{};</span>
+
+            <span class="c">// this.fire(&#39;success&#39;, {</span>
+<span class="c"></span>            <span class="c">//     data: this.data</span>
+<span class="c"></span>            <span class="c">// });</span>
+<span class="c"></span>
+            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onSuccess</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
         <span class="o">},</span>
 
         <span class="nx">_onFailure</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Y._attach(Y.Object.keys(this.inserted));</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;failure&#39;</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;operation failed: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
-            <span class="o">});</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+            <span class="c">// this.fire(&#39;failure&#39;, {</span>
+<span class="c"></span>            <span class="c">//     msg: &#39;operation failed: &#39; + msg,</span>
+<span class="c"></span>            <span class="c">//     data: this.data</span>
+<span class="c"></span>            <span class="c">// });</span>
+<span class="c"></span>
+            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onFailure</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;operation failed: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span>
+                    <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
         <span class="o">},</span>
 
         <span class="nx">_onTimeout</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// Y._attach(Y.Object.keys(this.inserted));</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
-            <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;timeout&#39;</span><span class="o">,</span> <span class="o">{</span>
-                <span class="nx">msg</span><span class="o">:</span> <span class="s1">&#39;operation timed out: &#39;</span> <span class="o">+</span> <span class="nx">msg</span><span class="o">,</span>
-                <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
-            <span class="o">});</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+
+            <span class="c">// this.fire(&#39;timeout&#39;, {</span>
+<span class="c"></span>            <span class="c">//     data: this.data</span>
+<span class="c"></span>            <span class="c">// });</span>
+<span class="c"></span>
+            <span class="k">var</span> <span class="nx">f</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">f</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">f</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
+                    <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
         <span class="o">},</span>
         
         <span class="c">/**</span>
@@ -1275,10 +1314,17 @@
 <span class="c"></span>                <span class="c">// data to avoid loading the same module multiple times</span>
 <span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span><span class="o">[</span><span class="nx">mname</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;progress&#39;</span><span class="o">,</span> <span class="o">{</span>
-                    <span class="nx">name</span><span class="o">:</span> <span class="nx">mname</span><span class="o">,</span>
-                    <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
-                <span class="o">});</span>
+                <span class="c">// this.fire(&#39;progress&#39;, {</span>
+<span class="c"></span>                <span class="c">//     name: mname,</span>
+<span class="c"></span>                <span class="c">//     data: this.data</span>
+<span class="c"></span>                <span class="c">// });</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">onProgress</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">onProgress</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">context</span><span class="o">,</span> <span class="o">{</span>
+                            <span class="nx">name</span><span class="o">:</span> <span class="nx">mname</span><span class="o">,</span>
+                            <span class="nx">data</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">data</span>
+                        <span class="o">});</span>
+                <span class="o">}</span>
+
 
             <span class="o">}</span>
 
@@ -1311,6 +1357,7 @@
                     <span class="k">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s2">&quot;Undefined module &quot;</span> <span class="o">+</span> <span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">+</span> <span class="s2">&quot; skipped&quot;</span><span class="o">;</span>
                     <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="nx">msg</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;Loader&#39;</span><span class="o">);</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">skipped</span><span class="o">[</span><span class="nx">s</span><span class="o">[</span><span class="nx">i</span><span class="o">]]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
                     <span class="k">continue</span><span class="o">;</span>
 
                     <span class="c">// this.fire(&#39;failure&#39;, {</span>
@@ -1413,8 +1460,8 @@
 
     <span class="o">};</span>
 
-    <span class="nx">Y</span><span class="o">.</span><span class="nx">augment</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">);</span>
-
+    <span class="c">// Y.augment(Y.Loader, Y.Event.Target);</span>
+<span class="c"></span>
 <span class="o">},</span> <span class="s2">&quot;@VERSION@&quot;</span><span class="o">);</span>
 </pre></div>
                     </div>

@@ -3264,7 +3264,6 @@ Y.Env.meta = {
                 // will pass that module name to this function.  Storing this
                 // data to avoid loading the same module multiple times
                 this.inserted[mname] = true;
-                this.skipped[mname] = true;
 
                 // this.fire('progress', {
                 //     name: mname,
@@ -3309,6 +3308,7 @@ Y.Env.meta = {
                     var msg = "Undefined module " + s[i] + " skipped";
                     Y.log(msg, 'warn', 'Loader');
                     this.inserted[s[i]] = true;
+                    this.skipped[s[i]] = true;
                     continue;
 
                     // this.fire('failure', {
@@ -3437,13 +3437,7 @@ Y.Env.meta = {
 
             core.push(
               "get", 
-              "loader", 
-              "oop",
-              "aop", 
-              "event", 
-              "dom", 
-              "node", 
-              "io");
+              "loader");
         }
 
         Y.use.apply(Y, core);

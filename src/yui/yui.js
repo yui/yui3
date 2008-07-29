@@ -38,8 +38,6 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <dd>If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <dt>win</dt>
      *  <dd>The target window/frame</dd>
-     *  <dt>doc</dt>
-     *  <dd>The target document</dd>
      *  <dt>core</dt>
      *  <dd>A list of modules that defines the YUI core (overrides the default)</dd>
      *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
@@ -324,7 +322,7 @@ YUI.prototype = {
             dynamic = false,
             callback = a[a.length-1];
 
-        Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
+        // Y.log(Y.id + ': use called: ' + a + ' :: ' + callback);
 
         // The last argument supplied to use can be a load complete callback
         if (typeof callback === 'function') {
@@ -451,9 +449,12 @@ YUI.prototype = {
             // dynamic load
             Y.log('trying to get the missing modules ' + missing);
             loader = new Y.Loader(Y.config);
-            loader.subscribe('success', onComplete, Y);
-            loader.subscribe('failure', onComplete, Y);
-            loader.subscribe('timeout', onComplete, Y);
+            // loader.subscribe('success', onComplete, Y);
+            // loader.subscribe('failure', onComplete, Y);
+            // loader.subscribe('timeout', onComplete, Y);
+            loader.onSuccess = onComplete;
+            loader.onFailure = onComplete;
+            loader.onTimeout = onComplete;
             loader.require(missing);
             // loader calls use to automatically attach when finished
             // but we still need to execute the callback.

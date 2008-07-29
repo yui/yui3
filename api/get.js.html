@@ -462,15 +462,6 @@
     <span class="k">return</span> <span class="o">{</span>
 
         <span class="c">/**</span>
-<span class="c">         * The default poll freqency in ms, when needed</span>
-<span class="c">         * @property POLL_FREQ</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type int</span>
-<span class="c">         * @default 10</span>
-<span class="c">         */</span>
-        <span class="nx">POLL_FREQ</span><span class="o">:</span> <span class="m">10</span><span class="o">,</span>
-
-        <span class="c">/**</span>
 <span class="c">         * The number of request required before an automatic purge.</span>
 <span class="c">         * property PURGE_THRESH</span>
 <span class="c">         * @static</span>
@@ -479,16 +470,6 @@
 <span class="c">         */</span>
         <span class="nx">PURGE_THRESH</span><span class="o">:</span> <span class="m">20</span><span class="o">,</span>
 
-        <span class="c">/**</span>
-<span class="c">         * The length time to poll for varName when loading a script in</span>
-<span class="c">         * Safari 2.x before the transaction fails.</span>
-<span class="c">         * property TIMEOUT</span>
-<span class="c">         * @static</span>
-<span class="c">         * @type int</span>
-<span class="c">         * @default 2000</span>
-<span class="c">         */</span>
-        <span class="nx">TIMEOUT</span><span class="o">:</span> <span class="m">2000</span><span class="o">,</span>
-        
         <span class="c">/**</span>
 <span class="c">         * Called by the the helper for detecting script load in Safari</span>
 <span class="c">         * @method _finalize</span>
@@ -543,6 +524,25 @@
 <span class="c">         * &lt;dt&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;onTimeout&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;</span>
+<span class="c">         * callback to execute when a timeout occurs.</span>
+<span class="c">         * The callback receives an object back with the following</span>
+<span class="c">         * data:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;win&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;the window the script(s) were inserted into&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;data&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;the data object passed in when the request was made&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;nodes&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;An array containing references to the nodes that were</span>
+<span class="c">         * inserted&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;purge&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;A function that, when executed, will remove the nodes</span>
+<span class="c">         * that were inserted&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         * &lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;onFailure&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;</span>
 <span class="c">         * callback to execute when the script load operation fails</span>
@@ -576,23 +576,14 @@
 <span class="c">         * data that is supplied to the callback when the script(s) are</span>
 <span class="c">         * loaded.</span>
 <span class="c">         * &lt;/dd&gt;</span>
-<span class="c">         * &lt;dt&gt;varName&lt;/dt&gt;</span>
-<span class="c">         * &lt;dd&gt;</span>
-<span class="c">         * variable that should be available when a script is finished</span>
-<span class="c">         * loading.  Used to help Safari 2.x and below with script load </span>
-<span class="c">         * detection.  The type of this property should match what was</span>
-<span class="c">         * passed into the url parameter: if loading a single url, a</span>
-<span class="c">         * string can be supplied.  If loading multiple scripts, you</span>
-<span class="c">         * must supply an array that contains the variable name for</span>
-<span class="c">         * each script.</span>
-<span class="c">         * &lt;/dd&gt;</span>
 <span class="c">         * &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;node or node id that will become the new node&#39;s nextSibling&lt;/dd&gt;</span>
 <span class="c">         * &lt;/dl&gt;</span>
 <span class="c">         * &lt;dt&gt;charset&lt;/dt&gt;</span>
 <span class="c">         * &lt;dd&gt;Node charset, default utf-8&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;timeout&lt;/dt&gt;</span>
+<span class="c">         * &lt;dd&gt;Number of milliseconds to wait before aborting and firing the timeout event&lt;/dd&gt;</span>
 <span class="c">         * &lt;pre&gt;</span>
-<span class="c">         * // assumes yahoo, dom, and event are already on the page</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;Y.Get.script(</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js&quot;,</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js&quot;], &amp;#123;</span>
