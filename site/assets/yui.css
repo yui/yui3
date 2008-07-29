@@ -287,7 +287,6 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #main p,
 #main form {margin-bottom:1em;}
 #main div.clear {clear:both;}
-#main code {background-color:#D9D9D9;}
 
 #promo {background:#f2fbff url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:13px;margin-bottom:13px;}
 #promo p {margin-bottom:1em;}
