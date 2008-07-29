@@ -16,9 +16,7 @@
 
 <script language="javascript">
 
-(function() {
-
-	var Y = YUI();
+YUI().use('node', function(Y) {
 
 	//we'll use this handler for all of our callbacks; the
 	//message being logged will always be the last argument.
@@ -41,6 +39,6 @@
 	
 	Y.log("As the page loads, you'll see the onAvailable, onContentReady, event:ready, and window's load event logged here as they fire in sequence.", "info", "example");
 	
-})();
+});
 
 </script>

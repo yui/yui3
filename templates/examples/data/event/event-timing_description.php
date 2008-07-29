@@ -28,8 +28,7 @@
 <p>In the script, we create an anonymous function that contains our YUI instance (<code>Y</code>).  We then subscribe to the four events in which we're interested and, in each case, log a message to the console or Logger to express the timing of the events as they fire.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">(function() {
-
-	var Y = YUI();
+YUI().use('node', function(Y) {
 
 	//we'll use this handler for all of our callbacks; the
 	//message being logged will always be the last argument.
@@ -52,4 +51,5 @@
 	
 	Y.log("As the page loads, you'll see the onAvailable, onContentReady, event:ready, and window's load event logged here as they fire in sequence.", "info", "example");
 	
+});
 })();</textarea>
