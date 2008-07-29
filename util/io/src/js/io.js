@@ -382,7 +382,7 @@ YUI.add("io", function (Y) {
 	*/
 	function _io(uri, c) {
 		var c = c || {};
-		var o = _create((arguments.length = 3) ? arguments[2] : null, c);
+		var o = _create((arguments.length === 3) ? arguments[2] : null, c);
 		var m = (c.method) ? c.method.toUpperCase() : 'GET';
 		var d = (c.data) ? c.data : null;
 
