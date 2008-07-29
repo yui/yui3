@@ -7,15 +7,18 @@ $releasenotes = true;
 include "../inc/header.inc";
 ?>
 <div id="yui-main">
-	<div class="yui-b">
-		<div class="yui-ge">
-			<div class="yui-u first" id="main">
-			<!-- main column -->
-			
-				<h2><?php echo $component;?></h2>
-			
-				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+    <div class="yui-b">
+        <div class="yui-ge">
+            <div class="yui-u first" id="main">
+            <!-- main column -->
+
+                <h2><?php echo $component;?></h2>
+
+                <div id="promo" class="component">
+                    <p>Base is designed to be a low level class from which other attribute and event target based classes in the YUI library 
+                    can be derived. It provides a standard template for creating attribute based objects across the library and a consistent init() 
+                    and destroy() sequence for objects derived from Base, by chaining initialization (initializer) and destruction (destructor) 
+                    methods for the class hierarcy.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -24,9 +27,14 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+                                            <li><a href="#extendbase">Extending Base</a></li>
+                                            <li><a href="#static">Static Properties</a>
+                                                <ul>
+                                                    <li><a href="#name">The NAME Property</a></li>
+                                                    <li><a href="#attrs">The ATTRS Property</a></li>
+                                                </ul>
+                                            </li>
+                                            <li><a href="#initdestroy">Initialization and Destruction</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -38,85 +46,323 @@ include "../inc/header.inc";
 							include('../inc/quicklinks.inc');
 							?>
 						</div>
-					</div>				
+					</div>
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
+
 				<h3 id="start">Getting Started</h3>
-				
+
 				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-				</textarea>
+                <p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
+                <textarea name="code" class="HTML" cols="60" rows="1">
+                    &lt;!-- Dependencies --&gt;
+                    &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+                    &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
-				<?php
-				include "../inc/include-notice.inc";
-				?>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+                    &lt;!-- Source file --&gt;
+                    &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/base/base-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+                </textarea>
+                <?php
+                    include "../inc/include-notice.inc";
+                ?>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
+                <h4 id="yui">The YUI Instance</h4>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Once you have the source and dependancy files for Base on your page, you can create a new YUI instance (it is recommended you create this in your own 
+                sandboxed anonymous function to avoid polluting the global namespace), and populate it with the modules you need. In the case of Base,
+                you only need to include the "base" module as shown below, using YUI's <code>use</code> method:</p>
 
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
-				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-				</ul>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    (function() {
+                        var Y = YUI().use("base");
+                        ...
+                    })();
+                </textarea>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<table>
-					<thead>
-						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
-				</table>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
+                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>), with the classes which make up Base (e.g. Y.Base); and any classes which Base requires.</p>
+
+                <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <code>use</code> method.</p>
+
+                <h3 id="using">Using the <?php echo $component;?></h3>
+
+                <p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
+                <ul class="topspace">
+                    <li><a href="#extendbase">Extending Base</a></li>
+                    <li><a href="#static">Static Properties</a>
+                        <ul>
+                            <li><a href="#name">The NAME Property</a></li>
+                            <li><a href="#attrs">The ATTRS Property</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#initdestroy">Initialization and Destruction</a></li>
+                </ul>
+
+            <h4 id="extendbase">Extending Base</h4>
+
+            <p>Although Base can be instantiated, it's really designed to be a root class, which you extend when creating your 
+            own <code>Attribute</code> and <code>Event.Target</code> based classes as shown below:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+            (function() {
+                var Y = YUI().use("base");
+
+                function MyClass(config) {
+
+                    // Invoke Base constructor, passing through arguments
+                    MyClass.superclass.constructor.apply(this, arguments);
+                }
+
+                Y.extend(MyClass, Y.Base, {
+                    // Prototype methods for your new class
+                });
+            })();
+            </textarea>
+
+            <p>Base itself augments <code>Attribute</code>, which in turn augments <code>Event.Target</code>, making Base an Attribute provider and 
+            an Event Target.</p>
+            
+            <p>Base's contructor expects a configuration object literal, which is uses to setup user provides values for attributes (discussed below).</p>
+
+            <h4 id="staticprops">Static Properties</h4>
+
+            <p>To adds it's value to the  Attribute and Event.Target support which it augments, Base works off of a couple of "static" properties, 
+            which it requires you to add to your class constructor - <code>NAME</code> and <code>ATTRS</code>:</p>
+
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                function MyClass(config) {
+                    MyClass.superclass.constructor.apply(this, arguments);
+                }
+
+                // Used to identify instances of this class
+                // For example, to prefix event names
+
+                MyClass.NAME = "myclass";
+                
+                // "Associative Array", used to define the set of attributes 
+                // added by this class. The name of the attribute is the key,
+                // and the object literal value acts as the configuration 
+                // object passed used to configure the attribute
+
+                MyClass.ATTRS = {
+                    A : {
+                        // Attribute "A" configuration
+                    },
+
+                    B : {
+                        // Attribute "B" configuration
+                    }
+                }
+
+                Y.extend(MyClass, Y.Base, {
+                    // Prototype methods for your new class
+                });
+                </textarea>
+
+            <h5 id="#name">NAME</h5>
+
+            <p>The <code>NAME</code> property is a string which is used to identify the class.</p>
+
+            <p>One core area where it is currently used is to prefix events which are published/fired by instances of your class.
+            For example, any events published by the class <code>MyClass</code> in the above code snippet, will have the "myclass" prefix.</p>
+
+            <p>Event prefixes allow events with the same name fired from instances of different classes to be uniquely identified, <em>(e.g. Menu "click" vs. Editor "click" events when bubbled up to a common target object)</em>
+            without publishers or subscribers of the events needing to manually namespace them whenever they use Event.Target's <code>subscribe, fire ,publish</code> methods or Attribute's <code>on</code> method on the instance. e.g:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                // NAME is used to prefix the provided event type, if not already prefixed,
+                // when publishing, firing and subscribing to events.
+
+                MyClass.prototype.doSomething = function() {
+                    // Actually fires the event type "myclass:enabled"
+                    this.fire("enabled");
+                }
+
+                ...
+
+                var o = new MyClass(cfg);
+
+                o.on("enabled", function() {
+                    // Actually listening for "myclass:enabled".
+                });
+
+                o.on("myclass:enabled", function() {
+                    // Also listening for "myclass:enabled"
+                });
+
+            </textarea>
+
+            <p>It is also used in the default <code>toString</code> implementation for Base.</p>
+
+            <h5 id="#attrs">ATTRS</h5>
+
+            <p>The <code>ATTRS</code> property is an associative array (object literal) which is used to define the default set of 
+            attributes the class adds to the instance. The instance will contain attributes defined by each class in the class
+            hierarchy from which it is created, which each class adding the set of attributes and supporting code which it 
+            brings to the picture.</p>
+
+            <p>For example, this is the (partial) set of attributes which the <a href="../api/Drag.html">Drag</a> class defines:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                Drag.ATTRS = {
+
+                        node: {
+                            set: function(node) {
+                                var n = Y.Node.get(node);
+                                if (!n) {
+                                    Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                                }
+                                return n;
+                            }
+                        },
+
+                        dragNode: {
+                            set: function(node) {
+                                var n = Y.Node.get(node);
+                                if (!n) {
+                                    Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
+                                }
+                                return n;
+                            }
+                        },
+
+                        offsetNode: {
+                            value: true
+                        },
+
+                        clickPixelThresh: {
+                            value: DDM.get('clickPixelThresh')
+                        },
+
+                        lock: {
+                            value: false,
+                            set: function(lock) {
+                                if (lock) {
+                                    this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
+                                } else {
+                                    this.get(NODE).removeClass(DDM.CSS_PREFIX + '-locked');
+                                }
+                            }
+                        }
+
+                        ...
+
+                }; // End of Drag.ATTRS associative array (object literal)
+
+            </textarea>
+
+            <p>Each key in the associative array (e.g. "dragNode"), defines the name of the attribute to be added, and the corresponding 
+            value defines the object literal used to configure the attribute. See <a href="../attribute/index.html#configuration">Attribute's discussion of configuration properties</a>
+            for more details about the structure of configuration object for each attribute.</p>
+
+            <p>When instantiating an instance of a class which is derived from Base, Base's <code>init()</code> method , will initialize 
+            the set of attributes defined by the <code>ATTRS</code> property for each class in the class heirarchy. This helps avoid
+            replicating attribute initialization code in the constructor/initializer of each class and defines a specific order in which
+            attributes are initialized - starting from the Base class first, and ending with the specific sub-class being instantiated.</p>
+
+            <h4 id="initdestroy">Initialization and Destruction</h4>
+
+            <p>Base implements final versions of it's <code>init</code> and <code>destroy</code> methods used to establish the init and destroy lifecycle phases for all classes derived from Base.
+            Classes extending Base can perform operations during initialization or destruction, by defining prototype level <code>initializer</code> and <code>destructor</code> methods respectively 
+            for the class:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+
+                Y.extend(MyClass, Y.Base, {
+
+                    // Prototype methods for your new class
+
+                    // What this class wants to do as part 
+                    // of the init() lifecycle phase
+
+                    initializer : function(cfg) {
+                        this._started = false;
+                        this._wrapper = Y.Node.create('<div class="yui-wrapper"></div>');
+                    },
+
+                    // What this class wants to do as part 
+                    // of the destroy() lifecycle phase
+                    destructor : function() {
+                        Y.Event.purgeElement(this._wrapper);
+                        this._wrapper.get("parentNode").removeChild(this._wrapper);
+                        this._wrapper = null;
+                    }
+
+                });
+            </textarea>
+
+            <p>Base's <code>init</code> and <code>destroy</code> methods take care of invoking <code>intializer</code> and <code>destructor</code> methods for each class in the hierarchy.
+            The implementations for each class do not need to call superclass versions of the method. This way Base can ensure that intialization and destruction occur in a consistent,
+            manner, following the class hierarchy.</p>
+
+            <dl>
+                <dt><code>initializer()</code></dt>
+                <dd>
+                    Base will invoke the <code>initializer</code> method for each class in the hierarchy - starting from the Base class first and ending with the specific sub-class being instantiated,
+                    when <code>init(cfg)</code> is called, which by default is done in Base's constructor. The <code>initializer</code> method for the class is invoked after it's attributes have been initialized 
+                    (as discussed above) and will receive the configuration object literal passed to the <code>init</code> method.
+                </dd>
+                <dt><code>destructor()</code></dt>
+                <dd>
+                    Base will invoke the <code>destructor</code> method for each class in the hierarchy - starting from the specific sub-class instantiated to create the instance, and ending with the Base class (the opposite of initialization),
+                    when <code>destroy()</code> is called.
+                </dd>
+            </dl>
+
+            <!--
+            <h5>Making Your Class Available "Globally"</h5>
+
+            <p>When extending Base to create your own class, it's likely you will want to expose that class for other code 
+            in your application to use. You can either make it available globally, by attaching it to your own global namespace:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                <script type="text/javascript">
+                    var MY_APP = YUI().use("base");
+                </script>
+                ...
+                <script type="text/javascript">
+                    // In another file, or later in the page
+                    (function(){
+
+                        function MyClass() {
+                            ...
+                        }
+
+                        MY_APP.extend(MyClass, MY_APP.Base, {
+                            // Prototype methods for your new class
+                        });
+
+                        MY_APP.MyClass = MyClass;
+
+                    })();
+                </script>
+
+            </textarea>
+
+            <p>Or, add it as a first class module to YUI, whereby it can be pulled into 
+            sandboxed YUI instances via YUI's <a href="../yui/index.html#use"><code>use</code></a> method, as shown below:</p>
+
+            <textarea name="code" class="JScript" cols="60" rows="1">
+                YUI.add("mymodule", function(Y) {
+
+                    function MyClass() {
+                        ...
+                    }
+
+                    Y.extend(MyClass, Y.Base, {
+                        // Prototype methods for your new class
+                    });
+
+                    Y.MyClass = MyClass;
+
+                }, "3.0.0", {
+
+                    // "mymodule" pulls in "base"
+                    require:"base"
+
+                });
+            </textarea>
+            -->
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
@@ -127,17 +373,17 @@ include "../inc/support.inc";
 		</div>
 <div class="yui-u sidebar">
 
-	<?php 
-	include "../inc/cheatsheet.inc";
+    <?php 
+	 // include "../inc/cheatsheet.inc";
 	?>
-			
+		 	
 			<div id="examples">
 <?php 
-	include("../inc/examplesNav/".$section.".inc");
+	# include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		   
-		   	<div id="morereading">
+		   <!-- 
+		   <div id="morereading">
 				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
 				
 				<ul>
@@ -147,6 +393,7 @@ include "../inc/support.inc";
 
 			   </ul>
 		   </div>
+           -->
 		   
 <?php 
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
