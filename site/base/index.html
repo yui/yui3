@@ -28,10 +28,10 @@ include "../inc/header.inc";
                                     <li><a href="#using">Using the <?php echo $component;?></a>
                                         <ul class="topspace">
                                             <li><a href="#extendbase">Extending Base</a></li>
-                                            <li><a href="#static">Static Properties</a>
+                                            <li><a href="#staticprops">Static Properties</a>
                                                 <ul>
-                                                    <li><a href="#name">The NAME Property</a></li>
-                                                    <li><a href="#attrs">The ATTRS Property</a></li>
+                                                    <li><a href="#nameprop">The NAME Property</a></li>
+                                                    <li><a href="#attrsprop">The ATTRS Property</a></li>
                                                 </ul>
                                             </li>
                                             <li><a href="#initdestroy">Initialization and Destruction</a></li>
@@ -88,10 +88,10 @@ include "../inc/header.inc";
                 <p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
                 <ul class="topspace">
                     <li><a href="#extendbase">Extending Base</a></li>
-                    <li><a href="#static">Static Properties</a>
+                    <li><a href="#staticprops">Static Properties</a>
                         <ul>
-                            <li><a href="#name">The NAME Property</a></li>
-                            <li><a href="#attrs">The ATTRS Property</a></li>
+                            <li><a href="#nameprop">The NAME Property</a></li>
+                            <li><a href="#attrsprop">The ATTRS Property</a></li>
                         </ul>
                     </li>
                     <li><a href="#initdestroy">Initialization and Destruction</a></li>
@@ -157,7 +157,7 @@ Y.extend(MyClass, Y.Base, {
 });
 </textarea>
 
-            <h5 id="#name">NAME</h5>
+            <h5 id="nameprop">NAME</h5>
 
             <p>The <code>NAME</code> property is a string which is used to identify the class.</p>
 
@@ -190,7 +190,7 @@ o.on("myclass:enabled", function() {
 
             <p>It is also used in the default <code>toString</code> implementation for Base.</p>
 
-            <h5 id="#attrs">ATTRS</h5>
+            <h5 id="attrsprop">ATTRS</h5>
 
             <p>The <code>ATTRS</code> property is an associative array (object literal) which is used to define the default set of 
             attributes the class adds to the instance. The instance will contain attributes defined by each class in the class
@@ -370,12 +370,14 @@ wp.lock();
             <p>Under the hood, <code>build</code>:</p>
             <ul>
                 <li>Creates a new 'built' class by extending the main class passed in as the first argument.</li>
-                <li>Augments the list of feature classes (the 2nd argument) to built class, adding their prototype methods to it.</li>
-                <li>Aggregates known static properties (by default <code>ATTRS</code> on the built class. 
+                <li>Augments the list of feature classes (the 2nd argument) to the built class, so that it now has their prototype methods.</li>
+                <li>Aggregates any known static properties (by default <code>ATTRS</code> is aggregated) on the built class.
                 The caller can provide other properties to aggregate also, using the 3rd configuration argument to build.</li>
             </ul>
 
             <p>The new class constructor created by <code>build</code> will invoke the constructors for the main and feature classes when the new class is instantiated.</p>
+            
+            <p>See Base's <a href="../api/Base.html#method_build">build method API documentation</a> for more details about the build method.</p>
 
             <h5>Create</h5>
 
@@ -395,7 +397,6 @@ wp.lock();
         </div>
         <div class="yui-u sidebar">
                 <?php # include "../inc/cheatsheet.inc"; ?>
-                
                 <div id="examples">
                     <?php # include("../inc/examplesNav/".$section.".inc"); ?>
                </div>
@@ -411,10 +412,5 @@ wp.lock();
       </div>
 </div>
 </div>
-
 <?php include "../inc/side.inc" ?>
 <?php include "../inc/footer.inc" ?>
-
-
-
-
