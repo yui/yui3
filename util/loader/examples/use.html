@@ -3,10 +3,6 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
-<script type="text/javascript" src="../../build3x/compat/compat-debug.js"></script>
-<script type="text/javascript" src="../../build3x/dump/dump-debug.js"></script>
-<script type="text/javascript" src="../../build3x/get/get-debug.js"></script>
-<script type="text/javascript" src="../../build3x/loader/loader-debug.js"></script>
 <style>
 .dd {
             padding-left: 20px;
@@ -47,7 +43,8 @@ YUI({
     // combine: true,
     filter: 'debug',
     timeout: 2000
-}).use('compat', 'dd-dragdrop-all', function(Y) {
+// }).use('compat', 'dd-dragdrop-all', function(Y) {
+}).use('dd-dragdrop-all', function(Y) {
 
     Y.log('custom event success');
 

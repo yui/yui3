@@ -114,7 +114,9 @@ Y.Env.meta = {
             requires: ['base']
         },
 
-        attribute: { },
+        attribute: { 
+            requires: ['event']
+        },
 
         base: {
             requires: ['attribute']
@@ -130,7 +132,7 @@ Y.Env.meta = {
 
         'dd-ddm-base': {
             path: 'dd/dd-ddm-base-min.js',
-            requires: [BASE]
+            requires: ['node', BASE]
         }, 
         'dd-ddm':{
             path: 'dd/dd-ddm-min.js',
@@ -191,7 +193,13 @@ Y.Env.meta = {
             supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-plugin']
         },
 
+        dom: { },
+
         dump: { },
+
+        event: { 
+            requires: ['oop']
+        },
         
         io: { },
 
@@ -210,6 +218,12 @@ Y.Env.meta = {
         logreader: {
             requires: ['css']
         },
+
+        node: { 
+            requires: ['event', 'dom']
+        },
+
+        oop: { },
 
         profiler: { },
 
@@ -294,9 +308,9 @@ Y.Env.meta = {
         /**
          * The execution context for all callbacks
          * @property context
-         * @default this
+         * @default {YUI} the YUI instance
          */
-        this.context = this;
+        this.context = Y;
 
         /**
          * Data that is passed to all callbacks
@@ -492,6 +506,8 @@ Y.Env.meta = {
          */
         this.inserted = {};
 
+        this.skipped = {};
+
         // Y.on('yui:load', this.loadNext, this);
 
         this._config(o);
@@ -516,7 +532,7 @@ Y.Env.meta = {
             // apply config values
             if (o) {
                 for (var i in o) {
-                    if (Y.Object.owns(o, i)) {
+                    if (o.hasOwnProperty(i)) {
                         if (i == "require") {
                             this.require(o[i]);
                         // support the old callback syntax
@@ -631,7 +647,6 @@ Y.Env.meta = {
                 return mod.expanded;
             }
 
-
             var i, d=[], r=mod.requires, o=mod.optional, 
                 info=this.moduleInfo, m, j, add;
 
@@ -665,12 +680,9 @@ Y.Env.meta = {
                 }
             }
 
-
             if (o && this.loadOptional) {
                 for (i=0; i<o.length; i=i+1) {
                     d.push(o[i]);
-                    // AU.appendArray(d, this.getRequires(info[o[i]]));
-                    // d.concat(this.getRequires(info[o[i]]));
                     add = this.getRequires(info[o[i]]);
                     for (j=0;j<add.length;j=j+1) {
                         d.push(add[j]);
@@ -975,29 +987,56 @@ Y.Env.meta = {
         _onSuccess: function() {
 
             this._pushEvents();
-            // Y._attach(Y.Object.keys(this.inserted));
             Y._attach(this.sorted);
-            this.fire('success', {
-                data: this.data
-            });
+
+            for (var i in this.skipped) {
+                delete this.inserted[i];
+            }
+
+            this.skipped = {};
+
+            // this.fire('success', {
+            //     data: this.data
+            // });
+
+            var f = this.onSuccess;
+            if (f) {
+                f.call(this.context, {
+                    data: this.data
+                });
+            }
+
         },
 
         _onFailure: function(msg) {
-            // Y._attach(Y.Object.keys(this.inserted));
             Y._attach(this.sorted);
-            this.fire('failure', {
-                msg: 'operation failed: ' + msg,
-                data: this.data
-            });
+            // this.fire('failure', {
+            //     msg: 'operation failed: ' + msg,
+            //     data: this.data
+            // });
+
+            var f = this.onFailure;
+            if (f) {
+                f.call(this.context, {
+                    msg: 'operation failed: ' + msg,
+                    data: this.data
+                });
+            }
         },
 
         _onTimeout: function(msg) {
-            // Y._attach(Y.Object.keys(this.inserted));
             Y._attach(this.sorted);
-            this.fire('timeout', {
-                msg: 'operation timed out: ' + msg,
-                data: this.data
-            });
+
+            // this.fire('timeout', {
+            //     data: this.data
+            // });
+
+            var f = this.onTimeout;
+            if (f) {
+                f.call(this.context, {
+                    data: this.data
+                });
+            }
         },
         
         /**
@@ -1236,11 +1275,19 @@ Y.Env.meta = {
                 // will pass that module name to this function.  Storing this
                 // data to avoid loading the same module multiple times
                 this.inserted[mname] = true;
+                this.skipped[mname] = true;
 
-                this.fire('progress', {
-                    name: mname,
-                    data: this.data
-                });
+                // this.fire('progress', {
+                //     name: mname,
+                //     data: this.data
+                // });
+                if (this.onProgress) {
+                    this.onProgress.call(this.context, {
+                            name: mname,
+                            data: this.data
+                        });
+                }
+
 
             }
 
@@ -1375,6 +1422,6 @@ Y.Env.meta = {
 
     };
 
-    Y.augment(Y.Loader, Y.Event.Target);
+    // Y.augment(Y.Loader, Y.Event.Target);
 
 }, "@VERSION@");
