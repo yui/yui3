@@ -420,7 +420,7 @@
 <span class="c">	*/</span>
 	<span class="k">function</span> <span class="nx">_io</span><span class="o">(</span><span class="nx">uri</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
 		<span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">c</span> <span class="o">||</span> <span class="o">{};</span>
-		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">((</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">=</span> <span class="m">3</span><span class="o">)</span> <span class="o">?</span> <span class="nx">arguments</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
+		<span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="nx">_create</span><span class="o">((</span><span class="nx">arguments</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">3</span><span class="o">)</span> <span class="o">?</span> <span class="nx">arguments</span><span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="o">:</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">c</span><span class="o">);</span>
 		<span class="k">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">method</span><span class="o">.</span><span class="nx">toUpperCase</span><span class="o">()</span> <span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="o">;</span>
 		<span class="k">var</span> <span class="nx">d</span> <span class="o">=</span> <span class="o">(</span><span class="nx">c</span><span class="o">.</span><span class="nx">data</span><span class="o">)</span> <span class="o">?</span> <span class="nx">c</span><span class="o">.</span><span class="nx">data</span> <span class="o">:</span> <span class="kc">null</span><span class="o">;</span>
 
@@ -1192,7 +1192,7 @@
 
                                 <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
-                                <li class=""><a href="module_queue.html">queue</a></li>
+                                <li class=""><a href="module_Queue.html">Queue</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

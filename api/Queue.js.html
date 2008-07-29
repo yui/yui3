@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: queue   Queue.js  (YUI Library)</title>
+	<title>API: Queue   Queue.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>queue&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>Queue&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_queue.html">queue</a>
+            &gt; <a href="./module_queue.html">Queue</a>
                 
                  &gt; Queue.js (source view) 
             </p>
@@ -37,11 +37,6 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Executes a series of callbacks in a non-blocking queue</span>
-<span class="c"> * @module queue</span>
-<span class="c"> */</span>
-
-<span class="c">/**</span>
 <span class="c"> * Mechanism to execute a series of callbacks in a non-blocking queue.  Each</span>
 <span class="c"> * callback is executed via setTimout unless configured with a negative</span>
 <span class="c"> * timeout, in which case it is run in blocking mode in the same execution</span>
@@ -54,10 +49,11 @@
 <span class="c"> *    &lt;li&gt;&lt;code&gt;iterations&lt;/code&gt; - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with &lt;code&gt;until&lt;/code&gt;.&lt;/li&gt;</span>
 <span class="c"> * &lt;/ul&gt;</span>
 <span class="c"> *</span>
+<span class="c"> * @module Queue</span>
 <span class="c"> * @class Queue</span>
 <span class="c"> * @constructor</span>
 <span class="c"> * @param callback* {Function|Object} Any number of callbacks to initialize the queue</span>
-<span class="c">*/</span>
+<span class="c"> */</span>
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span> <span class="o">=</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
     <span class="c">// Factory or Constructor</span>
 <span class="c"></span>    <span class="k">var</span> <span class="nx">me</span> <span class="o">=</span> <span class="k">this</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span> <span class="o">?</span> <span class="k">this</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">();</span>
@@ -66,15 +62,12 @@
 <span class="c">     * The callback queue</span>
 <span class="c">     * @property q</span>
 <span class="c">     * @type {Array}</span>
-<span class="c">     * @private</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">me</span><span class="o">.</span><span class="nx">q</span> <span class="o">=</span> <span class="o">[];</span>
 
     <span class="k">return</span> <span class="nx">me</span><span class="o">.</span><span class="nx">add</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">me</span><span class="o">,</span><span class="nx">arguments</span><span class="o">);</span>
 <span class="o">};</span>
-
-<span class="k">var</span> <span class="nx">_SL</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">slice</span><span class="o">,</span>
-    <span class="nx">_SP</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="nx">prototype</span><span class="o">.</span><span class="nx">splice</span><span class="o">;</span>
 
 <span class="nx">Y</span><span class="o">.</span><span class="nx">Queue</span><span class="o">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="o">{</span>
     <span class="c">/**</span>
@@ -83,7 +76,7 @@
 <span class="c">     * blocking execution, and positives indicate non-blocking execution.</span>
 <span class="c">     * @property id</span>
 <span class="c">     * @type {number}</span>
-<span class="c">     * @private</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">id</span>   <span class="o">:</span> <span class="m">0</span><span class="o">,</span>
 
@@ -103,7 +96,7 @@
             <span class="c">/**</span>
 <span class="c">             * Event fired when the callback queue is emptied via execution</span>
 <span class="c">             * (not via a call to chain.stop()).</span>
-<span class="c">             * @event end</span>
+<span class="c">             * @event complete</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;complete&#39;</span><span class="o">);</span>
             <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
@@ -168,11 +161,31 @@
 <span class="c">     * @method _exec</span>
 <span class="c">     * @param fn {Function} the function to execute</span>
 <span class="c">     * @param c {Object|Function} the callback as defined during add(c)</span>
-<span class="c">     * @private</span>
+<span class="c">     * @protected</span>
 <span class="c">     */</span>
     <span class="nx">_exec</span> <span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">fn</span><span class="o">,</span><span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Fired before a callback is executed</span>
+<span class="c">         * @event beforeCallback</span>
+<span class="c">         * @param o {Object} Object literal with the following keys:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;fn&lt;/dt&gt;&lt;dd&gt;The function about to be executed&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback&lt;/dt&gt;&lt;dd&gt;The callback as provided to &lt;code&gt;add(..)&lt;/code&gt;&lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;beforeCallback&#39;</span><span class="o">,{</span><span class="nx">fn</span><span class="o">:</span><span class="nx">fn</span><span class="o">,</span><span class="nx">callback</span><span class="o">:</span><span class="nx">c</span><span class="o">});</span>
+
         <span class="nx">fn</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired before a callback is executed</span>
+<span class="c">         * @event afterCallback</span>
+<span class="c">         * @param o {Object} Object literal with the following keys:</span>
+<span class="c">         * &lt;dl&gt;</span>
+<span class="c">         * &lt;dt&gt;fn&lt;/dt&gt;&lt;dd&gt;The function just executed&lt;/dd&gt;</span>
+<span class="c">         * &lt;dt&gt;callback&lt;/dt&gt;&lt;dd&gt;The callback as provided to &lt;code&gt;add(..)&lt;/code&gt;&lt;/dd&gt;</span>
+<span class="c">         * &lt;/dl&gt;</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;afterCallback&#39;</span><span class="o">,{</span><span class="nx">fn</span><span class="o">:</span><span class="nx">fn</span><span class="o">,</span><span class="nx">callback</span><span class="o">:</span><span class="nx">c</span><span class="o">});</span>
     <span class="o">},</span>
 
@@ -182,6 +195,11 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="nx">_shift</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">         * Fired after a callback is shifted from the Queue</span>
+<span class="c">         * @event shiftCallback</span>
+<span class="c">         * @param callback {Function|Object} The callback passed to &lt;code&gt;add(..)&lt;/code&gt;</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;shiftCallback&#39;</span><span class="o">,</span><span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">.</span><span class="nx">shift</span><span class="o">());</span>
     <span class="o">},</span>
     
@@ -192,9 +210,15 @@
 <span class="c">     * @return {Queue} the Queue instance</span>
 <span class="c">     */</span>
     <span class="nx">add</span>  <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
-        <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
-        <span class="nx">_SP</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">,[</span><span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span><span class="m">0</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">c</span><span class="o">));</span>
-        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;addCallback&#39;</span><span class="o">,</span><span class="nx">c</span><span class="o">);</span>
+        <span class="k">var</span> <span class="nx">callbacks</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">arguments</span><span class="o">,</span><span class="m">0</span><span class="o">,</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">.</span><span class="nx">splice</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">,[</span><span class="k">this</span><span class="o">.</span><span class="nx">q</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span><span class="m">0</span><span class="o">].</span><span class="nx">concat</span><span class="o">(</span><span class="nx">callbacks</span><span class="o">));</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired from within &lt;code&gt;add(..)&lt;/code&gt; after callbacks are queued</span>
+<span class="c">         * @event addCallback</span>
+<span class="c">         * @param callbacks {Array} Array of callbacks passed to &lt;code&gt;add(..)&lt;/code&gt;</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;addCallback&#39;</span><span class="o">,</span><span class="nx">callbacks</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
 
@@ -209,6 +233,11 @@
     <span class="nx">pause</span><span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span>
         <span class="nx">clearTimeout</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">id</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">id</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired after Queue is paused</span>
+<span class="c">         * @event pause</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;pause&#39;</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">},</span>
@@ -222,6 +251,11 @@
     <span class="nx">stop</span> <span class="o">:</span> <span class="k">function</span> <span class="o">()</span> <span class="o">{</span> 
         <span class="k">this</span><span class="o">.</span><span class="nx">pause</span><span class="o">();</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">q</span> <span class="o">=</span> <span class="o">[];</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Fired after Queue is stopped</span>
+<span class="c">         * @event stop</span>
+<span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;stop&#39;</span><span class="o">);</span>
         <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
     <span class="o">}</span>
@@ -272,7 +306,7 @@
 
                                 <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
-                                <li class="selected"><a href="module_queue.html">queue</a></li>
+                                <li class="selected"><a href="module_Queue.html">Queue</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

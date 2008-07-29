@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: queue   (YUI Library)</title>
+	<title>API: Queue   (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>queue&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>Queue&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_queue.html">queue</a>
+            &gt; <a href="./module_queue.html">Queue</a>
                 
                 
             </p>
@@ -33,17 +33,27 @@
             </form>
 
                    
-                    <h3>Module: queue
+                    <h3>Module: Queue
                     
 
 
                     </h3>
                     <div class="description summary">
-                        Executes a series of callbacks in a non-blocking queue
+                        Mechanism to execute a series of callbacks in a non-blocking queue.  Each
+callback is executed via setTimout unless configured with a negative
+timeout, in which case it is run in blocking mode in the same execution
+thread as the previous callback.  Callbacks can be function references or
+object literals with the following keys:
+<ul>
+<li><code>fn</code> - {Function} REQUIRED the callback function.</li>
+<li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
+<li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
+<li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
+</ul>
                     </div>
 
                     <form onsubmit="return false">
-                        <p>Search queue:
+                        <p>Search Queue:
                         <div id="propertysearch">
                             <input autocomplete="off" id="searchinput" />
                             <div id="searchresults">
@@ -52,7 +62,7 @@
                         </div>
                     </form>
                     <script type="text/javascript">
-                        ALL_YUI_PROPS = [{"url": "Queue.html#method_add", "access": "", "host": "Queue", "name": "add"}, {"url": "Queue.html#event_end", "access": "", "host": "Queue", "name": "end"}, {"url": "Queue.html#method__exec", "access": "private", "host": "Queue", "name": "_exec"}, {"url": "Queue.html#property_id", "access": "private", "host": "Queue", "name": "id"}, {"url": "Queue.html#method_pause", "access": "", "host": "Queue", "name": "pause"}, {"url": "Queue.html#property_q", "access": "private", "host": "Queue", "name": "q"}, {"url": "Queue.html#method_run", "access": "", "host": "Queue", "name": "run"}, {"url": "Queue.html#method__shift", "access": "private", "host": "Queue", "name": "_shift"}, {"url": "Queue.html#method_stop", "access": "", "host": "Queue", "name": "stop"}];
+                        ALL_YUI_PROPS = [{"url": "Queue.html#method_add", "access": "", "host": "Queue", "name": "add"}, {"url": "Queue.html#event_addCallback", "access": "", "host": "Queue", "name": "addCallback"}, {"url": "Queue.html#event_afterCallback", "access": "", "host": "Queue", "name": "afterCallback"}, {"url": "Queue.html#event_beforeCallback", "access": "", "host": "Queue", "name": "beforeCallback"}, {"url": "Queue.html#event_complete", "access": "", "host": "Queue", "name": "complete"}, {"url": "Queue.html#method__exec", "access": "protected", "host": "Queue", "name": "_exec"}, {"url": "Queue.html#property_id", "access": "protected", "host": "Queue", "name": "id"}, {"url": "Queue.html#method_pause", "access": "", "host": "Queue", "name": "pause"}, {"url": "Queue.html#event_pause", "access": "", "host": "Queue", "name": "pause"}, {"url": "Queue.html#property_q", "access": "protected", "host": "Queue", "name": "q"}, {"url": "Queue.html#method_run", "access": "", "host": "Queue", "name": "run"}, {"url": "Queue.html#method__shift", "access": "private", "host": "Queue", "name": "_shift"}, {"url": "Queue.html#event_shiftCallback", "access": "", "host": "Queue", "name": "shiftCallback"}, {"url": "Queue.html#method_stop", "access": "", "host": "Queue", "name": "stop"}, {"url": "Queue.html#event_stop", "access": "", "host": "Queue", "name": "stop"}];
                     </script>
 
 
@@ -99,7 +109,7 @@
 
                                 <li class=""><a href="module_node-screen.html">node-screen</a></li>
 
-                                <li class="selected"><a href="module_queue.html">queue</a></li>
+                                <li class="selected"><a href="module_Queue.html">Queue</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
