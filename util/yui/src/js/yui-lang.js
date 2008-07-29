@@ -49,6 +49,11 @@ YUI.add("lang", function(Y) {
         return typeof o === 'function';
     };
         
+    /**
+     * Determines whether or not the supplied object is a date instance
+     * @method isDate
+     * @return {boolean} true if it is a date
+     */
     L.isDate = function(o) {
         return o instanceof Date;
     };
@@ -105,7 +110,6 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
         return typeof o === 'undefined';
     };
     
-
     /**
      * Returns a string without any leading or trailing whitespace.  If 
      * the input is not a string, the input will be returned untouched.
