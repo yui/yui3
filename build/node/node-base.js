@@ -374,6 +374,24 @@ YUI.add('node-base', function(Y) {
         reset: noOut
     };
 
+    var addNodeListMethod = function(name) {
+        NodeList.prototype[name] = function() {
+            var a = [],
+                nodes = _nodelists[this._yuid],
+                ret;
+
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                _nodes[_tmpNode._yuid] = nodes[i];
+                ret = _tmpNode[name].apply(_tmpNode, arguments);
+                if (ret !== _tmpNode) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
+    };
+
     var METHODS_INVOKE = {
         'getBoundingClientRect': true
     };
@@ -386,7 +404,7 @@ YUI.add('node-base', function(Y) {
         var yuid = Y.guid();
         try { // IE errors on non-element expandos (cant be reused)
             node._yuid = yuid;
-        } catch(e) {};
+        } catch(e) {}
         this._yuid = yuid;
         _nodes[yuid] = node;
         _instances[yuid] = this;
@@ -451,24 +469,6 @@ YUI.add('node-base', function(Y) {
                 Node.methods(name, fn);
             });
         }
-    };
-
-    var addNodeListMethod = function(name) {
-        NodeList.prototype[name] = function() {
-            var a = [],
-                nodes = _nodelists[this._yuid],
-                ret;
-
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[_tmpNode._yuid] = nodes[i];
-                ret = _tmpNode[name].apply(_tmpNode, arguments);
-                if (ret !== _tmpNode) {
-                    a[i] = ret;
-                }
-            }
-
-            return a.length ? a : this;
-        };
     };
 
     Node.getDOMNode = function(node) {
@@ -799,12 +799,10 @@ YUI.add('node-base', function(Y) {
         }
     
         if (node && typeof node === 'string') {
-            switch(node) {
-                case 'document':
-                    node = Y.config.doc;
-                    break;
-                default: 
-                    node = Y.Selector.query(node, doc, true);
+            if (node === 'document') {
+                node = Y.config.doc;
+            } else {
+                node = Y.Selector.query(node, doc, true);
             }
         }
 
