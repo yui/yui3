@@ -3,7 +3,6 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../build/yui-debug.js"></script>
-<script type="text/javascript" src="../../build3x/dump/dump.js"></script>
 
 <body>
 
@@ -13,9 +12,11 @@
 
 <script>
 
-(function() {
 
-    var Y = YUI().use('dump', 'substitute', 'compat');
+    YUI({
+        base: '/build3x/'
+    // }).use('event', 'dump', 'substitute', 'compat', function(Y) {
+    }).use('event', 'dump', 'substitute', function(Y) {
 
     Y.on('yui:log', function(msg) {
         var d=document, b=d.body, n=d.createElement("div");
@@ -190,7 +191,7 @@ property names rather than e.details[1]
     Y.log('keys: ' + a);
 
 
-})();
+});
 
 
 </script>

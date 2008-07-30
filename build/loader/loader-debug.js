@@ -132,6 +132,73 @@ Y.Env.meta = {
 
     modules: {
 
+
+      dom: {
+          requires: ['event'],
+          supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector']
+      },
+
+      'dom-base': {
+          path: 'dom/dom-base-min.js',
+          requires: ['event']
+      },
+
+      'dom-style': {
+          path: 'dom/dom-style-min.js',
+          requires: ['dom-base']
+
+      },
+
+      'dom-screen': {
+          path: 'dom/dom-screen-min.js',
+          requires: ['dom-base', 'dom-style']
+      },
+
+      selector: {
+          path: 'dom/selector-min.js',
+          requires: ['dom-base']
+      },
+
+
+      node: {
+          supersedes: ['node-base', 'node-style', 'node-screen'],
+          requires: ['dom']
+      },
+
+      'node-base': {
+          path: 'node/node-base-min.js',
+          requires: ['dom-base', 'selector']
+      },
+
+      'node-style': {
+          path: 'node/node-style-min.js',
+          requires: ['dom-style', 'node-base']
+      },
+
+      'node-screen': {
+          path: 'node/node-screen-min.js',
+          requires: ['dom-screen', 'node-base']
+      },
+
+
+        animation: {
+            requires: ['base']
+        },
+
+        attribute: { 
+            requires: ['event']
+        },
+
+        base: {
+            requires: ['attribute']
+        },
+        
+        compat: { 
+            requires: ['node']
+        },
+        
+        cookie: { },
+
         cssbase: {
             type: CSS,
             after: [RESET, FONTS, GRIDS],
@@ -154,24 +221,6 @@ Y.Env.meta = {
             type: CSS,
             path: 'cssreset/reset.css'
         },
-
-// node, dom, event included in the yui dist, so we are not including the metadata for PR1
-
-        animation: {
-            requires: ['base']
-        },
-
-        attribute: { 
-            requires: ['event']
-        },
-
-        base: {
-            requires: ['attribute']
-        },
-        
-        compat: { },
-        
-        cookie: { },
 
         'dd-ddm-base': {
             path: 'dd/dd-ddm-base-min.js',
@@ -211,32 +260,11 @@ Y.Env.meta = {
             requires: ['dd-drop']
         },
 
-        'dd-drag-all':{
-            path: 'dd/dd-drag-all-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drag-core', 'dd-drag-proxy']
-        },
-
-        'dd-dragdrop-all':{
-            path: 'dd/dd-dragdrop-all-min.js',
+        'dd':{
+            path: 'dd/dd-min.js',
             supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-core', 'dd-drag-proxy']
         },
 
-        'dd-drop-core':{
-            path: 'dd/dd-drop-core-min.js',
-            supersedes: ['dd-ddm-drop', 'dd-drop', 'dd-plugin-drop']
-        },
-
-        'dd-drag-core':{
-            path: 'dd/dd-drag-core-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-plugin']
-        },
-
-        'dd-drag-proxy':{
-            path: 'dd/dd-drag-proxy-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-drag', 'dd-proxy', 'dd-plugin']
-        },
-
-        dom: { },
 
         dump: { },
 
@@ -258,10 +286,6 @@ Y.Env.meta = {
             supersedes: ['json-parse', 'json-stringify']
         },
         
-        node: { 
-            requires: ['event', 'dom']
-        },
-
         oop: { },
 
         queue: { },
@@ -600,18 +624,10 @@ Y.Env.meta = {
 
                 // the logger must be available in order to use the debug
                 // versions of the library
-                if (f === "DEBUG") {
-                    this.require("log");
-                }
-
-                // hack to handle a a bug where LogWriter is being instantiated
-                // at load time, and the loader has no way to sort above it
-                // at the moment.
-                if (!Y.LogWriter) {
-                    Y.LogWriter = function() {
-                        return Y;
-                    };
-                }
+                // @TODO review when logreader is available
+                // if (f === "DEBUG") {
+                //     this.require("log");
+                // }
 
                 this.filter = this.FILTERS[f];
             }
@@ -672,7 +688,6 @@ Y.Env.meta = {
         require: function(what) {
             var a = (typeof what === "string") ? arguments : what;
             this.dirty = true;
-            //OU.appendArray(this.required, a);
             Y.mix(this.required, Y.Array.hash(a));
         },
 
@@ -701,9 +716,6 @@ Y.Env.meta = {
                 // Y.log(mod.name + ' requiring ' + r[i]);
                 d.push(r[i]);
                 m = this.getModule(r[i]);
-                // AU.appendArray(d, this.getRequires(m));
-                // d.concat(this.getRequires(m));
-                // Y.log(d);
                 add = this.getRequires(m);
                 for (j=0;j<add.length;j=j+1) {
                     d.push(add[j]);
@@ -717,9 +729,6 @@ Y.Env.meta = {
                     // Y.log(mod.name + ' requiring ' + r[i]);
                     d.push(r[i]);
                     m = this.getModule(r[i]);
-                    // AU.appendArray(d, this.getRequires(m));
-                    // d.concat(this.getRequires(m));
-                    // Y.log(d);
                     add = this.getRequires(m);
                     for (j=0;j<add.length;j=j+1) {
                         d.push(add[j]);
@@ -737,13 +746,9 @@ Y.Env.meta = {
                 }
             }
 
-            // Y.log(d);
-
-            // mod.expanded = AU.uniq(d);
             mod.expanded = Y.Object.keys(Y.Array.hash(d));
 
             // Y.log(mod.expanded);
-
 
             return mod.expanded;
         },
@@ -867,7 +872,7 @@ Y.Env.meta = {
             // expand the list to include superseded modules
             for (j in l) {
                 // Y.log("expanding: " + j);
-                if (Y.Object.owns(l, j)) {
+                if (l.hasOwnProperty(j)) {
                     Y.mix(l, this.getProvides(j));
                 }
             }
@@ -1212,11 +1217,8 @@ Y.Env.meta = {
          * @param type {string} the type of dependency to insert
          */
         insert: function(o, type) {
-            // if (o) {
-            //     Y.log("insert: " + L.dump(o, 1) + ", " + type);
-            // } else {
-            //     Y.log("insert: " + this.toString() + ", " + type);
-            // }
+
+            Y.log("Insert() " + (type || ''), "info", "Loader");
 
             // build the dependency list
             this.calculate(o);
@@ -1269,7 +1271,9 @@ Y.Env.meta = {
 
             var s, len, i, m, url, self=this;
 
-            if (this.combine && !this._combineComplete) {
+            // @TODO this will need to handle the two phase insert when
+            // CSS support is added
+            if (this.loadType !== CSS && this.combine && (!this._combineComplete)) {
 
                 this._combining = []; 
                 s=this.sorted;
@@ -1282,7 +1286,7 @@ Y.Env.meta = {
                     // Do not try to combine non-yui JS
                     if (m.type == JS && !m.ext) {
                         url += this.root + m.path;
-                        if (i < len) {
+                        if (i < len-1) {
                             url += '&';
                         }
 
@@ -1292,21 +1296,24 @@ Y.Env.meta = {
 
                 if (this._combining.length) {
 
-                    var callback=function(o) {
-                        Y.log('loading combo, just loaded' + o.data, "info", "Loader");
-                        self._combineComplete = true;
+Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
 
-                        var c=self._combining, len=c.length, i, m;
+                    var callback=function(o) {
+                        Y.log('Combo complete: ' + o.data, "info", "Loader");
+                        this._combineComplete = true;
+
+
+                        var c=this._combining, len=c.length, i, m;
                         for (i=0; i<len; i=i+1) {
-                            self.inserted[c[i]] = true;
+                            this.inserted[c[i]] = true;
                         }
 
-                        self.loadNext(o.data);
+                        this.loadNext(o.data);
                     };
 
                     // @TODO get rid of the redundant Get code
                     Y.Get.script(url, {
-                        data: s[i],
+                        data: this._loading,
                         onSuccess: callback,
                         onFailure: this._onFailure,
                         onTimeout: this._onTimeout,
@@ -1317,6 +1324,7 @@ Y.Env.meta = {
                     });
 
                     return;
+
                 } else {
                     this._combineComplete = true;
                 }

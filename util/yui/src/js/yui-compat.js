@@ -56,7 +56,8 @@ YUI.add("compat", function(Y) {
             return Y.mix(r, s, (wl), wl, 1);
         },
 
-        extend: Y.bind(Y.extend, Y), 
+        // extend: Y.bind(Y.extend, Y), 
+        extend: Y.extend,
         // merge: Y.bind(Y.merge, Y)
         merge: Y.merge
     }, true);

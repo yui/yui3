@@ -3,8 +3,8 @@
 <head>
 <title>YUI 3.0</title>
 <script type="text/javascript" src="../../build3x/yui/yui-debug.js"></script>
-<script type="text/javascript" src="../../build3x/compat/compat-debug.js"></script>
 <script type="text/javascript" src="../../build3x/dump/dump-debug.js"></script>
+<script type="text/javascript" src="../../build3x/compat/compat-debug.js"></script>
 <script type="text/javascript" src="../../build3x/substitute/substitute-debug.js"></script>
 <script type="text/javascript" src="../../build3x/get/get-debug.js"></script>
 <script type="text/javascript" src="../../build3x/loader/loader-debug.js"></script>
@@ -18,22 +18,23 @@
 <script>
 
 
-YUI().use('*', function(Y) {
+YUI({
+    base: '/build3x/'
+}).use('*', function(Y) {
 
     var loader = new Y.Loader();
 
-    loader.subscribe('success', function() {
+    loader.onSuccess = function() {
         Y.log('custom event success');
-    })
+    };
 
-    loader.subscribe('failure', function() {
+    loader.onFailure = function() {
         Y.log('custom event failure');
-    })
+    };
 
-
-    loader.subscribe('timeout', function() {
+    loader.onTimeout = function() {
         Y.log('custom event timeout');
-    })
+    };
 
     loader.insert({
         // require: ["tabview", "treeview"],
