@@ -2,7 +2,7 @@
 YUI({
     base: '../../build/',
     timeout: 1000
-}).use('dd-dragdrop-all', 'animation', 'easing', 'io', 'cookie', 'json', function(Y) {
+}).use('dd', 'animation', 'easing', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
 
     //Setup some private variables..
