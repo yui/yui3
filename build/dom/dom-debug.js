@@ -22,16 +22,11 @@ var NODE_TYPE = 'nodeType',
     LAST_CHILD = 'lastChild',
     PREVIOUS_SIBLING = 'previousSibling',
     NEXT_SIBLING = 'nextSibling',
-    OFFSET_HEIGHT = 'offsetHeight',
-    OFFSET_WIDTH = 'offsetWidth',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     INNER_TEXT = 'innerText',
     TEXT_CONTENT = 'textContent',
-    CLIENT_HEIGHT = 'clientHeight',
-    CLIENT_WIDTH = 'clientWidth',
     LENGTH = 'length',
-    STRING = 'string',
 
     UNDEFINED = undefined;
 
@@ -566,7 +561,10 @@ Y.mix(Y.DOM, {
  * @module dom-style
  */
 
-var STYLE = 'style',
+var DOCUMENT_ELEMENT = 'documentElement',
+    DEFAULT_VIEW = 'defaultView',
+    OWNER_DOCUMENT = 'ownerDocument',
+    STYLE = 'style',
     FLOAT = 'float',
     CSS_FLOAT = 'cssFloat',
     STYLE_FLOAT = 'styleFloat',
@@ -581,6 +579,7 @@ var STYLE = 'style',
     GET_COMPUTED_STYLE = 'getComputedStyle',
 
     DOCUMENT = Y.config.doc,
+    UNDEFINED = undefined,
 
     re_color = /color$/i;
 
@@ -588,6 +587,14 @@ var STYLE = 'style',
 Y.mix(Y.DOM, {
     CUSTOM_STYLES: {},
 
+
+    /**
+     * Applies a CSS style to a given node.
+     * @method setStyle
+     * @param {HTMLElement} An HTMLElement to apply the style to.
+     * @param {String} att The style attribute to set. 
+     * @param {String|Number} val The value. 
+     */
     setStyle: function(node, att, val) {
         var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
@@ -605,6 +612,12 @@ Y.mix(Y.DOM, {
         }
     },
 
+    /**
+     * Returns a CSS style for the given node.
+     * @method getStyle
+     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {String} att The style attribute to get. 
+     */
     getStyle: function(node, att) {
         var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
@@ -627,6 +640,24 @@ Y.mix(Y.DOM, {
         return val;
     },
 
+    /**
+     * Sets multiple style properties.
+     * @method setStyles
+     * @param {HTMLElement} node An HTMLElement to apply the styles to. 
+     * @param {Object} hash An object literal of property:value pairs. 
+     */
+    'setStyles': function(node, hash) {
+        Y.each(hash, function(v, n) {
+            Y.DOM.setStyle(node, n, v);
+        }, Y.DOM);
+    },
+
+    /**
+     * Returns the computed style for the given node.
+     * @method getComputedStyle
+     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {String} att The style attribute to get. 
+     */
     getComputedStyle: function(node, att) {
         var val = '',
             doc = node[OWNER_DOCUMENT];
@@ -678,6 +709,7 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
  */
 
 var OFFSET_TOP = 'offsetTop',
+    DOCUMENT_ELEMENT = 'documentElement',
     COMPAT_MODE = 'compatMode',
     OFFSET_LEFT = 'offsetLeft',
     OFFSET_PARENT = 'offsetParent',
@@ -765,6 +797,9 @@ Y.mix(Y.DOM, {
     getXY: function() {
         if (document.documentElement[GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
+                if (!node) {
+                    return false;
+                }
                 var scrollLeft = Y.DOM.docScrollX(node),
                     scrollTop = Y.DOM.docScrollY(node),
                     box = node[GET_BOUNDING_CLIENT_RECT](),
@@ -1019,6 +1054,10 @@ Y.mix(Y.DOM, {
  * @module dom-region
  */
 
+var OFFSET_WIDTH = 'offsetWidth',
+    OFFSET_HEIGHT = 'offsetHeight',
+    TAG_NAME = 'tagName';
+
 var getOffsets = function(r1, r2) {
 
     var t = Math.max(r1.top,    r2.top   ),
@@ -1061,10 +1100,11 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Find the intersect information for this node and the node passed in.
+     * Find the intersect information for the passes nodes.
      * @method intersect
-     * @param {Object} node2 The node to check the interect with
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} node The first node 
+     * @param {Object} node2 The other node to check the interect with
+     * @param {Object} altRegion An object literal containing the region for the first node if we already have the data (for performance i.e. DragDrop)
      * @return {Object} Returns an Object literal with the intersect information for the nodes
      */
     intersect: function(node, node2, altRegion) {
@@ -1377,6 +1417,9 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
  */
 
 var TAG = 'tag',
+    LENGTH = 'length',
+    NODE_TYPE = 'nodeType',
+    TAG_NAME = 'tagName',
     ATTRIBUTES = 'attributes',
     PSEUDOS = 'pseudos',
     COMBINATOR = 'combinator';
@@ -1935,6 +1978,7 @@ Y.Selector.patterns = patterns;
  */
 
 var TO_STRING = 'toString',
+    PARSE_INT = 'parseInt',
     RE = RegExp;
 
 Y.Color = {
@@ -1968,9 +2012,9 @@ Y.Color = {
 
         if(Y.Color.re_hex.exec(val)) {
             val = 'rgb(' + [
-                parseInt(RE.$1, 16),
-                parseInt(RE.$2, 16),
-                parseInt(RE.$3, 16)
+                PARSE_INT(RE.$1, 16),
+                PARSE_INT(RE.$2, 16),
+                PARSE_INT(RE.$3, 16)
             ].join(', ') + ')';
         }
         return val;
@@ -2000,4 +2044,4 @@ Y.Color = {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{skinnable:false});
