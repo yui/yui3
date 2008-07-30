@@ -17,10 +17,8 @@
 <div id="example-container"></div>
 
 <script type="text/javascript">
-(function() {
-
-    // Get a new YUI instance 
-    var Y = YUI().use("attribute");
+// Get a new YUI instance 
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     // Shortcut for Y.Lang;
     var L = Y.Lang;
@@ -114,28 +112,24 @@
 
     Y.augment(Box, Y.Attribute);
 
-    // event:ready is fired when the DOM is ready
-    Y.on("event:ready", function() { 
+    var b = new Box();
 
-        var b = new Box();
+    var w = Y.Node.get("#w");
+    var h = Y.Node.get("#h");
+    var txt = Y.Node.get("#txt");
 
-        var w = Y.Node.get("#w");
-        var h = Y.Node.get("#h");
-        var txt = Y.Node.get("#txt");
+    w.set("value", b.get("width"));
+    h.set("value", b.get("height"));
+    txt.set("value", b.get("content"));
 
-        w.set("value", b.get("width"));
-        h.set("value", b.get("height"));
-        txt.set("value", b.get("content"));
+    Y.on("click", function() {
+        b.set("width", w.get("value"));
+        b.set("height", h.get("value"));
+        b.set("content", txt.get("value"));
+    }, "#change");
 
-        Y.on("click", function() {
-            b.set("width", w.get("value"));
-            b.set("height", h.get("value"));
-            b.set("content", txt.get("value"));
-        }, "#change");
-
-        Y.on("click", function() {
-            b.set("content", b.get("area"));
-        }, "#showdims");
-    });
-})();
+    Y.on("click", function() {
+        b.set("content", b.get("area"));
+    }, "#showdims");
+});
 </script>

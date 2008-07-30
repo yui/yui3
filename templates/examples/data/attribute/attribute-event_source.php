@@ -15,12 +15,11 @@
 <div id="example-out"></div>
 
 <script type="text/javascript">
-(function() {
+// Get a new YUI instance 
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
+
     // Shortcut to print (unrelated to example)
     var print = YUI.example.print;
-
-    // Get a new YUI instance 
-    var Y = YUI().use("attribute");
 
     // Setup a custom class with attribute support
     function MyClass(cfg) {
@@ -78,31 +77,27 @@
         printEvt(e);
     });
 
-    // event:ready is fired when the DOM is ready
-    Y.on("event:ready", function() {
- 
-        var attrSel = Y.Node.get("#attr");
-        var attrOpts = attrSel.get("options");
-        var newValTxt = Y.Node.get("#newVal");
+    var attrSel = Y.Node.get("#attr");
+    var attrOpts = attrSel.get("options");
+    var newValTxt = Y.Node.get("#newVal");
 
-        Y.on("click", function() {
+    Y.on("click", function() {
 
-            var selIndex = attrSel.get("selectedIndex");
-            var attr = attrOpts.item(selIndex).get("value");
-            o1.set(attr, newValTxt.get("value"));
+        var selIndex = attrSel.get("selectedIndex");
+        var attr = attrOpts.item(selIndex).get("value");
+        o1.set(attr, newValTxt.get("value"));
 
-        }, "#changeValue");
+    }, "#changeValue");
 
-        function populateCurrentValue() {
-            var selIndex = attrSel.get("selectedIndex");
-            var attr = attrOpts.item(selIndex).get("value");
-            newValTxt.set("value", o1.get(attr));
-        }
+    function populateCurrentValue() {
+        var selIndex = attrSel.get("selectedIndex");
+        var attr = attrOpts.item(selIndex).get("value");
+        newValTxt.set("value", o1.get(attr));
+    }
 
-        populateCurrentValue();
+    populateCurrentValue();
 
-        Y.on("change", populateCurrentValue, "#attr");
+    Y.on("change", populateCurrentValue, "#attr");
 
-    });
-})();
+});
 </script>

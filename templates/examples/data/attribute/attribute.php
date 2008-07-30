@@ -11,9 +11,9 @@ $examples["attribute-basic"] = array(
 	name => "Basic Configuration",
 	modules => array("attribute"),
 	description => "Use the Attribute API to define, set and get attribute values.",
-	sequence => array(1),
+	sequence => array(0),
 	newWindow => "default",
-	requires => array("yui", "attribute"),
+	requires => array("node", "attribute"),
 	highlightSyntax => true
 );
 
@@ -21,9 +21,9 @@ $examples["attribute-event"] = array(
 	name => "Change Events",
 	modules => array("attribute", "event"),
 	description => "How to listen for changes in attribute values.",
-	sequence => array(2, 50),
+	sequence => array(1, 50),
 	newWindow => "default",
-	requires => array("yui", "attribute"),
+	requires => array("node", "attribute"),
 	highlightSyntax => true
 );
 
@@ -31,9 +31,9 @@ $examples["attribute-getset"] = array(
 	name => "Custom Getters, Setters and Validators",
 	modules => array("attribute"),
 	description => "Add custom methods to get and set attribute values and provide validation support.",
-	sequence => array(3),
+	sequence => array(2),
 	newWindow => "default",
-	requires => array("yui", "attribute"),
+	requires => array("node", "attribute"),
 	highlightSyntax => true
 );
 
@@ -41,9 +41,9 @@ $examples["attribute-clone"] = array(
 	name => "Value Clone Configuration",
 	modules => array("attribute"),
 	description => "Specify how attributes should be cloned, when returning values through get.",
-	sequence => array(4),
+	sequence => array(3),
 	newWindow => "default",
-	requires => array("yui", "dump", "attribute"),
+	requires => array("node", "dump", "attribute"),
 	highlightSyntax => true
 );
 
@@ -51,9 +51,9 @@ $examples["attribute-rw"] = array(
 	name => "readOnly and writeOnce Configuration",
 	modules => array("attribute"),
 	description => "Configure attributes to be readOnly or writeOnce.",
-	sequence => array(5),
+	sequence => array(4),
 	newWindow => "default",
-	requires => array("yui", "attribute"),
+	requires => array("node", "attribute"),
 	highlightSyntax => true
 );
 

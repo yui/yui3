@@ -1,12 +1,12 @@
 <div id="example-out"></div>
 
 <script type="text/javascript">
-(function() {
+
+// Get a new YUI instance 
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
+
     // Shortcut to print (unrelated to example)
     var print = YUI.example.print;
-
-    // Get a new YUI instance 
-    var Y = YUI().use("attribute", "dump");
 
     // Setup a custom class with attribute support
     function MyClass(cfg) {
@@ -156,5 +156,5 @@
 
     print("Value After Setting Sub-Attribute:", "subheader");
     print(Y.dump(o1.get("D")));
-})();
+});
 </script>

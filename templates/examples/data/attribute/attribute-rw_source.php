@@ -1,12 +1,10 @@
 <div id="example-out"></div>
 
 <script type="text/javascript">
-(function() {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
+
     // Shortcut to print (unrelated to example)
     var print = YUI.example.print;
-
-    // Get a new YUI instance 
-    var Y = YUI().use("attribute");
 
     // Setup a custom class with attribute support
     function MyClass(cfg) {
@@ -72,5 +70,5 @@
     o1.doSomething();
     print(o1.get("foo"));
 
-})();
+});
 </script>

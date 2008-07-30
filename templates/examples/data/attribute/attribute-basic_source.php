@@ -1,10 +1,11 @@
 <div id="example-out"></div>
-<script type="text/javascript">
-(function() {
-    // Get a new instance of YUI and 
-    // load it with the attribute module
 
-    var Y = YUI().use("attribute");
+<script type="text/javascript">
+
+// Get a new instance of YUI and 
+// load it with the required set of modules
+
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     // Setup custom dummy class which is going
     // to support managed attributes
@@ -65,5 +66,5 @@
     print("foo:" + o2.get("foo"));
     print("bar:" + o2.get("bar"));
     print("foobar:" + o2.get("foobar"));
-})();
+});
 </script>
