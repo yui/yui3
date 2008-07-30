@@ -3,7 +3,7 @@
 
 <textarea name="code" class="JScript" rows="1" cols="60">
 // Create business logic in a YUI sandbox using the 'io' and 'json' modules
-YUI().use('io','json-parse',function (Y) {
+YUI().use('node','dump','io','json-parse',function (Y) {
 
     // capture the node that we'll display the messages in
     var target = Y.Node.get('#demo_msg');

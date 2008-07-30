@@ -4,7 +4,7 @@
     <div id="demo_msg"></div>
 </div>
 <script type="text/javascript">
-YUI().use('io','json-parse',function (Y) {
+YUI().use('node','dump','io','json-parse',function (Y) {
 
     var target = Y.Node.get('#demo_msg');
 
