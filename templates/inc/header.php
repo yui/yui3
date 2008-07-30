@@ -52,7 +52,7 @@ if ($prepend) { /*there is additional css or header information for this page --
     echo $prepend;
 }
 
-if ($customHeader) {
+if (isset($customHeader) && $customHeader != "") {
 	include($customHeader);
 }
 ?>

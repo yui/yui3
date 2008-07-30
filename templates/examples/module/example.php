@@ -35,19 +35,43 @@ if(!isset($prepend)) {$prepend = "";}
 //used to stamp external links in dist
 $externalLabel = ($ydn) ? "" : " (external)";
 
-$comboConfig = "{root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", filter: \"debug\", timeout: 10000}";
-$separateConfig = "{ base:\"$buildpath\" }";
+$defYuiConfig = ($ydn) ? "root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", filter: \"debug\", timeout: 10000"
+                       : "base:\"$buildpath\", timeout: 10000, filter:\"debug\"";
 
-$yuiConfig = ($ydn) ? $comboConfig : $separateConfig;
+function getYUIConfig($cfg) {
+    global $defYuiConfig;
+
+    if ($cfg) {
+        return "{".$defYuiConfig.", ".$cfg."}";
+    } else {
+        return "{".$defYuiConfig."}";
+    }
+}
+
+$defMods = "";
+if (isset($examples[$name]["requires"])) {
+    $defMods = "\"".join("\", \"", $examples[$name]["requires"])."\"";
+}
+
+function getRequiredModules($mods) {
+    global $defMods;
+
+    if ($mods) {
+        $mods = "\"".join("\", \"", $mods)."\"";
+        if ($defMods) { $mods = ", ".$mods; }
+        return $defMods.$mods; 
+    } else {
+        return $defMods;
+    }
+}
+
+$yuiConfig = getYUIConfig(null);
+$requiredModules = getRequiredModules(null);
 
 $currentExample = $examples[$name];
 $currentModuleName = $examples[$name][modules][0];
 $currentModule = validateModule($currentModuleName, $modules);
 
-$requiredModules = "";
-if (isset($examples[$name]["requires"])) {
-    $requiredModules = "\"".join("\",\"", $examples[$name]["requires"])."\"";
-}
 
 $title="YUI Library Examples: ".$currentModule["name"].": ".$examples[$name][name];
 $section=$currentModuleName;
