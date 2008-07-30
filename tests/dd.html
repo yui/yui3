@@ -48,6 +48,7 @@
     <script type="text/javascript">
 
         var Y = new YUI({
+            base: '../build/',
             logExclude: {
                 'YUI': true,
                 Event: true,
@@ -55,8 +56,7 @@
                 Attribute: true,
                 augment: true
             }
-        }).use("dd-drop", 'dd-proxy', "yuitest", 'substitute');
-        Y.on('event:ready', function() {
+        }).use("dd-drop", 'dd-proxy', "yuitest", 'substitute', function(Y) {
 
                 _count = {};
                 _data = {

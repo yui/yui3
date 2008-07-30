@@ -855,5 +855,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd-drop-core', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-drop', 'dd-drop', 'dd-drop-plugin']});
+YUI.add('dd-drop-core', function(Y){}, '@VERSION@' ,{use:['dd-ddm-drop', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
 

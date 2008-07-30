@@ -77,7 +77,6 @@ YUI.add('dd-proxy', function(Y) {
         _createFrame: function() {
             if (!DDM._proxy) {
                 DDM._proxy = true;
-                //var p = Y.Node.create(['div']);
                 var p = Y.Node.create('<div></div>');
 
                 p.setStyles({
@@ -89,8 +88,8 @@ YUI.add('dd-proxy', function(Y) {
                     border: this.get('borderStyle')
                 });
 
-                //DDM._pg.get('parentNode').insertBefore(p, DDM._pg.get('nextSibling'));
-                DDM._pg.get('parentNode').insertBefore(p, DDM._pg);
+                var b = Y.Node.get('body');
+                b.insertBefore(p, b.get('firstChild'));
                 p.set('id', Y.stamp(p));
                 p.addClass(DDM.CSS_PREFIX + '-proxy');
                 DDM._proxy = p;
