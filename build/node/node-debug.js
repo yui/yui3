@@ -1176,4 +1176,4 @@ Y.Node.methods({
 
 
 
-}, '@VERSION@' ,{requires:['dom-all']});
+}, '@VERSION@' ,{requires:['dom']});
