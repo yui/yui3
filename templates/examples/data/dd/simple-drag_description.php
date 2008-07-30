@@ -17,14 +17,13 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drag</code> module.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drag');
+YUI().use('dd-drag');
 </textarea>
 
 <h3>Making the Node draggable</h3>
 <p>Now that we have a YUI instance with the <code>dd-drag</code> module, we need to instantiate the <code>Drag</code> instance on this Node.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drag');
-Y.on('event:ready', function() {
+YUI().use('dd-drag', function(Y) {
     //Selector of the node to make draggable
     var dd = new Y.DD.Drag({
         node: '#demo'
