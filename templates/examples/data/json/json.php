@@ -13,7 +13,7 @@ $examples["json_connect"] = array(
 	description => "Use the JSON Utility to parse data received from Y.io calls",
 	sequence => array(1),
 	newWindow => "default",
-	requires => array("yui","io","json-parse"),
+	requires => array("node","io","dump","json-parse"),
 	highlightSyntax => true
 );
 
