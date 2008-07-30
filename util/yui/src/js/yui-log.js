@@ -7,7 +7,7 @@ YUI.add("log", function(instance) {
      * write to the browser console if available.
      *
      * @method log
-     * @static
+     * @for YUI
      * @param  {String}  msg  The message to log.
      * @param  {String}  cat  The log category for the message.  Default
      *                        categories are "info", "warn", "error", time".

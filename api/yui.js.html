@@ -231,7 +231,7 @@
 <span class="c">     * @param method {string} the name of the method to exectute.</span>
 <span class="c">     * Ex: &#39;Object.keys&#39;</span>
 <span class="c">     * @param args {Array} the arguments to apply to the method</span>
-<span class="c">     * @return the return value from the applied method or null</span>
+<span class="c">     * @return {object} the return value from the applied method or null</span>
 <span class="c">     */</span>
     <span class="nx">applyTo</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">,</span> <span class="nx">method</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
 
@@ -531,9 +531,8 @@
 <span class="c">     * This fails because &quot;long&quot; is a future reserved word in ECMAScript</span>
 <span class="c">     *</span>
 <span class="c">     * @method namespace</span>
-<span class="c">     * @static</span>
-<span class="c">     * @param  {String*} arguments 1-n namespaces to create </span>
-<span class="c">     * @return {Object}  A reference to the last namespace object created</span>
+<span class="c">     * @param  {string*} arguments 1-n namespaces to create </span>
+<span class="c">     * @return {object}  A reference to the last namespace object created</span>
 <span class="c">     */</span>
     <span class="nx">namespace</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">a</span><span class="o">=</span><span class="nx">arguments</span><span class="o">,</span> <span class="nx">o</span><span class="o">=</span><span class="kc">null</span><span class="o">,</span> <span class="nx">i</span><span class="o">,</span> <span class="nx">j</span><span class="o">,</span> <span class="nx">d</span><span class="o">;</span>
@@ -660,6 +659,8 @@
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_get.html">get</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
 

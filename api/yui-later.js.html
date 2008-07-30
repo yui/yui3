@@ -36,8 +36,7 @@
                         <style>
                             #doc3 #classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="c">// requires lang</span>
-<span class="c"></span><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;later&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;later&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
 
@@ -46,22 +45,23 @@
 <span class="c">     * object &#39;when&#39; milliseconds later.  Executes the function a </span>
 <span class="c">     * single time unless periodic is set to true.</span>
 <span class="c">     * @method later</span>
+<span class="c">     * @for YUI</span>
 <span class="c">     * @param when {int} the number of milliseconds to wait until the fn </span>
-<span class="c">     * is executed</span>
-<span class="c">     * @param o the context object</span>
+<span class="c">     * is executed.</span>
+<span class="c">     * @param o the context object.</span>
 <span class="c">     * @param fn {Function|String} the function to execute or the name of </span>
-<span class="c">     * the method in the &#39;o&#39; object to execute</span>
+<span class="c">     * the method in the &#39;o&#39; object to execute.</span>
 <span class="c">     * @param data [Array] data that is provided to the function.  This accepts</span>
 <span class="c">     * either a single item or an array.  If an array is provided, the</span>
 <span class="c">     * function is executed with one parameter for each array item.  If</span>
 <span class="c">     * you need to pass a single array parameter, it needs to be wrapped in</span>
-<span class="c">     * an array [myarray]</span>
+<span class="c">     * an array [myarray].</span>
 <span class="c">     * @param periodic {boolean} if true, executes continuously at supplied </span>
-<span class="c">     * interval until canceled</span>
-<span class="c">     * @return a timer object. Call the cancel() method on this object to </span>
+<span class="c">     * interval until canceled.</span>
+<span class="c">     * @return {object} a timer object. Call the cancel() method on this object to </span>
 <span class="c">     * stop the timer.</span>
 <span class="c">     */</span>
-    <span class="nx">L</span><span class="o">.</span><span class="nx">later</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">when</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">periodic</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">var</span> <span class="nx">later</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">when</span><span class="o">,</span> <span class="nx">o</span><span class="o">,</span> <span class="nx">fn</span><span class="o">,</span> <span class="nx">data</span><span class="o">,</span> <span class="nx">periodic</span><span class="o">)</span> <span class="o">{</span>
         <span class="nx">when</span> <span class="o">=</span> <span class="nx">when</span> <span class="o">||</span> <span class="m">0</span><span class="o">;</span> 
         <span class="nx">o</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">||</span> <span class="o">{};</span>
         <span class="k">var</span> <span class="nx">m</span><span class="o">=</span><span class="nx">fn</span><span class="o">,</span> <span class="nx">d</span><span class="o">=</span><span class="nx">data</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">r</span><span class="o">;</span>
@@ -95,6 +95,10 @@
             <span class="o">}</span>
         <span class="o">};</span>
     <span class="o">};</span>
+
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">later</span> <span class="o">=</span> <span class="nx">later</span><span class="o">;</span>
+    <span class="nx">L</span><span class="o">.</span><span class="nx">later</span> <span class="o">=</span> <span class="nx">later</span><span class="o">;</span>
+
 <span class="o">},</span> <span class="s2">&quot;@VERSION@&quot;</span><span class="o">);</span>
 </pre></div>
                     </div>
@@ -126,6 +130,8 @@
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_get.html">get</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
 

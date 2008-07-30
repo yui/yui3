@@ -15,7 +15,6 @@ YUI.add("core", function(Y) {
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param w a whitelist object (the keys are the valid items to reference)
-     * @static
      * @private
      * @for YUI
      */
@@ -40,7 +39,7 @@ YUI.add("core", function(Y) {
      * copy, use clone.
      * @method merge
      * @param arguments {Object*} the objects to merge
-     * @return the new merged object
+     * @return {object} the new merged object
      */
     Y.merge = function() {
         // var o={}, a=arguments;
@@ -64,7 +63,6 @@ YUI.add("core", function(Y) {
      * @TODO add constants for the modes
      *
      * @method mix
-     * @static
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
@@ -79,7 +77,7 @@ YUI.add("core", function(Y) {
      *        4: object to prototype
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
-     * @return the augmented object
+     * @return {object} the augmented object
      * @TODO review for PR2
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {

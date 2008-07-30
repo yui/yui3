@@ -4,9 +4,9 @@ YUI.add("get", function(Y) {
         var ua=Y.UA, 
         L=Y.Lang;
 
-/*
+/**
  * Provides a mechanism to fetch remote resources and
- * insert them into a document
+ * insert them into a document.
  * @module get
  */
 
@@ -447,7 +447,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
-         * @param {string|object} either the tId or the object returned from
+         * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
         abort: function(o) {
@@ -548,20 +548,23 @@ Y.Get = function() {
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
          * &nbsp;&nbsp;Y.Get.script(
-         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js",
-         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"], &#123;
+         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
+         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.5.2/build/event/event-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(o.data); // foo
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new Y.DDProxy("dd1"); // also new o.reference("dd1"); would work
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the context");
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log(o.nodes.length === 2) // true
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.data); // foo
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.nodes.length === 2) // true
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
+         * &nbsp;&nbsp;&nbsp;&nbsp;onTimeout: function(o) &#123;
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction timed out");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
-         * &nbsp;&nbsp;&nbsp;&nbsp;context: Y,
+         * &nbsp;&nbsp;&nbsp;&nbsp;timeout: 10000, // 10 second timeout
+         * &nbsp;&nbsp;&nbsp;&nbsp;context: Y, // make the YUI instance
          * &nbsp;&nbsp;&nbsp;&nbsp;// win: otherframe // target another window/frame
          * &nbsp;&nbsp;&nbsp;&nbsp;autopurge: true // allow the utility to choose when to remove the nodes
          * &nbsp;&nbsp;&#125;);
@@ -617,8 +620,11 @@ Y.Get = function() {
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");
          * </pre>
          * <pre>
-         *      Y.Get.css(["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
-         *                          "http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"]);
+         * &nbsp;&nbsp;Y.Get.css(
+         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
+         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"], &#123;
+         * &nbsp;&nbsp;&nbsp;&nbsp;insertBefore: 'custom-styles' // nodes will be inserted before the specified node
+         * &nbsp;&nbsp;&#125;);
          * </pre>
          * @return {tId: string} an object containing info about the transaction
          */

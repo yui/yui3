@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: loader   get.js  (YUI Library)</title>
+	<title>API: get   get.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,10 +13,10 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>loader&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>get&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_loader.html">loader</a>
+            &gt; <a href="./module_get.html">get</a>
                 
                  &gt; get.js (source view) 
             </p>
@@ -41,9 +41,9 @@
         <span class="k">var</span> <span class="nx">ua</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">UA</span><span class="o">,</span> 
         <span class="nx">L</span><span class="o">=</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">;</span>
 
-<span class="c">/*</span>
+<span class="c">/**</span>
 <span class="c"> * Provides a mechanism to fetch remote resources and</span>
-<span class="c"> * insert them into a document</span>
+<span class="c"> * insert them into a document.</span>
 <span class="c"> * @module get</span>
 <span class="c"> */</span>
 
@@ -484,7 +484,7 @@
         <span class="c">/**</span>
 <span class="c">         * Abort a transaction</span>
 <span class="c">         * @method abort</span>
-<span class="c">         * @param {string|object} either the tId or the object returned from</span>
+<span class="c">         * @param o {string|object} Either the tId or the object returned from</span>
 <span class="c">         * script() or css()</span>
 <span class="c">         */</span>
         <span class="nx">abort</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
@@ -585,20 +585,23 @@
 <span class="c">         * &lt;dd&gt;Number of milliseconds to wait before aborting and firing the timeout event&lt;/dd&gt;</span>
 <span class="c">         * &lt;pre&gt;</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;Y.Get.script(</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js&quot;], &amp;#123;</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js&quot;,</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.5.2/build/event/event-min.js&quot;], &amp;#123;</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onSuccess: function(o) &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;console.log(o.data); // foo</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;new Y.DDProxy(&quot;dd1&quot;); // also new o.reference(&quot;dd1&quot;); would work</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(&quot;won&#39;t cause error because Y is the context&quot;);</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;this.log(o.nodes.length === 2) // true</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.data); // foo</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(o.nodes.length === 2) // true</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// o.purge(); // optionally remove the script nodes immediately</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onFailure: function(o) &amp;#123;</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;console.log(&quot;transaction failed&quot;);</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction failed&quot;);</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;onTimeout: function(o) &amp;#123;</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Y.log(&quot;transaction timed out&quot;);</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;#125;,</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;data: &quot;foo&quot;,</span>
-<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;context: Y,</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;timeout: 10000, // 10 second timeout</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;context: Y, // make the YUI instance</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;// win: otherframe // target another window/frame</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;autopurge: true // allow the utility to choose when to remove the nodes</span>
 <span class="c">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
@@ -654,8 +657,11 @@
 <span class="c">         *      Y.Get.css(&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;);</span>
 <span class="c">         * &lt;/pre&gt;</span>
 <span class="c">         * &lt;pre&gt;</span>
-<span class="c">         *      Y.Get.css([&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;,</span>
-<span class="c">         *                          &quot;http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css&quot;]);</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;Y.Get.css(</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;[&quot;http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css&quot;,</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&quot;http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css&quot;], &amp;#123;</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;insertBefore: &#39;custom-styles&#39; // nodes will be inserted before the specified node</span>
+<span class="c">         * &amp;nbsp;&amp;nbsp;&amp;#125;);</span>
 <span class="c">         * &lt;/pre&gt;</span>
 <span class="c">         * @return {tId: string} an object containing info about the transaction</span>
 <span class="c">         */</span>
@@ -697,9 +703,11 @@
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
+                                <li class="selected"><a href="module_get.html">get</a></li>
+
                                 <li class=""><a href="module_io.html">io</a></li>
 
-                                <li class="selected"><a href="module_loader.html">loader</a></li>
+                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
@@ -719,7 +727,6 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Get.html">Get</a></li>
-                                <li class=""><a href="Loader.html">Loader</a></li>
                         </ul>
                     </div>
 
@@ -727,7 +734,6 @@
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="get.js.html">get.js</a></li>
-                                <li class=""><a href="loader.js.html">loader.js</a></li>
                         </ul>
                     </div>
 

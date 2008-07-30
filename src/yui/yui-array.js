@@ -4,28 +4,25 @@
  * @module yui
  */
 
-/**
- * Array utilities
- * @TODO investigate using Array subclasses for some of this
- * @class Array
- * @static
- */
 YUI.add("array", function(Y) {
 
     var L = Y.Lang, Native = Array.prototype;
 
     /** 
-     * Returns an array:
+     * Y.Array(o) returns an array:
      * - Arrays are return unmodified unless the start position is specified.
      * - "Array-like" collections (@see Array.test) are converted to arrays
      * - For everything else, a new array is created with the input as the sole item
      * - The start position is used if the input is or is like an array to return
      *   a subset of the collection.
      *
-     *   @todo this will not automatically convert elements that are also collections
+     *   @TODO this will not automatically convert elements that are also collections
      *   such as forms and selects.  Passing true as the third param will
      *   force a conversion.
      *
+     * @class Array
+     * @static
+     * @constructor
      *   @param o the item to arrayify
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
@@ -45,10 +42,6 @@ YUI.add("array", function(Y) {
 
     var A = Y.Array;
     
-    // YUI array utilities.  The current plan is to make a few useful
-    // ones 'core', and to have the rest of the array extras an optional
-    // module
-
     /** 
      * Evaluates the input to determine if it is an array, array-like, or 
      * something else.  This is used to handle the arguments collection 
@@ -83,6 +76,7 @@ YUI.add("array", function(Y) {
     /**
      * Executes the supplied function on each item in the array.
      * @method each
+     * @return {YUI} the YUI instance
      */
     A.each = (Native.forEach) ?
         function (a, f, o) { 
@@ -104,7 +98,7 @@ YUI.add("array", function(Y) {
      * @method hash
      * @param k {Array} keyset
      * @param v {Array} optional valueset
-     * @return the hash
+     * @return {object} the hash
      */
     A.hash = function(k, v) {
         var o = {}, l = k.length, vl = v && v.length, i;
@@ -124,7 +118,7 @@ YUI.add("array", function(Y) {
      * @method indexOf
      * @param a {Array} the array to search
      * @param val the value to search for
-     * @return the index of the item that contains the value or -1
+     * @return {int} the index of the item that contains the value or -1
      */
     A.indexOf = function(a, val) {
         for (var i=0; i<a.length; i=i+1) {

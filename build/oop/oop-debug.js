@@ -8,6 +8,8 @@ YUI.add("oop", function(Y) {
     /**
      * Applies prototype properties from the supplier to the receiver.
      * The receiver can be a constructor or an instance.
+     * @method augment
+     * @for YUI
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
@@ -16,7 +18,7 @@ YUI.add("oop", function(Y) {
      * this list will be applied to the receiver.
      * @param args {Array | Any} arg or arguments to apply to the supplier
      * constructor when initializing.
-     * @return the augmented object
+     * @return {object} the augmented object
      *
      * @todo constructor optional?
      * @todo understanding what an instance is augmented with
@@ -112,14 +114,14 @@ YUI.add("oop", function(Y) {
      * the target has the property, and the property is an object, the target
      * object will be augmented with the supplier's value.  If the property
      * is an array, the suppliers value will be appended to the target.
-     *
+     * @method aggregate
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
      * will be overwritten if found on the supplier.
      * @param wl {string[]} a whitelist.  If supplied, only properties in 
      * this list will be applied to the receiver.
-     * @return the extended object
+     * @return {object} the extended object
      */
     Y.aggregate = function(r, s, ov, wl) {
         return Y.mix(r, s, ov, wl, 0, true);
@@ -190,8 +192,7 @@ YUI.add("oop", function(Y) {
      * receives the value, key, and object as parameters
      * @param proto if true, prototype properties are
      * iterated on objects
-     * @return the return value from the appropriate method
-     * in Node, Object or Array
+     * @return {YUI} the YUI instance
      */
     Y.each = function(o, f, c, proto) {
 
@@ -276,7 +277,7 @@ YUI.add("oop", function(Y) {
      * @param f {Function} the function to bind
      * @param c the execution context
      * @param args* 0..n arguments to append to the arguments collection for the function
-     * @return the wrapped function
+     * @return {function} the wrapped function
      */
     Y.bind = function(f, c) {
         // if (!f) {

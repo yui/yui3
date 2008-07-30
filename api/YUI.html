@@ -177,7 +177,7 @@ A list of module definitions.  See Loader.addModule for the supported module met
                             <div class="content">
                                     <div class="private">
                                     <h4><a name="property__iefix">_iefix</a>
-                                        <code>- private static object</code>
+                                        <code>- private object</code>
                                     </h4>
                                     <div class="detail">
                                         <div class="description">
@@ -367,7 +367,7 @@ omit - features that should not be loaded if this module is present</dd>
                                         
                                         
                                         
-                                        void
+                                        object
                                             <strong>aggregate</strong>
                                            (
                                                 
@@ -424,7 +424,7 @@ this list will be applied to the receiver.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        object
                                                     </code></dt>
                                                     <dd>the extended object</dd>
                                                 </dl>
@@ -442,7 +442,7 @@ this list will be applied to the receiver.
                                         
                                         
                                         
-                                        void
+                                        object
                                             <strong>applyTo</strong>
                                            (
                                                 
@@ -488,7 +488,7 @@ Ex: 'Object.keys'
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        object
                                                     </code></dt>
                                                     <dd>the return value from the applied method or null</dd>
                                                 </dl>
@@ -506,7 +506,7 @@ Ex: 'Object.keys'
                                         
                                         
                                         
-                                        void
+                                        object
                                             <strong>augment</strong>
                                            (
                                                 
@@ -570,7 +570,7 @@ constructor when initializing.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        object
                                                     </code></dt>
                                                     <dd>the augmented object</dd>
                                                 </dl>
@@ -588,7 +588,7 @@ constructor when initializing.
                                         
                                         
                                         
-                                        void
+                                        function
                                             <strong>bind</strong>
                                            (
                                                 
@@ -635,7 +635,7 @@ is executed with.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        function
                                                     </code></dt>
                                                     <dd>the wrapped function</dd>
                                                 </dl>
@@ -801,7 +801,7 @@ associative arrays.
                                         
                                         
                                         
-                                        void
+                                        YUI
                                             <strong>each</strong>
                                            (
                                                 
@@ -849,10 +849,9 @@ iterated on objects
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        YUI
                                                     </code></dt>
-                                                    <dd>the return value from the appropriate method
-in Node, Object or Array</dd>
+                                                    <dd>the YUI instance</dd>
                                                 </dl>
              
                                         </div>
@@ -1038,13 +1037,168 @@ and throwFail is specified, this error will be re-thrown.
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_later">later</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        object
+                                            <strong>later</strong>
+                                           (
+                                                
+                                                        
+                                                         when
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         fn
+                                                    
+                                                
+                                                        , 
+                                                         data
+                                                    
+                                                
+                                                        , 
+                                                         periodic
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executes the supplied function in the context of the supplied 
+object 'when' milliseconds later.  Executes the function a 
+single time unless periodic is set to true.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>when &lt;int&gt;</code>
+                                                              the number of milliseconds to wait until the fn 
+is executed.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             the context object.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>fn &lt;Function|String&gt;</code>
+                                                              the function to execute or the name of 
+the method in the 'o' object to execute.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>data &lt;object&gt;</code>
+                                                             [Array] data that is provided to the function.  This accepts
+either a single item or an array.  If an array is provided, the
+function is executed with one parameter for each array item.  If
+you need to pass a single array parameter, it needs to be wrapped in
+an array [myarray].
+                                                        </dd>
+                                                        <dd>
+                                                            <code>periodic &lt;boolean&gt;</code>
+                                                              if true, executes continuously at supplied 
+interval until canceled.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        object
+                                                    </code></dt>
+                                                    <dd>a timer object. Call the cancel() method on this object to 
+stop the timer.</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_log">log</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        YUI
+                                            <strong>log</strong>
+                                           (
+                                                
+                                                        
+                                                         msg
+                                                    
+                                                
+                                                        , 
+                                                         cat
+                                                    
+                                                
+                                                        , 
+                                                         src
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            If the 'debug' config is true, a 'yui:log' event will be
+dispatched, which the logger widget and anything else
+can consume.  If the 'useConsole' config is true, it will
+write to the browser console if available.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>msg &lt;String&gt;</code>
+                                                              The message to log.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>cat &lt;String&gt;</code>
+                                                              The log category for the message.  Default
+categories are "info", "warn", "error", time".
+Custom categories can be used as well. (opt)
+                                                        </dd>
+                                                        <dd>
+                                                            <code>src &lt;String&gt;</code>
+                                                              The source of the the message (opt)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>YUI instance</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_merge">merge</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        void
+                                        object
                                             <strong>merge</strong>
                                            (
                                                 
@@ -1076,7 +1230,7 @@ copy, use clone.
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        object
                                                     </code></dt>
                                                     <dd>the new merged object</dd>
                                                 </dl>
@@ -1092,9 +1246,9 @@ copy, use clone.
                                     <div class="detail">
                                         <code>
                                         
-                                         static 
                                         
-                                        void
+                                        
+                                        object
                                             <strong>mix</strong>
                                            (
                                                 
@@ -1175,7 +1329,7 @@ Used by Y.aggregate
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        void
+                                                        object
                                                     </code></dt>
                                                     <dd>the augmented object</dd>
                                                 </dl>
@@ -1191,9 +1345,9 @@ Used by Y.aggregate
                                     <div class="detail">
                                         <code>
                                         
-                                         static 
                                         
-                                        Object
+                                        
+                                        object
                                             <strong>namespace</strong>
                                            (
                                                 
@@ -1225,7 +1379,7 @@ This fails because "long" is a future reserved word in ECMAScript
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>arguments &lt;String*&gt;</code>
+                                                            <code>arguments &lt;string*&gt;</code>
                                                              1-n namespaces to create
                                                         </dd>
                                                 </dl>
@@ -1233,7 +1387,7 @@ This fails because "long" is a future reserved word in ECMAScript
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Object
+                                                        object
                                                     </code></dt>
                                                     <dd>A reference to the last namespace object created</dd>
                                                 </dl>
@@ -1471,6 +1625,8 @@ must be the last parameter.
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
+                                <li class=""><a href="module_get.html">get</a></li>
+
                                 <li class=""><a href="module_io.html">io</a></li>
 
                                 <li class=""><a href="module_loader.html">loader</a></li>
@@ -1537,16 +1693,16 @@ must be the last parameter.
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_add">add</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_aggregate">aggregate</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_applyTo">applyTo</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_augment">augment</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>function</code>-->
                                 <a href="#method_bind">bind</a>
                                 </li>
                                 <li class=""><!--<code>Array|Object</code>-->
@@ -1555,7 +1711,7 @@ must be the last parameter.
                                 <li class=""><!--<code>String</code>-->
                                 <a href="#method_dump">dump</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_each">each</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
@@ -1567,13 +1723,19 @@ must be the last parameter.
                                 <li class=""><!--<code>string</code>-->
                                 <a href="#method_guid">guid</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>object</code>-->
+                                <a href="#method_later">later</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_log">log</a>
+                                </li>
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_merge">merge</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_mix">mix</a>
                                 </li>
-                                <li class=""><!--<code>Object</code>-->
+                                <li class=""><!--<code>object</code>-->
                                 <a href="#method_namespace">namespace</a>
                                 </li>
                                 <li class=""><!--<code>string</code>-->

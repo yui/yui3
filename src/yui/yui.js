@@ -193,7 +193,7 @@ YUI.prototype = {
      * @param method {string} the name of the method to exectute.
      * Ex: 'Object.keys'
      * @param args {Array} the arguments to apply to the method
-     * @return the return value from the applied method or null
+     * @return {object} the return value from the applied method or null
      */
     applyTo: function(id, method, args) {
 
@@ -493,9 +493,8 @@ YUI.prototype = {
      * This fails because "long" is a future reserved word in ECMAScript
      *
      * @method namespace
-     * @static
-     * @param  {String*} arguments 1-n namespaces to create 
-     * @return {Object}  A reference to the last namespace object created
+     * @param  {string*} arguments 1-n namespaces to create 
+     * @return {object}  A reference to the last namespace object created
      */
     namespace: function() {
         var a=arguments, o=null, i, j, d;

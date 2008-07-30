@@ -46,6 +46,8 @@
     <span class="c">/**</span>
 <span class="c">     * Applies prototype properties from the supplier to the receiver.</span>
 <span class="c">     * The receiver can be a constructor or an instance.</span>
+<span class="c">     * @method augment</span>
+<span class="c">     * @for YUI</span>
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
 <span class="c">     * @param {Function} s  the object that supplies the properties to augment</span>
 <span class="c">     * @param ov {boolean} if true, properties already on the receiver</span>
@@ -54,7 +56,7 @@
 <span class="c">     * this list will be applied to the receiver.</span>
 <span class="c">     * @param args {Array | Any} arg or arguments to apply to the supplier</span>
 <span class="c">     * constructor when initializing.</span>
-<span class="c">     * @return the augmented object</span>
+<span class="c">     * @return {object} the augmented object</span>
 <span class="c">     *</span>
 <span class="c">     * @todo constructor optional?</span>
 <span class="c">     * @todo understanding what an instance is augmented with</span>
@@ -150,14 +152,14 @@
 <span class="c">     * the target has the property, and the property is an object, the target</span>
 <span class="c">     * object will be augmented with the supplier&#39;s value.  If the property</span>
 <span class="c">     * is an array, the suppliers value will be appended to the target.</span>
-<span class="c">     *</span>
+<span class="c">     * @method aggregate</span>
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
 <span class="c">     * @param {Function} s  the object that supplies the properties to augment</span>
 <span class="c">     * @param ov {boolean} if true, properties already on the receiver</span>
 <span class="c">     * will be overwritten if found on the supplier.</span>
 <span class="c">     * @param wl {string[]} a whitelist.  If supplied, only properties in </span>
 <span class="c">     * this list will be applied to the receiver.</span>
-<span class="c">     * @return the extended object</span>
+<span class="c">     * @return {object} the extended object</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">aggregate</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
@@ -228,8 +230,7 @@
 <span class="c">     * receives the value, key, and object as parameters</span>
 <span class="c">     * @param proto if true, prototype properties are</span>
 <span class="c">     * iterated on objects</span>
-<span class="c">     * @return the return value from the appropriate method</span>
-<span class="c">     * in Node, Object or Array</span>
+<span class="c">     * @return {YUI} the YUI instance</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">,</span> <span class="nx">proto</span><span class="o">)</span> <span class="o">{</span>
 
@@ -314,7 +315,7 @@
 <span class="c">     * @param f {Function} the function to bind</span>
 <span class="c">     * @param c the execution context</span>
 <span class="c">     * @param args* 0..n arguments to append to the arguments collection for the function</span>
-<span class="c">     * @return the wrapped function</span>
+<span class="c">     * @return {function} the wrapped function</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">bind</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">f</span><span class="o">,</span> <span class="nx">c</span><span class="o">)</span> <span class="o">{</span>
         <span class="c">// if (!f) {</span>
@@ -360,6 +361,8 @@
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class="selected"><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_get.html">get</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
 

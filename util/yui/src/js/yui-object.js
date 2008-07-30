@@ -1,15 +1,12 @@
-/**
- * Object utils
- * @class Object
- */
 YUI.add("object", function(Y) {
 
     /**
-     * Returns a new object based upon the supplied object.  By
-     * default the new object's prototype will have all members
-     * on the object.tructor prototype.
-     * @param The supplier object
-     * @return the new object
+     * Y.Object(o) returns a new object based upon the supplied object.  
+     * @class Object
+     * @static
+     * @constructor 
+     * @param o the supplier object
+     * @return {object} the new object
      */
     Y.Object = function(o) {
         var F = function() {};
@@ -48,7 +45,7 @@ YUI.add("object", function(Y) {
     O.keys = function(o) {
         var a=[], i;
         for (i in o) {
-            if (O.owns(o, i)) {
+            if (o.hasOwnProperty(i)) {
                 a.push(i);
             }
         }
@@ -70,7 +67,7 @@ YUI.add("object", function(Y) {
         var s = c || Y;
 
         for (var i in o) {
-            if (proto || O.owns(o, i)) {
+            if (proto || o.hasOwnProperty(i)) {
                 f.call(s, o[i], i, o);
             }
         }

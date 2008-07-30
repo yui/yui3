@@ -193,7 +193,7 @@ YUI.prototype = {
      * @param method {string} the name of the method to exectute.
      * Ex: 'Object.keys'
      * @param args {Array} the arguments to apply to the method
-     * @return the return value from the applied method or null
+     * @return {object} the return value from the applied method or null
      */
     applyTo: function(id, method, args) {
 
@@ -493,9 +493,8 @@ YUI.prototype = {
      * This fails because "long" is a future reserved word in ECMAScript
      *
      * @method namespace
-     * @static
-     * @param  {String*} arguments 1-n namespaces to create 
-     * @return {Object}  A reference to the last namespace object created
+     * @param  {string*} arguments 1-n namespaces to create 
+     * @return {object}  A reference to the last namespace object created
      */
     namespace: function() {
         var a=arguments, o=null, i, j, d;
@@ -601,7 +600,7 @@ YUI.add("log", function(instance) {
      * write to the browser console if available.
      *
      * @method log
-     * @static
+     * @for YUI
      * @param  {String}  msg  The message to log.
      * @param  {String}  cat  The log category for the message.  Default
      *                        categories are "info", "warn", "error", time".
@@ -676,8 +675,8 @@ YUI.add("lang", function(Y) {
      * properties.
      * @TODO can we kill this cross frame hack?
      * @method isArray
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is an array
      */
      L.isArray = function(o) { 
         if (o) {
@@ -690,8 +689,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a boolean
      * @method isBoolean
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a boolean
      */
     L.isBoolean = function(o) {
         return typeof o === 'boolean';
@@ -700,8 +699,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a function
      * @method isFunction
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
         return typeof o === 'function';
@@ -710,7 +709,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the supplied object is a date instance
      * @method isDate
-     * @return {boolean} true if it is a date
+     * @param o The object to test
+     * @return {boolean} true if o is a date
      */
     L.isDate = function(o) {
         return o instanceof Date;
@@ -719,8 +719,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is null
      * @method isNull
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is null
      */
     L.isNull = function(o) {
         return o === null;
@@ -729,8 +729,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a legal number
      * @method isNumber
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a number
      */
     L.isNumber = function(o) {
         return typeof o === 'number' && isFinite(o);
@@ -740,9 +740,9 @@ YUI.add("lang", function(Y) {
      * Determines whether or not the provided object is of type object
      * or function
      * @method isObject
-     * @param {any} o The object being testing
+     * @param o The object to test
      * @param failfn {boolean} fail if the input is a function
-     * @return Boolean
+     * @return {boolean} true if o is an object
      */  
     L.isObject = function(o, failfn) {
 return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
@@ -751,8 +751,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is a string
      * @method isString
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a string
      */
     L.isString = function(o) {
         return typeof o === 'string';
@@ -761,8 +761,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is undefined
      * @method isUndefined
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is undefined
      */
     L.isUndefined = function(o) {
         return typeof o === 'undefined';
@@ -788,7 +788,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns false for null/undefined/NaN, true for other values, 
      * including 0/false/''
      * @method isValue
-     * @param o {any} the item to test
+     * @param the item to test
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
@@ -804,28 +804,25 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
  * @module yui
  */
 
-/**
- * Array utilities
- * @TODO investigate using Array subclasses for some of this
- * @class Array
- * @static
- */
 YUI.add("array", function(Y) {
 
     var L = Y.Lang, Native = Array.prototype;
 
     /** 
-     * Returns an array:
+     * Y.Array(o) returns an array:
      * - Arrays are return unmodified unless the start position is specified.
      * - "Array-like" collections (@see Array.test) are converted to arrays
      * - For everything else, a new array is created with the input as the sole item
      * - The start position is used if the input is or is like an array to return
      *   a subset of the collection.
      *
-     *   @todo this will not automatically convert elements that are also collections
+     *   @TODO this will not automatically convert elements that are also collections
      *   such as forms and selects.  Passing true as the third param will
      *   force a conversion.
      *
+     * @class Array
+     * @static
+     * @constructor
      *   @param o the item to arrayify
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
@@ -845,10 +842,6 @@ YUI.add("array", function(Y) {
 
     var A = Y.Array;
     
-    // YUI array utilities.  The current plan is to make a few useful
-    // ones 'core', and to have the rest of the array extras an optional
-    // module
-
     /** 
      * Evaluates the input to determine if it is an array, array-like, or 
      * something else.  This is used to handle the arguments collection 
@@ -883,6 +876,7 @@ YUI.add("array", function(Y) {
     /**
      * Executes the supplied function on each item in the array.
      * @method each
+     * @return {YUI} the YUI instance
      */
     A.each = (Native.forEach) ?
         function (a, f, o) { 
@@ -904,7 +898,7 @@ YUI.add("array", function(Y) {
      * @method hash
      * @param k {Array} keyset
      * @param v {Array} optional valueset
-     * @return the hash
+     * @return {object} the hash
      */
     A.hash = function(k, v) {
         var o = {}, l = k.length, vl = v && v.length, i;
@@ -924,7 +918,7 @@ YUI.add("array", function(Y) {
      * @method indexOf
      * @param a {Array} the array to search
      * @param val the value to search for
-     * @return the index of the item that contains the value or -1
+     * @return {int} the index of the item that contains the value or -1
      */
     A.indexOf = function(a, val) {
         for (var i=0; i<a.length; i=i+1) {
@@ -954,7 +948,6 @@ YUI.add("core", function(Y) {
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param w a whitelist object (the keys are the valid items to reference)
-     * @static
      * @private
      * @for YUI
      */
@@ -979,7 +972,7 @@ YUI.add("core", function(Y) {
      * copy, use clone.
      * @method merge
      * @param arguments {Object*} the objects to merge
-     * @return the new merged object
+     * @return {object} the new merged object
      */
     Y.merge = function() {
         // var o={}, a=arguments;
@@ -1003,7 +996,6 @@ YUI.add("core", function(Y) {
      * @TODO add constants for the modes
      *
      * @method mix
-     * @static
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver
@@ -1018,7 +1010,7 @@ YUI.add("core", function(Y) {
      *        4: object to prototype
      * @param merge {boolean} merge objects instead of overwriting/ignoring
      * Used by Y.aggregate
-     * @return the augmented object
+     * @return {object} the augmented object
      * @TODO review for PR2
      */
     Y.mix = function(r, s, ov, wl, mode, merge) {
@@ -1098,18 +1090,15 @@ YUI.add("core", function(Y) {
     
 
 }, "@VERSION@");
-/**
- * Object utils
- * @class Object
- */
 YUI.add("object", function(Y) {
 
     /**
-     * Returns a new object based upon the supplied object.  By
-     * default the new object's prototype will have all members
-     * on the object.tructor prototype.
-     * @param The supplier object
-     * @return the new object
+     * Y.Object(o) returns a new object based upon the supplied object.  
+     * @class Object
+     * @static
+     * @constructor 
+     * @param o the supplier object
+     * @return {object} the new object
      */
     Y.Object = function(o) {
         var F = function() {};
@@ -1148,7 +1137,7 @@ YUI.add("object", function(Y) {
     O.keys = function(o) {
         var a=[], i;
         for (i in o) {
-            if (O.owns(o, i)) {
+            if (o.hasOwnProperty(i)) {
                 a.push(i);
             }
         }
@@ -1170,7 +1159,7 @@ YUI.add("object", function(Y) {
         var s = c || Y;
 
         for (var i in o) {
-            if (proto || O.owns(o, i)) {
+            if (proto || o.hasOwnProperty(i)) {
                 f.call(s, o[i], i, o);
             }
         }
@@ -1304,7 +1293,6 @@ YUI.add("ua", function(Y) {
         return o;
     }();
 }, "@VERSION@");
-// requires lang
 YUI.add("later", function(Y) {
 
     var L = Y.Lang;
@@ -1314,22 +1302,23 @@ YUI.add("later", function(Y) {
      * object 'when' milliseconds later.  Executes the function a 
      * single time unless periodic is set to true.
      * @method later
+     * @for YUI
      * @param when {int} the number of milliseconds to wait until the fn 
-     * is executed
-     * @param o the context object
+     * is executed.
+     * @param o the context object.
      * @param fn {Function|String} the function to execute or the name of 
-     * the method in the 'o' object to execute
+     * the method in the 'o' object to execute.
      * @param data [Array] data that is provided to the function.  This accepts
      * either a single item or an array.  If an array is provided, the
      * function is executed with one parameter for each array item.  If
      * you need to pass a single array parameter, it needs to be wrapped in
-     * an array [myarray]
+     * an array [myarray].
      * @param periodic {boolean} if true, executes continuously at supplied 
-     * interval until canceled
-     * @return a timer object. Call the cancel() method on this object to 
+     * interval until canceled.
+     * @return {object} a timer object. Call the cancel() method on this object to 
      * stop the timer.
      */
-    L.later = function(when, o, fn, data, periodic) {
+    var later = function(when, o, fn, data, periodic) {
         when = when || 0; 
         o = o || {};
         var m=fn, d=data, f, r;
@@ -1363,6 +1352,10 @@ YUI.add("later", function(Y) {
             }
         };
     };
+
+    Y.later = later;
+    L.later = later;
+
 }, "@VERSION@");
 
 YUI.add("get", function(Y) {
@@ -1370,9 +1363,9 @@ YUI.add("get", function(Y) {
         var ua=Y.UA, 
         L=Y.Lang;
 
-/*
+/**
  * Provides a mechanism to fetch remote resources and
- * insert them into a document
+ * insert them into a document.
  * @module get
  */
 
@@ -1813,7 +1806,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
-         * @param {string|object} either the tId or the object returned from
+         * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
         abort: function(o) {
@@ -1914,20 +1907,23 @@ Y.Get = function() {
          * <dd>Number of milliseconds to wait before aborting and firing the timeout event</dd>
          * <pre>
          * &nbsp;&nbsp;Y.Get.script(
-         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js",
-         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/animation/animation-min.js"], &#123;
+         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.5.2/build/yahoo/yahoo-min.js",
+         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.5.2/build/event/event-min.js"], &#123;
          * &nbsp;&nbsp;&nbsp;&nbsp;onSuccess: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log(o.data); // foo
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new Y.DDProxy("dd1"); // also new o.reference("dd1"); would work
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log("won't cause error because Y is the context");
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.log(o.nodes.length === 2) // true
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.data); // foo
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log(o.nodes.length === 2) // true
          * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// o.purge(); // optionally remove the script nodes immediately
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;onFailure: function(o) &#123;
-         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction failed");
+         * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
+         * &nbsp;&nbsp;&nbsp;&nbsp;onTimeout: function(o) &#123;
+         * &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y.log("transaction timed out");
          * &nbsp;&nbsp;&nbsp;&nbsp;&#125;,
          * &nbsp;&nbsp;&nbsp;&nbsp;data: "foo",
-         * &nbsp;&nbsp;&nbsp;&nbsp;context: Y,
+         * &nbsp;&nbsp;&nbsp;&nbsp;timeout: 10000, // 10 second timeout
+         * &nbsp;&nbsp;&nbsp;&nbsp;context: Y, // make the YUI instance
          * &nbsp;&nbsp;&nbsp;&nbsp;// win: otherframe // target another window/frame
          * &nbsp;&nbsp;&nbsp;&nbsp;autopurge: true // allow the utility to choose when to remove the nodes
          * &nbsp;&nbsp;&#125;);
@@ -1983,8 +1979,11 @@ Y.Get = function() {
          *      Y.Get.css("http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css");
          * </pre>
          * <pre>
-         *      Y.Get.css(["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
-         *                          "http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"]);
+         * &nbsp;&nbsp;Y.Get.css(
+         * &nbsp;&nbsp;["http://yui.yahooapis.com/2.3.1/build/menu/assets/skins/sam/menu.css",
+         * &nbsp;&nbsp;&nbsp;"http://yui.yahooapis.com/2.3.1/build/logger/assets/skins/sam/logger.css"], &#123;
+         * &nbsp;&nbsp;&nbsp;&nbsp;insertBefore: 'custom-styles' // nodes will be inserted before the specified node
+         * &nbsp;&nbsp;&#125;);
          * </pre>
          * @return {tId: string} an object containing info about the transaction
          */

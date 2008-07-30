@@ -53,7 +53,6 @@
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
 <span class="c">     * @param {Function} s  the object that supplies the properties to augment</span>
 <span class="c">     * @param w a whitelist object (the keys are the valid items to reference)</span>
-<span class="c">     * @static</span>
 <span class="c">     * @private</span>
 <span class="c">     * @for YUI</span>
 <span class="c">     */</span>
@@ -78,7 +77,7 @@
 <span class="c">     * copy, use clone.</span>
 <span class="c">     * @method merge</span>
 <span class="c">     * @param arguments {Object*} the objects to merge</span>
-<span class="c">     * @return the new merged object</span>
+<span class="c">     * @return {object} the new merged object</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">merge</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
         <span class="c">// var o={}, a=arguments;</span>
@@ -102,7 +101,6 @@
 <span class="c">     * @TODO add constants for the modes</span>
 <span class="c">     *</span>
 <span class="c">     * @method mix</span>
-<span class="c">     * @static</span>
 <span class="c">     * @param {Function} r  the object to receive the augmentation</span>
 <span class="c">     * @param {Function} s  the object that supplies the properties to augment</span>
 <span class="c">     * @param ov {boolean} if true, properties already on the receiver</span>
@@ -117,7 +115,7 @@
 <span class="c">     *        4: object to prototype</span>
 <span class="c">     * @param merge {boolean} merge objects instead of overwriting/ignoring</span>
 <span class="c">     * Used by Y.aggregate</span>
-<span class="c">     * @return the augmented object</span>
+<span class="c">     * @return {object} the augmented object</span>
 <span class="c">     * @TODO review for PR2</span>
 <span class="c">     */</span>
     <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">,</span> <span class="nx">s</span><span class="o">,</span> <span class="nx">ov</span><span class="o">,</span> <span class="nx">wl</span><span class="o">,</span> <span class="nx">mode</span><span class="o">,</span> <span class="nx">merge</span><span class="o">)</span> <span class="o">{</span>
@@ -227,6 +225,8 @@
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_get.html">get</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
 

@@ -18,8 +18,8 @@ YUI.add("lang", function(Y) {
      * properties.
      * @TODO can we kill this cross frame hack?
      * @method isArray
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is an array
      */
      L.isArray = function(o) { 
         if (o) {
@@ -32,8 +32,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a boolean
      * @method isBoolean
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a boolean
      */
     L.isBoolean = function(o) {
         return typeof o === 'boolean';
@@ -42,8 +42,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a function
      * @method isFunction
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
         return typeof o === 'function';
@@ -52,7 +52,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the supplied object is a date instance
      * @method isDate
-     * @return {boolean} true if it is a date
+     * @param o The object to test
+     * @return {boolean} true if o is a date
      */
     L.isDate = function(o) {
         return o instanceof Date;
@@ -61,8 +62,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is null
      * @method isNull
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is null
      */
     L.isNull = function(o) {
         return o === null;
@@ -71,8 +72,8 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a legal number
      * @method isNumber
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a number
      */
     L.isNumber = function(o) {
         return typeof o === 'number' && isFinite(o);
@@ -82,9 +83,9 @@ YUI.add("lang", function(Y) {
      * Determines whether or not the provided object is of type object
      * or function
      * @method isObject
-     * @param {any} o The object being testing
+     * @param o The object to test
      * @param failfn {boolean} fail if the input is a function
-     * @return Boolean
+     * @return {boolean} true if o is an object
      */  
     L.isObject = function(o, failfn) {
 return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
@@ -93,8 +94,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is a string
      * @method isString
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is a string
      */
     L.isString = function(o) {
         return typeof o === 'string';
@@ -103,8 +104,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is undefined
      * @method isUndefined
-     * @param {any} o The object being testing
-     * @return Boolean
+     * @param o The object to test
+     * @return {boolean} true if o is undefined
      */
     L.isUndefined = function(o) {
         return typeof o === 'undefined';
@@ -130,7 +131,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns false for null/undefined/NaN, true for other values, 
      * including 0/false/''
      * @method isValue
-     * @param o {any} the item to test
+     * @param the item to test
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
