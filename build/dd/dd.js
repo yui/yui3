@@ -2809,5 +2809,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-plugin-drop'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
 
