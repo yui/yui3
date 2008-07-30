@@ -347,66 +347,68 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 	.box3 #pdf-single {}
 	.box3 a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-repeat 0 0px;}
 
-.box4 {border:1px solid #D9D9D9;background:url(../assets/gradient-mod.png) repeat-x 0 0;}
-	.box4 h4 {color:#89B31F;}
-	
-	
-#bd .toc3 {border:1px solid #D9D9D9;background-color:#F5F5F5;}
-#bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;}
-#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 7px;}
-#bd .toc3 li.sect {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;
-	border-bottom:1px solid #D9D9D9;margin:6px 6px 6px 6px;padding:4px 5px 4px 0;background:none;}
-#bd .toc3 li a {color:#2288BB;text-decoration:none;display:block;padding:2px 5px 2px 16px;}
-#bd .toc3 li a:hover {text-decoration:underline;}
-#bd .toc3 li.selected {background-color:#999;}
-#bd .toc3 li.selected a {color:#FFF;}
-#bd .toc3 li.selected a:hover {color:#FFF;}
-	
-
-/* */
-.example h2 em {font-size:78.5714%;color:#666;}
-.ex-box {border:1px solid #D9D9D9;}
-.ex-box .bd {background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;padding:10px;border:1px solid #FFF;}
-.ex-box .ft {background:#F2FBFF url(../assets/gradient-example-ft.png) repeat-x 0 0;border-top:1px solid #D9D9D9;}
-
-/*left navigation TOC */
-/*#toc {background-color:#ecf5fa; padding:0; border:1px solid #89d }
-#toc ul {margin:0; padding:0;}
-#toc ul li {list-style:none; padding:0; margin:0;  font-size:85%; }
-#toc ul li.selected { font-weight:bold; color:#fff; background:#f82; padding:0; }
-#toc ul li.selected a { color:#fff; }
-#toc ul li a { display:block; padding:2px 2px 2px 10px; text-decoration:none; }
-#toc ul li a:hover { color:#fff; background:#e60; }
-#toc ul li em { display:none; }
-#toc ul li.sect { font-weight:bold; color:#fff; background:#89d; padding:2px 0; text-indent:2px; margin-top:2px;}
-#toc ul li.first {margin-top:0;}*/
+	.box4 {border:1px solid #D9D9D9;background:url(../assets/gradient-mod.png) repeat-x 0 0;}
+		.box4 h4 {color:#89B31F;}
 
 
-.apisummary table,
-table {width:100%;margin-bottom:1em;}
- 
-.apisummary table tr,
-table tr {vertical-align:top;}
+	#bd .toc3 {border:1px solid #D9D9D9;background-color:#F5F5F5;}
+	#bd .toc3 ul {padding:0;margin:0;border:1px solid #FFF;}
+	#bd .toc3 li {list-style:none;list-style:none;margin:0;background:transparent url(../assets/bullet-box6x6.gif) no-repeat 6px 7px;}
+	#bd .toc3 li.sect {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;
+		border-bottom:1px solid #D9D9D9;margin:6px 6px 6px 6px;padding:4px 5px 4px 0;background:none;}
+	#bd .toc3 li a {color:#2288BB;text-decoration:none;display:block;padding:2px 5px 2px 16px;}
+	#bd .toc3 li a:hover {text-decoration:underline;}
+	#bd .toc3 li.selected {background-color:#999;}
+	#bd .toc3 li.selected a {color:#FFF;}
+	#bd .toc3 li.selected a:hover {color:#FFF;}
 
-.apisummary table caption,
-table caption {display:none;}
 
-.apisummary table th,
-table th {background-color:#6c8ea1;color:#FFF;text-transform:uppercase;font-weight:bold;}
+	/* */
+	.example h2 em {font-size:78.5714%;color:#666;}
+	.ex-box {border:1px solid #D9D9D9;}
+	.ex-box .bd {background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;padding:10px;border:1px solid #FFF;}
+	.ex-box .ft {background:#F2FBFF url(../assets/gradient-example-ft.png) repeat-x 0 0;border-top:1px solid #D9D9D9;}
 
-.apisummary table td,
-table td {background-color:#e5edf1;}
+	/*left navigation TOC */
+	/*#toc {background-color:#ecf5fa; padding:0; border:1px solid #89d }
+	#toc ul {margin:0; padding:0;}
+	#toc ul li {list-style:none; padding:0; margin:0;  font-size:85%; }
+	#toc ul li.selected { font-weight:bold; color:#fff; background:#f82; padding:0; }
+	#toc ul li.selected a { color:#fff; }
+	#toc ul li a { display:block; padding:2px 2px 2px 10px; text-decoration:none; }
+	#toc ul li a:hover { color:#fff; background:#e60; }
+	#toc ul li em { display:none; }
+	#toc ul li.sect { font-weight:bold; color:#fff; background:#89d; padding:2px 0; text-indent:2px; margin-top:2px;}
+	#toc ul li.first {margin-top:0;}*/
 
-.apisummary table th,
-.apisummary table td,
-table th, table td {padding:5px;border:2px solid #fff;}
 
-.apisummary table tr {background-color:#f5f8f9;}
-dl {margin:0;}
-dl dt {
-	/*giving UL's LIs generated numbers*/
-	font-weight:bold;}
-dl dd {margin:.5em 0 1.5em 1em;}
-.dp-highlighter table tr, .dp-highlighter table td {border:0;padding:0;background-color:#FFF;}
-table tr {background-color:#fff;}
-table td dl {margin:1em 0;}
+	.apisummary table,
+	table {width:100%;margin-bottom:1em;}
+
+	.apisummary table tr,
+	table tr {vertical-align:top;}
+
+	.apisummary table caption,
+	table caption {display:none;}
+
+	.apisummary table th,
+	table th {background-color:#6c8ea1;color:#FFF;text-transform:uppercase;font-weight:bold;}
+
+	.apisummary table td,
+	table td {background-color:#e5edf1;}
+
+	.apisummary table th,
+	.apisummary table td,
+	table th, table td {padding:5px;border:2px solid #fff;}
+
+	.apisummary table tr {background-color:#f5f8f9;}
+	dl {margin:0;}
+	dl dt {
+		/*giving UL's LIs generated numbers*/
+		font-weight:bold;}
+	dl dd {margin:.5em 0 1.5em 1em;}
+	.dp-highlighter table tr, .dp-highlighter table td {border:0;padding:0;background-color:#FFF;}
+	table tr {background-color:#fff;}
+	table td dl {margin:1em 0;}
+
+.dp-highlighter .line1, .dp-highlighter .line2 {padding-left: 10px;white-space:nowrap;}
