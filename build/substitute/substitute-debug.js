@@ -21,13 +21,14 @@ YUI.add("substitute", function(Y) {
      * in the YUI module.
      *
      * @method substitute
-     * @param s {String} The string that will be modified.
-     * @param o {Object} An object containing the replacement values
-     * @param f {Function} An optional function that can be used to
+     * @for YUI
+     * @param s {string} The string that will be modified.
+     * @param o An object containing the replacement values
+     * @param f {function} An optional function that can be used to
      *                     process each match.  It receives the key,
      *                     value, and any extra metadata included with
      *                     the key inside of the braces.
-     * @return {String} the substituted string
+     * @return {string} the substituted string
      */
     substitute = function (s, o, f) {
         var i, j, k, key, v, meta, saved=[], token;

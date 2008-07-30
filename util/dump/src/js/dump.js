@@ -8,17 +8,17 @@ YUI.add("dump", function(Y) {
      * are expected to be indexed.  Use object notation for
      * associative arrays.
      *
-     * @todo dumping a window is causing an unhandled exception in
-     * FireFox.  Trying to account for it is hanging FireFox.
-     * Could be a FireBug interaction.
+     * @TODO dumping a window is causing an unhandled exception in
+     * FireFox.
      *
      * This method is in the 'dump' module, which is not bundled with
      * the core YUI object
      *
      * @method dump
-     * @param o {Object} The object to dump
+     * @for YUI
+     * @param o {object} The object to dump
      * @param d {int} How deep to recurse child objects, default 3
-     * @return {String} the dump result
+     * @return {string} the dump result
      */
     dump = function(o, d) {
         var i, len, s = [];
