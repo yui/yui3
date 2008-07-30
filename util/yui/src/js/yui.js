@@ -25,40 +25,42 @@ if (typeof YUI === 'undefined' || !YUI) {
      * @global
      * @uses Event.Target
      * @param o Optional configuration object.  Options:
-     * <dl>
-     *  <dt>debug</dt>
-     *  <dd>Turn debug statements on or off</dd>
-     *  <dt>useConsole</dt>
-     *  <dd>Log to the browser console if debug is on and the console is available</dd>
-     *  <dt>logInclude</dt>
-     *  <dd>A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</dd>
-     *  <dt>logExclude</dt>
-     *  <dd>A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</dd>
-     *  <dt>throwFail</dt>
-     *  <dd>If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
-     *  <dt>win</dt>
-     *  <dd>The target window/frame</dd>
-     *  <dt>core</dt>
-     *  <dd>A list of modules that defines the YUI core (overrides the default)</dd>
-     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-     *  <dt>For event and get:</dt>
-     *  <dd>-------------------------------------------------------------------</dd>
-     *  <dt>pollInterval</dt>
-     *  <dd>The default poll interval</dd>
-     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-     *  <dt>For loader</dt>
-     *  <dd>-------------------------------------------------------------------</dd>
-     *  <dt>base</dt>
-     *  <dd>The base dir</dd>
-     *  <dt>secureBase</dt>
-     *  <dd>The secure base dir (not implemented)</dd>
-     *  <dt>comboBase</dt>
-     *  <dd>The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</dd>
-     *  <dt>root</dt>
-     *  <dd>The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</dd>
-     *  <dt>filter</dt>
-     *  <dd>
-     *
+     * <ul>
+     *  <li>------------------------------------------------------------------------</li>
+     *  <li>Global:</li>
+     *  <li>------------------------------------------------------------------------</li>
+     *  <li>debug:
+     *  Turn debug statements on or off</li>
+     *  <li>useConsole:
+     *  Log to the browser console if debug is on and the console is available</li>
+     *  <li>logInclude:
+     *  A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</li>
+     *  <li>logExclude:
+     *  A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  <li>throwFail:
+     *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
+     *  <li>win:
+     *  The target window/frame</li>
+     *  <li>core:
+     *  A list of modules that defines the YUI core (overrides the default)</li>
+     *  <li>------------------------------------------------------------------------</li>
+     *  <li>For event and get:</li>
+     *  <li>------------------------------------------------------------------------</li>
+     *  <li>pollInterval:
+     *  The default poll interval</li>
+     *  <li>-------------------------------------------------------------------------</li>
+     *  <li>For loader:</li>
+     *  <li>-------------------------------------------------------------------------</li>
+     *  <li>base:
+     *  The base dir</li>
+     *  <li>secureBase:
+     *  The secure base dir (not implemented)</li>
+     *  <li>comboBase:
+     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+     *  <li>root:
+     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+     *  <li>filter:
+     *  
      * A filter to apply to result urls.  This filter will modify the default
      * path for all modules.  The default path for the YUI library is the
      * minified version of the files (e.g., event-min.js).  The filter property
@@ -80,29 +82,32 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  &#125;
      * </pre>
      *
-     *  </dd>
-     *  <dt>combine</dt>
-     *  <dd>Use the YUI combo service to reduce the number of http connections required to load your dependencies</dd>
-     *  <dt>ignore</dt>
-     *  <dd>A list of modules that should never be dynamically loaded</dd>
-     *  <dt>force</dt>
-     *  <dd>A list of modules that should always be loaded when required, even if already present on the page</dd>
-     *  <dt>insertBefore</dt>
-     *  <dd>Node or id for a node that should be used as the insertion point for new nodes</dd>
-     *  <dt>charset</dt>
-     *  <dd>charset for dynamic nodes</dd>
-     *  <dt>timeout</dt>
-     *  <dd>number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</dd>
-     *  <dt>context</dt>
-     *  <dd>execution context for all callbacks</dd>
-     *  <dt>onSuccess</dt>
-     *  <dd>callback to subscribe to the 'success' event</dd>
-     *  <dt>onFailure</dt>
-     *  <dd>callback to subscribe to the 'failure' event</dd>
-     *  <dt>onTimeout</dt>
-     *  <dd>callback to subscribe to the 'timeout' event</dd>
-     *  <dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-     * </dl>
+     *  </li>
+     *  <li>combine:
+     *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+     *  <li>ignore:
+     *  A list of modules that should never be dynamically loaded</li>
+     *  <li>force:
+     *  A list of modules that should always be loaded when required, even if already present on the page</li>
+     *  <li>insertBefore:
+     *  Node or id for a node that should be used as the insertion point for new nodes</li>
+     *  <li>charset:
+     *  charset for dynamic nodes</li>
+     *  <li>timeout:
+     *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+     *  <li>context:
+     *  execution context for all callbacks</li>
+     *  <li>onSuccess:
+     *  callback for the 'success' event</li>
+     *  <li>onFailure:
+     *  callback for the 'failure' event</li>
+     *  <li>onTimeout:
+     *  callback for the 'timeout' event</li>
+     *  <li>onProgress:
+     *  callback executed each time a script or css file is loaded</li>
+     *  <li>modules:
+     *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+     * </ul>
      */
 
     /*global YUI*/
@@ -377,11 +382,11 @@ YUI.prototype = {
             if (m) {
                 used[name] = true;
 
-                if (dynamic) {
+                // if (dynamic) {
                     // Y.mix(l, YUI.Env.mods);
-                    Y.log('attaching ' + name, 'info', 'YUI');
-                    m.fn(Y);
-                }
+                    // Y.log('attaching ' + name, 'info', 'YUI');
+                    // m.fn(Y);
+                // }
 
                 // Y.log('found ' + name);
                 req = m.details.requires;
@@ -455,12 +460,15 @@ YUI.prototype = {
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
+            loader.attaching = a;
             loader.require(missing);
             // loader calls use to automatically attach when finished
             // but we still need to execute the callback.
             loader.insert();
         } else {
-            Y._attach(r);
+            // if (!dynamic) {
+                Y._attach(r);
+            // }
             onComplete();
         }
 
