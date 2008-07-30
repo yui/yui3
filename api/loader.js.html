@@ -151,14 +151,9 @@
     <span class="k">var</span> <span class="nx">BASE</span> <span class="o">=</span> <span class="s1">&#39;base&#39;</span><span class="o">,</span> 
         <span class="nx">CSS</span> <span class="o">=</span> <span class="s1">&#39;css&#39;</span><span class="o">,</span>
         <span class="nx">JS</span> <span class="o">=</span> <span class="s1">&#39;js&#39;</span><span class="o">,</span>
-        <span class="nx">PKG</span> <span class="o">=</span> <span class="s1">&#39;pkg&#39;</span><span class="o">,</span>
-
-        <span class="nx">ANIMATION</span> <span class="o">=</span> <span class="s1">&#39;animation&#39;</span><span class="o">,</span>
-        <span class="nx">RESET</span> <span class="o">=</span> <span class="s1">&#39;reset&#39;</span><span class="o">,</span>
-        <span class="nx">FONTS</span> <span class="o">=</span> <span class="s1">&#39;fonts&#39;</span><span class="o">,</span>
-        <span class="nx">GRIDS</span> <span class="o">=</span> <span class="s1">&#39;grids&#39;</span><span class="o">,</span>
-        <span class="nx">DRAGDROP</span> <span class="o">=</span> <span class="s1">&#39;dragdrop&#39;</span><span class="o">,</span>
-        <span class="nx">JSON</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="o">,</span>
+        <span class="nx">RESET</span> <span class="o">=</span> <span class="s1">&#39;cssreset&#39;</span><span class="o">,</span>
+        <span class="nx">FONTS</span> <span class="o">=</span> <span class="s1">&#39;cssfonts&#39;</span><span class="o">,</span>
+        <span class="nx">GRIDS</span> <span class="o">=</span> <span class="s1">&#39;cssgrids&#39;</span><span class="o">,</span>
         <span class="nx">VERSION</span> <span class="o">=</span> <span class="s1">&#39;@VERSION@&#39;</span><span class="o">,</span>
         <span class="nx">ROOT</span> <span class="o">=</span> <span class="nx">VERSION</span> <span class="o">+</span> <span class="s1">&#39;/build/&#39;</span><span class="o">;</span>
 
@@ -175,44 +170,27 @@
 
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
 
-        <span class="nx">basecss</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">cssbase</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span><span class="o">,</span>
             <span class="nx">after</span><span class="o">:</span> <span class="o">[</span><span class="nx">RESET</span><span class="o">,</span> <span class="nx">FONTS</span><span class="o">,</span> <span class="nx">GRIDS</span><span class="o">],</span>
-            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;base/base.css&#39;</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cssbase/base.css&#39;</span>
         <span class="o">},</span>
 
-        <span class="nx">fonts</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span>
+        <span class="nx">cssfonts</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span><span class="o">,</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cssfonts/fonts.css&#39;</span>
         <span class="o">},</span>
 
-        <span class="nx">grids</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">cssgrids</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span><span class="o">,</span>
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="nx">FONTS</span><span class="o">],</span>
-            <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="nx">RESET</span><span class="o">]</span>
+            <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="nx">RESET</span><span class="o">],</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cssgrids/grids.css&#39;</span>
         <span class="o">},</span>
 
-        <span class="nx">log</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="nx">DRAGDROP</span><span class="o">],</span>
-            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;log/logreader-min.js&#39;</span><span class="o">,</span>
-            <span class="nx">skinnable</span><span class="o">:</span> <span class="m">1</span>
-        <span class="o">},</span>
-
-        <span class="nx">reset</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span>
-        <span class="o">},</span>
-
-        <span class="s1">&#39;reset-fonts-grids&#39;</span><span class="o">:</span> <span class="o">{</span>
+        <span class="nx">cssreset</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span><span class="o">,</span>
-            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;reset-fonts-grids/reset-fonts-grids.css&#39;</span><span class="o">,</span>
-            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">RESET</span><span class="o">,</span> <span class="nx">FONTS</span><span class="o">,</span> <span class="nx">GRIDS</span><span class="o">,</span> <span class="s1">&#39;reset-fonts&#39;</span><span class="o">],</span>
-            <span class="nx">rollup</span><span class="o">:</span> <span class="m">4</span>
-        <span class="o">},</span>
-
-        <span class="s1">&#39;reset-fonts&#39;</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">type</span><span class="o">:</span> <span class="nx">CSS</span><span class="o">,</span>
-            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;reset-fonts/reset-fonts.css&#39;</span><span class="o">,</span>
-            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="nx">RESET</span><span class="o">,</span> <span class="nx">FONTS</span><span class="o">],</span>
-            <span class="nx">rollup</span><span class="o">:</span> <span class="m">2</span>
+            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;cssreset/reset.css&#39;</span>
         <span class="o">},</span>
 
 <span class="c">// node, dom, event included in the yui dist, so we are not including the metadata for PR1</span>
@@ -229,13 +207,9 @@
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;attribute&#39;</span><span class="o">]</span>
         <span class="o">},</span>
         
-        <span class="nx">classnamemanager</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
-        
         <span class="nx">compat</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
         
         <span class="nx">cookie</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
-
-        <span class="nx">css</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="s1">&#39;dd-ddm-base&#39;</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;dd/dd-ddm-base-min.js&#39;</span><span class="o">,</span>
@@ -322,32 +296,16 @@
             <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;json-parse&#39;</span><span class="o">,</span> <span class="s1">&#39;json-stringify&#39;</span><span class="o">]</span>
         <span class="o">},</span>
         
-        <span class="nx">logreader</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;css&#39;</span><span class="o">]</span>
-        <span class="o">},</span>
-
         <span class="nx">node</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">,</span> <span class="s1">&#39;dom&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
-        <span class="nx">profiler</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
-
         <span class="nx">queue</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="nx">substitute</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dump&#39;</span><span class="o">]</span>
-        <span class="o">},</span>
-
-        <span class="nx">yuitestcore</span><span class="o">:</span> <span class="o">{</span> 
-            <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;yuitest/yuitest_core-min.js&#39;</span>
-        <span class="o">},</span>
-
-        <span class="nx">yuitest</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;log&#39;</span><span class="o">],</span>
-            <span class="c">// skinnable: 1,</span>
-<span class="c"></span>            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yuitestcore&#39;</span><span class="o">]</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">};</span>

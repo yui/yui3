@@ -2079,14 +2079,9 @@ YUI.add("loader", function(Y) {
     var BASE = 'base', 
         CSS = 'css',
         JS = 'js',
-        PKG = 'pkg',
-
-        ANIMATION = 'animation',
-        RESET = 'reset',
-        FONTS = 'fonts',
-        GRIDS = 'grids',
-        DRAGDROP = 'dragdrop',
-        JSON = 'json',
+        RESET = 'cssreset',
+        FONTS = 'cssfonts',
+        GRIDS = 'cssgrids',
         VERSION = '@VERSION@',
         ROOT = VERSION + '/build/';
 
@@ -2103,44 +2098,27 @@ Y.Env.meta = {
 
     modules: {
 
-        basecss: {
+        cssbase: {
             type: CSS,
             after: [RESET, FONTS, GRIDS],
-            path: 'base/base.css'
+            path: 'cssbase/base.css'
         },
 
-        fonts: {
-            type: CSS
+        cssfonts: {
+            type: CSS,
+            path: 'cssfonts/fonts.css'
         },
 
-        grids: {
+        cssgrids: {
             type: CSS,
             requires: [FONTS],
-            optional: [RESET]
+            optional: [RESET],
+            path: 'cssgrids/grids.css'
         },
 
-        log: {
-            optional: [DRAGDROP],
-            path: 'log/logreader-min.js',
-            skinnable: 1
-        },
-
-        reset: {
-            type: CSS
-        },
-
-        'reset-fonts-grids': {
+        cssreset: {
             type: CSS,
-            path: 'reset-fonts-grids/reset-fonts-grids.css',
-            supersedes: [RESET, FONTS, GRIDS, 'reset-fonts'],
-            rollup: 4
-        },
-
-        'reset-fonts': {
-            type: CSS,
-            path: 'reset-fonts/reset-fonts.css',
-            supersedes: [RESET, FONTS],
-            rollup: 2
+            path: 'cssreset/reset.css'
         },
 
 // node, dom, event included in the yui dist, so we are not including the metadata for PR1
@@ -2157,13 +2135,9 @@ Y.Env.meta = {
             requires: ['attribute']
         },
         
-        classnamemanager: { },
-        
         compat: { },
         
         cookie: { },
-
-        css: { },
 
         'dd-ddm-base': {
             path: 'dd/dd-ddm-base-min.js',
@@ -2250,32 +2224,16 @@ Y.Env.meta = {
             supersedes: ['json-parse', 'json-stringify']
         },
         
-        logreader: {
-            requires: ['css']
-        },
-
         node: { 
             requires: ['event', 'dom']
         },
 
         oop: { },
 
-        profiler: { },
-
         queue: { },
 
         substitute: {
             optional: ['dump']
-        },
-
-        yuitestcore: { 
-            path: 'yuitest/yuitest_core-min.js'
-        },
-
-        yuitest: {
-            requires: ['log'],
-            // skinnable: 1,
-            supersedes: ['yuitestcore']
         }
     }
 };
