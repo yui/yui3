@@ -13,7 +13,7 @@ YUI.add('queue', function(Y) {
  *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
  * </ul>
  *
- * @module Queue
+ * @module queue
  * @class Queue
  * @constructor
  * @param callback* {Function|Object} Any number of callbacks to initialize the queue
