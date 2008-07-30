@@ -37,30 +37,98 @@
                             #doc3 #classopts { display:none; }
                         </style>
 <div class="highlight" ><pre><span class="c">/**</span>
-<span class="c"> * Provides dynamic loading for the YUI library.  It includes the dependency</span>
-<span class="c"> * info for the library, and will automatically pull in dependencies for</span>
-<span class="c"> * the modules requested.  It supports rollup files (such as utilities.js, and </span>
-<span class="c"> * will automatically use these when appropriate in order to minimize the </span>
-<span class="c"> * number of http connections required to load all of the dependencies.  It</span>
-<span class="c"> * can load the files from the Yahoo! CDN, and it can use the combo service</span>
-<span class="c"> * provided on that network.</span>
+<span class="c"> * Loader dynamically loads script and css files.  It includes the dependency</span>
+<span class="c"> * info for the version of the library in use, and will automatically pull in</span>
+<span class="c"> * dependencies for the modules requested.  It supports rollup files and will</span>
+<span class="c"> * automatically use these when appropriate in order to minimize the number of</span>
+<span class="c"> * http connections required to load all of the dependencies.  It can load the</span>
+<span class="c"> * files from the Yahoo! CDN, and it can utilize the combo service provided on</span>
+<span class="c"> * this network to reduce the number of http connections required to download </span>
+<span class="c"> * YUI files.</span>
 <span class="c"> *</span>
 <span class="c"> * @module loader</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
-<span class="c"> * Loader provides dynamic loading for YUI.</span>
+<span class="c"> * Loader dynamically loads script and css files.  It includes the dependency</span>
+<span class="c"> * info for the version of the library in use, and will automatically pull in</span>
+<span class="c"> * dependencies for the modules requested.  It supports rollup files and will</span>
+<span class="c"> * automatically use these when appropriate in order to minimize the number of</span>
+<span class="c"> * http connections required to load all of the dependencies.  It can load the</span>
+<span class="c"> * files from the Yahoo! CDN, and it can utilize the combo service provided on</span>
+<span class="c"> * this network to reduce the number of http connections required to download </span>
+<span class="c"> * YUI files.</span>
 <span class="c"> * @class Loader</span>
+<span class="c"> * @constructor</span>
+<span class="c"> * @param o an optional set of configuration options.  Valid options:</span>
+<span class="c"> * &lt;ul&gt;</span>
+<span class="c"> *  &lt;li&gt;base:</span>
+<span class="c"> *  The base dir&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;secureBase:</span>
+<span class="c"> *  The secure base dir (not implemented)&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;comboBase:</span>
+<span class="c"> *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;root:</span>
+<span class="c"> *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;filter:</span>
+<span class="c"> *  </span>
+<span class="c"> * A filter to apply to result urls.  This filter will modify the default</span>
+<span class="c"> * path for all modules.  The default path for the YUI library is the</span>
+<span class="c"> * minified version of the files (e.g., event-min.js).  The filter property</span>
+<span class="c"> * can be a predefined filter or a custom filter.  The valid predefined </span>
+<span class="c"> * filters are:</span>
+<span class="c"> * &lt;dl&gt;</span>
+<span class="c"> *  &lt;dt&gt;DEBUG&lt;/dt&gt;</span>
+<span class="c"> *  &lt;dd&gt;Selects the debug versions of the library (e.g., event-debug.js).</span>
+<span class="c"> *      This option will automatically include the logger widget&lt;/dd&gt;</span>
+<span class="c"> *  &lt;dt&gt;RAW&lt;/dt&gt;</span>
+<span class="c"> *  &lt;dd&gt;Selects the non-minified version of the library (e.g., event.js).&lt;/dd&gt;</span>
+<span class="c"> * &lt;/dl&gt;</span>
+<span class="c"> * You can also define a custom filter, which must be an object literal </span>
+<span class="c"> * containing a search expression and a replace string:</span>
+<span class="c"> * &lt;pre&gt;</span>
+<span class="c"> *  myFilter: &amp;#123; </span>
+<span class="c"> *      &#39;searchExp&#39;: &quot;-min\\.js&quot;, </span>
+<span class="c"> *      &#39;replaceStr&#39;: &quot;-debug.js&quot;</span>
+<span class="c"> *  &amp;#125;</span>
+<span class="c"> * &lt;/pre&gt;</span>
+<span class="c"> *</span>
+<span class="c"> *  &lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;combine:</span>
+<span class="c"> *  Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;ignore:</span>
+<span class="c"> *  A list of modules that should never be dynamically loaded&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;force:</span>
+<span class="c"> *  A list of modules that should always be loaded when required, even if already present on the page&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;insertBefore:</span>
+<span class="c"> *  Node or id for a node that should be used as the insertion point for new nodes&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;charset:</span>
+<span class="c"> *  charset for dynamic nodes&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;timeout:</span>
+<span class="c"> *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;context:</span>
+<span class="c"> *  execution context for all callbacks&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onSuccess:</span>
+<span class="c"> *  callback for the &#39;success&#39; event&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onFailure:</span>
+<span class="c"> *  callback for the &#39;failure&#39; event&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onTimeout:</span>
+<span class="c"> *  callback for the &#39;timeout&#39; event&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;onProgress:</span>
+<span class="c"> *  callback executed each time a script or css file is loaded&lt;/li&gt;</span>
+<span class="c"> *  &lt;li&gt;modules:</span>
+<span class="c"> *  A list of module definitions.  See Loader.addModule for the supported module metadata&lt;/li&gt;</span>
+<span class="c"> * &lt;/ul&gt;</span>
 <span class="c"> */</span>
 
-<span class="c">/**</span>
+<span class="c">/*</span>
 <span class="c"> * Executed when the loader successfully completes an insert operation</span>
 <span class="c"> * This can be subscribed to normally, or a listener can be passed</span>
 <span class="c"> * as an onSuccess config option.</span>
 <span class="c"> * @event success</span>
 <span class="c"> */</span>
 
-<span class="c">/**</span>
+<span class="c">/*</span>
 <span class="c"> * Executed when the loader fails to complete an insert operation.</span>
 <span class="c"> * This can be subscribed to normally, or a listener can be passed</span>
 <span class="c"> * as an onFailure config option.</span>
@@ -68,7 +136,7 @@
 <span class="c"> * @event failure</span>
 <span class="c"> */</span>
 
-<span class="c">/**</span>
+<span class="c">/*</span>
 <span class="c"> * Executed when a Get operation times out.</span>
 <span class="c"> * This can be subscribed to normally, or a listener can be passed</span>
 <span class="c"> * as an onTimeout config option.</span>
@@ -322,28 +390,35 @@
 <span class="c">         */</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">_useYahooListener</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
 
-        <span class="c">/*</span>
+        <span class="c">/**</span>
 <span class="c">         * Callback that will be executed when the loader is finished</span>
 <span class="c">         * with an insert</span>
 <span class="c">         * @method onSuccess</span>
 <span class="c">         * @type function</span>
 <span class="c">         */</span>
-        <span class="c">// this.onSuccess = null;</span>
-<span class="c"></span>
-        <span class="c">/*</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="c">/**</span>
 <span class="c">         * Callback that will be executed if there is a failure</span>
 <span class="c">         * @method onFailure</span>
 <span class="c">         * @type function</span>
 <span class="c">         */</span>
-        <span class="c">// this.onFailure = Y.log;</span>
-<span class="c"></span>
-        <span class="c">/*</span>
-<span class="c">         * Callback that will be executed each time a new module is loaded</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Callback executed each time a script or css file is loaded</span>
 <span class="c">         * @method onProgress</span>
 <span class="c">         * @type function</span>
 <span class="c">         */</span>
-        <span class="c">// this.onProgress = null;</span>
-<span class="c"></span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">onProgress</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="c">/**</span>
+<span class="c">         * Callback that will be executed if a timeout occurs</span>
+<span class="c">         * @method onTimeout</span>
+<span class="c">         * @type function</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">onTimeout</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
         <span class="c">/**</span>
 <span class="c">         * The execution context for all callbacks</span>
 <span class="c">         * @property context</span>
@@ -530,6 +605,13 @@
         <span class="k">this</span><span class="o">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="o">{};</span>
 
         <span class="c">/**</span>
+<span class="c">         * A list of modules to attach to the YUI instance when complete.</span>
+<span class="c">         * If not supplied, the sorted list of dependencies are applied.</span>
+<span class="c">         * @property attaching</span>
+<span class="c">         */</span>
+        <span class="k">this</span><span class="o">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+        <span class="c">/**</span>
 <span class="c">         * Flag to indicate the dependency tree needs to be recomputed</span>
 <span class="c">         * if insert is called again.</span>
 <span class="c">         * @property dirty</span>
@@ -571,14 +653,20 @@
             <span class="c">// apply config values</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">o</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
                     <span class="k">if</span> <span class="o">(</span><span class="nx">o</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">i</span><span class="o">))</span> <span class="o">{</span>
-                        <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s2">&quot;require&quot;</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">this</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;require&#39;</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">this</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">val</span><span class="o">);</span>
                         <span class="c">// support the old callback syntax</span>
-<span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">i</span><span class="o">.</span><span class="nx">indexOf</span><span class="o">(</span><span class="s1">&#39;on&#39;</span><span class="o">)</span> <span class="o">===</span> <span class="m">0</span><span class="o">)</span> <span class="o">{</span>
-                            <span class="k">this</span><span class="o">.</span><span class="nx">subscribe</span><span class="o">(</span><span class="nx">i</span><span class="o">.</span><span class="nx">substr</span><span class="o">(</span><span class="m">2</span><span class="o">).</span><span class="nx">toLowerCase</span><span class="o">(),</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span> <span class="nx">o</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="k">this</span><span class="o">);</span>
+<span class="c"></span>                        <span class="c">// } else if (i.indexOf(&#39;on&#39;) === 0) {</span>
+<span class="c"></span>                            <span class="c">// this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);</span>
+<span class="c"></span>                        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">i</span> <span class="o">==</span> <span class="s1">&#39;modules&#39;</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="c">// add a hash of module definitions</span>
+<span class="c"></span>                            <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">j</span> <span class="k">in</span> <span class="nx">val</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">this</span><span class="o">.</span><span class="nx">addModule</span><span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="nx">j</span><span class="o">],</span> <span class="nx">j</span><span class="o">);</span>
+                            <span class="o">}</span>
                         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                            <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">o</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                            <span class="k">this</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">=</span> <span class="nx">val</span><span class="o">;</span>
                         <span class="o">}</span>
                     <span class="o">}</span>
                 <span class="o">}</span>
@@ -1023,10 +1111,24 @@
             <span class="o">}</span>
         <span class="o">},</span>
 
+        <span class="nx">_attach</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="c">// this is the full list of items the YUI needs attached,</span>
+<span class="c"></span>            <span class="c">// which is needed if some dependencies are already on</span>
+<span class="c"></span>            <span class="c">// the page without their dependencies.</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attaching</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attaching</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+            <span class="o">}</span>
+
+        <span class="o">},</span>
+
         <span class="nx">_onSuccess</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
             <span class="k">this</span><span class="o">.</span><span class="nx">_pushEvents</span><span class="o">();</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
             <span class="k">for</span> <span class="o">(</span><span class="k">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="k">this</span><span class="o">.</span><span class="nx">skipped</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">delete</span> <span class="k">this</span><span class="o">.</span><span class="nx">inserted</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
@@ -1048,7 +1150,7 @@
         <span class="o">},</span>
 
         <span class="nx">_onFailure</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
             <span class="c">// this.fire(&#39;failure&#39;, {</span>
 <span class="c"></span>            <span class="c">//     msg: &#39;operation failed: &#39; + msg,</span>
 <span class="c"></span>            <span class="c">//     data: this.data</span>
@@ -1064,7 +1166,7 @@
         <span class="o">},</span>
 
         <span class="nx">_onTimeout</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">msg</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">();</span>
 
             <span class="c">// this.fire(&#39;timeout&#39;, {</span>
 <span class="c"></span>            <span class="c">//     data: this.data</span>
@@ -1496,8 +1598,6 @@
                                 <li class=""><a href="module_event.html">event</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_json.html">json</a></li>
 
                                 <li class="selected"><a href="module_loader.html">loader</a></li>
 

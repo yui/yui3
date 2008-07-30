@@ -63,40 +63,42 @@
 <span class="c">     * @global</span>
 <span class="c">     * @uses Event.Target</span>
 <span class="c">     * @param o Optional configuration object.  Options:</span>
-<span class="c">     * &lt;dl&gt;</span>
-<span class="c">     *  &lt;dt&gt;debug&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;Turn debug statements on or off&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;useConsole&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;Log to the browser console if debug is on and the console is available&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;logInclude&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;logExclude&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;throwFail&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.</span>
-<span class="c">     *  &lt;dt&gt;win&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The target window/frame&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;core&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;A list of modules that defines the YUI core (overrides the default)&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;For event and get:&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;pollInterval&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The default poll interval&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;For loader&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;base&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The base dir&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;secureBase&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The secure base dir (not implemented)&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;comboBase&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;root&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;filter&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;</span>
-<span class="c">     *</span>
+<span class="c">     * &lt;ul&gt;</span>
+<span class="c">     *  &lt;li&gt;------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;Global:&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;debug:</span>
+<span class="c">     *  Turn debug statements on or off&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;useConsole:</span>
+<span class="c">     *  Log to the browser console if debug is on and the console is available&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;logInclude:</span>
+<span class="c">     *  A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;logExclude:</span>
+<span class="c">     *  A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;throwFail:</span>
+<span class="c">     *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.</span>
+<span class="c">     *  &lt;li&gt;win:</span>
+<span class="c">     *  The target window/frame&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;core:</span>
+<span class="c">     *  A list of modules that defines the YUI core (overrides the default)&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;For event and get:&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;pollInterval:</span>
+<span class="c">     *  The default poll interval&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;-------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;For loader:&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;-------------------------------------------------------------------------&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;base:</span>
+<span class="c">     *  The base dir&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;secureBase:</span>
+<span class="c">     *  The secure base dir (not implemented)&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;comboBase:</span>
+<span class="c">     *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;root:</span>
+<span class="c">     *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;filter:</span>
+<span class="c">     *  </span>
 <span class="c">     * A filter to apply to result urls.  This filter will modify the default</span>
 <span class="c">     * path for all modules.  The default path for the YUI library is the</span>
 <span class="c">     * minified version of the files (e.g., event-min.js).  The filter property</span>
@@ -118,29 +120,32 @@
 <span class="c">     *  &amp;#125;</span>
 <span class="c">     * &lt;/pre&gt;</span>
 <span class="c">     *</span>
-<span class="c">     *  &lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;combine&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;ignore&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;A list of modules that should never be dynamically loaded&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;force&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;A list of modules that should always be loaded when required, even if already present on the page&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;insertBefore&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;Node or id for a node that should be used as the insertion point for new nodes&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;charset&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;charset for dynamic nodes&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;timeout&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;context&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;execution context for all callbacks&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;onSuccess&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;success&#39; event&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;onFailure&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;failure&#39; event&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;onTimeout&lt;/dt&gt;</span>
-<span class="c">     *  &lt;dd&gt;callback to subscribe to the &#39;timeout&#39; event&lt;/dd&gt;</span>
-<span class="c">     *  &lt;dt&gt;-----&lt;/dt&gt;&lt;dd&gt;-------------------------------------------------------------------&lt;/dd&gt;</span>
-<span class="c">     * &lt;/dl&gt;</span>
+<span class="c">     *  &lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;combine:</span>
+<span class="c">     *  Use the YUI combo service to reduce the number of http connections required to load your dependencies&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;ignore:</span>
+<span class="c">     *  A list of modules that should never be dynamically loaded&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;force:</span>
+<span class="c">     *  A list of modules that should always be loaded when required, even if already present on the page&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;insertBefore:</span>
+<span class="c">     *  Node or id for a node that should be used as the insertion point for new nodes&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;charset:</span>
+<span class="c">     *  charset for dynamic nodes&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;timeout:</span>
+<span class="c">     *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;context:</span>
+<span class="c">     *  execution context for all callbacks&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;onSuccess:</span>
+<span class="c">     *  callback for the &#39;success&#39; event&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;onFailure:</span>
+<span class="c">     *  callback for the &#39;failure&#39; event&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;onTimeout:</span>
+<span class="c">     *  callback for the &#39;timeout&#39; event&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;onProgress:</span>
+<span class="c">     *  callback executed each time a script or css file is loaded&lt;/li&gt;</span>
+<span class="c">     *  &lt;li&gt;modules:</span>
+<span class="c">     *  A list of module definitions.  See Loader.addModule for the supported module metadata&lt;/li&gt;</span>
+<span class="c">     * &lt;/ul&gt;</span>
 <span class="c">     */</span>
 
     <span class="c">/*global YUI*/</span>
@@ -415,12 +420,12 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                <span class="k">if</span> <span class="o">(</span><span class="nx">dynamic</span><span class="o">)</span> <span class="o">{</span>
-                    <span class="c">// Y.mix(l, YUI.Env.mods);</span>
-<span class="c"></span>                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
-                    <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="nx">Y</span><span class="o">);</span>
-                <span class="o">}</span>
-
+                <span class="c">// if (dynamic) {</span>
+<span class="c"></span>                    <span class="c">// Y.mix(l, YUI.Env.mods);</span>
+<span class="c"></span>                    <span class="c">// Y.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;YUI&#39;);</span>
+<span class="c"></span>                    <span class="c">// m.fn(Y);</span>
+<span class="c"></span>                <span class="c">// }</span>
+<span class="c"></span>
                 <span class="c">// Y.log(&#39;found &#39; + name);</span>
 <span class="c"></span>                <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
                 <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
@@ -493,13 +498,16 @@
 <span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onTimeout</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="nx">a</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">missing</span><span class="o">);</span>
             <span class="c">// loader calls use to automatically attach when finished</span>
 <span class="c"></span>            <span class="c">// but we still need to execute the callback.</span>
 <span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
-            <span class="nx">onComplete</span><span class="o">();</span>
+            <span class="c">// if (!dynamic) {</span>
+<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
+            <span class="c">// }</span>
+<span class="c"></span>            <span class="nx">onComplete</span><span class="o">();</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span> <span class="c">// chain support var yui = YUI().use(&#39;dragdrop&#39;);</span>
@@ -654,8 +662,6 @@
                                 <li class=""><a href="module_event.html">event</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_json.html">json</a></li>
 
                                 <li class=""><a href="module_loader.html">loader</a></li>
 

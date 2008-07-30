@@ -52,9 +52,101 @@
   
 
                     <div class="summary description">
-                        Loader provides dynamic loading for YUI.
+                        Loader dynamically loads script and css files.  It includes the dependency
+info for the version of the library in use, and will automatically pull in
+dependencies for the modules requested.  It supports rollup files and will
+automatically use these when appropriate in order to minimize the number of
+http connections required to load all of the dependencies.  It can load the
+files from the Yahoo! CDN, and it can utilize the combo service provided on
+this network to reduce the number of http connections required to download 
+YUI files.
                     </div>
 
+                        <div class="section constructor details">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong>Loader</strong>
+                                <code>
+                                    (
+  
+                                        
+                                                
+                                                o
+                                    )
+                                </code>
+                                <div class="description">
+                                        <dl>
+                                            <dt>Parameters:</dt>
+                                                <dd>
+                                                    <code>o
+                                                    &lt;object&gt; 
+                                                    </code>
+                                                     an optional set of configuration options.  Valid options:
+<ul>
+<li>base:
+The base dir</li>
+<li>secureBase:
+The secure base dir (not implemented)</li>
+<li>comboBase:
+The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root:
+The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+<li>filter:
+A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined 
+filters are:
+<dl>
+<dt>DEBUG</dt>
+<dd>Selects the debug versions of the library (e.g., event-debug.js).
+This option will automatically include the logger widget</dd>
+<dt>RAW</dt>
+<dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+</dl>
+You can also define a custom filter, which must be an object literal 
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123; 
+'searchExp': "-min\\.js", 
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+</li>
+<li>combine:
+Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+<li>ignore:
+A list of modules that should never be dynamically loaded</li>
+<li>force:
+A list of modules that should always be loaded when required, even if already present on the page</li>
+<li>insertBefore:
+Node or id for a node that should be used as the insertion point for new nodes</li>
+<li>charset:
+charset for dynamic nodes</li>
+<li>timeout:
+number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+<li>context:
+execution context for all callbacks</li>
+<li>onSuccess:
+callback for the 'success' event</li>
+<li>onFailure:
+callback for the 'failure' event</li>
+<li>onTimeout:
+callback for the 'timeout' event</li>
+<li>onProgress:
+callback executed each time a script or css file is loaded</li>
+<li>modules:
+A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+</ul>
+                                                </dd>
+                                        </dl>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                         <div class="section field details">
                             <h3 id="properties">Properties</h3>
@@ -105,6 +197,22 @@ is only switched on for Safari 2.x and below.
                                     <div class="default">
                                         Default Value: true
                                     </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_attaching">attaching</a>
+                                        <code>- object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A list of modules to attach to the YUI instance when complete.
+If not supplied, the sorted list of dependencies are applied.
+                                        </div>
+                                    </div>
+     
+                                        
 
 
                                     <hr />
@@ -1087,6 +1195,143 @@ one)
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_onFailure">onFailure</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>onFailure</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Callback that will be executed if there is a failure
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onProgress">onProgress</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>onProgress</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Callback executed each time a script or css file is loaded
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onSuccess">onSuccess</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>onSuccess</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Callback that will be executed when the loader is finished
+with an insert
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_onTimeout">onTimeout</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>onTimeout</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Callback that will be executed if a timeout occurs
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_require">require</a></h4>
                                     <div class="detail">
                                         <code>
@@ -1135,104 +1380,6 @@ one)
                         </div>
 
 
-                        <div class="section method details">
-                            <h3 id="events">Events</h3>
-                            <div class="content">
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_failure">failure</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>failure</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executed when the loader fails to complete an insert operation.
-This can be subscribed to normally, or a listener can be passed
-as an onFailure config option.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_success">success</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>success</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executed when the loader successfully completes an insert operation
-This can be subscribed to normally, or a listener can be passed
-as an onSuccess config option.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_timeout">timeout</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>timeout</strong>
-
-                                            (
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executed when a Get operation times out.
-This can be subscribed to normally, or a listener can be passed
-as an onTimeout config option.
-                                        </div>
-
-                                        <div class="description">
-
-
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                            </div>
-                        </div>
 
 
 
@@ -1268,8 +1415,6 @@ as an onTimeout config option.
                                 <li class=""><a href="module_event.html">event</a></li>
 
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_json.html">json</a></li>
 
                                 <li class="selected"><a href="module_loader.html">loader</a></li>
 
@@ -1313,6 +1458,9 @@ as an onTimeout config option.
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_allowRollup">allowRollup</a>
+                                        <!--<code>&lt;int&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_attaching">attaching</a>
                                         <!--<code>&lt;int&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_base">base</a>
@@ -1424,25 +1572,23 @@ as an onTimeout config option.
                                 <a href="#method_loadNext">loadNext</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
+                                <a href="#method_onFailure">onFailure</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onProgress">onProgress</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onSuccess">onSuccess</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_onTimeout">onTimeout</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_require">require</a>
                                 </li>
                         </ul>
                     </div>
 
-                    <div class="module">
-                        <h4>Events</h4>
-                        <ul class="content">        
-                                <li class="">
-                                <a href="#event_failure">failure</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_success">success</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_timeout">timeout</a>
-                                </li>
-                        </ul>
-                    </div>
 
 
             </div>

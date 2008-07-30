@@ -82,39 +82,41 @@ namespaces are preserved.
                                                     &lt;object&gt; 
                                                     </code>
                                                      Optional configuration object.  Options:
-<dl>
-<dt>debug</dt>
-<dd>Turn debug statements on or off</dd>
-<dt>useConsole</dt>
-<dd>Log to the browser console if debug is on and the console is available</dd>
-<dt>logInclude</dt>
-<dd>A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</dd>
-<dt>logExclude</dt>
-<dd>A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</dd>
-<dt>throwFail</dt>
-<dd>If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
-<dt>win</dt>
-<dd>The target window/frame</dd>
-<dt>core</dt>
-<dd>A list of modules that defines the YUI core (overrides the default)</dd>
-<dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-<dt>For event and get:</dt>
-<dd>-------------------------------------------------------------------</dd>
-<dt>pollInterval</dt>
-<dd>The default poll interval</dd>
-<dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-<dt>For loader</dt>
-<dd>-------------------------------------------------------------------</dd>
-<dt>base</dt>
-<dd>The base dir</dd>
-<dt>secureBase</dt>
-<dd>The secure base dir (not implemented)</dd>
-<dt>comboBase</dt>
-<dd>The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</dd>
-<dt>root</dt>
-<dd>The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</dd>
-<dt>filter</dt>
-<dd>
+<ul>
+<li>------------------------------------------------------------------------</li>
+<li>Global:</li>
+<li>------------------------------------------------------------------------</li>
+<li>debug:
+Turn debug statements on or off</li>
+<li>useConsole:
+Log to the browser console if debug is on and the console is available</li>
+<li>logInclude:
+A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</li>
+<li>logExclude:
+A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+<li>throwFail:
+If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
+<li>win:
+The target window/frame</li>
+<li>core:
+A list of modules that defines the YUI core (overrides the default)</li>
+<li>------------------------------------------------------------------------</li>
+<li>For event and get:</li>
+<li>------------------------------------------------------------------------</li>
+<li>pollInterval:
+The default poll interval</li>
+<li>-------------------------------------------------------------------------</li>
+<li>For loader:</li>
+<li>-------------------------------------------------------------------------</li>
+<li>base:
+The base dir</li>
+<li>secureBase:
+The secure base dir (not implemented)</li>
+<li>comboBase:
+The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root:
+The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+<li>filter:
 A filter to apply to result urls.  This filter will modify the default
 path for all modules.  The default path for the YUI library is the
 minified version of the files (e.g., event-min.js).  The filter property
@@ -135,29 +137,32 @@ myFilter: &#123;
 'replaceStr': "-debug.js"
 &#125;
 </pre>
-</dd>
-<dt>combine</dt>
-<dd>Use the YUI combo service to reduce the number of http connections required to load your dependencies</dd>
-<dt>ignore</dt>
-<dd>A list of modules that should never be dynamically loaded</dd>
-<dt>force</dt>
-<dd>A list of modules that should always be loaded when required, even if already present on the page</dd>
-<dt>insertBefore</dt>
-<dd>Node or id for a node that should be used as the insertion point for new nodes</dd>
-<dt>charset</dt>
-<dd>charset for dynamic nodes</dd>
-<dt>timeout</dt>
-<dd>number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</dd>
-<dt>context</dt>
-<dd>execution context for all callbacks</dd>
-<dt>onSuccess</dt>
-<dd>callback to subscribe to the 'success' event</dd>
-<dt>onFailure</dt>
-<dd>callback to subscribe to the 'failure' event</dd>
-<dt>onTimeout</dt>
-<dd>callback to subscribe to the 'timeout' event</dd>
-<dt>-----</dt><dd>-------------------------------------------------------------------</dd>
-</dl>
+</li>
+<li>combine:
+Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+<li>ignore:
+A list of modules that should never be dynamically loaded</li>
+<li>force:
+A list of modules that should always be loaded when required, even if already present on the page</li>
+<li>insertBefore:
+Node or id for a node that should be used as the insertion point for new nodes</li>
+<li>charset:
+charset for dynamic nodes</li>
+<li>timeout:
+number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+<li>context:
+execution context for all callbacks</li>
+<li>onSuccess:
+callback for the 'success' event</li>
+<li>onFailure:
+callback for the 'failure' event</li>
+<li>onTimeout:
+callback for the 'timeout' event</li>
+<li>onProgress:
+callback executed each time a script or css file is loaded</li>
+<li>modules:
+A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+</ul>
                                                 </dd>
                                         </dl>
                                     
@@ -356,6 +361,81 @@ omit - features that should not be loaded if this module is present</dd>
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_aggregate">aggregate</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>aggregate</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         ov
+                                                    
+                                                
+                                                        , 
+                                                         wl
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Applies object properties from the supplier to the receiver.  If
+the target has the property, and the property is an object, the target
+object will be augmented with the supplier's value.  If the property
+is an array, the suppliers value will be appended to the target.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                              the object to receive the augmentation
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                              the object that supplies the properties to augment
+                                                        </dd>
+                                                        <dd>
+                                                            <code>ov &lt;boolean&gt;</code>
+                                                              if true, properties already on the receiver
+will be overwritten if found on the supplier.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>wl &lt;string[]&gt;</code>
+                                                              a whitelist.  If supplied, only properties in 
+this list will be applied to the receiver.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>the extended object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_applyTo">applyTo</a></h4>
                                     <div class="detail">
                                         <code>
@@ -420,6 +500,244 @@ Ex: 'Object.keys'
                                     </div>
                                     <div class="">
                                     <h4>
+                                        <a name="method_augment">augment</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>augment</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         ov
+                                                    
+                                                
+                                                        , 
+                                                         wl
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Applies prototype properties from the supplier to the receiver.
+The receiver can be a constructor or an instance.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                              the object to receive the augmentation
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                              the object that supplies the properties to augment
+                                                        </dd>
+                                                        <dd>
+                                                            <code>ov &lt;boolean&gt;</code>
+                                                              if true, properties already on the receiver
+will be overwritten if found on the supplier.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>wl &lt;string[]&gt;</code>
+                                                              a whitelist.  If supplied, only properties in 
+this list will be applied to the receiver.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array | Any&gt;</code>
+                                                              arg or arguments to apply to the supplier
+constructor when initializing.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>the augmented object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_bind">bind</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>bind</strong>
+                                           (
+                                                
+                                                        
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns a function that will execute the supplied function in the
+supplied object's context, optionally adding any additional
+supplied parameters to the end of the arguments the function
+is executed with.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>f &lt;Function&gt;</code>
+                                                              the function to bind
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             the execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             0..n arguments to append to the arguments collection for the function
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>the wrapped function</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_clone">clone</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array|Object
+                                            <strong>clone</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         safe
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         owner
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Deep obj/array copy.  Functions will are cloned with Y.bind.
+Array-like objects are treated as arrays.
+primitives are returned untouched.  Optionally a
+function can be provided to handle other data types,
+filter keys, validate values, etc.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             what to clone
+                                                        </dd>
+                                                        <dd>
+                                                            <code>safe &lt;boolean&gt;</code>
+                                                              if true, objects will not have prototype
+items from the source.  If false, it does.  In this case, the
+original is initally protected, but the clone is not completely immune
+from changes to the source object prototype.  Also, cloned prototype
+items that are deleted from the clone will result in the value
+of the source prototype to be exposed.  If operating on a non-safe
+clone, items should be nulled out rather than deleted.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;object&gt;</code>
+                                                             optional function to apply to each item in a collection
+it will be executed prior to applying the value to
+the new object.  Return false to prevent the copy.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             optional execution context for f
+                                                        </dd>
+                                                        <dd>
+                                                            <code>owner &lt;object&gt;</code>
+                                                             Owner object passed when clone is iterating an
+object.  Used to set up context for cloned functions.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array|Object
+                                                    </code></dt>
+                                                    <dd>the cloned object</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
                                         <a name="method_dump">dump</a></h4>
                                     <div class="detail">
                                         <code>
@@ -468,6 +786,145 @@ associative arrays.
                                                         String
                                                     </code></dt>
                                                     <dd>the dump result</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_each">each</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>each</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         proto
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executes the supplied function for each item in
+a collection.  Supports arrays, objects, and
+Y.NodeLists
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             the object to iterate
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;object&gt;</code>
+                                                             the function to execute.  This function
+receives the value, key, and object as parameters
+                                                        </dd>
+                                                        <dd>
+                                                            <code>proto &lt;object&gt;</code>
+                                                             if true, prototype properties are
+iterated on objects
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>the return value from the appropriate method
+in Node, Object or Array</dd>
+                                                </dl>
+             
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_extend">extend</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        YUI
+                                            <strong>extend</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         px
+                                                    
+                                                
+                                                        , 
+                                                         sx
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Utility to set up the prototype, constructor and superclass properties to
+support an inheritance strategy that can chain constructors and methods.
+Static members will not be inherited.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                               the object to modify
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                             the object to inherit
+                                                        </dd>
+                                                        <dd>
+                                                            <code>px &lt;Object&gt;</code>
+                                                             prototype properties to add/override
+                                                        </dd>
+                                                        <dd>
+                                                            <code>sx &lt;Object&gt;</code>
+                                                             static properties to add/override
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>the YUI instance</dd>
                                                 </dl>
              
                                         </div>
@@ -1016,8 +1473,6 @@ must be the last parameter.
 
                                 <li class=""><a href="module_io.html">io</a></li>
 
-                                <li class=""><a href="module_json.html">json</a></li>
-
                                 <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
@@ -1083,10 +1538,28 @@ must be the last parameter.
                                 <a href="#method_add">add</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
+                                <a href="#method_aggregate">aggregate</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_applyTo">applyTo</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_augment">augment</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_bind">bind</a>
+                                </li>
+                                <li class=""><!--<code>Array|Object</code>-->
+                                <a href="#method_clone">clone</a>
                                 </li>
                                 <li class=""><!--<code>String</code>-->
                                 <a href="#method_dump">dump</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_each">each</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_extend">extend</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_fail">fail</a>
