@@ -3,12 +3,7 @@
 <head>
     <title>DragDrop Tests</title>
     <script type="text/javascript" src="../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../build/dom/dom-min.js"></script>    
-    <script type="text/javascript" src="../build/node/node-min.js"></script>
     <script type="text/javascript" src="../build/yuitest/yuitest-min.js"></script>    
-    <script type="text/javascript" src="../build/base/base-min.js"></script>
-    <script type="text/javascript" src="../build/attribute/attribute-min.js"></script>
-    <script type="text/javascript" src="../build/dd/dd-dragdrop-all-min.js"></script>
 
 <style>
     /* TO make sure the test will run in an iframe*/
@@ -56,7 +51,7 @@
                 Attribute: true,
                 augment: true
             }
-        }).use("dd-drop", 'dd-proxy', "yuitest", 'substitute', function(Y) {
+        }).use('dd', "yuitest", 'substitute', function(Y) {
 
                 _count = {};
                 _data = {

@@ -1,10 +1,10 @@
 YUI.add('dd-drag', function(Y) {
 
     /**
-     * This class provides the ability to drag a Node.
-     * <p>Module Name: <strong>dd-drag</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
-     */
+     * @submodule dd-drag
+     */     
     /**
      * This class provides the ability to drag a Node.
      * @class Drag
@@ -315,6 +315,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drag Instance to.
         * @return {Self}
+        * @chainable
         */
         addToGroup: function(g) {
             this._groups[g] = true;
@@ -326,6 +327,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.
         * @param {String} g The group to remove this Drag Instance from.
         * @return {Self}
+        * @chainable
         */
         removeFromGroup: function(g) {
             delete this._groups[g];
@@ -692,6 +694,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove a Selector added by addHandle
         * @param {String} str The selector for the handle to be removed. 
         * @return {Self}
+        * @chainable
         */
         removeHandle: function(str) {
             if (this._handles[str]) {
@@ -705,6 +708,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
         * @param {String} str The selector to test for a valid handle. Must be a child of the element.
         * @return {Self}
+        * @chainable
         */
         addHandle: function(str) {
             if (!this._handles) {
@@ -721,6 +725,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove an invalid handle added by addInvalid
         * @param {String} str The invalid handle to remove from the internal list.
         * @return {Self}
+        * @chainable
         */
         removeInvalid: function(str) {
             if (this._invalids[str]) {
@@ -734,6 +739,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add a selector string to test the handle against. If the test passes the drag operation will not continue.
         * @param {String} str The selector to test against to determine if this is an invalid drag handle.
         * @return {Self}
+        * @chainable
         */
         addInvalid: function(str) {
             if (Y.Lang.isString(str)) {
@@ -796,6 +802,7 @@ YUI.add('dd-drag', function(Y) {
         * @method start
         * @description Starts the drag operation
         * @return {Self}
+        * @chainable
         */
         start: function() {
             if (!this.get('lock') && !this.get('dragging')) {
@@ -826,6 +833,7 @@ YUI.add('dd-drag', function(Y) {
         * @method end
         * @description Ends the drag operation
         * @return {Self}
+        * @chainable
         */
         end: function() {
             this._endTime = (new Date()).getTime();
@@ -937,6 +945,7 @@ YUI.add('dd-drag', function(Y) {
         * @method stopDrag
         * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @return {Self}
+        * @chainable
         */
         stopDrag: function() {
             if (this.get('dragging')) {

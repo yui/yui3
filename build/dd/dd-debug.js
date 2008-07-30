@@ -1,11 +1,10 @@
 YUI.add('dd-ddm-base', function(Y) {
 
     /**
-     * Provides the base Drag Drop Manger required for making a Node draggable.
-     * <p>Module Name: <strong>dd-ddm-base</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
-     */
-
+     * @submodule dd-ddm-base
+     */     
      /**
      * Provides the base Drag Drop Manger required for making a Node draggable.
      * @class DDM
@@ -177,6 +176,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @method stopDrag
         * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @return {Self}
+        * @chainable
         */       
         stopDrag: function() {
             if (this.activeDrag) {
@@ -286,16 +286,11 @@ YUI.add('dd-ddm-base', function(Y) {
 YUI.add('dd-ddm', function(Y) {
 
     /**
-     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
-     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     * <p>Module Name: <strong>dd-ddm</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * @module dd
+     * @for DDM
+     * @submodule dd-ddm
      */
-
-     /**
-     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
-     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
-     */
-
     Y.mix(Y.DD.DDM, {
         /**
         * @private
@@ -406,12 +401,12 @@ YUI.add('dd-ddm', function(Y) {
 YUI.add('dd-ddm-drop', function(Y) {
 
     /**
-     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     * <p>Module Name: <strong>dd-ddm-drop</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * @module dd
+     * @for DDM
+     * @submodule dd-ddm-drop
      */
-    /**
-     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     */    
+
     //TODO CSS class name for the bestMatch..
     Y.mix(Y.DD.DDM, {
         /**
@@ -544,6 +539,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
+        * @chainable
         */
         _addValid: function(drop) {
             this.validDrops[this.validDrops.length] = drop;
@@ -555,6 +551,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
+        * @chainable
         */
         _removeValid: function(drop) {
             var drops = [];
@@ -799,10 +796,10 @@ YUI.add('dd-ddm-drop', function(Y) {
 YUI.add('dd-drag', function(Y) {
 
     /**
-     * This class provides the ability to drag a Node.
-     * <p>Module Name: <strong>dd-drag</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
-     */
+     * @submodule dd-drag
+     */     
     /**
      * This class provides the ability to drag a Node.
      * @class Drag
@@ -1113,6 +1110,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add this Drag instance to a group, this should be used for on-the-fly group additions.
         * @param {String} g The group to add this Drag Instance to.
         * @return {Self}
+        * @chainable
         */
         addToGroup: function(g) {
             this._groups[g] = true;
@@ -1124,6 +1122,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove this Drag instance from a group, this should be used for on-the-fly group removals.
         * @param {String} g The group to remove this Drag Instance from.
         * @return {Self}
+        * @chainable
         */
         removeFromGroup: function(g) {
             delete this._groups[g];
@@ -1490,6 +1489,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove a Selector added by addHandle
         * @param {String} str The selector for the handle to be removed. 
         * @return {Self}
+        * @chainable
         */
         removeHandle: function(str) {
             if (this._handles[str]) {
@@ -1503,6 +1503,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
         * @param {String} str The selector to test for a valid handle. Must be a child of the element.
         * @return {Self}
+        * @chainable
         */
         addHandle: function(str) {
             if (!this._handles) {
@@ -1519,6 +1520,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Remove an invalid handle added by addInvalid
         * @param {String} str The invalid handle to remove from the internal list.
         * @return {Self}
+        * @chainable
         */
         removeInvalid: function(str) {
             if (this._invalids[str]) {
@@ -1532,6 +1534,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Add a selector string to test the handle against. If the test passes the drag operation will not continue.
         * @param {String} str The selector to test against to determine if this is an invalid drag handle.
         * @return {Self}
+        * @chainable
         */
         addInvalid: function(str) {
             if (Y.Lang.isString(str)) {
@@ -1594,6 +1597,7 @@ YUI.add('dd-drag', function(Y) {
         * @method start
         * @description Starts the drag operation
         * @return {Self}
+        * @chainable
         */
         start: function() {
             if (!this.get('lock') && !this.get('dragging')) {
@@ -1624,6 +1628,7 @@ YUI.add('dd-drag', function(Y) {
         * @method end
         * @description Ends the drag operation
         * @return {Self}
+        * @chainable
         */
         end: function() {
             this._endTime = (new Date()).getTime();
@@ -1735,6 +1740,7 @@ YUI.add('dd-drag', function(Y) {
         * @method stopDrag
         * @description Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
         * @return {Self}
+        * @chainable
         */
         stopDrag: function() {
             if (this.get('dragging')) {
@@ -1766,9 +1772,9 @@ YUI.add('dd-drag', function(Y) {
 YUI.add('dd-proxy', function(Y) {
 
     /**
-     * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
-     * <p>Module Name: <strong>dd-proxy</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
+     * @submodule dd-proxy
      */
     /**
      * This class extends dd-drag to allow for creating a proxy drag node, instead of dragging the original node.
@@ -1937,10 +1943,9 @@ YUI.add('dd-proxy', function(Y) {
 YUI.add('dd-constrain', function(Y) {
 
     /**
-     * <p>This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
-     * supports tick based moves and XY axis constraints.</p>
-     * <p>Module Name: <strong>dd-constrain</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
+     * @submodule dd-constrain
      */
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
@@ -2361,10 +2366,10 @@ YUI.add('dd-plugin', function(Y) {
 YUI.add('dd-drop', function(Y) {
 
     /**
-     * This class provides the ability to create a Drop Target.
-     * <p>Module Name: <strong>dd-drop</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
-     */
+     * @submodule dd-drop
+     */     
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
