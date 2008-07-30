@@ -5,7 +5,7 @@
     <title>Portal Example</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="assets/portal.css">
-    <script type="text/javascript" src="../../../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
 <body>
 <div id="doc3" class="yui-t2">
     <div id="hd"><h1>YUI 3.0 Portal Example</h1></div>
