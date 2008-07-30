@@ -52,7 +52,7 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code> and <code>dd-constrain</code> modules.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-constrain');
+YUI().use('dd-drop', 'dd-constrain');
 </textarea>
 
 <h3>Making the Nodes draggable</h3>
@@ -70,7 +70,7 @@ var Y = YUI().use('dd-drop', 'dd-constrain');
 </textarea>
 <p>Now we walk through the nodes and create a drag instance from each of them.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-constrain', function(Y) {
+YUI().use('dd-drop', 'dd-constrain', function(Y) {
     //Data to attach to each drag object
     var data = {
         'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
@@ -141,7 +141,7 @@ drop.on('drop:hit', function(e) {
 
 <h3>Full Example Source</h3>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-constrain', function(Y) {
+YUI().use('dd-drop', 'dd-constrain', function(Y) {
     var data = {
         'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
         'drag2': { color: 'blue', size: 'small', price: '$6.00' },

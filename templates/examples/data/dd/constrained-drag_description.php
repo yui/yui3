@@ -70,14 +70,13 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-constrain</code> module (that will load the dd-ddm and dd-drag modules too).</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-constrain');
+YUI().use('dd-constrain');
 </textarea>
 
 <h3>Making the Nodes draggable</h3>
 <p>Now that we have a YUI instance with the <code>dd-constrain</code> module, we need to instantiate the <code>Drag</code> instance on the Nodes.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-constrain', function(Y) {
     var dd1 = new Y.DD.Drag({
         node: '#dd-demo-1'
     });
@@ -95,8 +94,7 @@ Y.on('event:ready', function() {
 <h3>Constrain the Nodes to other Nodes</h3>
 <p>Now that we have the Nodes draggable, we need to constrain them. We can do this by passing another config option called <code>constrain2node</code> and giving it a selector string of the Node we want to constrain to.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-constrain', function(Y) {
     var dd1 = new Y.DD.Drag({
         node: '#dd-demo-1',
         constrain2node: '#dd-demo-canvas3'

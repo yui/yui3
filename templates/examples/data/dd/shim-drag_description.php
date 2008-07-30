@@ -1,7 +1,7 @@
 <h3>Using the shim</h3>
 <p>Here is the code for this example.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-ddm', 'dd-drag', 'dd-proxy, function(Y) {
+YUI().use('dd-ddm', 'dd-drag', 'dd-proxy, function(Y) {
 
     //Toggling the buttons
     Y.Node.get('#shim').on('click', function(e) {

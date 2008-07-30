@@ -24,8 +24,7 @@
 
 <script>
 
-var Y = YUI().use('dd-plugin');
-Y.on('event:ready', function() {
+YUI().use('dd-plugin', function(Y) {
     var node = Y.Node.get('#demo');
     node.plug(Y.Plugin.Drag);
     node.dd.addHandle('h2');

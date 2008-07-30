@@ -84,14 +84,13 @@
 <h3>Setting up the YUI Instance</h3>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-proxy</code> and <code>dd-constrain</code> modules.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
 </textarea>
 
 <h3>Setting up the Drop Targets</h3>
 <p>Now that we have a YUI instance with the requested modules, we are going to create our Drop Targets.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     //Get all the nodes with the class of .slot under #workarea
     var slots = Y.Node.get('#workarea').queryAll('.slot');
     //Loop through them
@@ -117,8 +116,7 @@ Y.on('event:ready', function() {
 <h3>Setting up the Drag Nodes</h3>
 <p>Now we need to create the Drag Nodes and assign them to the proper group.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     //Snipped
     var players = Y.Node.get('#workarea').queryAll('.player');
     Y.each(players, function(v, k, items) {
@@ -189,8 +187,7 @@ drag.on('drag:dropmiss', function(e) {
 
 <h3>Full Javascript Code</h3>
 <textarea name="code" class="JScript">
-var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');
     Y.each(slots, function(v, k, items) {

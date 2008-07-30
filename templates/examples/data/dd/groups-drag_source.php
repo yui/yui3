@@ -78,8 +78,7 @@
 </div>
 
 <script>
-var Y = YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
-Y.on('event:ready', function() {
+YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');
     Y.each(slots, function(v, k, items) {
