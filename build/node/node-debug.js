@@ -17,34 +17,23 @@ YUI.add('node', function(Y) {
 
     var BASE_NODE                   = 0, 
         ELEMENT_NODE                = 1,
-        ATTRIBUTE_NODE              = 2,
-        TEXT_NODE                   = 3,
-        CDATA_SECTION_NODE          = 4,
-        ENTITY_REFERENCE_NODE       = 5,
-        ENTITY_NODE                 = 6,
-        PROCESSING_INSTRUCTION_NODE = 7,
-        COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9,
-        DOCUMENT_TYPE_NODE          = 10,
-        DOCUMENT_FRAGMENT_NODE      = 11,
-        NOTATION_NODE               = 12;
+        //ATTRIBUTE_NODE              = 2,
+        //TEXT_NODE                   = 3,
+        //CDATA_SECTION_NODE          = 4,
+        //ENTITY_REFERENCE_NODE       = 5,
+        //ENTITY_NODE                 = 6,
+        //PROCESSING_INSTRUCTION_NODE = 7,
+        //COMMENT_NODE                = 8,
+        DOCUMENT_NODE               = 9; //,
+        //DOCUMENT_TYPE_NODE          = 10,
+        //DOCUMENT_FRAGMENT_NODE      = 11,
+        //NOTATION_NODE               = 12;
 
 
     var OWNER_DOCUMENT = 'ownerDocument',
-        DEFAULT_VIEW = 'defaultView',
-        PARENT_WINDOW = 'parentWindow',
-        DOCUMENT_ELEMENT = 'documentElement',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
-        NODE_TYPE = 'nodeType',
-        COMPAT_MODE = 'compatMode',
-        PARENT_NODE = 'parentNode',
-        PREVIOUS_SIBLING = 'previousSibling',
-        NEXT_SIBLING = 'nextSibling',
-        SCROLL_TOP = 'scrollTop',
-        SCROLL_LEFT = 'scrollLeft',
-        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-        CONTAINS = 'contains';
+        NODE_TYPE = 'nodeType';
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
@@ -621,49 +610,6 @@ YUI.add('node', function(Y) {
         },
 
         /**
-         * Retrieves a style attribute from the given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
-         */
-        getStyle: function(attr) {
-            return Y.DOM.getStyle(_nodes[this._yuid], attr);
-        },
-
-        /**
-         * Retrieves the computed value for the given style attribute.
-         * @method getComputedStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The computed value of the style property for the element.
-         */
-        getComputedStyle: function(attr) {
-            return Y.DOM.getComputedStyle(_nodes[this._yuid], attr);
-        },
-
-        /**
-         * Applies a CSS style to a given node.
-         * @method setStyle
-         * @param {String} attr The style attribute to set. 
-         * @param {String|Number} val The value. 
-         */
-        setStyle: function(attr, val) {
-            Y.DOM.setStyle(_nodes[this._yuid], attr, val);
-            return this;
-        },
-
-        /**
-         * Sets multiple style properties.
-         * @method setStyles
-         * @param {Object} hash An object literal of property:value pairs. 
-         */
-        setStyles: function(hash) {
-            Y.each(hash, function(v, n) {
-                this.setStyle(n, v);
-            }, this);
-            return this;
-        },
-
-        /**
          * Compares nodes to determine if they match.
          * Node instances can be compared to each other and/or HTMLElements/selectors.
          * @method compareTo
@@ -682,7 +628,7 @@ YUI.add('node', function(Y) {
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(this, fn)));
         },
 
         /**
@@ -695,7 +641,7 @@ YUI.add('node', function(Y) {
          * @return {Node} Node instance or null if not found
          */
         previous: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)), all);
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'previousSibling', wrapFn(fn)), all);
         }, 
 
         /**
@@ -708,7 +654,7 @@ YUI.add('node', function(Y) {
          * @return {Object} HTMLElement or null if not found
          */
         next: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)), all);
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'nextSibling', wrapFn(fn)), all);
         },
         
        /**
@@ -1023,6 +969,44 @@ YUI.add('node', function(Y) {
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
 /**
+ * Extended Node interface for managing regions.
+ * @module node-region
+ */
+
+Y.Node.addDOMMethods([
+    /**
+     * Retrieves a style attribute from the node.
+     * @method getStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The current value of the style property for the element.
+     */
+    'getStyle',
+
+    /**
+     * Retrieves the computed value for the given style attribute.
+     * @method getComputedStyle
+     * @param {String} attr The style attribute to retrieve. 
+     * @return {String} The computed value of the style property for the element.
+     */
+    'getComputedStyle',
+
+    /**
+     * Applies a CSS style to thes node.
+     * @method setStyle
+     * @param {String} attr The style attribute to set. 
+     * @param {String|Number} val The value. 
+     */
+    'setStyle',
+
+    /**
+     * Sets multiple style properties on the node.
+     * @method setStyles
+     * @param {Object} hash An object literal of property:value pairs. 
+     */
+    'setStyles'
+]);
+
+/**
  * Extended Node interface for managing classNames.
  * @module node-class
  */
@@ -1175,6 +1159,23 @@ Y.Node.methods({
         'setY'
     ]);
 
+    // these need special treatment to extract 2nd node arg
+    Y.Node.methods({
+        intersect: function(node1, node2, altRegion) {
+            if (node2 instanceof Y.Node) { // might be a region object
+                node2 = getNode(node2);
+            }
+            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
+        },
+
+        inRegion: function(node1, node2, all, altRegion) {
+            if (node2 instanceof Y.Node) { // might be a region object
+                node2 = getNode(node2);
+            }
+            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
+        }
+    });
 
 
-}, '@VERSION@' ,{requires:['dom']});
+
+}, '@VERSION@' ,{requires:['dom-all']});

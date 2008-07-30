@@ -1,4 +1,4 @@
-YUI.add('node', function(Y) {
+YUI.add('node-base', function(Y) {
 
 /**
  * Provides a wrapper for dom nodes that supports selector queries normalizes x-browser differences.
@@ -380,6 +380,7 @@ YUI.add('node', function(Y) {
 
     var Node = function(node) {
         if (!node || !node[NODE_TYPE]) {
+            Y.log('invalid node:' + node, 'error', 'Node');
             return null;
         }
         
@@ -905,6 +906,7 @@ YUI.add('node', function(Y) {
          */
         get: function(name) {
             if (name == 'length') { // TODO: remove
+                Y.log('the length property is deprecated; use size()', 'warn', 'NodeList');
                 return _nodelists[this._yuid].length;
             }
             var nodes = _nodelists[this._yuid];
@@ -967,44 +969,6 @@ YUI.add('node', function(Y) {
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
 /**
- * Extended Node interface for managing regions.
- * @module node-region
- */
-
-Y.Node.addDOMMethods([
-    /**
-     * Retrieves a style attribute from the node.
-     * @method getStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The current value of the style property for the element.
-     */
-    'getStyle',
-
-    /**
-     * Retrieves the computed value for the given style attribute.
-     * @method getComputedStyle
-     * @param {String} attr The style attribute to retrieve. 
-     * @return {String} The computed value of the style property for the element.
-     */
-    'getComputedStyle',
-
-    /**
-     * Applies a CSS style to thes node.
-     * @method setStyle
-     * @param {String} attr The style attribute to set. 
-     * @param {String|Number} val The value. 
-     */
-    'setStyle',
-
-    /**
-     * Sets multiple style properties on the node.
-     * @method setStyles
-     * @param {Object} hash An object literal of property:value pairs. 
-     */
-    'setStyles'
-]);
-
-/**
  * Extended Node interface for managing classNames.
  * @module node-class
  */
@@ -1052,128 +1016,6 @@ Y.Node.addDOMMethods([
          */
         'toggleClass'
     ]);
-/**
- * Extended Node interface for managing regions.
- * @module node-region
- */
-
-var ATTR = ['region', 'viewportRegion'],
-    getNode = Y.Node.getDOMNode;
-
-Y.each(ATTR, function(v, n) {
-    Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-});
-
-Y.Node.addDOMMethods([
-    'inViewportRegion'
-]);
-
-// these need special treatment to extract 2nd node arg
-Y.Node.methods({
-    intersect: function(node1, node2, altRegion) {
-        if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
-        }
-        return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-    },
-
-    inRegion: function(node1, node2, all, altRegion) {
-        if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
-        }
-        return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
-    }
-});
-
-/**
- * This module applies adds support for positioning elements and
- * normalizes window size and scroll detection. 
- * @module node-screen
- */
-
-    Y.each([
-        'winWidth',
-        'winHeight',
-        'docWidth',
-        'docHeight',
-        'docScrollX',
-        'docScrollY'
-        ],
-        function(v, n) {
-            Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-        }
-    );
-
-    Y.Node.addDOMMethods([
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getXY
-     * @return {Array} The XY position of the node
-    */
-        'getXY',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setXY
-     * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
-     */
-        'setXY',
-
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getX
-     * @return {Int} The X position of the node
-    */
-        'getX',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setX
-     * @param {Int} x X value for new position (coordinates are page-based)
-     */
-        'setX',
-
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getY
-     * @return {Int} The Y position of the node
-    */
-        'getY',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setY
-     * @param {Int} y Y value for new position (coordinates are page-based)
-     */
-        'setY'
-    ]);
-
-    // these need special treatment to extract 2nd node arg
-    Y.Node.methods({
-        intersect: function(node1, node2, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-        },
-
-        inRegion: function(node1, node2, all, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
-        }
-    });
 
 
-
-}, '@VERSION@' ,{requires:['dom-all']});
+}, '@VERSION@' ,{requires:['dom-base', 'selector']});
