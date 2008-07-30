@@ -216,7 +216,7 @@ Y.Color = {
             ].join('');
         }
 
-        if (val[LENGTH] < 6) {
+        if (val.length < 6) {
             val = val.replace(Y.Color.re_hex3, '$1$1');
         }
 
@@ -231,6 +231,7 @@ Y.Color = {
 
 var CLIENT_TOP = 'clientTop',
     CLIENT_LEFT = 'clientLeft',
+    PARENT_NODE = 'parentNode',
     RIGHT = 'right',
     HAS_LAYOUT = 'hasLayout',
     PX = 'px',
@@ -260,7 +261,7 @@ if (document[DOCUMENT_ELEMENT][STYLE][OPACITY] === UNDEFINED &&
         },
 
         set: function(node, val, style) {
-            if (typeof style[FILTER] == STRING) { // in case not appended
+            if (typeof style[FILTER] == 'string') { // in case not appended
                 style[FILTER] = 'alpha(' + OPACITY + '=' + val * 100 + ')';
                 
                 if (!node[CURRENT_STYLE] || !node[CURRENT_STYLE][HAS_LAYOUT]) {
@@ -342,13 +343,13 @@ var ComputedStyle = {
                 value = el[CLIENT_TOP];
                 break;
             case BORDER_BOTTOM_WIDTH:
-                value = el[OFFSET_HEIGHT] - el[CLIENT_HEIGHT] - el[CLIENT_TOP];
+                value = el.offsetHeight - el.clientHeight - el[CLIENT_TOP];
                 break;
             case BORDER_LEFT_WIDTH:
                 value = el[CLIENT_LEFT];
                 break;
             case BORDER_RIGHT_WIDTH:
-                value = el[OFFSET_WIDTH] - el[CLIENT_WIDTH] - el[CLIENT_LEFT];
+                value = el.offsetWidth - el.clientWidth - el[CLIENT_LEFT];
                 break;
         }
         return value + PX;

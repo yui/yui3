@@ -19,7 +19,12 @@ var OFFSET_TOP = 'offsetTop',
     SCROLL_TOP = 'scrollTop',
     _BACK_COMPAT = 'BackCompat',
     MEDIUM = 'medium',
+    HEIGHT = 'height',
+    WIDTH = 'width',
+    BORDER_LEFT_WIDTH = 'borderLeftWidth',
+    BORDER_TOP_WIDTH = 'borderTopWidth',
     GET_BOUNDING_CLIENT_RECT = 'getBoundingClientRect',
+    GET_COMPUTED_STYLE = 'getComputedStyle',
     RE_TABLE = /^t(?:able|d|h)$/i;
 
 Y.mix(Y.DOM, {
@@ -92,7 +97,7 @@ Y.mix(Y.DOM, {
      TODO: test inDocument/display
      */
     getXY: function() {
-        if (document.documentElement[GET_BOUNDING_CLIENT_RECT]) {
+        if (document[DOCUMENT_ELEMENT][GET_BOUNDING_CLIENT_RECT]) {
             return function(node) {
                 if (!node) {
                     return false;
@@ -161,12 +166,12 @@ Y.mix(Y.DOM, {
                     parentNode = node;
                     var scrollTop, scrollLeft;
 
-                    while ((parentNode = parentNode[PARENT_NODE])) {
+                    while ((parentNode = parentNode.parentNode)) {
                         scrollTop = parentNode[SCROLL_TOP];
                         scrollLeft = parentNode[SCROLL_LEFT];
 
                         //Firefox does something funky with borders when overflow is not visible.
-                        if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== VISIBLE)) {
+                        if (Y.UA.gecko && (Y.DOM.getStyle(parentNode, 'overflow') !== 'visible')) {
                                 xy = Y.DOM._calcBorders(parentNode, xy);
                         }
                         
@@ -306,7 +311,7 @@ Y.mix(Y.DOM, {
         var t = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_TOP_WIDTH), 10) || 0,
             l = parseInt(Y.DOM[GET_COMPUTED_STYLE](node, BORDER_LEFT_WIDTH), 10) || 0;
         if (Y.UA.gecko) {
-            if (RE_TABLE.test(node[TAG_NAME])) {
+            if (RE_TABLE.test(node.tagName)) {
                 t = 0;
                 l = 0;
             }
@@ -318,7 +323,7 @@ Y.mix(Y.DOM, {
 
     _getWinSize: function(node) {
         var doc = Y.DOM._getDoc(),
-            win = doc[DEFAULT_VIEW] || doc[PARENT_WINDOW],
+            win = doc.defaultView || doc.parentWindow,
             mode = doc[COMPAT_MODE],
             h = win.innerHeight,
             w = win.innerWidth,
@@ -328,8 +333,8 @@ Y.mix(Y.DOM, {
             if (mode != 'CSS1Compat') { // Quirks
                 root = doc.body; 
             }
-            h = root[CLIENT_HEIGHT];
-            w = root[CLIENT_WIDTH];
+            h = root.clientHeight;
+            w = root.clientWidth;
         }
         return { height: h, width: w }; 
     },

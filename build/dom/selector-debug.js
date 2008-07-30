@@ -12,6 +12,8 @@ YUI.add('selector', function(Y) {
  */
 
 var TAG = 'tag',
+    PARENT_NODE = 'parentNode',
+    PREVIOUS_SIBLING = 'previousSibling',
     LENGTH = 'length',
     NODE_TYPE = 'nodeType',
     TAG_NAME = 'tagName',
@@ -82,7 +84,7 @@ var Selector = {
      */
     pseudos: {
         'root': function(node) {
-            return node === node[OWNER_DOCUMENT][DOCUMENT_ELEMENT];
+            return node === node.ownerDocument.documentElement;
         },
 
         'nth-child': function(node, val) {
