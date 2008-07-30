@@ -135,7 +135,8 @@ Y.Env.meta = {
 
       dom: {
           requires: ['event'],
-          supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector']
+          supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector'],
+          rollup: 3
       },
 
       'dom-base': {
@@ -162,7 +163,8 @@ Y.Env.meta = {
 
       node: {
           supersedes: ['node-base', 'node-style', 'node-screen'],
-          requires: ['dom']
+          requires: ['dom'],
+          rollup: 2
       },
 
       'node-base': {
@@ -262,7 +264,8 @@ Y.Env.meta = {
 
         'dd':{
             path: 'dd/dd-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-core', 'dd-drag-proxy']
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-core', 'dd-drag-proxy'],
+            rollup: 5
         },
 
 

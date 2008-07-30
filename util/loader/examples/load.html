@@ -25,15 +25,15 @@ YUI({
     var loader = new Y.Loader();
 
     loader.onSuccess = function() {
-        Y.log('custom event success');
+        Y.log('loader success');
     };
 
     loader.onFailure = function() {
-        Y.log('custom event failure');
+        Y.log('loader failure');
     };
 
     loader.onTimeout = function() {
-        Y.log('custom event timeout');
+        Y.log('loader timeout');
     };
 
     loader.insert({
