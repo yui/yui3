@@ -1293,7 +1293,7 @@ Y.Env.meta = {
                 if (this._combining.length) {
 
                     var callback=function(o) {
-                        Y.log('loading combo, just loaded' + o.data);
+                        Y.log('loading combo, just loaded' + o.data, "info", "Loader");
                         self._combineComplete = true;
 
                         var c=self._combining, len=c.length, i, m;
@@ -1330,7 +1330,7 @@ Y.Env.meta = {
                     return;
                 }
 
-                Y.log("loadNext executing, just loaded " + mname);
+Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -1368,7 +1368,7 @@ Y.Env.meta = {
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
                     return;
                 }
 
@@ -1394,7 +1394,7 @@ Y.Env.meta = {
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base);
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {

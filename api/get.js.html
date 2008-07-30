@@ -228,7 +228,7 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">_finish</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Finishing transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Finishing transaction &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="nx">q</span><span class="o">.</span><span class="nx">finished</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
@@ -252,7 +252,7 @@
 <span class="c">     * @private</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">_timeout</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">id</span><span class="o">)</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Get utility timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s2">&quot;Timeout &quot;</span> <span class="o">+</span> <span class="nx">id</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Get&quot;</span><span class="o">);</span>
         <span class="k">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">queues</span><span class="o">[</span><span class="nx">id</span><span class="o">];</span>
         <span class="k">if</span> <span class="o">(</span><span class="nx">q</span><span class="o">.</span><span class="nx">onTimeout</span><span class="o">)</span> <span class="o">{</span>
             <span class="k">var</span> <span class="nx">sc</span><span class="o">=</span><span class="nx">q</span><span class="o">.</span><span class="nx">context</span> <span class="o">||</span> <span class="nx">q</span><span class="o">;</span>

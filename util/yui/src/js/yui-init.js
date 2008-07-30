@@ -9,7 +9,7 @@
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' setup completing) .');
+        Y.log(Y.id + ' initialized', 'info', 'YUI');
 
         if (C.core) {
 

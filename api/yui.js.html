@@ -384,10 +384,6 @@
                 <span class="o">}</span>
             <span class="o">}</span>
 
-            <span class="c">// if (callback) {</span>
-<span class="c"></span>                <span class="c">// a.push(callback);</span>
-<span class="c"></span>            <span class="c">// }</span>
-<span class="c"></span>
             <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">use</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">Y</span><span class="o">,</span> <span class="nx">a</span><span class="o">);</span>
 
         <span class="o">}</span>
@@ -420,12 +416,6 @@
             <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">)</span> <span class="o">{</span>
                 <span class="nx">used</span><span class="o">[</span><span class="nx">name</span><span class="o">]</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
 
-                <span class="c">// if (dynamic) {</span>
-<span class="c"></span>                    <span class="c">// Y.mix(l, YUI.Env.mods);</span>
-<span class="c"></span>                    <span class="c">// Y.log(&#39;attaching &#39; + name, &#39;info&#39;, &#39;YUI&#39;);</span>
-<span class="c"></span>                    <span class="c">// m.fn(Y);</span>
-<span class="c"></span>                <span class="c">// }</span>
-<span class="c"></span>
                 <span class="c">// Y.log(&#39;found &#39; + name);</span>
 <span class="c"></span>                <span class="nx">req</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">requires</span><span class="o">;</span>
                 <span class="nx">use</span> <span class="o">=</span> <span class="nx">m</span><span class="o">.</span><span class="nx">details</span><span class="o">.</span><span class="nx">use</span><span class="o">;</span>
@@ -449,18 +439,6 @@
 <span class="c"></span>            <span class="c">// Y.log(&#39;using &#39; + name);</span>
 <span class="c"></span>            <span class="nx">r</span><span class="o">.</span><span class="nx">push</span><span class="o">(</span><span class="nx">name</span><span class="o">);</span>
 
-            <span class="c">// auto-attach sub-modules</span>
-<span class="c"></span>            <span class="c">/*</span>
-<span class="c">            if (use) {</span>
-<span class="c">                if (Y.Lang.isString(use)) {</span>
-<span class="c">                    f(use);</span>
-<span class="c">                } else {</span>
-<span class="c">                    for (j = 0; j &lt; use.length; j = j + 1) {</span>
-<span class="c">                        f(use[j]);</span>
-<span class="c">                    }</span>
-<span class="c">                }</span>
-<span class="c">            }</span>
-<span class="c">            */</span>
         <span class="o">};</span>
 
         <span class="c">// process each requirement and any additional requirements </span>
@@ -469,12 +447,12 @@
             <span class="nx">f</span><span class="o">(</span><span class="nx">a</span><span class="o">[</span><span class="nx">i</span><span class="o">]);</span>
         <span class="o">}</span>
 
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;all reqs: &#39;</span> <span class="o">+</span> <span class="nx">r</span> <span class="o">+</span> <span class="s1">&#39; --- missing: &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">);</span>
-
+        <span class="c">// Y.log(&#39;all reqs: &#39; + r + &#39; --- missing: &#39; + missing);</span>
+<span class="c"></span>
         <span class="k">var</span> <span class="nx">onComplete</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">fromLoader</span><span class="o">)</span> <span class="o">{</span>
 
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Use complete&#39;</span><span class="o">);</span>
-
+            <span class="c">// Y.log(&#39;Use complete&#39;);</span>
+<span class="c"></span>
             <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">)</span> <span class="o">{</span>
 
                 <span class="k">var</span> <span class="nx">cb</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Env</span><span class="o">.</span><span class="nx">_callback</span><span class="o">;</span>
@@ -488,26 +466,19 @@
         <span class="o">};</span>
 
 
-        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
-            <span class="c">// dynamic load</span>
-<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;trying to get the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">);</span>
+        <span class="c">// dynamic load</span>
+<span class="c"></span>        <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span> <span class="o">&amp;&amp;</span> <span class="nx">missing</span><span class="o">.</span><span class="nx">length</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;Attempting to dynamically load the missing modules &#39;</span> <span class="o">+</span> <span class="nx">missing</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
             <span class="nx">loader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Loader</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">config</span><span class="o">);</span>
-            <span class="c">// loader.subscribe(&#39;success&#39;, onComplete, Y);</span>
-<span class="c"></span>            <span class="c">// loader.subscribe(&#39;failure&#39;, onComplete, Y);</span>
-<span class="c"></span>            <span class="c">// loader.subscribe(&#39;timeout&#39;, onComplete, Y);</span>
-<span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">onSuccess</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onFailure</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">onTimeout</span> <span class="o">=</span> <span class="nx">onComplete</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">attaching</span> <span class="o">=</span> <span class="nx">a</span><span class="o">;</span>
             <span class="nx">loader</span><span class="o">.</span><span class="nx">require</span><span class="o">(</span><span class="nx">missing</span><span class="o">);</span>
-            <span class="c">// loader calls use to automatically attach when finished</span>
-<span class="c"></span>            <span class="c">// but we still need to execute the callback.</span>
-<span class="c"></span>            <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
+            <span class="nx">loader</span><span class="o">.</span><span class="nx">insert</span><span class="o">();</span>
         <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="c">// if (!dynamic) {</span>
-<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
-            <span class="c">// }</span>
-<span class="c"></span>            <span class="nx">onComplete</span><span class="o">();</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="nx">r</span><span class="o">);</span>
+            <span class="nx">onComplete</span><span class="o">();</span>
         <span class="o">}</span>
 
         <span class="k">return</span> <span class="nx">Y</span><span class="o">;</span> <span class="c">// chain support var yui = YUI().use(&#39;dragdrop&#39;);</span>

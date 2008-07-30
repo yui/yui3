@@ -191,7 +191,7 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id);
+        Y.log("Finishing transaction " + id, "info", "Get");
         var q = queues[id];
         q.finished = true;
 
@@ -215,7 +215,7 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Get utility timeout " + id);
+        Y.log("Timeout " + id, "info", "Get");
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.context || q;

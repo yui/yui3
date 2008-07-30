@@ -346,10 +346,6 @@ YUI.prototype = {
                 }
             }
 
-            // if (callback) {
-                // a.push(callback);
-            // }
-
             return Y.use.apply(Y, a);
 
         }
@@ -382,12 +378,6 @@ YUI.prototype = {
             if (m) {
                 used[name] = true;
 
-                // if (dynamic) {
-                    // Y.mix(l, YUI.Env.mods);
-                    // Y.log('attaching ' + name, 'info', 'YUI');
-                    // m.fn(Y);
-                // }
-
                 // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
@@ -411,18 +401,6 @@ YUI.prototype = {
             // Y.log('using ' + name);
             r.push(name);
 
-            // auto-attach sub-modules
-            /*
-            if (use) {
-                if (Y.Lang.isString(use)) {
-                    f(use);
-                } else {
-                    for (j = 0; j < use.length; j = j + 1) {
-                        f(use[j]);
-                    }
-                }
-            }
-            */
         };
 
         // process each requirement and any additional requirements 
@@ -431,11 +409,11 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
         var onComplete = function(fromLoader) {
 
-            Y.log('Use complete');
+            // Y.log('Use complete');
 
             if (Y.Env._callback) {
 
@@ -450,25 +428,18 @@ YUI.prototype = {
         };
 
 
+        // dynamic load
         if (Y.Loader && missing.length) {
-            // dynamic load
-            Y.log('trying to get the missing modules ' + missing);
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
             loader = new Y.Loader(Y.config);
-            // loader.subscribe('success', onComplete, Y);
-            // loader.subscribe('failure', onComplete, Y);
-            // loader.subscribe('timeout', onComplete, Y);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
             loader.attaching = a;
             loader.require(missing);
-            // loader calls use to automatically attach when finished
-            // but we still need to execute the callback.
             loader.insert();
         } else {
-            // if (!dynamic) {
-                Y._attach(r);
-            // }
+            Y._attach(r);
             onComplete();
         }
 
@@ -1550,7 +1521,7 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id);
+        Y.log("Finishing transaction " + id, "info", "Get");
         var q = queues[id];
         q.finished = true;
 
@@ -1574,7 +1545,7 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Get utility timeout " + id);
+        Y.log("Timeout " + id, "info", "Get");
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.context || q;
@@ -3289,7 +3260,7 @@ Y.Env.meta = {
                 if (this._combining.length) {
 
                     var callback=function(o) {
-                        Y.log('loading combo, just loaded' + o.data);
+                        Y.log('loading combo, just loaded' + o.data, "info", "Loader");
                         self._combineComplete = true;
 
                         var c=self._combining, len=c.length, i, m;
@@ -3326,7 +3297,7 @@ Y.Env.meta = {
                     return;
                 }
 
-                Y.log("loadNext executing, just loaded " + mname);
+Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -3364,7 +3335,7 @@ Y.Env.meta = {
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
                     return;
                 }
 
@@ -3390,7 +3361,7 @@ Y.Env.meta = {
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base);
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {
@@ -3493,7 +3464,7 @@ Y.Env.meta = {
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' setup completing) .');
+        Y.log(Y.id + ' initialized', 'info', 'YUI');
 
         if (C.core) {
 

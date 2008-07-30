@@ -346,10 +346,6 @@ YUI.prototype = {
                 }
             }
 
-            // if (callback) {
-                // a.push(callback);
-            // }
-
             return Y.use.apply(Y, a);
 
         }
@@ -382,12 +378,6 @@ YUI.prototype = {
             if (m) {
                 used[name] = true;
 
-                // if (dynamic) {
-                    // Y.mix(l, YUI.Env.mods);
-                    // Y.log('attaching ' + name, 'info', 'YUI');
-                    // m.fn(Y);
-                // }
-
                 // Y.log('found ' + name);
                 req = m.details.requires;
                 use = m.details.use;
@@ -411,18 +401,6 @@ YUI.prototype = {
             // Y.log('using ' + name);
             r.push(name);
 
-            // auto-attach sub-modules
-            /*
-            if (use) {
-                if (Y.Lang.isString(use)) {
-                    f(use);
-                } else {
-                    for (j = 0; j < use.length; j = j + 1) {
-                        f(use[j]);
-                    }
-                }
-            }
-            */
         };
 
         // process each requirement and any additional requirements 
@@ -431,11 +409,11 @@ YUI.prototype = {
             f(a[i]);
         }
 
-        Y.log('all reqs: ' + r + ' --- missing: ' + missing);
+        // Y.log('all reqs: ' + r + ' --- missing: ' + missing);
 
         var onComplete = function(fromLoader) {
 
-            Y.log('Use complete');
+            // Y.log('Use complete');
 
             if (Y.Env._callback) {
 
@@ -450,25 +428,18 @@ YUI.prototype = {
         };
 
 
+        // dynamic load
         if (Y.Loader && missing.length) {
-            // dynamic load
-            Y.log('trying to get the missing modules ' + missing);
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
             loader = new Y.Loader(Y.config);
-            // loader.subscribe('success', onComplete, Y);
-            // loader.subscribe('failure', onComplete, Y);
-            // loader.subscribe('timeout', onComplete, Y);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
             loader.onTimeout = onComplete;
             loader.attaching = a;
             loader.require(missing);
-            // loader calls use to automatically attach when finished
-            // but we still need to execute the callback.
             loader.insert();
         } else {
-            // if (!dynamic) {
-                Y._attach(r);
-            // }
+            Y._attach(r);
             onComplete();
         }
 
