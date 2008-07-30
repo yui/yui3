@@ -16,7 +16,7 @@ $examples["event-simple"] = array(
 	description => "Use the Event Utility to attach simple DOM event handlers.",
 	sequence => array(1),
 	newWindow => "default",
-	requires => array("yui"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -28,7 +28,7 @@ $examples["event-timing"] = array(
 	logger => array("event", "example"),
 	loggerInclude => "require", 
 	newWindow => "suppress",
-	requires => array("yui"),
+	requires => array("node"),
 	highlightSyntax => true
 );
 
@@ -38,7 +38,7 @@ $examples["event-ce"] = array(
 	description => "Use the Event Utility to create Custom Events that are bubbleable, preventable, cancelable and much more.",
 	sequence => array(4),
 	newWindow => "default",
-	requires => array("yui"),
+	requires => array("node"),
 	logger => array("event", "example"),
 	highlightSyntax => true
 );

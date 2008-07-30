@@ -2,7 +2,8 @@
     
 <script language="javascript">
 
-YUI().use('node', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+function(Y) {
         
     //A function that pops up a "Hello World" alert:
     var helloWorld = function(e) {

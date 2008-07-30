@@ -27,7 +27,8 @@
 
 <script>
 
-YUI().use('*', function(Y) {
+YUI().use('*', 
+function(Y) {
     var node = Y.get('#demo');
     var used = [];
     Y.each(Y.Env._attached, function(v, k) {

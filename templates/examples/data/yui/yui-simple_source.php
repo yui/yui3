@@ -11,7 +11,8 @@
 
 <script>
 
-var Y = YUI().use('node', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+function(Y) {
     var node = Y.get('#demo');
     Y.log('Found node.. Setting style');
     node.setStyle('backgroundColor', '#D00050');

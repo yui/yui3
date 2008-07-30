@@ -23,7 +23,10 @@
 <div id="results">Click a date..</div>
 
 <script>
-YUI().use('dd-drag', function(Y) {
+
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+
+function(Y) {
     var cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');
     cal1.renderEvent.subscribe(function() {
         var dd = new Y.DD.Drag({

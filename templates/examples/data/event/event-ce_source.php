@@ -9,7 +9,9 @@
 <script language="javascript">
 
 //Create a YUI instance:
-YUI().use('node', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+
+function(Y) {
 
     //Shortcut for our logging div:
     var logger = Y.Node.get("#log");

@@ -16,7 +16,8 @@
 
 <script language="javascript">
 
-YUI().use('node', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+function(Y) {
 
 	//we'll use this handler for all of our callbacks; the
 	//message being logged will always be the last argument.

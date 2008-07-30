@@ -16,7 +16,8 @@
 </div>
 <script>
 
-var Y = YUI().use('animation', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('animation',
+function(Y) {
     var anim = new Y.Anim({
         node: '#demo',
         to: {
@@ -34,7 +35,8 @@ var Y = YUI().use('animation', function(Y) {
     anim.run();
 });
 
-var Y2 = YUI().use('dd-drag', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-drag',
+function(Y) {
     var dd = new Y.DD.Drag({
         node: '#demo'
     });

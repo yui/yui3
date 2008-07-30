@@ -12,7 +12,9 @@
 
 <script>
 
-YUI().use('node', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
+
+function(Y) {
     var node = Y.get('#demo');
     var used = [];
     Y.each(Y.Env._attached, function(v, k) {
