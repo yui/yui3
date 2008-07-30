@@ -1,4 +1,3 @@
-// requires lang, dump
 YUI.add("substitute", function(Y) {
 
     var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}',
@@ -18,7 +17,7 @@ YUI.add("substitute", function(Y) {
      * pairs if Y.dump is available (if dump isn't available, toString()
      * is used).
      *
-     * This method is included in the 'i18n' module.  It is not included
+     * This method is included in the 'substitute' module.  It is not included
      * in the YUI module.
      *
      * @method substitute
