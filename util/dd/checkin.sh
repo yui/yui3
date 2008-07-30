@@ -28,13 +28,6 @@ echo "****************************************"
 echo "Checking in Doc files"
 echo "****************************************"
 cd ../../src/dd
-cat ddm.js >> ddm-base.js
-wait
-cat ddm-drop.js >> ddm-base.js
-wait
-rm ddm.js
-wait
-rm ddm-drop.js
 wait
 cvs commit -m "$CMT" *.js
 wait

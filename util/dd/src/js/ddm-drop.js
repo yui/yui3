@@ -1,10 +1,10 @@
     /**
-     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     * <p>Module Name: <strong>dd-ddm-drop</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * @module dd
+     * @for DDM
+     * @submodule dd-ddm-drop
      */
-    /**
-     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
-     */    
+
     //TODO CSS class name for the bestMatch..
     Y.mix(Y.DD.DDM, {
         /**
@@ -137,6 +137,7 @@
         * @description Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
+        * @chainable
         */
         _addValid: function(drop) {
             this.validDrops[this.validDrops.length] = drop;
@@ -148,6 +149,7 @@
         * @description Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
         * @param {Object} drop
         * @return {Self}
+        * @chainable
         */
         _removeValid: function(drop) {
             var drops = [];

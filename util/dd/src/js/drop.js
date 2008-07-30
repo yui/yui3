@@ -1,8 +1,8 @@
     /**
-     * This class provides the ability to create a Drop Target.
-     * <p>Module Name: <strong>dd-drop</strong></p>
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
-     */
+     * @submodule dd-drop
+     */     
     /**
      * This class provides the ability to create a Drop Target.
      * @class Drop
