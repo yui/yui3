@@ -35,7 +35,10 @@ if(!isset($prepend)) {$prepend = "";}
 //used to stamp external links in dist
 $externalLabel = ($ydn) ? "" : " (external)";
 
-$yuiConfig = ($buildpath) ? "{ base:\"$buildpath\" }" : "";
+$comboConfig = "{root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", filter: \"debug\", timeout: 10000}";
+$separateConfig = "{ base:\"$buildpath\" }";
+
+$yuiConfig = ($ydn) ? $comboConfig : $separateConfig;
 
 $currentExample = $examples[$name];
 $currentModuleName = $examples[$name][modules][0];
