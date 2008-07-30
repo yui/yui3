@@ -73,4 +73,10 @@ general:
     constants
     error message symbols (symbol description optional module)
 
-    
+-------------------------------------- 
+
+Loader can handle modules already on the page without their dependencies.
+Fixed redundant attach when not dynamically loading.
+Added a 'modules' config option for loader and YUI.  This allows one or
+more additional modules to be defined.  
+

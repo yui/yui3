@@ -1,28 +1,96 @@
 /**
- * Provides dynamic loading for the YUI library.  It includes the dependency
- * info for the library, and will automatically pull in dependencies for
- * the modules requested.  It supports rollup files (such as utilities.js, and 
- * will automatically use these when appropriate in order to minimize the 
- * number of http connections required to load all of the dependencies.  It
- * can load the files from the Yahoo! CDN, and it can use the combo service
- * provided on that network.
+ * Loader dynamically loads script and css files.  It includes the dependency
+ * info for the version of the library in use, and will automatically pull in
+ * dependencies for the modules requested.  It supports rollup files and will
+ * automatically use these when appropriate in order to minimize the number of
+ * http connections required to load all of the dependencies.  It can load the
+ * files from the Yahoo! CDN, and it can utilize the combo service provided on
+ * this network to reduce the number of http connections required to download 
+ * YUI files.
  *
  * @module loader
  */
 
 /**
- * Loader provides dynamic loading for YUI.
+ * Loader dynamically loads script and css files.  It includes the dependency
+ * info for the version of the library in use, and will automatically pull in
+ * dependencies for the modules requested.  It supports rollup files and will
+ * automatically use these when appropriate in order to minimize the number of
+ * http connections required to load all of the dependencies.  It can load the
+ * files from the Yahoo! CDN, and it can utilize the combo service provided on
+ * this network to reduce the number of http connections required to download 
+ * YUI files.
  * @class Loader
+ * @constructor
+ * @param o an optional set of configuration options.  Valid options:
+ * <ul>
+ *  <li>base:
+ *  The base dir</li>
+ *  <li>secureBase:
+ *  The secure base dir (not implemented)</li>
+ *  <li>comboBase:
+ *  The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+ *  <li>root:
+ *  The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+ *  <li>filter:
+ *  
+ * A filter to apply to result urls.  This filter will modify the default
+ * path for all modules.  The default path for the YUI library is the
+ * minified version of the files (e.g., event-min.js).  The filter property
+ * can be a predefined filter or a custom filter.  The valid predefined 
+ * filters are:
+ * <dl>
+ *  <dt>DEBUG</dt>
+ *  <dd>Selects the debug versions of the library (e.g., event-debug.js).
+ *      This option will automatically include the logger widget</dd>
+ *  <dt>RAW</dt>
+ *  <dd>Selects the non-minified version of the library (e.g., event.js).</dd>
+ * </dl>
+ * You can also define a custom filter, which must be an object literal 
+ * containing a search expression and a replace string:
+ * <pre>
+ *  myFilter: &#123; 
+ *      'searchExp': "-min\\.js", 
+ *      'replaceStr': "-debug.js"
+ *  &#125;
+ * </pre>
+ *
+ *  </li>
+ *  <li>combine:
+ *  Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+ *  <li>ignore:
+ *  A list of modules that should never be dynamically loaded</li>
+ *  <li>force:
+ *  A list of modules that should always be loaded when required, even if already present on the page</li>
+ *  <li>insertBefore:
+ *  Node or id for a node that should be used as the insertion point for new nodes</li>
+ *  <li>charset:
+ *  charset for dynamic nodes</li>
+ *  <li>timeout:
+ *  number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+ *  <li>context:
+ *  execution context for all callbacks</li>
+ *  <li>onSuccess:
+ *  callback for the 'success' event</li>
+ *  <li>onFailure:
+ *  callback for the 'failure' event</li>
+ *  <li>onTimeout:
+ *  callback for the 'timeout' event</li>
+ *  <li>onProgress:
+ *  callback executed each time a script or css file is loaded</li>
+ *  <li>modules:
+ *  A list of module definitions.  See Loader.addModule for the supported module metadata</li>
+ * </ul>
  */
 
-/**
+/*
  * Executed when the loader successfully completes an insert operation
  * This can be subscribed to normally, or a listener can be passed
  * as an onSuccess config option.
  * @event success
  */
 
-/**
+/*
  * Executed when the loader fails to complete an insert operation.
  * This can be subscribed to normally, or a listener can be passed
  * as an onFailure config option.
@@ -30,7 +98,7 @@
  * @event failure
  */
 
-/**
+/*
  * Executed when a Get operation times out.
  * This can be subscribed to normally, or a listener can be passed
  * as an onTimeout config option.
@@ -284,26 +352,33 @@ Y.Env.meta = {
          */
         this._useYahooListener = false;
 
-        /*
+        /**
          * Callback that will be executed when the loader is finished
          * with an insert
          * @method onSuccess
          * @type function
          */
-        // this.onSuccess = null;
+        this.onSuccess = null;
 
-        /*
+        /**
          * Callback that will be executed if there is a failure
          * @method onFailure
          * @type function
          */
 
-        /*
-         * Callback that will be executed each time a new module is loaded
+        /**
+         * Callback executed each time a script or css file is loaded
          * @method onProgress
          * @type function
          */
-        // this.onProgress = null;
+        this.onProgress = null;
+
+        /**
+         * Callback that will be executed if a timeout occurs
+         * @method onTimeout
+         * @type function
+         */
+        this.onTimeout = null;
 
         /**
          * The execution context for all callbacks
@@ -491,6 +566,13 @@ Y.Env.meta = {
         this.loaded = {};
 
         /**
+         * A list of modules to attach to the YUI instance when complete.
+         * If not supplied, the sorted list of dependencies are applied.
+         * @property attaching
+         */
+        this.attaching = null;
+
+        /**
          * Flag to indicate the dependency tree needs to be recomputed
          * if insert is called again.
          * @property dirty
@@ -532,14 +614,20 @@ Y.Env.meta = {
             // apply config values
             if (o) {
                 for (var i in o) {
+                    var val = o[i];
                     if (o.hasOwnProperty(i)) {
-                        if (i == "require") {
-                            this.require(o[i]);
+                        if (i == 'require') {
+                            this.require(val);
                         // support the old callback syntax
-                        } else if (i.indexOf('on') === 0) {
-                            this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
+                        // } else if (i.indexOf('on') === 0) {
+                            // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
+                        } else if (i == 'modules') {
+                            // add a hash of module definitions
+                            for (var j in val) {
+                                this.addModule(val[j], j);
+                            }
                         } else {
-                            this[i] = o[i];
+                            this[i] = val;
                         }
                     }
                 }
@@ -961,10 +1049,24 @@ Y.Env.meta = {
             }
         },
 
+        _attach: function() {
+
+            // this is the full list of items the YUI needs attached,
+            // which is needed if some dependencies are already on
+            // the page without their dependencies.
+            if (this.attaching) {
+                Y._attach(this.attaching);
+            } else {
+                Y._attach(this.sorted);
+            }
+
+        },
+
         _onSuccess: function() {
 
             this._pushEvents();
-            Y._attach(this.sorted);
+
+            this._attach();
 
             for (var i in this.skipped) {
                 delete this.inserted[i];
@@ -986,7 +1088,7 @@ Y.Env.meta = {
         },
 
         _onFailure: function(msg) {
-            Y._attach(this.sorted);
+            this._attach();
             // this.fire('failure', {
             //     msg: 'operation failed: ' + msg,
             //     data: this.data
@@ -1002,7 +1104,7 @@ Y.Env.meta = {
         },
 
         _onTimeout: function(msg) {
-            Y._attach(this.sorted);
+            this._attach();
 
             // this.fire('timeout', {
             //     data: this.data
