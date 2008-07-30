@@ -2197,7 +2197,7 @@ Y.Env.meta = {
 
         'dd':{
             path: 'dd/dd-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-core', 'dd-drag-proxy'],
+            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-proxy'],
             rollup: 5
         },
 
