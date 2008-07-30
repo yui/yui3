@@ -2066,7 +2066,6 @@ Y.Env.meta = {
 
     modules: {
 
-
       dom: {
           requires: ['event'],
           supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector'],
@@ -2118,7 +2117,7 @@ Y.Env.meta = {
 
 
         animation: {
-            requires: ['base']
+            requires: ['dom', 'base']
         },
 
         attribute: { 

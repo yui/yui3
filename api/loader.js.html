@@ -170,7 +170,6 @@
 
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
 
-
       <span class="nx">dom</span><span class="o">:</span> <span class="o">{</span>
           <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">],</span>
           <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-base&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-style&#39;</span><span class="o">,</span> <span class="s1">&#39;dom-screen&#39;</span><span class="o">,</span> <span class="s1">&#39;selector&#39;</span><span class="o">],</span>
@@ -222,7 +221,7 @@
 
 
         <span class="nx">animation</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">]</span>
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">]</span>
         <span class="o">},</span>
 
         <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> 
@@ -1083,8 +1082,10 @@
 <span class="c"></span>            <span class="c">// which is needed if some dependencies are already on</span>
 <span class="c"></span>            <span class="c">// the page without their dependencies.</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attaching</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching Y supplied deps: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">attaching</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Loader&quot;</span><span class="o">);</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">attaching</span><span class="o">);</span>
             <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching sorted list: &#39;</span> <span class="o">+</span> <span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">,</span> <span class="s2">&quot;info&quot;</span><span class="o">,</span> <span class="s2">&quot;Loader&quot;</span><span class="o">);</span>
                 <span class="nx">Y</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">sorted</span><span class="o">);</span>
             <span class="o">}</span>
 

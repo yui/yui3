@@ -132,7 +132,6 @@ Y.Env.meta = {
 
     modules: {
 
-
       dom: {
           requires: ['event'],
           supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector'],
@@ -184,7 +183,7 @@ Y.Env.meta = {
 
 
         animation: {
-            requires: ['base']
+            requires: ['dom', 'base']
         },
 
         attribute: { 
@@ -1045,8 +1044,10 @@ Y.Env.meta = {
             // which is needed if some dependencies are already on
             // the page without their dependencies.
             if (this.attaching) {
+                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "Loader");
                 Y._attach(this.attaching);
             } else {
+                Y.log('attaching sorted list: ' + this.sorted, "info", "Loader");
                 Y._attach(this.sorted);
             }
 
