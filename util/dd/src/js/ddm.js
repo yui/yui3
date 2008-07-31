@@ -1,8 +1,9 @@
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Extends the dd-ddm-base Class to add support for the viewport shim to allow a draggable node to drag to be dragged over an iframe or any other node that traps mousemove events.
+     * It is also required to have Drop Targets enabled, as the viewport shim will contain the shims for the Drop Targets.
      * @module dd
-     * @for DDM
      * @submodule dd-ddm
+     * @for DDM
      */
     Y.mix(Y.DD.DDM, {
         /**
