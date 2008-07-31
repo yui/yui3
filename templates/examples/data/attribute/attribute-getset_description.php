@@ -56,7 +56,7 @@
     }
 </textarea>
 
-<p>As seen above, we also setup <code>validator<code> functions for these attributes which ensure that we only store valid values. </p>
+<p>As seen above, we also setup <code>validator</code> functions for these attributes which ensure that we only store valid values. </p>
 
 <p>A <code>content</code> attribute is also setup, which has a <code>set</code> function which changes all content set using this attribute to upper case.</p>
 
