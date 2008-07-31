@@ -283,7 +283,9 @@ YUI.prototype = {
 
                 this.log('attaching ' + name, 'info', 'YUI');
 
-                m.fn(this);
+                if (m.fn) {
+                    m.fn(this);
+                }
 
                 if (use) {
                     this._attach(this.Array(use));
@@ -562,6 +564,8 @@ YUI.prototype = {
 
 
 })();
+// This is just a stub to for dependency processing
+YUI.add("yui-base", null, "@VERSION@");
 YUI.add("log", function(instance) {
 
     /**
@@ -1330,7 +1334,7 @@ YUI.add("later", function(Y) {
 }, "@VERSION@");
 (function() {
 
-    var min = ['log', 'lang', 'array', 'core'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 

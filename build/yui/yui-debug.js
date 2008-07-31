@@ -283,7 +283,9 @@ YUI.prototype = {
 
                 this.log('attaching ' + name, 'info', 'YUI');
 
-                m.fn(this);
+                if (m.fn) {
+                    m.fn(this);
+                }
 
                 if (use) {
                     this._attach(this.Array(use));
@@ -562,6 +564,8 @@ YUI.prototype = {
 
 
 })();
+// This is just a stub to for dependency processing
+YUI.add("yui-base", null, "@VERSION@");
 YUI.add("log", function(instance) {
 
     /**
@@ -2050,6 +2054,10 @@ Y.Get = function() {
  * </ul>
  */
 
+// @TODO backed out the custom event changes so that the event system
+// isn't required in the seed build.  If needed, we may want to 
+// add them back if the event system is detected.
+
 /*
  * Executed when the loader successfully completes an insert operation
  * This can be subscribed to normally, or a listener can be passed
@@ -2092,8 +2100,8 @@ Y.Env.meta = {
 
     root: ROOT,
 
-    // base: 'http://yui.yahooapis.com/' + ROOT,
-    base: '../../build/',
+    base: 'http://yui.yahooapis.com/' + ROOT,
+    // base: '../../build/',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
@@ -2148,10 +2156,40 @@ Y.Env.meta = {
           requires: ['dom-screen', 'node-base']
       },
 
+      anim: {
+          supersedes: ['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-scroll', 'anim-xy'],
+          requires: ['base', 'node']
+      },
 
-        animation: {
-            requires: ['dom', 'base']
-        },
+      'anim-base': {
+          path: 'anim/anim-base-min.js',
+          requires: ['base', 'node-style']
+      },
+
+      'anim-color': {
+          path: 'anim/anim-color-min.js',
+          requires: ['anim-base']
+      },
+
+      'anim-curve': {
+          path: 'anim/anim-curve-min.js',
+          requires: ['anim-xy']
+      },
+
+      'anim-easing': {
+          path: 'anim/anim-easing-min.js'
+      },
+
+      'anim-scroll': {
+          path: 'anim/anim-scroll-min.js',
+          requires: ['anim-base']
+      },
+
+      'anim-xy': {
+          path: 'anim/anim-xy-min.js',
+          requires: ['anim-base', 'node-screen']
+      },
+
 
         attribute: { 
             requires: ['event']
@@ -2255,13 +2293,23 @@ Y.Env.meta = {
             supersedes: ['json-parse', 'json-stringify']
         },
         
-        oop: { },
+        oop: { 
+            requires: ['yui-base']
+        },
 
         queue: { },
 
         substitute: {
             optional: ['dump']
-        }
+        },
+
+        // Since YUI is required for everything else, it should not be specified as
+        // a dependency.
+        yui: {
+            supersedes: ['yui-base', 'get', 'loader']
+        },
+
+        'yui-base': { }
     }
 };
 
@@ -2829,20 +2877,20 @@ Y.Env.meta = {
                 Y.mix(l, Y.Array.hash(this.ignore));
             }
 
+            // expand the list to include superseded modules
+            for (j in l) {
+                // Y.log("expanding: " + j);
+                if (l.hasOwnProperty(j)) {
+                    Y.mix(l, this.getProvides(j));
+                }
+            }
+
             // remove modules on the force list from the loaded list
             if (this.force) {
                 for (i=0; i<this.force.length; i=i+1) {
                     if (this.force[i] in l) {
                         delete l[this.force[i]];
                     }
-                }
-            }
-
-            // expand the list to include superseded modules
-            for (j in l) {
-                // Y.log("expanding: " + j);
-                if (l.hasOwnProperty(j)) {
-                    Y.mix(l, this.getProvides(j));
                 }
             }
 
@@ -3467,7 +3515,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
 }, "@VERSION@");
 (function() {
 
-    var min = ['log', 'lang', 'array', 'core'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 

@@ -1,6 +1,6 @@
 (function() {
 
-    var min = ['log', 'lang', 'array', 'core'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 

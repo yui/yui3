@@ -283,7 +283,9 @@ YUI.prototype = {
 
                 this.log('attaching ' + name, 'info', 'YUI');
 
-                m.fn(this);
+                if (m.fn) {
+                    m.fn(this);
+                }
 
                 if (use) {
                     this._attach(this.Array(use));
