@@ -1,7 +1,7 @@
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.
-        * <p>Module Name: <strong>dd-plugin</strong></p>
         * @module dd-plugin
+        * @submodule dd-plugin
         */
        /**
         * This is a simple Drag plugin that can be attached to a Node via the plug method.

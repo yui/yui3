@@ -1,7 +1,7 @@
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
-        * <p>Module Name: <strong>dd-drop-plugin</strong></p>
         * @module dd-plugin
+        * @submodule dd-drop-plugin
         */
        /**
         * This is a simple Drop plugin that can be attached to a Node via the plug method.
