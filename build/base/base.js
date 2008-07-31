@@ -21,10 +21,17 @@ YUI.add('base', function(Y) {
     var ETP = Y.Event.Target.prototype;
 
     /**
+     * <p>
      * Provides a base class for managed attribute based
-     * objects, which automates chaining of init and destroy
-     * lifecycle methods and automatic instantiation of
-     * registered Attributes, through the static ATTRS property
+     * objects, which handles the chaining of initializer and destructor methods
+     * across the hierarchy during init and destroy lifecycle methods and 
+     * handles automatic configuration of registered Attributes, through 
+     * the static ATTRS property.
+     * </p>
+     *
+     * <p>The Base class also handles prefixing of event types with the static NAME 
+     * property for all events fired from instances of classes derived from Base.</p>
+     *
      * @constructor
      * @class Base
      * @uses Attribute
@@ -66,7 +73,7 @@ YUI.add('base', function(Y) {
          * has been through the init lifecycle phase.
          *
          * @attribute initialized
-         * @readonly
+         * @readOnly
          * @default false
          * @type boolean
          */
@@ -80,7 +87,7 @@ YUI.add('base', function(Y) {
          * has been through the destroy lifecycle phase.
          *
          * @attribute destroyed
-         * @readonly
+         * @readOnly
          * @default false
          * @type boolean
          */
@@ -95,7 +102,7 @@ YUI.add('base', function(Y) {
     /**
      * <p>
      * Builds a constructor function (class) from the
-     * main function, and array of extension functions
+     * main function, and array of extension functions (classes)
      * provided.
      * </p>
      * <p>
@@ -108,7 +115,7 @@ YUI.add('base', function(Y) {
      *    is created which extends the main class, and acts as the 
      *    host on which the extension classes are augmented.</p>
      *    <p>If false, the extensions classes are augmented directly to
-     *    the main class, modifying the main class.</p>
+     *    the main class, modifying the main classes prototype.</p>
      *    </dd>
      *    <dt>aggregates {String[]}</dt>
      *    <dd>An array of static property names, which will get aggregated
@@ -231,12 +238,27 @@ YUI.add('base', function(Y) {
     });
 
     /**
+     * <p>
+     * Creates a new object instance, based on a dynamically created custom class.
+     * The custom class is created from the main class passed in as the first parameter 
+     * along with the list of extension classes passed in
+     * as the second parameter using <a href="#method_build>Base.build</a> 
+     * with "dynamic" set to true. See the documentation for this method 
+     * to see how the main class and extension classes are used.
+     * </p>
+     * 
+     * <p>Any arguments following the 2nd argument are passed as arguments to the 
+     * constructor of the newly created class used to create the instance.</p>
+     * 
      * @method create
      * @static
      *
-     * @param {Function} main 
-     * @param {Array} extensions
-     * @param {Any*} args 
+     * @param {Function} main The main class on which the instance it to be 
+     * based. This class will be extended to create the class for the custom instance
+     * @param {Array} extensions The list of extension classes used to augment the
+     * main class with.
+     * @param {Any*} args  Zero or more arguments to pass to the constructor of the 
+     * newly created class, when creating the instance.
      */
     Base.create = function(main, extensions, args) {
         var c = Base.build(main, extensions, {dynamic:true}),
@@ -257,6 +279,7 @@ YUI.add('base', function(Y) {
          * 
          * @method init
          * @final
+         * @chainable
          * @param {Object} config Object literal of configuration property name/value pairs
          */
         init: function(config) {
@@ -282,7 +305,8 @@ YUI.add('base', function(Y) {
              * </p>
              *
              * @event init
-             * @param {EventFacade} e Event object
+             * @preventable _defInitFn
+             * @param {Event.Facade} e Event object
              * @param config Object literal of configuration name/value pairs
              */
             this.publish(INIT, {
@@ -298,7 +322,7 @@ YUI.add('base', function(Y) {
          * <p>
          * Destroy lifecycle method. Fires the destroy
          * event, prior to invoking destructors for the
-         * class heirarchy.
+         * class hierarchy.
          * </p>
          * <p>
          * Subscribers to the destroy
@@ -307,6 +331,7 @@ YUI.add('base', function(Y) {
          * </p>
          * @method destroy
          * @final
+         * @chainable
          */
         destroy: function() {
 
@@ -322,7 +347,8 @@ YUI.add('base', function(Y) {
              * destruction).
              * </p>
              * @event destroy
-             * @param {EventFacade} e Event object
+             * @preventable _defDestroyFn
+             * @param {Event.Facade} e Event object
              */
             this.publish(DESTROY, {
                 queuable:false,
@@ -361,7 +387,7 @@ YUI.add('base', function(Y) {
         },
 
         /**
-         * Returns the top down class heirarchy for this object,
+         * Returns the top down class hierarchy for this object,
          * with Base being the first class in the array
          *
          * @protected
@@ -474,6 +500,7 @@ YUI.add('base', function(Y) {
          * Overrides Event.Target's fire method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
+         * 
          * @method fire
          * @param {String|Object} type The type of the event, or an object that contains
          * a 'type' property. If the type does not contain a prefix ("prefix:eventType"),

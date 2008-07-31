@@ -1,7 +1,3 @@
-    /**
-     * Managed Attribute Provider
-     * @module attribute
-     */
 
     var O = Y.Object,
 
@@ -180,6 +176,7 @@
          * as the only argument.
          *
          * @method get
+         *
          * @param {String} key The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
@@ -212,12 +209,16 @@
          * Sets the value of an attribute.
          *
          * @method set
+         * @chainable
+         * 
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
          * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
          * been declared as an immutable attribute (see Attribute.CLONE).
+         * 
          * @param {Any} value The value to apply to the attribute
+         * 
          * @param {Object} opts Optional event data. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
          * of attribute change events
@@ -274,7 +275,7 @@
         },
 
         /**
-         * Alias for the Event.Target subscribe method.
+         * Alias for the <a href="Event.Target.html#method_subscribe">Event.Target subscribe method</a>.
          * @method on
          */
         on : function() {
@@ -284,9 +285,9 @@
         /**
          * Default handler implementation for set events
          *
-         * @method _defAttSet
          * @private
-         * @param {EventFacade} e The event object for the custom event
+         * @method _defAttSet
+         * @param {Event.Facade} e The event object for the custom event
          */
         _defAttSet : function(e) {
             var conf = this._conf,

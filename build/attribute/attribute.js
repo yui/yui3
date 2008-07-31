@@ -5,6 +5,131 @@ YUI.add('attribute', function(Y) {
      * @module attribute
      */
 
+    /**
+     * Maintain state for a collection of items.  Individual properties 
+     * are stored in hash tables.  This is instead of having state objects 
+     * for each item in the collection.  For large collections, especially 
+     * changing ones, this approach may perform better.
+     * 
+     * @constructor
+     * @class State
+     */
+    Y.State = function() { 
+
+        /**
+         * Hash of attributes
+         * @property data
+         */
+        this.data = {};
+    };
+
+    Y.State.prototype = {
+
+        /**
+         * Add an item with all of the properties in the supplied object.
+         * @method add
+         * @param name {string} identifier for this attribute
+         * @param o hash of attributes
+         */
+        add: function(name, o) {
+            Y.each(o, function(v, k) {
+                if (!this.data[k]) {
+                    this.data[k] = {};
+                }
+
+                this.data[k][name] = v;
+            }, this);
+        },
+
+        /**
+         * Remove entire item, or optionally specified fields
+         * @method remove
+         * @param name {string} name of attribute
+         * @param o {string|object|array} single key or collection of keys to delete
+         */
+        remove: function(name, o) {
+            var d = this.data, 
+                del = function(key) {
+                    if (d[key] && (name in d[key])) {
+                        delete d[key][name];
+                    }
+                };
+
+            if (Y.Lang.isString(o)) {
+                del(o);
+            } else {
+                Y.each(o || d, function(v, k) {
+                    if(Y.Lang.isString(k)) {
+                        del(k);
+                    } else {
+                        del(v);
+                    }
+                }, this);
+
+            }
+        },
+
+        /**
+         * For a given item, gets an attribute.  If key is not
+         * supplied, a disposable object with all attributes is 
+         * returned.  Use of the latter option makes sense when
+         * working with single items, but not if object explosion
+         * might cause gc problems.
+         * @method get
+         * @param name {string} name of attribute
+         * @param key {string} optional attribute to get
+         * @return either the value of the supplied key or an object with
+         * all data.
+         */
+        // get: function(name, key, val) {
+        get: function(name, key) {
+            var d = this.data;
+
+            if (key) {
+                return d[key] && d[key][name];
+            } else {
+                var o = {};
+
+                Y.each(d, function(v, k) {
+                    if (name in d[k]) {
+                        o[k] = v[name];
+                    }
+                }, this);
+
+                return o;
+
+            }
+        }
+
+        // figure out what kind of functionality we may need here
+        // get whole list
+        // get a list of items and values for a given key
+        // get a list of items where a key has the supplied value
+        /*
+        list: function(key, val) {
+            var o = {}, d = this.data, test = !L.isUndefined(val);
+
+            Y.each(this, function(v, k) {
+
+                // verify key
+                if (key && k !== key) {
+                    return;
+                // verify value.  note, v will be the item names, so this
+                // isn't working ... need to iterate v items
+                } else if (test && v !== val) {
+                    return;
+                }
+
+                o[k] = v;
+
+            }, this);
+
+            return o;
+        }
+        */
+    };
+
+
     var O = Y.Object,
 
         DOT = ".",
@@ -179,6 +304,7 @@ YUI.add('attribute', function(Y) {
          * as the only argument.
          *
          * @method get
+         *
          * @param {String} key The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
@@ -211,12 +337,16 @@ YUI.add('attribute', function(Y) {
          * Sets the value of an attribute.
          *
          * @method set
+         * @chainable
+         * 
          * @param {String} name The name of the attribute. Note, if the 
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
          * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
          * been declared as an immutable attribute (see Attribute.CLONE).
+         * 
          * @param {Any} value The value to apply to the attribute
+         * 
          * @param {Object} opts Optional event data. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
          * of attribute change events
@@ -268,7 +398,7 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
-         * Alias for the Event.Target subscribe method.
+         * Alias for the <a href="Event.Target.html#method_subscribe">Event.Target subscribe method</a>.
          * @method on
          */
         on : function() {
@@ -278,9 +408,9 @@ YUI.add('attribute', function(Y) {
         /**
          * Default handler implementation for set events
          *
-         * @method _defAttSet
          * @private
-         * @param {EventFacade} e The event object for the custom event
+         * @method _defAttSet
+         * @param {Event.Facade} e The event object for the custom event
          */
         _defAttSet : function(e) {
             var conf = this._conf,
@@ -593,128 +723,4 @@ YUI.add('attribute', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['event-target', 'state']});
-YUI.add("state", function(Y) {
-
-    var L = Y.Lang;
-
-    /**
-     * Maintain state for a collection of items.  Individual properties 
-     * are stored in hash tables.  This is instead of having state objects 
-     * for each item in the collection.  For large collections, especially 
-     * changing ones, this approach may perform better.
-     * @class State
-     */
-    Y.State = function() { 
-
-        /**
-         * Hash of attributes
-         * @property data
-         */
-        this.data = {};
-    };
-
-    Y.State.prototype = {
-
-        /**
-         * Add an item with all of the properties in the supplied object.
-         * @method add
-         * @param name {string} identifier for this attribute
-         * @param o hash of attributes
-         */
-        add: function(name, o) {
-            Y.each(o, function(v, k) {
-                if (!this.data[k]) {
-                    this.data[k] = {};
-                }
-
-                this.data[k][name] = v;
-            }, this);
-        },
-
-        /**
-         * Remove entire item, or optionally specified fields
-         * @method remove
-         * @param name {string} name of attribute
-         * @param o {string|object|array} single key or collection of keys to delete
-         */
-        remove: function(name, o) {
-            var d = this.data, 
-                del = function(key) {
-                    if (d[key] && (name in d[key])) {
-                        delete d[key][name];
-                    }
-                };
-
-            if (L.isString(o)) {
-                del(o);
-            } else {
-                Y.each(o || d, function(v, k) {
-                    if(L.isString(k)) {
-                        del(k);
-                    } else {
-                        del(v);
-                    }
-                }, this);
-
-            }
-        },
-
-        /** 
-         * for a given item, gets an attribute.  If key is not
-         * supplied, a disposable object with all attributes is 
-         * returned.  Use of the latter option makes sense when
-         * working with single items, but not if object explosion
-         * might cause gc problems.
-         * @method get
-         * @param name {string} name of attribute
-         * @param key {string} optional attribute to get
-         * @return either the value of the supplied key or an object with
-         * all data.
-         */
-        // get: function(name, key, val) {
-        get: function(name, key) {
-            var d = this.data;
-
-            if (key) {
-                return d[key] && d[key][name];
-            } else {
-                var o = {};
-
-                Y.each(d, function(v, k) {
-                    if (name in d[k]) {
-                        o[k] = v[name];
-                    }
-                }, this);
-
-                return o;
-
-            }
-        },
-
-        // figure out what kind of functionality we may need here
-        // get whole list
-        // get a list of items and values for a given key
-        // get a list of items where a key has the supplied value
-        list: function(key, val) {
-            var o = {}, d = this.data, test = !L.isUndefined(val);
-
-            Y.each(this, function(v, k) {
-
-                // verify key
-                if (key && k !== key) {
-                    return;
-                // verify value.  note, v will be the item names, so this
-                // isn't working ... need to iterate v items
-                } else if (test && v !== val) {
-                    return;
-                }
-
-                o[k] = v;
-
-            }, this);
-
-            return o;
-        }
-    };
-}, "3.0.0");
+}, '@VERSION@' ,{requires:['event']});
