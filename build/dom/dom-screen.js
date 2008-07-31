@@ -1,8 +1,10 @@
 YUI.add('dom-screen', function(Y) {
 
 /**
- * This module add support for positioning elements window/document size normalization.
- * @module dom-screen
+ * Adds position and region management functionality to DOM.
+ * @module dom
+ * @submodule dom-screen
+ * @for DOM
  */
 
 var OFFSET_TOP = 'offsetTop',
@@ -346,8 +348,10 @@ Y.mix(Y.DOM, {
 });
 
 /**
- * Adds region management functionality to DOM.
- * @module dom-region
+ * Adds position and region management functionality to DOM.
+ * @module dom
+ * @submodule dom-screen
+ * @for DOM
  */
 
 var OFFSET_WIDTH = 'offsetWidth',
@@ -491,4 +495,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});

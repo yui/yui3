@@ -1,13 +1,16 @@
 YUI.add('dom-base', function(Y) {
 
 /** 
- * Provides helper functions for common DOM tasks.
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
  * @module dom
+ * @submodule dom-base
  *
  */
 
 /** 
- * Provides helper functions for common DOM tasks.
+ * Provides DOM helper methods.
  * @class DOM
  *
  */
@@ -478,9 +481,13 @@ Y.DOM = {
         });
     }
 })();
-/**
- * Add className management functionality to DOM.
- * @module dom-class
+/** 
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
+ * @module dom
+ * @submodule dom-base
+ * @for DOM
  */
 
 var CLASS_NAME = 'className';
@@ -556,4 +563,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['event'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['event']});

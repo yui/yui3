@@ -1,13 +1,16 @@
 YUI.add('dom', function(Y) {
 
 /** 
- * Provides helper functions for common DOM tasks.
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
  * @module dom
+ * @submodule dom-base
  *
  */
 
 /** 
- * Provides helper functions for common DOM tasks.
+ * Provides DOM helper methods.
  * @class DOM
  *
  */
@@ -478,9 +481,13 @@ Y.DOM = {
         });
     }
 })();
-/**
- * Add className management functionality to DOM.
- * @module dom-class
+/** 
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
+ * @module dom
+ * @submodule dom-base
+ * @for DOM
  */
 
 var CLASS_NAME = 'className';
@@ -554,9 +561,11 @@ Y.mix(Y.DOM, {
     }
 });
 
-/**
- * Adds region management functionality to DOM.
- * @module dom-style
+/** 
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var DOCUMENT_ELEMENT = 'documentElement',
@@ -702,8 +711,10 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
 }
 
 /**
- * This module add support for positioning elements window/document size normalization.
- * @module dom-screen
+ * Adds position and region management functionality to DOM.
+ * @module dom
+ * @submodule dom-screen
+ * @for DOM
  */
 
 var OFFSET_TOP = 'offsetTop',
@@ -1047,8 +1058,10 @@ Y.mix(Y.DOM, {
 });
 
 /**
- * Adds region management functionality to DOM.
- * @module dom-region
+ * Adds position and region management functionality to DOM.
+ * @module dom
+ * @submodule dom-screen
+ * @for DOM
  */
 
 var OFFSET_WIDTH = 'offsetWidth',
@@ -1191,8 +1204,10 @@ Y.mix(Y.DOM, {
     }
 });
 /**
- * Adds opacity and currentStyle support for IE. 
- * @module dom-ie-style
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var CLIENT_TOP = 'clientTop',
@@ -1961,15 +1976,10 @@ Y.Selector = Selector;
 Y.Selector.patterns = patterns;
 
 /**
- * Provides color conversion functionality.
- * @module color
- *
- */
-
-/**
- * Provides color conversion functionality.
- * @class Color
- *
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var TO_STRING = 'toString',

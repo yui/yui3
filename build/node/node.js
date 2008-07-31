@@ -1,18 +1,18 @@
 YUI.add('node', function(Y) {
 
-/**
- * Provides a wrapper for dom nodes that supports selector queries normalizes x-browser differences.
- * @module node
- */
+    /**
+     * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
+     * @module node
+     * @submodule node-base
+     */     
 
     /**
-     * A wrapper for DOM Nodes.
+     * The Node class provides a wrapper for manipulating DOM Nodes.
      * Node properties can be accessed via the set/get methods.
-     * With the exception of the noted properties,
-     * only strings, numbers, and booleans are passed through. 
      * Use Y.get() or Y.Node.get() to retrieve Node instances.
      *
      * @class Node
+     * @constructor
      */
 
     var BASE_NODE                   = 0, 
@@ -322,6 +322,7 @@ YUI.add('node', function(Y) {
          * @method setAttribute
          * @param {String} attribute The attribute to set 
          * @param {String} The value to apply to the attribute 
+         * @chainable
          */
         setAttribute: noOut,
 
@@ -336,6 +337,7 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method scrollIntoView
+         * @chainable
          */
         scrollIntoView: noOut,
 
@@ -350,12 +352,14 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method focus
+         * @chainable
          */
         focus: noOut,
 
         /**
          * Passes through to DOM method.
          * @method blur
+         * @chainable
          */
         blur: noOut,
 
@@ -363,6 +367,7 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method submit
+         * @chainable
          */
         submit: noOut,
 
@@ -370,6 +375,7 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method reset
+         * @chainable
          */
         reset: noOut
     };
@@ -415,13 +421,18 @@ YUI.add('node', function(Y) {
     var GETTERS = {
         /**
          * Normalizes nodeInnerText and textContent. 
-         * @property text
+         * @attribute text
          * @type String
          */
         'text': function(node) {
             return node.get('innerText') || node.get('textContent') || '';
         },
 
+        /**
+         * Returns a nodeList of option elements 
+         * @attribute options
+         * @type String
+         */
         'options': function(node) {
             return (node) ? node.getElementsByTagName('option') : [];
         }
@@ -509,6 +520,7 @@ YUI.add('node', function(Y) {
          * @method set
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
+         * @chainable
          */
         set: function(prop, val) {
             var node = _nodes[this._yuid];
@@ -718,6 +730,7 @@ YUI.add('node', function(Y) {
          * @method contains
          * @param {String | HTMLElement} needle The possible descendent
          * @return {Boolean} Whether or not this node is an ancestor of needle
+         * @chainable
          */
         contains: function(needle) {
             return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
@@ -846,6 +859,8 @@ YUI.add('node', function(Y) {
     /** 
      * A wrapper for manipulating multiple DOM elements
      * @class NodeList
+     * @extends Node
+     * @constructor
      */
     var NodeList = function(nodes) {
         // TODO: input validation
@@ -882,6 +897,7 @@ YUI.add('node', function(Y) {
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
          * @see Node
+         * @chainable
          */
         set: function(name, val) {
             var nodes = _nodelists[this._yuid];
@@ -933,7 +949,7 @@ YUI.add('node', function(Y) {
          * @param {Object} context optional An optional context to apply the function with
          * Default context is the NodeList instance
          * @return {NodeList} NodeList containing the updated collection 
-         * @see Y.each
+         * @chainable
          */
         each: function(fn, context) {
             context = context || this;
@@ -965,13 +981,13 @@ YUI.add('node', function(Y) {
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
 /**
- * Extended Node interface for managing regions.
- * @module node-region
+ * Extended Node interface for managing node styles.
+ * @module node-styles
  */
 
 Y.Node.addDOMMethods([
     /**
-     * Retrieves a style attribute from the node.
+     * Returns the given style attribute value from the node.
      * @method getStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
@@ -979,7 +995,7 @@ Y.Node.addDOMMethods([
     'getStyle',
 
     /**
-     * Retrieves the computed value for the given style attribute.
+     * Returns the computed value for the given style attribute.
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -987,10 +1003,11 @@ Y.Node.addDOMMethods([
     'getComputedStyle',
 
     /**
-     * Applies a CSS style to thes node.
+     * Applies a CSS style to the node.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 
+     * @chainable
      */
     'setStyle',
 
@@ -998,19 +1015,18 @@ Y.Node.addDOMMethods([
      * Sets multiple style properties on the node.
      * @method setStyles
      * @param {Object} hash An object literal of property:value pairs. 
+     * @chainable
      */
     'setStyles'
 ]);
 
 /**
  * Extended Node interface for managing classNames.
- * @module node-class
+ * @module node
+ * @submodule node-base
+ * @for Node
  */
 
-    /**
-     * An interface for manipulating className strings.
-     * @interface NodeClassName
-     */
     Y.Node.addDOMMethods([
         /**
          * Determines whether an HTMLElement has the given className.
@@ -1024,6 +1040,7 @@ Y.Node.addDOMMethods([
          * Adds a class name to a given element or collection of elements.
          * @method addClass         
          * @param {String} className the class name to add to the class attribute
+         * @chainable
          */
         'addClass',
 
@@ -1031,6 +1048,7 @@ Y.Node.addDOMMethods([
          * Removes a class name from a given element or collection of elements.
          * @method removeClass         
          * @param {String} className the class name to remove from the class attribute
+         * @chainable
          */
         'removeClass',
 
@@ -1040,6 +1058,7 @@ Y.Node.addDOMMethods([
          * @method replaceClass  
          * @param {String} oldClassName the class name to be replaced
          * @param {String} newClassName the class name that will be replacing the old class name
+         * @chainable
          */
         'replaceClass',
 
@@ -1047,15 +1066,33 @@ Y.Node.addDOMMethods([
          * If the className exists on the node it is removed, if it doesn't exist it is added.
          * @method toggleClass  
          * @param {String} className the class name to be toggled
+         * @chainable
          */
         'toggleClass'
     ]);
 /**
- * Extended Node interface for managing regions.
- * @module node-region
+ * Extended Node interface for managing regions and screen positioning.
+ * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * @module node
+ * @submodule node-screen
+ * @for Node
  */
 
-var ATTR = ['region', 'viewportRegion'],
+var ATTR = [
+        /**
+         * Returns a region object for the node 
+         * @attribute region
+         * @type Node
+         */
+        'region',
+        /**
+         * Returns a region object for the node's viewport 
+         * @attribute viewportRegion
+         * @type Node
+         */
+        'viewportRegion'
+    ],
+
     getNode = Y.Node.getDOMNode;
 
 Y.each(ATTR, function(v, n) {
@@ -1063,11 +1100,24 @@ Y.each(ATTR, function(v, n) {
 });
 
 Y.Node.addDOMMethods([
+    /**
+     * Removes a class name from a given element or collection of elements.
+     * @method inViewportRegion         
+     * @return {Boolean} Whether or not the node is currently positioned
+     * within the viewport's region
+     */
     'inViewportRegion'
 ]);
 
 // these need special treatment to extract 2nd node arg
 Y.Node.methods({
+    /**
+     * Compares the intersection of the node with another node or region 
+     * @method intersect         
+     * @param {Node|Object} node2 The node or region to compare with.
+     * @param {Object} altRegion An alternate region to use (rather than this node's). 
+     * @return {Object} An object representing the intersection of the regions. 
+     */
     intersect: function(node1, node2, altRegion) {
         if (node2 instanceof Y.Node) { // might be a region object
             node2 = getNode(node2);
@@ -1075,6 +1125,14 @@ Y.Node.methods({
         return Y.DOM.intersect(getNode(node1), node2, altRegion); 
     },
 
+    /**
+     * Determines whether or not the node is within the giving region.
+     * @method inRegion         
+     * @param {Node|Object} node2 The node or region to compare with.
+     * @param {Boolean} all Whether or not all of the node must be in the region. 
+     * @param {Object} altRegion An alternate region to use (rather than this node's). 
+     * @return {Object} An object representing the intersection of the regions. 
+     */
     inRegion: function(node1, node2, all, altRegion) {
         if (node2 instanceof Y.Node) { // might be a region object
             node2 = getNode(node2);
@@ -1084,9 +1142,11 @@ Y.Node.methods({
 });
 
 /**
- * This module applies adds support for positioning elements and
- * normalizes window size and scroll detection. 
- * @module node-screen
+ * Extended Node interface for managing regions and screen positioning.
+ * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * @module node
+ * @submodule node-screen
+ * @for Node
  */
 
     Y.each([
@@ -1117,6 +1177,7 @@ Y.Node.methods({
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
+     * @chainable
      */
         'setXY',
 
@@ -1134,6 +1195,7 @@ Y.Node.methods({
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param {Int} x X value for new position (coordinates are page-based)
+     * @chainable
      */
         'setX',
 
@@ -1151,27 +1213,10 @@ Y.Node.methods({
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param {Int} y Y value for new position (coordinates are page-based)
+     * @chainable
      */
         'setY'
     ]);
-
-    // these need special treatment to extract 2nd node arg
-    Y.Node.methods({
-        intersect: function(node1, node2, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-        },
-
-        inRegion: function(node1, node2, all, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
-        }
-    });
-
 
 
 }, '@VERSION@' ,{requires:['dom']});

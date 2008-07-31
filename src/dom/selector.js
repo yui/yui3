@@ -1,5 +1,3 @@
-YUI.add('selector', function(Y) {
-
 /**
  * Provides helper methods for collecting and filtering DOM elements.
  * @module selector
@@ -185,6 +183,7 @@ var Selector = {
         nodes = nodes || [];
 
         var result = Selector._filter(nodes, Selector._tokenize(selector)[0]);
+        Y.log('filter: returning:' + result[LENGTH], 'info', 'Selector');
         return result;
     },
 
@@ -200,6 +199,7 @@ var Selector = {
      */
     query: function(selector, root, firstOnly) {
         var result = Selector._query(selector, root, firstOnly);
+        //Y.log('query: ' + selector + ' returning ' + result, 'info', 'Selector');
         return result;
     },
 
@@ -326,6 +326,7 @@ var Selector = {
     _regexCache: {},
 
     _clearFoundCache: function() {
+        Y.log('getBySelector: clearing found cache of ' + Selector._foundCache[LENGTH] + ' elements');
         for (var i = 0, len = Selector._foundCache[LENGTH]; i < len; ++i) {
             try { // IE no like delete
                 delete Selector._foundCache[i]._found;
@@ -334,6 +335,7 @@ var Selector = {
             }
         }
         Selector._foundCache = [];
+        Y.log('getBySelector: done clearing Selector._foundCache');
     },
 
     combinators: {
@@ -558,6 +560,3 @@ if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
 Y.Selector = Selector;
 Y.Selector.patterns = patterns;
 
-
-
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});

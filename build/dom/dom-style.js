@@ -1,8 +1,10 @@
 YUI.add('dom-style', function(Y) {
 
-/**
- * Adds region management functionality to DOM.
- * @module dom-style
+/** 
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var DOCUMENT_ELEMENT = 'documentElement',
@@ -148,15 +150,10 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
 }
 
 /**
- * Provides color conversion functionality.
- * @module color
- *
- */
-
-/**
- * Provides color conversion functionality.
- * @class Color
- *
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var TO_STRING = 'toString',
@@ -225,8 +222,10 @@ Y.Color = {
 };
 
 /**
- * Adds opacity and currentStyle support for IE. 
- * @module dom-ie-style
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var CLIENT_TOP = 'clientTop',
@@ -438,4 +437,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
