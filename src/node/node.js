@@ -1,50 +1,37 @@
-YUI.add('node', function(Y) {
-
-/**
- * Provides a wrapper for dom nodes that supports selector queries normalizes x-browser differences.
- * @module node
- */
+    /**
+     * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
+     * @module node
+     * @submodule node-base
+     */     
 
     /**
-     * A wrapper for DOM Nodes.
+     * The Node class provides a wrapper for manipulating DOM Nodes.
      * Node properties can be accessed via the set/get methods.
-     * With the exception of the noted properties,
-     * only strings, numbers, and booleans are passed through. 
      * Use Y.get() or Y.Node.get() to retrieve Node instances.
      *
      * @class Node
+     * @constructor
      */
 
     var BASE_NODE                   = 0, 
         ELEMENT_NODE                = 1,
-        ATTRIBUTE_NODE              = 2,
-        TEXT_NODE                   = 3,
-        CDATA_SECTION_NODE          = 4,
-        ENTITY_REFERENCE_NODE       = 5,
-        ENTITY_NODE                 = 6,
-        PROCESSING_INSTRUCTION_NODE = 7,
-        COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9,
-        DOCUMENT_TYPE_NODE          = 10,
-        DOCUMENT_FRAGMENT_NODE      = 11,
-        NOTATION_NODE               = 12;
+        //ATTRIBUTE_NODE              = 2,
+        //TEXT_NODE                   = 3,
+        //CDATA_SECTION_NODE          = 4,
+        //ENTITY_REFERENCE_NODE       = 5,
+        //ENTITY_NODE                 = 6,
+        //PROCESSING_INSTRUCTION_NODE = 7,
+        //COMMENT_NODE                = 8,
+        DOCUMENT_NODE               = 9; //,
+        //DOCUMENT_TYPE_NODE          = 10,
+        //DOCUMENT_FRAGMENT_NODE      = 11,
+        //NOTATION_NODE               = 12;
 
 
     var OWNER_DOCUMENT = 'ownerDocument',
-        DEFAULT_VIEW = 'defaultView',
-        PARENT_WINDOW = 'parentWindow',
-        DOCUMENT_ELEMENT = 'documentElement',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
-        NODE_TYPE = 'nodeType',
-        COMPAT_MODE = 'compatMode',
-        PARENT_NODE = 'parentNode',
-        PREVIOUS_SIBLING = 'previousSibling',
-        NEXT_SIBLING = 'nextSibling',
-        SCROLL_TOP = 'scrollTop',
-        SCROLL_LEFT = 'scrollLeft',
-        COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
-        CONTAINS = 'contains';
+        NODE_TYPE = 'nodeType';
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
@@ -333,6 +320,7 @@ YUI.add('node', function(Y) {
          * @method setAttribute
          * @param {String} attribute The attribute to set 
          * @param {String} The value to apply to the attribute 
+         * @chainable
          */
         setAttribute: noOut,
 
@@ -347,6 +335,7 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method scrollIntoView
+         * @chainable
          */
         scrollIntoView: noOut,
 
@@ -361,12 +350,14 @@ YUI.add('node', function(Y) {
         /**
          * Passes through to DOM method.
          * @method focus
+         * @chainable
          */
         focus: noOut,
 
         /**
          * Passes through to DOM method.
          * @method blur
+         * @chainable
          */
         blur: noOut,
 
@@ -374,6 +365,7 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method submit
+         * @chainable
          */
         submit: noOut,
 
@@ -381,8 +373,27 @@ YUI.add('node', function(Y) {
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method reset
+         * @chainable
          */
         reset: noOut
+    };
+
+    var addNodeListMethod = function(name) {
+        NodeList.prototype[name] = function() {
+            var a = [],
+                nodes = _nodelists[this._yuid],
+                ret;
+
+            for (var i = 0, len = nodes.length; i < len; ++i) {
+                _nodes[_tmpNode._yuid] = nodes[i];
+                ret = _tmpNode[name].apply(_tmpNode, arguments);
+                if (ret !== _tmpNode) {
+                    a[i] = ret;
+                }
+            }
+
+            return a.length ? a : this;
+        };
     };
 
     var METHODS_INVOKE = {
@@ -398,7 +409,7 @@ YUI.add('node', function(Y) {
         var yuid = Y.guid();
         try { // IE errors on non-element expandos (cant be reused)
             node._yuid = yuid;
-        } catch(e) {};
+        } catch(e) {}
         this._yuid = yuid;
         _nodes[yuid] = node;
         _instances[yuid] = this;
@@ -409,13 +420,18 @@ YUI.add('node', function(Y) {
     var GETTERS = {
         /**
          * Normalizes nodeInnerText and textContent. 
-         * @property text
+         * @attribute text
          * @type String
          */
         'text': function(node) {
             return node.get('innerText') || node.get('textContent') || '';
         },
 
+        /**
+         * Returns a nodeList of option elements 
+         * @attribute options
+         * @type String
+         */
         'options': function(node) {
             return (node) ? node.getElementsByTagName('option') : [];
         }
@@ -465,24 +481,6 @@ YUI.add('node', function(Y) {
         }
     };
 
-    var addNodeListMethod = function(name) {
-        NodeList.prototype[name] = function() {
-            var a = [],
-                nodes = _nodelists[this._yuid],
-                ret;
-
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[_tmpNode._yuid] = nodes[i];
-                ret = _tmpNode[name].apply(nodes[i], arguments);
-                if (ret !== _tmpNode) {
-                    a[i] = ret;
-                }
-            }
-
-            return a.length ? a : this;
-        };
-    };
-
     Node.getDOMNode = function(node) {
         var ret;
 
@@ -521,6 +519,7 @@ YUI.add('node', function(Y) {
          * @method set
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
+         * @chainable
          */
         set: function(prop, val) {
             var node = _nodes[this._yuid];
@@ -621,49 +620,6 @@ YUI.add('node', function(Y) {
         },
 
         /**
-         * Retrieves a style attribute from the given node.
-         * @method getStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The current value of the style property for the element.
-         */
-        getStyle: function(attr) {
-            return Y.DOM.getStyle(_nodes[this._yuid], attr);
-        },
-
-        /**
-         * Retrieves the computed value for the given style attribute.
-         * @method getComputedStyle
-         * @param {String} attr The style attribute to retrieve. 
-         * @return {String} The computed value of the style property for the element.
-         */
-        getComputedStyle: function(attr) {
-            return Y.DOM.getComputedStyle(_nodes[this._yuid], attr);
-        },
-
-        /**
-         * Applies a CSS style to a given node.
-         * @method setStyle
-         * @param {String} attr The style attribute to set. 
-         * @param {String|Number} val The value. 
-         */
-        setStyle: function(attr, val) {
-            Y.DOM.setStyle(_nodes[this._yuid], attr, val);
-            return this;
-        },
-
-        /**
-         * Sets multiple style properties.
-         * @method setStyles
-         * @param {Object} hash An object literal of property:value pairs. 
-         */
-        setStyles: function(hash) {
-            Y.each(hash, function(v, n) {
-                this.setStyle(n, v);
-            }, this);
-            return this;
-        },
-
-        /**
          * Compares nodes to determine if they match.
          * Node instances can be compared to each other and/or HTMLElements/selectors.
          * @method compareTo
@@ -682,7 +638,7 @@ YUI.add('node', function(Y) {
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PARENT_NODE, wrapFn(this, fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(this, fn)));
         },
 
         /**
@@ -695,7 +651,7 @@ YUI.add('node', function(Y) {
          * @return {Node} Node instance or null if not found
          */
         previous: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], PREVIOUS_SIBLING, wrapFn(fn)), all);
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'previousSibling', wrapFn(fn)), all);
         }, 
 
         /**
@@ -708,7 +664,7 @@ YUI.add('node', function(Y) {
          * @return {Object} HTMLElement or null if not found
          */
         next: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], NEXT_SIBLING, wrapFn(fn)), all);
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'nextSibling', wrapFn(fn)), all);
         },
         
        /**
@@ -773,6 +729,7 @@ YUI.add('node', function(Y) {
          * @method contains
          * @param {String | HTMLElement} needle The possible descendent
          * @return {Boolean} Whether or not this node is an ancestor of needle
+         * @chainable
          */
         contains: function(needle) {
             return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
@@ -854,12 +811,10 @@ YUI.add('node', function(Y) {
         }
     
         if (node && typeof node === 'string') {
-            switch(node) {
-                case 'document':
-                    node = Y.config.doc;
-                    break;
-                default: 
-                    node = Y.Selector.query(node, doc, true);
+            if (node === 'document') {
+                node = Y.config.doc;
+            } else {
+                node = Y.Selector.query(node, doc, true);
             }
         }
 
@@ -903,6 +858,8 @@ YUI.add('node', function(Y) {
     /** 
      * A wrapper for manipulating multiple DOM elements
      * @class NodeList
+     * @extends Node
+     * @constructor
      */
     var NodeList = function(nodes) {
         // TODO: input validation
@@ -939,6 +896,7 @@ YUI.add('node', function(Y) {
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
          * @see Node
+         * @chainable
          */
         set: function(name, val) {
             var nodes = _nodelists[this._yuid];
@@ -991,7 +949,7 @@ YUI.add('node', function(Y) {
          * @param {Object} context optional An optional context to apply the function with
          * Default context is the NodeList instance
          * @return {NodeList} NodeList containing the updated collection 
-         * @see Y.each
+         * @chainable
          */
         each: function(fn, context) {
             context = context || this;
@@ -1022,159 +980,3 @@ YUI.add('node', function(Y) {
     Y.NodeList = NodeList;
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
-/**
- * Extended Node interface for managing classNames.
- * @module node-class
- */
-
-    /**
-     * An interface for manipulating className strings.
-     * @interface NodeClassName
-     */
-    Y.Node.addDOMMethods([
-        /**
-         * Determines whether an HTMLElement has the given className.
-         * @method hasClass
-         * @param {String} className the class name to search for
-         * @return {Boolean} A boolean value or array of boolean values
-         */
-        'hasClass',
-
-        /**
-         * Adds a class name to a given element or collection of elements.
-         * @method addClass         
-         * @param {String} className the class name to add to the class attribute
-         */
-        'addClass',
-
-        /**
-         * Removes a class name from a given element or collection of elements.
-         * @method removeClass         
-         * @param {String} className the class name to remove from the class attribute
-         */
-        'removeClass',
-
-        /**
-         * Replace a class with another class for a given element or collection of elements.
-         * If no oldClassName is present, the newClassName is simply added.
-         * @method replaceClass  
-         * @param {String} oldClassName the class name to be replaced
-         * @param {String} newClassName the class name that will be replacing the old class name
-         */
-        'replaceClass',
-
-        /**
-         * If the className exists on the node it is removed, if it doesn't exist it is added.
-         * @method toggleClass  
-         * @param {String} className the class name to be toggled
-         */
-        'toggleClass'
-    ]);
-/**
- * This module applies adds support for positioning elements and
- * normalizes window size and scroll detection. 
- * @module node-screen
- */
-
-    Y.each([
-        'winWidth',
-        'winHeight',
-        'docWidth',
-        'docHeight',
-        'docScrollX',
-        'docScrollY'
-        ],
-        function(v, n) {
-            Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-        }
-    );
-
-    Y.Node.addDOMMethods([
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getXY
-     * @return {Array} The XY position of the node
-    */
-        'getXY',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setXY
-     * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
-     */
-        'setXY',
-
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getX
-     * @return {Int} The X position of the node
-    */
-        'getX',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setX
-     * @param {Int} x X value for new position (coordinates are page-based)
-     */
-        'setX',
-
-    /**
-     * Gets the current position of the node in page coordinates. 
-     * Nodes must be part of the DOM tree to have page coordinates
-     * (display:none or nodes not appended return false).
-     * @method getY
-     * @return {Int} The Y position of the node
-    */
-        'getY',
-
-    /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
-     * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
-     * @method setY
-     * @param {Int} y Y value for new position (coordinates are page-based)
-     */
-        'setY'
-    ]);
-
-/**
- * Extended Node interface for managing regions.
- * @module node-region
- */
-
-var ATTR = ['region', 'viewportRegion'],
-    getNode = Y.Node.getDOMNode;
-
-Y.each(ATTR, function(v, n) {
-    Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-});
-
-Y.Node.addDOMMethods([
-    'inViewportRegion'
-]);
-
-// these need special treatment to extract 2nd node arg
-Y.Node.methods({
-    intersect: function(node1, node2, altRegion) {
-        if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
-        }
-        return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-    },
-
-    inRegion: function(node1, node2, all, altRegion) {
-        if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
-        }
-        return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
-    }
-});
-
-
-
-}, '@VERSION@' ,{requires:['dom']});
