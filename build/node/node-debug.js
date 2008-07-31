@@ -984,7 +984,9 @@ YUI.add('node', function(Y) {
     Y.get = Y.Node.get;
 /**
  * Extended Node interface for managing node styles.
- * @module node-styles
+ * @module node
+ * @submodule node-style
+ * @for Node
  */
 
 Y.Node.addDOMMethods([
@@ -1025,7 +1027,6 @@ Y.Node.addDOMMethods([
 /**
  * Extended Node interface for managing classNames.
  * @module node
- * @submodule node-base
  * @for Node
  */
 

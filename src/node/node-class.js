@@ -1,7 +1,6 @@
 /**
  * Extended Node interface for managing classNames.
  * @module node
- * @submodule node-base
  * @for Node
  */
 

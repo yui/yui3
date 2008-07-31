@@ -2,7 +2,9 @@ YUI.add('node-style', function(Y) {
 
 /**
  * Extended Node interface for managing node styles.
- * @module node-styles
+ * @module node
+ * @submodule node-style
+ * @for Node
  */
 
 Y.Node.addDOMMethods([
