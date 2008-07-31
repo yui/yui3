@@ -4,8 +4,7 @@
 
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
-
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var onClick = function(e) {
         var node = e.currentTarget;
         if (!node.query('dl')) { // only create the DL once

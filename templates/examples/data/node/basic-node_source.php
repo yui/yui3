@@ -3,7 +3,7 @@
 </div>
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var node = Y.get('#demo p');
 
     onClick = function(e) {

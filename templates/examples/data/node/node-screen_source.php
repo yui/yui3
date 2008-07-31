@@ -6,7 +6,7 @@
 </dl>
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var onClick = function(e) {
         var target = e.target,
             h, w;

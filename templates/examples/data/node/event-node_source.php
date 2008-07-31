@@ -4,7 +4,7 @@
 </ul>
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var onClick = function(e) {
         e.currentTarget.set('innerHTML', e.type);
     };

@@ -1,7 +1,7 @@
 <span id="demo"></span>
 
 <script type="text/javascript">
-YUI().use('*', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var onClick = function(e) {
         Y.get('#demo').setXY([e.pageX, e.pageY]);
     };
