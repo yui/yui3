@@ -1,8 +1,8 @@
     /**
-     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
+     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.
      * @module dd
-     * @for DDM
      * @submodule dd-ddm-drop
+     * @for DDM
      */
 
     //TODO CSS class name for the bestMatch..
