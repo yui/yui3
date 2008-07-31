@@ -2,36 +2,32 @@
 
 <p>In this example, we'll show how you can use the Attribute utility to add managed attributes to your own object classes. Later examples will walk you through listening for attribute change events and some of the more advanced attribute configuration properties.</p>
 
-<h3>Sandboxing YUI</h3>
-<p>Before we get into attribute, a quick note on sandboxing YUI. For all of the attribute examples, we'll be writing the example code inside an anonymous function wrapper, and using our own YUI instance inside that anonymous function wrapper, which is recommended when working with YUI:</p>
+<h3>Setting Up Our YUI Instance</h3>
+<p>Before we get into attribute, a quick note on how we set up the instance of YUI we'll use for the examples. For all of the attribute examples, we'll setup our own instance of the YUI object and download the files we require on demand using the code pattern shown below:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 <script type="text/javascript">
-(function() {
 
     // Create our local YUI instance, to avoid
     // modifying the global YUI object
-    var Y = YUI();
 
-    // Load it with the modules we need. 
-    // In this case, attribute.  
-    Y.use("attribute");
- 
-    ...
-})();
+    YUI({...}).use("node", "attribute", function(Y) {
+
+        // Example code is written inside this function,
+        // which gets passed our own YUI instance, Y, loaded
+        // with the modules we asked for - "node" and "attribute"
+
+    });
 </script>
 </textarea>
 
-<p>This can also be written a little more succinctly, based on the fact that YUI() and use() are chainable, as:</p>
+<p>The call to <code>YUI({...})</code> will create and return a new instance of the global YUI object for us to use. However this instance does not yet have all the modules we need for the examples. The configuration object passed to <code>YUI()</code> is used to tell it how to download the source files.</p>
 
-<textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-(function() {
-    var Y = YUI().use("attribute");
-    ...
-})();
-</script>
-</textarea>
+<p>To load the modules, we invoke <code>use()</code> and pass it the list of modules we'd like populated on our new YUI instance - in this case, "node" and "attribute". The YUI instance will pull down the source files for "node" and "attribute" if they don't already exist on the page (which they don't for the example pages). When the source files are done downloading, the callback function which we pass in as the 3rd argument to <code>use()</code> is invoked, and is passed our custom YUI instance, <code>Y</code>, populated with the classes which make up "node" and "attribute".</p>
+
+<p>This function is where we'll write all our example code.</p>
+
+<p>By working inside the callback, we don't pollute the global namespace and we're also able to download the files we need on demand, rather than have them be on the page upfront.</p>
 
 <h3>Setting Up Your Custom Class</h3>
 
