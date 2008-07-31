@@ -1,11 +1,14 @@
 /** 
- * Provides helper functions for common DOM tasks.
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
  * @module dom
+ * @submodule dom-base
  *
  */
 
 /** 
- * Provides helper functions for common DOM tasks.
+ * Provides DOM helper methods.
  * @class DOM
  *
  */
@@ -20,16 +23,11 @@ var NODE_TYPE = 'nodeType',
     LAST_CHILD = 'lastChild',
     PREVIOUS_SIBLING = 'previousSibling',
     NEXT_SIBLING = 'nextSibling',
-    OFFSET_HEIGHT = 'offsetHeight',
-    OFFSET_WIDTH = 'offsetWidth',
     CONTAINS = 'contains',
     COMPARE_DOCUMENT_POSITION = 'compareDocumentPosition',
     INNER_TEXT = 'innerText',
     TEXT_CONTENT = 'textContent',
-    CLIENT_HEIGHT = 'clientHeight',
-    CLIENT_WIDTH = 'clientWidth',
     LENGTH = 'length',
-    STRING = 'string',
 
     UNDEFINED = undefined;
 

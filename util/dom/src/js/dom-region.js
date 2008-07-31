@@ -1,7 +1,13 @@
 /**
- * Adds region management functionality to DOM.
- * @module dom-region
+ * Adds position and region management functionality to DOM.
+ * @module dom
+ * @submodule dom-screen
+ * @for DOM
  */
+
+var OFFSET_WIDTH = 'offsetWidth',
+    OFFSET_HEIGHT = 'offsetHeight',
+    TAG_NAME = 'tagName';
 
 var getOffsets = function(r1, r2) {
 
@@ -45,10 +51,11 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Find the intersect information for this node and the node passed in.
+     * Find the intersect information for the passes nodes.
      * @method intersect
-     * @param {Object} node2 The node to check the interect with
-     * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
+     * @param {Object} node The first node 
+     * @param {Object} node2 The other node to check the interect with
+     * @param {Object} altRegion An object literal containing the region for the first node if we already have the data (for performance i.e. DragDrop)
      * @return {Object} Returns an Object literal with the intersect information for the nodes
      */
     intersect: function(node, node2, altRegion) {

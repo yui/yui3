@@ -1,16 +1,12 @@
 /**
- * Provides color conversion functionality.
- * @module color
- *
- */
-
-/**
- * Provides color conversion functionality.
- * @class Color
- *
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
 var TO_STRING = 'toString',
+    PARSE_INT = 'parseInt',
     RE = RegExp;
 
 Y.Color = {
@@ -44,9 +40,9 @@ Y.Color = {
 
         if(Y.Color.re_hex.exec(val)) {
             val = 'rgb(' + [
-                parseInt(RE.$1, 16),
-                parseInt(RE.$2, 16),
-                parseInt(RE.$3, 16)
+                PARSE_INT(RE.$1, 16),
+                PARSE_INT(RE.$2, 16),
+                PARSE_INT(RE.$3, 16)
             ].join(', ') + ')';
         }
         return val;
@@ -66,7 +62,7 @@ Y.Color = {
             ].join('');
         }
 
-        if (val[LENGTH] < 6) {
+        if (val.length < 6) {
             val = val.replace(Y.Color.re_hex3, '$1$1');
         }
 

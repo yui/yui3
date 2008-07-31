@@ -1,6 +1,10 @@
-/**
- * Add className management functionality to DOM.
- * @module dom-class
+/** 
+ * The DOM utility provides a cross-browser abtraction layer
+ * normalizing DOM tasks, and adds extra helper functionality
+ * for other common tasks. 
+ * @module dom
+ * @submodule dom-base
+ * @for DOM
  */
 
 var CLASS_NAME = 'className';

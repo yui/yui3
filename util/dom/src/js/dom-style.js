@@ -1,9 +1,14 @@
-/**
- * Adds region management functionality to DOM.
- * @module dom-style
+/** 
+ * Add style management functionality to DOM.
+ * @module dom
+ * @submodule dom-style
+ * @for DOM
  */
 
-var STYLE = 'style',
+var DOCUMENT_ELEMENT = 'documentElement',
+    DEFAULT_VIEW = 'defaultView',
+    OWNER_DOCUMENT = 'ownerDocument',
+    STYLE = 'style',
     FLOAT = 'float',
     CSS_FLOAT = 'cssFloat',
     STYLE_FLOAT = 'styleFloat',
@@ -18,6 +23,7 @@ var STYLE = 'style',
     GET_COMPUTED_STYLE = 'getComputedStyle',
 
     DOCUMENT = Y.config.doc,
+    UNDEFINED = undefined,
 
     re_color = /color$/i;
 
@@ -25,6 +31,14 @@ var STYLE = 'style',
 Y.mix(Y.DOM, {
     CUSTOM_STYLES: {},
 
+
+    /**
+     * Applies a CSS style to a given node.
+     * @method setStyle
+     * @param {HTMLElement} An HTMLElement to apply the style to.
+     * @param {String} att The style attribute to set. 
+     * @param {String|Number} val The value. 
+     */
     setStyle: function(node, att, val) {
         var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
@@ -42,6 +56,12 @@ Y.mix(Y.DOM, {
         }
     },
 
+    /**
+     * Returns a CSS style for the given node.
+     * @method getStyle
+     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {String} att The style attribute to get. 
+     */
     getStyle: function(node, att) {
         var style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES,
@@ -64,6 +84,24 @@ Y.mix(Y.DOM, {
         return val;
     },
 
+    /**
+     * Sets multiple style properties.
+     * @method setStyles
+     * @param {HTMLElement} node An HTMLElement to apply the styles to. 
+     * @param {Object} hash An object literal of property:value pairs. 
+     */
+    'setStyles': function(node, hash) {
+        Y.each(hash, function(v, n) {
+            Y.DOM.setStyle(node, n, v);
+        }, Y.DOM);
+    },
+
+    /**
+     * Returns the computed style for the given node.
+     * @method getComputedStyle
+     * @param {HTMLElement} An HTMLElement to get the style from.
+     * @param {String} att The style attribute to get. 
+     */
     getComputedStyle: function(node, att) {
         var val = '',
             doc = node[OWNER_DOCUMENT];
