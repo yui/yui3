@@ -302,6 +302,7 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #main p,
 #main form {margin-bottom:1em;}
 #main div.clear {clear:both;}
+#main strong {font-weight:bold;}
 
 #promo {background:#f2fbff url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:13px;margin-bottom:13px;}
 #promo p {margin-bottom:1em;}
@@ -322,6 +323,8 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #utilityboxes .mod .bd {border-top:none;padding:6px;padding-bottom:0;}
 #utilityboxes ul {margin:0;padding:0;margin-bottom:1em;}
 #utilityboxes ul li {list-style: none;margin:0;padding:0 0 0 15px;background:url(../assets/bullet4x4.png) no-repeat 3px 6px;}
+#utilityboxes table td {background:none;padding:0;}
+#utilityboxes table {margin:0;}
 
 
 /* for frontpage*/
