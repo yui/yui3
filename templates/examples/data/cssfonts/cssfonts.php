@@ -3,13 +3,13 @@
 /* Test Module: */
 $modules["cssfonts"] = array(
         /* The name of the module, used in index listings, titles, headers */
-		"name" => "CSS Fonts Basic Example",
+		"name" => "CSS Fonts",
         /* The type of the module.
            Currently used values for type are:
            "css", "core", "utility", "tool" */
 		"type" => "css",
         /* This description appears on the component's examples index page*/
-		"description" => "CSS Fonts provides typographical normalization",
+		"description" => "CSS Fonts provides typographical normalization and control",
         /* Whether or not the component has a cheatsheet. PR1 will not snip with
            cheatsheets */ 
 		"cheatsheet" => false 
@@ -18,7 +18,7 @@ $modules["cssfonts"] = array(
 /* Sample Utility Examples */
 $examples["cssfonts-basic"] = array(
     /* Example Name */
-	name => "Basic CSS Fonts Example", 
+	name => "CSS Fonts Basic Example", 
     
     /* Modules that this example should be listed with; this array is parallel
     to the sequence array*/
@@ -73,13 +73,24 @@ $examples["cssfonts-basic"] = array(
 
 $examples["cssfonts-context"] = array(
 	name => "CSS Fonts Contextual Example",
-	modules => array("sample"),
-	description => "Sample Two Description",
+	modules => array("cssfonts", "cssreset"),
+	description => "Applying CSS Fonts to Specific Contexts",
 	sequence => array(2),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts-context"),
 	highlightSyntax => true,
     bodyclass => "yui-cssreset yui-cssfonts"
+);
+
+$examples["cssfonts-size"] = array(
+	name => "CSS Fonts Sizing Example",
+	modules => array("cssfonts", "cssreset"),
+	description => "Defining Font Sizes using YUI CSS Fonts Prescribed Percentages",
+	sequence => array(3),
+	newWindow => "require",
+	requires => array("cssreset", "cssfonts"),
+	highlightSyntax => true,
+    bodyclass => false
 );
 
 ?>
