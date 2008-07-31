@@ -817,10 +817,9 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
-        * @preventable
+        * @preventable _handleMouseDown
         * @param {Event} ev The mousedown event.
-        * @bubbles DD.DDM
-        * @defaultFn _handleMouseDown
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_MOUSE_DOWN = 'drag:mouseDown',
@@ -828,56 +827,56 @@ YUI.add('dd-drag', function(Y) {
         * @event drag:afterMouseDown
         * @description Fires after the mousedown event has been cleared.
         * @param {Event} ev The mousedown event.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_AFTER_MOUSE_DOWN = 'drag:afterMouseDown',
         /**
         * @event drag:removeHandle
         * @description Fires after a handle is removed.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_REMOVE_HANDLE = 'drag:removeHandle',
         /**
         * @event drag:addHandle
         * @description Fires after a handle is added.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_ADD_HANDLE = 'drag:addHandle',
         /**
         * @event drag:removeInvalid
         * @description Fires after an invalid selector is removed.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_REMOVE_INVALID = 'drag:removeInvalid',
         /**
         * @event drag:addInvalid
         * @description Fires after an invalid selector is added.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_ADD_INVALID = 'drag:addInvalid',
         /**
         * @event drag:start
         * @description Fires at the start of a drag operation.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_START = 'drag:start',
         /**
         * @event drag:end
         * @description Fires at the end of a drag operation.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_END = 'drag:end',
         /**
         * @event drag:drag
         * @description Fires every mousemove during a drag operation.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DRAG = 'drag:drag';
@@ -886,31 +885,31 @@ YUI.add('dd-drag', function(Y) {
         /**
         * @event drag:over
         * @description Fires when this node is over a Drop Target. (Fired from dd-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         /**
         * @event drag:enter
         * @description Fires when this node enters a Drop Target. (Fired from dd-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         /**
         * @event drag:exit
         * @description Fires when this node exits a Drop Target. (Fired from dd-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         /**
         * @event drag:drophit
         * @description Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         /**
         * @event drag:dropmiss
         * @description Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
     
@@ -2384,21 +2383,21 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_EXIT = 'drop:exit';
@@ -2406,7 +2405,7 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         

@@ -19,21 +19,21 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_OVER = 'drop:over',
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_ENTER = 'drop:enter',
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         EV_DROP_EXIT = 'drop:exit';
@@ -41,7 +41,7 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
-        * @bubbles DD.DDM
+        * @bubbles DDM
         * @type Event.Custom
         */
         
