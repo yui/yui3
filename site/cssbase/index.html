@@ -1,7 +1,7 @@
 <?php 
-$title="The CSS Reset File";
-$section="cssreset";
-$component="CSS Reset";
+$title="The CSS Base File";
+$section="cssbase";
+$component="CSS Base";
 $highlightSyntax = true;
 $releasenotes = true;
 include "../inc/header.inc";
@@ -16,9 +16,7 @@ include "../inc/header.inc";
 			
 				<div id="promo" class="component">
 					
-					<p><?php echo $component;?> removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset in place, begin writing the explicit CSS your project needs.</p>
-					
-					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can compliment CSS Reset by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.</p>						
+					<p><?php echo $component;?> is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">Reset</a>, <a href="../cssfonts/">Fonts</a>, and <a href="../cssgrids/">Grids</a>). While Reset removes inconsistent styling of HTML elements, Base applies a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.
 							
 					<div class="yui-g">
 						<div class="yui-u first">
@@ -55,7 +53,7 @@ include "../inc/header.inc";
 				<p>To use <?php echo $component;?>, include the following source file in your web page with the link element:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/reset-min.css">
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssbase/base-min.css">
 				</textarea>
 				
 				<h4 id="context">Global vs. Contextual</h4>
@@ -66,9 +64,9 @@ include "../inc/header.inc";
 				
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/reset-context-min.css">
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssbase/base-context-min.css">
 				</textarea>
-				
+				s
 				<?php
 				include "../inc/css-foundation-overview.inc";
 				?>
@@ -77,13 +75,96 @@ include "../inc/header.inc";
 				include "../inc/include-notice.inc";
 				?>
 								
-				<h3 id="start">Using <?php echo $component; ?></h3>
+			
+					<h3 id="code">See the Code</h3>
+
+					<p>Here is what's in Base. As you can see in the code below, or in this example showing <a href="../examples/base/base-simple.html">HTML elements after Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
+
+			<textarea name="code" class="CSS" cols="60" rows="10">
+			/* base.css, part of YUI's CSS Foundation */
+			h1 {
+				/*18px via YUI Fonts CSS foundation*/
+				font-size:138.5%;  
+			}
+			h2 {
+				/*16px via YUI Fonts CSS foundation*/
+				font-size:123.1%; 
+			}
+			h3 {
+				/*14px via YUI Fonts CSS foundation*/
+				font-size:108%;  
+			}
+			h1,h2,h3 {
+				/* top & bottom margin based on font size */
+				margin:1em 0;
+			}
+			h1,h2,h3,h4,h5,h6,strong {
+				/*bringing boldness back to headers and the strong element*/
+				font-weight:bold; 
+			}
+			abbr,acronym {
+				/*indicating to users that more info is available */
+				border-bottom:1px dotted #000;
+				cursor:help;
+			} 
+			em {
+				/*bringing italics back to the em element*/
+				font-style:italic;
+			}
+			blockquote,ul,ol,dl {
+				/*giving blockquotes and lists room to breath*/
+				margin:1em;
+			}
+			ol,ul,dl {
+				/*bringing lists on to the page with breathing room */
+				margin-left:2em;
+			}
+			ol li {
+				/*giving OL's LIs generated numbers*/
+				list-style: decimal outside;	
+			}
+			ul li {
+				/*giving UL's LIs generated disc markers*/
+				list-style: disc outside;
+			}
+			dl dd {
+				/*giving UL's LIs generated numbers*/
+				margin-left:1em;
+			}
+			th,td {
+				/*borders and padding to make the table readable*/
+				border:1px solid #000;
+				padding:.5em;
+			}
+			th {
+				/*distinguishing table headers from data cells*/
+				font-weight:bold;
+				text-align:center;
+			}
+			caption {
+				/*coordinated marking to match cell's padding*/
+				margin-bottom:.5em;
+				/*centered so it doesn't blend in to other content*/
+				text-align:center;
+			}
+			p,fieldset,table {
+				/*so things don't run into each other*/
+				margin-bottom:1em;
+			}
+			</textarea>
 				
-				<p><?php echo $component; ?> is easy to use. By simply including the file it removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
+				
+				<h3 id="start">Using <?php echo $component; ?></h3>
+
+				<p><?php echo $component; ?> is easy to use. By simply including the file it provides removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
+
+			
 				
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
-				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to nodes that descend from a node with a class value of <code>.yui-reset</code>. In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
+				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-reset</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
+				<p>In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
+					
 					
 <textarea name="code" class="HTML" cols="60" rows="1">
 <div>

@@ -1,4 +1,4 @@
-<div id="cheatsheet" class="mod box3">
+<!-- <div id="cheatsheet" class="mod box3">
 	<div class="hd">
 		<h4>Cheat Sheets</h4>
 	</div>
@@ -10,4 +10,4 @@
 		<h5>Complete Set (.zip)</h5>
 		<a href="/yui/docs/assets/cheatsheets.zip" class="download" id="pdf-all">Download full set of cheat sheets</a>
 	</div>
-</div>
+</div> -->

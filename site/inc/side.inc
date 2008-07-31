@@ -40,10 +40,10 @@ $nav[]=array('profiler','/profiler/','YUI Profiler', 'Global YUI Object');
 $nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
-$nav[]=array('reset','/reset/','CSS Reset', 'CSS Reset');
-$nav[]=array('fonts','/fonts/','CSS Fonts', 'CSS Fonts');
-$nav[]=array('grids','/grids/','CSS Grids', 'CSS Grids');
-$nav[]=array('base','/base/','CSS Base', 'CSS Base');
+$nav[]=array('cssreset','/cssreset/','CSS Reset', 'CSS Reset');
+$nav[]=array('cssfonts','/cssfonts/','CSS Fonts', 'CSS Fonts');
+$nav[]=array('cssgrids','/cssgrids/','CSS Grids', 'CSS Grids');
+$nav[]=array('cssbase','/cssbase/','CSS Base', 'CSS Base');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog', 'The Yahoo! User Interface Blog');

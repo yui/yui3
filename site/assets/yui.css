@@ -201,9 +201,8 @@ p.loggerButton {text-align:center;}
  color:#000033;}
  
 /*ed eliot's server-side delicious badge css*/ 
- #delicious-badge { font: 85% Arial, sans-serif; border: 1px solid #b1b1b1; }
 #delicious-badge .bookmark { background: url(http://images.del.icio.us/static/img/delicious.small.gif) no-repeat left center; padding-left: 15px; font-weight: bold; }
-#delicious-badge p, #delicious-badge div { padding: 7px; margin: 0; text-align: center; }
+#delicious-badge p, #delicious-badge div {text-align: center; margin:0;}
 #delicious-badge a { color: #00f; text-decoration: none; }
 #delicious-badge div { background: #eee; }
 #delicious-badge div span { font-weight: bold; color: #000; }
@@ -263,14 +262,30 @@ p.loggerButton {text-align:center;}
 	
 	/yui/assets/bullet4x4.png
 	/yui/assets/gradient-promo.png
+	
+/* examples swatch
+
+    * C0FFF6 - light blue
+    * 8DD5E7 - blue
+    * 00B8BF - teal
+    * CDCDCD - gray
+    * CFB192 - tan
+    * 71241A - brown
+    * EDFF9F - lime
+    * FFA928 - yellow/gold
+    * D00050 - red
+    * FFA882 - peach
+    * 53DBA6 - bright purple
+    * 004C6D - dark blue
 
 */
 
 
 #bar-note {
-	background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:3px;margin-bottom:1em;
+	background:#F2FBFF url(../assets/gradient-promo.png) repeat-x 0 0;border:1px solid #D9D9D9;padding:3px;margin:1em;font-size:85%;
 	}
-#bar-note a {color:#2288BB;text-decoration:none;}
+#bar-note strong {font-weight:bold;}
+#bar-note a {color:#004C6D;text-decoration:none;font-weight:bold;}
 #bar-note a:hover {text-decoration:underline;}
 #bar-note p {margin:0;text-align:center;}
 span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:block;}
@@ -412,3 +427,5 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 	table td dl {margin:1em 0;}
 
 .dp-highlighter .line1, .dp-highlighter .line2 {padding-left: 10px;white-space:nowrap;}
+
+table.auto {width:auto;}

@@ -1,7 +1,7 @@
 <?php 
 $title="The CSS Grids File";
-$section="grids";
-$component="CSS Grids File";
+$section="cssgrids";
+$component="CSS Grids";
 $highlightSyntax = true;
 $releasenotes = true;
 include "../inc/header.inc";
@@ -15,25 +15,58 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+					
+					<p>The foundational <?php echo $component;?> offers four preset page widths, six preset templates, and the ability to stack and nest subdivided regions of two, three, or four columns. The 4kb file provides over 1000 page layout combinations. Other features include:</p>
+
+					<ul>
+						<li>Supports fluid-width (100%) layouts as well as preset fixed-width layouts at 750px, 950px, and 974px, and the ability to easily customize to any number.</li>
+						<li>Supports easy customization of the width for fixed-width layouts.</li>
+						<li>Flexible in response to user initiated font-size adjustments.</li>
+						<li>Template columns are source-order independent, so you can put your most important content first in the markup layer for improved accessibility and search engine optimization (SEO).</li>
+						<li>Self-clearing footer. No matter which column is longer, the footer stays at the bottom.</li>
+						<li>Layouts less than 100% are automatically centered. </li>
+						<li>Accommodates <a href="http://www.iab.net/standards/adunits.asp">IAB's Ad Unit Guidelines</a> for common ad dimensions.</li>
+						<li>Offers full <a href="../articles/gbs/gbs.html">A-grade browser</a> support.</li>
+					</ul>
+					
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
 								<h4>On This Page</h4>
 								<ul>
-									<li><a href="#start">Getting Started</a></li>
-									<li><a href="#using">Using the <?php echo $component;?></a>
-										<ul class="topspace">
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
-										<li><a href="#[you id here]">[your sub-section title here]</a></li>
+									<li><a href="#start">Getting Started</a>
+										<ul>
+										<li><a href="#dependencies">Include Dependencies</a></li>
+											<li><a href="#context">Global vs. Contextual</a></li>
+											<li><a href="#cssfoundation">The YUI CSS Foundation</a></li>
 										</ul></li>
+									<li><a href="#using">Using <?php echo $component;?></a><ul>
+											<li><a href="#base_markup">Starting Base Markup</a></li>
+											<li><a href="#page_width">Choose the Overall Page Width</a><ul>
+													<li><a href="#custom_page_width">Customizing the Page Width</a></li>
+												</ul></li>
+											<li><a href="#preset_templates">Using Template Presets</a><ul>
+													<li><a href="#available_templates">Available Template Presets</a></li>
+												</ul></li>
+											<li><a href="#nesting_grids">Using Nesting Grids</a></li>
+											<li><a href="#special_grids">Using Special Nesting Grids</a><ul>
+													<li><a href="#available_special_grids">Available Special Nesting Grids</a></li>
+												</ul></li>
+											<li><a href="#putting_it_together">Putting It All Together</a></li>
+										</ul></li>
+									<li><a href="#newin3x">What's New in 3.x?</a></li>
+									<li><a href="#video">Video: The YUI CSS Foundation</a></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
+									
 								</ul>
 							</div>
 						</div>
 						<div class="yui-u">
+							<h4>Tools:</h4>
+							<ul>
+								<li><a href="http://developer.yahoo.com/yui/cssgrids/builder/">The YUI CSS Grids Builder</a> &mdash; a simple interface for CSS Grids customization</li>
+							</ul>
 							<?php
 							include('../inc/quicklinks.inc');
 							?>
@@ -43,83 +76,346 @@ include "../inc/header.inc";
 				</div><!-- /promo -->
 				
 				<h3 id="start">Getting Started</h3>
-				
-				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- Dependencies --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yahoo-dom-event/yahoo-dom-event.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
-				&lt;!-- Source file --&gt;
-				&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/animation/animation-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-				</textarea>
+				<p>We use and recommend this !DOCTYPE to trigger Standards Mode in browsers with multiple rendering modes:</p>
 
-				<?php
-				include "../inc/include-notice.inc";
-				?>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+<textarea name="code" class="HTML" cols="60" rows="2">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+"http://www.w3.org/TR/html4/strict.dtd">
+</textarea>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				
-				<ul>
-					<li> the actual attribute(s) that will comprise the animation (required to see any actual animation occur)</li>
-					<li> the duration of the animation (defaults to 1 second) </li>
-					<li>the easing method (defaults to <code>YAHOO.util.Easing.easeNone</code>) </li> 
-				</ul>
+				<p>To use <?php echo $component;?>, include the following source file in your web page with the link element.</p>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			<textarea name="code" class="HTML" cols="60" rows="3">
+			<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids-min.css">
+			</textarea>
 
-				<h3 id="using">Using the <?php echo $component;?></h3>
-			
-				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-				<ul class="topspace">
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-					<li><a href="#[you id here]">[your sub-section title here]</a></li>
-				</ul>
-				
-				<h4 id="your id here">Your Subsection here (h4)</h4>
+					<p>Grids rely on the width of an "<code>em</code>" provided by <a href="../cssfonts/">Fonts CSS</a>; therefore, that file must be included. For the sake of this document, the level playing field provided by <a href="../reset/">Reset CSS</a> is also assumed. Including the doctype declaration and links to the files, the top and head of your document should contain the following information:</p>
 
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			<textarea name="code" class="HTML" cols="60" rows="11">
+			<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+			"http://www.w3.org/TR/html4/strict.dtd">
+			<html>
+			<head>
+				<title>YUI Grids CSS </title>
+				<!-- Source File -->
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts-grids/reset-fonts-grids.css">
+			</head>
+			</textarea>
+
+					<h4>The YUI CSS Foundation</h4>
+
+					<p>Note: If you are using the entire YUI CSS foundation, including the <a href="../cssreset/">Reset</a>, <a href="../cssfonts/">Fonts</a>, and <a href="../cssgrids/">Grids</a> packages, we have provided a concatenated and minified aggregate file for you to use.  Including the "reset-fonts-grids.css" file will give you more efficient pageload performance as compared to including each of the foundation files separately.</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="5">
+			<!-- Source File -->
+			<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts-grids/reset-fonts-grids.css">
+			</textarea>
+			<?php
+			include "../inc/include-notice.inc";
+			?>
+
+					<h3 id="using">Using YUI Grids CSS</h3>
+
+					<p>This sections describes how to implement CSS Grids. It contains these sub-sections:</p>
+
+					<ul>
+						<li><a href="#base_markup">Starting Base Markup</a></li>
+						<li><a href="#page_width">Choose the Overall Page Width</a><ul>
+								<li><a href="#custom_page_width">Customizing the Page Width</a></li>
+							</ul></li>
+						<li><a href="#preset_templates">Using Template Presets</a><ul>
+								<li><a href="#available_templates">Available Template Presets</a></li>
+							</ul></li>
+						<li><a href="#nesting_grids">Using Nesting Grids</a></li>
+						<li><a href="#special_grids">Using Special Nesting Grids</a><ul>
+								<li><a href="#available_special_grids">Available Special Nesting Grids</a></li>
+							</ul></li>
+						<li><a href="#putting_it_together">Putting It All Together</a></li>
+					</ul>
+
+					<h4 id="markup">Starting Base Markup</h4>
+
+					<p>In addition to the recommended doctype and YUI's foundational CSS files, we find it useful to construct a page in three stacked regions. We define one region for the header (or masthead), one for the body region, and one for the footer. These regions aren't strictly required, but we will use them in our examples. Including the above, the base markup looks like this:</p>
+
+<textarea name="code" class="HTML" cols="60" rows="17">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title>YUI Grids CSS </title>
+		<!-- Source File -->
+		<link rel="stylesheet" type="text/css" href="reset-fonts-grids.css">
+	</head>
+	<body>
+		<div class="doc">
+			<div id="hd"><!-- header, optional --></div> 
+			<div id="bd"><!-- body, optional --></div> 
+			<div id="ft"><!-- footer, optional --></div> 
+		</div>
+	</body>
+</html>
+</textarea>
+
+					<h5 id="page_width">Choose the Overall Page Width</h5>
+
+						<p>Change the id of the outer <code>div</code> to choose the width of the page. For a 750px width, use <code>.doc</code>. For a 950px width, use <code>.doc2</code>. For a 100% width, also known as fluid width, choose <code>.doc3</code>. The <code>.doc4</code> class provides the increasingly prevalent 974px page width. You can find examples of each on the <a href="../examples/cssgrids/">Grids examples page</a>. </p>					
+
+			<textarea name="code" class="HTML" cols="60" rows="11">
+			<!-- .doc = 750px width, centered-->
+			<div class="doc"></div>
+
+			<!-- .doc2 = 950px width, centered -->
+			<div class="doc2"></div>
+
+			<!-- .doc3 = 100% width -->
+			<div class="doc3"></div>
+
+			<!-- #.doc4 = 974px width, centered -->
+			<div class="doc4"></div>
+			</textarea>
+
+						<h6 class="note">Note:</h6>
+
+						<p>On the advice of our designers, the 100% grid (<code>#doc3</code>) has 10px of margin on the left and right sides. This prevents the content from <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleeding</a> into the browser's chrome. If you prefer, you can set it back to zero by adding this to your document:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="3">
+			<style>
+			.doc3 {margin:auto;}
+			</style>
+			</textarea>
+
+						<h5 id="custom_page_width">Customizing the Page Width</h5>
+
+						<p>We've made it easy to customize the page width. Divide your desired pixel width by 13; the result is your width in ems for all non-IE browsers. For IE, divide your desired pixel with by 13.3333 to find the width in ems for IE. Here's an <a href="../examples/cssgrids/grids-doc-custom.html">example of a custom page width of 600px</a>, and here's what the CSS looks like: </p> 
+
+			<textarea name="code" class="CSS" cols="60" rows="8">
+			<style> 
+			.custom-doc {
+				margin:auto;text-align:left; /* leave unchanged */
+				width:46.15em;/* non-IE */
+				*width:45.00em;/* IE */
+				min-width:600px;/* optional but recommended */
+			}
+			</style>
+			</textarea>
+
+
+						<h6 class="note">Note:</h6>
+
+						<p>Here are some other things to keep in mind: 1) The width is set in <code>em</code>s because <code>em</code>s scale with user-initiated font-size adjustment, and therefore provide a superior user experience. 2) YUI Fonts does a good job of normalizing the width of an <code>em</code>, but we're still obliged to provide a slightly different value for IE. 3) Be sure the <code>width</code> value for IE comes <em>after</em> the value for everybody else. 4) Setting the <code>min-width</code> is optional, but helps the grid maintain integrity as the viewport shrinks. 5) The <code>text-align</code> and <code>margin</code> are used to help center the page, and should not be modified.</p>
+
+
+						<h4 id="preset_templates">Using Template Presets</h4>
+
+						<p>Most web pages have a main block of content and a secondary block of content. The "template" part of Grids allows you to choose the orientation of these blocks (does the narrow one go on the left or the right), as well as the fixed width of the secondary (narrow) block. The main block will take the remaining available space, which varies depending on the overall page width.</p>
+
+						<p>The two blocks on the page are both defined as <code>div.yui-b</code>, where "b" stands for block. Wrap the block considered "main" in another div, <code>div.yui-main</code>. It will look like this:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="8">
+			...
+			      <div class="yui-main">
+			         <div class="yui-b"></div>
+			      </div>
+			      <div class="yui-b"></div>
+			...
+			</textarea>
+
+						<h6 id="source-order-independence">Source-Order Independence</h6>
+
+						<p>In some cases you may want your secondary content block to appear before your main content block in your markup. For example, some sites put their navigation in the secondary block, yet want it to appear first in the markup for accessibility or search engine optimization (<a href="http://en.wikipedia.org/wiki/Seo">SEO</a>) reasons. YUI Grids offers source-order independence at the <code>yui-b</code> level, without impacting the visual layout of your page. In other words, the "b" wrapped in "main" can come before or after the naked "b" without impacting your visual layout.</p>
+
+						<h5 id="available_templates">Available Template Presets</h5>
+
+			<table border="1" cellpadding="3" cellspacing="3" class="auto">
+			<tr class="odd">
+			<th>Template Class</th>
+			<th>Preset Description</th>
+			<th>Example</th>
+			</tr>
+
+			<tr>
+				<td><code>.yui-t1</code></td>
+				<td>160 on left</td>
+				<td><a href="../examples/cssgrids/grids-t1.html">Example</a></td>
+			</tr>
+			<tr class="odd">
+				<td><code>.yui-t2</code></td>
+				<td>180 on left</td>
+				<td><a href="../examples/cssgrids/grids-t2.html">Example</a></td>
+			</tr>
+			<tr>
+				<td><code>.yui-t3</code></td>
+				<td>300 on left</td>
+				<td><a href="../examples/cssgrids/grids-t3.html">Example</a></td>
+			</tr>
+			<tr class="odd">
+				<td><code>.yui-t4</code></td>
+				<td>180 on right</td>
+				<td><a href="../examples/cssgrids/grids-t4.html">Example</a></td>
+			</tr>
+			<tr>
+				<td><code>.yui-t5</code></td>
+				<td>240 on right</td>
+				<td><a href="../examples/cssgrids/grids-t5.html">Example</a></td>
+			</tr>
+			<tr class="odd">
+				<td><code>.yui-t6</code></td>
+				<td>300 on right</td>
+				<td><a href="../examples/cssgrids/grids-t6.html">Example</a></td>
+			</tr>
+			</table>
+
+			<p> Here's what the code looks like to choose a template preset:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="13">
+			...
+			<div class="doc">
+               <div class="yui-t4"> <!-- change class to change preset -->
+                  <div class="yui-main">
+                     <div class="yui-b"></div>
+                  </div>
+                  <div class="yui-b"></div>
+               </div>
+            </div>
+			...
+			</textarea>
+
+
+						<p>We offer the template presets we do because they accommodate <a href="http://www.iab.net/standards/adunits.asp">standard IAB ad unit dimensions</a>, and because they represent the vast majority of common page structures we use.</p>
+
+
+						<h4 id="nesting_grids">Using Nesting Grids</h4>
+
+						<p>YUI Grids CSS provides a system for subdividing sections of your page with nestable grids. Use this technique to easily create complex layouts that go beyond the two column layouts offered by the template presets. The picture below shows, for example, how a two-column grid is "nested" within the main block:</p>
+
+			<p><img src="http://us.i1.yimg.com/us.yimg.com/i/ydn/yuiweb/img/grids-docs-3.gif" alt="" width="346" height="147" border="0"></p>
+
+						<h5>The Basic Idea</h5>
+
+						<p>The basic idea is that "grids" are holders of "units". The standard grid holder is a <code>div</code> with a class of "<code>yui-g</code>" (g is for grid). The contained units are <code>div</code>s with a "<code>yui-u</code>" class (u is for unit). Except in special cases we'll examine later, a <em>grid</em> holds two <em>units</em> and instructs each unit to take up half the available space. Here's what a basic nested two-unit grid looks like:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="10">
+			...
+			<div class="yui-main">
+			   <div class="yui-b">
+			      <div class="yui-g">
+			         <div class="yui-u first"></div>
+			         <div class="yui-u"></div>
+			      </div>
+			   </div>
+			</div>
+			...
+			</textarea>
+
+						<p>You can see <a href="../examples/cssgrids/grids-g.html">an example of a basic nested two-unit grid</a> in action.</p>
+
+						<h6 id="first-child" class="note">Note: Indicating :first-child</h6>
+						<p>Because not all <a href="../articles/gbs/gbs.html">A-grade browser</a> support the <a href="http://www.w3.org/TR/REC-CSS2/selector.html#first-child"><code>:first-child</code></a> pseudo-class selector, we manually indicate which node is "first" by adding an additional value to the class attribute. This is useful information to have because, for example, we sometimes float siblings apart.</p>
+
+						<h5 id="deeper_nesting">Deeper Nesting</h5>
+
+						<p>You can nest grids within other nested grids to create more columns. Here is <a href="../examples/cssgrids/grids-gg.html">an example of deeper nesting to create four columns</a>. In the markup below, <strong>be sure to note two things</strong>. First: If the direct child of a grid is itself a grid, it need not be within a unit; in this case grids behave as units. Second: Be sure to denote the "first" of each set:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="16">
+			...
+			<div class="yui-main">
+			   <div class="yui-b">
+			      <div class="yui-g">
+			         <div class="yui-g first">
+			            <div class="yui-u first"></div>
+			            <div class="yui-u"></div>
+			         </div>
+			         <div class="yui-g">
+			            <div class="yui-u first"></div>
+			            <div class="yui-u"></div>
+			         </div>
+			      </div>
+			   </div>
+			</div>
+			...
+			</textarea>
+
+						<h4 id="special_grids">Using Special Nesting Grids</h4>
+
+						<p>The standard grid-unit interplay always divides space in two, evenly. To create layouts of more than two units (e.g., three), and to create layouts divided <em>unevenly</em> (e.g., 66% and 33% or 75% and 25%), we employ <em>special</em> grid holders. While "yui-g" tells the two children each take up half the space each, "yui-gc" tells the first unit to take up two-thirds of the space, and the other unit to take up one-third of the space. Everything else remains the same: units live within grids, and the first of a set must be indicated. Here is <a href="../examples/cssgrids/grids-gc.html">an example of a special grid for a two-thirds / one-third layout</a>, and here's what the markup looks like:</p>
+
+			<textarea name="code" class="HTML" cols="60" rows="10">
+			...
+			<div class="yui-main">
+			   <div class="yui-b">
+			      <div class="yui-gc"> <!-- the "special grid" -->
+			         <div class="yui-u first"></div>
+			         <div class="yui-u"></div>
+			      </div>
+			   </div>
+			</div>
+			...
+			</textarea>
+
+
+						<h5 id="available_special_grids">Available Special Nesting Grids</h5>
+
+			<div>
+			<table border="1" cellpadding="3" cellspacing="3" class="auto">
+			<tr class="odd">
+				<th>Special Grid Class</th>
+				<th>Description</th>
+				<th>Example</th>
+			</tr>
+			<tr>
+				<td><code>.yui-gb</code></td>
+				<td>1/3 - 1/3 - 1/3</td>
+				<td><a href="../examples/cssgrids/grids-gb.html">Example</a></td>
+			</tr>
+			<tr class="odd">
+				<td><code>.yui-gc</code></td>
+				<td>2/3 - 1/3</td>
+				<td><a href="../examples/cssgrids/grids-gc.html">Example</a></td>
+			</tr>
+			<tr>
+				<td><code>.yui-gd</code></td>
+				<td>1/3 - 2/3</td>
+				<td><a href="../examples/cssgrids/grids-gd.html">Example</a></td>
+			</tr>
+			<tr class="odd">
+				<td><code>.yui-ge</code></td>
+				<td>3/4 - 1/4</td>
+				<td><a href="../examples/cssgrids/grids-ge.html">Example</a></td>
+			</tr>
+			<tr>
+				<td><code>.yui-gf</code></td>
+				<td>1/4 - 3/4</td>
+				<td><a href="../examples/cssgrids/grids-gf.html">Example</a></td>
+			</tr>
+			</table>
+			</div>
+
+						<h4 id="putting_it_together">Putting It All Together</h4>
+
+						<p>Combining Page Widths, Template Presets, and Nesting Grids, a nearly infinite number of complex page layouts are possible. No matter how you put the pieces together, you just need the unmodified YUI Grids CSS file - it's all in the single file! Give it a shot, check out <a href="../examples/cssgrids/">all the examples</a>, and enjoy.</p>
+
+			<?php include "../inc/mobileSection.inc";?>
+
+			<p>YUI Grids CSS works well with the high-end mobile devices on which we've tested it.  Specifically, the versions of Webkit found on Nokia N-Series phones and Apple's iPhone both render Grids layouts well.  Both browsers' birds-eye view modes give you a high-level picture of the page.  On the iPhone, you can quickly navigate to a specific subsection of a Grid by double-clicking it; the iPhone's renderer correctly zooms in on Grid units as you would expect.  Any of the Grids examples found here can be used as a starting point for evaluating the user experience with these devices.</p>
+
+			<p>From a design perspective, Grids CSS is probably a good choice for applications that are meant to be consumed by both PC browsers and mobile A-Grade browsers; because the Grids model tends to assume a larger screen size, it's not recommended as a starting point for applications that are mobile-specific.</p>
+
+
+
+
+
+
+
+
+				<h3 id="newsin3x">New in 3.x</h3>
 				
-				<table>
-					<thead>
-						<tr>
-							<th>your</th>
-							<th>headers</th>
-							<th>here</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-						<tr>
-							<td><code>your</code></td>
-							<td>data</td>
-							<td>here</td>
-						</tr>
-					</tbody>
-				</table>
+				<p>In 3.x, <?php echo $component; ?> began offering fixed-width layouts. These are built with pixels instead of EMs and therefore do not expand horizontally when the font size is adjusted by the user.</p>
+					 				
+				<?php include "../inc/video-css.inc";?>
 				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-				<h5>Your sub-subsection here (h5)</h5>
-				
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>	
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>			
 
 <?php # include "../inc/mobileSection.inc";?>
-<!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
+
 <?php 
 include "../inc/support.inc";
 ?>
@@ -136,26 +432,32 @@ include "../inc/support.inc";
 	include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		   
-		   	<div id="morereading">
-				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-				
+		
+		
+		<div id="morereading" class="mod box4">
+			<div class="hd">
+				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
+			</div>
+			<div class="bd">
 				<ul>
 					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-				  	<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
+			  		<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
 					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
+				</ul>
+			</div>
+		</div>
 
-			   </ul>
-		   </div>
-		   
-<?php 
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-require_once('../inc/badge.inc');
-?>
-<h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
-<div class="delicious">
-<?php require('../inc/badge-html.inc'); ?>
-</div>
+		<div id="delicious" class="mod box4">
+			<div class="bd delicious">
+				<?php 
+				$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
+				require_once('../inc/badge.inc');
+				?>
+				<?php require('../inc/badge-html.inc'); ?>
+			</div>
+		</div>
+
+
 
 		 </div>
       </div>
