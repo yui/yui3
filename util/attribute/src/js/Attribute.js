@@ -1,3 +1,7 @@
+    /**
+     * Managed Attribute Provider
+     * @module attribute
+     */
 
     var O = Y.Object,
 
