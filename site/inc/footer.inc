@@ -12,7 +12,7 @@
 //include code for syntax-highlighting boxes, mostly found on landing and example pages
 if ($highlightSyntax) {
 ?>
-<script src="../assets/dpSyntaxHighlighter.js"></script>
+<script src="/yui/3/assets/dpSyntaxHighlighter.js"></script>
 <script language="javascript"> 
 dp.SyntaxHighlighter.HighlightAll('code'); 
 </script>
