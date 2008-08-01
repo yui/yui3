@@ -308,7 +308,9 @@ Y.Env.meta = {
             requires: ['oop']
         },
         
-        io: { },
+        io: { 
+            requires: ['node']
+        },
 
         'json-parse': {
             path: 'json/json-parse-min.js'
