@@ -23,6 +23,27 @@
         width:30em;
     }
 
+    .attrs {
+        width:30em;
+        border:1px solid #000;
+        background-color:#cdcdcd;
+        margin-bottom:10px;
+    }
+
+    .attrs .header {
+        font-weight:bold;
+        color:#004c6d;
+        padding:5px;
+    }
+
+    .attrs .body {
+        padding:10px;
+    }
+
+    .attrs .footer {
+        padding:5px;
+    }
+
     .attrs label {
         display:block;
         float:left;

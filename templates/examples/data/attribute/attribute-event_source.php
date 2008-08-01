@@ -1,15 +1,19 @@
 <div class="attrs">
-    <p>Enter a new value and click the "Change Value" button:</p>
-    <p>
-        <label for="attr">Attribute:</label>
-        <select id="attr">
-            <option value="foo">foo</option>
-            <option value="bar">bar</option>
-            <option value="foobar">foobar (change will be cancelled)</option>
-        </select>
-    </p>
-    <p><label for="newVal">Value:</label><input type="text" id="newVal" /></p>
-    <p><button type="button" id="changeValue">Change Value</button></p>
+    <div class="header">Enter a new value and click the "Change Value" button:</div>
+    <div class="body">
+        <p>
+            <label for="attr">Attribute:</label>
+            <select id="attr">
+                <option value="foo">foo</option>
+                <option value="bar">bar</option>
+                <option value="foobar">foobar (change will be cancelled)</option>
+            </select>
+        </p>
+        <p><label for="newVal">Value:</label><input type="text" id="newVal" /></p>
+    </div>
+    <div class="footer">
+        <button type="button" id="changeValue">Change Value</button>
+    </div>
 </div>
 
 <div id="example-out"></div>
