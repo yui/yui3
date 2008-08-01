@@ -32,6 +32,7 @@ YUI.add("substitute", function(Y) {
      * in the YUI module.
      *
      * @method substitute
+     * @for YUI
      * @param s {string} The string that will be modified.
      * @param o An object containing the replacement values
      * @param f {function} An optional function that can be used to
