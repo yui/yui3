@@ -1,4 +1,7 @@
-// requires lang
+/**
+ * OOP utils.  If included, the OOP methods are added to the YUI instance
+ * @module oop
+ */
 YUI.add("oop", function(Y) {
 
     var L = Y.Lang, 
