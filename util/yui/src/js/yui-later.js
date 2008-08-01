@@ -1,3 +1,8 @@
+/*
+ * YUI setTimeout/setInterval abstraction
+ * @module yui
+ * @submodule later
+ */
 YUI.add("later", function(Y) {
 
     var L = Y.Lang;

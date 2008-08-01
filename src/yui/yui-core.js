@@ -1,4 +1,4 @@
-/**
+/*
  * YUI core utilities
  * @module yui
  * @submodule core

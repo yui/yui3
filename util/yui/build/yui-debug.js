@@ -1,3 +1,7 @@
+/**
+ * YUI core
+ * @module yui
+ */
 (function() {
 
     var _instances = {},
@@ -34,9 +38,11 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>useConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
-     *  A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</li>
+     *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+     *  
+     *  </li>
      *  <li>logExclude:
-     *  A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -283,7 +289,9 @@ YUI.prototype = {
 
                 this.log('attaching ' + name, 'info', 'YUI');
 
-                m.fn(this);
+                if (m.fn) {
+                    m.fn(this);
+                }
 
                 if (use) {
                     this._attach(this.Array(use));
@@ -562,6 +570,18 @@ YUI.prototype = {
 
 
 })();
+/**
+ * YUI stub
+ * @module yui
+ * @submodule yui-base
+ */
+// This is just a stub to for dependency processing
+YUI.add("yui-base", null, "@VERSION@");
+/*
+ * YUI console logger
+ * @module yui
+ * @submodule log
+ */
 YUI.add("log", function(instance) {
 
     /**
@@ -588,24 +608,25 @@ YUI.add("log", function(instance) {
         // or the event call stack contains a consumer of the yui:log event
         if (c.debug && !bail) {
 
+            // apply source filters
+            if (src) {
+
+
+                var exc = c.logExclude, inc = c.logInclude;
+
+                // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
+
+                if (inc && !(src in inc)) {
+                    // console.log('bail: inc list found, but src is not in list: ' + src);
+                    bail = true;
+                } else if (exc && (src in exc)) {
+                    // console.log('bail: exc list found, and src is in it: ' + src);
+                    bail = true;
+                }
+            }
+
             if (c.useConsole && typeof console != 'undefined') {
 
-                // apply source filters
-                if (src) {
-
-
-                    var exc = c.logExclude, inc = c.logInclude;
-
-                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
-
-                    if (inc && !(src in inc)) {
-                        // console.log('bail: inc list found, but src is not in list: ' + src);
-                        bail = true;
-                    } else if (exc && (src in exc)) {
-                        // console.log('bail: exc list found, and src is in it: ' + src);
-                        bail = true;
-                    }
-                }
 
                 if (!bail) {
 
@@ -615,9 +636,7 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            // category filters are not used to suppress the log event
-            // so that the data can be stored and displayed later.
-            if (Y.fire) {
+            if (Y.fire && !bail) {
                 Y.fire('yui:log', msg, cat, src);
             }
         }
@@ -626,7 +645,11 @@ YUI.add("log", function(instance) {
     };
 
 }, "@VERSION@");
-
+/*
+ * YUI lang utils
+ * @module yui
+ * @submodule lang
+ */
 YUI.add("lang", function(Y) {
 
     /**
@@ -770,6 +793,12 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
 }, "@VERSION@");
 
 
+/*
+ * Array utilities
+ * @module yui
+ * @submodule array
+ */
+
 /**
  * YUI core
  * @module yui
@@ -902,6 +931,11 @@ YUI.add("array", function(Y) {
     };
 
 }, "@VERSION@");
+/*
+ * YUI core utilities
+ * @module yui
+ * @submodule core
+ */
 // requires lang
 YUI.add("core", function(Y) {
 
@@ -1061,6 +1095,11 @@ YUI.add("core", function(Y) {
     
 
 }, "@VERSION@");
+/*
+ * YUI object utilities
+ * @module yui
+ * @submodule object
+ */
 YUI.add("object", function(Y) {
 
     /**
@@ -1137,6 +1176,11 @@ YUI.add("object", function(Y) {
         return Y;
     };
 }, "@VERSION@");
+/*
+ * YUI user agent detection
+ * @module yui
+ * @submodule ua
+ */
 YUI.add("ua", function(Y) {
 
     /**
@@ -1264,6 +1308,11 @@ YUI.add("ua", function(Y) {
         return o;
     }();
 }, "@VERSION@");
+/*
+ * YUI setTimeout/setInterval abstraction
+ * @module yui
+ * @submodule later
+ */
 YUI.add("later", function(Y) {
 
     var L = Y.Lang;
@@ -1337,7 +1386,8 @@ YUI.add("get", function(Y) {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
- * @module get
+ * @module yui
+ * @submodule get
  */
 
 /**
@@ -1975,7 +2025,8 @@ Y.Get = function() {
  * this network to reduce the number of http connections required to download 
  * YUI files.
  *
- * @module loader
+ * @module yui
+ * @submodule loader
  */
 
 /**
@@ -2050,6 +2101,10 @@ Y.Get = function() {
  * </ul>
  */
 
+// @TODO backed out the custom event changes so that the event system
+// isn't required in the seed build.  If needed, we may want to 
+// add them back if the event system is detected.
+
 /*
  * Executed when the loader successfully completes an insert operation
  * This can be subscribed to normally, or a listener can be passed
@@ -2092,8 +2147,8 @@ Y.Env.meta = {
 
     root: ROOT,
 
-    // base: 'http://yui.yahooapis.com/' + ROOT,
-    base: '../../build/',
+    base: 'http://yui.yahooapis.com/' + ROOT,
+    // base: '../../build/',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
@@ -2148,10 +2203,40 @@ Y.Env.meta = {
           requires: ['dom-screen', 'node-base']
       },
 
+      anim: {
+          supersedes: ['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-scroll', 'anim-xy'],
+          requires: ['base', 'node']
+      },
 
-        animation: {
-            requires: ['dom', 'base']
-        },
+      'anim-base': {
+          path: 'anim/anim-base-min.js',
+          requires: ['base', 'node-style']
+      },
+
+      'anim-color': {
+          path: 'anim/anim-color-min.js',
+          requires: ['anim-base']
+      },
+
+      'anim-curve': {
+          path: 'anim/anim-curve-min.js',
+          requires: ['anim-xy']
+      },
+
+      'anim-easing': {
+          path: 'anim/anim-easing-min.js'
+      },
+
+      'anim-scroll': {
+          path: 'anim/anim-scroll-min.js',
+          requires: ['anim-base']
+      },
+
+      'anim-xy': {
+          path: 'anim/anim-xy-min.js',
+          requires: ['anim-base', 'node-screen']
+      },
+
 
         attribute: { 
             requires: ['event']
@@ -2241,7 +2326,9 @@ Y.Env.meta = {
             requires: ['oop']
         },
         
-        io: { },
+        io: { 
+            requires: ['node']
+        },
 
         'json-parse': {
             path: 'json/json-parse-min.js'
@@ -2255,13 +2342,23 @@ Y.Env.meta = {
             supersedes: ['json-parse', 'json-stringify']
         },
         
-        oop: { },
+        oop: { 
+            requires: ['yui-base']
+        },
 
         queue: { },
 
         substitute: {
             optional: ['dump']
-        }
+        },
+
+        // Since YUI is required for everything else, it should not be specified as
+        // a dependency.
+        yui: {
+            supersedes: ['yui-base', 'get', 'loader']
+        },
+
+        'yui-base': { }
     }
 };
 
@@ -2829,20 +2926,20 @@ Y.Env.meta = {
                 Y.mix(l, Y.Array.hash(this.ignore));
             }
 
+            // expand the list to include superseded modules
+            for (j in l) {
+                // Y.log("expanding: " + j);
+                if (l.hasOwnProperty(j)) {
+                    Y.mix(l, this.getProvides(j));
+                }
+            }
+
             // remove modules on the force list from the loaded list
             if (this.force) {
                 for (i=0; i<this.force.length; i=i+1) {
                     if (this.force[i] in l) {
                         delete l[this.force[i]];
                     }
-                }
-            }
-
-            // expand the list to include superseded modules
-            for (j in l) {
-                // Y.log("expanding: " + j);
-                if (l.hasOwnProperty(j)) {
-                    Y.mix(l, this.getProvides(j));
                 }
             }
 
@@ -3465,9 +3562,14 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
     // Y.augment(Y.Loader, Y.Event.Target);
 
 }, "@VERSION@");
+/*
+ * YUI initializer
+ * @module yui
+ * @submodule init
+ */
 (function() {
 
-    var min = ['log', 'lang', 'array', 'core'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 

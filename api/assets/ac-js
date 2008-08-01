@@ -88,7 +88,7 @@
         var className=(show) ? "": "none";
         var els=Dom.getElementsByClassName(type);
 
-        console.log('showhide ' + type + ', ' + els.length);
+        // console.log('showhide ' + type + ', ' + els.length);
 
         for (var i=0,l=els.length;i<l;i=i+1) {
             //try {

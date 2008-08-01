@@ -1,4 +1,4 @@
-/**
+/*
  * YUI console logger
  * @module yui
  * @submodule log

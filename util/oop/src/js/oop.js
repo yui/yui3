@@ -6,13 +6,18 @@ YUI.add("oop", function(Y) {
 
     var L = Y.Lang, 
     A = Y.Array,
-    OP = Object.prototype;
+    OP = Object.prototype,
+    O;
+
+    /**
+     * The following methods are added to the YUI instance
+     * @class YUI~oop
+     */
 
     /**
      * Applies prototype properties from the supplier to the receiver.
      * The receiver can be a constructor or an instance.
      * @method augment
-     * @for YUI
      * @param {Function} r  the object to receive the augmentation
      * @param {Function} s  the object that supplies the properties to augment
      * @param ov {boolean} if true, properties already on the receiver

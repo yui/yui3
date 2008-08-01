@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -91,9 +92,10 @@ Turn debug statements on or off</li>
 <li>useConsole:
 Log to the browser console if debug is on and the console is available</li>
 <li>logInclude:
-A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</li>
+A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+</li>
 <li>logExclude:
-A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
 <li>throwFail:
 If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
 <li>win:
@@ -241,7 +243,10 @@ we care about on the Object prototype.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -276,7 +281,10 @@ when the yui modules was registered.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -353,7 +361,10 @@ skinnable  -
 rollup
 omit - features that should not be loaded if this module is present</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -361,74 +372,38 @@ omit - features that should not be loaded if this module is present</dd>
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_aggregate">aggregate</a></h4>
+                                        <a name="method_after">after</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        object
-                                            <strong>aggregate</strong>
+                                        void
+                                            <strong>after</strong>
                                            (
-                                                
-                                                        
-                                                         r
-                                                    
-                                                
-                                                        , 
-                                                         s
-                                                    
-                                                
-                                                        , 
-                                                         ov
-                                                    
-                                                
-                                                        , 
-                                                         wl
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Applies object properties from the supplier to the receiver.  If
-the target has the property, and the property is an object, the target
-object will be augmented with the supplier's value.  If the property
-is an array, the suppliers value will be appended to the target.
+                                            Executes the callback after a DOM event, custom event
+or method.  If the first argument is a function, it
+is assumed the target is a method.
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>r &lt;Function&gt;</code>
-                                                              the object to receive the augmentation
-                                                        </dd>
-                                                        <dd>
-                                                            <code>s &lt;Function&gt;</code>
-                                                              the object that supplies the properties to augment
-                                                        </dd>
-                                                        <dd>
-                                                            <code>ov &lt;boolean&gt;</code>
-                                                              if true, properties already on the receiver
-will be overwritten if found on the supplier.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>wl &lt;string[]&gt;</code>
-                                                              a whitelist.  If supplied, only properties in 
-this list will be applied to the receiver.
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        object
+                                                        void
                                                     </code></dt>
-                                                    <dd>the extended object</dd>
+                                                    <dd>unsubscribe handle</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -492,7 +467,10 @@ Ex: 'Object.keys'
                                                     </code></dt>
                                                     <dd>the return value from the applied method or null</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -500,81 +478,42 @@ Ex: 'Object.keys'
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_augment">augment</a></h4>
+                                        <a name="method_before">before</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        object
-                                            <strong>augment</strong>
+                                        void
+                                            <strong>before</strong>
                                            (
-                                                
-                                                        
-                                                         r
-                                                    
-                                                
-                                                        , 
-                                                         s
-                                                    
-                                                
-                                                        , 
-                                                         ov
-                                                    
-                                                
-                                                        , 
-                                                         wl
-                                                    
-                                                
-                                                        , 
-                                                         args
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Applies prototype properties from the supplier to the receiver.
-The receiver can be a constructor or an instance.
+                                            Executes the callback before a DOM event, custom event
+or method.  If the first argument is a function, it
+is assumed the target is a method.
+For DOM and custom events:
+type, callback, context, 1-n arguments
+For methods:
+callback, object (method host), methodName, context, 1-n arguments
                                         </div>
 
                                         <div class="description">
 
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>r &lt;Function&gt;</code>
-                                                              the object to receive the augmentation
-                                                        </dd>
-                                                        <dd>
-                                                            <code>s &lt;Function&gt;</code>
-                                                              the object that supplies the properties to augment
-                                                        </dd>
-                                                        <dd>
-                                                            <code>ov &lt;boolean&gt;</code>
-                                                              if true, properties already on the receiver
-will be overwritten if found on the supplier.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>wl &lt;string[]&gt;</code>
-                                                              a whitelist.  If supplied, only properties in 
-this list will be applied to the receiver.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>args &lt;Array | Any&gt;</code>
-                                                              arg or arguments to apply to the supplier
-constructor when initializing.
-                                                        </dd>
-                                                </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        object
+                                                        void
                                                     </code></dt>
-                                                    <dd>the augmented object</dd>
+                                                    <dd>unsubscribe handle</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -582,110 +521,34 @@ constructor when initializing.
                                     </div>
                                     <div class="">
                                     <h4>
-                                        <a name="method_bind">bind</a></h4>
+                                        <a name="method_detach">detach</a></h4>
                                     <div class="detail">
                                         <code>
                                         
                                         
                                         
-                                        function
-                                            <strong>bind</strong>
+                                        YUI
+                                            <strong>detach</strong>
                                            (
                                                 
                                                         
+                                                         type
+                                                    
+                                                
+                                                        , 
                                                          f
                                                     
                                                 
                                                         , 
-                                                         c
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Returns a function that will execute the supplied function in the
-supplied object's context, optionally adding any additional
-supplied parameters to the end of the arguments the function
-is executed with.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>f &lt;Function&gt;</code>
-                                                              the function to bind
-                                                        </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             the execution context
-                                                        </dd>
-                                                        <dd>
-                                                            <code>args* &lt;object&gt;</code>
-                                                             0..n arguments to append to the arguments collection for the function
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        function
-                                                    </code></dt>
-                                                    <dd>the wrapped function</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_clone">clone</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Array|Object
-                                            <strong>clone</strong>
-                                           (
-                                                
-                                                        
                                                          o
                                                     
                                                 
-                                                        , 
-                                                         safe
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         c
-                                                    
-                                                
-                                                        , 
-                                                         owner
-                                                    
-                                                
                                             )
                                         </code>
                                         
                                         <div class="description">
-                                            Deep obj/array copy.  Functions will are cloned with Y.bind.
-Array-like objects are treated as arrays.
-primitives are returned untouched.  Optionally a
-function can be provided to handle other data types,
-filter keys, validate values, etc.
+                                            Detach an event listener (either a custom event or a
+DOM event
                                         </div>
 
                                         <div class="description">
@@ -693,44 +556,33 @@ filter keys, validate values, etc.
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
+                                                            <code>type &lt;object&gt;</code>
+                                                             the type of event, or a Event.Handle to
+for the subscription.  If the Event.Handle is passed
+in, the other parameters are not used.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;Function&gt;</code>
+                                                              the subscribed function
+                                                        </dd>
+                                                        <dd>
                                                             <code>o &lt;object&gt;</code>
-                                                             what to clone
-                                                        </dd>
-                                                        <dd>
-                                                            <code>safe &lt;boolean&gt;</code>
-                                                              if true, objects will not have prototype
-items from the source.  If false, it does.  In this case, the
-original is initally protected, but the clone is not completely immune
-from changes to the source object prototype.  Also, cloned prototype
-items that are deleted from the clone will result in the value
-of the source prototype to be exposed.  If operating on a non-safe
-clone, items should be nulled out rather than deleted.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>f &lt;object&gt;</code>
-                                                             optional function to apply to each item in a collection
-it will be executed prior to applying the value to
-the new object.  Return false to prevent the copy.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>c &lt;object&gt;</code>
-                                                             optional execution context for f
-                                                        </dd>
-                                                        <dd>
-                                                            <code>owner &lt;object&gt;</code>
-                                                             Owner object passed when clone is iterating an
-object.  Used to set up context for cloned functions.
+                                                             the object or element the listener is subscribed
+to.
                                                         </dd>
                                                 </dl>
 
                                                 <dl>
                                                     <dt>Returns:
                                                     <code>
-                                                        Array|Object
+                                                        YUI
                                                     </code></dt>
-                                                    <dd>the cloned object</dd>
+                                                    <dd>the YUI instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -787,145 +639,10 @@ associative arrays.
                                                     </code></dt>
                                                     <dd>the dump result</dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_each">each</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        YUI
-                                            <strong>each</strong>
-                                           (
-                                                
-                                                        
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         proto
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executes the supplied function for each item in
-a collection.  Supports arrays, objects, and
-Y.NodeLists
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the object to iterate
-                                                        </dd>
-                                                        <dd>
-                                                            <code>f &lt;object&gt;</code>
-                                                             the function to execute.  This function
-receives the value, key, and object as parameters
-                                                        </dd>
-                                                        <dd>
-                                                            <code>proto &lt;object&gt;</code>
-                                                             if true, prototype properties are
-iterated on objects
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd>the YUI instance</dd>
-                                                </dl>
-             
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_extend">extend</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                         static 
-                                        
-                                        YUI
-                                            <strong>extend</strong>
-                                           (
-                                                
-                                                        
-                                                         r
-                                                    
-                                                
-                                                        , 
-                                                         s
-                                                    
-                                                
-                                                        , 
-                                                         px
-                                                    
-                                                
-                                                        , 
-                                                         sx
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Utility to set up the prototype, constructor and superclass properties to
-support an inheritance strategy that can chain constructors and methods.
-Static members will not be inherited.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>r &lt;Function&gt;</code>
-                                                               the object to modify
-                                                        </dd>
-                                                        <dd>
-                                                            <code>s &lt;Function&gt;</code>
-                                                             the object to inherit
-                                                        </dd>
-                                                        <dd>
-                                                            <code>px &lt;Object&gt;</code>
-                                                             prototype properties to add/override
-                                                        </dd>
-                                                        <dd>
-                                                            <code>sx &lt;Object&gt;</code>
-                                                             static properties to add/override
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd>the YUI instance</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -983,7 +700,10 @@ and throwFail is specified, this error will be re-thrown.
                                                     </code></dt>
                                                     <dd>this YUI instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1029,7 +749,10 @@ and throwFail is specified, this error will be re-thrown.
                                                     </code></dt>
                                                     <dd>the guid</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1117,7 +840,10 @@ interval until canceled.
                                                     <dd>a timer object. Call the cancel() method on this object to 
 stop the timer.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1184,7 +910,10 @@ Custom categories can be used as well. (opt)
                                                     </code></dt>
                                                     <dd>YUI instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1234,7 +963,10 @@ copy, use clone.
                                                     </code></dt>
                                                     <dd>the new merged object</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1333,7 +1065,10 @@ Used by Y.aggregate
                                                     </code></dt>
                                                     <dd>the augmented object</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1391,7 +1126,94 @@ This fails because "long" is a future reserved word in ECMAScript
                                                     </code></dt>
                                                     <dd>A reference to the last namespace object created</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_on">on</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Event.Handle
+                                            <strong>on</strong>
+                                           (
+                                                
+                                                        
+                                                         type
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         context
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Attach an event listener, either to a DOM object
+or to an Event.Target.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>type &lt;string&gt;</code>
+                                                              the event type
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;Function&gt;</code>
+                                                              the function to execute
+                                                        </dd>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             the Event.Target or element to attach to
+                                                        </dd>
+                                                        <dd>
+                                                            <code>context &lt;object&gt;</code>
+                                                             Optional execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             0..n additional arguments to append
+to the signature provided when the event fires.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Event.Handle
+                                                    </code></dt>
+                                                    <dd>a handle object for 
+unsubscribing to this event.</dd>
+                                                </dl>
+
+
+             
+
                                         </div>
 
                                     </div>
@@ -1438,86 +1260,10 @@ has one, a new one is not created
                                                     </code></dt>
                                                     <dd>The object's guid</dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_substitute">substitute</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        string
-                                            <strong>substitute</strong>
-                                           (
-                                                
-                                                        
-                                                         s
-                                                    
-                                                
-                                                        , 
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Does variable substitution on a string. It scans through the string 
-looking for expressions enclosed in { } braces. If an expression 
-is found, it is used a key on the object.  If there is a space in
-the key, the first word is used for the key and the rest is provided
-to an optional function to be used to programatically determine the
-value (the extra information might be used for this decision). If 
-the value for the key in the object, or what is returned from the
-function has a string value, number value, or object value, it is 
-substituted for the bracket expression and it repeats.  If this
-value is an object, it uses the Object's toString() if this has
-been overridden, otherwise it does a shallow dump of the key/value
-pairs if Y.dump is available (if dump isn't available, toString()
-is used).
-This method is included in the 'substitute' module.  It is not included
-in the YUI module.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>s &lt;string&gt;</code>
-                                                              The string that will be modified.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             An object containing the replacement values
-                                                        </dd>
-                                                        <dd>
-                                                            <code>f &lt;function&gt;</code>
-                                                              An optional function that can be used to
-process each match.  It receives the key,
-value, and any extra metadata included with
-the key inside of the braces.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        string
-                                                    </code></dt>
-                                                    <dd>the substituted string</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -1573,7 +1319,10 @@ must be the last parameter.
                                                     </code></dt>
                                                     <dd>the YUI instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1586,7 +1335,7 @@ must be the last parameter.
                                 <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
                                 <div class="content">
                                     <code>
-                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_before">before</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_detach">detach</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
                                     </code>
                                 </div>
                             </div>
@@ -1607,39 +1356,27 @@ must be the last parameter.
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class="selected"><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1649,7 +1386,9 @@ must be the last parameter.
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Loader.html">Loader</a></li>
                                 <li class=""><a href="Object.html">Object</a></li>
                                 <li class=""><a href="UA.html">UA</a></li>
                                 <li class="selected"><a href="YUI.html">YUI</a></li>
@@ -1659,7 +1398,10 @@ must be the last parameter.
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="get.js.html">get.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
                                 <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
                                 <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
@@ -1693,29 +1435,20 @@ must be the last parameter.
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_add">add</a>
                                 </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_aggregate">aggregate</a>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_after">after</a>
                                 </li>
                                 <li class=""><!--<code>object</code>-->
                                 <a href="#method_applyTo">applyTo</a>
                                 </li>
-                                <li class=""><!--<code>object</code>-->
-                                <a href="#method_augment">augment</a>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_before">before</a>
                                 </li>
-                                <li class=""><!--<code>function</code>-->
-                                <a href="#method_bind">bind</a>
-                                </li>
-                                <li class=""><!--<code>Array|Object</code>-->
-                                <a href="#method_clone">clone</a>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_detach">detach</a>
                                 </li>
                                 <li class=""><!--<code>String</code>-->
                                 <a href="#method_dump">dump</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_each">each</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_extend">extend</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_fail">fail</a>
@@ -1738,11 +1471,11 @@ must be the last parameter.
                                 <li class=""><!--<code>object</code>-->
                                 <a href="#method_namespace">namespace</a>
                                 </li>
-                                <li class=""><!--<code>string</code>-->
-                                <a href="#method_stamp">stamp</a>
+                                <li class=""><!--<code>Event.Handle</code>-->
+                                <a href="#method_on">on</a>
                                 </li>
                                 <li class=""><!--<code>string</code>-->
-                                <a href="#method_substitute">substitute</a>
+                                <a href="#method_stamp">stamp</a>
                                 </li>
                                 <li class=""><!--<code>YUI</code>-->
                                 <a href="#method_use">use</a>

@@ -1,3 +1,8 @@
+/*
+ * YUI console logger
+ * @module yui
+ * @submodule log
+ */
 YUI.add("log", function(instance) {
 
     /**
@@ -24,24 +29,25 @@ YUI.add("log", function(instance) {
         // or the event call stack contains a consumer of the yui:log event
         if (c.debug && !bail) {
 
+            // apply source filters
+            if (src) {
+
+
+                var exc = c.logExclude, inc = c.logInclude;
+
+                // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
+
+                if (inc && !(src in inc)) {
+                    // console.log('bail: inc list found, but src is not in list: ' + src);
+                    bail = true;
+                } else if (exc && (src in exc)) {
+                    // console.log('bail: exc list found, and src is in it: ' + src);
+                    bail = true;
+                }
+            }
+
             if (c.useConsole && typeof console != 'undefined') {
 
-                // apply source filters
-                if (src) {
-
-
-                    var exc = c.logExclude, inc = c.logInclude;
-
-                    // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
-
-                    if (inc && !(src in inc)) {
-                        // console.log('bail: inc list found, but src is not in list: ' + src);
-                        bail = true;
-                    } else if (exc && (src in exc)) {
-                        // console.log('bail: exc list found, and src is in it: ' + src);
-                        bail = true;
-                    }
-                }
 
                 if (!bail) {
 
@@ -51,9 +57,7 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            // category filters are not used to suppress the log event
-            // so that the data can be stored and displayed later.
-            if (Y.fire) {
+            if (Y.fire && !bail) {
                 Y.fire('yui:log', msg, cat, src);
             }
         }

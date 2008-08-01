@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                    
@@ -39,9 +40,20 @@
 
                     </h3>
                     <div class="description summary">
-                        YUI core
+                        Loader dynamically loads script and css files.  It includes the dependency
+info for the version of the library in use, and will automatically pull in
+dependencies for the modules requested.  It supports rollup files and will
+automatically use these when appropriate in order to minimize the number of
+http connections required to load all of the dependencies.  It can load the
+files from the Yahoo! CDN, and it can utilize the combo service provided on
+this network to reduce the number of http connections required to download 
+YUI files.
                     </div>
 
+
+
+<div class="yui-gc">
+    <div class="yui-u first">
                     <form onsubmit="return false">
                         <p>Search yui:
                         <div id="propertysearch">
@@ -52,9 +64,37 @@
                         </div>
                     </form>
                     <script type="text/javascript">
-                        ALL_YUI_PROPS = [{"url": "YUI.html#method_add", "access": "", "host": "YUI", "name": "add"}, {"url": "YUI.html#method_aggregate", "access": "", "host": "YUI", "name": "aggregate"}, {"url": "YUI.html#method_applyTo", "access": "", "host": "YUI", "name": "applyTo"}, {"url": "YUI.html#method_augment", "access": "", "host": "YUI", "name": "augment"}, {"url": "YUI.html#method_bind", "access": "", "host": "YUI", "name": "bind"}, {"url": "YUI.html#method_clone", "access": "", "host": "YUI", "name": "clone"}, {"url": "YUI.html#method_dump", "access": "", "host": "YUI", "name": "dump"}, {"url": "Array.html#method_each", "access": "", "host": "Array", "name": "each"}, {"url": "Object.html#method_each", "access": "", "host": "Object", "name": "each"}, {"url": "YUI.html#method_each", "access": "", "host": "YUI", "name": "each"}, {"url": "YUI.html#method_extend", "access": "", "host": "YUI", "name": "extend"}, {"url": "YUI.html#method_fail", "access": "", "host": "YUI", "name": "fail"}, {"url": "UA.html#property_gecko", "access": "", "host": "UA", "name": "gecko"}, {"url": "YUI.html#method_guid", "access": "", "host": "YUI", "name": "guid"}, {"url": "Array.html#method_hash", "access": "", "host": "Array", "name": "hash"}, {"url": "UA.html#property_ie", "access": "", "host": "UA", "name": "ie"}, {"url": "YUI.html#property__iefix", "access": "private", "host": "YUI", "name": "_iefix"}, {"url": "Array.html#method_indexOf", "access": "", "host": "Array", "name": "indexOf"}, {"url": "YUI.html#method__init", "access": "private", "host": "YUI", "name": "_init"}, {"url": "Lang.html#method_isArray", "access": "", "host": "Lang", "name": "isArray"}, {"url": "Lang.html#method_isBoolean", "access": "", "host": "Lang", "name": "isBoolean"}, {"url": "Lang.html#method_isDate", "access": "", "host": "Lang", "name": "isDate"}, {"url": "Lang.html#method_isFunction", "access": "", "host": "Lang", "name": "isFunction"}, {"url": "Lang.html#method_isNull", "access": "", "host": "Lang", "name": "isNull"}, {"url": "Lang.html#method_isNumber", "access": "", "host": "Lang", "name": "isNumber"}, {"url": "Lang.html#method_isObject", "access": "", "host": "Lang", "name": "isObject"}, {"url": "Lang.html#method_isString", "access": "", "host": "Lang", "name": "isString"}, {"url": "Lang.html#method_isUndefined", "access": "", "host": "Lang", "name": "isUndefined"}, {"url": "Lang.html#method_isValue", "access": "", "host": "Lang", "name": "isValue"}, {"url": "Object.html#method_keys", "access": "", "host": "Object", "name": "keys"}, {"url": "YUI.html#method_later", "access": "", "host": "YUI", "name": "later"}, {"url": "YUI.html#method_log", "access": "", "host": "YUI", "name": "log"}, {"url": "YUI.html#method_merge", "access": "", "host": "YUI", "name": "merge"}, {"url": "YUI.html#method_mix", "access": "", "host": "YUI", "name": "mix"}, {"url": "UA.html#property_mobile", "access": "", "host": "UA", "name": "mobile"}, {"url": "YUI.html#method_namespace", "access": "", "host": "YUI", "name": "namespace"}, {"url": "UA.html#property_opera", "access": "", "host": "UA", "name": "opera"}, {"url": "Object.html#method_owns", "access": "", "host": "Object", "name": "owns"}, {"url": "YUI.html#method__setup", "access": "private", "host": "YUI", "name": "_setup"}, {"url": "YUI.html#method_stamp", "access": "", "host": "YUI", "name": "stamp"}, {"url": "YUI.html#method_substitute", "access": "", "host": "YUI", "name": "substitute"}, {"url": "Array.html#method_test", "access": "", "host": "Array", "name": "test"}, {"url": "Lang.html#method_trim", "access": "", "host": "Lang", "name": "trim"}, {"url": "YUI.html#method_use", "access": "", "host": "YUI", "name": "use"}, {"url": "UA.html#property_webkit", "access": "", "host": "UA", "name": "webkit"}];
+                        ALL_YUI_PROPS = [{"url": "Get.html#method_abort", "access": "", "host": "Get", "name": "abort"}, {"url": "YUI.html#method_add", "access": "", "host": "YUI", "name": "add"}, {"url": "Loader.html#method_addModule", "access": "", "host": "Loader", "name": "addModule"}, {"url": "YUI.html#method_after", "access": "", "host": "YUI", "name": "after"}, {"url": "Loader.html#property_allowRollup", "access": "", "host": "Loader", "name": "allowRollup"}, {"url": "YUI.html#method_applyTo", "access": "", "host": "YUI", "name": "applyTo"}, {"url": "Loader.html#property_attaching", "access": "", "host": "Loader", "name": "attaching"}, {"url": "Get.html#method__autoPurge", "access": "private", "host": "Get", "name": "_autoPurge"}, {"url": "Loader.html#property_base", "access": "", "host": "Loader", "name": "base"}, {"url": "YUI.html#method_before", "access": "", "host": "YUI", "name": "before"}, {"url": "Loader.html#method_calculate", "access": "", "host": "Loader", "name": "calculate"}, {"url": "Loader.html#property_charset", "access": "", "host": "Loader", "name": "charset"}, {"url": "Loader.html#property_combine", "access": "", "host": "Loader", "name": "combine"}, {"url": "Loader.html#property_comboBase", "access": "", "host": "Loader", "name": "comboBase"}, {"url": "Loader.html#property_context", "access": "", "host": "Loader", "name": "context"}, {"url": "Get.html#method_css", "access": "", "host": "Get", "name": "css"}, {"url": "Loader.html#property_data", "access": "", "host": "Loader", "name": "data"}, {"url": "YUI.html#method_detach", "access": "", "host": "YUI", "name": "detach"}, {"url": "Loader.html#property_dirty", "access": "", "host": "Loader", "name": "dirty"}, {"url": "YUI.html#method_dump", "access": "", "host": "YUI", "name": "dump"}, {"url": "Array.html#method_each", "access": "", "host": "Array", "name": "each"}, {"url": "Object.html#method_each", "access": "", "host": "Object", "name": "each"}, {"url": "Loader.html#method__explode", "access": "private", "host": "Loader", "name": "_explode"}, {"url": "YUI.html#method_fail", "access": "", "host": "YUI", "name": "fail"}, {"url": "Loader.html#property_filter", "access": "", "host": "Loader", "name": "filter"}, {"url": "Get.html#method__finalize", "access": "private", "host": "Get", "name": "_finalize"}, {"url": "Get.html#method__finish", "access": "private", "host": "Get", "name": "_finish"}, {"url": "Loader.html#property_force", "access": "", "host": "Loader", "name": "force"}, {"url": "UA.html#property_gecko", "access": "", "host": "UA", "name": "gecko"}, {"url": "Loader.html#method_getProvides", "access": "", "host": "Loader", "name": "getProvides"}, {"url": "Loader.html#method_getRequires", "access": "", "host": "Loader", "name": "getRequires"}, {"url": "YUI.html#method_guid", "access": "", "host": "YUI", "name": "guid"}, {"url": "Array.html#method_hash", "access": "", "host": "Array", "name": "hash"}, {"url": "UA.html#property_ie", "access": "", "host": "UA", "name": "ie"}, {"url": "YUI.html#property__iefix", "access": "private", "host": "YUI", "name": "_iefix"}, {"url": "Loader.html#property_ignore", "access": "", "host": "Loader", "name": "ignore"}, {"url": "Loader.html#property_ignoreRegistered", "access": "", "host": "Loader", "name": "ignoreRegistered"}, {"url": "Array.html#method_indexOf", "access": "", "host": "Array", "name": "indexOf"}, {"url": "YUI.html#method__init", "access": "private", "host": "YUI", "name": "_init"}, {"url": "Loader.html#method_insert", "access": "", "host": "Loader", "name": "insert"}, {"url": "Loader.html#property_insertBefore", "access": "", "host": "Loader", "name": "insertBefore"}, {"url": "Loader.html#property_inserted", "access": "", "host": "Loader", "name": "inserted"}, {"url": "Loader.html#property__internalCallback", "access": "private", "host": "Loader", "name": "_internalCallback"}, {"url": "Lang.html#method_isArray", "access": "", "host": "Lang", "name": "isArray"}, {"url": "Lang.html#method_isBoolean", "access": "", "host": "Lang", "name": "isBoolean"}, {"url": "Lang.html#method_isDate", "access": "", "host": "Lang", "name": "isDate"}, {"url": "Lang.html#method_isFunction", "access": "", "host": "Lang", "name": "isFunction"}, {"url": "Lang.html#method_isNull", "access": "", "host": "Lang", "name": "isNull"}, {"url": "Lang.html#method_isNumber", "access": "", "host": "Lang", "name": "isNumber"}, {"url": "Lang.html#method_isObject", "access": "", "host": "Lang", "name": "isObject"}, {"url": "Lang.html#method_isString", "access": "", "host": "Lang", "name": "isString"}, {"url": "Lang.html#method_isUndefined", "access": "", "host": "Lang", "name": "isUndefined"}, {"url": "Lang.html#method_isValue", "access": "", "host": "Lang", "name": "isValue"}, {"url": "Object.html#method_keys", "access": "", "host": "Object", "name": "keys"}, {"url": "YUI.html#method_later", "access": "", "host": "YUI", "name": "later"}, {"url": "Get.html#method__linkNode", "access": "private", "host": "Get", "name": "_linkNode"}, {"url": "Loader.html#property_loaded", "access": "", "host": "Loader", "name": "loaded"}, {"url": "Loader.html#method_loadNext", "access": "", "host": "Loader", "name": "loadNext"}, {"url": "Loader.html#property_loadOptional", "access": "", "host": "Loader", "name": "loadOptional"}, {"url": "YUI.html#method_log", "access": "", "host": "YUI", "name": "log"}, {"url": "YUI.html#method_merge", "access": "", "host": "YUI", "name": "merge"}, {"url": "YUI.html#method_mix", "access": "", "host": "YUI", "name": "mix"}, {"url": "UA.html#property_mobile", "access": "", "host": "UA", "name": "mobile"}, {"url": "Loader.html#property_moduleInfo", "access": "", "host": "Loader", "name": "moduleInfo"}, {"url": "YUI.html#method_namespace", "access": "", "host": "YUI", "name": "namespace"}, {"url": "Get.html#method__next", "access": "private", "host": "Get", "name": "_next"}, {"url": "Get.html#property_nidx", "access": "private", "host": "Get", "name": "nidx"}, {"url": "Get.html#method__node", "access": "private", "host": "Get", "name": "_node"}, {"url": "YUI.html#method_on", "access": "", "host": "YUI", "name": "on"}, {"url": "Loader.html#method_onFailure", "access": "", "host": "Loader", "name": "onFailure"}, {"url": "Loader.html#method_onProgress", "access": "", "host": "Loader", "name": "onProgress"}, {"url": "Loader.html#method_onSuccess", "access": "", "host": "Loader", "name": "onSuccess"}, {"url": "Loader.html#method_onTimeout", "access": "", "host": "Loader", "name": "onTimeout"}, {"url": "UA.html#property_opera", "access": "", "host": "UA", "name": "opera"}, {"url": "Object.html#method_owns", "access": "", "host": "Object", "name": "owns"}, {"url": "Get.html#method__purge", "access": "private", "host": "Get", "name": "_purge"}, {"url": "Get.html#property_PURGE_THRESH", "access": "", "host": "Get", "name": "PURGE_THRESH"}, {"url": "Get.html#property_purging", "access": "private", "host": "Get", "name": "purging"}, {"url": "Loader.html#method__pushEvents", "access": "private", "host": "Loader", "name": "_pushEvents"}, {"url": "Get.html#property_qidx", "access": "private", "host": "Get", "name": "qidx"}, {"url": "Get.html#method_queue", "access": "private", "host": "Get", "name": "queue"}, {"url": "Get.html#property_queues", "access": "private", "host": "Get", "name": "queues"}, {"url": "Loader.html#method__reduce", "access": "private", "host": "Loader", "name": "_reduce"}, {"url": "Loader.html#method_require", "access": "", "host": "Loader", "name": "require"}, {"url": "Loader.html#property_required", "access": "", "host": "Loader", "name": "required"}, {"url": "Get.html#method__returnData", "access": "private", "host": "Get", "name": "_returnData"}, {"url": "Loader.html#method__rollup", "access": "private", "host": "Loader", "name": "_rollup"}, {"url": "Loader.html#property_rollups", "access": "", "host": "Loader", "name": "rollups"}, {"url": "Loader.html#property_root", "access": "", "host": "Loader", "name": "root"}, {"url": "Get.html#method_script", "access": "", "host": "Get", "name": "script"}, {"url": "Get.html#method__scriptNode", "access": "private", "host": "Get", "name": "_scriptNode"}, {"url": "YUI.html#method__setup", "access": "private", "host": "YUI", "name": "_setup"}, {"url": "Loader.html#method__setup", "access": "private", "host": "Loader", "name": "_setup"}, {"url": "Loader.html#method__sort", "access": "private", "host": "Loader", "name": "_sort"}, {"url": "Loader.html#property_sorted", "access": "", "host": "Loader", "name": "sorted"}, {"url": "YUI.html#method_stamp", "access": "", "host": "YUI", "name": "stamp"}, {"url": "Array.html#method_test", "access": "", "host": "Array", "name": "test"}, {"url": "Get.html#method__timeout", "access": "private", "host": "Get", "name": "_timeout"}, {"url": "Loader.html#property_timeout", "access": "", "host": "Loader", "name": "timeout"}, {"url": "Get.html#method__track", "access": "private", "host": "Get", "name": "_track"}, {"url": "Lang.html#method_trim", "access": "", "host": "Lang", "name": "trim"}, {"url": "Loader.html#method__url", "access": "private", "host": "Loader", "name": "_url"}, {"url": "YUI.html#method_use", "access": "", "host": "YUI", "name": "use"}, {"url": "Loader.html#property__useYahooListener", "access": "private", "host": "Loader", "name": "_useYahooListener"}, {"url": "UA.html#property_webkit", "access": "", "host": "UA", "name": "webkit"}];
                     </script>
+	    </div>
+    <div class="yui-u">
+                    <style>
+                        .submodules dd {
+                            font-size: 93%;
+                            font-weight: italic;
+                        }
+                    </style>
+                    <div class="submodules">
+                        <h4>Submodules:</h4> 
+                        <dl>
+                            <dt><code><a href="UA.html">yui-base</a></code></dt>
+                            <dd>Browser/platform detection</dd>
+                            <dt><code><a href="Get.html">get</a></code></dt>
+                            <dd>Fetches and inserts one or more script or link nodes into the document</dd>
+                            <dt><code><a href="Loader.html">loader</a></code></dt>
+                            <dd>Loader dynamically loads script and css files.  It includes the dependency
+info for the version of the library in use, and will automatically pull in
+dependencies for the modules requested.  It supports rollup files and will
+automatically use these when appropriate in order to minimize the number of
+http connections required to load all of the dependencies.  It can load the
+files from the Yahoo! CDN, and it can utilize the combo service provided on
+this network to reduce the number of http connections required to download 
+YUI files.</dd>
+                        </dl>
+                    </div>
 
+	    </div>
+</div>
 
 			</div>
 		</div>
@@ -67,39 +107,27 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class="selected"><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -109,7 +137,9 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Loader.html">Loader</a></li>
                                 <li class=""><a href="Object.html">Object</a></li>
                                 <li class=""><a href="UA.html">UA</a></li>
                                 <li class=""><a href="YUI.html">YUI</a></li>
@@ -119,7 +149,10 @@
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="get.js.html">get.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
                                 <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
                                 <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>

@@ -1,3 +1,8 @@
+/*
+ * A wrapper for DOM events and Custom Events
+ * @submodule event-facade
+ * @module event
+ */
 YUI.add("event-facade", function(Y) {
 
 

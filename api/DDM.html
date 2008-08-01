@@ -1,0 +1,2404 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: dd  DDM   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>dd&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html">dd</a>
+                 &gt; DDM 
+                
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>DDM</b>
+                        <span class="extends">
+                           - extends <a href="Base.html">Base</a>
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        Provides the base Drag Drop Manger required for making a Node draggable.
+                    </div>
+
+                        <div class="section constructor details">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong>DDM</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__activeShims">_activeShims</a>
+                                        <code>- private {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Placeholder for all active shims on the page
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__debugShim">_debugShim</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Set this to true to set the shims opacity to .5 for debugging it, default: false.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__drags">_drags</a>
+                                        <code>- private {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Holder for all registered drag elements.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__noShim">_noShim</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This flag turns off the use of the mouseover/mouseout shim. It should not be used unless you know what you are doing.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__pg">_pg</a>
+                                        <code>- private {Node}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The shim placed over the screen to track the mousemove event.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_activeDrag">activeDrag</a>
+                                        <code>- {Drag}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A reference to the currently active draggable object.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_activeDrop">activeDrop</a>
+                                        <code>- {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A reference to the active Drop Target
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_CSS_PREFIX">CSS_PREFIX</a>
+                                        <code>- {String}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The PREFIX to attach to all DD CSS class names
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_INTERSECT">INTERSECT</a>
+                                        <code>- private Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            In intersect mode, a Drop is targeted by "part" of the drag node being over the Target
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_mode">mode</a>
+                                        <code>- private Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_otherDrops">otherDrops</a>
+                                        <code>- {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            An object literal of Other Drop Targets that we encountered during this interaction (in the case of overlapping Drop Targets)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_POINT">POINT</a>
+                                        <code>- private Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            In point mode, a Drop is targeted by the cursor being over the Target
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property_STRICT">STRICT</a>
+                                        <code>- private Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            In strict mode, a Drop is targeted by the "entire" drag node being over the Target
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_targets">targets</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            All of the Targets
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_useHash">useHash</a>
+                                        <code>- {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Should we only check targets that are in the viewport on drags (for performance), default: true
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_validDrops">validDrops</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            An array of the valid Drop Targets for this interaction.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                        <a class="" href="Base.html#property_name">name</a>
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__activateTargets">_activateTargets</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_activateTargets</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Clear the cache and activate the shims of all the targets
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__addActiveShim">_addActiveShim</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_addActiveShim</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Adds a Drop Target to the list of active shims
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>d &lt;Object&gt;</code>
+                                                             The Drop instance to add to the list.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__addValid">_addValid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Self
+                                            <strong>_addValid</strong>
+                                           (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a Drop Target to the list of Valid Targets. This list get's regenerated on each new drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                            
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__createPG">_createPG</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_createPG</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Creates the shim and adds it's listeners to it.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__deactivateTargets">_deactivateTargets</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_deactivateTargets</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__dropMove">_dropMove</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_dropMove</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method is called when the move method is called on the Drag Object.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__end">_end</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_end</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Internal method used by Drag to signal the end of a drag operation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__endDrag">_endDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_endDrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Factory method to be overwritten by other DDM's
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleTargetOver">_handleTargetOver</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleTargetOver</strong>
+                                           (
+                                                
+                                                        
+                                                         force
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method execs _handleTargetOver on all valid Drop Targets
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>force &lt;Boolean&gt;</code>
+                                                             Force it to run the first time.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__hasActiveShim">_hasActiveShim</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Boolean
+                                            <strong>_hasActiveShim</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method checks the _activeShims Object to see if there is a shim active.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__init">_init</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_init</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            DDM's init method
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__lookup">_lookup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Array
+                                            <strong>_lookup</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Filters the list of Drops down to those in the viewport.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>The valid Drop Targets that are in the viewport.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__move">_move</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_move</strong>
+                                           (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Internal listener for the mousemove DOM event to pass to the Drag's move method.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The Dom mousemove Event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__pg_activate">_pg_activate</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_pg_activate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Activates the shim
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__pg_deactivate">_pg_deactivate</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_pg_deactivate</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Deactivates the shim
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__pg_size">_pg_size</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_pg_size</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sizes the shim on: activatation, window:scroll, window:resize
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__regDrag">_regDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_regDrag</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Adds a reference to the drag object to the DDM._drags array, called in the constructor of Drag.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>d &lt;Drag&gt;</code>
+                                                             The Drag object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__regTarget">_regTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_regTarget</strong>
+                                           (
+                                                
+                                                        
+                                                         t
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add the passed in Target to the targets collection
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>t &lt;Object&gt;</code>
+                                                             The Target to add to the targets collection
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__removeActiveShim">_removeActiveShim</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_removeActiveShim</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes a Drop Target to the list of active shims
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>d &lt;Object&gt;</code>
+                                                             The Drop instance to remove from the list.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__removeValid">_removeValid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Self
+                                            <strong>_removeValid</strong>
+                                           (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes a Drop Target from the list of Valid Targets. This list get's regenerated on each new drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                            
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setDragMode">_setDragMode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_setDragMode</strong>
+                                           (
+                                                
+                                                        
+                                                         String/Number
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for dragMode attribute setter.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>String/Number &lt;object&gt;</code>
+                                                             The Number value or the String for the DragMode to default all future drag instances to.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>Number The Mode to be set</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__start">_start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_start</strong>
+                                           (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         y
+                                                    
+                                                
+                                                        , 
+                                                         w
+                                                    
+                                                
+                                                        , 
+                                                         h
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Internal method used by Drag to signal the start of a drag operation
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>x &lt;Number&gt;</code>
+                                                             The x position of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>y &lt;Number&gt;</code>
+                                                             The y position of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>w &lt;Number&gt;</code>
+                                                             The width of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>h &lt;Number&gt;</code>
+                                                             The height of the drag element
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__startDrag">_startDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_startDrag</strong>
+                                           (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                                        , 
+                                                         y
+                                                    
+                                                
+                                                        , 
+                                                         w
+                                                    
+                                                
+                                                        , 
+                                                         h
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Factory method to be overwritten by other DDM's
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>x &lt;Number&gt;</code>
+                                                             The x position of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>y &lt;Number&gt;</code>
+                                                             The y position of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>w &lt;Number&gt;</code>
+                                                             The width of the drag element
+                                                        </dd>
+                                                        <dd>
+                                                            <code>h &lt;Number&gt;</code>
+                                                             The height of the drag element
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__unregDrag">_unregDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_unregDrag</strong>
+                                           (
+                                                
+                                                        
+                                                         d
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove this drag object from the DDM._drags array.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>d &lt;Drag&gt;</code>
+                                                             The drag object.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__unregTarget">_unregTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_unregTarget</strong>
+                                           (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove the passed in Target from the targets collection
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                             The Target to remove from the targets collection
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_clearCache">clearCache</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>clearCache</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Clears the cache data used for this interaction.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_cssSizestoObject">cssSizestoObject</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Object
+                                            <strong>cssSizestoObject</strong>
+                                           (
+                                                
+                                                        
+                                                         gutter
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            //TODO Private, rename??...
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>gutter &lt;String&gt;</code>
+                                                             CSS style string for gutter: '5 0' (sets top and bottom to 5px, left and right to 0px), '1 2 3 4' (top 1px, right 2px, bottom 3px, left 4px)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>The gutter Object Literal.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getBestMatch">getBestMatch</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object or Array
+                                            <strong>getBestMatch</strong>
+                                           (
+                                                
+                                                        
+                                                         drops
+                                                    
+                                                
+                                                        , 
+                                                         all
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method will gather the area for all potential targets and see which has the hightest covered area and return it.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drops &lt;Array&gt;</code>
+                                                             An Array of drops to scan for the best match.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             If present, it returns an Array. First item is best match, second is an Array of the other items in the original Array.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object or Array
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getDrag">getDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>getDrag</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Get a valid Drag instance back from a Node or a selector string, false otherwise
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;String/Object&gt;</code>
+                                                             The Node instance or Selector string to check for a valid Drag Object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getDrop">getDrop</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>getDrop</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Get a valid Drop instance back from a Node or a selector string, false otherwise
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;String/Object&gt;</code>
+                                                             The Node instance or Selector string to check for a valid Drop Object
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_isOverTarget">isOverTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>isOverTarget</strong>
+                                           (
+                                                
+                                                        
+                                                         drop
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Check to see if the Drag element is over the target, method varies on current mode
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>drop &lt;Object&gt;</code>
+                                                             The drop to check against
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setXY">setXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setXY</strong>
+                                           (
+                                                
+                                                        
+                                                         node
+                                                    
+                                                
+                                                        , 
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            A simple method to set the top and left position from offsets instead of page coordinates
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node &lt;Object&gt;</code>
+                                                             The node to set the position of
+                                                        </dd>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             The Array of left/top position to be set.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stopDrag">stopDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>stopDrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_syncActiveShims">syncActiveShims</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array
+                                            <strong>syncActiveShims</strong>
+                                           (
+                                                
+                                                        
+                                                         force
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method will sync the position of the shims on the Drop Targets that are currently active.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>force &lt;Boolean&gt;</code>
+                                                             Resize/sync all Targets.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>drops The list of Drop Targets that was just synced.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="private" href="Attribute.html#method__cloneAttVal">_cloneAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__fireAttChange">_fireAttChange</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_addAtt">addAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_removeAtt">removeAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Base.html">Base</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="protected" href="Base.html#method__defDestroyFn">_defDestroyFn</a><span class="protected">,</span>                                            <a class="protected" href="Base.html#method__defInitFn">_defInitFn</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>                                            <a class="protected" href="Base.html#method__getClasses">_getClasses</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__initHierarchy">_initHierarchy</a><span class="private">,</span>                                            <a class="private" href="Base.html#method__prefixEvtType">_prefixEvtType</a><span class="private">,</span>                                            <a class="" href="Base.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Base.html#method_destroy">destroy</a><span class="">,</span>                                            <a class="" href="Base.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Base.html#method_init">init</a><span class="">,</span>                                            <a class="" href="Base.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Base.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_toString">toString</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickPixelThreshChange">clickPixelThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickPixelThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickPixelThresh' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickTimeThreshChange">clickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickTimeThresh' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragModeChange">dragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragMode' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section field inheritance">
+                            <h4>Events inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#event_destroy">destroy</a><span class="">,</span>                                        <a class="" href="Base.html#event_destroyedChange">destroyedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_init">init</a><span class="">,</span>                                        <a class="" href="Base.html#event_initializedChange">initializedChange</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="config_clickPixelThresh">clickPixelThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of pixels to move to start a drag operation, default is 3.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickTimeThresh">clickTimeThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragMode">dragMode</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of all future Drag instances.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div class="section field inheritance">
+                            <h4>Configuration attributes inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#config_destroyed">destroyed</a><span class="">,</span>                                        <a class="" href="Base.html#config_initialized">initialized</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class="selected"><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="DDM.html">DDM</a></li>
+                                <li class=""><a href="Drag.html">Drag</a></li>
+                                <li class=""><a href="DragConstained.html">DragConstained</a></li>
+                                <li class=""><a href="Drop.html">Drop</a></li>
+                                <li class=""><a href="Proxy.html">Proxy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="constrain.js.html">constrain.js</a></li>
+                                <li class=""><a href="ddm-base.js.html">ddm-base.js</a></li>
+                                <li class=""><a href="ddm-drop.js.html">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html">ddm.js</a></li>
+                                <li class=""><a href="drag.js.html">drag.js</a></li>
+                                <li class=""><a href="drop.js.html">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html">proxy.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__activeShims">_activeShims</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__debugShim">_debugShim</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__drags">_drags</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__noShim">_noShim</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__pg">_pg</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_activeDrag">activeDrag</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_activeDrop">activeDrop</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_CSS_PREFIX">CSS_PREFIX</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_INTERSECT">INTERSECT</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_mode">mode</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_otherDrops">otherDrops</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_POINT">POINT</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property_STRICT">STRICT</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_targets">targets</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_useHash">useHash</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_validDrops">validDrops</a>
+                                        <!--<code>&lt;{Array}&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__activateTargets">_activateTargets</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__addActiveShim">_addActiveShim</a>
+                                </li>
+                                <li class="private"><!--<code>Self</code>-->
+                                <a href="#method__addValid">_addValid</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__createPG">_createPG</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__deactivateTargets">_deactivateTargets</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__dropMove">_dropMove</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__end">_end</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__endDrag">_endDrag</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleTargetOver">_handleTargetOver</a>
+                                </li>
+                                <li class="private"><!--<code>Boolean</code>-->
+                                <a href="#method__hasActiveShim">_hasActiveShim</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__init">_init</a>
+                                </li>
+                                <li class="private"><!--<code>Array</code>-->
+                                <a href="#method__lookup">_lookup</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__move">_move</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__pg_activate">_pg_activate</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__pg_deactivate">_pg_deactivate</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__pg_size">_pg_size</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__regDrag">_regDrag</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__regTarget">_regTarget</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__removeActiveShim">_removeActiveShim</a>
+                                </li>
+                                <li class="private"><!--<code>Self</code>-->
+                                <a href="#method__removeValid">_removeValid</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setDragMode">_setDragMode</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__start">_start</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__startDrag">_startDrag</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unregDrag">_unregDrag</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unregTarget">_unregTarget</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_clearCache">clearCache</a>
+                                </li>
+                                <li class="private"><!--<code>Object</code>-->
+                                <a href="#method_cssSizestoObject">cssSizestoObject</a>
+                                </li>
+                                <li class=""><!--<code>Object or Array</code>-->
+                                <a href="#method_getBestMatch">getBestMatch</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_getDrag">getDrag</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_getDrop">getDrop</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_isOverTarget">isOverTarget</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setXY">setXY</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_stopDrag">stopDrag</a>
+                                </li>
+                                <li class=""><!--<code>Array</code>-->
+                                <a href="#method_syncActiveShims">syncActiveShims</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_clickPixelThreshChange">clickPixelThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickTimeThreshChange">clickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragModeChange">dragModeChange</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#config_clickPixelThresh">clickPixelThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickTimeThresh">clickTimeThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragMode">dragMode</a>
+                                </li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

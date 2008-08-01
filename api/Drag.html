@@ -1,0 +1,3320 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: dd  Drag   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>dd&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html">dd</a>
+                 &gt; Drag 
+                
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>Drag</b>
+                        <span class="extends">
+                           - extends <a href="Base.html">Base</a>
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                        <dl class="subclasses">
+                            <dt>Known Subclasses:</dd>
+                            <dd>
+                                    <a href="Proxy.html">Proxy</a>
+                                    <a href="DragPlugin.html">DragPlugin</a>
+                                    <a href="DragConstained.html">DragConstained</a>
+                            </dd>
+                       </dl>
+                
+  
+
+                    <div class="summary description">
+                        This class provides the ability to drag a Node.
+                    </div>
+
+                        <div class="section constructor details">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong>Drag</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4><a name="property__clickTimeout">_clickTimeout</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Holder for the setTimeout call
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__dragThreshMet">_dragThreshMet</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Private flag to see if the drag threshhold was met
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__endTime">_endTime</a>
+                                        <code>- private Date</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The getTime of the mouseup event. Not used, just here in case someone wants/needs to use it.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__ev_md">_ev_md</a>
+                                        <code>- private {Event}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private reference to the mousedown DOM event
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__fromTimeout">_fromTimeout</a>
+                                        <code>- private {Boolean}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Flag to determine if the drag operation came from a timeout
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__groups">_groups</a>
+                                        <code>- private {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Storage Array for the groups this drag belongs to.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__handles">_handles</a>
+                                        <code>- private {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the valid drag handles
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__ieSelectBack">_ieSelectBack</a>
+                                        <code>- private object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            We will hold a copy of the current "onselectstart" method on this property, and reset it after we are done using it.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__invalids">_invalids</a>
+                                        <code>- private {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the invalid selector strings
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__invalidsDefault">_invalidsDefault</a>
+                                        <code>- private {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A private hash of the default invalid selector strings: {'textarea': true, 'input': true, 'a': true, 'button': true}
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4><a name="property__startTime">_startTime</a>
+                                        <code>- private Date</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The getTime of the mousedown event. Not used, just here in case someone wants/needs to use it.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_deltaXY">deltaXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The offset of the mouse position to the element's position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_lastXY">lastXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The position of the element as it's moving (for offset calculations)
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_mouseXY">mouseXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The XY coords of the mousemove
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_nodeXY">nodeXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The initial element position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_region">region</a>
+                                        <code>- Object</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A region object associated with this drag, used for checking regions while dragging.
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_startXY">startXY</a>
+                                        <code>- {Array}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The initial mouse position
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4><a name="property_target">target</a>
+                                        <code>- {Object}</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This will be a reference to the Drop instance associated with this drag if the target: true config attribute is set..
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+
+
+                            </div>
+                        </div>
+
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                        <a class="" href="Base.html#property_name">name</a>
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__align">_align</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_align</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Calculates the offsets and set's the XY that the element will move to.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             The xy coords to align with.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd>Array</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__createEvents">_createEvents</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_createEvents</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method creates all the events for this Event Target and publishes them so we get Event Bubbling.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fixIEMouseDown">_fixIEMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseDown</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the onselectstart listner on the document to the _ieSelectFix property
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__fixIEMouseUp">_fixIEMouseUp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_fixIEMouseUp</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method copies the _ieSelectFix property back to the onselectstart listner on the document.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseDown">_handleMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseDown</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mousedown DOM event
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseDownEvent">_handleMouseDownEvent</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseDownEvent</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mousedown DOM event
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleMouseUp">_handleMouseUp</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_handleMouseUp</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handler for the mouseup DOM event
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__handleTarget">_handleTarget</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        Boolean/Object
+                                            <strong>_handleTarget</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Attribute handler for the target config attribute.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean/Object
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__ieSelectFix">_ieSelectFix</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_ieSelectFix</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            The function we use as the onselectstart handler when we start a drag in Internet Explorer
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__move">_move</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_move</strong>
+                                           (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fired from DragDropMgr (DDM) on mousemove.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The mousemove DOM event
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__moveNode">_moveNode</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_moveNode</strong>
+                                           (
+                                                
+                                                        
+                                                         eXY
+                                                    
+                                                
+                                                        , 
+                                                         noFire
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            This method performs the actual element move.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>eXY &lt;Array&gt;</code>
+                                                             The XY to move the element to, usually comes from the mousemove DOM event.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>noFire &lt;Boolean&gt;</code>
+                                                             If true, the drag:drag event will not fire.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__prep">_prep</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_prep</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Attach event listners and add classname
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__setStartPosition">_setStartPosition</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_setStartPosition</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Sets the current position of the Element and calculates the offset
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             The XY coords to set the position to.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__timeoutCheck">_timeoutCheck</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_timeoutCheck</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            The method passed to setTimeout to determine if the clickTimeThreshold was met.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method__unprep">_unprep</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>_unprep</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Detach event listners and remove classname
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addHandle">addHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addHandle</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a handle to a drag element. Drag only initiates when a mousedown happens on this element.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector to test for a valid handle. Must be a child of the element.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addInvalid">addInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addInvalid</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add a selector string to test the handle against. If the test passes the drag operation will not continue.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector to test against to determine if this is an invalid drag handle.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addToGroup">addToGroup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>addToGroup</strong>
+                                           (
+                                                
+                                                        
+                                                         g
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Add this Drag instance to a group, this should be used for on-the-fly group additions.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>g &lt;String&gt;</code>
+                                                             The group to add this Drag Instance to.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_destructor">destructor</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>destructor</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Lifecycle destructor, unreg the drag from the DDM and remove listeners
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_end">end</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>end</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Ends the drag operation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="private">
+                                    <h4>
+                                        <a name="method_initializer">initializer</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                         private 
+                                        
+                                        
+                                        void
+                                            <strong>initializer</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Internal init handler
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeFromGroup">removeFromGroup</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeFromGroup</strong>
+                                           (
+                                                
+                                                        
+                                                         g
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove this Drag instance from a group, this should be used for on-the-fly group removals.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>g &lt;String&gt;</code>
+                                                             The group to remove this Drag Instance from.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeHandle">removeHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeHandle</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove a Selector added by addHandle
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The selector for the handle to be removed.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeInvalid">removeInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>removeInvalid</strong>
+                                           (
+                                                
+                                                        
+                                                         str
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Remove an invalid handle added by addInvalid
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>str &lt;String&gt;</code>
+                                                             The invalid handle to remove from the internal list.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_start">start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>start</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Starts the drag operation
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_stopDrag">stopDrag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Self
+                                            <strong>stopDrag</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method will forcefully stop a drag operation. For example calling this from inside an ESC keypress handler will stop this drag.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Self
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_validClick">validClick</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>validClick</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Method first checks to see if we have handles, if so it validates the click against the handle. Then if it finds a valid handle, it checks it against the invalid handles list. Returns true if a good handle was used, false otherwise.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="private" href="Attribute.html#method__cloneAttVal">_cloneAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__fireAttChange">_fireAttChange</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_addAtt">addAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_removeAtt">removeAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Base.html">Base</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="protected" href="Base.html#method__defDestroyFn">_defDestroyFn</a><span class="protected">,</span>                                            <a class="protected" href="Base.html#method__defInitFn">_defInitFn</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>                                            <a class="protected" href="Base.html#method__getClasses">_getClasses</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__initHierarchy">_initHierarchy</a><span class="private">,</span>                                            <a class="private" href="Base.html#method__prefixEvtType">_prefixEvtType</a><span class="private">,</span>                                            <a class="" href="Base.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Base.html#method_destroy">destroy</a><span class="">,</span>                                            <a class="" href="Base.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Base.html#method_init">init</a><span class="">,</span>                                            <a class="" href="Base.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Base.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_toString">toString</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+
+                        <div class="section method details">
+                            <h3 id="events">Events</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_activeHandleChange">activeHandleChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>activeHandleChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'activeHandle' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickPixelThreshChange">clickPixelThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickPixelThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickPixelThresh' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_clickTimeThreshChange">clickTimeThreshChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>clickTimeThreshChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'clickTimeThresh' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dataChange">dataChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dataChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'data' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:addHandle">drag:addHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:addHandle</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after a handle is added.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:addInvalid">drag:addInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:addInvalid</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after an invalid selector is added.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:afterMouseDown">drag:afterMouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:afterMouseDown</strong>
+
+                                            (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after the mousedown event has been cleared.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The mousedown event.
+                                                        </dd>
+                                                </dl>
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:drag">drag:drag</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:drag</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires every mousemove during a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:drophit">drag:drophit</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:drophit</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is dropped on a valid Drop Target. (Fired from dd-ddm-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:dropmiss">drag:dropmiss</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:dropmiss</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is dropped on an invalid Drop Target. (Fired from dd-ddm-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:end">drag:end</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:end</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires at the end of a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:enter">drag:enter</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:enter</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node enters a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:exit">drag:exit</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:exit</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node exits a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:mouseDown">drag:mouseDown</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:mouseDown</strong>
+
+                                            (
+                                                
+                                                        
+                                                         ev
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>ev &lt;Event&gt;</code>
+                                                             The mousedown event.
+                                                        </dd>
+                                                </dl>
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method: _handleMouseDown.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:over">drag:over</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:over</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when this node is over a Drop Target. (Fired from dd-drop)
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:removeHandle">drag:removeHandle</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:removeHandle</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after a handle is removed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:removeInvalid">drag:removeInvalid</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:removeInvalid</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires after an invalid selector is removed.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_drag:start">drag:start</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>drag:start</strong>
+
+                                            (
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires at the start of a drag operation.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+                                            <div class="bubbles">
+                                                <strong>Bubbles:</strong> This event bubbles to <a href="DDM.html">DDM</a>.
+                                            </div>        
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_draggingChange">draggingChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>draggingChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragging' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragModeChange">dragModeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragModeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragMode' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_dragNodeChange">dragNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>dragNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'dragNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_groupsChange">groupsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>groupsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'groups' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_handlesChange">handlesChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>handlesChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'handles' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_lockChange">lockChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>lockChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'lock' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_moveChange">moveChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>moveChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'move' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_nodeChange">nodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>nodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'node' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_offsetNodeChange">offsetNodeChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>offsetNodeChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'offsetNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_primaryButtonOnlyChange">primaryButtonOnlyChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>primaryButtonOnlyChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'primaryButtonOnly' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_targetChange">targetChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>targetChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'target' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_useShimChange">useShimChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>useShimChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'useShim' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+                        <div class="section field inheritance">
+                            <h4>Events inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#event_destroy">destroy</a><span class="">,</span>                                        <a class="" href="Base.html#event_destroyedChange">destroyedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_init">init</a><span class="">,</span>                                        <a class="" href="Base.html#event_initializedChange">initializedChange</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+
+                        <div class="section field details">
+                            <h3 id="configattributes">Configuration Attributes</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4><a name="config_activeHandle">activeHandle</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This config option is set by Drag to inform you of which handle fired the drag event (in the case that there are several handles): default false.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickPixelThresh">clickPixelThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of pixels to move to start a drag operation, default is 3.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_clickTimeThresh">clickTimeThresh</a>
+                                        <code>- Number</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The number of milliseconds a mousedown has to pass to start a drag operation, default is 1000.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_data">data</a>
+                                        <code>- Mixed</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            A payload holder to store arbitrary data about this drag object, can be used to store any value.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragging">dragging</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute is not meant to be used by the implementor, it is meant to be used as an Event tracker so you can listen for it to change.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragMode">dragMode</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module is active. It will set the dragMode (point, intersect, strict) of this Drag instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_dragNode">dragNode</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Y.Node instanace to use as the draggable element, defaults to node
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_groups">groups</a>
+                                        <code>- Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Array of groups to add this drag into.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_handles">handles</a>
+                                        <code>- Array</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Array of valid handles to add. Adding something here will set all handles, even if previously added with addHandle
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_lock">lock</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Set to lock this drag element so that it can't be dragged: default false.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_move">move</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            If this is false, the drag element will not move with the cursor: default true. Can be used to "resize" the element.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_node">node</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Y.Node instanace to use as the element to initiate a drag operation
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_offsetNode">offsetNode</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Offset the drag element by the difference in cursor position: default true
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_primaryButtonOnly">primaryButtonOnly</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            By default a drag operation will only begin if the mousedown occurred with the primary mouse button. Setting this to false will allow for all mousedown events to trigger a drag.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_target">target</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_useShim">useShim</a>
+                                        <code>- Boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Use the protective shim on all drag operations: default true. Only works with dd-ddm, not dd-ddm-base.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+
+                            </div>
+                        </div>
+
+                        <div class="section field inheritance">
+                            <h4>Configuration attributes inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#config_destroyed">destroyed</a><span class="">,</span>                                        <a class="" href="Base.html#config_initialized">initialized</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class="selected"><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DDM.html">DDM</a></li>
+                                <li class="selected"><a href="Drag.html">Drag</a></li>
+                                <li class=""><a href="DragConstained.html">DragConstained</a></li>
+                                <li class=""><a href="Drop.html">Drop</a></li>
+                                <li class=""><a href="Proxy.html">Proxy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="constrain.js.html">constrain.js</a></li>
+                                <li class=""><a href="ddm-base.js.html">ddm-base.js</a></li>
+                                <li class=""><a href="ddm-drop.js.html">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html">ddm.js</a></li>
+                                <li class=""><a href="drag.js.html">drag.js</a></li>
+                                <li class=""><a href="drop.js.html">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html">proxy.js</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class="private"><a href="#property__clickTimeout">_clickTimeout</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__dragThreshMet">_dragThreshMet</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__endTime">_endTime</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__ev_md">_ev_md</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__fromTimeout">_fromTimeout</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__groups">_groups</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__handles">_handles</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__ieSelectBack">_ieSelectBack</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__invalids">_invalids</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__invalidsDefault">_invalidsDefault</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class="private"><a href="#property__startTime">_startTime</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_deltaXY">deltaXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_lastXY">lastXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_mouseXY">mouseXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_nodeXY">nodeXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_region">region</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_startXY">startXY</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_target">target</a>
+                                        <!--<code>&lt;{Object}&gt;</code>-->
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__align">_align</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__createEvents">_createEvents</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseDown">_fixIEMouseDown</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__fixIEMouseUp">_fixIEMouseUp</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseDown">_handleMouseDown</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseDownEvent">_handleMouseDownEvent</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__handleMouseUp">_handleMouseUp</a>
+                                </li>
+                                <li class="private"><!--<code>Boolean/Object</code>-->
+                                <a href="#method__handleTarget">_handleTarget</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__ieSelectFix">_ieSelectFix</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__move">_move</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__moveNode">_moveNode</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__prep">_prep</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__setStartPosition">_setStartPosition</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__timeoutCheck">_timeoutCheck</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method__unprep">_unprep</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addHandle">addHandle</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addInvalid">addInvalid</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_addToGroup">addToGroup</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_destructor">destructor</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_end">end</a>
+                                </li>
+                                <li class="private"><!--<code>void</code>-->
+                                <a href="#method_initializer">initializer</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeFromGroup">removeFromGroup</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeHandle">removeHandle</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_removeInvalid">removeInvalid</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_start">start</a>
+                                </li>
+                                <li class=""><!--<code>Self</code>-->
+                                <a href="#method_stopDrag">stopDrag</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_validClick">validClick</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Events</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#event_activeHandleChange">activeHandleChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickPixelThreshChange">clickPixelThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_clickTimeThreshChange">clickTimeThreshChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dataChange">dataChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:addHandle">drag:addHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:addInvalid">drag:addInvalid</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:afterMouseDown">drag:afterMouseDown</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:drag">drag:drag</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:drophit">drag:drophit</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:dropmiss">drag:dropmiss</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:end">drag:end</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:enter">drag:enter</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:exit">drag:exit</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:mouseDown">drag:mouseDown</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:over">drag:over</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:removeHandle">drag:removeHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:removeInvalid">drag:removeInvalid</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_drag:start">drag:start</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_draggingChange">draggingChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragModeChange">dragModeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_dragNodeChange">dragNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_groupsChange">groupsChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_handlesChange">handlesChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_lockChange">lockChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_moveChange">moveChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_nodeChange">nodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_offsetNodeChange">offsetNodeChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_primaryButtonOnlyChange">primaryButtonOnlyChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_targetChange">targetChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_useShimChange">useShimChange</a>
+                                </li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Configuration Attributes</h4>
+                        <ul class="content">        
+                                <li class="">
+                                <a href="#config_activeHandle">activeHandle</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickPixelThresh">clickPixelThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_clickTimeThresh">clickTimeThresh</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_data">data</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragging">dragging</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragMode">dragMode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_dragNode">dragNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_groups">groups</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_handles">handles</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_lock">lock</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_move">move</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_node">node</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_offsetNode">offsetNode</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_primaryButtonOnly">primaryButtonOnly</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_target">target</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_useShim">useShim</a>
+                                </li>
+                        </ul>
+                    </div>
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

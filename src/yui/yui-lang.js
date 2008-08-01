@@ -1,4 +1,4 @@
-/**
+/*
  * YUI lang utils
  * @module yui
  * @submodule lang

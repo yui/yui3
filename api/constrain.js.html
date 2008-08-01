@@ -1,0 +1,492 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: dd   constrain.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>dd&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html">dd</a>
+                
+                 &gt; constrain.js (source view) 
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * The Drag &amp; Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.</span>
+<span class="c">     * @module dd</span>
+<span class="c">     * @submodule dd-constrain</span>
+<span class="c">     */</span>
+    <span class="c">/**</span>
+<span class="c">     * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also</span>
+<span class="c">     * supports tick based moves and XY axis constraints.</span>
+<span class="c">     * @class DragConstained</span>
+<span class="c">     * @extends Drag</span>
+<span class="c">     * @constructor</span>
+<span class="c">     */</span>
+
+    <span class="k">var</span> <span class="nx">DRAG_NODE</span> <span class="o">=</span> <span class="s1">&#39;dragNode&#39;</span><span class="o">,</span>
+        <span class="nx">OFFSET_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;offsetHeight&#39;</span><span class="o">,</span>
+        <span class="nx">OFFSET_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;offsetWidth&#39;</span><span class="o">;</span>
+
+
+    <span class="k">var</span> <span class="nx">C</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">constructor</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+
+    <span class="o">};</span>
+    
+    <span class="nx">C</span><span class="o">.</span><span class="nx">NAME</span> <span class="o">=</span> <span class="s1">&#39;DragConstrained&#39;</span><span class="o">;</span>
+
+    <span class="nx">C</span><span class="o">.</span><span class="nx">ATTRS</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute stickX</span>
+<span class="c">        * @description Stick the drag movement to the X-Axis. Default: false</span>
+<span class="c">        * @type Boolean</span>
+<span class="c">        */</span>        
+        <span class="nx">stickX</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute stickY</span>
+<span class="c">        * @description Stick the drag movement to the Y-Axis</span>
+<span class="c">        * @type Boolean</span>
+<span class="c">        */</span>        
+        <span class="nx">stickY</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute tickX</span>
+<span class="c">        * @description The X tick offset the drag node should snap to on each drag move. False for no ticks. Default: false</span>
+<span class="c">        * @type Number/false</span>
+<span class="c">        */</span>        
+        <span class="nx">tickX</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute tickY</span>
+<span class="c">        * @description The Y tick offset the drag node should snap to on each drag move. False for no ticks. Default: false</span>
+<span class="c">        * @type Number/false</span>
+<span class="c">        */</span>        
+        <span class="nx">tickY</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute tickXArray</span>
+<span class="c">        * @description An array of page coordinates to use as X ticks for drag movement.</span>
+<span class="c">        * @type Array</span>
+<span class="c">        */</span>
+        <span class="nx">tickXArray</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute tickYArray</span>
+<span class="c">        * @description An array of page coordinates to use as Y ticks for drag movement.</span>
+<span class="c">        * @type Array</span>
+<span class="c">        */</span>
+        <span class="nx">tickYArray</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute constrain2region</span>
+<span class="c">        * @description An Object Literal containing a valid region (top, right, bottom, left) of page positions to constrain the drag node to.</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">constrain2region</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">r</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">},</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span> <span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isObject</span><span class="o">(</span><span class="nx">r</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">top</span> <span class="o">&amp;&amp;</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">&amp;&amp;</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span> <span class="o">&amp;&amp;</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">var</span> <span class="nx">o</span> <span class="o">=</span> <span class="o">{};</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">o</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
+                        <span class="k">return</span> <span class="nx">o</span><span class="o">;</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constrain2region expecting a valid object with (top, right, bottom, left properties)&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;DragConstrain&#39;</span><span class="o">);</span>
+                        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">r</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constrain2region expecting an object&#39;</span><span class="o">,</span> <span class="s1">&#39;error&#39;</span><span class="o">,</span> <span class="s1">&#39;DragConstrain&#39;</span><span class="o">);</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute gutter</span>
+<span class="c">        * @description CSS style string for the gutter of a region (supports negative values): &#39;5 0&#39; (sets top and bottom to 5px, left and right to 0px), &#39;1 2 3 4&#39; (top 1px, right 2px, bottom 3px, left 4px)        </span>
+<span class="c">        * @type String</span>
+<span class="c">        */</span>
+        <span class="nx">gutter</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;0&#39;</span><span class="o">,</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">gutter</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">.</span><span class="nx">cssSizestoObject</span><span class="o">(</span><span class="nx">gutter</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute constrain2node</span>
+<span class="c">        * @description Will attempt to constrain the drag node to the bounderies of this node.</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">constrain2node</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+            <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">n</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="nx">node</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">)</span> <span class="o">!==</span> <span class="kc">false</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constrain2region found, can not have both. Node ignored&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;DragConstrain&#39;</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @attribute constrain2view</span>
+<span class="c">        * @description Will attempt to constrain the drag node to the bounderies of the viewport region.</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">constrain2view</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">value</span><span class="o">:</span> <span class="kc">false</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+
+    <span class="k">var</span> <span class="nx">proto</span> <span class="o">=</span> <span class="o">{</span>
+        <span class="nx">start</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">start</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property _regionCache</span>
+<span class="c">        * @description Store a cache of the region that we are constraining to</span>
+<span class="c">        * @type Object</span>
+<span class="c">        */</span>
+        <span class="nx">_regionCache</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _cacheRegion</span>
+<span class="c">        * @description Get&#39;s the region and caches it, called from window.resize and when the cache is null</span>
+<span class="c">        */</span>
+        <span class="nx">_cacheRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;region&#39;</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method getRegion</span>
+<span class="c">        * @description Get the active region: viewport, node, custom region</span>
+<span class="c">        * @param {Boolean} inc Include the node&#39;s height and width</span>
+<span class="c">        * @return {Object}</span>
+<span class="c">        */</span>
+        <span class="nx">getRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">inc</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">r</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2node&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">addListener</span><span class="o">(</span><span class="s1">&#39;window&#39;</span><span class="o">,</span> <span class="s1">&#39;resize&#39;</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">,</span> <span class="k">this</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">_cacheRegion</span><span class="o">();</span>
+                <span class="o">}</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">clone</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_regionCache</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2region&#39;</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;constrain2view&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;viewportRegion&#39;</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">var</span> <span class="nx">g</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;gutter&#39;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">g</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">i</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">((</span><span class="nx">n</span> <span class="o">==</span> <span class="s1">&#39;right&#39;</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">n</span> <span class="o">==</span> <span class="s1">&#39;bottom&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">r</span><span class="o">[</span><span class="nx">n</span><span class="o">]</span> <span class="o">-=</span> <span class="nx">i</span><span class="o">;</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="nx">r</span><span class="o">[</span><span class="nx">n</span><span class="o">]</span> <span class="o">+=</span> <span class="nx">i</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">inc</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">oh</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span>
+                    <span class="nx">ow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
+                <span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">;</span>
+                <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">r</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _checkRegion</span>
+<span class="c">        * @description</span>
+<span class="c">        * @param {Array} _xy The XY to check if it&#39;s in the current region, if it isn&#39;t inside the region, it will reset the xy array to be inside the region.</span>
+<span class="c">        * @return {Array} The new XY that is inside the region</span>
+<span class="c">        */</span>
+        <span class="nx">_checkRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">_xy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">oxy</span> <span class="o">=</span> <span class="nx">_xy</span><span class="o">,</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRegion</span><span class="o">(),</span>
+                <span class="nx">oh</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_HEIGHT</span><span class="o">),</span>
+                <span class="nx">ow</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">get</span><span class="o">(</span><span class="nx">OFFSET_WIDTH</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">top</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+                <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">;</span>
+
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">oxy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span> <span class="o">-</span> <span class="nx">oh</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">left</span> <span class="o">&gt;</span> <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+                <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&gt;</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">oxy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="nx">r</span><span class="o">.</span><span class="nx">right</span> <span class="o">-</span> <span class="nx">ow</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">oxy</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method inRegion</span>
+<span class="c">        * @description Checks if the XY passed or the dragNode is inside the active region.</span>
+<span class="c">        * @param {Array} xy Optional XY to check, if not supplied this.get(&#39;dragNode&#39;).getXY() is used.</span>
+<span class="c">        * @return {Boolean} True if the XY is inside the region, false otherwise.</span>
+<span class="c">        */</span>
+        <span class="nx">inRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nx">xy</span> <span class="o">=</span> <span class="nx">xy</span> <span class="o">||</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">DRAG_NODE</span><span class="o">).</span><span class="nx">getXY</span><span class="o">();</span>
+
+            <span class="k">var</span> <span class="nx">_xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_checkRegion</span><span class="o">([</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]]),</span>
+                <span class="nx">inside</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">((</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">===</span> <span class="nx">_xy</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">===</span> <span class="nx">_xy</span><span class="o">[</span><span class="m">1</span><span class="o">]))</span> <span class="o">{</span>
+                    <span class="nx">inside</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">inside</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _align</span>
+<span class="c">        * @description Override of Drag _align to account for region checking and tick checking</span>
+<span class="c">        * @param {Array} xy The XY to check for ticks and region</span>
+<span class="c">        * @return {Array} The modified XY coords.</span>
+<span class="c">        */</span>
+        <span class="nx">_align</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">_xy</span> <span class="o">=</span> <span class="nx">C</span><span class="o">.</span><span class="nx">superclass</span><span class="o">.</span><span class="nx">_align</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">),</span>
+                <span class="nx">r</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getRegion</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;stickX&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">_xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;stickY&#39;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="nx">_xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+            <span class="o">}</span>
+
+
+            <span class="k">if</span> <span class="o">(</span><span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">_xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_checkRegion</span><span class="o">(</span><span class="nx">_xy</span><span class="o">);</span>
+            <span class="o">}</span>
+                
+            <span class="nx">_xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_checkTicks</span><span class="o">(</span><span class="nx">_xy</span><span class="o">,</span> <span class="nx">r</span><span class="o">);</span>
+            <span class="k">return</span> <span class="nx">_xy</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _calcTicks</span>
+<span class="c">        * @description Helper method to calculate the tick offsets for a given position</span>
+<span class="c">        * @param {Number} pos The current X or Y position</span>
+<span class="c">        * @param {Number} start The start X or Y position</span>
+<span class="c">        * @param {Number} tick The X or Y tick increment</span>
+<span class="c">        * @param {Number} off1 The min offset that we can&#39;t pass (region)</span>
+<span class="c">        * @param {Number} off2 The max offset that we can&#39;t pass (region)</span>
+<span class="c">        * @return {Number} The new position based on the tick calculation</span>
+<span class="c">        */</span>
+        <span class="nx">_calcTicks</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pos</span><span class="o">,</span> <span class="nx">start</span><span class="o">,</span> <span class="nx">tick</span><span class="o">,</span> <span class="nx">off1</span><span class="o">,</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">ix</span> <span class="o">=</span> <span class="o">((</span><span class="nx">pos</span> <span class="o">-</span> <span class="nx">start</span><span class="o">)</span> <span class="o">/</span> <span class="nx">tick</span><span class="o">),</span>
+                <span class="nx">min</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">floor</span><span class="o">(</span><span class="nx">ix</span><span class="o">),</span>
+                <span class="nx">max</span> <span class="o">=</span> <span class="nb">Math</span><span class="o">.</span><span class="nx">ceil</span><span class="o">(</span><span class="nx">ix</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">((</span><span class="nx">min</span> <span class="o">!==</span> <span class="m">0</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="nx">max</span> <span class="o">!==</span> <span class="m">0</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">((</span><span class="nx">ix</span> <span class="o">&gt;=</span> <span class="nx">min</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">(</span><span class="nx">ix</span> <span class="o">&lt;=</span> <span class="nx">max</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="nx">pos</span> <span class="o">=</span> <span class="o">(</span><span class="nx">start</span> <span class="o">+</span> <span class="o">(</span><span class="nx">tick</span> <span class="o">*</span> <span class="nx">min</span><span class="o">));</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">off1</span> <span class="o">&amp;&amp;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">pos</span> <span class="o">&lt;</span> <span class="nx">off1</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">pos</span> <span class="o">=</span> <span class="o">(</span><span class="nx">start</span> <span class="o">+</span> <span class="o">(</span><span class="nx">tick</span> <span class="o">*</span> <span class="o">(</span><span class="nx">min</span> <span class="o">+</span> <span class="m">1</span><span class="o">)));</span>
+                            <span class="o">}</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">pos</span> <span class="o">&gt;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="nx">pos</span> <span class="o">=</span> <span class="o">(</span><span class="nx">start</span> <span class="o">+</span> <span class="o">(</span><span class="nx">tick</span> <span class="o">*</span> <span class="o">(</span><span class="nx">min</span> <span class="o">-</span> <span class="m">1</span><span class="o">)));</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="nx">pos</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _calcTickArray</span>
+<span class="c">        * @description This method is used with the tickXArray and tickYArray config options</span>
+<span class="c">        * @param {Number} pos The current X or Y position</span>
+<span class="c">        * @param {Number} ticks The array containing our custom tick positions.</span>
+<span class="c">        * @param {Number} off1 The min offset that we can&#39;t pass (region)</span>
+<span class="c">        * @param {Number} off2 The max offset that we can&#39;t pass (region)</span>
+<span class="c">        * @return The tick position</span>
+<span class="c">        */</span>
+        <span class="nx">_calcTickArray</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">pos</span><span class="o">,</span> <span class="nx">ticks</span><span class="o">,</span> <span class="nx">off1</span><span class="o">,</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span><span class="o">,</span> <span class="nx">next</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(!</span><span class="nx">ticks</span> <span class="o">||</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span> <span class="o">===</span> <span class="m">0</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">pos</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="nx">pos</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">ticks</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">for</span> <span class="o">(</span><span class="nx">i</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span><span class="o">;</span> <span class="nx">i</span><span class="o">++)</span> <span class="o">{</span>
+                    <span class="nx">next</span> <span class="o">=</span> <span class="o">(</span><span class="nx">i</span> <span class="o">+</span> <span class="m">1</span><span class="o">);</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">&gt;=</span> <span class="nx">pos</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">var</span> <span class="nx">diff1</span> <span class="o">=</span> <span class="nx">pos</span> <span class="o">-</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">],</span>
+                            <span class="nx">diff2</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">]</span> <span class="o">-</span> <span class="nx">pos</span><span class="o">;</span>
+                        <span class="k">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="o">(</span><span class="nx">diff2</span> <span class="o">&gt;</span> <span class="nx">diff1</span><span class="o">)</span> <span class="o">?</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="o">:</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">next</span><span class="o">];</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">off1</span> <span class="o">&amp;&amp;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">if</span> <span class="o">(</span><span class="nx">ret</span> <span class="o">&gt;</span> <span class="nx">off2</span><span class="o">)</span> <span class="o">{</span>
+                                <span class="k">if</span> <span class="o">(</span><span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">])</span> <span class="o">{</span>
+                                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">i</span><span class="o">];</span>
+                                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                                    <span class="nx">ret</span> <span class="o">=</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">len</span> <span class="o">-</span> <span class="m">1</span><span class="o">];</span>
+                                <span class="o">}</span>
+                            <span class="o">}</span>
+                        <span class="o">}</span>
+                        <span class="k">return</span> <span class="nx">ret</span><span class="o">;</span>
+                    <span class="o">}</span>
+                    
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="nx">ticks</span><span class="o">[</span><span class="nx">ticks</span><span class="o">.</span><span class="nx">length</span> <span class="o">-</span> <span class="m">1</span><span class="o">];</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _checkTicks</span>
+<span class="c">        * @description This method delegates the proper helper method for tick calculations</span>
+<span class="c">        * @param {Array} xy The XY coords for the Drag</span>
+<span class="c">        * @param {Object} r The optional region that we are bound to.</span>
+<span class="c">        * @return {Array} The calced XY coords</span>
+<span class="c">        */</span>
+        <span class="nx">_checkTicks</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">xy</span><span class="o">,</span> <span class="nx">r</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">lx</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span>
+                <span class="nx">ly</span> <span class="o">=</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">startXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">-</span> <span class="k">this</span><span class="o">.</span><span class="nx">deltaXY</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span>
+                <span class="nx">xt</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickX&#39;</span><span class="o">),</span>
+                <span class="nx">yt</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickY&#39;</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">xt</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickXArray&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_calcTicks</span><span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">lx</span><span class="o">,</span> <span class="nx">xt</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">yt</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickYArray&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_calcTicks</span><span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="nx">ly</span><span class="o">,</span> <span class="nx">yt</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickXArray&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_calcTickArray</span><span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickXArray&#39;</span><span class="o">),</span> <span class="nx">r</span><span class="o">.</span><span class="nx">left</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">right</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickYArray&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_calcTickArray</span><span class="o">(</span><span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span> <span class="k">this</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;tickYArray&#39;</span><span class="o">),</span> <span class="nx">r</span><span class="o">.</span><span class="nx">top</span><span class="o">,</span> <span class="nx">r</span><span class="o">.</span><span class="nx">bottom</span><span class="o">);</span>
+                <span class="o">}</span>
+
+            <span class="k">return</span> <span class="nx">xy</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+    <span class="c">//Extend DD.Drag</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">extend</span><span class="o">(</span><span class="nx">C</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span><span class="o">,</span> <span class="nx">proto</span><span class="o">);</span>
+    <span class="c">//Set this to DD.Drag for other extensions</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">Drag</span> <span class="o">=</span> <span class="nx">C</span><span class="o">;</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class="selected"><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DDM.html">DDM</a></li>
+                                <li class=""><a href="Drag.html">Drag</a></li>
+                                <li class=""><a href="DragConstained.html">DragConstained</a></li>
+                                <li class=""><a href="Drop.html">Drop</a></li>
+                                <li class=""><a href="Proxy.html">Proxy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class="selected"><a href="constrain.js.html">constrain.js</a></li>
+                                <li class=""><a href="ddm-base.js.html">ddm-base.js</a></li>
+                                <li class=""><a href="ddm-drop.js.html">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html">ddm.js</a></li>
+                                <li class=""><a href="drag.js.html">drag.js</a></li>
+                                <li class=""><a href="drop.js.html">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html">proxy.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

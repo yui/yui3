@@ -1,4 +1,8 @@
-
+/*
+ * Method displacement
+ * @submodule event-aop
+ * @module event
+ */
 YUI.add("aop", function(Y) {
 
     var BEFORE = 0,

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: loader   loader.js  (YUI Library)</title>
+	<title>API: yui   loader.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,13 +13,14 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>loader&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>yui&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_loader.html">loader</a>
+            &gt; <a href="./module_yui.html">yui</a>
                 
                  &gt; loader.js (source view) 
             </p>
+
 
 	</div>
 
@@ -27,9 +28,9 @@
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <div id="srcout">
@@ -46,7 +47,8 @@
 <span class="c"> * this network to reduce the number of http connections required to download </span>
 <span class="c"> * YUI files.</span>
 <span class="c"> *</span>
-<span class="c"> * @module loader</span>
+<span class="c"> * @module yui</span>
+<span class="c"> * @submodule loader</span>
 <span class="c"> */</span>
 
 <span class="c">/**</span>
@@ -121,6 +123,10 @@
 <span class="c"> * &lt;/ul&gt;</span>
 <span class="c"> */</span>
 
+<span class="c">// @TODO backed out the custom event changes so that the event system</span>
+<span class="c">// isn&#39;t required in the seed build.  If needed, we may want to </span>
+<span class="c">// add them back if the event system is detected.</span>
+<span class="c"></span>
 <span class="c">/*</span>
 <span class="c"> * Executed when the loader successfully completes an insert operation</span>
 <span class="c"> * This can be subscribed to normally, or a listener can be passed</span>
@@ -163,9 +169,9 @@
 
     <span class="nx">root</span><span class="o">:</span> <span class="nx">ROOT</span><span class="o">,</span>
 
-    <span class="c">// base: &#39;http://yui.yahooapis.com/&#39; + ROOT,</span>
-<span class="c"></span>    <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;../../build/&#39;</span><span class="o">,</span>
-
+    <span class="nx">base</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/&#39;</span> <span class="o">+</span> <span class="nx">ROOT</span><span class="o">,</span>
+    <span class="c">// base: &#39;../../build/&#39;,</span>
+<span class="c"></span>
     <span class="nx">comboBase</span><span class="o">:</span> <span class="s1">&#39;http://yui.yahooapis.com/combo?&#39;</span><span class="o">,</span>
 
     <span class="nx">modules</span><span class="o">:</span> <span class="o">{</span>
@@ -219,10 +225,40 @@
           <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom-screen&#39;</span><span class="o">,</span> <span class="s1">&#39;node-base&#39;</span><span class="o">]</span>
       <span class="o">},</span>
 
+      <span class="nx">anim</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;anim-base&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-color&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-curve&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-easing&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-scroll&#39;</span><span class="o">,</span> <span class="s1">&#39;anim-xy&#39;</span><span class="o">],</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
 
-        <span class="nx">animation</span><span class="o">:</span> <span class="o">{</span>
-            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dom&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">]</span>
-        <span class="o">},</span>
+      <span class="s1">&#39;anim-base&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-base-min.js&#39;</span><span class="o">,</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;base&#39;</span><span class="o">,</span> <span class="s1">&#39;node-style&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
+
+      <span class="s1">&#39;anim-color&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-color-min.js&#39;</span><span class="o">,</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
+
+      <span class="s1">&#39;anim-curve&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-curve-min.js&#39;</span><span class="o">,</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;anim-xy&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
+
+      <span class="s1">&#39;anim-easing&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-easing-min.js&#39;</span>
+      <span class="o">},</span>
+
+      <span class="s1">&#39;anim-scroll&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-scroll-min.js&#39;</span><span class="o">,</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;anim-base&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
+
+      <span class="s1">&#39;anim-xy&#39;</span><span class="o">:</span> <span class="o">{</span>
+          <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;anim/anim-xy-min.js&#39;</span><span class="o">,</span>
+          <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;anim-base&#39;</span><span class="o">,</span> <span class="s1">&#39;node-screen&#39;</span><span class="o">]</span>
+      <span class="o">},</span>
+
 
         <span class="nx">attribute</span><span class="o">:</span> <span class="o">{</span> 
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;event&#39;</span><span class="o">]</span>
@@ -312,7 +348,9 @@
             <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;oop&#39;</span><span class="o">]</span>
         <span class="o">},</span>
         
-        <span class="nx">io</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">io</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;node&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="s1">&#39;json-parse&#39;</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;json/json-parse-min.js&#39;</span>
@@ -326,13 +364,23 @@
             <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;json-parse&#39;</span><span class="o">,</span> <span class="s1">&#39;json-stringify&#39;</span><span class="o">]</span>
         <span class="o">},</span>
         
-        <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
+        <span class="nx">oop</span><span class="o">:</span> <span class="o">{</span> 
+            <span class="nx">requires</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
 
         <span class="nx">queue</span><span class="o">:</span> <span class="o">{</span> <span class="o">},</span>
 
         <span class="nx">substitute</span><span class="o">:</span> <span class="o">{</span>
             <span class="nx">optional</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;dump&#39;</span><span class="o">]</span>
-        <span class="o">}</span>
+        <span class="o">},</span>
+
+        <span class="c">// Since YUI is required for everything else, it should not be specified as</span>
+<span class="c"></span>        <span class="c">// a dependency.</span>
+<span class="c"></span>        <span class="nx">yui</span><span class="o">:</span> <span class="o">{</span>
+            <span class="nx">supersedes</span><span class="o">:</span> <span class="o">[</span><span class="s1">&#39;yui-base&#39;</span><span class="o">,</span> <span class="s1">&#39;get&#39;</span><span class="o">,</span> <span class="s1">&#39;loader&#39;</span><span class="o">]</span>
+        <span class="o">},</span>
+
+        <span class="s1">&#39;yui-base&#39;</span><span class="o">:</span> <span class="o">{</span> <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">};</span>
 
@@ -900,20 +948,20 @@
 <span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">l</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nb">Array</span><span class="o">.</span><span class="nx">hash</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">ignore</span><span class="o">));</span>
             <span class="o">}</span>
 
+            <span class="c">// expand the list to include superseded modules</span>
+<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="k">in</span> <span class="nx">l</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c">// Y.log(&quot;expanding: &quot; + j);</span>
+<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">j</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">l</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">getProvides</span><span class="o">(</span><span class="nx">j</span><span class="o">));</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+
             <span class="c">// remove modules on the force list from the loaded list</span>
 <span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
                 <span class="k">for</span> <span class="o">(</span><span class="nx">i</span><span class="o">=</span><span class="m">0</span><span class="o">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span> <span class="nx">i</span><span class="o">=</span><span class="nx">i</span><span class="o">+</span><span class="m">1</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">[</span><span class="nx">i</span><span class="o">]</span> <span class="k">in</span> <span class="nx">l</span><span class="o">)</span> <span class="o">{</span>
                         <span class="nx">delete</span> <span class="nx">l</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">force</span><span class="o">[</span><span class="nx">i</span><span class="o">]];</span>
                     <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-
-            <span class="c">// expand the list to include superseded modules</span>
-<span class="c"></span>            <span class="k">for</span> <span class="o">(</span><span class="nx">j</span> <span class="k">in</span> <span class="nx">l</span><span class="o">)</span> <span class="o">{</span>
-                <span class="c">// Y.log(&quot;expanding: &quot; + j);</span>
-<span class="c"></span>                <span class="k">if</span> <span class="o">(</span><span class="nx">l</span><span class="o">.</span><span class="nx">hasOwnProperty</span><span class="o">(</span><span class="nx">j</span><span class="o">))</span> <span class="o">{</span>
-                    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">l</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">getProvides</span><span class="o">(</span><span class="nx">j</span><span class="o">));</span>
                 <span class="o">}</span>
             <span class="o">}</span>
 
@@ -1549,55 +1597,61 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class="selected"><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
 
-                                <li class=""><a href="module_yui.html">yui</a></li>
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class="selected"><a href="module_yui.html">yui</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
+                                <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
+                                <li class=""><a href="Lang.html">Lang</a></li>
                                 <li class=""><a href="Loader.html">Loader</a></li>
+                                <li class=""><a href="Object.html">Object</a></li>
+                                <li class=""><a href="UA.html">UA</a></li>
+                                <li class=""><a href="YUI.html">YUI</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="get.js.html">get.js</a></li>
                                 <li class="selected"><a href="loader.js.html">loader.js</a></li>
+                                <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
+                                <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
+                                <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
+                                <li class=""><a href="yui-init.js.html">yui-init.js</a></li>
+                                <li class=""><a href="yui-lang.js.html">yui-lang.js</a></li>
+                                <li class=""><a href="yui-later.js.html">yui-later.js</a></li>
+                                <li class=""><a href="yui-log.js.html">yui-log.js</a></li>
+                                <li class=""><a href="yui-object.js.html">yui-object.js</a></li>
+                                <li class=""><a href="yui-ua.js.html">yui-ua.js</a></li>
+                                <li class=""><a href="yui.js.html">yui.js</a></li>
                         </ul>
                     </div>
 

@@ -8,7 +8,8 @@
  * this network to reduce the number of http connections required to download 
  * YUI files.
  *
- * @module loader
+ * @module yui
+ * @submodule loader
  */
 
 /**

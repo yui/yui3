@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -164,6 +165,24 @@ via stopPropagation(), stopImmediatePropagation(), or halt()
                                     <hr />
                                     </div>
                                     <div class="">
+                                    <h4><a name="property_configured">configured</a>
+                                        <code>- boolean</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            The publisher has configured this event
+                                        </div>
+                                    </div>
+     
+                                        
+                                    <div class="default">
+                                        Default Value: true
+                                    </div>        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="">
                                     <h4><a name="property_context">context</a>
                                         <code>- object</code>
                                     </h4>
@@ -257,7 +276,7 @@ to enable event bubbling
                                     <div class="detail">
                                         <div class="description">
                                             Specifies whether or not this event's default function
-can be canceled by a subscriber by executing preventDefault() 
+can be cancelled by a subscriber by executing preventDefault() 
 on the event facade
                                         </div>
                                     </div>
@@ -430,7 +449,10 @@ stopPropagation or stopImmediatePropagation
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -484,7 +506,10 @@ stopPropagation or stopImmediatePropagation
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -548,7 +573,10 @@ default behavior, it also prevents after listeners from firing.
                                                     </code></dt>
                                                     <dd>unsubscribe handle</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -603,7 +631,10 @@ will be overwritten.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -659,7 +690,10 @@ the handler.
                                                     <dd>false if one of the subscribers returned false, 
 true otherwise</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -713,7 +747,10 @@ true otherwise</dd>
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -747,7 +784,10 @@ true otherwise</dd>
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -782,7 +822,10 @@ subscribers on the current target from executing.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -816,7 +859,10 @@ subscribers on the current target from executing.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -878,7 +924,10 @@ subscribers on the current target from executing.
                                                     </code></dt>
                                                     <dd>unsubscribe handle</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -912,7 +961,10 @@ subscribers on the current target from executing.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -971,7 +1023,10 @@ that lives on the prototype)
                                                     </code></dt>
                                                     <dd>True if the subscriber was found and detached.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1005,7 +1060,10 @@ that lives on the prototype)
                                                     </code></dt>
                                                     <dd>The number of listeners unsubscribed</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1100,39 +1158,27 @@ the execution context.
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class="selected"><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1165,7 +1211,6 @@ the execution context.
                                 <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
                                 <li class=""><a href="event-target.js.html">event-target.js</a></li>
                                 <li class=""><a href="event.js.html">event.js</a></li>
-                                <li class=""><a href="oop.js.html">oop.js</a></li>
                         </ul>
                     </div>
 
@@ -1179,6 +1224,9 @@ the execution context.
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_bubbles">bubbles</a>
+                                        <!--<code>&lt;string&gt;</code>-->
+                                </li>
+                                <li class=""><a href="#property_configured">configured</a>
                                         <!--<code>&lt;string&gt;</code>-->
                                 </li>
                                 <li class=""><a href="#property_context">context</a>

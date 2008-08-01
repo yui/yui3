@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: anim   anim-scroll.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>anim&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_anim.html">anim</a>
+                
+                 &gt; anim-scroll.js (source view) 
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Adds scroll behaviors to Anim.</span>
+<span class="c"> * @module anim</span>
+<span class="c"> * @submodule anim-scroll</span>
+<span class="c"> * @for Anim</span>
+<span class="c"> */</span>
+
+<span class="k">var</span> <span class="nx">NUM</span> <span class="o">=</span> <span class="nb">Number</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Anim</span><span class="o">.</span><span class="nx">behaviors</span><span class="o">.</span><span class="nx">scroll</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nx">set</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">anim</span><span class="o">,</span> <span class="nx">att</span><span class="o">,</span> <span class="nx">from</span><span class="o">,</span> <span class="nx">to</span><span class="o">,</span> <span class="nx">elapsed</span><span class="o">,</span> <span class="nx">duration</span><span class="o">,</span> <span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="o">.</span><span class="nx">_node</span><span class="o">,</span> 
+            <span class="nx">val</span> <span class="o">=</span> <span class="o">([</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">0</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">),</span>
+            <span class="nx">fn</span><span class="o">(</span><span class="nx">elapsed</span><span class="o">,</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">to</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">-</span> <span class="nx">NUM</span><span class="o">(</span><span class="nx">from</span><span class="o">[</span><span class="m">1</span><span class="o">]),</span> <span class="nx">duration</span><span class="o">)</span>
+        <span class="o">]);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="m">0</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="o">,</span> <span class="nx">val</span><span class="o">[</span><span class="m">0</span><span class="o">]);</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="nx">val</span><span class="o">[</span><span class="m">1</span><span class="o">])</span> <span class="o">{</span>
+            <span class="nx">node</span><span class="o">.</span><span class="nx">set</span><span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="o">,</span> <span class="nx">val</span><span class="o">[</span><span class="m">1</span><span class="o">]);</span>
+        <span class="o">}</span>
+    <span class="o">},</span>
+    <span class="nx">get</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">anim</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nx">anim</span><span class="o">.</span><span class="nx">_node</span><span class="o">;</span>
+        <span class="k">return</span> <span class="o">[</span><span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollLeft&#39;</span><span class="o">),</span> <span class="nx">node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;scrollTop&#39;</span><span class="o">)];</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class="selected"><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Anim.html">Anim</a></li>
+                                <li class=""><a href="Y.Anim.html">Y.Anim</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="anim-color.js.html">anim-color.js</a></li>
+                                <li class=""><a href="anim-curve.js.html">anim-curve.js</a></li>
+                                <li class=""><a href="anim-easing.js.html">anim-easing.js</a></li>
+                                <li class=""><a href="anim-node-plugin.js.html">anim-node-plugin.js</a></li>
+                                <li class="selected"><a href="anim-scroll.js.html">anim-scroll.js</a></li>
+                                <li class=""><a href="anim-xy.js.html">anim-xy.js</a></li>
+                                <li class=""><a href="anim.js.html">anim.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

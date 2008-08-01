@@ -1,6 +1,5 @@
 /**
  * String variable substitution and string formatting.
- *
  * If included, the substitute method is added to the YUI instance.
  *
  * @module substitute
@@ -8,6 +7,11 @@
 YUI.add("substitute", function(Y) {
 
     var L = Y.Lang, DUMP='dump', SPACE=' ', LBRACE='{', RBRACE='}',
+
+    /**
+     * The following methods are added to the YUI instance
+     * @class YUI~substitute
+     */
 
     /**
      * Does variable substitution on a string. It scans through the string 
@@ -28,7 +32,6 @@ YUI.add("substitute", function(Y) {
      * in the YUI module.
      *
      * @method substitute
-     * @for YUI
      * @param s {string} The string that will be modified.
      * @param o An object containing the replacement values
      * @param f {function} An optional function that can be used to

@@ -1,4 +1,8 @@
-
+/*
+ * YUI lang utils
+ * @module yui
+ * @submodule lang
+ */
 YUI.add("lang", function(Y) {
 
     /**

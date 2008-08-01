@@ -1,4 +1,4 @@
-/**
+/*
  * YUI user agent detection
  * @module yui
  * @submodule ua

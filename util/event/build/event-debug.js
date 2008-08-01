@@ -1,3 +1,7 @@
+/**
+ * The YUI event system
+ * @module event
+ */
 YUI.add("event", function(Y) {
 
     /**
@@ -129,7 +133,11 @@ YUI.add("event", function(Y) {
           "event-facade"
           ]
 });
-
+/*
+ * Method displacement
+ * @submodule event-aop
+ * @module event
+ */
 YUI.add("aop", function(Y) {
 
     var BEFORE = 0,
@@ -378,8 +386,9 @@ YUI.add("aop", function(Y) {
 // Y["Event"] && Y.Event.addListener(window, "unload", Y.Do._unload, Y.Do);
 
 }, "3.0.0");
-/**
- * The YUI event system
+/*
+ * YUI Custom Events
+ * @submodule event-custom
  * @module event
  */
 YUI.add("event-custom", function(Y) {
@@ -1232,7 +1241,11 @@ YUI.add("event-custom", function(Y) {
     };
 
 }, "3.0.0");
-
+/*
+ * Configures an object to be able to be targeted for events, and to publish events
+ * @submodule event-target
+ * @module event
+ */
 YUI.add("event-target", function(Y) {
 
     var SILENT = { 'yui:log': true };
@@ -1610,6 +1623,11 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
 
 
 }, "3.0.0");
+/*
+ * DOMReady
+ * @submodule event-ready
+ * @module event
+ */
 YUI.add("event-ready", function(Y) {
 
     if (Y === YUI) {
@@ -1701,6 +1719,11 @@ YUI.add("event-ready", function(Y) {
 
 
 }, "3.0.0");
+/*
+ * The YUI DOM event system
+ * @submodule event-dom
+ * @module event
+ */
 YUI.add("event-dom", function(Y) {
 
     /*
@@ -2509,6 +2532,11 @@ YUI.add("event-dom", function(Y) {
         E._tryPreloadAttach();
 
 }, "3.0.0");
+/*
+ * A wrapper for DOM events and Custom Events
+ * @submodule event-facade
+ * @module event
+ */
 YUI.add("event-facade", function(Y) {
 
 

@@ -7,7 +7,8 @@ YUI.add("get", function(Y) {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
- * @module get
+ * @module yui
+ * @submodule get
  */
 
 /**

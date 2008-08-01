@@ -21,15 +21,16 @@
                  &gt; Base.js (source view) 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <div id="srcout">
@@ -57,10 +58,17 @@
     <span class="k">var</span> <span class="nx">ETP</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Event</span><span class="o">.</span><span class="nx">Target</span><span class="o">.</span><span class="nx">prototype</span><span class="o">;</span>
 
     <span class="c">/**</span>
+<span class="c">     * &lt;p&gt;</span>
 <span class="c">     * Provides a base class for managed attribute based</span>
-<span class="c">     * objects, which automates chaining of init and destroy</span>
-<span class="c">     * lifecycle methods and automatic instantiation of</span>
-<span class="c">     * registered Attributes, through the static ATTRS property</span>
+<span class="c">     * objects, which handles the chaining of initializer and destructor methods</span>
+<span class="c">     * across the hierarchy during init and destroy lifecycle methods and </span>
+<span class="c">     * handles automatic configuration of registered Attributes, through </span>
+<span class="c">     * the static ATTRS property.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     *</span>
+<span class="c">     * &lt;p&gt;The Base class also handles prefixing of event types with the static NAME </span>
+<span class="c">     * property for all events fired from instances of classes derived from Base.&lt;/p&gt;</span>
+<span class="c">     *</span>
 <span class="c">     * @constructor</span>
 <span class="c">     * @class Base</span>
 <span class="c">     * @uses Attribute</span>
@@ -68,7 +76,7 @@
 <span class="c">     * @param {Object} config Object literal of configuration property name/value pairs</span>
 <span class="c">     */</span>
     <span class="k">var</span> <span class="nx">Base</span> <span class="o">=</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
+        <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;constructor called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
         <span class="nx">Y</span><span class="o">.</span><span class="nx">Attribute</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
         <span class="k">this</span><span class="o">.</span><span class="nx">init</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="nx">arguments</span><span class="o">);</span>
     <span class="o">};</span>
@@ -103,7 +111,7 @@
 <span class="c">         * has been through the init lifecycle phase.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute initialized</span>
-<span class="c">         * @readonly</span>
+<span class="c">         * @readOnly</span>
 <span class="c">         * @default false</span>
 <span class="c">         * @type boolean</span>
 <span class="c">         */</span>
@@ -117,7 +125,7 @@
 <span class="c">         * has been through the destroy lifecycle phase.</span>
 <span class="c">         *</span>
 <span class="c">         * @attribute destroyed</span>
-<span class="c">         * @readonly</span>
+<span class="c">         * @readOnly</span>
 <span class="c">         * @default false</span>
 <span class="c">         * @type boolean</span>
 <span class="c">         */</span>
@@ -132,7 +140,7 @@
     <span class="c">/**</span>
 <span class="c">     * &lt;p&gt;</span>
 <span class="c">     * Builds a constructor function (class) from the</span>
-<span class="c">     * main function, and array of extension functions</span>
+<span class="c">     * main function, and array of extension functions (classes)</span>
 <span class="c">     * provided.</span>
 <span class="c">     * &lt;/p&gt;</span>
 <span class="c">     * &lt;p&gt;</span>
@@ -145,7 +153,7 @@
 <span class="c">     *    is created which extends the main class, and acts as the </span>
 <span class="c">     *    host on which the extension classes are augmented.&lt;/p&gt;</span>
 <span class="c">     *    &lt;p&gt;If false, the extensions classes are augmented directly to</span>
-<span class="c">     *    the main class, modifying the main class.&lt;/p&gt;</span>
+<span class="c">     *    the main class, modifying the main classes prototype.&lt;/p&gt;</span>
 <span class="c">     *    &lt;/dd&gt;</span>
 <span class="c">     *    &lt;dt&gt;aggregates {String[]}&lt;/dt&gt;</span>
 <span class="c">     *    &lt;dd&gt;An array of static property names, which will get aggregated</span>
@@ -268,12 +276,27 @@
     <span class="o">});</span>
 
     <span class="c">/**</span>
+<span class="c">     * &lt;p&gt;</span>
+<span class="c">     * Creates a new object instance, based on a dynamically created custom class.</span>
+<span class="c">     * The custom class is created from the main class passed in as the first parameter </span>
+<span class="c">     * along with the list of extension classes passed in</span>
+<span class="c">     * as the second parameter using &lt;a href=&quot;#method_build&gt;Base.build&lt;/a&gt; </span>
+<span class="c">     * with &quot;dynamic&quot; set to true. See the documentation for this method </span>
+<span class="c">     * to see how the main class and extension classes are used.</span>
+<span class="c">     * &lt;/p&gt;</span>
+<span class="c">     * </span>
+<span class="c">     * &lt;p&gt;Any arguments following the 2nd argument are passed as arguments to the </span>
+<span class="c">     * constructor of the newly created class used to create the instance.&lt;/p&gt;</span>
+<span class="c">     * </span>
 <span class="c">     * @method create</span>
 <span class="c">     * @static</span>
 <span class="c">     *</span>
-<span class="c">     * @param {Function} main </span>
-<span class="c">     * @param {Array} extensions</span>
-<span class="c">     * @param {Any*} args </span>
+<span class="c">     * @param {Function} main The main class on which the instance it to be </span>
+<span class="c">     * based. This class will be extended to create the class for the custom instance</span>
+<span class="c">     * @param {Array} extensions The list of extension classes used to augment the</span>
+<span class="c">     * main class with.</span>
+<span class="c">     * @param {Any*} args  Zero or more arguments to pass to the constructor of the </span>
+<span class="c">     * newly created class, when creating the instance.</span>
 <span class="c">     */</span>
     <span class="nx">Base</span><span class="o">.</span><span class="nx">create</span> <span class="o">=</span> <span class="k">function</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="nx">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="k">var</span> <span class="nx">c</span> <span class="o">=</span> <span class="nx">Base</span><span class="o">.</span><span class="nx">build</span><span class="o">(</span><span class="nx">main</span><span class="o">,</span> <span class="nx">extensions</span><span class="o">,</span> <span class="o">{</span><span class="nx">dynamic</span><span class="o">:</span><span class="kc">true</span><span class="o">}),</span>
@@ -294,10 +317,11 @@
 <span class="c">         * </span>
 <span class="c">         * @method init</span>
 <span class="c">         * @final</span>
+<span class="c">         * @chainable</span>
 <span class="c">         * @param {Object} config Object literal of configuration property name/value pairs</span>
 <span class="c">         */</span>
         <span class="nx">init</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">config</span><span class="o">)</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;init called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;init called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
 
             <span class="c">/**</span>
 <span class="c">             * The name string to be used to identify </span>
@@ -320,7 +344,8 @@
 <span class="c">             * &lt;/p&gt;</span>
 <span class="c">             *</span>
 <span class="c">             * @event init</span>
-<span class="c">             * @param {EventFacade} e Event object</span>
+<span class="c">             * @preventable _defInitFn</span>
+<span class="c">             * @param {Event.Facade} e Event object</span>
 <span class="c">             * @param config Object literal of configuration name/value pairs</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">INIT</span><span class="o">,</span> <span class="o">{</span>
@@ -336,7 +361,7 @@
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Destroy lifecycle method. Fires the destroy</span>
 <span class="c">         * event, prior to invoking destructors for the</span>
-<span class="c">         * class heirarchy.</span>
+<span class="c">         * class hierarchy.</span>
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * &lt;p&gt;</span>
 <span class="c">         * Subscribers to the destroy</span>
@@ -345,9 +370,10 @@
 <span class="c">         * &lt;/p&gt;</span>
 <span class="c">         * @method destroy</span>
 <span class="c">         * @final</span>
+<span class="c">         * @chainable</span>
 <span class="c">         */</span>
         <span class="nx">destroy</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
-            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destroy called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;Base&#39;</span><span class="o">);</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;destroy called&#39;</span><span class="o">,</span> <span class="s1">&#39;life&#39;</span><span class="o">,</span> <span class="s1">&#39;base&#39;</span><span class="o">);</span>
 
             <span class="c">/**</span>
 <span class="c">             * &lt;p&gt;</span>
@@ -361,7 +387,8 @@
 <span class="c">             * destruction).</span>
 <span class="c">             * &lt;/p&gt;</span>
 <span class="c">             * @event destroy</span>
-<span class="c">             * @param {EventFacade} e Event object</span>
+<span class="c">             * @preventable _defDestroyFn</span>
+<span class="c">             * @param {Event.Facade} e Event object</span>
 <span class="c">             */</span>
             <span class="k">this</span><span class="o">.</span><span class="nx">publish</span><span class="o">(</span><span class="nx">DESTROY</span><span class="o">,</span> <span class="o">{</span>
                 <span class="nx">queuable</span><span class="o">:</span><span class="kc">false</span><span class="o">,</span>
@@ -400,7 +427,7 @@
         <span class="o">},</span>
 
         <span class="c">/**</span>
-<span class="c">         * Returns the top down class heirarchy for this object,</span>
+<span class="c">         * Returns the top down class hierarchy for this object,</span>
 <span class="c">         * with Base being the first class in the array</span>
 <span class="c">         *</span>
 <span class="c">         * @protected</span>
@@ -513,6 +540,7 @@
 <span class="c">         * Overrides Event.Target&#39;s fire method, to add the name prefix </span>
 <span class="c">         * of the instance to the event type, if absent.</span>
 <span class="c">         * &lt;/p&gt;</span>
+<span class="c">         * </span>
 <span class="c">         * @method fire</span>
 <span class="c">         * @param {String|Object} type The type of the event, or an object that contains</span>
 <span class="c">         * a &#39;type&#39; property. If the type does not contain a prefix (&quot;prefix:eventType&quot;),</span>
@@ -667,39 +695,27 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class="selected"><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>API: dd-plugin   substitute.js  (YUI Library)</title>
+	<title>API: substitute   substitute.js  (YUI Library)</title>
 	<link rel="stylesheet" type="text/css" href="assets/api.css">
     <script type="text/javascript" src="assets/api-js"></script>
     <script type="text/javascript" src="assets/ac-js"></script>
@@ -13,13 +13,14 @@
 
 	<div id="hd">
         <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
-        <h3>dd-plugin&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <h3>substitute&nbsp; <span class="subtitle">3.00PR1</span></h3>
         <p>
         <a href="./index.html">Yahoo! UI Library</a> 
-            &gt; <a href="./module_dd-plugin.html">dd-plugin</a>
+            &gt; <a href="./module_substitute.html">substitute</a>
                 
                  &gt; substitute.js (source view) 
             </p>
+
 
 	</div>
 
@@ -27,18 +28,29 @@
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <div id="srcout">
                         <style>
                             #doc3 #classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;substitute&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * String variable substitution and string formatting.</span>
+<span class="c"> * If included, the substitute method is added to the YUI instance.</span>
+<span class="c"> *</span>
+<span class="c"> * @module substitute</span>
+<span class="c"> */</span>
+<span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;substitute&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="k">var</span> <span class="nx">L</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">,</span> <span class="nx">DUMP</span><span class="o">=</span><span class="s1">&#39;dump&#39;</span><span class="o">,</span> <span class="nx">SPACE</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="o">,</span> <span class="nx">LBRACE</span><span class="o">=</span><span class="s1">&#39;{&#39;</span><span class="o">,</span> <span class="nx">RBRACE</span><span class="o">=</span><span class="s1">&#39;}&#39;</span><span class="o">,</span>
+
+    <span class="c">/**</span>
+<span class="c">     * The following methods are added to the YUI instance</span>
+<span class="c">     * @class YUI~substitute</span>
+<span class="c">     */</span>
 
     <span class="c">/**</span>
 <span class="c">     * Does variable substitution on a string. It scans through the string </span>
@@ -59,7 +71,6 @@
 <span class="c">     * in the YUI module.</span>
 <span class="c">     *</span>
 <span class="c">     * @method substitute</span>
-<span class="c">     * @for YUI</span>
 <span class="c">     * @param s {string} The string that will be modified.</span>
 <span class="c">     * @param o An object containing the replacement values</span>
 <span class="c">     * @param f {function} An optional function that can be used to</span>
@@ -164,39 +175,27 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
-                                <li class="selected"><a href="module_dd-plugin.html">dd-plugin</a></li>
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class="selected"><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -205,17 +204,13 @@
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="DragPlugin.html">DragPlugin</a></li>
-                                <li class=""><a href="DropPlugin.html">DropPlugin</a></li>
+                                <li class=""><a href="YUI~substitute.html">YUI~substitute</a></li>
                         </ul>
                     </div>
 
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
-                                <li class=""><a href="dd-drop-plugin.js.html">dd-drop-plugin.js</a></li>
-                                <li class=""><a href="dd-plugin.js.html">dd-plugin.js</a></li>
-                                <li class=""><a href="dump.js.html">dump.js</a></li>
                                 <li class="selected"><a href="substitute.js.html">substitute.js</a></li>
                         </ul>
                     </div>

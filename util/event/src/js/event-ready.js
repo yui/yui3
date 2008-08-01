@@ -1,3 +1,8 @@
+/*
+ * DOMReady
+ * @submodule event-ready
+ * @module event
+ */
 YUI.add("event-ready", function(Y) {
 
     if (Y === YUI) {

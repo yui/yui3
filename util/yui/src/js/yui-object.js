@@ -1,3 +1,8 @@
+/*
+ * YUI object utilities
+ * @module yui
+ * @submodule object
+ */
 YUI.add("object", function(Y) {
 
     /**

@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: node   node-region.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>node&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_node.html">node</a>
+                
+                 &gt; node-region.js (source view) 
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * Extended Node interface for managing regions and screen positioning.</span>
+<span class="c"> * Adds support for positioning elements and normalizes window size and scroll detection. </span>
+<span class="c"> * @module node</span>
+<span class="c"> * @submodule node-screen</span>
+<span class="c"> * @for Node</span>
+<span class="c"> */</span>
+
+<span class="k">var</span> <span class="nx">ATTR</span> <span class="o">=</span> <span class="o">[</span>
+        <span class="c">/**</span>
+<span class="c">         * Returns a region object for the node </span>
+<span class="c">         * @attribute region</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="s1">&#39;region&#39;</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">         * Returns a region object for the node&#39;s viewport </span>
+<span class="c">         * @attribute viewportRegion</span>
+<span class="c">         * @type Node</span>
+<span class="c">         */</span>
+        <span class="s1">&#39;viewportRegion&#39;</span>
+    <span class="o">],</span>
+
+    <span class="nx">getNode</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getDOMNode</span><span class="o">;</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">ATTR</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">n</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">getters</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">wrapDOMMethod</span><span class="o">(</span><span class="nx">v</span><span class="o">));</span>
+<span class="o">});</span>
+
+<span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">addDOMMethods</span><span class="o">([</span>
+    <span class="c">/**</span>
+<span class="c">     * Removes a class name from a given element or collection of elements.</span>
+<span class="c">     * @method inViewportRegion         </span>
+<span class="c">     * @return {Boolean} Whether or not the node is currently positioned</span>
+<span class="c">     * within the viewport&#39;s region</span>
+<span class="c">     */</span>
+    <span class="s1">&#39;inViewportRegion&#39;</span>
+<span class="o">]);</span>
+
+<span class="c">// these need special treatment to extract 2nd node arg</span>
+<span class="c"></span><span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">methods</span><span class="o">({</span>
+    <span class="c">/**</span>
+<span class="c">     * Compares the intersection of the node with another node or region </span>
+<span class="c">     * @method intersect         </span>
+<span class="c">     * @param {Node|Object} node2 The node or region to compare with.</span>
+<span class="c">     * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
+<span class="c">     * @return {Object} An object representing the intersection of the regions. </span>
+<span class="c">     */</span>
+    <span class="nx">intersect</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node1</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// might be a region object</span>
+<span class="c"></span>            <span class="nx">node2</span> <span class="o">=</span> <span class="nx">getNode</span><span class="o">(</span><span class="nx">node2</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">intersect</span><span class="o">(</span><span class="nx">getNode</span><span class="o">(</span><span class="nx">node1</span><span class="o">),</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">);</span> 
+    <span class="o">},</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Determines whether or not the node is within the giving region.</span>
+<span class="c">     * @method inRegion         </span>
+<span class="c">     * @param {Node|Object} node2 The node or region to compare with.</span>
+<span class="c">     * @param {Boolean} all Whether or not all of the node must be in the region. </span>
+<span class="c">     * @param {Object} altRegion An alternate region to use (rather than this node&#39;s). </span>
+<span class="c">     * @return {Object} An object representing the intersection of the regions. </span>
+<span class="c">     */</span>
+    <span class="nx">inRegion</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node1</span><span class="o">,</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="nx">node2</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span> <span class="c">// might be a region object</span>
+<span class="c"></span>            <span class="nx">node2</span> <span class="o">=</span> <span class="nx">getNode</span><span class="o">(</span><span class="nx">node2</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">DOM</span><span class="o">.</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">getNode</span><span class="o">(</span><span class="nx">node1</span><span class="o">),</span> <span class="nx">node2</span><span class="o">,</span> <span class="nx">all</span><span class="o">,</span> <span class="nx">altRegion</span><span class="o">);</span> 
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class="selected"><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="Node.html">Node</a></li>
+                                <li class=""><a href="NodeList.html">NodeList</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="node-class.js.html">node-class.js</a></li>
+                                <li class="selected"><a href="node-region.js.html">node-region.js</a></li>
+                                <li class=""><a href="node-screen.js.html">node-screen.js</a></li>
+                                <li class=""><a href="node-style.js.html">node-style.js</a></li>
+                                <li class=""><a href="node.js.html">node.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

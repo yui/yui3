@@ -1,3 +1,8 @@
+/*
+ * The YUI DOM event system
+ * @submodule event-dom
+ * @module event
+ */
 YUI.add("event-dom", function(Y) {
 
     /*

@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -107,7 +108,10 @@ be specified.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -180,47 +184,10 @@ if configured for the event, has executed.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_before">before</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        void
-                                            <strong>before</strong>
-                                           (
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Executes the callback before a DOM event, custom event
-or method.  If the first argument is a function, it
-is assumed the target is a method.
-For DOM and custom events:
-type, callback, context, 1-n arguments
-For methods:
-callback, object (method host), methodName, context, 1-n arguments
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        void
-                                                    </code></dt>
-                                                    <dd>unsubscribe handle</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -266,73 +233,10 @@ callback, object (method host), methodName, context, 1-n arguments
                                                     </code></dt>
                                                     <dd>the aggregated return value from Event.Custom.fire</dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_detach">detach</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        YUI
-                                            <strong>detach</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         o
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Detach an event listener (either a custom event or a
-DOM event
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;object&gt;</code>
-                                                             the type of event, or a Event.Handle to
-for the subscription.  If the Event.Handle is passed
-in, the other parameters are not used.
-                                                        </dd>
-                                                        <dd>
-                                                            <code>f &lt;Function&gt;</code>
-                                                              the subscribed function
-                                                        </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the object or element the listener is subscribed
-to.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        YUI
-                                                    </code></dt>
-                                                    <dd>the YUI instance</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -395,7 +299,10 @@ the handler.
                                                     </code></dt>
                                                     <dd>the return value from Event.Custom.fire</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -442,88 +349,10 @@ falsy value otherwise
                                                     </code></dt>
                                                     <dd>the custom event or a falsy value</dd>
                                                 </dl>
+
+
              
-                                        </div>
 
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="method_on">on</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                        Event.Handle
-                                            <strong>on</strong>
-                                           (
-                                                
-                                                        
-                                                         type
-                                                    
-                                                
-                                                        , 
-                                                         f
-                                                    
-                                                
-                                                        , 
-                                                         o
-                                                    
-                                                
-                                                        , 
-                                                         context
-                                                    
-                                                
-                                                        , 
-                                                         args*
-                                                    
-                                                
-                                            )
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Attach an event listener, either to a DOM object
-or to an Event.Target.
-                                        </div>
-
-                                        <div class="description">
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>type &lt;string&gt;</code>
-                                                              the event type
-                                                        </dd>
-                                                        <dd>
-                                                            <code>f &lt;Function&gt;</code>
-                                                              the function to execute
-                                                        </dd>
-                                                        <dd>
-                                                            <code>o &lt;object&gt;</code>
-                                                             the Event.Target or element to attach to
-                                                        </dd>
-                                                        <dd>
-                                                            <code>context &lt;object&gt;</code>
-                                                             Optional execution context
-                                                        </dd>
-                                                        <dd>
-                                                            <code>args* &lt;object&gt;</code>
-                                                             0..n additional arguments to append
-to the signature provided when the event fires.
-                                                        </dd>
-                                                </dl>
-
-                                                <dl>
-                                                    <dt>Returns:
-                                                    <code>
-                                                        Event.Handle
-                                                    </code></dt>
-                                                    <dd>a handle object for 
-unsubscribing to this event.</dd>
-                                                </dl>
-             
                                         </div>
 
                                     </div>
@@ -618,7 +447,10 @@ the fire will be notified immediately.
                                                     </code></dt>
                                                     <dd>the custom event</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -682,7 +514,10 @@ to the signature provided when the event fires.
                                                     </code></dt>
                                                     <dd>the YUI instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -728,7 +563,10 @@ to the signature provided when the event fires.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -798,7 +636,10 @@ to the signature provided when the event fires.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -868,7 +709,10 @@ that lives on the prototype)
                                                     </code></dt>
                                                     <dd>true if the subscriber was found and detached.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -916,7 +760,10 @@ be removed.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -942,39 +789,27 @@ be removed.
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class="selected"><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1007,7 +842,6 @@ be removed.
                                 <li class=""><a href="event-ready.js.html">event-ready.js</a></li>
                                 <li class=""><a href="event-target.js.html">event-target.js</a></li>
                                 <li class=""><a href="event.js.html">event.js</a></li>
-                                <li class=""><a href="oop.js.html">oop.js</a></li>
                         </ul>
                     </div>
 
@@ -1021,23 +855,14 @@ be removed.
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_after">after</a>
                                 </li>
-                                <li class=""><!--<code>void</code>-->
-                                <a href="#method_before">before</a>
-                                </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_bubble">bubble</a>
-                                </li>
-                                <li class=""><!--<code>YUI</code>-->
-                                <a href="#method_detach">detach</a>
                                 </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_fire">fire</a>
                                 </li>
                                 <li class=""><!--<code>Event.Target</code>-->
                                 <a href="#method_getEvent">getEvent</a>
-                                </li>
-                                <li class=""><!--<code>Event.Handle</code>-->
-                                <a href="#method_on">on</a>
                                 </li>
                                 <li class=""><!--<code>Event.Custom</code>-->
                                 <a href="#method_publish">publish</a>

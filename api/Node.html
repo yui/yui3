@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -48,45 +49,95 @@
                     </h2>
                     <!-- class tree goes here -->
                     
+                        <dl class="subclasses">
+                            <dt>Known Subclasses:</dd>
+                            <dd>
+                                    <a href="NodeList.html">NodeList</a>
+                            </dd>
+                       </dl>
                 
   
 
                     <div class="summary description">
-                        A wrapper for DOM Nodes.
+                        The Node class provides a wrapper for manipulating DOM Nodes.
 Node properties can be accessed via the set/get methods.
-With the exception of the noted properties,
-only strings, numbers, and booleans are passed through. 
 Use Y.get() or Y.Node.get() to retrieve Node instances.
                     </div>
 
-
-                        <div class="section field details">
-                            <h3 id="properties">Properties</h3>
-                            <div class="content">
-                                    <div class="">
-                                    <h4><a name="property_text">text</a>
-                                        <code>- String</code>
-                                    </h4>
-                                    <div class="detail">
-                                        <div class="description">
-                                            Normalizes nodeInnerText and textContent.
-                                        </div>
-                                    </div>
-     
-                                        
-
-
-                                    <hr />
-                                    </div>
-
-
+                        <div class="section constructor details">
+                        <h3 id="constructor">Constructor</h3>
+                        <div class="content">
+                            <div class="detail">
+                                <strong>Node</strong>
+                                <code>
+                                    (
+                                    )
+                                </code>
+                                <div class="description">
+                                    
+                                    
+                                </div>
                             </div>
                         </div>
+                    </div>
+
 
 
                         <div class="section method details">
                             <h3 id="methods">Methods</h3>
                             <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_addClass">addClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>addClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Adds a class name to a given element or collection of elements.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to add to the class attribute
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
                                     <div class="">
                                     <h4>
                                         <a name="method_all">all</a></h4>
@@ -135,7 +186,10 @@ Use Y.get() or Y.Node.get() to retrieve Node instances.
                                                     </code></dt>
                                                     <dd>A wrapper instance for the supplied nodes.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -181,7 +235,10 @@ Use Y.get() or Y.Node.get() to retrieve Node instances.
                                                     </code></dt>
                                                     <dd>The appended node</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -243,7 +300,10 @@ Use Y.get() or Y.Node.get() to retrieve Node instances.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -277,7 +337,13 @@ Use Y.get() or Y.Node.get() to retrieve Node instances.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -323,7 +389,10 @@ Use Y.get() or Y.Node.get() to retrieve Node instances.
                                                     </code></dt>
                                                     <dd>The clone</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -370,7 +439,10 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                                     </code></dt>
                                                     <dd>True if the nodes match, false if they do not.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -416,7 +488,13 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                                     </code></dt>
                                                     <dd>Whether or not this node is an ancestor of needle</dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -462,7 +540,10 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                                     </code></dt>
                                                     <dd>A new Node instance</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -516,7 +597,10 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -550,7 +634,13 @@ Node instances can be compared to each other and/or HTMLElements/selectors.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -597,7 +687,10 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                                     </code></dt>
                                                     <dd>Current value of the property</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -643,7 +736,10 @@ Only strings/numbers/booleans are passed through unless a GETTER exists.
                                                     </code></dt>
                                                     <dd>The current value of the attribute</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -698,7 +794,10 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -724,7 +823,7 @@ Defaults to current document.
                                         </code>
                                         
                                         <div class="description">
-                                            Retrieves the computed value for the given style attribute.
+                                            Returns the computed value for the given style attribute.
                                         </div>
 
                                         <div class="description">
@@ -744,7 +843,10 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>The computed value of the style property for the element.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -790,7 +892,10 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>A NodeList representing the HTMLCollection</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -816,7 +921,7 @@ Defaults to current document.
                                         </code>
                                         
                                         <div class="description">
-                                            Retrieves a style attribute from the given node.
+                                            Returns the given style attribute value from the node.
                                         </div>
 
                                         <div class="description">
@@ -836,7 +941,127 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>The current value of the style property for the element.</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getX">getX</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Int
+                                            <strong>getX</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets the current position of the node in page coordinates. 
+Nodes must be part of the DOM tree to have page coordinates
+(display:none or nodes not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Int
+                                                    </code></dt>
+                                                    <dd>The X position of the node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getXY">getXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array
+                                            <strong>getXY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets the current position of the node in page coordinates. 
+Nodes must be part of the DOM tree to have page coordinates
+(display:none or nodes not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array
+                                                    </code></dt>
+                                                    <dd>The XY position of the node</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_getY">getY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Int
+                                            <strong>getY</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Gets the current position of the node in page coordinates. 
+Nodes must be part of the DOM tree to have page coordinates
+(display:none or nodes not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Int
+                                                    </code></dt>
+                                                    <dd>The Y position of the node</dd>
+                                                </dl>
+
+
+             
+
                                         </div>
 
                                     </div>
@@ -882,7 +1107,10 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>Whether or not the attribute is present</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -916,7 +1144,59 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>Whether or not the node has any childNodes</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_hasClass">hasClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>hasClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether an HTMLElement has the given className.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to search for
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>A boolean value or array of boolean values</dd>
+                                                </dl>
+
+
+             
+
                                         </div>
 
                                     </div>
@@ -963,7 +1243,75 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>Whether or not this node is attached to the document.</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_inRegion">inRegion</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>inRegion</strong>
+                                           (
+                                                
+                                                        
+                                                         node2
+                                                    
+                                                
+                                                        , 
+                                                         all
+                                                    
+                                                
+                                                        , 
+                                                         altRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Determines whether or not the node is within the giving region.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node2 &lt;Node|Object&gt;</code>
+                                                             The node or region to compare with.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>all &lt;Boolean&gt;</code>
+                                                             Whether or not all of the node must be in the region.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>altRegion &lt;Object&gt;</code>
+                                                             An alternate region to use (rather than this node's).
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>An object representing the intersection of the regions.</dd>
+                                                </dl>
+
+
+             
+
                                         </div>
 
                                     </div>
@@ -1017,7 +1365,105 @@ Defaults to current document.
                                                     </code></dt>
                                                     <dd>The inserted node</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_intersect">intersect</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Object
+                                            <strong>intersect</strong>
+                                           (
+                                                
+                                                        
+                                                         node2
+                                                    
+                                                
+                                                        , 
+                                                         altRegion
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Compares the intersection of the node with another node or region
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>node2 &lt;Node|Object&gt;</code>
+                                                             The node or region to compare with.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>altRegion &lt;Object&gt;</code>
+                                                             An alternate region to use (rather than this node's).
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Object
+                                                    </code></dt>
+                                                    <dd>An object representing the intersection of the regions.</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_inViewportRegion">inViewportRegion</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean
+                                            <strong>inViewportRegion</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes a class name from a given element or collection of elements.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Boolean
+                                                    </code></dt>
+                                                    <dd>Whether or not the node is currently positioned
+within the viewport's region</dd>
+                                                </dl>
+
+
+             
+
                                         </div>
 
                                     </div>
@@ -1073,7 +1519,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>HTMLElement or null if not found</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1107,7 +1556,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1169,7 +1621,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1225,7 +1680,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>Node instance or null if not found</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1271,7 +1729,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>A Node instance for the matching HTMLElement.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1317,7 +1778,10 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>A NodeList instance for the matching HTMLCollection/Array.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1363,7 +1827,62 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>The removed node</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_removeClass">removeClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>removeClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Removes a class name from a given element or collection of elements.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to remove from the class attribute
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
                                         </div>
 
                                     </div>
@@ -1417,7 +1936,71 @@ that receives the sibling node being tested as its only argument.
                                                     </code></dt>
                                                     <dd>The replaced node</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_replaceClass">replaceClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>replaceClass</strong>
+                                           (
+                                                
+                                                        
+                                                         oldClassName
+                                                    
+                                                
+                                                        , 
+                                                         newClassName
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Replace a class with another class for a given element or collection of elements.
+If no oldClassName is present, the newClassName is simply added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>oldClassName &lt;String&gt;</code>
+                                                             the class name to be replaced
+                                                        </dd>
+                                                        <dd>
+                                                            <code>newClassName &lt;String&gt;</code>
+                                                             the class name that will be replacing the old class name
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
                                         </div>
 
                                     </div>
@@ -1452,7 +2035,13 @@ Only valid on FORM elements
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1486,7 +2075,13 @@ Only valid on FORM elements
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1541,7 +2136,13 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1595,7 +2196,13 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1625,7 +2232,7 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                         </code>
                                         
                                         <div class="description">
-                                            Applies a CSS style to a given node.
+                                            Applies a CSS style to the node.
                                         </div>
 
                                         <div class="description">
@@ -1649,7 +2256,13 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1675,7 +2288,7 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                         </code>
                                         
                                         <div class="description">
-                                            Sets multiple style properties.
+                                            Sets multiple style properties on the node.
                                         </div>
 
                                         <div class="description">
@@ -1695,7 +2308,172 @@ Only strings/numbers/booleans are passed through unless a SETTER exists.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setX">setX</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setX</strong>
+                                           (
+                                                
+                                                        
+                                                         x
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the position of a node in page coordinates, regardless of how the node is positioned.
+The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>x &lt;Int&gt;</code>
+                                                             X value for new position (coordinates are page-based)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setXY">setXY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setXY</strong>
+                                           (
+                                                
+                                                        
+                                                         xy
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the position of a node in page coordinates, regardless of how the node is positioned.
+The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>xy &lt;Array&gt;</code>
+                                                             Contains X & Y values for new position (coordinates are page-based)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_setY">setY</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>setY</strong>
+                                           (
+                                                
+                                                        
+                                                         y
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Set the position of a node in page coordinates, regardless of how the node is positioned.
+The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>y &lt;Int&gt;</code>
+                                                             Y value for new position (coordinates are page-based)
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
                                         </div>
 
                                     </div>
@@ -1730,7 +2508,13 @@ Only valid on FORM elements
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -1776,7 +2560,62 @@ Only valid on FORM elements
                                                     </code></dt>
                                                     <dd>Whether or not the node matches the selector.</dd>
                                                 </dl>
+
+
              
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_toggleClass">toggleClass</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong>toggleClass</strong>
+                                           (
+                                                
+                                                        
+                                                         className
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            If the className exists on the node it is removed, if it doesn't exist it is added.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>className &lt;String&gt;</code>
+                                                             the class name to be toggled
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        void
+                                                    </code></dt>
+                                                    <dd></dd>
+                                                </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
+             
+
                                         </div>
 
                                     </div>
@@ -1791,662 +2630,6 @@ Only valid on FORM elements
                             <div class="content">
                                     <div class="">
                                     <h4>
-                                        <a name="event_beforeBodyChange">beforeBodyChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeBodyChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'body' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeCellsChange">beforeCellsChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeCellsChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'cells' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeChildNodesChange">beforeChildNodesChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeChildNodesChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'childNodes' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeChildrenChange">beforeChildrenChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeChildrenChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'children' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeDocumentElementChange">beforeDocumentElementChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeDocumentElementChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'documentElement' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeElementsChange">beforeElementsChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeElementsChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'elements' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeFirstChildChange">beforeFirstChildChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeFirstChildChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'firstChild' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeLastChildChange">beforeLastChildChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeLastChildChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'lastChild' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeOffsetParentChange">beforeOffsetParentChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeOffsetParentChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'offsetParent' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeOwnerDocumentChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'ownerDocument' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeParentNodeChange">beforeParentNodeChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeParentNodeChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'parentNode' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforePreviousSiblingChange">beforePreviousSiblingChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforePreviousSiblingChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'previousSibling' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeRowsChange">beforeRowsChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeRowsChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'rows' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeTBodiesChange">beforeTBodiesChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeTBodiesChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'tBodies' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeTFootChange">beforeTFootChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeTFootChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'tFoot' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeTHeadChange">beforeTHeadChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeTHeadChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'tHead' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
                                         <a name="event_bodyChange">bodyChange</a></h4>
                                     <div class="detail">
                                         <code>
@@ -2458,7 +2641,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2466,7 +2649,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'body' changes.
+                                            Fires when the value for the configuration attribute 'body' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2475,8 +2658,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2499,7 +2682,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2507,7 +2690,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'cells' changes.
+                                            Fires when the value for the configuration attribute 'cells' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2516,8 +2699,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2540,7 +2723,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2548,7 +2731,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'childNodes' changes.
+                                            Fires when the value for the configuration attribute 'childNodes' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2557,8 +2740,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2581,7 +2764,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2589,7 +2772,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'children' changes.
+                                            Fires when the value for the configuration attribute 'children' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2598,8 +2781,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2622,7 +2805,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2630,7 +2813,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'documentElement' changes.
+                                            Fires when the value for the configuration attribute 'documentElement' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2639,8 +2822,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2663,7 +2846,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2671,7 +2854,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'elements' changes.
+                                            Fires when the value for the configuration attribute 'elements' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2680,8 +2863,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2704,7 +2887,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2712,7 +2895,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'firstChild' changes.
+                                            Fires when the value for the configuration attribute 'firstChild' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2721,8 +2904,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2745,7 +2928,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2753,7 +2936,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'lastChild' changes.
+                                            Fires when the value for the configuration attribute 'lastChild' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2762,8 +2945,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2786,7 +2969,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2794,7 +2977,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'offsetParent' changes.
+                                            Fires when the value for the configuration attribute 'offsetParent' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2803,8 +2986,49 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_optionsChange">optionsChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>optionsChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'options' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2827,7 +3051,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2835,7 +3059,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'ownerDocument' changes.
+                                            Fires when the value for the configuration attribute 'ownerDocument' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2844,8 +3068,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2868,7 +3092,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2876,7 +3100,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'parentNode' changes.
+                                            Fires when the value for the configuration attribute 'parentNode' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2885,8 +3109,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2909,7 +3133,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2917,7 +3141,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'previousSibling' changes.
+                                            Fires when the value for the configuration attribute 'previousSibling' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2926,8 +3150,49 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_regionChange">regionChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>regionChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'region' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2950,7 +3215,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2958,7 +3223,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'rows' changes.
+                                            Fires when the value for the configuration attribute 'rows' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -2967,8 +3232,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -2991,7 +3256,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -2999,7 +3264,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'tBodies' changes.
+                                            Fires when the value for the configuration attribute 'tBodies' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3008,8 +3273,49 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_textChange">textChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>textChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'text' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -3032,7 +3338,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -3040,7 +3346,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'tFoot' changes.
+                                            Fires when the value for the configuration attribute 'tFoot' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3049,8 +3355,8 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -3073,7 +3379,7 @@ Only valid on FORM elements
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -3081,7 +3387,7 @@ Only valid on FORM elements
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'tHead' changes.
+                                            Fires when the value for the configuration attribute 'tHead' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -3090,8 +3396,49 @@ Only valid on FORM elements
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
+                                                        </dd>
+                                                </dl>
+
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="event_viewportRegionChange">viewportRegionChange</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                            <strong>viewportRegionChange</strong>
+
+                                            (
+                                                
+                                                        
+                                                         event
+                                                    
+                                                
+                                            )
+
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Fires when the value for the configuration attribute 'viewportRegion' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
+                                        </div>
+
+                                        <div class="description">
+
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -3236,6 +3583,20 @@ Only valid on FORM elements
                                     <hr />
                                     </div>        
                                     <div class="">
+                                    <h4><a name="config_options">options</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a nodeList of option elements
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
                                     <h4><a name="config_ownerDocument">ownerDocument</a>
                                         <code>- Doc</code>
                                     </h4>
@@ -3278,6 +3639,20 @@ Only valid on FORM elements
                                     <hr />
                                     </div>        
                                     <div class="">
+                                    <h4><a name="config_region">region</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a region object for the node
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
                                     <h4><a name="config_rows">rows</a>
                                         <code>- NodeList</code>
                                     </h4>
@@ -3298,6 +3673,20 @@ Only valid on FORM elements
                                     <div class="detail">
                                         <div class="description">
                                             Returns a NodeList instance.
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
+                                    <div class="">
+                                    <h4><a name="config_text">text</a>
+                                        <code>- String</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Normalizes nodeInnerText and textContent.
                                         </div>
                                     </div>
  
@@ -3333,6 +3722,20 @@ Only valid on FORM elements
 
                                     <hr />
                                     </div>        
+                                    <div class="">
+                                    <h4><a name="config_viewportRegion">viewportRegion</a>
+                                        <code>- Node</code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description">
+                                            Returns a region object for the node's viewport
+                                        </div>
+                                    </div>
+ 
+     
+
+                                    <hr />
+                                    </div>        
 
                             </div>
                         </div>
@@ -3349,39 +3752,27 @@ Only valid on FORM elements
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class="selected"><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -3398,22 +3789,21 @@ Only valid on FORM elements
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="node-class.js.html">node-class.js</a></li>
+                                <li class=""><a href="node-region.js.html">node-region.js</a></li>
+                                <li class=""><a href="node-screen.js.html">node-screen.js</a></li>
+                                <li class=""><a href="node-style.js.html">node-style.js</a></li>
                                 <li class=""><a href="node.js.html">node.js</a></li>
                         </ul>
                     </div>
 
-                    <div class="module">
-                        <h4>Properties</h4>
-                        <ul class="content">        
-                                <li class=""><a href="#property_text">text</a>
-                                        <!--<code>&lt;String&gt;</code>-->
-                                </li>
-                        </ul>
-                    </div>
 
                     <div class="module">
                         <h4>Methods</h4>
                         <ul class="content">        
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_addClass">addClass</a>
+                                </li>
                                 <li class=""><!--<code>NodeList</code>-->
                                 <a href="#method_all">all</a>
                                 </li>
@@ -3462,6 +3852,15 @@ Only valid on FORM elements
                                 <li class=""><!--<code>String</code>-->
                                 <a href="#method_getStyle">getStyle</a>
                                 </li>
+                                <li class=""><!--<code>Int</code>-->
+                                <a href="#method_getX">getX</a>
+                                </li>
+                                <li class=""><!--<code>Array</code>-->
+                                <a href="#method_getXY">getXY</a>
+                                </li>
+                                <li class=""><!--<code>Int</code>-->
+                                <a href="#method_getY">getY</a>
+                                </li>
                                 <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_hasAttribute">hasAttribute</a>
                                 </li>
@@ -3469,10 +3868,22 @@ Only valid on FORM elements
                                 <a href="#method_hasChildNodes">hasChildNodes</a>
                                 </li>
                                 <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_hasClass">hasClass</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
                                 <a href="#method_inDoc">inDoc</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_inRegion">inRegion</a>
                                 </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_insertBefore">insertBefore</a>
+                                </li>
+                                <li class=""><!--<code>Object</code>-->
+                                <a href="#method_intersect">intersect</a>
+                                </li>
+                                <li class=""><!--<code>Boolean</code>-->
+                                <a href="#method_inViewportRegion">inViewportRegion</a>
                                 </li>
                                 <li class=""><!--<code>Object</code>-->
                                 <a href="#method_next">next</a>
@@ -3495,8 +3906,14 @@ Only valid on FORM elements
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_removeChild">removeChild</a>
                                 </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_removeClass">removeClass</a>
+                                </li>
                                 <li class=""><!--<code>Node</code>-->
                                 <a href="#method_replaceChild">replaceChild</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_replaceClass">replaceClass</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
                                 <a href="#method_reset">reset</a>
@@ -3517,10 +3934,22 @@ Only valid on FORM elements
                                 <a href="#method_setStyles">setStyles</a>
                                 </li>
                                 <li class=""><!--<code>void</code>-->
+                                <a href="#method_setX">setX</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setXY">setXY</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_setY">setY</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
                                 <a href="#method_submit">submit</a>
                                 </li>
                                 <li class=""><!--<code>boolean</code>-->
                                 <a href="#method_test">test</a>
+                                </li>
+                                <li class=""><!--<code>void</code>-->
+                                <a href="#method_toggleClass">toggleClass</a>
                                 </li>
                         </ul>
                     </div>
@@ -3528,54 +3957,6 @@ Only valid on FORM elements
                     <div class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#event_beforeBodyChange">beforeBodyChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeCellsChange">beforeCellsChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeChildNodesChange">beforeChildNodesChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeChildrenChange">beforeChildrenChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeDocumentElementChange">beforeDocumentElementChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeElementsChange">beforeElementsChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeFirstChildChange">beforeFirstChildChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeLastChildChange">beforeLastChildChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeOffsetParentChange">beforeOffsetParentChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeOwnerDocumentChange">beforeOwnerDocumentChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeParentNodeChange">beforeParentNodeChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforePreviousSiblingChange">beforePreviousSiblingChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeRowsChange">beforeRowsChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeTBodiesChange">beforeTBodiesChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeTFootChange">beforeTFootChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeTHeadChange">beforeTHeadChange</a>
-                                </li>
                                 <li class="">
                                 <a href="#event_bodyChange">bodyChange</a>
                                 </li>
@@ -3604,6 +3985,9 @@ Only valid on FORM elements
                                 <a href="#event_offsetParentChange">offsetParentChange</a>
                                 </li>
                                 <li class="">
+                                <a href="#event_optionsChange">optionsChange</a>
+                                </li>
+                                <li class="">
                                 <a href="#event_ownerDocumentChange">ownerDocumentChange</a>
                                 </li>
                                 <li class="">
@@ -3613,16 +3997,25 @@ Only valid on FORM elements
                                 <a href="#event_previousSiblingChange">previousSiblingChange</a>
                                 </li>
                                 <li class="">
+                                <a href="#event_regionChange">regionChange</a>
+                                </li>
+                                <li class="">
                                 <a href="#event_rowsChange">rowsChange</a>
                                 </li>
                                 <li class="">
                                 <a href="#event_tBodiesChange">tBodiesChange</a>
                                 </li>
                                 <li class="">
+                                <a href="#event_textChange">textChange</a>
+                                </li>
+                                <li class="">
                                 <a href="#event_tFootChange">tFootChange</a>
                                 </li>
                                 <li class="">
                                 <a href="#event_tHeadChange">tHeadChange</a>
+                                </li>
+                                <li class="">
+                                <a href="#event_viewportRegionChange">viewportRegionChange</a>
                                 </li>
                         </ul>
                     </div>
@@ -3658,6 +4051,9 @@ Only valid on FORM elements
                                 <a href="#config_offsetParent">offsetParent</a>
                                 </li>
                                 <li class="">
+                                <a href="#config_options">options</a>
+                                </li>
+                                <li class="">
                                 <a href="#config_ownerDocument">ownerDocument</a>
                                 </li>
                                 <li class="">
@@ -3667,16 +4063,25 @@ Only valid on FORM elements
                                 <a href="#config_previousSibling">previousSibling</a>
                                 </li>
                                 <li class="">
+                                <a href="#config_region">region</a>
+                                </li>
+                                <li class="">
                                 <a href="#config_rows">rows</a>
                                 </li>
                                 <li class="">
                                 <a href="#config_tBodies">tBodies</a>
                                 </li>
                                 <li class="">
+                                <a href="#config_text">text</a>
+                                </li>
+                                <li class="">
                                 <a href="#config_tFoot">tFoot</a>
                                 </li>
                                 <li class="">
                                 <a href="#config_tHead">tHead</a>
+                                </li>
+                                <li class="">
+                                <a href="#config_viewportRegion">viewportRegion</a>
                                 </li>
                         </ul>
                     </div>

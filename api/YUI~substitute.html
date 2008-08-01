@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: substitute  YUI~substitute   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>substitute&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_substitute.html">substitute</a>
+                 &gt; YUI~substitute 
+                
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>YUI~substitute</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        The following methods are added to the YUI instance
+                    </div>
+
+
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_substitute">substitute</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        string
+                                            <strong>substitute</strong>
+                                           (
+                                                
+                                                        
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Does variable substitution on a string. It scans through the string 
+looking for expressions enclosed in { } braces. If an expression 
+is found, it is used a key on the object.  If there is a space in
+the key, the first word is used for the key and the rest is provided
+to an optional function to be used to programatically determine the
+value (the extra information might be used for this decision). If 
+the value for the key in the object, or what is returned from the
+function has a string value, number value, or object value, it is 
+substituted for the bracket expression and it repeats.  If this
+value is an object, it uses the Object's toString() if this has
+been overridden, otherwise it does a shallow dump of the key/value
+pairs if Y.dump is available (if dump isn't available, toString()
+is used).
+This method is included in the 'substitute' module.  It is not included
+in the YUI module.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>s &lt;string&gt;</code>
+                                                              The string that will be modified.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             An object containing the replacement values
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;function&gt;</code>
+                                                              An optional function that can be used to
+process each match.  It receives the key,
+value, and any extra metadata included with
+the key inside of the braces.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        string
+                                                    </code></dt>
+                                                    <dd>the substituted string</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class="selected"><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="YUI~substitute.html">YUI~substitute</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="substitute.js.html">substitute.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><!--<code>string</code>-->
+                                <a href="#method_substitute">substitute</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

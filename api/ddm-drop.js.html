@@ -1,0 +1,504 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: dd   ddm-drop.js  (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>dd&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_dd.html">dd</a>
+                
+                 &gt; ddm-drop.js (source view) 
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 #classopts { display:none; }
+                        </style>
+<div class="highlight" ><pre>    <span class="c">/**</span>
+<span class="c">     * Extends the dd-ddm Class to add support for the placement of Drop Target shims inside the viewport shim. It also handles all Drop Target related events and interactions.</span>
+<span class="c">     * @module dd</span>
+<span class="c">     * @submodule dd-ddm-drop</span>
+<span class="c">     * @for DDM</span>
+<span class="c">     */</span>
+
+    <span class="c">//TODO CSS class name for the bestMatch..</span>
+<span class="c"></span>    <span class="nx">Y</span><span class="o">.</span><span class="nx">mix</span><span class="o">(</span><span class="nx">Y</span><span class="o">.</span><span class="nx">DD</span><span class="o">.</span><span class="nx">DDM</span><span class="o">,</span> <span class="o">{</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property _noShim</span>
+<span class="c">        * @description This flag turns off the use of the mouseover/mouseout shim. It should not be used unless you know what you are doing.</span>
+<span class="c">        * @type {Boolean}</span>
+<span class="c">        */</span>
+        <span class="nx">_noShim</span><span class="o">:</span> <span class="kc">false</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property _activeShims</span>
+<span class="c">        * @description Placeholder for all active shims on the page</span>
+<span class="c">        * @type {Array}</span>
+<span class="c">        */</span>
+        <span class="nx">_activeShims</span><span class="o">:</span> <span class="o">[],</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _hasActiveShim</span>
+<span class="c">        * @description This method checks the _activeShims Object to see if there is a shim active.</span>
+<span class="c">        * @return {Boolean}</span>
+<span class="c">        */</span>
+        <span class="nx">_hasActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_noShim</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">.</span><span class="nx">length</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _addActiveShim </span>
+<span class="c">        * @description Adds a Drop Target to the list of active shims</span>
+<span class="c">        * @param {Object} d The Drop instance to add to the list.</span>
+<span class="c">        */</span>
+        <span class="nx">_addActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">d</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _removeActiveShim </span>
+<span class="c">        * @description Removes a Drop Target to the list of active shims</span>
+<span class="c">        * @param {Object} d The Drop instance to remove from the list.</span>
+<span class="c">        */</span>
+        <span class="nx">_removeActiveShim</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">d</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">_yuid</span> <span class="o">!==</span> <span class="nx">d</span><span class="o">.</span><span class="nx">_yuid</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">s</span><span class="o">[</span><span class="nx">s</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span>
+                
+            <span class="o">});</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span> <span class="o">=</span> <span class="nx">s</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method syncActiveShims</span>
+<span class="c">        * @description This method will sync the position of the shims on the Drop Targets that are currently active.</span>
+<span class="c">        * @param {Boolean} force Resize/sync all Targets.</span>
+<span class="c">        * @return {Array} drops The list of Drop Targets that was just synced.</span>
+<span class="c">        */</span>
+        <span class="nx">syncActiveShims</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">force</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="o">((</span><span class="nx">force</span><span class="o">)</span> <span class="o">?</span> <span class="k">this</span><span class="o">.</span><span class="nx">targets</span> <span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lookup</span><span class="o">());</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">sizeShim</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+
+            <span class="k">return</span> <span class="nx">drops</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property mode</span>
+<span class="c">        * @description The mode that the drag operations will run in 0 for Point, 1 for Intersect, 2 for Strict</span>
+<span class="c">        * @type Number</span>
+<span class="c">        */</span>
+        <span class="nx">mode</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property POINT</span>
+<span class="c">        * @description In point mode, a Drop is targeted by the cursor being over the Target</span>
+<span class="c">        * @type Number</span>
+<span class="c">        */</span>
+        <span class="nx">POINT</span><span class="o">:</span> <span class="m">0</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property INTERSECT</span>
+<span class="c">        * @description In intersect mode, a Drop is targeted by &quot;part&quot; of the drag node being over the Target</span>
+<span class="c">        * @type Number</span>
+<span class="c">        */</span>
+        <span class="nx">INTERSECT</span><span class="o">:</span> <span class="m">1</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @property STRICT</span>
+<span class="c">        * @description In strict mode, a Drop is targeted by the &quot;entire&quot; drag node being over the Target</span>
+<span class="c">        * @type Number</span>
+<span class="c">        */</span>
+        <span class="nx">STRICT</span><span class="o">:</span> <span class="m">2</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property useHash</span>
+<span class="c">        * @description Should we only check targets that are in the viewport on drags (for performance), default: true</span>
+<span class="c">        * @type {Boolean}</span>
+<span class="c">        */</span>
+        <span class="nx">useHash</span><span class="o">:</span> <span class="kc">true</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property activeDrop</span>
+<span class="c">        * @description A reference to the active Drop Target</span>
+<span class="c">        * @type {Object}</span>
+<span class="c">        */</span>
+        <span class="nx">activeDrop</span><span class="o">:</span> <span class="kc">null</span><span class="o">,</span>
+        <span class="c">/**</span>
+<span class="c">        * @property validDrops</span>
+<span class="c">        * @description An array of the valid Drop Targets for this interaction.</span>
+<span class="c">        * @type {Array}</span>
+<span class="c">        */</span>
+        <span class="c">//TODO Change array/object literals to be in sync..</span>
+<span class="c"></span>        <span class="nx">validDrops</span><span class="o">:</span> <span class="o">[],</span>
+        <span class="c">/**</span>
+<span class="c">        * @property otherDrops</span>
+<span class="c">        * @description An object literal of Other Drop Targets that we encountered during this interaction (in the case of overlapping Drop Targets)</span>
+<span class="c">        * @type {Object}</span>
+<span class="c">        */</span>
+        <span class="nx">otherDrops</span><span class="o">:</span> <span class="o">{},</span>
+        <span class="c">/**</span>
+<span class="c">        * @property targets</span>
+<span class="c">        * @description All of the Targets</span>
+<span class="c">        * @type {Array}</span>
+<span class="c">        */</span>
+        <span class="nx">targets</span><span class="o">:</span> <span class="o">[],</span>
+        <span class="c">/**</span>
+<span class="c">        * @private </span>
+<span class="c">        * @method _addValid</span>
+<span class="c">        * @description Add a Drop Target to the list of Valid Targets. This list get&#39;s regenerated on each new drag operation.</span>
+<span class="c">        * @param {Object} drop</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        * @chainable</span>
+<span class="c">        */</span>
+        <span class="nx">_addValid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">drop</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private </span>
+<span class="c">        * @method _removeValid</span>
+<span class="c">        * @description Removes a Drop Target from the list of Valid Targets. This list get&#39;s regenerated on each new drag operation.</span>
+<span class="c">        * @param {Object} drop</span>
+<span class="c">        * @return {Self}</span>
+<span class="c">        * @chainable</span>
+<span class="c">        */</span>
+        <span class="nx">_removeValid</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">!==</span> <span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">drops</span><span class="o">[</span><span class="nx">drops</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span> <span class="o">=</span> <span class="nx">drops</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method isOverTarget</span>
+<span class="c">        * @description Check to see if the Drag element is over the target, method varies on current mode</span>
+<span class="c">        * @param {Object} drop The drop to check against</span>
+<span class="c">        * @return {Boolean}</span>
+<span class="c">        */</span>
+        <span class="nx">isOverTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+            <span class="c">//if (Y.Lang.isObject(this.activeDrag) &amp;&amp; drop) { //TODO, check this check..</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span> <span class="o">&amp;&amp;</span> <span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">xy</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">mouseXY</span><span class="o">;</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">xy</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragMode&#39;</span><span class="o">)</span> <span class="o">==</span> <span class="k">this</span><span class="o">.</span><span class="nx">STRICT</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">(</span><span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">region</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="k">if</span> <span class="o">(</span><span class="nx">drop</span> <span class="o">&amp;&amp;</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">shim</span><span class="o">)</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">shim</span><span class="o">.</span><span class="nx">intersect</span><span class="o">({</span>
+                                <span class="nx">top</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                                <span class="nx">bottom</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">1</span><span class="o">],</span>
+                                <span class="nx">left</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> 
+                                <span class="nx">right</span><span class="o">:</span> <span class="nx">xy</span><span class="o">[</span><span class="m">0</span><span class="o">]</span>
+                            <span class="o">},</span> <span class="nx">drop</span><span class="o">.</span><span class="nx">region</span><span class="o">).</span><span class="nx">inRegion</span><span class="o">;</span>
+                        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                        <span class="o">}</span>
+                    <span class="o">}</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method clearCache</span>
+<span class="c">        * @description Clears the cache data used for this interaction.</span>
+<span class="c">        */</span>
+        <span class="nx">clearCache</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span> <span class="o">=</span> <span class="o">{};</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_activeShims</span> <span class="o">=</span> <span class="o">[];</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _activateTargets</span>
+<span class="c">        * @description Clear the cache and activate the shims of all the targets</span>
+<span class="c">        */</span>
+        <span class="nx">_activateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">clearCache</span><span class="o">();</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">_activateShim</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="o">[]);</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">_handleTargetOver</span><span class="o">();</span>
+            
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method getBestMatch</span>
+<span class="c">        * @description This method will gather the area for all potential targets and see which has the hightest covered area and return it.</span>
+<span class="c">        * @param {Array} drops An Array of drops to scan for the best match.</span>
+<span class="c">        * @param {Boolean} all If present, it returns an Array. First item is best match, second is an Array of the other items in the original Array.</span>
+<span class="c">        * @return {Object or Array} </span>
+<span class="c">        */</span>
+        <span class="nx">getBestMatch</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">biggest</span> <span class="o">=</span> <span class="kc">null</span><span class="o">,</span> <span class="nx">area</span> <span class="o">=</span> <span class="m">0</span><span class="o">;</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">inter</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragNode&#39;</span><span class="o">).</span><span class="nx">intersect</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">));</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">region</span><span class="o">.</span><span class="nx">area</span> <span class="o">=</span> <span class="nx">inter</span><span class="o">.</span><span class="nx">area</span><span class="o">;</span>
+
+                <span class="k">if</span> <span class="o">(</span><span class="nx">inter</span><span class="o">.</span><span class="nx">inRegion</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">inter</span><span class="o">.</span><span class="nx">area</span> <span class="o">&gt;</span> <span class="nx">area</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">area</span> <span class="o">=</span> <span class="nx">inter</span><span class="o">.</span><span class="nx">area</span><span class="o">;</span>
+                        <span class="nx">biggest</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">all</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">var</span> <span class="nx">out</span> <span class="o">=</span> <span class="o">[];</span>
+                <span class="c">//TODO Sort the others in numeric order by area covered..</span>
+<span class="c"></span>                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">!==</span> <span class="nx">biggest</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="nx">out</span><span class="o">[</span><span class="nx">out</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+                <span class="k">return</span> <span class="o">[</span><span class="nx">biggest</span><span class="o">,</span> <span class="nx">out</span><span class="o">];</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="nx">biggest</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _deactivateTargets</span>
+<span class="c">        * @description This method fires the drop:hit, drag:drophit, drag:dropmiss methods and deactivates the shims..</span>
+<span class="c">        */</span>
+        <span class="nx">_deactivateTargets</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">other</span> <span class="o">=</span> <span class="o">[],</span>
+                <span class="nx">activeDrag</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">;</span>
+            
+            <span class="c">//TODO why is this check so hard??</span>
+<span class="c"></span>            <span class="k">if</span> <span class="o">(</span><span class="nx">activeDrag</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">Y</span><span class="o">.</span><span class="nx">Lang</span><span class="o">.</span><span class="nx">isNull</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">])</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(!</span><span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;dragMode&#39;</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="c">//TODO otherDrops -- private..</span>
+<span class="c"></span>                    <span class="nx">other</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">;</span>
+                    <span class="nx">delete</span> <span class="nx">other</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">];</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="k">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">getBestMatch</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                    <span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">0</span><span class="o">];</span>
+                    <span class="nx">other</span> <span class="o">=</span> <span class="nx">tmp</span><span class="o">[</span><span class="m">1</span><span class="o">];</span>
+                <span class="o">}</span>
+                <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-drag-over&#39;</span><span class="o">)</span>
+                <span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drop:hit&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drag</span><span class="o">:</span> <span class="nx">activeDrag</span><span class="o">,</span> <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">,</span> <span class="nx">others</span><span class="o">:</span> <span class="nx">other</span> <span class="o">});</span>
+                <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:drophit&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">drag</span><span class="o">:</span> <span class="nx">activeDrag</span><span class="o">,</span>  <span class="nx">drop</span><span class="o">:</span> <span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span><span class="o">,</span> <span class="nx">others</span><span class="o">:</span> <span class="nx">other</span> <span class="o">});</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">activeDrag</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">).</span><span class="nx">removeClass</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">CSS_PREFIX</span> <span class="o">+</span> <span class="s1">&#39;-drag-over&#39;</span><span class="o">)</span>
+                <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">fire</span><span class="o">(</span><span class="s1">&#39;drag:dropmiss&#39;</span><span class="o">,</span> <span class="o">{</span> <span class="nx">pageX</span><span class="o">:</span> <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">[</span><span class="m">0</span><span class="o">],</span> <span class="nx">pageY</span><span class="o">:</span> <span class="nx">activeDrag</span><span class="o">.</span><span class="nx">lastXY</span><span class="o">[</span><span class="m">1</span><span class="o">]</span> <span class="o">});</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;No Active Drag&#39;</span><span class="o">,</span> <span class="s1">&#39;warn&#39;</span><span class="o">,</span> <span class="s1">&#39;dd-ddm&#39;</span><span class="o">);</span>
+            <span class="o">}</span>
+            
+            <span class="k">this</span><span class="o">.</span><span class="nx">activeDrop</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">_deactivateShim</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="o">[]);</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _dropMove</span>
+<span class="c">        * @description This method is called when the move method is called on the Drag Object.</span>
+<span class="c">        */</span>
+        <span class="nx">_dropMove</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">_hasActiveShim</span><span class="o">())</span> <span class="o">{</span>
+                <span class="c">//Y.log(&#39;We have an active shim, check targets&#39;, &#39;info&#39;, &#39;dd-ddm&#39;);</span>
+<span class="c"></span>                <span class="k">this</span><span class="o">.</span><span class="nx">_handleTargetOver</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">otherDrops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">v</span><span class="o">.</span><span class="nx">_handleOut</span><span class="o">.</span><span class="nx">apply</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="o">[]);</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _lookup</span>
+<span class="c">        * @description Filters the list of Drops down to those in the viewport.</span>
+<span class="c">        * @return {Array} The valid Drop Targets that are in the viewport.</span>
+<span class="c">        */</span>
+        <span class="nx">_lookup</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="k">this</span><span class="o">.</span><span class="nx">useHash</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="c">//Only scan drop shims that are in the Viewport</span>
+<span class="c"></span>            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">shim</span> <span class="o">&amp;&amp;</span> <span class="nx">v</span><span class="o">.</span><span class="nx">shim</span><span class="o">.</span><span class="nx">inViewportRegion</span><span class="o">(</span><span class="kc">false</span><span class="o">,</span> <span class="nx">v</span><span class="o">.</span><span class="nx">region</span><span class="o">))</span> <span class="o">{</span>
+                    <span class="nx">drops</span><span class="o">[</span><span class="nx">drops</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+            <span class="k">return</span> <span class="nx">drops</span><span class="o">;</span>
+                
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _handleTargetOver</span>
+<span class="c">        * @description This method execs _handleTargetOver on all valid Drop Targets</span>
+<span class="c">        * @param {Boolean} force Force it to run the first time.</span>
+<span class="c">        */</span>
+        <span class="nx">_handleTargetOver</span><span class="o">:</span> <span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">drops</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="nx">_lookup</span><span class="o">();</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="nx">drops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">v</span><span class="o">.</span><span class="nx">_handleTargetOver</span><span class="o">.</span><span class="nx">call</span><span class="o">(</span><span class="nx">v</span><span class="o">);</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _regTarget</span>
+<span class="c">        * @description Add the passed in Target to the targets collection</span>
+<span class="c">        * @param {Object} t The Target to add to the targets collection</span>
+<span class="c">        */</span>
+        <span class="nx">_regTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">[</span><span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">t</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @private</span>
+<span class="c">        * @method _unregTarget</span>
+<span class="c">        * @description Remove the passed in Target from the targets collection</span>
+<span class="c">        * @param {Object} drop The Target to remove from the targets collection</span>
+<span class="c">        */</span>
+        <span class="nx">_unregTarget</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">targets</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">!=</span> <span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">targets</span><span class="o">[</span><span class="nx">targets</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                <span class="o">}</span>
+            <span class="o">},</span> <span class="k">this</span><span class="o">);</span>
+            <span class="k">this</span><span class="o">.</span><span class="nx">targets</span> <span class="o">=</span> <span class="nx">targets</span><span class="o">;</span>
+
+            <span class="k">var</span> <span class="nx">vdrops</span> <span class="o">=</span> <span class="o">[];</span>
+            <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">v</span> <span class="o">!==</span> <span class="nx">drop</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">vdrops</span><span class="o">[</span><span class="nx">vdrops</span><span class="o">.</span><span class="nx">length</span><span class="o">]</span> <span class="o">=</span> <span class="nx">v</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+
+            <span class="k">this</span><span class="o">.</span><span class="nx">validDrops</span> <span class="o">=</span> <span class="nx">vdrops</span><span class="o">;</span>
+        <span class="o">},</span>
+        <span class="c">/**</span>
+<span class="c">        * @method getDrop</span>
+<span class="c">        * @description Get a valid Drop instance back from a Node or a selector string, false otherwise</span>
+<span class="c">        * @param {String/Object} node The Node instance or Selector string to check for a valid Drop Object</span>
+<span class="c">        * @return {Object}</span>
+<span class="c">        */</span>
+        <span class="nx">getDrop</span><span class="o">:</span> <span class="k">function</span><span class="o">(</span><span class="nx">node</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">var</span> <span class="nx">drop</span> <span class="o">=</span> <span class="kc">false</span><span class="o">,</span>
+                <span class="nx">n</span> <span class="o">=</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="nx">node</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="nx">n</span> <span class="k">instanceof</span> <span class="nx">Y</span><span class="o">.</span><span class="nx">Node</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nx">Y</span><span class="o">.</span><span class="nx">each</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nx">targets</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">v</span><span class="o">,</span> <span class="nx">k</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="nx">n</span><span class="o">.</span><span class="nx">compareTo</span><span class="o">(</span><span class="nx">v</span><span class="o">.</span><span class="nx">get</span><span class="o">(</span><span class="s1">&#39;node&#39;</span><span class="o">)))</span> <span class="o">{</span>
+                        <span class="nx">drop</span> <span class="o">=</span> <span class="nx">v</span><span class="o">;</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="nx">drop</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">},</span> <span class="kc">true</span><span class="o">);</span>
+    
+</pre></div>
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class="selected"><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class=""><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="DDM.html">DDM</a></li>
+                                <li class=""><a href="Drag.html">Drag</a></li>
+                                <li class=""><a href="DragConstained.html">DragConstained</a></li>
+                                <li class=""><a href="Drop.html">Drop</a></li>
+                                <li class=""><a href="Proxy.html">Proxy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="constrain.js.html">constrain.js</a></li>
+                                <li class=""><a href="ddm-base.js.html">ddm-base.js</a></li>
+                                <li class="selected"><a href="ddm-drop.js.html">ddm-drop.js</a></li>
+                                <li class=""><a href="ddm.js.html">ddm.js</a></li>
+                                <li class=""><a href="drag.js.html">drag.js</a></li>
+                                <li class=""><a href="drop.js.html">drop.js</a></li>
+                                <li class=""><a href="proxy.js.html">proxy.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

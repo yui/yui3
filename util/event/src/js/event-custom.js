@@ -1,5 +1,6 @@
-/**
- * The YUI event system
+/*
+ * YUI Custom Events
+ * @submodule event-custom
  * @module event
  */
 YUI.add("event-custom", function(Y) {

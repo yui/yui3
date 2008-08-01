@@ -13,6 +13,11 @@ YUI.add("dump", function(Y) {
     var L=Y.Lang, OBJ="{...}", FUN="f(){...}", COMMA=', ', ARROW=' => ',
 
     /**
+     * The following methods are added to the YUI instance
+     * @class YUI~dump
+     */
+
+    /**
      * Returns a simple string representation of the object or array.
      * Other types of objects will be returned unprocessed.  Arrays
      * are expected to be indexed.  Use object notation for
@@ -25,7 +30,6 @@ YUI.add("dump", function(Y) {
      * the core YUI object
      *
      * @method dump
-     * @for YUI
      * @param o {object} The object to dump
      * @param d {int} How deep to recurse child objects, default 3
      * @return {string} the dump result

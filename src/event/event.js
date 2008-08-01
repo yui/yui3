@@ -1,3 +1,7 @@
+/**
+ * The YUI event system
+ * @module event
+ */
 YUI.add("event", function(Y) {
 
     /**

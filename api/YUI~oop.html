@@ -1,0 +1,630 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<title>API: oop  YUI~oop   (YUI Library)</title>
+	<link rel="stylesheet" type="text/css" href="assets/api.css">
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+
+	<div id="hd">
+        <a href="http://developer.yahoo.com/yui/"><h1>Yahoo! UI Library</h1></a>
+        <h3>oop&nbsp; <span class="subtitle">3.00PR1</span></h3>
+        <p>
+        <a href="./index.html">Yahoo! UI Library</a> 
+            &gt; <a href="./module_oop.html">oop</a>
+                 &gt; YUI~oop 
+                
+            </p>
+
+
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form name="yui-classopts-form">
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
+            </form>
+
+                    <h2>
+                        
+
+                        
+                        
+                            Class <b>YUI~oop</b>
+                        <span class="extends">
+                        </span>
+
+                        <span class="extends">
+                        </span>
+                        
+                        </code>
+                    </h2>
+                    <!-- class tree goes here -->
+                    
+                
+  
+
+                    <div class="summary description">
+                        The following methods are added to the YUI instance
+                    </div>
+
+
+
+
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_aggregate">aggregate</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        object
+                                            <strong>aggregate</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         ov
+                                                    
+                                                
+                                                        , 
+                                                         wl
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Applies object properties from the supplier to the receiver.  If
+the target has the property, and the property is an object, the target
+object will be augmented with the supplier's value.  If the property
+is an array, the suppliers value will be appended to the target.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                              the object to receive the augmentation
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                              the object that supplies the properties to augment
+                                                        </dd>
+                                                        <dd>
+                                                            <code>ov &lt;boolean&gt;</code>
+                                                              if true, properties already on the receiver
+will be overwritten if found on the supplier.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>wl &lt;string[]&gt;</code>
+                                                              a whitelist.  If supplied, only properties in 
+this list will be applied to the receiver.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        object
+                                                    </code></dt>
+                                                    <dd>the extended object</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_augment">augment</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        object
+                                            <strong>augment</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         ov
+                                                    
+                                                
+                                                        , 
+                                                         wl
+                                                    
+                                                
+                                                        , 
+                                                         args
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Applies prototype properties from the supplier to the receiver.
+The receiver can be a constructor or an instance.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                              the object to receive the augmentation
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                              the object that supplies the properties to augment
+                                                        </dd>
+                                                        <dd>
+                                                            <code>ov &lt;boolean&gt;</code>
+                                                              if true, properties already on the receiver
+will be overwritten if found on the supplier.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>wl &lt;string[]&gt;</code>
+                                                              a whitelist.  If supplied, only properties in 
+this list will be applied to the receiver.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args &lt;Array | Any&gt;</code>
+                                                              arg or arguments to apply to the supplier
+constructor when initializing.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        object
+                                                    </code></dt>
+                                                    <dd>the augmented object</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_bind">bind</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        function
+                                            <strong>bind</strong>
+                                           (
+                                                
+                                                        
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         args*
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Returns a function that will execute the supplied function in the
+supplied object's context, optionally adding any additional
+supplied parameters to the end of the arguments the function
+is executed with.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>f &lt;Function&gt;</code>
+                                                              the function to bind
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             the execution context
+                                                        </dd>
+                                                        <dd>
+                                                            <code>args* &lt;object&gt;</code>
+                                                             0..n arguments to append to the arguments collection for the function
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        function
+                                                    </code></dt>
+                                                    <dd>the wrapped function</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_clone">clone</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        Array|Object
+                                            <strong>clone</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         safe
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         c
+                                                    
+                                                
+                                                        , 
+                                                         owner
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Deep obj/array copy.  Functions will are cloned with Y.bind.
+Array-like objects are treated as arrays.
+primitives are returned untouched.  Optionally a
+function can be provided to handle other data types,
+filter keys, validate values, etc.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             what to clone
+                                                        </dd>
+                                                        <dd>
+                                                            <code>safe &lt;boolean&gt;</code>
+                                                              if true, objects will not have prototype
+items from the source.  If false, it does.  In this case, the
+original is initally protected, but the clone is not completely immune
+from changes to the source object prototype.  Also, cloned prototype
+items that are deleted from the clone will result in the value
+of the source prototype to be exposed.  If operating on a non-safe
+clone, items should be nulled out rather than deleted.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;object&gt;</code>
+                                                             optional function to apply to each item in a collection
+it will be executed prior to applying the value to
+the new object.  Return false to prevent the copy.
+                                                        </dd>
+                                                        <dd>
+                                                            <code>c &lt;object&gt;</code>
+                                                             optional execution context for f
+                                                        </dd>
+                                                        <dd>
+                                                            <code>owner &lt;object&gt;</code>
+                                                             Owner object passed when clone is iterating an
+object.  Used to set up context for cloned functions.
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        Array|Object
+                                                    </code></dt>
+                                                    <dd>the cloned object</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_each">each</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                        
+                                        
+                                        YUI
+                                            <strong>each</strong>
+                                           (
+                                                
+                                                        
+                                                         o
+                                                    
+                                                
+                                                        , 
+                                                         f
+                                                    
+                                                
+                                                        , 
+                                                         proto
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Executes the supplied function for each item in
+a collection.  Supports arrays, objects, and
+Y.NodeLists
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>o &lt;object&gt;</code>
+                                                             the object to iterate
+                                                        </dd>
+                                                        <dd>
+                                                            <code>f &lt;object&gt;</code>
+                                                             the function to execute.  This function
+receives the value, key, and object as parameters
+                                                        </dd>
+                                                        <dd>
+                                                            <code>proto &lt;object&gt;</code>
+                                                             if true, prototype properties are
+iterated on objects
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>the YUI instance</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="">
+                                    <h4>
+                                        <a name="method_extend">extend</a></h4>
+                                    <div class="detail">
+                                        <code>
+                                        
+                                         static 
+                                        
+                                        YUI
+                                            <strong>extend</strong>
+                                           (
+                                                
+                                                        
+                                                         r
+                                                    
+                                                
+                                                        , 
+                                                         s
+                                                    
+                                                
+                                                        , 
+                                                         px
+                                                    
+                                                
+                                                        , 
+                                                         sx
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description">
+                                            Utility to set up the prototype, constructor and superclass properties to
+support an inheritance strategy that can chain constructors and methods.
+Static members will not be inherited.
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl>
+                                                    <dt>Parameters:</dt>
+                                                        <dd>
+                                                            <code>r &lt;Function&gt;</code>
+                                                               the object to modify
+                                                        </dd>
+                                                        <dd>
+                                                            <code>s &lt;Function&gt;</code>
+                                                             the object to inherit
+                                                        </dd>
+                                                        <dd>
+                                                            <code>px &lt;Object&gt;</code>
+                                                             prototype properties to add/override
+                                                        </dd>
+                                                        <dd>
+                                                            <code>sx &lt;Object&gt;</code>
+                                                             static properties to add/override
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code>
+                                                        YUI
+                                                    </code></dt>
+                                                    <dd>the YUI instance</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+
+                                <li class=""><a href="module_anim.html">anim</a></li>
+
+                                <li class=""><a href="module_attribute.html">attribute</a></li>
+
+                                <li class=""><a href="module_base.html">base</a></li>
+
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
+                                <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
+
+                                <li class=""><a href="module_event.html">event</a></li>
+
+                                <li class=""><a href="module_io.html">io</a></li>
+
+                                <li class=""><a href="module_node.html">node</a></li>
+
+                                <li class="selected"><a href="module_oop.html">oop</a></li>
+
+                                <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
+
+                                <li class=""><a href="module_yui.html">yui</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="YUI~oop.html">YUI~oop</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="oop.js.html">oop.js</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><!--<code>object</code>-->
+                                <a href="#method_aggregate">aggregate</a>
+                                </li>
+                                <li class=""><!--<code>object</code>-->
+                                <a href="#method_augment">augment</a>
+                                </li>
+                                <li class=""><!--<code>function</code>-->
+                                <a href="#method_bind">bind</a>
+                                </li>
+                                <li class=""><!--<code>Array|Object</code>-->
+                                <a href="#method_clone">clone</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_each">each</a>
+                                </li>
+                                <li class=""><!--<code>YUI</code>-->
+                                <a href="#method_extend">extend</a>
+                                </li>
+                        </ul>
+                    </div>
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2008 Yahoo! Inc. All rights reserved.
+	</div>
+</div>
+</body>
+</html>

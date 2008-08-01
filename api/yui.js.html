@@ -21,22 +21,27 @@
                  &gt; yui.js (source view) 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <div id="srcout">
                         <style>
                             #doc3 #classopts { display:none; }
                         </style>
-<div class="highlight" ><pre><span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
+<div class="highlight" ><pre><span class="c">/**</span>
+<span class="c"> * YUI core</span>
+<span class="c"> * @module yui</span>
+<span class="c"> */</span>
+<span class="o">(</span><span class="k">function</span><span class="o">()</span> <span class="o">{</span>
 
     <span class="k">var</span> <span class="nx">_instances</span> <span class="o">=</span> <span class="o">{},</span>
 
@@ -72,9 +77,11 @@
 <span class="c">     *  &lt;li&gt;useConsole:</span>
 <span class="c">     *  Log to the browser console if debug is on and the console is available&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;logInclude:</span>
-<span class="c">     *  A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.&lt;/li&gt;</span>
+<span class="c">     *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.</span>
+<span class="c">     *  </span>
+<span class="c">     *  &lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;logExclude:</span>
-<span class="c">     *  A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.&lt;/li&gt;</span>
+<span class="c">     *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.&lt;/li&gt;</span>
 <span class="c">     *  &lt;li&gt;throwFail:</span>
 <span class="c">     *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.</span>
 <span class="c">     *  &lt;li&gt;win:</span>
@@ -321,7 +328,9 @@
 
                 <span class="k">this</span><span class="o">.</span><span class="nx">log</span><span class="o">(</span><span class="s1">&#39;attaching &#39;</span> <span class="o">+</span> <span class="nx">name</span><span class="o">,</span> <span class="s1">&#39;info&#39;</span><span class="o">,</span> <span class="s1">&#39;YUI&#39;</span><span class="o">);</span>
 
-                <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nx">m</span><span class="o">.</span><span class="nx">fn</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+                <span class="o">}</span>
 
                 <span class="k">if</span> <span class="o">(</span><span class="nx">use</span><span class="o">)</span> <span class="o">{</span>
                     <span class="k">this</span><span class="o">.</span><span class="nx">_attach</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="nb">Array</span><span class="o">(</span><span class="nx">use</span><span class="o">));</span>
@@ -613,39 +622,27 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class="selected"><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -655,7 +652,9 @@
                         <h4>Classes</h4>
                         <ul class="content">
                                 <li class=""><a href="Array.html">Array</a></li>
+                                <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="Lang.html">Lang</a></li>
+                                <li class=""><a href="Loader.html">Loader</a></li>
                                 <li class=""><a href="Object.html">Object</a></li>
                                 <li class=""><a href="UA.html">UA</a></li>
                                 <li class=""><a href="YUI.html">YUI</a></li>
@@ -665,7 +664,10 @@
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="get.js.html">get.js</a></li>
+                                <li class=""><a href="loader.js.html">loader.js</a></li>
                                 <li class=""><a href="yui-array.js.html">yui-array.js</a></li>
+                                <li class=""><a href="yui-base.js.html">yui-base.js</a></li>
                                 <li class=""><a href="yui-core.js.html">yui-core.js</a></li>
                                 <li class=""><a href="yui-dump.js.html">yui-dump.js</a></li>
                                 <li class=""><a href="yui-init.js.html">yui-init.js</a></li>

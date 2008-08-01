@@ -1,4 +1,8 @@
-
+/*
+ * Configures an object to be able to be targeted for events, and to publish events
+ * @submodule event-target
+ * @module event
+ */
 YUI.add("event-target", function(Y) {
 
     var SILENT = { 'yui:log': true };

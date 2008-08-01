@@ -1,4 +1,4 @@
-/**
+/*
  * YUI initializer
  * @module yui
  * @submodule init

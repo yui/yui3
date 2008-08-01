@@ -1,4 +1,4 @@
-/**
+/*
  * YUI setTimeout/setInterval abstraction
  * @module yui
  * @submodule later

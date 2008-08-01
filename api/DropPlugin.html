@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -111,13 +112,107 @@
                             </div>
                         </div>
 
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                        <a class="" href="Base.html#property_name">name</a>
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Drop.html">Drop</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                        <a class="private" href="Drop.html#property__groups">_groups</a><span class="private">,</span>
+                                        <a class="private" href="Drop.html#property__valid">_valid</a><span class="private">,</span>
+                                        <a class="" href="Drop.html#property_overTarget">overTarget</a><span class="">,</span>
+                                        <a class="" href="Drop.html#property_region">region</a><span class="">,</span>
+                                        <a class="" href="Drop.html#property_shim">shim</a>
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Properties inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                            <div class="content">
+                                <code>
+                                    
+                                </code>
+                            </div>
+                        </div>
+
+
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Base.html">Base</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="protected" href="Base.html#method__defDestroyFn">_defDestroyFn</a><span class="protected">,</span>                                            <a class="protected" href="Base.html#method__defInitFn">_defInitFn</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__destroyHierarchy">_destroyHierarchy</a><span class="private">,</span>                                            <a class="protected" href="Base.html#method__getClasses">_getClasses</a><span class="protected">,</span>                                            <a class="private" href="Base.html#method__initHierarchy">_initHierarchy</a><span class="private">,</span>                                            <a class="private" href="Base.html#method__prefixEvtType">_prefixEvtType</a><span class="private">,</span>                                            <a class="" href="Base.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Base.html#method_destroy">destroy</a><span class="">,</span>                                            <a class="" href="Base.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Base.html#method_init">init</a><span class="">,</span>                                            <a class="" href="Base.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Base.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_toString">toString</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Base.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Drop.html">Drop</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="private" href="Drop.html#method__activateShim">_activateShim</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__createEvents">_createEvents</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__createShim">_createShim</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__deactivateShim">_deactivateShim</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__handleOut">_handleOut</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__handleOverEvent">_handleOverEvent</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method__handleOverTarget">_handleOverTarget</a><span class="private">,</span>                                            <a class="private" href="Drop.html#method_destructor">destructor</a><span class="private">,</span>                                            <a class="" href="Drop.html#method_inGroup">inGroup</a><span class="">,</span>                                            <a class="private" href="Drop.html#method_initializer">initializer</a><span class="private">,</span>                                            <a class="" href="Drop.html#method_sizeShim">sizeShim</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                    </code>
+                                </div>
+                            </div>
+                            <div class="section field inheritance">
+                                <h4>Methods inherited from <a href="Attribute.html">Attribute</a>:</h4>
+                                <div class="content">
+                                    <code>
+                                            <a class="private" href="Attribute.html#method__cloneAttVal">_cloneAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__defAttSet">_defAttSet</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__fireAttChange">_fireAttChange</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__getSubAttVal">_getSubAttVal</a><span class="private">,</span>                                            <a class="protected" href="Attribute.html#method__initAtts">_initAtts</a><span class="protected">,</span>                                            <a class="private" href="Attribute.html#method__initAttVal">_initAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__setSubAttVal">_setSubAttVal</a><span class="private">,</span>                                            <a class="private" href="Attribute.html#method__splitAttrValues">_splitAttrValues</a><span class="private">,</span>                                            <a class="" href="Attribute.html#method_addAtt">addAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_get">get</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_getAtts">getAtts</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_removeAtt">removeAtt</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_set">set</a><span class="">,</span>                                            <a class="" href="Attribute.html#method_setAtts">setAtts</a>
+                                    </code>
+                                </div>
+                            </div>
 
 
 
+                        <div class="section field inheritance">
+                            <h4>Events inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#event_destroy">destroy</a><span class="">,</span>                                        <a class="" href="Base.html#event_destroyedChange">destroyedChange</a><span class="">,</span>                                        <a class="" href="Base.html#event_init">init</a><span class="">,</span>                                        <a class="" href="Base.html#event_initializedChange">initializedChange</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Events inherited from <a href="Drop.html">Drop</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Drop.html#event_drop:enter">drop:enter</a><span class="">,</span>                                        <a class="" href="Drop.html#event_drop:exit">drop:exit</a><span class="">,</span>                                        <a class="" href="Drop.html#event_drop:hit">drop:hit</a><span class="">,</span>                                        <a class="" href="Drop.html#event_drop:over">drop:over</a><span class="">,</span>                                        <a class="" href="Drop.html#event_groupsChange">groupsChange</a><span class="">,</span>                                        <a class="" href="Drop.html#event_lockChange">lockChange</a>                                        <a class="" href="Drop.html#event_nodeChange">nodeChange</a>                                        <a class="" href="Drop.html#event_paddingChange">paddingChange</a>
+                                </code>
+                            </div>
+                        </div>
 
 
-
-
+                        <div class="section field inheritance">
+                            <h4>Configuration attributes inherited from <a href="Base.html">Base</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Base.html#config_destroyed">destroyed</a><span class="">,</span>                                        <a class="" href="Base.html#config_initialized">initialized</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
+                        <div class="section field inheritance">
+                            <h4>Configuration attributes inherited from <a href="Drop.html">Drop</a>:</h4>
+                            <div class="content">
+                                <code>
+                                        <a class="" href="Drop.html#config_groups">groups</a><span class="">,</span>                                        <a class="" href="Drop.html#config_lock">lock</a><span class="">,</span>                                        <a class="" href="Drop.html#config_node">node</a><span class="">,</span>                                        <a class="" href="Drop.html#config_padding">padding</a><span class="">,</span>
+                                </code>
+                            </div>
+                        </div>
 
 			</div>
 		</div>
@@ -130,39 +225,27 @@
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class="selected"><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -181,8 +264,6 @@
                         <ul class="content">        
                                 <li class=""><a href="dd-drop-plugin.js.html">dd-drop-plugin.js</a></li>
                                 <li class=""><a href="dd-plugin.js.html">dd-plugin.js</a></li>
-                                <li class=""><a href="dump.js.html">dump.js</a></li>
-                                <li class=""><a href="substitute.js.html">substitute.js</a></li>
                         </ul>
                     </div>
 

@@ -1,3 +1,7 @@
+/**
+ * YUI core
+ * @module yui
+ */
 (function() {
 
     var _instances = {},
@@ -34,9 +38,11 @@ if (typeof YUI === 'undefined' || !YUI) {
      *  <li>useConsole:
      *  Log to the browser console if debug is on and the console is available</li>
      *  <li>logInclude:
-     *  A list of log sources that should be logged.  If specified, only log messages from these sources will be logged.</li>
+     *  A hash of log sources that should be logged.  If specified, only log messages from these sources will be logged.
+     *  
+     *  </li>
      *  <li>logExclude:
-     *  A list of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
+     *  A hash of log sources that should be not be logged.  If specified, all sources are logged if not on this list.</li>
      *  <li>throwFail:
      *  If throwFail is set, Y.fail will generate or re-throw a JS error.  Otherwise the failure is logged.
      *  <li>win:
@@ -283,7 +289,9 @@ YUI.prototype = {
 
                 this.log('attaching ' + name, 'info', 'YUI');
 
-                m.fn(this);
+                if (m.fn) {
+                    m.fn(this);
+                }
 
                 if (use) {
                     this._attach(this.Array(use));

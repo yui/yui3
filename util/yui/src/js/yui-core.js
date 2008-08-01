@@ -1,3 +1,8 @@
+/*
+ * YUI core utilities
+ * @module yui
+ * @submodule core
+ */
 // requires lang
 YUI.add("core", function(Y) {
 

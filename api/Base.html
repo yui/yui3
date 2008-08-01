@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                     <h2>
@@ -52,14 +53,28 @@
                     </h2>
                     <!-- class tree goes here -->
                     
+                        <dl class="subclasses">
+                            <dt>Known Subclasses:</dd>
+                            <dd>
+                                    <a href="Anim.html">Anim</a>
+                                    <a href="Drag.html">Drag</a>
+                                    <a href="Drop.html">Drop</a>
+                                    <a href="DDM.html">DDM</a>
+                            </dd>
+                       </dl>
                 
   
 
                     <div class="summary description">
-                        Provides a base class for managed attribute based
-objects, which automates chaining of init and destroy
-lifecycle methods and automatic instantiation of
-registered Attributes, through the static ATTRS property
+                        <p>
+Provides a base class for managed attribute based
+objects, which handles the chaining of initializer and destructor methods
+across the hierarchy during init and destroy lifecycle methods and 
+handles automatic configuration of registered Attributes, through 
+the static ATTRS property.
+</p>
+<p>The Base class also handles prefixing of event types with the static NAME 
+property for all events fired from instances of classes derived from Base.</p>
                     </div>
 
                         <div class="section constructor details">
@@ -193,7 +208,10 @@ this instance of object.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -227,7 +245,10 @@ this instance of object.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -262,7 +283,10 @@ the descructor method on the prototype of each class in the hierarchy.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -283,7 +307,7 @@ the descructor method on the prototype of each class in the hierarchy.
                                         </code>
                                         
                                         <div class="description">
-                                            Returns the top down class heirarchy for this object,
+                                            Returns the top down class hierarchy for this object,
 with Base being the first class in the array
                                         </div>
 
@@ -297,7 +321,10 @@ with Base being the first class in the array
                                                     </code></dt>
                                                     <dd>array of classes</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -346,7 +373,10 @@ method on the prototype of each class in the hierarchy.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -393,7 +423,10 @@ name property of the instance, if absent
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -474,7 +507,10 @@ the name property of the instance will be used as the default prefix.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -510,7 +546,7 @@ the name property of the instance will be used as the default prefix.
                                         <div class="description">
                                             <p>
 Builds a constructor function (class) from the
-main function, and array of extension functions
+main function, and array of extension functions (classes)
 provided.
 </p>
 <p>
@@ -523,7 +559,7 @@ The cfg object literal supports the following properties
 is created which extends the main class, and acts as the 
 host on which the extension classes are augmented.</p>
 <p>If false, the extensions classes are augmented directly to
-the main class, modifying the main class.</p>
+the main class, modifying the main classes prototype.</p>
 </dd>
 <dt>aggregates {String[]}</dt>
 <dd>An array of static property names, which will get aggregated
@@ -559,7 +595,10 @@ augmented/aggregated to the built class.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -593,7 +632,16 @@ augmented/aggregated to the built class.
                                         </code>
                                         
                                         <div class="description">
-                                            
+                                            <p>
+Creates a new object instance, based on a dynamically created custom class.
+The custom class is created from the main class passed in as the first parameter 
+along with the list of extension classes passed in
+as the second parameter using <a href="#method_build>Base.build</a> 
+with "dynamic" set to true. See the documentation for this method 
+to see how the main class and extension classes are used.
+</p>
+<p>Any arguments following the 2nd argument are passed as arguments to the 
+constructor of the newly created class used to create the instance.</p>
                                         </div>
 
                                         <div class="description">
@@ -602,15 +650,18 @@ augmented/aggregated to the built class.
                                                     <dt>Parameters:</dt>
                                                         <dd>
                                                             <code>main &lt;Function&gt;</code>
-                                                            
+                                                             The main class on which the instance it to be 
+based. This class will be extended to create the class for the custom instance
                                                         </dd>
                                                         <dd>
                                                             <code>extensions &lt;Array&gt;</code>
-                                                            
+                                                             The list of extension classes used to augment the
+main class with.
                                                         </dd>
                                                         <dd>
                                                             <code>args &lt;Any*&gt;</code>
-                                                            
+                                                              Zero or more arguments to pass to the constructor of the 
+newly created class, when creating the instance.
                                                         </dd>
                                                 </dl>
 
@@ -621,7 +672,10 @@ augmented/aggregated to the built class.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -645,7 +699,7 @@ augmented/aggregated to the built class.
                                             <p>
 Destroy lifecycle method. Fires the destroy
 event, prior to invoking destructors for the
-class heirarchy.
+class hierarchy.
 </p>
 <p>
 Subscribers to the destroy
@@ -664,7 +718,13 @@ from proceeding.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -729,7 +789,10 @@ the handler.
                                                     </code></dt>
                                                     <dd>the return value from Event.Target.fire</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -777,7 +840,13 @@ the class hierarchy.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+                                            <div class="chainable">
+                                                <strong>Chainable:</strong> This method is chainable.
+                                            </div>        
+
              
+
                                         </div>
 
                                     </div>
@@ -841,7 +910,10 @@ be used as the default prefix.
                                                     </code></dt>
                                                     <dd>the custom event</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -919,7 +991,10 @@ the name property of the instance will be used as the default prefix.
                                                     </code></dt>
                                                     <dd>unsubscribe handle</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -953,7 +1028,10 @@ the name property of the instance will be used as the default prefix.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1032,7 +1110,10 @@ that lives on the prototype)
                                                     </code></dt>
                                                     <dd>true if the subscriber was found and detached.</dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1088,7 +1169,10 @@ the name property of the instance will be used as the default prefix.
                                                     </code></dt>
                                                     <dd></dd>
                                                 </dl>
+
+
              
+
                                         </div>
 
                                     </div>
@@ -1109,7 +1193,7 @@ the name property of the instance will be used as the default prefix.
                                 <h4>Methods inherited from <a href="Event.Target.html">Event.Target</a>:</h4>
                                 <div class="content">
                                     <code>
-                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_before">before</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_detach">detach</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_on">on</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
+                                            <a class="" href="Event.Target.html#method_addTarget">addTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_after">after</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_bubble">bubble</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_fire">fire</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_getEvent">getEvent</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_publish">publish</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_ready">ready</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_removeTarget">removeTarget</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_subscribe">subscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribe">unsubscribe</a><span class="">,</span>                                            <a class="" href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a>
                                     </code>
                                 </div>
                             </div>
@@ -1117,88 +1201,6 @@ the name property of the instance will be used as the default prefix.
                         <div class="section method details">
                             <h3 id="events">Events</h3>
                             <div class="content">
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeDestroyedChange">beforeDestroyedChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeDestroyedChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'destroyed' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
-                                    <div class="">
-                                    <h4>
-                                        <a name="event_beforeInitializedChange">beforeInitializedChange</a></h4>
-                                    <div class="detail">
-                                        <code>
-                                        
-                                        
-                                        
-                                            <strong>beforeInitializedChange</strong>
-
-                                            (
-                                                
-                                                        
-                                                         eventInfo
-                                                    
-                                                
-                                            )
-
-                                        </code>
-                                        
-                                        <div class="description">
-                                            Fires before the value for the configuration attribute 'initialized' changes. Return false to cancel the attribute change.
-                                        </div>
-
-                                        <div class="description">
-
-
-                                                <dl>
-                                                    <dt>Parameters:</dt>
-                                                        <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the current attribute value and the new value.
-                                                        </dd>
-                                                </dl>
-
-
-                                        </div>
-
-                                    </div>
-                                    <hr />
-                                    </div>
                                     <div class="">
                                     <h4>
                                         <a name="event_destroy">destroy</a></h4>
@@ -1238,11 +1240,14 @@ destruction).
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>e &lt;EventFacade&gt;</code>
+                                                            <code>e &lt;Event.Facade&gt;</code>
                                                              Event object
                                                         </dd>
                                                 </dl>
 
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method: _defDestroyFn.
+                                            </div>        
 
                                         </div>
 
@@ -1262,7 +1267,7 @@ destruction).
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -1270,7 +1275,7 @@ destruction).
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'destroyed' changes.
+                                            Fires when the value for the configuration attribute 'destroyed' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -1279,8 +1284,8 @@ destruction).
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -1333,7 +1338,7 @@ cannot prevent initialization).
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>e &lt;EventFacade&gt;</code>
+                                                            <code>e &lt;Event.Facade&gt;</code>
                                                              Event object
                                                         </dd>
                                                         <dd>
@@ -1342,6 +1347,9 @@ cannot prevent initialization).
                                                         </dd>
                                                 </dl>
 
+                                            <div class="preventable">
+                                                <strong>Preventable:</strong> This event is preventable by method: _defInitFn.
+                                            </div>        
 
                                         </div>
 
@@ -1361,7 +1369,7 @@ cannot prevent initialization).
                                             (
                                                 
                                                         
-                                                         eventInfo
+                                                         event
                                                     
                                                 
                                             )
@@ -1369,7 +1377,7 @@ cannot prevent initialization).
                                         </code>
                                         
                                         <div class="description">
-                                            Fires when the value for the configuration attribute 'initialized' changes.
+                                            Fires when the value for the configuration attribute 'initialized' is changed. You can listen for the event using the <a href="Attribute.html#method_on>on</a> method if you wish to be notified before the attribute's value has changed, or using the <a href="Event.Target.html#method_after>after</a> method if you wish to be notified after the attribute's value has changed.
                                         </div>
 
                                         <div class="description">
@@ -1378,8 +1386,8 @@ cannot prevent initialization).
                                                 <dl>
                                                     <dt>Parameters:</dt>
                                                         <dd>
-                                                            <code>eventInfo &lt;{oldValue: any, newValue: any}&gt;</code>
-                                                            An object containing the previous attribute value and the new value.
+                                                            <code>event &lt;Event.Facade&gt;</code>
+                                                            An Event Facade object with      the following attribute specific properties added:	<dl>		<dt>prevVal</dt>		<dd>The value of the attribute, prior to it being set</dd>		<dt>newVal</dt>		<dd>The value the attribute is to be set to</dd>		<dt>attrName</dt>		<dd>The name of the attribute being set</dd>		<dt>subAttrName</dt>		<dd>If setting a property within the attribute's value,           the name of the sub-attribute property being set</dd>	</dl>
                                                         </dd>
                                                 </dl>
 
@@ -1449,39 +1457,27 @@ has been through the init lifecycle phase.
 
                                 <li class=""><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class="selected"><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -1576,12 +1572,6 @@ has been through the init lifecycle phase.
                     <div class="module">
                         <h4>Events</h4>
                         <ul class="content">        
-                                <li class="">
-                                <a href="#event_beforeDestroyedChange">beforeDestroyedChange</a>
-                                </li>
-                                <li class="">
-                                <a href="#event_beforeInitializedChange">beforeInitializedChange</a>
-                                </li>
                                 <li class="">
                                 <a href="#event_destroy">destroy</a>
                                 </li>

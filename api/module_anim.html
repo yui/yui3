@@ -21,15 +21,16 @@
                 
             </p>
 
+
 	</div>
 
 	<div id="bd">
 		<div id="yui-main">
 			<div class="yui-b">
             <form name="yui-classopts-form">
-    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> Show Private</span>
-    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> Show Protected</span>
-    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> Show Deprecated</span>
+    <span id="classopts"><input type="checkbox" name="showprivate" id="showprivate" /> <label for="showprivate">Show Private</label></span>
+    <span id="classopts"><input type="checkbox" name="showprotected" id="showprotected" /> <label for="showprotected">Show Protected</label></span>
+    <span id="classopts"><input type="checkbox" name="showdeprecated" id="showdeprecated" /> <label for="showdeprecated">Show Deprecated</label></span>
             </form>
 
                    
@@ -42,6 +43,10 @@
                         Y.Animation Utility.
                     </div>
 
+
+
+<div class="yui-gc">
+    <div class="yui-u first">
                     <form onsubmit="return false">
                         <p>Search anim:
                         <div id="propertysearch">
@@ -52,9 +57,37 @@
                         </div>
                     </form>
                     <script type="text/javascript">
-                        ALL_YUI_PROPS = [{"url": "Y.Anim.html#event_beforeDirectionChange", "access": "", "host": "Y.Anim", "name": "beforeDirectionChange"}, {"url": "Y.Anim.html#event_beforeDurationChange", "access": "", "host": "Y.Anim", "name": "beforeDurationChange"}, {"url": "Y.Anim.html#event_beforeEasingChange", "access": "", "host": "Y.Anim", "name": "beforeEasingChange"}, {"url": "Y.Anim.html#event_beforeElapsedTimeChange", "access": "", "host": "Y.Anim", "name": "beforeElapsedTimeChange"}, {"url": "Y.Anim.html#event_beforeFromChange", "access": "", "host": "Y.Anim", "name": "beforeFromChange"}, {"url": "Y.Anim.html#event_beforeIterationCountChange", "access": "", "host": "Y.Anim", "name": "beforeIterationCountChange"}, {"url": "Y.Anim.html#event_beforeIterationsChange", "access": "", "host": "Y.Anim", "name": "beforeIterationsChange"}, {"url": "Y.Anim.html#event_beforeNodeChange", "access": "", "host": "Y.Anim", "name": "beforeNodeChange"}, {"url": "Y.Anim.html#event_beforeReversedChange", "access": "", "host": "Y.Anim", "name": "beforeReversedChange"}, {"url": "Y.Anim.html#event_beforeRunningChange", "access": "", "host": "Y.Anim", "name": "beforeRunningChange"}, {"url": "Y.Anim.html#event_beforeStartTimeChange", "access": "", "host": "Y.Anim", "name": "beforeStartTimeChange"}, {"url": "Y.Anim.html#event_beforeToChange", "access": "", "host": "Y.Anim", "name": "beforeToChange"}, {"url": "Y.Anim.html#property_behaviors", "access": "", "host": "Y.Anim", "name": "behaviors"}, {"url": "Y.Anim.html#property_DEFAULT_GETTER", "access": "", "host": "Y.Anim", "name": "DEFAULT_GETTER"}, {"url": "Y.Anim.html#property_DEFAULT_SETTER", "access": "", "host": "Y.Anim", "name": "DEFAULT_SETTER"}, {"url": "Y.Anim.html#property_DEFAULT_UNIT", "access": "", "host": "Y.Anim", "name": "DEFAULT_UNIT"}, {"url": "Y.Anim.html#config_direction", "access": "", "host": "Y.Anim", "name": "direction"}, {"url": "Y.Anim.html#event_directionChange", "access": "", "host": "Y.Anim", "name": "directionChange"}, {"url": "Y.Anim.html#config_duration", "access": "", "host": "Y.Anim", "name": "duration"}, {"url": "Y.Anim.html#event_durationChange", "access": "", "host": "Y.Anim", "name": "durationChange"}, {"url": "Y.Anim.html#config_easing", "access": "", "host": "Y.Anim", "name": "easing"}, {"url": "Y.Anim.html#event_easingChange", "access": "", "host": "Y.Anim", "name": "easingChange"}, {"url": "Y.Anim.html#config_elapsedTime", "access": "", "host": "Y.Anim", "name": "elapsedTime"}, {"url": "Y.Anim.html#event_elapsedTimeChange", "access": "", "host": "Y.Anim", "name": "elapsedTimeChange"}, {"url": "Y.Anim.html#config_from", "access": "", "host": "Y.Anim", "name": "from"}, {"url": "Y.Anim.html#event_fromChange", "access": "", "host": "Y.Anim", "name": "fromChange"}, {"url": "Y.Anim.html#config_iterationCount", "access": "", "host": "Y.Anim", "name": "iterationCount"}, {"url": "Y.Anim.html#event_iterationCountChange", "access": "", "host": "Y.Anim", "name": "iterationCountChange"}, {"url": "Y.Anim.html#config_iterations", "access": "", "host": "Y.Anim", "name": "iterations"}, {"url": "Y.Anim.html#event_iterationsChange", "access": "", "host": "Y.Anim", "name": "iterationsChange"}, {"url": "Y.Anim.html#property_NAME", "access": "", "host": "Y.Anim", "name": "NAME"}, {"url": "Y.Anim.html#config_node", "access": "", "host": "Y.Anim", "name": "node"}, {"url": "Y.Anim.html#event_nodeChange", "access": "", "host": "Y.Anim", "name": "nodeChange"}, {"url": "Y.Anim.html#method_pause", "access": "", "host": "Y.Anim", "name": "pause"}, {"url": "Y.Anim.html#property_RE_DEFAULT_UNIT", "access": "", "host": "Y.Anim", "name": "RE_DEFAULT_UNIT"}, {"url": "Y.Anim.html#config_reversed", "access": "", "host": "Y.Anim", "name": "reversed"}, {"url": "Y.Anim.html#event_reversedChange", "access": "", "host": "Y.Anim", "name": "reversedChange"}, {"url": "Y.Anim.html#method_run", "access": "", "host": "Y.Anim", "name": "run"}, {"url": "Y.Anim.html#method__runFrame", "access": "private", "host": "Y.Anim", "name": "_runFrame"}, {"url": "Y.Anim.html#config_running", "access": "", "host": "Y.Anim", "name": "running"}, {"url": "Y.Anim.html#event_runningChange", "access": "", "host": "Y.Anim", "name": "runningChange"}, {"url": "Y.Anim.html#method_start", "access": "", "host": "Y.Anim", "name": "start"}, {"url": "Y.Anim.html#config_startTime", "access": "", "host": "Y.Anim", "name": "startTime"}, {"url": "Y.Anim.html#event_startTimeChange", "access": "", "host": "Y.Anim", "name": "startTimeChange"}, {"url": "Y.Anim.html#method_stop", "access": "", "host": "Y.Anim", "name": "stop"}, {"url": "Y.Anim.html#config_to", "access": "", "host": "Y.Anim", "name": "to"}, {"url": "Y.Anim.html#event_toChange", "access": "", "host": "Y.Anim", "name": "toChange"}];
+                        ALL_YUI_PROPS = [{"url": "Anim.html#method_backBoth", "access": "", "host": "Anim", "name": "backBoth"}, {"url": "Anim.html#method_backIn", "access": "", "host": "Anim", "name": "backIn"}, {"url": "Anim.html#method_backOut", "access": "", "host": "Anim", "name": "backOut"}, {"url": "Y.Anim.html#property_behaviors", "access": "", "host": "Y.Anim", "name": "behaviors"}, {"url": "Anim.html#method_bounceBoth", "access": "", "host": "Anim", "name": "bounceBoth"}, {"url": "Anim.html#method_bounceIn", "access": "", "host": "Anim", "name": "bounceIn"}, {"url": "Anim.html#method_bounceOut", "access": "", "host": "Anim", "name": "bounceOut"}, {"url": "Anim.html#property_curve", "access": "", "host": "Anim", "name": "curve"}, {"url": "Y.Anim.html#property_DEFAULT_GETTER", "access": "", "host": "Y.Anim", "name": "DEFAULT_GETTER"}, {"url": "Y.Anim.html#property_DEFAULT_SETTER", "access": "", "host": "Y.Anim", "name": "DEFAULT_SETTER"}, {"url": "Y.Anim.html#property_DEFAULT_UNIT", "access": "", "host": "Y.Anim", "name": "DEFAULT_UNIT"}, {"url": "Y.Anim.html#config_direction", "access": "", "host": "Y.Anim", "name": "direction"}, {"url": "Y.Anim.html#event_directionChange", "access": "", "host": "Y.Anim", "name": "directionChange"}, {"url": "Y.Anim.html#config_duration", "access": "", "host": "Y.Anim", "name": "duration"}, {"url": "Y.Anim.html#event_durationChange", "access": "", "host": "Y.Anim", "name": "durationChange"}, {"url": "Anim.html#method_easeBoth", "access": "", "host": "Anim", "name": "easeBoth"}, {"url": "Anim.html#method_easeBothStrong", "access": "", "host": "Anim", "name": "easeBothStrong"}, {"url": "Anim.html#method_easeIn", "access": "", "host": "Anim", "name": "easeIn"}, {"url": "Anim.html#method_easeInStrong", "access": "", "host": "Anim", "name": "easeInStrong"}, {"url": "Anim.html#method_easeNone", "access": "", "host": "Anim", "name": "easeNone"}, {"url": "Anim.html#method_easeOut", "access": "", "host": "Anim", "name": "easeOut"}, {"url": "Anim.html#method_easeOutStrong", "access": "", "host": "Anim", "name": "easeOutStrong"}, {"url": "Y.Anim.html#config_easing", "access": "", "host": "Y.Anim", "name": "easing"}, {"url": "Y.Anim.html#event_easingChange", "access": "", "host": "Y.Anim", "name": "easingChange"}, {"url": "Y.Anim.html#config_elapsedTime", "access": "", "host": "Y.Anim", "name": "elapsedTime"}, {"url": "Y.Anim.html#event_elapsedTimeChange", "access": "", "host": "Y.Anim", "name": "elapsedTimeChange"}, {"url": "Anim.html#method_elasticBoth", "access": "", "host": "Anim", "name": "elasticBoth"}, {"url": "Anim.html#method_elasticIn", "access": "", "host": "Anim", "name": "elasticIn"}, {"url": "Anim.html#method_elasticOut", "access": "", "host": "Anim", "name": "elasticOut"}, {"url": "Y.Anim.html#config_from", "access": "", "host": "Y.Anim", "name": "from"}, {"url": "Y.Anim.html#event_fromChange", "access": "", "host": "Y.Anim", "name": "fromChange"}, {"url": "Anim.html#method_getBezier", "access": "", "host": "Anim", "name": "getBezier"}, {"url": "Y.Anim.html#config_iterationCount", "access": "", "host": "Y.Anim", "name": "iterationCount"}, {"url": "Y.Anim.html#event_iterationCountChange", "access": "", "host": "Y.Anim", "name": "iterationCountChange"}, {"url": "Y.Anim.html#config_iterations", "access": "", "host": "Y.Anim", "name": "iterations"}, {"url": "Y.Anim.html#event_iterationsChange", "access": "", "host": "Y.Anim", "name": "iterationsChange"}, {"url": "Y.Anim.html#property_NAME", "access": "", "host": "Y.Anim", "name": "NAME"}, {"url": "Y.Anim.html#config_node", "access": "", "host": "Y.Anim", "name": "node"}, {"url": "Y.Anim.html#event_nodeChange", "access": "", "host": "Y.Anim", "name": "nodeChange"}, {"url": "Y.Anim.html#method_pause", "access": "", "host": "Y.Anim", "name": "pause"}, {"url": "Y.Anim.html#property_RE_DEFAULT_UNIT", "access": "", "host": "Y.Anim", "name": "RE_DEFAULT_UNIT"}, {"url": "Y.Anim.html#config_reverse", "access": "", "host": "Y.Anim", "name": "reverse"}, {"url": "Y.Anim.html#event_reverseChange", "access": "", "host": "Y.Anim", "name": "reverseChange"}, {"url": "Y.Anim.html#method_run", "access": "", "host": "Y.Anim", "name": "run"}, {"url": "Y.Anim.html#method__runFrame", "access": "private", "host": "Y.Anim", "name": "_runFrame"}, {"url": "Y.Anim.html#config_running", "access": "", "host": "Y.Anim", "name": "running"}, {"url": "Y.Anim.html#event_runningChange", "access": "", "host": "Y.Anim", "name": "runningChange"}, {"url": "Y.Anim.html#method_start", "access": "", "host": "Y.Anim", "name": "start"}, {"url": "Y.Anim.html#config_startTime", "access": "", "host": "Y.Anim", "name": "startTime"}, {"url": "Y.Anim.html#event_startTimeChange", "access": "", "host": "Y.Anim", "name": "startTimeChange"}, {"url": "Y.Anim.html#method_stop", "access": "", "host": "Y.Anim", "name": "stop"}, {"url": "Y.Anim.html#config_to", "access": "", "host": "Y.Anim", "name": "to"}, {"url": "Y.Anim.html#event_toChange", "access": "", "host": "Y.Anim", "name": "toChange"}];
                     </script>
+	    </div>
+    <div class="yui-u">
+                    <style>
+                        .submodules dd {
+                            font-size: 93%;
+                            font-weight: italic;
+                        }
+                    </style>
+                    <div class="submodules">
+                        <h4>Submodules:</h4> 
+                        <dl>
+                            <dt><code><a href="Anim.html">anim-color</a></code></dt>
+                            <dd>Adds color behaviors to Anim.</dd>
+                            <dt><code><a href="Anim.html">anim-curve</a></code></dt>
+                            <dd>Adds bezier curve behaviors to Anim.</dd>
+                            <dt><code><a href="Anim.html">anim-easing</a></code></dt>
+                            <dd>The easing module provides methods for customizing
+how an animation behaves during each run.</dd>
+                            <dt><code><a href="Anim.html">anim-node-plugin</a></code></dt>
+                            <dd>Binds an Anim instance to a Node instance</dd>
+                            <dt><code><a href="Anim.html">anim-scroll</a></code></dt>
+                            <dd>Adds scroll behaviors to Anim.</dd>
+                            <dt><code><a href="Anim.html">anim-xy</a></code></dt>
+                            <dd>Adds scroll behaviors to Anim.</dd>
+                        </dl>
+                    </div>
 
+	    </div>
+</div>
 
 			</div>
 		</div>
@@ -67,39 +100,27 @@
 
                                 <li class="selected"><a href="module_anim.html">anim</a></li>
 
-                                <li class=""><a href="module_anim-color.html">anim-color</a></li>
-
-                                <li class=""><a href="module_anim-curve.html">anim-curve</a></li>
-
-                                <li class=""><a href="module_anim-easing.html">anim-easing</a></li>
-
-                                <li class=""><a href="module_anim-scroll.html">anim-scroll</a></li>
-
-                                <li class=""><a href="module_anim-xy.html">anim-xy</a></li>
-
                                 <li class=""><a href="module_attribute.html">attribute</a></li>
 
                                 <li class=""><a href="module_base.html">base</a></li>
 
+                                <li class=""><a href="module_dd.html">dd</a></li>
+
                                 <li class=""><a href="module_dd-plugin.html">dd-plugin</a></li>
+
+                                <li class=""><a href="module_dump.html">dump</a></li>
 
                                 <li class=""><a href="module_event.html">event</a></li>
 
-                                <li class=""><a href="module_get.html">get</a></li>
-
                                 <li class=""><a href="module_io.html">io</a></li>
-
-                                <li class=""><a href="module_loader.html">loader</a></li>
 
                                 <li class=""><a href="module_node.html">node</a></li>
 
-                                <li class=""><a href="module_node-class.html">node-class</a></li>
-
-                                <li class=""><a href="module_node-region.html">node-region</a></li>
-
-                                <li class=""><a href="module_node-screen.html">node-screen</a></li>
+                                <li class=""><a href="module_oop.html">oop</a></li>
 
                                 <li class=""><a href="module_queue.html">queue</a></li>
+
+                                <li class=""><a href="module_substitute.html">substitute</a></li>
 
                                 <li class=""><a href="module_yui.html">yui</a></li>
                         </ul>
@@ -116,6 +137,12 @@
                     <div class="module">
                         <h4>Files</h4>
                         <ul class="content">        
+                                <li class=""><a href="anim-color.js.html">anim-color.js</a></li>
+                                <li class=""><a href="anim-curve.js.html">anim-curve.js</a></li>
+                                <li class=""><a href="anim-easing.js.html">anim-easing.js</a></li>
+                                <li class=""><a href="anim-node-plugin.js.html">anim-node-plugin.js</a></li>
+                                <li class=""><a href="anim-scroll.js.html">anim-scroll.js</a></li>
+                                <li class=""><a href="anim-xy.js.html">anim-xy.js</a></li>
                                 <li class=""><a href="anim.js.html">anim.js</a></li>
                         </ul>
                     </div>
