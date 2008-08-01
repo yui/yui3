@@ -1,15 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>YUI use all available modules</title>
-
-
-    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
-    <script type="text/javascript" src="../../build/oop/oop.js"></script>
-    <script type="text/javascript" src="../../build/event/event.js"></script>
-    <script type="text/javascript" src="../../build/dom/dom.js"></script>
-    <script type="text/javascript" src="../../build/node/node.js"></script>
+<!-- include all requirements for node -->
+<script type="text/javascript" src="<?php echo $buildpath ?>oop/oop.js"></script>
+<script type="text/javascript" src="<?php echo $buildpath ?>event/event.js"></script>
+<script type="text/javascript" src="<?php echo $buildpath ?>dom/dom.js"></script>
+<script type="text/javascript" src="<?php echo $buildpath ?>node/node.js"></script>
 
 <style>
     #demo {
@@ -38,5 +31,4 @@ function(Y) {
     node.set('innerHTML', '<strong>Modules Loaded:</strong> ' + used.join(', '));
 });
 </script>
-</body>
-</html>
+

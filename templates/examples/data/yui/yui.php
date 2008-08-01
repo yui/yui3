@@ -19,6 +19,8 @@ $examples["yui-core"] = array(
 	highlightSyntax => true
 );
 
+/*
+// became redundant
 $examples["yui-simple"] = array(
 	name => "Simple YUI Use",
 	modules => array("yui"),
@@ -28,13 +30,14 @@ $examples["yui-simple"] = array(
 	requires => array('node'),
 	highlightSyntax => true
 );
+*/
 
 $examples["yui-more"] = array(
 	name => "Load All Modules",
 	modules => array("yui"),
 	description => "Load All Modules",
 	sequence => array(2),
-    newWindow => "require",
+    newWindow => "default",
 	requires => array('node', 'io', 'anim', 'dd-drag'),
 	highlightSyntax => true
 );
@@ -55,7 +58,7 @@ $examples["yui-compat"] = array(
 	description => "Working with YUI 2.x and 3.x.",
 	sequence => array(4),
 	newWindow => "default",
-	requires => array('dd-drag'),
+	requires => array('dd'),
 	highlightSyntax => true
 );
 
