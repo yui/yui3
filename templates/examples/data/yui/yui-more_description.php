@@ -27,7 +27,7 @@ YUI().use('*' ...
 of the modules have been loaded and attached to the instance, ready to use.</p>
 <textarea name="code" class="JScript">
 YUI().use('*', function(Y) {
-    //the Y var passed in here will be our Y instance
+    // the Y var passed in here will be our YUI instance
 });
 </textarea>
 
