@@ -151,13 +151,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.subscribers = {};
 
-        /**
+        /*
          * The publisher has configured this event
          * @property configured
          * @type boolean
          * @default true
          */
-        this.configured = true;
+        // this.configured = true;
 
         /**
          * 'After' subscribers

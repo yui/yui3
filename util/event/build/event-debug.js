@@ -539,13 +539,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.subscribers = {};
 
-        /**
+        /*
          * The publisher has configured this event
          * @property configured
          * @type boolean
          * @default true
          */
-        this.configured = true;
+        // this.configured = true;
 
         /**
          * 'After' subscribers
@@ -1298,9 +1298,11 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context) {
 
-            var ce = this._yuievt.events[type] || this.publish(type, {
-                    configured: false
-                }),
+            var ce = this._yuievt.events[type] || 
+                // this.publish(type, {
+                //     configured: false
+                // }),
+                this.publish(type),
                 a = Y.Array(arguments, 1, true);
 
             return ce.subscribe.apply(ce, a);
@@ -1418,12 +1420,13 @@ YUI.add("event-target", function(Y) {
 
             var events = this._yuievt.events, ce = events[type];
 
-            if (ce && !ce.configured) {
+            //if (ce && !ce.configured) {
+            if (ce) {
 Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'Event');
 
                 // This event could have been published
                 ce.applyConfig(opts, true);
-                ce.configured = true;
+                // ce.configured = true;
 
             } else {
                 var o = opts || {};
@@ -1497,9 +1500,10 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
                 // if this object has bubble targets, we need to publish the
                 // event in order for it to bubble.
                 if (this._yuievt.hasTargets) {
-                    ce = this.publish(t, {
-                        configured: false
-                    });
+                    // ce = this.publish(t, {
+                    //     configured: false
+                    // });
+                    ce = this.publish(t);
 
                     return this.bubble(ce);
                 }
@@ -1563,7 +1567,7 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
                             // publish the event on the bubble target using this event
                             // for its configuration
                             ce = t.publish(type, evt);
-                            ce.configured = false;
+                            // ce.configured = false;
 
                             // set the host and context appropriately
                             ce.context = (evt.host === evt.context) ? t : evt.context;
@@ -1605,9 +1609,11 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || this.publish(type, {
-                    configured: false
-                }),
+            var ce = this._yuievt.events[type] || 
+                // this.publish(type, {
+                //     configured: false
+                // }),
+                this.publish(type),
                 a = Y.Array(arguments, 1, true);
 
             return ce.after.apply(ce, a);
