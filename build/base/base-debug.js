@@ -39,7 +39,7 @@ YUI.add('base', function(Y) {
      * @param {Object} config Object literal of configuration property name/value pairs
      */
     var Base = function() {
-        Y.log('constructor called', 'life', 'Base');
+        Y.log('constructor called', 'life', 'base');
         Y.Attribute.call(this);
         this.init.apply(this, arguments);
     };
@@ -284,7 +284,7 @@ YUI.add('base', function(Y) {
          * @param {Object} config Object literal of configuration property name/value pairs
          */
         init: function(config) {
-            Y.log('init called', 'life', 'Base');
+            Y.log('init called', 'life', 'base');
 
             /**
              * The name string to be used to identify 
@@ -336,7 +336,7 @@ YUI.add('base', function(Y) {
          * @chainable
          */
         destroy: function() {
-            Y.log('destroy called', 'life', 'Base');
+            Y.log('destroy called', 'life', 'base');
 
             /**
              * <p>

@@ -129,6 +129,10 @@ YUI.add('attribute', function(Y) {
         */
     };
 
+    /**
+     * Managed Attribute Provider
+     * @module attribute
+     */
 
     var O = Y.Object,
 
@@ -174,7 +178,7 @@ YUI.add('attribute', function(Y) {
     function Attribute() {
         Y.Event.Target.call(this, {emitFacade:true});
         this._conf = this._conf || new Y.State();
-        Y.log('att constructor called', 'info', 'Attribute');
+        Y.log('att constructor called', 'info', 'attribute');
     }
 
     /**
@@ -272,10 +276,10 @@ YUI.add('attribute', function(Y) {
          * 
          */
         addAtt: function(name, config) {
-            Y.log('adding attribute: ' + name, 'info', 'Attribute');
+            Y.log('adding attribute: ' + name, 'info', 'attribute');
             var value, hasValue = (VALUE in config);
 
-            if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'Attribute');}
+            if (config[READ_ONLY] && !hasValue) { Y.log('readOnly attribute: ' + name + ', added without an initial value. Value will be set on intial call to set', 'warn', 'attribute');}
 
             if(hasValue) {
                 value = config.value;
@@ -370,23 +374,23 @@ YUI.add('attribute', function(Y) {
             }
 
             if (path && conf.get(name, CLONE) === CLONE_ENUM.IMMUTABLE) {
-                Y.log('set ' + name + ' failed; Attribute is IMMUTABLE. Setting a sub value is not permitted', 'info', 'Attribute');
+                Y.log('set ' + name + ' failed; Attribute is IMMUTABLE. Setting a sub value is not permitted', 'info', 'attribute');
                 return this;
             }
 
             if (!initialSet) {
                 if (conf.get(name, WRITE_ONCE)) {
-                    Y.log('set ' + name + ' failed; Attribute is writeOnce', 'info', 'Attribute');
+                    Y.log('set ' + name + ' failed; Attribute is writeOnce', 'info', 'attribute');
                     return this;
                 }
                 if (conf.get(name, READ_ONLY)) {
-                    Y.log('set ' + name + ' failed; Attribute is readOnly', 'info', 'Attribute');
+                    Y.log('set ' + name + ' failed; Attribute is readOnly', 'info', 'attribute');
                     return this;
                 }
             }
 
             if (!conf.get(name)) {
-                Y.log('Set called with unconfigured attribute. Adding a new attribute: ' + name, 'info', 'Attribute');
+                Y.log('Set called with unconfigured attribute. Adding a new attribute: ' + name, 'info', 'attribute');
             }
 
             currVal = this.get(name);
@@ -395,7 +399,7 @@ YUI.add('attribute', function(Y) {
                val = this._setSubAttVal(path, Y.clone(currVal), val);
                if (val === undefined) {
                    // Path not valid, don't set anything.
-                   Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'Attribute');
+                   Y.log('set ' + strPath + 'failed; attribute sub path is invalid', 'error', 'attribute');
                    return this;
                }
             }
@@ -431,7 +435,7 @@ YUI.add('attribute', function(Y) {
             if (setFn) {
                 retVal = setFn.call(this, val);
                 if (retVal !== undefined) {
-                    Y.log('attribute: ' + name + ' modified by setter', 'info', 'Attribute');
+                    Y.log('attribute: ' + name + ' modified by setter', 'info', 'attribute');
                     val = retVal; // setter can change value
                 }
             }
