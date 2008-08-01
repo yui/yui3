@@ -39,14 +39,10 @@ if ($highlightSyntax) { /*include code for syntax-highlighting boxes, mostly fou
 <?php
 }
 
-if(isset($loader)) { //this header used by some files with no loader usage
-	echo "<!--Script and CSS includes for YUI dependencies on this page-->\n";
-	echo (getLoaderIncludes($loader));	
-	//Note: Logger output will be filtered off by script in the footer for
-	//all sources that are
-	//not explicitly identified in the => logger metadata for this
-	//example.
-}
+//Note: Logger output will be filtered off by script in the footer for
+//all sources that are
+//not explicitly identified in the => logger metadata for this
+//example.
 
 if ($prepend) { /*there is additional css or header information for this page -- perhaps some use of YUI and/or custom css -- that is meant to be inserted in the document head*/
     echo $prepend;

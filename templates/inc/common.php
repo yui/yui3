@@ -5,8 +5,6 @@ $dataroot = $docroot."examples/data/";
 
 $developerHome = 'http://developer.yahoo.com/yui/3';
 
-// TODO: Waiting for 3x PHP Loader, 2x Loader no longer needed in examples
-$loaderPath = "/home/y/share/pear/Yahoo/YUI/loader.php";
 $loggerAvailable = false;
 
 $aTypes = array('css', 'core', 'utility', 'tool');
@@ -37,21 +35,20 @@ if (!isset($yuiCurrentVersion)) {
     }
 }
 
-function getLoaderIncludes($loader) {
+function getExampleResources() {
     global $docroot;
     global $buildpath;
+    global $yuiCurrentVersion;
 
-    if (is_file($docroot."inc/loaderSubstitute.php")) {
+    if (is_file($docroot."inc/exampleResources.php")) {
         ob_start();
-        include $docroot."inc/loaderSubstitute.php";
+        include $docroot."inc/exampleResources.php";
         $contents = ob_get_contents();
         ob_end_clean();
         return $contents;
     } else {
-        return "<!--Error including JS/CSS files-->";
+        return "<!--Error including Example JS/CSS files-->";
     }
-
-    // return $loader->tags();
 }
 
 require($docroot."examples/module/modules.php");
