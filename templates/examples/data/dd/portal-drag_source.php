@@ -4,8 +4,8 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Portal Example</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
-    <link rel="stylesheet" type="text/css" href="assets/portal.css">
-    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo $assetsDirectory ?>portal.css">
+    <script type="text/javascript" src="<?php echo $buildDirectory ?>yui/yui-min.js"></script>
 <body>
 <div id="doc3" class="yui-t2">
     <div id="hd"><h1>YUI 3.0 Portal Example</h1></div>
@@ -30,6 +30,10 @@
     </div>
     <div id="ft">Built with <a href="http://developer.yahoo.com/yui/3/">YUI 3.0</a>: <a href="http://developer.yahoo.com/yui/3/yui">Core</a>, Loader, Get, <a href="http://developer.yahoo.com/yui/3/cookie">Cookie</a>, <a href="http://developer.yahoo.com/yui/3/animation">Animation</a>, <a href="http://developer.yahoo.com/yui/3/io">IO</a>, <a href="http://developer.yahoo.com/yui/3/json">JSON</a> &amp; <a href="http://developer.yahoo.com/yui/3/dd">DD</a>.</div>
 </div>
-<script src="assets/portal.js"></script>
+<script>
+var assetsDir = "<?php echo $assetsDirectory ?>";
+var yuiConfig = <?php echo $yuiConfig ?>;
+</script>
+<script src="<?php echo $assetsDirectory ?>portal.js"></script>
 </body>
 </html>

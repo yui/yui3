@@ -1,8 +1,5 @@
 //Use loader to grab the modules needed
-YUI({
-    base: '../../build/',
-    timeout: 1000
-}).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
+YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
 
     //Setup some private variables..
@@ -56,7 +53,7 @@ YUI({
 	Y.io.transport({
 		id: 'flash',
 		yid: Y.id,
-		src: 'assets/io.swf'
+		src: assetsDir + 'io.swf'
     });
     
     //Simple method for stopping event propagation

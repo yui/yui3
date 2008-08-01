@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Animated Drop Targets</title>
-    <link rel="stylesheet" href="../../build/cssreset/reset-min.css" type="text/css">
-    <link rel="stylesheet" href="../../build/cssfonts/fonts-min.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset-min.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts-min.css" type="text/css">
 <style type="text/css" media="screen">
 	.cssfonts--10 {font-size:77%;}
 	.cssfonts--11 {font-size:85%;}

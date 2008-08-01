@@ -5,7 +5,7 @@
     <title>Animated Drop Targets</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
 
-    <script type="text/javascript" src="../../build/yui/yui-min.js"></script>
+    <script type="text/javascript" src="<?php echo $buildDirectory ?>yui/yui-min.js"></script>
     <style type="text/css" media="screen">
         p, h2 {
             margin: 1em;

@@ -88,7 +88,8 @@ foreach($aTypes as $thisType) {
 							echo "<td>new window view suppressed</td>";
 							break;
 						case "require":
-							echo "<td><a href='$dataroot$currentModuleName/$thisExample[key]_source.php?$buildpathQS$generalQS'>[in new window (required)]</a></td>";
+//							echo "<td><a href='$dataroot$currentModuleName/$thisExample[key]_source.php?$buildpathQS$generalQS'>[in new window (required)]</a></td>";
+							echo "<td><a href='module/example.php?name=$thisExample[key]&clean=true&preview=true$buildpathQS$generalQS'>[in new window (required)]</a></td>";
 							break;
 						default:
 							echo "<td><a href='module/example.php?name=$thisExample[key]&clean=true&preview=true$buildpathQS$generalQS'>[in new window]</a></td>";

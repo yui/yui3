@@ -105,7 +105,7 @@ if ($currentExample["loggerInclude"] == "require" && isset($currentExample["logg
 $yuiConfig = getYUIConfig($exYuiConfig);
 $requiredModules = getRequiredModules(null);
 
-
+$buildDirectory = ($buildpath !== false) ? $buildpath : "http://yui.yahooapis.com/$yuiCurrentVersion/build/";
 
 //fork for "full" or "clean" template
 if(($clean=="true") && ($currentExample["newWindow"] == "default")) {
@@ -114,12 +114,11 @@ if(($clean=="true") && ($currentExample["newWindow"] == "default")) {
     $newWindowMode = true;
     include ("example_clean.php");
 
-/* } else if(($clean=="true") && ($currentExample["newWindow"] == "require")) {
+} else if(($clean=="true") && ($currentExample["newWindow"] == "require")) {
 
 	$newWindowRequiredFile = $dataroot.$currentModuleName."/".$name."_source.php";
 	include($newWindowRequiredFile);
     exit;
-*/
 
 } else {
 
