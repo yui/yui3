@@ -34,39 +34,6 @@ if(!isset($prepend)) {$prepend = "";}
 //used to stamp external links in dist
 $externalLabel = ($ydn) ? "" : " (external)";
 
-$defYuiConfig = ($ydn) ? "root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", filter: \"debug\", timeout: 10000"
-                       : "base:\"$buildpath\", timeout: 10000, filter:\"debug\"";
-
-function getYUIConfig($cfg) {
-    global $defYuiConfig;
-
-    if ($cfg) {
-        return "{".$defYuiConfig.", ".$cfg."}";
-    } else {
-        return "{".$defYuiConfig."}";
-    }
-}
-
-$defMods = "";
-if (isset($examples[$name]["requires"])) {
-    $defMods = "\"".join("\", \"", $examples[$name]["requires"])."\"";
-}
-
-function getRequiredModules($mods) {
-    global $defMods;
-
-    if ($mods) {
-        $mods = "\"".join("\", \"", $mods)."\"";
-        if ($defMods) { $mods = ", ".$mods; }
-        return $defMods.$mods; 
-    } else {
-        return $defMods;
-    }
-}
-
-$yuiConfig = getYUIConfig(null);
-$requiredModules = getRequiredModules(null);
-
 $currentExample = $examples[$name];
 $currentModuleName = $examples[$name][modules][0];
 $currentModule = validateModule($currentModuleName, $modules);
@@ -94,12 +61,65 @@ if(isset($currentExample["bodyclass"]) && $currentExample["bodyclass"] !== false
     $bodyclass = " yui-skin-sam";
 }
 
+$defYuiConfig = ($ydn) ? "root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", timeout: 10000"
+                       : "base:\"$buildpath\", timeout: 10000";
+
+function getYUIConfig($cfg) {
+    global $defYuiConfig;
+
+    if ($cfg) {
+        return "{".$defYuiConfig.", ".$cfg."}";
+    } else {
+        return "{".$defYuiConfig."}";
+    }
+}
+
+$defMods = "";
+if (isset($currentExample["requires"])) {
+    $defMods = "\"".join("\", \"", $currentExample["requires"])."\"";
+}
+
+function getRequiredModules($mods) {
+    global $defMods;
+
+    if ($mods) {
+        $mods = "\"".join("\", \"", $mods)."\"";
+        if ($defMods) { $mods = ", ".$mods; }
+        return $defMods.$mods; 
+    } else {
+        return $defMods;
+    }
+}
+
+$exYuiConfig = "";
+if ($currentExample["loggerInclude"] == "require" && isset($currentExample["logger"]) && sizeof($currentExample["logger"]) > 0) {
+
+    foreach ($currentExample["logger"] as $logSource) {
+       $logSources[] = $logSource.":true"; 
+    }
+
+    $logIncludes = "logInclude: {".join(", ", $logSources)."}";
+    $exYuiConfig .= "filter:\"debug\", $logIncludes";
+}
+
+$yuiConfig = getYUIConfig($exYuiConfig);
+$requiredModules = getRequiredModules(null);
+
+
+
 //fork for "full" or "clean" template
 if(($clean=="true") && ($currentExample["newWindow"] == "default")) {
 
     //flag to signal we're in newWindowMode:
     $newWindowMode = true;
     include ("example_clean.php");
+
+/* } else if(($clean=="true") && ($currentExample["newWindow"] == "require")) {
+
+	$newWindowRequiredFile = $dataroot.$currentModuleName."/".$name."_source.php";
+	include($newWindowRequiredFile);
+    exit;
+*/
 
 } else {
 
@@ -276,10 +296,7 @@ include("'.$docroot.'inc/header.inc");
 				</div>
 				<div class="yui-u sidebar">
 	<?php 
-	
-	
-	
-	
+
 	/*Logger can be suppressed entirely if loggerInclude
 	is set to "suppress"; wrap entire logger section in 
 	conditional:*/
