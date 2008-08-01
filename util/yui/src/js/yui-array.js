@@ -14,6 +14,11 @@ YUI.add("array", function(Y) {
 
     var L = Y.Lang, Native = Array.prototype;
 
+    /**
+     * Adds the following array utilities to the YUI instance
+     * @class YUI~array
+     */
+
     /** 
      * Y.Array(o) returns an array:
      * - Arrays are return unmodified unless the start position is specified.
@@ -26,9 +31,8 @@ YUI.add("array", function(Y) {
      *   such as forms and selects.  Passing true as the third param will
      *   force a conversion.
      *
-     * @class Array
+     * @method Array
      * @static
-     * @constructor
      *   @param o the item to arrayify
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
@@ -52,6 +56,9 @@ YUI.add("array", function(Y) {
      * Evaluates the input to determine if it is an array, array-like, or 
      * something else.  This is used to handle the arguments collection 
      * available within functions, and HTMLElement collections
+     *
+     * @method Array.test
+     * @static
      *
      * @todo current implementation (intenionally) will not implicitly 
      * handle html elements that are array-like (forms, selects, etc).  
@@ -81,7 +88,8 @@ YUI.add("array", function(Y) {
 
     /**
      * Executes the supplied function on each item in the array.
-     * @method each
+     * @method Array.each
+     * @static
      * @return {YUI} the YUI instance
      */
     A.each = (Native.forEach) ?
@@ -101,7 +109,8 @@ YUI.add("array", function(Y) {
      * Returns an object using the first array as keys, and
      * the second as values.  If the second array is not
      * provided the value is set to true for each.
-     * @method hash
+     * @method Array.hash
+     * @static
      * @param k {Array} keyset
      * @param v {Array} optional valueset
      * @return {object} the hash
@@ -121,7 +130,8 @@ YUI.add("array", function(Y) {
      * that contains the specified value, -1 if the
      * value isn't found.
      * @TODO use native method if avail
-     * @method indexOf
+     * @method Array.indexOf
+     * @static
      * @param a {Array} the array to search
      * @param val the value to search for
      * @return {int} the index of the item that contains the value or -1
