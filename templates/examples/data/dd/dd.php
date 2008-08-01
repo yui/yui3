@@ -85,7 +85,7 @@ $examples["portal-drag"] = array(
 	description => "Portal style example using Drag & Drop Event Bubbling and Animation.",
 	sequence => array(8, 50),
 	newWindow => "require",
-	requires => array("yui", 'dd-drop', 'dd-constrain', 'dd-proxy', 'animation'),
+	requires => array("yui", 'dd-drop', 'dd-constrain', 'dd-proxy', 'anim'),
 	highlightSyntax => true
 );
 
@@ -95,7 +95,7 @@ $examples["anim-drop"] = array(
 	description => "Animated Drop Targets",
 	sequence => array(9, 51),
 	newWindow => "require",
-	requires => array("yui", 'dd-drop', 'animation'),
+	requires => array("yui", 'dd-drop', 'anim'),
 	highlightSyntax => true
 );
 

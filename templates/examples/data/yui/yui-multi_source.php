@@ -16,7 +16,7 @@
 </div>
 <script>
 
-YUI(<?php echo $yuiConfig ?>).use('animation',
+YUI(<?php echo $yuiConfig ?>).use('anim',
 function(Y) {
     var anim = new Y.Anim({
         node: '#demo',

@@ -50,16 +50,16 @@
 </textarea>
 
 <h3>Setting up the YUI Instance</h3>
-<p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-plugin</code>, <code>dd-drop-plugin</code> and <code>animation</code> modules.</p>
+<p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-plugin</code>, <code>dd-drop-plugin</code> and <code>anim</code> modules.</p>
 <textarea name="code" class="JScript">
-YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin');
+YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin');
 </textarea>
 
 <h3>Making the Node draggable</h3>
 <p>Now that we have a YUI instance with the modules loaded, we need to instantiate the <code>Drag</code> instance on this Node.</p>
 <p>In this example we will be using Node plugins to accomplish our tasks.</p>
 <textarea name="code" class="JScript">
-YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
     d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });
@@ -138,7 +138,7 @@ a.fx.on('tween', function() {
 
 <h3>Full example source</h3>
 <textarea name="code" class="JScript">
-YUI().use('dd-drop', 'animation', 'dd-plugin', 'dd-drop-plugin', function(Y) {
+YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
     d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });

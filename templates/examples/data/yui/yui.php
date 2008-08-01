@@ -35,7 +35,7 @@ $examples["yui-more"] = array(
 	description => "Load All Modules",
 	sequence => array(2),
     newWindow => "require",
-	requires => array('node', 'io', 'animation', 'dd-drag'),
+	requires => array('node', 'io', 'anim', 'dd-drag'),
 	highlightSyntax => true
 );
 
@@ -45,7 +45,7 @@ $examples["yui-multi"] = array(
 	description => "Working with multiple YUI instances.",
 	sequence => array(3),
 	newWindow => "default",
-	requires => array('animation'),
+	requires => array('anim'),
 	highlightSyntax => true
 );
 
@@ -55,7 +55,7 @@ $examples["yui-compat"] = array(
 	description => "Working with YUI 2.x and 3.x.",
 	sequence => array(4),
 	newWindow => "default",
-	requires => array('dd'),
+	requires => array('dd-drag'),
 	highlightSyntax => true
 );
 

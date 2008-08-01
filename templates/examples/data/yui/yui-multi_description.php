@@ -1,14 +1,14 @@
 <h3>Setting up the first YUI Instance</h3>
 <p>Here we will create our first YUI instance and tell it to load the <code>animation</code> module.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('animation', function(Y) {
+var Y = YUI().use('anim', function(Y) {
 });
 </textarea>
 
 <h3>Using Animation</h3>
 <p>Now lets setup a simple animation on the Node <code>#demo</code>.</p>
 <textarea name="code" class="JScript">
-var Y = YUI().use('animation', function(Y) {
+var Y = YUI().use('anim', function(Y) {
     var anim = new Y.Anim({
         node: '#demo',
         to: {
