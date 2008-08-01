@@ -51,7 +51,9 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context) {
 
-            var ce = this._yuievt.events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type, {
+                    configured: false
+                }),
                 a = Y.Array(arguments, 1, true);
 
             return ce.subscribe.apply(ce, a);
@@ -167,15 +169,17 @@ YUI.add("event-target", function(Y) {
          */
         publish: function(type, opts) {
 
-            var o = opts || {}, events = this._yuievt.events, ce = events[type];
+            var events = this._yuievt.events, ce = events[type];
 
-            if (ce) {
-                Y.log("publish() skipped: '"+type+"' exists", 'info', 'Event');
+            if (ce && !ce.configured) {
+Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'Event');
 
-                // update config for the event
-                ce.applyConfig(o, true);
+                // This event could have been published
+                ce.applyConfig(opts, true);
+                ce.configured = true;
 
             } else {
+                var o = opts || {};
 
                 // apply defaults
                 Y.mix(o, this._yuievt.defaults);
@@ -246,7 +250,10 @@ YUI.add("event-target", function(Y) {
                 // if this object has bubble targets, we need to publish the
                 // event in order for it to bubble.
                 if (this._yuievt.hasTargets) {
-                    ce = this.publish(t);
+                    ce = this.publish(t, {
+                        configured: false
+                    });
+
                     return this.bubble(ce);
                 }
 
@@ -294,6 +301,8 @@ YUI.add("event-target", function(Y) {
 
             if (!evt.stopped && targs) {
 
+                // Y.log('Bubbling ' + evt.type);
+
                 for (var i in targs) {
                     if (targs.hasOwnProperty(i)) {
 
@@ -307,6 +316,7 @@ YUI.add("event-target", function(Y) {
                             // publish the event on the bubble target using this event
                             // for its configuration
                             ce = t.publish(type, evt);
+                            ce.configured = false;
 
                             // set the host and context appropriately
                             ce.context = (evt.host === evt.context) ? t : evt.context;
@@ -348,11 +358,12 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type, {
+                    configured: false
+                }),
                 a = Y.Array(arguments, 1, true);
 
             return ce.after.apply(ce, a);
-
         }
 
     };

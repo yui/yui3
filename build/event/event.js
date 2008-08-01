@@ -387,6 +387,8 @@ YUI.add("event-custom", function(Y) {
 
             'context',
 
+            'configured',
+
             'currentTarget',
 
             'defaultFn',
@@ -466,8 +468,8 @@ YUI.add("event-custom", function(Y) {
      */
     Y.CustomEvent = function(type, o) {
 
-        if (arguments.length > 2) {
-        }
+        // if (arguments.length > 2) {
+        // }
 
         o = o || {};
 
@@ -515,6 +517,13 @@ YUI.add("event-custom", function(Y) {
          */
         this.subscribers = {};
 
+        /**
+         * The publisher has configured this event
+         * @property configured
+         * @type boolean
+         * @default true
+         */
+        this.configured = true;
 
         /**
          * 'After' subscribers
@@ -595,7 +604,7 @@ YUI.add("event-custom", function(Y) {
 
         /**
          * Specifies whether or not this event's default function
-         * can be canceled by a subscriber by executing preventDefault() 
+         * can be cancelled by a subscriber by executing preventDefault() 
          * on the event facade 
          * @property preventable 
          * @type boolean 
@@ -657,8 +666,9 @@ YUI.add("event-custom", function(Y) {
          * will be overwritten.
          */
         applyConfig: function(o, force) {
-            Y.mix(this, o, force, CONFIGS);
-            // Y.mix(this, o, force);
+            if (o) {
+                Y.mix(this, o, force, CONFIGS);
+            }
         },
 
         _subscribe: function(fn, obj, args, when) {
@@ -740,7 +750,7 @@ YUI.add("event-custom", function(Y) {
 
             var found = false, subs = this.subscribers;
             for (var i in subs) {
-                if (Y.Object.owns(subs, i)) {
+                if (subs.hasOwnProperty(i)) {
                     var s = subs[i];
                     if (s && s.contains(fn, obj)) {
                         this._delete(s);
@@ -1014,7 +1024,7 @@ YUI.add("event-custom", function(Y) {
         unsubscribeAll: function() {
             var subs = this.subscribers, i;
             for (i in subs) {
-                if (Y.Object.owns(subs, i)) {
+                if (subs.hasOwnProperty(i)) {
                     this._delete(subs[i]);
                 }
             }
@@ -1044,8 +1054,9 @@ YUI.add("event-custom", function(Y) {
          * @method toString
          */
         toString: function() {
-             return "{ CE '" + this.type + "' " + "id: " + this.id +
-                  ", host: " + (this.host && Y.stamp(this.host) + " }");
+             // return "{ CE '" + this.type + "' " + "id: " + this.id +
+                  // ", host: " + (this.host && Y.stamp(this.host) + " }");
+             return this.type;
         },
 
         /**
@@ -1252,7 +1263,9 @@ YUI.add("event-target", function(Y) {
          */
         subscribe: function(type, fn, context) {
 
-            var ce = this._yuievt.events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type, {
+                    configured: false
+                }),
                 a = Y.Array(arguments, 1, true);
 
             return ce.subscribe.apply(ce, a);
@@ -1368,14 +1381,16 @@ YUI.add("event-target", function(Y) {
          */
         publish: function(type, opts) {
 
-            var o = opts || {}, events = this._yuievt.events, ce = events[type];
+            var events = this._yuievt.events, ce = events[type];
 
-            if (ce) {
+            if (ce && !ce.configured) {
 
-                // update config for the event
-                ce.applyConfig(o, true);
+                // This event could have been published
+                ce.applyConfig(opts, true);
+                ce.configured = true;
 
             } else {
+                var o = opts || {};
 
                 // apply defaults
                 Y.mix(o, this._yuievt.defaults);
@@ -1446,7 +1461,10 @@ YUI.add("event-target", function(Y) {
                 // if this object has bubble targets, we need to publish the
                 // event in order for it to bubble.
                 if (this._yuievt.hasTargets) {
-                    ce = this.publish(t);
+                    ce = this.publish(t, {
+                        configured: false
+                    });
+
                     return this.bubble(ce);
                 }
 
@@ -1494,6 +1512,7 @@ YUI.add("event-target", function(Y) {
 
             if (!evt.stopped && targs) {
 
+
                 for (var i in targs) {
                     if (targs.hasOwnProperty(i)) {
 
@@ -1507,6 +1526,7 @@ YUI.add("event-target", function(Y) {
                             // publish the event on the bubble target using this event
                             // for its configuration
                             ce = t.publish(type, evt);
+                            ce.configured = false;
 
                             // set the host and context appropriately
                             ce.context = (evt.host === evt.context) ? t : evt.context;
@@ -1548,11 +1568,12 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || this.publish(type),
+            var ce = this._yuievt.events[type] || this.publish(type, {
+                    configured: false
+                }),
                 a = Y.Array(arguments, 1, true);
 
             return ce.after.apply(ce, a);
-
         }
 
     };
