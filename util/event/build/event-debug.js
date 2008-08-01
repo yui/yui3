@@ -26,6 +26,7 @@ YUI.add("event", function(Y) {
      * @param args* 0..n additional arguments to append
      * to the signature provided when the event fires.
      * @method on
+     * @for YUI
      * @return {Event.Handle} a handle object for 
      * unsubscribing to this event.
      */
