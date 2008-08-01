@@ -1,3 +1,8 @@
+/**
+ * YUI user agent detection
+ * @module yui
+ * @submodule ua
+ */
 YUI.add("ua", function(Y) {
 
     /**

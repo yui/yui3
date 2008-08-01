@@ -1,3 +1,7 @@
+/**
+ * YUI core
+ * @module yui
+ */
 (function() {
 
     var _instances = {},

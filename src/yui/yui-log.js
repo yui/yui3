@@ -1,3 +1,8 @@
+/**
+ * YUI console logger
+ * @module yui
+ * @submodule log
+ */
 YUI.add("log", function(instance) {
 
     /**

@@ -1,3 +1,7 @@
+/**
+ * YUI core
+ * @module yui
+ */
 (function() {
 
     var _instances = {},
@@ -566,8 +570,18 @@ YUI.prototype = {
 
 
 })();
+/**
+ * YUI stub
+ * @module yui
+ * @submodule yui-base
+ */
 // This is just a stub to for dependency processing
 YUI.add("yui-base", null, "@VERSION@");
+/**
+ * YUI console logger
+ * @module yui
+ * @submodule log
+ */
 YUI.add("log", function(instance) {
 
     /**
@@ -631,7 +645,11 @@ YUI.add("log", function(instance) {
     };
 
 }, "@VERSION@");
-
+/**
+ * YUI lang utils
+ * @module yui
+ * @submodule lang
+ */
 YUI.add("lang", function(Y) {
 
     /**
@@ -776,8 +794,9 @@ return (L.isObject(o) || L.isString(o) || L.isNumber(o) || L.isBoolean(o));
 
 
 /**
- * YUI core
+ * Array utilities
  * @module yui
+ * @submodule array
  */
 
 YUI.add("array", function(Y) {
@@ -907,6 +926,11 @@ YUI.add("array", function(Y) {
     };
 
 }, "@VERSION@");
+/**
+ * YUI core utilities
+ * @module yui
+ * @submodule core
+ */
 // requires lang
 YUI.add("core", function(Y) {
 
@@ -1066,6 +1090,11 @@ YUI.add("core", function(Y) {
     
 
 }, "@VERSION@");
+/**
+ * YUI object utilities
+ * @module yui
+ * @submodule object
+ */
 YUI.add("object", function(Y) {
 
     /**
@@ -1142,6 +1171,11 @@ YUI.add("object", function(Y) {
         return Y;
     };
 }, "@VERSION@");
+/**
+ * YUI user agent detection
+ * @module yui
+ * @submodule ua
+ */
 YUI.add("ua", function(Y) {
 
     /**
@@ -1269,6 +1303,11 @@ YUI.add("ua", function(Y) {
         return o;
     }();
 }, "@VERSION@");
+/**
+ * YUI setTimeout/setInterval abstraction
+ * @module yui
+ * @submodule later
+ */
 YUI.add("later", function(Y) {
 
     var L = Y.Lang;
@@ -1333,6 +1372,11 @@ YUI.add("later", function(Y) {
     L.later = later;
 
 }, "@VERSION@");
+/**
+ * YUI initializer
+ * @module yui
+ * @submodule init
+ */
 (function() {
 
     var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,

@@ -1,7 +1,8 @@
 
 /**
- * YUI core
+ * Array utilities
  * @module yui
+ * @submodule array
  */
 
 YUI.add("array", function(Y) {
