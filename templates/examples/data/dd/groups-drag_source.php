@@ -78,7 +78,7 @@
 </div>
 
 <script>
-YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     
     var slots = Y.Node.get('#workarea').queryAll('.slot');
     Y.each(slots, function(v, k, items) {

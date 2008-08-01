@@ -47,7 +47,7 @@
 
 <script>
 
-YUI().use('dd-drop', 'dd-constrain', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-drop', 'dd-constrain', function(Y) {
     var data = {
         'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
         'drag2': { color: 'blue', size: 'small', price: '$6.00' },

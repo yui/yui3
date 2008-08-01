@@ -12,7 +12,7 @@
 
 <script>
 
-YUI().use('dd-drag', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-drag', function(Y) {
     var dd = new Y.DD.Drag({
         //Selector of the node to make draggable
         node: '#demo'

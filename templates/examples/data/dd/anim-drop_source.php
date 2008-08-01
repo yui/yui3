@@ -59,7 +59,7 @@
         <div id="anim5" class="anim">Anim #5</div>
 
 <script type="text/javascript">
-YUI().use('dd', 'anim', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd', 'anim', function(Y) {
     //Get the node #drag
     var d = Y.Node.get('#drag');
     d.plug(Y.Plugin.Drag, { dragMode: 'intersect' });

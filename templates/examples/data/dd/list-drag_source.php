@@ -57,7 +57,7 @@
 </div>
 
 <script type="text/javascript">
-YUI().use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-constrain', 'dd-proxy', 'dd-drop', function(Y) {
     //Listen for all drop:over events
     Y.DD.DDM.on('drop:over', function(e) {
         //Get a reference to out drag and drop nodes

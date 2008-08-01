@@ -65,7 +65,7 @@
 </div>
 
 <script>
-YUI().use('dd-constrain', function(Y) {
+YUI(<?php echo $yuiConfig ?>).use('dd-constrain', function(Y) {
     var dd1 = new Y.DD.Drag({
         node: '#dd-demo-1',
         constrain2node: '#dd-demo-canvas3'
