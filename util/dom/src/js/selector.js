@@ -1,6 +1,7 @@
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @module selector
+ * @module dom
+ * @submodule selector
  */
 
 /**

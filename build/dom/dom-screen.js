@@ -495,4 +495,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});
+}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});

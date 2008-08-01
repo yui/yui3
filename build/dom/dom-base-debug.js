@@ -565,4 +565,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['event']});
+}, '@VERSION@' ,{requires:['event'], skinnable:false});

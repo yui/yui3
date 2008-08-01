@@ -2,7 +2,8 @@ YUI.add('selector', function(Y) {
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
- * @module selector
+ * @module dom
+ * @submodule selector
  */
 
 /**
@@ -560,4 +561,4 @@ Y.Selector.patterns = patterns;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
