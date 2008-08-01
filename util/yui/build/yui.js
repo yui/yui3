@@ -818,6 +818,7 @@ YUI.add("array", function(Y) {
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
      *   can be used to avoid multiple array.test calls.
+     *   @return {Array} the resulting array
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
@@ -1099,10 +1100,14 @@ YUI.add("core", function(Y) {
 YUI.add("object", function(Y) {
 
     /**
+     * Adds the following Object utilities to the YUI instance
+     * @class YUI~object
+     */
+
+    /**
      * Y.Object(o) returns a new object based upon the supplied object.  
-     * @class Object
+     * @method Object
      * @static
-     * @constructor 
      * @param o the supplier object
      * @return {object} the new object
      */
@@ -1125,7 +1130,7 @@ YUI.add("object", function(Y) {
      *
      * @TODO Remove in PR2
      *
-     * @method owns
+     * @method Object.owns
      * @param o {any} The object being testing
      * @parma p {string} the property to look for
      * @return {boolean} true if the object has the property on the instance
@@ -1136,7 +1141,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Returns an array containing the object's keys
-     * @method keys
+     * @method Object.keys
      * @param o an object
      * @return {string[]} the keys
      */
@@ -1155,6 +1160,7 @@ YUI.add("object", function(Y) {
      * Executes a function on each item. The function
      * receives the value, the key, and the object
      * as paramters (in that order).
+     * @method Object.each
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context

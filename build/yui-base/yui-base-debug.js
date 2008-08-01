@@ -808,6 +808,11 @@ YUI.add("array", function(Y) {
 
     var L = Y.Lang, Native = Array.prototype;
 
+    /**
+     * Adds the following array utilities to the YUI instance
+     * @class YUI~array
+     */
+
     /** 
      * Y.Array(o) returns an array:
      * - Arrays are return unmodified unless the start position is specified.
@@ -820,13 +825,13 @@ YUI.add("array", function(Y) {
      *   such as forms and selects.  Passing true as the third param will
      *   force a conversion.
      *
-     * @class Array
+     * @method Array
      * @static
-     * @constructor
      *   @param o the item to arrayify
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
      *   can be used to avoid multiple array.test calls.
+     *   @return {Array} the resulting array
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
@@ -846,6 +851,9 @@ YUI.add("array", function(Y) {
      * Evaluates the input to determine if it is an array, array-like, or 
      * something else.  This is used to handle the arguments collection 
      * available within functions, and HTMLElement collections
+     *
+     * @method Array.test
+     * @static
      *
      * @todo current implementation (intenionally) will not implicitly 
      * handle html elements that are array-like (forms, selects, etc).  
@@ -875,7 +883,8 @@ YUI.add("array", function(Y) {
 
     /**
      * Executes the supplied function on each item in the array.
-     * @method each
+     * @method Array.each
+     * @static
      * @return {YUI} the YUI instance
      */
     A.each = (Native.forEach) ?
@@ -895,7 +904,8 @@ YUI.add("array", function(Y) {
      * Returns an object using the first array as keys, and
      * the second as values.  If the second array is not
      * provided the value is set to true for each.
-     * @method hash
+     * @method Array.hash
+     * @static
      * @param k {Array} keyset
      * @param v {Array} optional valueset
      * @return {object} the hash
@@ -915,7 +925,8 @@ YUI.add("array", function(Y) {
      * that contains the specified value, -1 if the
      * value isn't found.
      * @TODO use native method if avail
-     * @method indexOf
+     * @method Array.indexOf
+     * @static
      * @param a {Array} the array to search
      * @param val the value to search for
      * @return {int} the index of the item that contains the value or -1
@@ -1103,10 +1114,14 @@ YUI.add("core", function(Y) {
 YUI.add("object", function(Y) {
 
     /**
+     * Adds the following Object utilities to the YUI instance
+     * @class YUI~Object
+     */
+
+    /**
      * Y.Object(o) returns a new object based upon the supplied object.  
-     * @class Object
+     * @method Object
      * @static
-     * @constructor 
      * @param o the supplier object
      * @return {object} the new object
      */
@@ -1129,7 +1144,7 @@ YUI.add("object", function(Y) {
      *
      * @TODO Remove in PR2
      *
-     * @method owns
+     * @method Object.owns
      * @param o {any} The object being testing
      * @parma p {string} the property to look for
      * @return {boolean} true if the object has the property on the instance
@@ -1140,7 +1155,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Returns an array containing the object's keys
-     * @method keys
+     * @method Object.keys
      * @param o an object
      * @return {string[]} the keys
      */
@@ -1159,6 +1174,7 @@ YUI.add("object", function(Y) {
      * Executes a function on each item. The function
      * receives the value, the key, and the object
      * as paramters (in that order).
+     * @method Object.each
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context

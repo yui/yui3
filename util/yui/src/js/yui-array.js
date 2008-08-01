@@ -37,6 +37,7 @@ YUI.add("array", function(Y) {
      *   @param i {int} if an array or array-like, this is the start index
      *   @param al {boolean} if true, it forces the array-like fork.  This
      *   can be used to avoid multiple array.test calls.
+     *   @return {Array} the resulting array
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);

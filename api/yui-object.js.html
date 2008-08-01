@@ -45,10 +45,14 @@
 <span class="nx">YUI</span><span class="o">.</span><span class="nx">add</span><span class="o">(</span><span class="s2">&quot;object&quot;</span><span class="o">,</span> <span class="k">function</span><span class="o">(</span><span class="nx">Y</span><span class="o">)</span> <span class="o">{</span>
 
     <span class="c">/**</span>
+<span class="c">     * Adds the following Object utilities to the YUI instance</span>
+<span class="c">     * @class YUI~object</span>
+<span class="c">     */</span>
+
+    <span class="c">/**</span>
 <span class="c">     * Y.Object(o) returns a new object based upon the supplied object.  </span>
-<span class="c">     * @class Object</span>
+<span class="c">     * @method Object</span>
 <span class="c">     * @static</span>
-<span class="c">     * @constructor </span>
 <span class="c">     * @param o the supplier object</span>
 <span class="c">     * @return {object} the new object</span>
 <span class="c">     */</span>
@@ -71,7 +75,7 @@
 <span class="c">     *</span>
 <span class="c">     * @TODO Remove in PR2</span>
 <span class="c">     *</span>
-<span class="c">     * @method owns</span>
+<span class="c">     * @method Object.owns</span>
 <span class="c">     * @param o {any} The object being testing</span>
 <span class="c">     * @parma p {string} the property to look for</span>
 <span class="c">     * @return {boolean} true if the object has the property on the instance</span>
@@ -82,7 +86,7 @@
 
     <span class="c">/**</span>
 <span class="c">     * Returns an array containing the object&#39;s keys</span>
-<span class="c">     * @method keys</span>
+<span class="c">     * @method Object.keys</span>
 <span class="c">     * @param o an object</span>
 <span class="c">     * @return {string[]} the keys</span>
 <span class="c">     */</span>
@@ -101,6 +105,7 @@
 <span class="c">     * Executes a function on each item. The function</span>
 <span class="c">     * receives the value, the key, and the object</span>
 <span class="c">     * as paramters (in that order).</span>
+<span class="c">     * @method Object.each</span>
 <span class="c">     * @param o the object to iterate</span>
 <span class="c">     * @param f {function} the function to execute</span>
 <span class="c">     * @param c the execution context</span>
@@ -160,13 +165,13 @@
                     <div class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="Array.html">Array</a></li>
                                 <li class=""><a href="Get.html">Get</a></li>
                                 <li class=""><a href="Lang.html">Lang</a></li>
                                 <li class=""><a href="Loader.html">Loader</a></li>
-                                <li class=""><a href="Object.html">Object</a></li>
                                 <li class=""><a href="UA.html">UA</a></li>
                                 <li class=""><a href="YUI.html">YUI</a></li>
+                                <li class=""><a href="YUI~array.html">YUI~array</a></li>
+                                <li class=""><a href="YUI~object.html">YUI~object</a></li>
                         </ul>
                     </div>
 

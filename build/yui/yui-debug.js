@@ -1115,7 +1115,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Adds the following Object utilities to the YUI instance
-     * @class YUI~Object
+     * @class YUI~object
      */
 
     /**
