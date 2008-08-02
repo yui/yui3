@@ -396,19 +396,19 @@ wp.lock();
 
         </div>
         <div class="yui-u sidebar">
-                <?php # include "../inc/cheatsheet.inc"; ?>
-                <div id="examples">
-                    <?php # include("../inc/examplesNav/".$section.".inc"); ?>
+            <div id="delicious" class="mod box4">
+               <div class="hd delicious">
+                <h4>YUI <?php echo $component;?> on del.icio.us:</h4>
                </div>
-        <?php 
-        $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-        require_once('../inc/badge.inc');
-        ?>
-        <h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
-        <div class="delicious">
-        <?php require('../inc/badge-html.inc'); ?>
+               <div class="bd delicious">
+                   <?php
+                    $thisURI="http://developer.yahoo.com/yui/3/$section/";
+                    require_once('../inc/badge.inc');
+                   ?>
+                   <?php require('../inc/badge-html.inc'); ?>
+               </div>
+            </div>
         </div>
-         </div>
       </div>
 </div>
 </div>
