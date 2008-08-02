@@ -55,9 +55,6 @@ YUI.add("event-custom", function(Y) {
      * @param sub {Event.Subscriber} the subscriber
      */
     Y.EventHandle = function(evt, sub) {
-        if (!evt || !sub) {
-            return null;
-        }
 
         /**
          * The custom event

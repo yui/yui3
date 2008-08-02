@@ -261,6 +261,7 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
                     //     configured: false
                     // });
                     ce = this.publish(t);
+                    ce.details = Y.Array(arguments, (typeIncluded) ? 1 : 0, true);
 
                     return this.bubble(ce);
                 }
@@ -290,11 +291,11 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
          * falsy value otherwise
          * @method getEvent
          * @param type {string} the type, or name of the event
-         * @return {Event.Target} the custom event or a falsy value
+         * @return {Event.Custom} the custom event or null
          */
         getEvent: function(type) {
             var e = this._yuievt.events;
-            return (e && e[type]);
+            return (e && type in e) ? e[type] : null;
         },
 
         /**

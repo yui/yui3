@@ -434,6 +434,8 @@ YUI.add("event-dom", function(Y) {
                         ce = _wrappers[id];
                     if (ce) {
                         return ce.unsubscribe(fn);
+                    } else {
+                        return false;
                     }
 
                 },
