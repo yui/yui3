@@ -128,6 +128,8 @@ if (typeof YUI === 'undefined' || !YUI) {
 
             // bind the specified additional modules for this instance
             Y._setup();
+
+            return Y;
         }
     };
 }

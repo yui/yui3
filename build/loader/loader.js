@@ -1503,7 +1503,8 @@ Y.Env.meta = {
 
                 if (this.filterName == "DEBUG") {
                 
-                    var self = this, exc = self.logExclude,
+                    var self = this, 
+                        exc = self.logExclude,
                         inc = self.logInclude;
                     if (inc && !(name in inc)) {
                         useFilter = false;

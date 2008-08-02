@@ -128,6 +128,8 @@ if (typeof YUI === 'undefined' || !YUI) {
 
             // bind the specified additional modules for this instance
             Y._setup();
+
+            return Y;
         }
     };
 }
@@ -3503,7 +3505,8 @@ Y.Env.meta = {
 
                 if (this.filterName == "DEBUG") {
                 
-                    var self = this, exc = self.logExclude,
+                    var self = this, 
+                        exc = self.logExclude,
                         inc = self.logInclude;
                     if (inc && !(name in inc)) {
                         useFilter = false;
