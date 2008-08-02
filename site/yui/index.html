@@ -51,9 +51,7 @@ include "../inc/header.inc";
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;!-- TODO --&gt;
-				&lt;!-- TODO --&gt;
-				&lt;!-- TODO --&gt;
+				    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
 				</textarea>
 
 				<?php
@@ -94,8 +92,9 @@ include "../inc/header.inc";
 				<h4 id="core">YUI Core</h4>
 				<p>The YUI Global Object is an instantiatable object that allows you to create as many YUI instances as you need. Each completely configurable and loaded with only the modules that you need.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = YUI();
-                    myNameSpace.Node.get('#demo');
+                    YUI().use('node', function(Y) {
+                        Y.Node.get('#demo');
+                    });
                 </textarea>
 
                 <p>All of this functionality is available in the YUI Core:</p>
@@ -116,12 +115,6 @@ include "../inc/header.inc";
                             <td>YUI Core</td><td>core</td>
                         </tr>
                         <tr>
-                            <td>DOM Wrappers</td><td>dom</td>
-                        </tr>
-                        <tr>
-                            <td>Event</td><td>event-(see event page for more)</td>
-                        </tr>
-                        <tr>
                             <td>Language helper methods</td><td>lang</td>
                         </tr>
                         <tr>
@@ -129,9 +122,6 @@ include "../inc/header.inc";
                         </tr>
                         <tr>
                             <td>Logging support</td><td>log</td>
-                        </tr>
-                        <tr>
-                            <td>Node Support</td><td>node</td>
                         </tr>
                         <tr>
                             <td>Object Operations</td><td>object</td>
@@ -142,6 +132,12 @@ include "../inc/header.inc";
                         <tr>
                             <td>YUI Object</td><td>yui</td>
                         </tr>
+                        <tr>
+                            <td>The Get Utility</td><td>get</td>
+                        </tr>
+                        <tr>
+                            <td>YUI Loader</td><td>loader</td>
+                        </tr>
                     </tbody>
 				</table>
                 </div>
@@ -150,23 +146,25 @@ include "../inc/header.inc";
 				<p>The use method allows you to choose the modules that you want loaded into your YUI instance. You can pick and choose what you need, you don't have to load everything that was included on the page.</p>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace1 = YUI().use('dd-drop', 'animation');
-                    //myNameSpace1.DD is available
-                    //myNameSpace1.Anim is available
+                    YUI().use('dd-drop', 'anim', function(Y) {
+                        // Y.DD is available
+                        // Y.Anim is available
+                    }
                 </textarea>
 
                 <textarea name="code" class="JScript">
-                    var myNameSpace2 = YUI().use('animation');
-                    //myNameSpace2.DD is NOT available
-                    //myNameSpace2.Anim is available
+                    YUI().use('anim', function(Y) {
+                    // Y.DD is NOT available
+                    // Y.Anim is available
                 </textarea>
 
 				<h5>Use callback</h5>
-                <p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.</p>
+                <p>You can pass a function in as the last argument to use. This function will execute after the YUI instance loads all the modules.
+                This is required if you do not have all dependencies on the page.</p>
                 <p>The callback method has one argument passed, the YUI instance that we are dealing with. In this function you know that all the modules have been loaded and it's ok to use them.</p>
                 <textarea name="code" class="JScript">
-                    YUI().use('animation', function(myNameSpace) {
-                        //myNameSpace.Anim is available
+                    YUI().use('animation', function(Y) {
+                        // Y.Anim is available
                     });
                 </textarea>
 
@@ -174,7 +172,9 @@ include "../inc/header.inc";
                 <p>The use method contains a shorthand reference for all modules on the page. It uses the <code>*</code> as the module name.</p>
                 <p>This will load every module that is included on the page.</p>
                 <textarea name="code" class="JScript">
-                    var myNameSpace = YUI().use('*');
+                    YUI().use('*', function(Y) {
+                        // Implementation code
+                    });
                 </textarea>
 				
 				<h4 id="modulelist">Module List</h4>
@@ -231,16 +231,10 @@ include "../inc/header.inc";
                             <td>Timeout method</td><td>later</td>
                         </tr>
                         <tr>
-                            <td>Logging support</td><td>log</td>
-                        </tr>
-                        <tr>
                             <td>Node Support</td><td>node</td>
                         </tr>
                         <tr>
                             <td>Object Operations</td><td>object</td>
-                        </tr>
-                        <tr>
-                            <td>Profiler</td><td>profiler</td>
                         </tr>
                         <tr>
                             <td>Queue Support</td><td>queue</td>
@@ -254,16 +248,18 @@ include "../inc/header.inc";
                         <tr>
                             <td>YUI Object</td><td>yui</td>
                         </tr>
-                        <tr>
-                            <td>YUI Test</td><td>yuitest</td>
-                        </tr>
                     </tbody>
 				</table>
                 </div>
 				
 				<h4 id="loader">Loader</h4>
-                <p>Loader's functionality is now built into the YUI Global Object (as long as it's on the page) and puts its power behind the <code>YUI.use</code> method.</p>
-                <p>If you request a module that is not loaded on the page (or a dependency that is not loaded), loader will fetch a copy of that module (and its dependencies) and load them into your YUI instance.</p>
+                <p>Loader's functionality is now built into the YUI Global Object 
+                   (as long as it's on the page) and puts its power behind the 
+                   <code>YUI.use</code> method.</p> 
+                <p>If you request a module that is not loaded on the page 
+                (or a dependency that is not loaded), loader will fetch a copy 
+                of that module (and its dependencies) and load them into your 
+                YUI instance.</p>
                 <p>You need to include <code>yui.js</code>, <code>loader.js</code> and <code>get.js</code> for this to function properly.</p>
                 <textarea name="code" class="JScript">
                     YUI({
@@ -273,8 +269,8 @@ include "../inc/header.inc";
                            //combine: true,
                            //filter: 'raw'
                            timeout: 2000
-                        }).use('dd-dragdrop-all', function(Y) {
-                            //We are ready to code now..
+                        }).use('dd', function(Y) {
+                            // All YUI modules required to get drag and drop to work are now loaded.
                         });
                                     
                 </textarea>
