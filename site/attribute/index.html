@@ -454,28 +454,28 @@ var lbl = o.get("strings.ui.accept_label");
                 only defined for the top level attribute ("string" in this case) and will get invoked 
                 when getting/setting sub attribute values</p>
 
-<?php # include "../inc/mobileSection.inc";?>
-<?php include "../inc/support.inc"; ?>
+                <?php include "../inc/support.inc"; ?>
 
 		</div>
-<div class="yui-u sidebar">
 
-<?php # include "../inc/cheatsheet.inc"; ?>
-		 	
-			<div id="examples">
-<?php include("../inc/examplesNav/".$section.".inc"); ?>
-		   </div>
-<?php 
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-require_once('../inc/badge.inc');
-?>
-<h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
-<div class="delicious">
-<?php require('../inc/badge-html.inc'); ?>
-</div>
-
-		 </div>
-      </div>
+        <div class="yui-u sidebar">
+        	<div id="examples">
+                <?php include("../inc/examplesNav/".$section.".inc"); ?>
+            </div>
+            <div id="delicious" class="mod box4">
+               <div class="hd delicious">
+                <h4>YUI <?php echo $component;?> on del.icio.us:</h4>
+               </div>
+               <div class="bd delicious">
+                   <?php
+                    $thisURI="http://developer.yahoo.com/yui/3/$section/";
+                    require_once('../inc/badge.inc');
+                   ?>
+                   <?php require('../inc/badge-html.inc'); ?>
+               </div>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 
