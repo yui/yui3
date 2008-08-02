@@ -2463,9 +2463,9 @@ Y.Env.meta = {
          * handler
          * @property combine
          * @type boolean
-         * @default false
+         * @default true if a base dir isn't in the config
          */
-        this.combine = false;
+        this.combine = (!(BASE in o));
 
         /**
          * Ignore modules registered on the YUI global
