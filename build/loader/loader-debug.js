@@ -396,7 +396,7 @@ Y.Env.meta = {
          * @method onFailure
          * @type function
          */
-        this.onFailure = Y.log;
+        this.onFailure = null;
 
         /**
          * Callback executed each time a script or css file is loaded
@@ -669,7 +669,10 @@ Y.Env.meta = {
             var f = this.filter;
 
             if (L.isString(f)) {
+
                 f = f.toUpperCase();
+
+                this.filterName = f;
 
                 // the logger must be available in order to use the debug
                 // versions of the library
@@ -724,7 +727,7 @@ Y.Env.meta = {
             this.moduleInfo[name] = o;
             this.dirty = true;
 
-            //Y.log('New module ' + name);
+            // Y.log('New module ' + name);
 
             return o;
         },
@@ -1269,7 +1272,7 @@ Y.Env.meta = {
          */
         insert: function(o, type) {
 
-            Y.log("Insert() " + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "Loader");
 
             // build the dependency list
             this.calculate(o);
@@ -1461,7 +1464,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path);
+                    url=m.fullpath || this._url(m.path, s[i]);
                     self=this; 
 
                     fn(url, {
@@ -1524,15 +1527,31 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @return {string} the full url
          * @private
          */
-        _url: function(path) {
+        _url: function(path, name) {
             
-            var u = this.base || "", f=this.filter;
-            u = u + path;
+            var u = (this.base || "") + path, 
+                f = this.filter;
 
             if (f) {
+                var useFilter = true;
+
+                if (this.filterName == "DEBUG") {
+                
+                    var self = this, exc = self.logExclude,
+                        inc = self.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
                 // Y.log("filter: " + f + ", " + f.searchExp + 
                 // ", " + f.replaceStr);
-                u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                }
             }
 
             // Y.log(u);

@@ -598,7 +598,6 @@ YUI.add("log", function(instance) {
             // apply source filters
             if (src) {
 
-
                 var exc = c.logExclude, inc = c.logInclude;
 
                 // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
@@ -612,19 +611,17 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            if (c.useConsole && typeof console != 'undefined') {
+            if (!bail) {
 
-
-                if (!bail) {
-
-                    var f = (cat && console[cat]) ? cat : 'log',
-                        m = (src) ? src + ': ' + msg : msg;
-                    console[f](m);
+                if (c.useConsole && typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log',
+                            m = (src) ? src + ': ' + msg : msg;
+                        console[f](m);
                 }
-            }
 
-            if (Y.fire && !bail) {
-                Y.fire('yui:log', msg, cat, src);
+                if (Y.fire && !bail) {
+                    Y.fire('yui:log', msg, cat, src);
+                }
             }
         }
 
@@ -1101,7 +1098,7 @@ YUI.add("object", function(Y) {
 
     /**
      * Adds the following Object utilities to the YUI instance
-     * @class YUI~Object
+     * @class YUI~object
      */
 
     /**
@@ -1131,8 +1128,9 @@ YUI.add("object", function(Y) {
      * @TODO Remove in PR2
      *
      * @method Object.owns
+     * @static
      * @param o {any} The object being testing
-     * @parma p {string} the property to look for
+     * @param p {string} the property to look for
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
@@ -1142,6 +1140,7 @@ YUI.add("object", function(Y) {
     /**
      * Returns an array containing the object's keys
      * @method Object.keys
+     * @static
      * @param o an object
      * @return {string[]} the keys
      */
@@ -1161,6 +1160,7 @@ YUI.add("object", function(Y) {
      * receives the value, the key, and the object
      * as paramters (in that order).
      * @method Object.each
+     * @static
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context

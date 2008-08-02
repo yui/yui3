@@ -598,7 +598,6 @@ YUI.add("log", function(instance) {
             // apply source filters
             if (src) {
 
-
                 var exc = c.logExclude, inc = c.logInclude;
 
                 // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
@@ -612,19 +611,17 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            if (c.useConsole && typeof console != 'undefined') {
+            if (!bail) {
 
-
-                if (!bail) {
-
-                    var f = (cat && console[cat]) ? cat : 'log',
-                        m = (src) ? src + ': ' + msg : msg;
-                    console[f](m);
+                if (c.useConsole && typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log',
+                            m = (src) ? src + ': ' + msg : msg;
+                        console[f](m);
                 }
-            }
 
-            if (Y.fire && !bail) {
-                Y.fire('yui:log', msg, cat, src);
+                if (Y.fire && !bail) {
+                    Y.fire('yui:log', msg, cat, src);
+                }
             }
         }
 
@@ -1131,8 +1128,9 @@ YUI.add("object", function(Y) {
      * @TODO Remove in PR2
      *
      * @method Object.owns
+     * @static
      * @param o {any} The object being testing
-     * @parma p {string} the property to look for
+     * @param p {string} the property to look for
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
@@ -1142,6 +1140,7 @@ YUI.add("object", function(Y) {
     /**
      * Returns an array containing the object's keys
      * @method Object.keys
+     * @static
      * @param o an object
      * @return {string[]} the keys
      */
@@ -1161,6 +1160,7 @@ YUI.add("object", function(Y) {
      * receives the value, the key, and the object
      * as paramters (in that order).
      * @method Object.each
+     * @static
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
@@ -2396,6 +2396,7 @@ Y.Env.meta = {
          * @method onFailure
          * @type function
          */
+        this.onFailure = null;
 
         /**
          * Callback executed each time a script or css file is loaded
@@ -2668,7 +2669,10 @@ Y.Env.meta = {
             var f = this.filter;
 
             if (L.isString(f)) {
+
                 f = f.toUpperCase();
+
+                this.filterName = f;
 
                 // the logger must be available in order to use the debug
                 // versions of the library
@@ -3428,7 +3432,7 @@ Y.Env.meta = {
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path);
+                    url=m.fullpath || this._url(m.path, s[i]);
                     self=this; 
 
                     fn(url, {
@@ -3489,13 +3493,29 @@ Y.Env.meta = {
          * @return {string} the full url
          * @private
          */
-        _url: function(path) {
+        _url: function(path, name) {
             
-            var u = this.base || "", f=this.filter;
-            u = u + path;
+            var u = (this.base || "") + path, 
+                f = this.filter;
 
             if (f) {
-                u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                var useFilter = true;
+
+                if (this.filterName == "DEBUG") {
+                
+                    var self = this, exc = self.logExclude,
+                        inc = self.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                }
             }
 
 
