@@ -28,18 +28,18 @@ if($modules[$currentModuleName]) {
         			/*This may be a cross-listed example.  If it is, build the link out
         			and defer it until later on the page:*/
         			if ($currentModuleName != $thisExample[modules][0])  {
-        				$relatedExamples .= "<li><a href='/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a> (included with examples for the <a href='/yui/3/".$thisExample[modules][0]."/index.html'>".$modules[$thisExample[modules][0]][name]."</a>)</li>\n";
+        				$relatedExamples .= "<li><a href=\"/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html\">".$thisExample["name"]."</a> (included with examples for the <a href=\"/yui/3/".$thisExample[modules][0]."/index.html\">".$modules[$thisExample[modules][0]][name]."</a>)</li>\n";
         			} else {
-        				echo "<li><a href='/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html'>".$thisExample["name"]."</a></li>\n";
+        				echo "<li><a href=\"/yui/3/examples/".$thisExample[modules][0]."/$thisExample[key].html\">".$thisExample["name"]."</a></li>\n";
         			}
         		}
             ?>
             </ul>
         </div>
+    </div>
         <?php
     } // end current examples
-    </div>
-
+    
     /*output related examples:*/
 	if($relatedExamples) { ?>
 
