@@ -59,17 +59,17 @@ include "../inc/header.inc";
 				<p>To use the <?php echo $component;?>, the following source files need to be included in your web page:</p>
 
 <textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- Dependencies --&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-base.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/oop-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/event-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/dom-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/node-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-base-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/oop/oop-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/event/event-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/dom/dom-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/node/node-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
 &lt;!-- Source file --&gt;
 &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 </textarea>
 
-                <p>However, instead of manually including the files, you can simple include the yui seed file, which includes YUI Loader, and it will automatically
+                <p>However, instead of manually including the files, you can simple include the YUI seed file, which includes YUI Loader, and it will automatically
                 pull down the required files when the <code>attribute</code> module is used:</p>
 
 <textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- YUI with Loader --&gt;
