@@ -38,42 +38,46 @@ include("'.$docroot.'inc/header.inc");
 <p>The navigation controls on the left side of this page allow you to explore these examples component-by-component; on this page you'll find the full index of library examples with a link to and short description of each one.</p>
 <?php
 foreach($aTypes as $thisType) {
-		echo "\n<h3>".$oTypeNames[$thisType]."</h3>";
-		$aUtils = getModulesByType($thisType,$modules);
-		foreach($aUtils as $currentModuleName=>$aUtil) {
-			$aCurrentExamples = getExamplesByModule($currentModuleName, $examples);
-		if ($aCurrentExamples) {
-			echo "<table class='examplesTable'>\n";
-			echo "<thead>\n";
-			echo "<tr><th class='title' colspan='2'><h4>$aUtil[name]</h4></th></tr>";
-			echo "</thead>\n<tbody>\n";
-			$idx = 1;
-			foreach($aCurrentExamples as $key=>$thisExample) {
-				/*This may be a cross-listed example.  If it is, ignore; it will be listed with its primary component.*/
-				if ($currentModuleName != $thisExample[modules][0])  {
-					//do nothing
-				} else {
-					if($idx%2) {
-						$zebra = "class='odd'";
-					} else {
-						$zebra = "class='even'";
-					}
-					
-					//Link to example
-					echo "<tr $zebra><td class='title'><a href='$currentModuleName/$thisExample[key].html'>$thisExample[name]</a></td>";
-					
-					//Example descriptoin
-					echo "<td class='description'>$thisExample[description]</td>";
-					
-					echo "</tr>\n";
-					$idx++;
-				}
-			}
-			echo "</tbody>\n</table>\n";
-		}
-			
-		
-		}
+    $exHtml = "";
+
+    $aUtils = getModulesByType($thisType,$modules);
+    foreach($aUtils as $currentModuleName=>$aUtil) {
+        $aCurrentExamples = getExamplesByModule($currentModuleName, $examples);
+        if ($aCurrentExamples) {
+            $exHtml.= "<table class='examplesTable'>\n";
+            $exHtml.= "<thead>\n";
+            $exHtml.= "<tr><th class='title' colspan='2'><h4>$aUtil[name]</h4></th></tr>";
+            $exHtml.= "</thead>\n<tbody>\n";
+            $idx = 1;
+            foreach($aCurrentExamples as $key=>$thisExample) {
+                /*This may be a cross-listed example.  If it is, ignore; it will be listed with its primary component.*/
+                if ($currentModuleName != $thisExample[modules][0])  {
+                    //do nothing
+                } else {
+                    if($idx%2) {
+                        $zebra = "class='odd'";
+                    } else {
+                        $zebra = "class='even'";
+                    }
+                    
+                    //Link to example
+                    $exHtml.= "<tr $zebra><td class='title'><a href='$currentModuleName/$thisExample[key].html'>$thisExample[name]</a></td>";
+                    
+                    //Example descriptoin
+                    $exHtml.= "<td class='description'>$thisExample[description]</td>";
+                    
+                    $exHtml.= "</tr>\n";
+                    $idx++;
+                }
+            }
+            $exHtml.= "</tbody>\n</table>\n";
+        }
+    }
+
+    if ($exHtml !== "") {
+        echo "\n<h3>".$oTypeNames[$thisType]."</h3>";
+        echo $exHtml;
+    }
 }
 ?>
 			</div>

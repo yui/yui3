@@ -32,30 +32,6 @@ include($docroot."inc/header.php");
 <!--stacked three-column grid-->
 <div class="yui-gb">
 	<div class="yui-u first">
-    	<h4>CSS:</h4>
-        <ul>
-            <?php
-                //Going to print out the CSS Modules by hand to enforce the logical ordering:
-                /*$aUtils = getModulesByType("css",$modules);
-                foreach($aUtils as $key=>$aUtil) {
-                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
-                }*/
-            ?>
-            <li><a href='examples/reset/index.html'>Reset CSS</a></li>
-            <li><a href='examples/base/index.html'>Base CSS</a></li>
-            <li><a href='examples/fonts/index.html'>Fonts CSS</a></li>
-        </ul>
-	    <h4>Developer Tools:</h4>
-	    <ul>
-            <?php
-                $aUtils = getModulesByType("tool",$modules);
-                foreach($aUtils as $key=>$aUtil) {
-                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
-            }
-            ?>
-	    </ul>
-	</div>
-	<div class="yui-u">
         <h4>YUI Core:</h4>
         <ul>
         <?php
@@ -74,6 +50,36 @@ include($docroot."inc/header.php");
             }
         ?>
 		</ul>
+	</div>
+	<div class="yui-u">
+    	<h4>CSS:</h4>
+        <ul>
+            <?php
+                //Going to print out the CSS Modules by hand to enforce the logical ordering:
+                /*$aUtils = getModulesByType("css",$modules);
+                foreach($aUtils as $key=>$aUtil) {
+                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+                }*/
+            ?>
+            <li><a href='examples/cssreset/index.html'>CSS Reset</a></li>
+            <li><a href='examples/cssbase/index.html'>CSS Base</a></li>
+            <li><a href='examples/cssfonts/index.html'>CSS Fonts</a></li>
+            <li><a href='examples/cssgrids/index.html'>CSS Grids</a></li>
+        </ul>
+        <!-- No Tool Examples for PR1 -->
+        <!--
+	    <h4>Developer Tools:</h4>
+	    <ul>
+            <?php
+                /*
+                $aUtils = getModulesByType("tool",$modules);
+                foreach($aUtils as $key=>$aUtil) {
+                	echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
+                }
+                */
+            ?>
+	    </ul>
+        -->
 	</div>
 </div>
 
