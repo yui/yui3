@@ -61,9 +61,9 @@ if ($aCurrentExamples) {
 				<div id="module" class="firstContent">
 					<h3><? echo($currentModule[name]).":";?></h3>
 					<ul>
-						<li><a href="http://developer.yahoo.com/yui/<?php echo($currentModuleName);?>/">User's Guide</a></li>
+						<!-- <li><a href="http://developer.yahoo.com/yui/<?php echo($currentModuleName);?>/">User's Guide</a></li> -->
 						<li><a href="http://developer.yahoo.com/yui/docs/module_<?php echo($currentModuleName);?>.html">API Documentation</a></li>
-						<li><a href="http://yuiblog.com/assets/pdf/cheatsheets/<?php echo($currentModuleName);?>.pdf">Cheat Sheet (pdf)</a></li>
+						<!-- <li><a href="http://yuiblog.com/assets/pdf/cheatsheets/<?php echo($currentModuleName);?>.pdf">Cheat Sheet (pdf)</a></li> -->
 					</ul>
 				</div>
 				
