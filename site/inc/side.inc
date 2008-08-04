@@ -17,7 +17,7 @@ $nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free
 
 
 $nav[]=array('', '', 'YUI 3 Core', '');
-$nav[]=array('yui','/yui/','YUI (Global Object)', 'YUI Global Object');
+$nav[]=array('yui','/yui/3/yui/','YUI (Global Object)', 'YUI Global Object');
 $nav[]=array('dom','/dom/','DOM', 'DOM');
 $nav[]=array('node','/node/','Node', 'Node');
 
@@ -54,8 +54,8 @@ $nav[]=array('poweredby','/yui/poweredby/','YUI Sightings', 'YUI is used by Yaho
 
 $nav[]=array('', '', 'YUI Articles', '');
 $nav[]=array('gbs','/yui/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
-$nav[]=array('skinning','/yui/articles/skinning/','Skinning YUI', 'Modifying YUI\'s visual "skin" and building skins of your own');
-$nav[]=array('customwidgets','http://yuiblog.com/blog/2008/06/24/buildingwidgets','Building Custom Widgets', 'Building your own custom widgets using the YUI infrastructure and tools.');
+## $nav[]=array('skinning','/yui/articles/skinning/','Skinning YUI', 'Modifying YUI\'s visual "skin" and building skins of your own');
+## $nav[]=array('customwidgets','http://yuiblog.com/blog/2008/06/24/buildingwidgets','Building Custom Widgets', 'Building your own custom widgets using the YUI infrastructure and tools.');
 $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
 $nav[]=array('hosting','/yui/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
 $nav[]=array('security','/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');

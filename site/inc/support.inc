@@ -6,7 +6,16 @@
 				<h4>Forum &amp; Blog</h4>
 			</div>
 			<div class="bd">
-				<p>The YUI Library and related topics are discussed on the on the <a href="http://groups.yahoo.com/group/ydn-javascript/">ydn-javascript</a> mailing list.</p>
+				<p>There is a dedicated <a href="http://groups.yahoo.com/group/ydn-javascript/">mailing list for YUI 3</a>.</p>
+				<form method="get" action="http://groups.yahoo.com/subscribe/yui3">
+				<table cellspacing="0" cellpadding="2">
+					<tr>
+						<td align="right" width="50%"><input type="text" name="user" value="enter email address" size="20"></td>
+						<td align="left">&nbsp;<input type="image" border="0" alt="Click here to join yui3" name="Click here to join yui3" src="http://us.i1.yimg.com/us.yimg.com/i/ydn/yuiweb/img/joinbtn.gif"></td>
+					</tr>
+				</table>
+				</form>
+				<p>The <a href="http://groups.yahoo.com/group/ydn-javascript/">general list for the YUI Library</a> and related topics is the ydn-javascript mailing list.</p>
 				<form method="get" action="http://groups.yahoo.com/subscribe/ydn-javascript">
 				<table cellspacing="0" cellpadding="2">
 					<tr>
