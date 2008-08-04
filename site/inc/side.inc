@@ -18,32 +18,32 @@ $nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free
 
 $nav[]=array('', '', 'YUI 3 Core', '');
 $nav[]=array('yui','/yui/3/yui/','YUI (Global Object)', 'YUI Global Object');
-$nav[]=array('dom','/dom/','DOM', 'DOM');
-$nav[]=array('node','/node/','Node', 'Node');
+$nav[]=array('dom','/yui/3/dom/','DOM', 'DOM');
+$nav[]=array('node','/yui/3/node/','Node', 'Node');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
-$nav[]=array('attribute','/attribute/','Attribute', 'Attribute');
-$nav[]=array('animation','/animation/','Animation', 'Animation');
-$nav[]=array('base','/base/','Base', 'Base');
-$nav[]=array('compat','/compat/','Compat', 'Compat');
-$nav[]=array('cookie','/cookie/','Cookie', 'Cookie');
-$nav[]=array('dd','/dd/','Drag & Drop', 'Drag & Drop');
-$nav[]=array('io','/io/','IO', 'IO');
-$nav[]=array('json','/json/','JSON', 'JSON (JavaScript Object Notation)');
-$nav[]=array('queue','/queue/','Queue', 'Queue');
+$nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
+$nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
+$nav[]=array('base','/yui/3/base/','Base', 'Base');
+# $nav[]=array('compat','/yui/3/compat/','Compat', 'Compat');
+# $nav[]=array('cookie','/yui/3/cookie/','Cookie', 'Cookie');
+$nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
+$nav[]=array('io','/yui/3/io/','IO', 'IO');
+$nav[]=array('json','/yui/3/json/','JSON', 'JSON (JavaScript Object Notation)');
+$nav[]=array('queue','/yui/3/queue/','Queue', 'Queue');
 
-$nav[]=array('', '', 'Tools', '');
-$nav[]=array('compressor','/yui/compressor/','YUI Compressor', 'YUI Compressor for CSS and JavaScript');
-$nav[]=array('loader','/loader/','YUI Load', 'YUI Loader');
-$nav[]=array('logger','/logger/','YUI Log', 'YUI Logger');
-$nav[]=array('profiler','/profiler/','YUI Profiler', 'Global YUI Object');
-$nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
+# $nav[]=array('', '', 'Tools', '');
+# $nav[]=array('compressor','/yui/compressor/','YUI Compressor', 'YUI Compressor for CSS and JavaScript');
+# $nav[]=array('loader','/loader/','YUI Load', 'YUI Loader');
+# $nav[]=array('logger','/logger/','YUI Log', 'YUI Logger');
+# $nav[]=array('profiler','/profiler/','YUI Profiler', 'Global YUI Object');
+# $nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
-$nav[]=array('cssreset','/cssreset/','CSS Reset', 'CSS Reset');
-$nav[]=array('cssfonts','/cssfonts/','CSS Fonts', 'CSS Fonts');
-$nav[]=array('cssgrids','/cssgrids/','CSS Grids', 'CSS Grids');
-$nav[]=array('cssbase','/cssbase/','CSS Base', 'CSS Base');
+$nav[]=array('cssreset','/yui/3/cssreset/','CSS Reset', 'CSS Reset');
+$nav[]=array('cssfonts','/yui/3/cssfonts/','CSS Fonts', 'CSS Fonts');
+$nav[]=array('cssgrids','/yui/3/cssgrids/','CSS Grids', 'CSS Grids');
+$nav[]=array('cssbase','/yui/3/cssbase/','CSS Base', 'CSS Base');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog', 'The Yahoo! User Interface Blog');
