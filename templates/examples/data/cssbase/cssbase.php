@@ -2,23 +2,16 @@
 
 /* Test Module: */
 $modules["cssbase"] = array(
-        /* The name of the module, used in index listings, titles, headers */
 		"name" => "CSS Fonts",
-        /* The type of the module.
-           Currently used values for type are:
-           "css", "core", "utility", "tool" */
 		"type" => "css",
-        /* This description appears on the component's examples index page*/
 		"description" => "Building Pages with YUI CSS Base",
-        /* Whether or not the component has a cheatsheet. PR1 will not snip with
-           cheatsheets */ 
 		"cheatsheet" => false 
 );	
 
 /* Sample Utility Examples */
 
 $examples["cssbase-basic"] = array(
-	name => "CSS Base applied to HTML element",
+	name => "CSS Base applied to a page",
 	modules => array("cssbase"),
 	description => "CSS Base Basic Example",
 	sequence => array(1),
@@ -28,7 +21,7 @@ $examples["cssbase-basic"] = array(
     bodyclass => false
 );
 
-$examples["sample-two"] = array(
+$examples["cssbase-context"] = array(
 	name => "CSS Base applied contextually",
 	modules => array("cssbase"),
 	description => "CSS Base Contextual Example",
@@ -36,7 +29,7 @@ $examples["sample-two"] = array(
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts", "cssbase"),
 	highlightSyntax => true,
-    bodyclass => "yui-cssreset yui-cssfonts"
+    bodyclass => "yui-cssreset yui-cssfonts yui-cssbase"
 );
 
 ?>

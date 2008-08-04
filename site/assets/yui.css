@@ -432,3 +432,4 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 .dp-highlighter .line1, .dp-highlighter .line2 {padding-left: 10px;white-space:nowrap;}
 
 table.auto {width:auto;}
+#main .examplesTable h4 {margin:0;color:#FFF;}
