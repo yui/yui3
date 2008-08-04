@@ -61,7 +61,7 @@ if(isset($currentExample["bodyclass"]) && $currentExample["bodyclass"] !== false
     $bodyclass = " yui-skin-sam";
 }
 
-$defYuiConfig = ($ydn) ? "root:\"\", combine: true, comboBase: \"http://delightfuture.corp.yahoo.com/combo?\", timeout: 10000"
+$defYuiConfig = ($ydn && $buildpath === false) ? "combine: true, timeout: 10000"
                        : "base:\"$buildpath\", timeout: 10000";
 
 function getYUIConfig($cfg) {
