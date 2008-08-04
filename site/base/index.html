@@ -53,19 +53,19 @@ include "../inc/header.inc";
 
                 <h3 id="start">Getting Started</h3>
 
-                <h4 id="dependencies">Include Dependencies</h4>
+               <h4 id="dependencies">Include Dependencies</h4>
 
-               <p>To avoid having to manually include Base and all it's dependent files, you can simply include the YUI seed file on your page: 
-               
+               <p>The easiest way to include the source files for Base and it dependencies, is to add the YUI seed file to your page, using the following script tag, and allow the YUI instance to download any additional files which maybe required:</p> 
+
                 <textarea name="code" class="HTML" cols="60" rows="1">
                 &lt;!-- YUI Seed --&gt;
                 &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
                 </textarea>
-                
-                <p>It will automatically pull down Base's source files, along with any dependent files missing from the page, when the <code>base</code> module is used in your code. 
-                This helps you avoid having to manually manage the list of files which need to be included on your page, and also allows you to load files only when they are required.</p>
 
-                <p>If you do want to include file dependencies manually on your page, the YUI Configurator, discussed below, can be used to determine the list of files you need include to support Base.</p>
+                <p>The YUI instance will automatically pull down Base's source files, along with any dependent files missing from the page, when the <code>base</code> module is used in your code. 
+                This helps you avoid having to manually manage the list of files which need to be included on your page to support multiple components, while also optimizing your initial page weight by loading files only when they are required.</p>
+
+                <p>If you do want to include file dependencies manually on your page, the YUI Configurator (discussed below), can be used to determine the list of files you need include on your page in order to use Base.</p>
 
                 <?php
                     include "../inc/include-notice.inc";
@@ -73,8 +73,8 @@ include "../inc/header.inc";
 
                 <h4 id="yui">The YUI Instance</h4>
 
-                <p>Once you have the YUI seed file on your page, you can create a new YUI instance for your application to use, and populate it 
-                with the modules you need. In the case of Base, you only need to request the "base" module using YUI's <code>use</code> method, 
+                <p>Once you have the YUI seed file on your page (<code>yui-min.js</code>), you can create a new YUI instance for your application to use, and populate it 
+                with the modules you need. In the case of Base, you only need to request the <code>base</code> module using YUI's <code>use</code> method, 
                 passing in a callback function which will be invoked when all the file dependencies have been downloaded:</p>
 
                 <textarea name="code" class="JScript" cols="60" rows="1">
@@ -86,11 +86,11 @@ include "../inc/header.inc";
                 </textarea>
 
                 <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>) passed back to your callback function, with the 
-                classes which make up the "base" module (e.g. <code>Y.Base</code>) and any modules which the "base" module requires.
-                Any required file dependencies not already on the page will be pulled down automatically by the YUI instance if you're using the yui seed 
-                file (<code>yui-min.js</code>).</p>
+                classes which make up the <code>base</code> module (e.g. <code>Y.Base</code>) and any other modules which <code>base</code> requires.
+                Any required file dependencies not already on the page will be pulled down automatically by the YUI instance if you're using the YUI seed 
+                file.</p>
 
-                <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <a href="../yui/index.html#use"><code>use</code> method</a>.</p>
+                <p>For more information on creating instances of YUI and the <a href="../yui/index.html#use"><code>use</code> method</a>, see the <a href="../yui/index.html">YUI Global</a> object documentation.</p>
 
                 <h3 id="using">Using the <?php echo $component;?></h3>
 
