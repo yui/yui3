@@ -24,10 +24,10 @@
      * objects, which handles the chaining of initializer and destructor methods
      * across the hierarchy during init and destroy lifecycle methods and 
      * handles automatic configuration of registered Attributes, through 
-     * the static ATTRS property.
+     * the static <a href="#property_ATTRS">ATTRS</a> property.
      * </p>
      *
-     * <p>The Base class also handles prefixing of event types with the static NAME 
+     * <p>The Base class also handles prefixing of event types with the static <a href="#property_NAME">NAME</a> 
      * property for all events fired from instances of classes derived from Base.</p>
      *
      * @constructor
@@ -43,12 +43,14 @@
     };
 
     /**
+     * <p>
      * Name string to be used to identify instances of 
      * this class, for example in prefixing events.
-     *
+     * </p>
+     * <p>
      * Classes extending Base, should define their own
      * static NAME property.
-     *
+     * </p>
      * @property NAME
      * @type String
      * @static
@@ -241,7 +243,7 @@
      * Creates a new object instance, based on a dynamically created custom class.
      * The custom class is created from the main class passed in as the first parameter 
      * along with the list of extension classes passed in
-     * as the second parameter using <a href="#method_build>Base.build</a> 
+     * as the second parameter using <a href="#method_build">Base.build</a> 
      * with "dynamic" set to true. See the documentation for this method 
      * to see how the main class and extension classes are used.
      * </p>
@@ -295,11 +297,11 @@
             /**
              * <p>
              * Init event, fired prior to initialization. Invoking
-             * the preventDefault method on the EventFacade provided 
+             * the preventDefault method on the event object provided 
              * to subscribers will prevent initialization from occuring.
              * </p>
              * <p>
-             * Subscribers to the after momemt of this event, will be notified
+             * Subscribers to the "after" momemt of this event, will be notified
              * after initialization of the object is complete (and therefore
              * cannot prevent initialization).
              * </p>
@@ -326,7 +328,7 @@
          * </p>
          * <p>
          * Subscribers to the destroy
-         * event can preventDefault to prevent destruction
+         * event can invoke preventDefault on the event object, to prevent destruction
          * from proceeding.
          * </p>
          * @method destroy
@@ -339,11 +341,11 @@
             /**
              * <p>
              * Destroy event, fired prior to destruction. Invoking
-             * the preventDefault method on the EventFacade provided 
+             * the preventDefault method on the event object provided 
              * to subscribers will prevent destruction from proceeding.
              * </p>
              * <p>
-             * Subscribers to the after momemt of this event, will be notified
+             * Subscribers to the "after" moment of this event, will be notified
              * after destruction is complete (and as a result cannot prevent
              * destruction).
              * </p>
@@ -411,7 +413,7 @@
         /**
          * Initializes the class hierarchy rooted at this base class,
          * which includes initializing attributes for each class defined 
-         * in the class's static ATTRS property and invoking the initializer 
+         * in the class's static <a href="#property_ATTRS">ATTRS</a> property and invoking the initializer 
          * method on the prototype of each class in the hierarchy.
          * 
          * @method _initHierarchy
@@ -471,7 +473,7 @@
          * Subscribe to a custom event hosted by this object.
          * </p>
          * <p>
-         * Overrides Event.Target's subscribe method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_subscribe">subscribe</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * 
@@ -498,7 +500,7 @@
          * following parameters.
          * </p>
          * <p>
-         * Overrides Event.Target's fire method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_fire">fire</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * 
@@ -528,7 +530,7 @@
          * case the custom event is returned. 
          * </p>
          * <p>
-         * Overrides Event.Target's publish method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_publish">publish</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          *
@@ -536,7 +538,7 @@
          * @param {String} type  The type, or name of the event. If the type does not 
          * contain a prefix ("prefix:eventType"), the name property of the instance will 
          * be used as the default prefix.
-         * @param {Object} opts Optional config params (see Event.Target publish for details)
+         * @param {Object} opts Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)
          * @return {Event.Custom} the custom event
          */
         publish : function() {
@@ -553,7 +555,7 @@
          * if configured for the event, has executed.
          * </p>
          * <p>
-         * Overrides Event.Target's after method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_after">after</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method after
@@ -575,7 +577,7 @@
          * Unsubscribes one or more listeners the from the specified event.
          * </p>
          * <p>
-         * Overrides Event.Target's unsubscribe method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribe">unsubscribe</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method unsubscribe
@@ -610,7 +612,7 @@
          * be removed.
          * </p>
          * <p>
-         * Overrides Event.Target's unsubscribeAll method, to add the name prefix 
+         * Overrides Event.Target's <a href="Event.Target.html#method_unsubscribeAll">unsubscribeAll</a> method, to add the name prefix 
          * of the instance to the event type, if absent.
          * </p>
          * @method unsubscribeAll

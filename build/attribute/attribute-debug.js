@@ -166,7 +166,7 @@ YUI.add('attribute', function(Y) {
      *     <li>Be defined with a validator function, to validate values before they are stored.</li>
      *     <li>Be defined with a get function, which can be used to manipulate stored values,
      *     before they are returned by Attribute's get method.</li>
-     *     <li>Specify if and how they should be cloned on 'get' (see Attribute.CLONE for supported clone modes).</li>
+     *     <li>Specify if and how they should be cloned on 'get' (see <a href="#property_CLONE">Attribute.CLONE</a> for supported clone modes).</li>
      * </ul>
      *
      * <em>See the addAtt method, for details about how to add attributes with
@@ -182,10 +182,6 @@ YUI.add('attribute', function(Y) {
     }
 
     /**
-     * @property CLONE
-     * @static
-     * @final
-     * @type Object
      * <p>
      * Constants for clone formats supported by Attribute.
      * </p>
@@ -219,6 +215,11 @@ YUI.add('attribute', function(Y) {
      *         This is the default behavior.
      *     </dd>
      * </dl>
+     * 
+     * @property CLONE
+     * @static
+     * @final
+     * @type Object
      */
     Attribute.CLONE = {
         NONE : 0,
@@ -350,7 +351,7 @@ YUI.add('attribute', function(Y) {
          * value of the attribute is an Object, dot notation can be used
          * to set the value of a property within the object 
          * (e.g. <code>set("x.y.z", 5)</code>), if the attribute has not
-         * been declared as an immutable attribute (see Attribute.CLONE).
+         * been declared as an immutable attribute (see <a href="#property_CLONE">Attribute.CLONE</a>).
          * 
          * @param {Any} value The value to apply to the attribute
          * 
@@ -669,12 +670,13 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
+         * <p>
          * Clone utility method, which will 
          * clone the provided value using YUI's 
          * merge, or clone utilities based
-         * on the clone type provided.
+         * on the clone type provided. See <a href="#property_CLONE">Attribute.CLONE</a>
+         * </p>
          * 
-         * @see Attribute.CLONE
          * @method _cloneAttVal
          * @private 
          * @param {Any} val Value to clone
