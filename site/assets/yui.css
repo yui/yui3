@@ -136,9 +136,9 @@ img.icon-rss {display:inline;border:none !important;position:relative;top:2px;le
 #examples li.selected {font-weight:bold;}
 
 /*styles for example pages*/
-.example .promo {background-color:#89d;border-color:#666666; padding:1em;}
-.example .promo h1, .example .promo h2, .example .promo  h3 {color:#FFCC66;}
-.example .promo h1 {font-size:159%; padding-top:0; margin-top:0;}
+/*.example .promo {background-color:#89d;border-color:#666666; padding:1em;}*/
+/*.example .promo h1, .example .promo h2, .example .promo  h3 {color:#FFCC66;}*/
+/*.example .promo h1 {font-size:159%; padding-top:0; margin-top:0;}*/
 .exampleIntro, .exampleIntro p, .exampleIntro a, .exampleIntro a code {color:#fff;}
 .example .promo p {margin-top:.7em;}
 .firstContent {margin-top:0; padding-top:0;}
@@ -296,7 +296,7 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 #main h1, #main h2, #main h3, #main h4, #main h5, #main h6 {margin:0;}
 #main h2 {font-size:212%;color:#89B31F;font-weight:normal;margin:0 0 12px 0;padding:0;}
 #main h3 {font-size:153.9%;color:#FF8800;font-weight:normal;margin:0 0 12px 0;padding:0;}
-#main h4 {font-size:108%;font-weight:normal;color:#FF8800;;margin-bottom:10px;}
+#main h4 {font-size:108%;font-weight:normal;color:#FF8800;;margin-bottom:10px;}	
 #main h5 {font-size:93%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:12px;}
 #main h6 {font-size:93%;font-weight:normal;color:#FF8800;margin-bottom:10px;font-weight:bold;}
 #main p,
