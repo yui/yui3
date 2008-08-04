@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Animated Drop Targets</title>
+    <title>YUI 3.x: CSS Fonts Basic Example</title>
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset-min.css" type="text/css">
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts-min.css" type="text/css">
 </head>
