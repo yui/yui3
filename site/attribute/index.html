@@ -15,13 +15,14 @@ include "../inc/header.inc";
                 <h2><?php echo $component;?></h2>
 
                 <div id="promo" class="component">
-                    <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The Attribute interface
-                       provides <code>get</code> and <code>set</code> methods for attribute access, in addition to supporting Attribute value change events, 
-                       allowing you listen for changes in attribute values, and optionally prevent changes from occuring.</p>
+                    <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. 
+                       The Attribute interface provides <code>get</code> and <code>set</code> methods for attribute access, in 
+                       addition to supporting Attribute value change events, allowing you to listen for changes in attribute values, 
+                       and optionally prevent changes from occuring.</p>
 
-                    <p>Attributes added through the Attribute interface can be configured to with custom get, set and validation handlers and can also be specified as 
-                    read-only or write-once. It also provides the ability to configure attibutes to protect their stored values, using a deep or shallow clone when returning
-                    values through <code>get</code>.</p>
+                    <p>Attributes can be configured with custom get, set and validation handlers and can also be specified as 
+                    read-only or write-once. Attributes can also be configured to protect their stored values, using a deep or 
+                    shallow clone when returning values through <code>get</code>.</p>
 
 					<div class="yui-g">
 						<div class="yui-u first">
@@ -55,12 +56,24 @@ include "../inc/header.inc";
 
 				<h4 id="dependencies">Include Dependencies</h4>
 
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
+				<p>To use the <?php echo $component;?>, the following source files need to be included in your web page:</p>
+
 <textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- Dependencies --&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-base.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/oop-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/event-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/dom-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/node-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 
 &lt;!-- Source file --&gt;
 &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+</textarea>
+
+                <p>However, instead of manually including the files, you can simple include the yui seed file, which includes YUI Loader, and it will automatically
+                pull down the required files when the <code>attribute</code> module is used:</p>
+
+<textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- YUI with Loader --&gt;
+&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
 </textarea>
 
                 <?php
@@ -69,24 +82,26 @@ include "../inc/header.inc";
 
                 <h4 id="yui">The YUI Instance</h4>
 
-                <p>Once you have the source and dependancy files for Attribute on your page, you can create a new YUI instance (it is recommended you create this in your own 
-                sandboxed anonymous function to avoid polluting the global namespace), and populate it with the modules you need. In the case of Attribute,
-                you only need to include the "attribute" module as shown below, using YUI's <code>use</code> method:</p>
+                <p>Once you have the source files for Attribute on your page, you can create a new YUI instance, 
+                and populate it with the modules you need. In the case of Attribute, you only need to include the "attribute" 
+                module as shown below, using YUI's <code>use</code> method:</p>
 
-<textarea name="code" class="JScript" cols="60" rows="1">(function() {
-    var Y = YUI().use("attribute");
-    ... 
-})();
+<textarea name="code" class="JScript" cols="60" rows="1">
+    YUI().use("attribute", function(Y) {
+
+        // Y.Attribute available
+
+    });
 </textarea>
 
-                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>), with the classes which make up Attribute (e.g. Y.Attribute); which you 
-                can then augment to any custom classes which you need to add Attribute support to.</p>
+                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>) passed back to your callback function, with the classes which make up Attribute (e.g. <code>Y.Attribute</code>); which you 
+                can then augment to any custom classes which you need to add Attribute support to. Any required file dependencies not already on the page will be pulled down automatically by the YUI instance if using the yui seed file.</p>
 
                 <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <code>use</code> method.</p>
 
                 <h3 id="using">Using the <?php echo $component;?></h3>
 
-                <p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
+                <p>This section describes how to use the <?php echo $component;?> in further detail. It contains these subsections:</p>
                 <ul class="topspace">
                     <li><a href="#augment">Augmenting Your Class With Attribute</a></li>
                     <li><a href="#adding">Adding Attributes</a></li>
@@ -97,22 +112,22 @@ include "../inc/header.inc";
 
             <h4 id="augment">Augmenting Your Class With Attribute</h4>
 
-                <p>The Attribute class is designed to be augmented to an existing class (referred to as the 'host' class throughout this document) and adds attribute 
+                <p>The Attribute class is designed to be augmented to an existing class (we'll refer to this class as the 'host' class) and adds attribute 
                 management support to it. For example, assuming you have a class constructor, <code>MyClass</code>, to which you'd like to add attribute support, 
                 you can simply augment your class with Attribute, as shown below:</p>
 
-<textarea name="code" class="JScript" cols="60" rows="1">(function() {
-    var Y = YUI().use("attribute");
+<textarea name="code" class="JScript" cols="60" rows="1">
+YUI().use("attribute", function(Y) {
 
     function MyClass() {
         ...
     }
 
     Y.augment(MyClass, Y.Attribute);
-})();
+});
 </textarea>
 
-                <p>Instances of your class will now have Attribute methods available, which your class can use to add/configure attributes and which users of your
+                <p>Instances of your class will now have Attribute methods available, which your class can use to configure attributes for you class and which users of your
                 class can use to get and set attribute values. See the <a href="../api/Attribute.html">Attribute api documentation</a> for a complete list of 
                 methods which Attribute will add to your class.</p>
 
@@ -148,7 +163,7 @@ MyClass.ATTRIBUTE_CONFIG = {
                but it's a logical place to define it, since we're defining the default set 
                of attributes for this particular class.</p>
 
-               <p>Users of your class, can now pass attribute values into the constructor,
+               <p>Users of your class now have the ability to pass attribute values to the constructor,
                or set values using the <code>set</code> method as shown below:
 
 <textarea name="code" class="JScript" cols="60" rows="1">// Set attrA during instantiation
@@ -183,20 +198,23 @@ o.set("attrB", "Hello World!");
 							<td><code>get</code></td>
 							<td>Function</td>
 							<td>
-                                Custom 'get' handler, which is invoked when the user calls Attribute's get method. It can
-                                be used to manipulate the stored value returned to the user. The function will be passed 
-                                the currently stored value of the attribute as the only argument. If configured, the value 
-                                returned by this function, will be the value returned to the user.
+                                <p>Custom 'get' handler, which is invoked when the user calls Attribute's <code>get</code> method. It can
+                                be used to manipulate the stored value returned to the user.</p>
+
+                                <p>The function will be passed the currently stored value of the attribute as the only argument. 
+                                If configured, the value returned by this function, will be the value returned to the user.</p>
                             </td>
 						</tr>
 						<tr>
 							<td><code>set</code></td>
 							<td>Function</td>
 							<td>
-                                Custom 'set' handler, which is invoked when the user calls Attribute's set method. It can
-                                be used to manipulate the value which is stored for the attribute. The function will be passed 
-                                the value which the user passed to the set method, as the only argument. If configured, the value 
-                                returned by this function, will be the value stored as the attribute value.
+                                <p>Custom 'set' handler, which is invoked when the user calls Attribute's <code>set</code> method. It can
+                                be used to manipulate the value which is stored for the attribute.</p>
+
+                                <p>The function will be passed the value which the user passed to the set method, as the only 
+                                argument. If configured, the value returned by this function, will be the value stored as the 
+                                attribute value.</p> 
 
                                 <p>get and set can be used to normalize values on input/output for the user while storing the 
                                 value in a format most effective for internal operation.</p>
@@ -206,10 +224,11 @@ o.set("attrB", "Hello World!");
 							<td><code>validator</code></td>
 							<td>Function</td>
 							<td>
-                                Validation function, which if defined, is called after the custom 'set' handler, but before the attribute value is 
+                                <p>Validation function, which if defined, is called after the custom 'set' handler, but before the attribute value is 
                                 stored. The validation function is passed the value which the user is trying to set (after any modification by the 
-                                'set' handler. If the function returns <code>false</code> the attribute's stored value is not updated. If it returns
-                                true, the attribute's stored value is updated.
+                                'set' handler).</p>
+                                <p>If the function returns <code>false</code> the attribute's stored value is not updated. If it returns
+                                <code>true</code>, the attribute's stored value is updated.</p>
                             </td>
 						</tr>
 						<tr>
@@ -225,7 +244,7 @@ o.set("attrB", "Hello World!");
 							<td>boolean</td>
 							<td>
                                 Configures the attribute to be write-once. Users will only be able to set the value of the attribute using
-                                Attribute's set method once. Once a value has been set for the attribute, calling set will not change it's value.
+                                Attribute's <code>set</code> method once. Once a value has been set for the attribute, calling <code>set</code> will not change it's value.
                             </td>
                         </tr>
                         <tr>
@@ -240,17 +259,17 @@ o.set("attrB", "Hello World!");
                              <dl>
                                 <dt>Attribute.CLONE.DEEP</dt>
                                 <dd>Will result in a deep cloned value being returned
-                                (using YUI's clone method). The entire object will be protected, but can 
+                                (created using YUI's clone method). The entire object will be protected, but can 
                                 be expensive for complex objects.</dd>
 
                                 <dt>Attribute.CLONE.SHALLOW</dt>
-                                <dd>Will result in a shallow cloned value being returned (using YUI's merge method). Only top level
+                                <dd>Will result in a shallow cloned value being returned (created using YUI's merge method). Only top level
                                 properties of the object will be protected.</dd>
 
                                 <dt>Attribute.CLONE.IMMUTABLE</dt>
                                 <dd>Will result in a deep cloned value being returned when using the get method. 
-                                Additionally users will not be able to set sub values of the attribute using set's sub-attribute 
-                                notation (obj.set("x.y.z, 5)). However the value of the attribute can be changed, making it different from a readOnly 
+                                Additionally users will not be able to set properties within the attribute's value using <code>set's</code> sub-attribute 
+                                notation (<code>obj.set("x.y.z", 5)</code>). However the value of the attribute can be changed, making it different from a readOnly 
                                 attribute.</dd>
 
                                 <dt>Attribute.CLONE.NONE</dt>
@@ -365,11 +384,11 @@ o.set("attrB", "Hello World!");
                 <h6>After</h6>
 
                 <p>Listeners registered using the <code>after</code> method, are notified <strong>after</strong> 
-                the stored state of the attribute has been updated. As with "on" listeners, the subscribed Function 
+                the stored state of the attribute has been updated. As with "on" listeners, the subscribed function 
                 receives an <code>Event</code> object as the first parameter.</p>
 
                 <p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
-                for example, by one of the "on" listeners calling <code>preventDefault</code> on the event object</p>
+                for example, due to one of the "on" listeners calling <code>preventDefault</code> on the event object</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">o.after("enabledChange", function(event) {
 
@@ -397,7 +416,7 @@ o.set("attrB", "Hello World!");
                     <dt>subAttrName</dt>
                     <dd>Attribute also allows you to set individual properties of attributes having values which are objects through the 
                     <code>set</code> method (e.g. <code>o.set("X.a.b", 5)</code>, discussed below). This event property will contain the complete dot notation path for the object property which was changed
-                    <p>For example, during <code>o.set("X.a.b", 5);</code>, <code>event.subAttrName</code> will be "X.a.b", the path of the property modified, and <code>event.attrName</code> will be "X", the attribute name.</dd>
+                    <p>For example, during <code>o.set("X.a.b", 5);</code>, <code>event.subAttrName</code> will be <code>"X.a.b"</code>, the path of the property which was modified, and <code>event.attrName</code> will be <code>"X"</code>, the attribute name.</dd>
                     <dt>preventDefault()<dt>
                     <dd>This method can be called in an "on" listener function to prevent the attribute's value from being updated (the default behavior). Calling this method in an "after" listener has no impact, since the default behavior has already been invoked.</dd>
                     <dt>stopImmediatePropagation()</dt>
@@ -439,10 +458,9 @@ o.set("strings.messages.intro", "Welcome");
 </textarea>
 
                 <p>Setting sub attribute values, will fire an attribute change event for the 
-                main attribute ("stringsChange" in the above example), however the event object passed
+                main attribute (<code>"stringsChange"</code> in the above example), however the event object passed
                 to the listeners with have a "subAttrName" property set to reflect the full path to the 
-                attribute set (e.g. event.subAttrName will be "strings.ui.accept_label" for the first 
-                of the above examples).</p>
+                attribute set (e.g. <code>event.subAttrName</code> will be <code>"strings.ui.accept_label"</code> for the set call on line 2 in the code snippet above).</p>
 
                 <p>You can also retrieve sub attribute values using the same dot notation syntax</p>
 
@@ -451,8 +469,8 @@ var lbl = o.get("strings.ui.accept_label");
 </textarea>
 
                 <p>It should be noted that get, set and validator attribute configuration functions are 
-                only defined for the top level attribute ("string" in this case) and will get invoked 
-                when getting/setting sub attribute values</p>
+                only defined for the top level attribute ("string" in this case) and will be invoked 
+                when getting/setting sub attribute values.</p>
 
                 <?php include "../inc/support.inc"; ?>
 
