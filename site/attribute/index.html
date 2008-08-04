@@ -24,80 +24,72 @@ include "../inc/header.inc";
                     read-only or write-once. Attributes can also be configured to protect their stored values, using a deep or 
                     shallow clone when returning values through <code>get</code>.</p>
 
-					<div class="yui-g">
-						<div class="yui-u first">
-							<div id="jumps">
-								<h4>On This Page</h4>
-								<ul>
-									<li><a href="#start">Getting Started</a></li>
-									<li><a href="#using">Using the <?php echo $component;?></a>
-										<ul class="topspace">
-										<li><a href="#augment">Augmenting Your Class With Attribute</a></li>
-										<li><a href="#adding">Adding Attributes</a></li>
+                    <div class="yui-g">
+                        <div class="yui-u first">
+                            <div id="jumps">
+                                <h4>On This Page</h4>
+                                <ul>
+                                    <li><a href="#start">Getting Started</a></li>
+                                    <li><a href="#using">Using the <?php echo $component;?></a>
+                                        <ul class="topspace">
+                                        <li><a href="#augment">Augmenting Your Class With Attribute</a></li>
+                                        <li><a href="#adding">Adding Attributes</a></li>
                                         <li><a href="#configuration">Attribute Configuration Properties</a></li>
-										<li><a href="#events">Attribute Change Events</a></li>
-										<li><a href="#subattrs">Getting/Setting Sub Attribute Values</a></li>
-										</ul></li>
-									<li><a href="#support">Support &amp; Community</a></li>
-									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
-								</ul>
-							</div>
-						</div>
-						<div class="yui-u">
-							<?php
-							include('../inc/quicklinks.inc');
-							?>
-						</div>
-					</div>
-					<div class="clear"></div>
-				</div><!-- /promo -->
+                                        <li><a href="#events">Attribute Change Events</a></li>
+                                        <li><a href="#subattrs">Getting/Setting Sub Attribute Values</a></li>
+                                        </ul></li>
+                                    <li><a href="#support">Support &amp; Community</a></li>
+                                    <li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="yui-u">
+                            <?php
+                            include('../inc/quicklinks.inc');
+                            ?>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div><!-- /promo -->
 
-				<h3 id="start">Getting Started</h3>
+                <h3 id="start">Getting Started</h3>
 
-				<h4 id="dependencies">Include Dependencies</h4>
+                <h4 id="dependencies">Include Dependencies</h4>
 
-				<p>To use the <?php echo $component;?>, the following source files need to be included in your web page:</p>
+               <p>To avoid having to manually include Attribute and all it's dependent files, you can simply include the YUI seed file on your page: 
+               
+                <textarea name="code" class="HTML" cols="60" rows="1">
+                &lt;!-- YUI Seed --&gt;
+                &lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
+                </textarea>
+                
+                <p>It will automatically pull down Attribute's source files, along with any dependent files missing from the page, when the <code>attribute</code> module is used in your code. 
+                This helps you avoid having to manually manage the list of files which need to be included on your page, and also allows you to load files only when they are required.</p>
 
-<textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- Dependencies --&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-base-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/oop/oop-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/event/event-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/dom/dom-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/node/node-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-
-&lt;!-- Source file --&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/attribute/attribute-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-</textarea>
-
-                <p>However, instead of manually including the files, you can simple include the YUI seed file, which includes YUI Loader, and it will automatically
-                pull down the required files when the <code>attribute</code> module is used:</p>
-
-<textarea name="code" class="HTML" cols="60" rows="1">&lt;!-- YUI with Loader --&gt;
-&lt;script src=&quot;http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui-min.js&quot; type="text/javascript"&gt;&lt;/script&gt;
-</textarea>
+                <p>If you do want to include file dependencies manually on your page, the YUI Configurator, discussed below, can be used to determine the list of files you need include to support Attribute.</p>
 
                 <?php
-                include "../inc/include-notice.inc";
+                    include "../inc/include-notice.inc";
                 ?>
 
                 <h4 id="yui">The YUI Instance</h4>
 
-                <p>Once you have the source files for Attribute on your page, you can create a new YUI instance, 
-                and populate it with the modules you need. In the case of Attribute, you only need to include the "attribute" 
-                module as shown below, using YUI's <code>use</code> method:</p>
+                <p>Once you have the YUI seed file on your page, you can create a new YUI instance for your application to use, and populate it 
+                with the modules you need. In the case of Attribute, you only need to request the "attribute" module using YUI's <code>use</code> method, 
+                passing in a callback function which will be invoked when all the file dependencies have been downloaded:</p>
 
-<textarea name="code" class="JScript" cols="60" rows="1">
-    YUI().use("attribute", function(Y) {
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                    YUI().use("attribute", function(Y) {
 
-        // Y.Attribute available
+                        // Y.Attribute available, and ready for use.
 
-    });
-</textarea>
+                    });
+                </textarea>
 
-                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>) passed back to your callback function, with the classes 
-                which make up Attribute (e.g. <code>Y.Attribute</code>); which you can then augment to any custom classes which 
-                you need to add Attribute support to. Any required file dependencies not already on the page will be pulled down automatically 
-                by the YUI instance if using the yui seed file (<code>yui-min.js</code>).</p>
+                <p>The call to <code>use</code> will populate the local YUI instance (<code>Y</code>) passed back to your callback function, with the 
+                classes which make up the "attribute" module (e.g. <code>Y.Attribute</code>) and any modules which the "attribute" module requires.
+                Any required file dependencies not already on the page will be pulled down automatically by the YUI instance if you're using the yui seed 
+                file (<code>yui-min.js</code>).</p>
 
                 <p>See the <a href="../yui/index.html">YUI Global</a> documentation for more on creating instances of YUI, and the <code>use</code> method.</p>
 
@@ -184,33 +176,33 @@ o.set("attrB", "Hello World!");
                 <table>
                     <caption>Attribute Configuration Properties</caption>
                     <thead>
-						<tr>
-							<th>Property Name</th>
-							<th>Type</th>
-							<th>Description</th>
-						</tr>
-					</tbody>
-					<tbody>
-						<tr>
-							<td><code>value</code></td>
-							<td>Any</td>
-							<td>The default value for this attribute</td>
-						</tr>
-						<tr>
-							<td><code>get</code></td>
-							<td>Function</td>
-							<td>
+                        <tr>
+                            <th>Property Name</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td><code>value</code></td>
+                            <td>Any</td>
+                            <td>The default value for this attribute</td>
+                        </tr>
+                        <tr>
+                            <td><code>get</code></td>
+                            <td>Function</td>
+                            <td>
                                 <p>Custom 'get' handler, which is invoked when the user calls Attribute's <code>get</code> method. It can
                                 be used to manipulate the stored value returned to the user.</p>
 
                                 <p>The function will be passed the currently stored value of the attribute as the only argument. 
                                 If configured, the value returned by this function, will be the value returned to the user.</p>
                             </td>
-						</tr>
-						<tr>
-							<td><code>set</code></td>
-							<td>Function</td>
-							<td>
+                        </tr>
+                        <tr>
+                            <td><code>set</code></td>
+                            <td>Function</td>
+                            <td>
                                 <p>Custom 'set' handler, which is invoked when the user calls Attribute's <code>set</code> method. It can
                                 be used to manipulate the value which is stored for the attribute.</p>
 
@@ -221,30 +213,30 @@ o.set("attrB", "Hello World!");
                                 <p>get and set can be used to normalize values on input/output for the user while storing the 
                                 value in a format most effective for internal operation.</p>
                             </td>
-						</tr>
-						<tr>
-							<td><code>validator</code></td>
-							<td>Function</td>
-							<td>
+                        </tr>
+                        <tr>
+                            <td><code>validator</code></td>
+                            <td>Function</td>
+                            <td>
                                 <p>Validation function, which if defined, is called after the custom 'set' handler, but before the attribute value is 
                                 stored. The validation function is passed the value which the user is trying to set (after any modification by the 
                                 'set' handler).</p>
                                 <p>If the function returns <code>false</code> the attribute's stored value is not updated. If it returns
                                 <code>true</code>, the attribute's stored value is updated.</p>
                             </td>
-						</tr>
-						<tr>
-							<td><code>readOnly</code></td>
-							<td>boolean</td>
-							<td>
+                        </tr>
+                        <tr>
+                            <td><code>readOnly</code></td>
+                            <td>boolean</td>
+                            <td>
                                 Configures the attribute to be read-only. Users will not be able to set the value of the attribute using
                                 Attribute's public API.
                             </td>
-						</tr>
-						<tr>
-							<td><code>writeOnce</code></td>
-							<td>boolean</td>
-							<td>
+                        </tr>
+                        <tr>
+                            <td><code>writeOnce</code></td>
+                            <td>boolean</td>
+                            <td>
                                 Configures the attribute to be write-once. Users will only be able to set the value of the attribute using
                                 Attribute's <code>set</code> method once. Once a value has been set for the attribute, calling <code>set</code> will not change it's value.
                             </td>
@@ -476,10 +468,10 @@ var lbl = o.get("strings.ui.accept_label");
 
                 <?php include "../inc/support.inc"; ?>
 
-		</div>
+        </div>
 
         <div class="yui-u sidebar">
-        	<div id="examples">
+            <div id="examples">
                 <?php include("../inc/examplesNav/".$section.".inc"); ?>
             </div>
             <div id="delicious" class="mod box4">
