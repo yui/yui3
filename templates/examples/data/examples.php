@@ -7,6 +7,7 @@
    include($dataroot."/anim/animation.php");
    include($dataroot."/attribute/attribute.php");
    include($dataroot."/dd/dd.php");
+   include($dataroot."/get/get.php");
    include($dataroot."/cssfonts/cssfonts.php");
    #include($dataroot."/cssbase/cssbase.php");
    #include($dataroot."/cssgrids/cssgrids.php");
