@@ -86,4 +86,4 @@ if ($prepend) { /*there is additional css or header information for this page --
 	<div id="pagetitle"><h1>YUI 3: <?php echo $titlebar ?></h1></div>
 </div>
 <div id="bd">
-<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/3">YUI 3.x</a> site. Looking for the <a href="/">YUI 2.x</a> site?</p></div>
+<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/yui/3">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui/">YUI 2.x</a> site?</p></div>

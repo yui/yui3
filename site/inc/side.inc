@@ -58,7 +58,7 @@ $nav[]=array('gbs','/yui/articles/gbs/','Graded Browser Support', 'Yahoo!\'s phi
 ## $nav[]=array('customwidgets','http://yuiblog.com/blog/2008/06/24/buildingwidgets','Building Custom Widgets', 'Building your own custom widgets using the YUI infrastructure and tools.');
 $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
 $nav[]=array('hosting','/yui/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
-$nav[]=array('security','/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');
+$nav[]=array('security','/yui/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');
 $nav[]=array('roadmap','/yui/articles/roadmap/','YUI Roadmap', 'Learn about plans for YUI\'s upcoming releases');
 
 
