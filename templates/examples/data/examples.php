@@ -4,7 +4,7 @@
    
    // include($dataroot."/sample/sample.php");
 
-   include($dataroot."/animation/animation.php");
+   include($dataroot."/anim/animation.php");
    include($dataroot."/attribute/attribute.php");
    include($dataroot."/dd/dd.php");
    include($dataroot."/cssfonts/cssfonts.php");
