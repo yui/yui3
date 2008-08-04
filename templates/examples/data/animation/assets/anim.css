@@ -27,9 +27,8 @@ div#demo .yui-scroll {
     overflow:hidden;
 }
 
-div#demo .yui-bd p {
-    margin:0.3em 0;
-    width:20em; /* keep text from reflowing during animation */
+div#demo div.yui-bd p {
+    margin:0.3em 20px 0 0;
 }
 
 div#demo .yui-bd p em {
@@ -45,16 +44,11 @@ div#demo .yui-hd {
 }
 
 div#demo .yui-hd h4 {
+    color:#fff;
     margin:0;
 }
 
-div#demo .yui-hd,
-div#demo .yui-hd h4,
-div#demo .yui-hd a {
-    color:#fff;
-}
-
-div#demo .yui-hd a { /* module control (close remove, etc) */
+#demo .yui-hd a { /* module control (close remove, etc) */
     color:#abceff;
     cursor:pointer;
     cursor:hand;
@@ -66,25 +60,89 @@ div#demo .yui-hd a { /* module control (close remove, etc) */
     text-decoration:none;
 }
 
-#demo .yui-hd .yui-scrollup {
-    right: 2em;
+#demo .yui-hd .yui-scroll-controls {
+    background:#dfdfdf;
+    border-left:1px solid #7a97bb;
+    height:10em;
+    width:16px;
+    position:absolute;
+    right:0;
+    bottom:-10.1em;
 }
 
-div#demo .yui-hd a em {
+div#demo .yui-remove em {
     display:-moz-inline-stack;
     display:inline-block;
+    text-align:center;
+}
+
+#demo a.yui-remove em {
     border:1px solid #abceff;
     padding:0 0 0.1em;
-    text-align:center;
     width:1em;
 }
 
-div#demo .yui-hd a:hover {
+div#demo a.yui-remove:hover {
     color:#fff;
 }
 
-div#demo .yui-hd a:hover em {
+div#demo a.yui-remove:hover em {
     border-color:#fff;
+}
+
+#demo a.yui-toggle {
+    right:10px;
+    top:7px;
+}
+
+#demo.yui-closed .yui-toggle {
+    top:3px;
+    right:7px;
+}
+
+#demo .yui-scroll-controls em,
+#demo .yui-toggle em {
+    font:0/0 arial;
+    border:6px solid #406ed9; 
+    border-color:#abceff #406ed9 #406ed9;
+}
+
+#demo.yui-closed .yui-toggle em {
+    border-color:#406ed9 #406ed9 #406ed9 #abceff;
+}
+
+#demo a.yui-toggle:hover em {
+    border-color:#fff #406ed9 #406ed9;
+}
+
+#demo .yui-scroll-controls a {
+    right:-1px;
+    top:-6px;
+}
+
+#demo .yui-scroll-controls a.yui-scrolldown {
+    top:auto;
+    bottom:0;
+}
+
+#demo a.yui-scrolldown em {
+    border-color:#406ed9 #dfdfdf #dfdfdf;
+}
+
+#demo a.yui-scrollup em {
+    border-color:#dfdfdf #dfdfdf #406ed9;
+}
+
+div#demo a.yui-scrollup:hover em {
+    border-bottom-color:#ffa928;
+}
+
+div#demo a.yui-scrolldown:hover em {
+    border-top-color:#ffa928;
+}
+
+div#demo.yui-closed a.yui-toggle:hover em {
+    border-color:#406ed9 #406ed9 #406ed9 #fff;
 }
 
 div#demo .yui-bd {
