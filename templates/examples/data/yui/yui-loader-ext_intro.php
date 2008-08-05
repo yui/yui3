@@ -8,6 +8,9 @@ how to define external modules that can be loaded along side of YUI.
 <li>Use <code>node</code> so that we can bind an event listener to a button.  YUI will dynamically fetch <code>node</code> and its
 dependencies.  By default, these will be fetched from the Yahoo! CDN, and combined into a single file.</li>
 <li>a click listener is added to a button.</li>
-<li>When this button is clicked, YUI will dynamically fetch 3.x drag and drop and 2.x calendar files.</li>
+<li>When this button is clicked, YUI will dynamically fetch 3.x drag and drop and 2.x calendar files.  
+The CSS file will be fetched first; this helps prevent a flash of unstyled content when the
+calendar control is loaded.  This file is inserted above a style block which contains our custom calendar styles (via a YUI config option)
+so that styles are applied in the correct order.</li>
 <li>A calendar instance is created, and it is made draggable.</li>
 </ol>
