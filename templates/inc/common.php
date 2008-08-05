@@ -40,6 +40,7 @@ function getExampleResources() {
     global $buildpath;
     global $yuiCurrentVersion;
     global $buildDirectory;
+    global $logIncludes;
 
     if (is_file($docroot."inc/exampleResources.php")) {
         ob_start();
