@@ -1,14 +1,11 @@
 <?php
 
-/* Test Module: */
 $modules["cssbase"] = array(
-		"name" => "CSS Fonts",
+		"name" => "CSS Base",
 		"type" => "css",
 		"description" => "Building Pages with YUI CSS Base",
 		"cheatsheet" => false 
 );	
-
-/* Sample Utility Examples */
 
 $examples["cssbase-basic"] = array(
 	name => "CSS Base applied to a page",

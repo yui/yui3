@@ -16,7 +16,8 @@ include "../inc/header.inc";
 			
 				<div id="promo" class="component">
 					
-					<p><?php echo $component;?> is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">Reset</a>, <a href="../cssfonts/">Fonts</a>, and <a href="../cssgrids/">Grids</a>). While Reset removes inconsistent styling of HTML elements, Base applies a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.
+					<p><?php echo $component;?> is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">CSS Reset</a>, <a href="../cssfonts/">CSS Fonts</a>, and <a href="../cssgrids/">CSS Grids</a>). CSS Base applies a style foundation for HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.</p>
+					<p>CSS Base may also be useful as a template for your own base file, or a snippets library for styling HTML elements.</p>
 							
 					<div class="yui-g">
 						<div class="yui-u first">
@@ -50,7 +51,7 @@ include "../inc/header.inc";
 
 				<h4 id="dependencies">Include Dependencies</h4>
 				
-				<p>To use <?php echo $component;?>, include the following source file in your web page with the link element:</p>
+				<p>To use <?php echo $component;?>, include the following source file in your web page:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssbase/base-min.css">
@@ -58,7 +59,7 @@ include "../inc/header.inc";
 				
 				<h4 id="context">Global vs. Contextual</h4>
 				
-				<p>YUI's CSS resources apply rules to HTML elements directly. If you wish to only apply the rules within specific contexts, use the <code>-context.css</code> version. The contextual version selects HTML elements only when they descend from the <code>.yui-reset</code> classname.</p>
+				<p>YUI's CSS resources use <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>. Alternate versions of the files use descendent selectors exclusively. Alternate versions of the filesIf you wish to only apply the rules within specific contexts, use the <code>*-context.css</code> version. The contextual version of CSS Base (base-context-min.css) selects HTML elements only when they descend from the <code>yui-cssbase</code> class name.</p>
 				
 				<p>Here is how to include the contextual version of <?php echo $component; ?>:</p> 
 				
@@ -78,88 +79,85 @@ include "../inc/header.inc";
 			
 					<h3 id="code">See the Code</h3>
 
-					<p>Here is what's in Base. As you can see in the code below, or in this example showing <a href="../examples/base/base-simple.html">HTML elements after Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
+					<p>Here is what's in <?php echo $component;?>. As you can see in the code below, or in this example showing <a href="../examples/base/base-simple.html">HTML elements after CSS Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
 
-			<textarea name="code" class="CSS" cols="60" rows="10">
-			/* base.css, part of YUI's CSS Foundation */
-			h1 {
-				/*18px via YUI Fonts CSS foundation*/
-				font-size:138.5%;  
-			}
-			h2 {
-				/*16px via YUI Fonts CSS foundation*/
-				font-size:123.1%; 
-			}
-			h3 {
-				/*14px via YUI Fonts CSS foundation*/
-				font-size:108%;  
-			}
-			h1,h2,h3 {
-				/* top & bottom margin based on font size */
-				margin:1em 0;
-			}
-			h1,h2,h3,h4,h5,h6,strong {
-				/*bringing boldness back to headers and the strong element*/
-				font-weight:bold; 
-			}
-			abbr,acronym {
-				/*indicating to users that more info is available */
-				border-bottom:1px dotted #000;
-				cursor:help;
-			} 
-			em {
-				/*bringing italics back to the em element*/
-				font-style:italic;
-			}
-			blockquote,ul,ol,dl {
-				/*giving blockquotes and lists room to breath*/
-				margin:1em;
-			}
-			ol,ul,dl {
-				/*bringing lists on to the page with breathing room */
-				margin-left:2em;
-			}
-			ol li {
-				/*giving OL's LIs generated numbers*/
-				list-style: decimal outside;	
-			}
-			ul li {
-				/*giving UL's LIs generated disc markers*/
-				list-style: disc outside;
-			}
-			dl dd {
-				/*giving UL's LIs generated numbers*/
-				margin-left:1em;
-			}
-			th,td {
-				/*borders and padding to make the table readable*/
-				border:1px solid #000;
-				padding:.5em;
-			}
-			th {
-				/*distinguishing table headers from data cells*/
-				font-weight:bold;
-				text-align:center;
-			}
-			caption {
-				/*coordinated marking to match cell's padding*/
-				margin-bottom:.5em;
-				/*centered so it doesn't blend in to other content*/
-				text-align:center;
-			}
-			p,fieldset,table {
-				/*so things don't run into each other*/
-				margin-bottom:1em;
-			}
-			</textarea>
-				
-				
+				<textarea name="code" class="CSS" cols="60" rows="10">
+				/* base.css, part of YUI's CSS Foundation */
+				h1 {
+					/*18px via YUI Fonts CSS foundation*/
+					font-size:138.5%;  
+				}
+				h2 {
+					/*16px via YUI Fonts CSS foundation*/
+					font-size:123.1%; 
+				}
+				h3 {
+					/*14px via YUI Fonts CSS foundation*/
+					font-size:108%;  
+				}
+				h1,h2,h3 {
+					/* top & bottom margin based on font size */
+					margin:1em 0;
+				}
+				h1,h2,h3,h4,h5,h6,strong {
+					/*bringing boldness back to headers and the strong element*/
+					font-weight:bold; 
+				}
+				abbr,acronym {
+					/*indicating to users that more info is available */
+					border-bottom:1px dotted #000;
+					cursor:help;
+				} 
+				em {
+					/*bringing italics back to the em element*/
+					font-style:italic;
+				}
+				blockquote,ul,ol,dl {
+					/*giving blockquotes and lists room to breath*/
+					margin:1em;
+				}
+				ol,ul,dl {
+					/*bringing lists on to the page with breathing room */
+					margin-left:2em;
+				}
+				ol li {
+					/*giving OL's LIs generated numbers*/
+					list-style: decimal outside;	
+				}
+				ul li {
+					/*giving UL's LIs generated disc markers*/
+					list-style: disc outside;
+				}
+				dl dd {
+					/*giving UL's LIs generated numbers*/
+					margin-left:1em;
+				}
+				th,td {
+					/*borders and padding to make the table readable*/
+					border:1px solid #000;
+					padding:.5em;
+				}
+				th {
+					/*distinguishing table headers from data cells*/
+					font-weight:bold;
+					text-align:center;
+				}
+				caption {
+					/*coordinated marking to match cell's padding*/
+					margin-bottom:.5em;
+					/*centered so it doesn't blend in to other content*/
+					text-align:center;
+				}
+				p,fieldset,table {
+					/*so things don't run into each other*/
+					margin-bottom:1em;
+				}
+				</textarea>
+								
 				<h3 id="start">Using <?php echo $component; ?></h3>
 
-				<p><?php echo $component; ?> is easy to use. By simply including the file it provides removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
+				<p><?php echo $component; ?> is easy to use. Simply including the file provides consistent styling of HTML elements. If you want </p>
 
-			
-				
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
 				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-reset</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>

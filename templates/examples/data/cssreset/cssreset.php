@@ -9,9 +9,9 @@ $modules["cssreset"] = array(
 );	
 
 $examples["cssreset-basic"] = array(
-	name => "CSS Reset applied to HTML element",
+	name => "Global (Page-Level) Example",
 	modules => array("cssreset"),
-	description => "CSS Reset Basic Example",
+	description => "CSS Reset applied to a full page of HTML elements",
 	sequence => array(1),
 	newWindow => "require",
 	requires => array("cssreset"),
@@ -20,9 +20,9 @@ $examples["cssreset-basic"] = array(
 );
 
 $examples["cssreset-context"] = array(
-	name => "CSS Reset applied contextually",
+	name => "Contextual Example",
 	modules => array("cssreset"),
-	description => "CSS Reset Contextual Example",
+	description => "CSS Reset applied contextually to a portion of a page",
 	sequence => array(2),
 	newWindow => "require",
 	requires => array("cssreset-context"),
