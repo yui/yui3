@@ -1,1 +1,1 @@
-<p>A page of HTML elements with CSS Fonts applied.</p>
+<p>This is a page of HTML elements with CSS Reset and CSS Fonts applied.</p>

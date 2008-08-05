@@ -3,14 +3,14 @@
 $modules["cssbase"] = array(
 		"name" => "CSS Base",
 		"type" => "css",
-		"description" => "Building Pages with YUI CSS Base",
+		"description" => "CSS Base applies a consistent style foundation for common HTML elements across A-grade browsers.",
 		"cheatsheet" => false 
 );	
 
 $examples["cssbase-basic"] = array(
-	name => "CSS Base applied to a page",
+	name => "Global (Page-Level) Example",
 	modules => array("cssbase"),
-	description => "CSS Base Basic Example",
+	description => "When CSS Base is included in a page it provides consistent and basic cross-browser styling for HTML elements.",
 	sequence => array(1),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts", "cssbase"),
@@ -19,14 +19,14 @@ $examples["cssbase-basic"] = array(
 );
 
 $examples["cssbase-context"] = array(
-	name => "CSS Base applied contextually",
+	name => "Contextual Example",
 	modules => array("cssbase"),
-	description => "CSS Base Contextual Example",
+	description => "CSS Base applied to a portion of a page based on the location of a class value.",
 	sequence => array(2),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts", "cssbase"),
 	highlightSyntax => true,
-    bodyclass => "yui-cssreset yui-cssfonts yui-cssbase"
+    bodyclass => "yui-cssbase"
 );
 
 ?>

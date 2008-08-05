@@ -8,9 +8,8 @@ $modules["cssfonts"] = array(
 );	
 
 $examples["cssfonts-basic"] = array(
-    /* Example Name */
 	name => "Global (Page-Level) Example", 
-	modules => array("cssreset", "cssfonts"),
+	modules => array("cssfonts"),
 	description => "When CSS Fonts is included in a page, it applies a baseline font treatment to all HTML elements. This baseline is Arial at the equivalent of 13px size and 16px line-height.",
 	sequence => array(1), 
 	newWindow => "require", 
@@ -21,8 +20,8 @@ $examples["cssfonts-basic"] = array(
 
 $examples["cssfonts-context"] = array(
 	name => "Contextual Example",
-	modules => array("cssreset", "cssfonts"),
-	description => "",
+	modules => array("cssfonts"),
+	description => "Use the alternate contextual version of YUI Fonts to have precise control over which regions of the page are targeted.",
 	sequence => array(2),
 	newWindow => "require",
 	requires => array("cssreset-context", "cssfonts-context"),
@@ -32,8 +31,8 @@ $examples["cssfonts-context"] = array(
 
 $examples["cssfonts-size"] = array(
 	name => "Setting Font Size",
-	modules => array("cssfonts", "cssreset"),
-	description => "When using YUI Fonts, when you want a font-size other than the baseline, define the new size with percentages.",
+	modules => array("cssfonts"),
+	description => "Define all non-baseline sizes in percentages when using YUI Fonts.",
 	sequence => array(3),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts"),
@@ -43,7 +42,7 @@ $examples["cssfonts-size"] = array(
 
 $examples["cssfonts-family"] = array(
 	name => "Setting Font Family",
-	modules => array("cssfonts", "cssreset"),
+	modules => array("cssfonts"),
 	description => "When using YUI Fonts, set font-family as you would normally.",
 	sequence => array(4),
 	newWindow => "require",

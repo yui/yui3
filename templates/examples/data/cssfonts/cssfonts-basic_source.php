@@ -14,8 +14,6 @@
 	<h5>This is a H5 element.</h5>
 	<h6>This is a H6 element.</h6>
 
-	<p>This is a P element.</p>
-
 	<ul>
 		<li>This is a LI in a UL</li>
 	</ul>

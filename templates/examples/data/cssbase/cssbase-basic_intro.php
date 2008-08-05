@@ -1,1 +1,1 @@
-Sample One Intro
+<p>CSS Base applies a consistent style foundation for common HTML elements. This example shows what that looks like.</p>
