@@ -69,7 +69,7 @@ YUI().use("attribute", function(Y) {
     });
 </textarea>
 
-<p>As seen in the above code, the event type for attribute change events is created by concatenating the attribute name with <code>"Change"</code>, and this event type is used for both the <code>on</code> and <code>after</code> subscription methods. Whenever an attribute's value is changed through Attribute's <code>set</code> method, both "on" and "after" subscribers are notified.</p>
+<p>As seen in the above code, the event type for attribute change events is created by concatenating the attribute name with <code>"Change"</code> (e.g. <code>"fooChange"</code>), and this event type is used for both the <code>on</code> and <code>after</code> subscription methods. Whenever an attribute's value is changed through Attribute's <code>set</code> method, both "on" and "after" subscribers are notified.</p>
 
 <h4>On vs. After</h4>
 
@@ -93,7 +93,7 @@ YUI().use("attribute", function(Y) {
 
 <h4>Event Facade</h4>
 
-<p>The event object (an instance of <a href="../api/Event.Facade.html">Event.Facade</a>) passed to attribute change event subscribers, has the following interesting properties and methods:</p>
+<p>The event object (an instance of <a href="../api/Event.Facade.html">Event.Facade</a>) passed to attribute change event subscribers, has the following interesting properties and methods related to attribute manangement:</p>
 
 <dl>
     <dt>newVal</dt>

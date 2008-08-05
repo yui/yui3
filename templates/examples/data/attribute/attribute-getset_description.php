@@ -2,9 +2,9 @@
 
 <p>Attribute lets you define get and set functions for each attribute. These functions are invoked when the user calls Attribute's <code>get</code> and <code>set</code> methods, and provide a way to modify the value returned or the value stored respectively.</p>
 
-<h3>Setting Up The Box Class Attributes</h3>
+<h3>Setting Up Attributes For The Box Class</h3>
 
-<p>In this example, we'll set up a Box class, with width and height attributes. We'll define a <code>set</code> function for these attributes, which appends a default unit suffix ("em") to the value passed to the Attribute <code>set</code> method, if none is provided by the caller:</p>
+<p>In this example, we'll set up a Box class, with <code>width</code> and <code>height</code> attributes. We'll define a <code>set</code> function for these attributes, which appends a default unit suffix ("em") to the value passed to the Attribute <code>set</code> method, if none is provided by the caller:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     function Box(cfg) {
@@ -56,7 +56,7 @@
     }
 </textarea>
 
-<p>As seen above, we also setup <code>validator</code> functions for these attributes which ensure that we only store valid values. </p>
+<p>As seen above, we also setup <code>validator</code> functions for these attributes which ensure that we only store valid values.</p>
 
 <p>A <code>content</code> attribute is also setup, which has a <code>set</code> function which changes all content set using this attribute to upper case.</p>
 
@@ -78,7 +78,7 @@
 
 <h3>Get Configuration</h3>
 
-<p>The example also has an attribute named <code>area</code>. This attribute has a <code>get</code> function defined, which always returns the calculated area of the box. This attribute is different, in that it doesn't actually have a stored value, but simply returns a calculated value, based on other properties of the host.</p>
+<p>The example has an attribute named <code>area</code>. This attribute has a <code>get</code> function defined, which always returns the calculated area of the box. This attribute is different, in that it doesn't actually have a stored value, but simply returns a calculated value, based on other properties of the host.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     ...
@@ -95,9 +95,9 @@
     ...
 </textarea>
 
-<h3>Syncing Up Changes Using Events</h3>
+<h3>Syncing Changes Using Events</h3>
 
-<p>We use attribute change events, to listen for changes in the <code>width, height and content</code> attributes, and update the respective areas of the rendered DOM for the box:</p>
+<p>We use attribute change events, to listen for changes in the <code>width</code>, <code>height</code> and <code>content</code> attributes, and update the respective areas of the rendered DOM for the box:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     Box.prototype._createNode = function() {

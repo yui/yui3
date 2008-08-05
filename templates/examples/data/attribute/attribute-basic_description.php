@@ -23,11 +23,11 @@
 
 <p>The call to <code>YUI()</code> will create and return a new instance of the global YUI object for us to use. However this instance does not yet have all the modules we need for the examples.</p>
 
-<p>To load the modules, we invoke <code>use()</code> and pass it the list of modules we'd like populated on our new YUI instance - in this case, "node" and "attribute". The YUI instance will pull down the source files for "node" and "attribute" if they don't already exist on the page. When the source files are done downloading, the callback function which we pass in as the 3rd argument to <code>use()</code> is invoked, and is passed our custom YUI instance, <code>Y</code>, populated with the classes which make up "node" and "attribute".</p>
+<p>To load the modules, we invoke <code>use()</code> and pass it the list of modules we'd like populated on our new YUI instance - in this case, <code>node</code> and <code>attribute</code>. The YUI instance will pull down the source files for <code>node</code> and <code>attribute</code> if they don't already exist on the page. When the source files are done downloading, the callback function which we pass in as the 3rd argument to <code>use()</code> is invoked, and is passed our custom YUI instance, <code>Y</code>, populated with the classes which make up the <code>node</code> and <code>attribute</code> modules.</p>
 
-<p>This callback function is where we'll write all our example code. By working inside the callback, we don't pollute the global namespace and we're also able to download the files we need on demand, rather than have them be on the page upfront.</p>
+<p>This callback function is where we'll write all our example code. By working inside the callback function, we don't pollute the global namespace and we're also able to download the files we need on demand, rather than have them be on the page upfront.</p>
 
-<p><em>NOTE:</em> The configuration object passed to <code>YUI()</code> when creating the instance, is used to speficy where we want the files downloaded from. The API documentation for the <a href="../api/YUI.html">YUI object</a>, provides more information about the configuration options available.</p>
+<p><em>NOTE:</em> The configuration object passed to <code>YUI()</code> when creating the instance, is used to speficy how (<em>combined, separate, debug, min etc.</em>) we want the files downloaded and from where. The API documentation for the <a href="../api/YUI.html">YUI object</a>, provides more information about the configuration options available.</p>
 
 <h4>Defining Your Custom Class</h4>
 
@@ -43,7 +43,7 @@
 
 <h4>Adding Attributes</h4>
 
-<p>We can now setup any attributes we need for <code>MyClass</code>. We can setup multiple attributes in one call using the using the <code>_initAtts</code> method (a protected method, designed to be used by the augmented class, as opposed to end users of your class). For the basic example we add 3 attributes - <code>foo</code>,<code>bar</code>, and <code>foobar</code>, and provide an initial  <code>value</code> for each. The same object literal we use to provide the value for the attribute, will also be used in the other examples to configure specific types of attributes using properties such as <code>readOnly</code>, <code>writeOnce</code>, <code>validator</code> etc..</p>
+<p>We can now setup any attributes we need for <code>MyClass</code>. We can setup multiple attributes in one call using the using the <code>_initAtts</code> method (a protected method, designed to be used by the augmented class, as opposed to end users of your class). For the basic example we add 3 attributes - <code>foo</code>,<code>bar</code>, and <code>foobar</code>, and provide an initial  <code>value</code> for each. The same object literal we use to provide the value for the attribute will also be used in the other examples to configure specific types of attributes using properties such as <code>readOnly</code>, <code>writeOnce</code>, <code>validator</code> etc..</p>
 
 <p>For convenience (not required), we define the set of attributes which <code>MyClass</code> supports as a static property on our <code>MyClass</code> constructor. This static property is passed to <code>_initAtts</code> to setup the attributes, as part of <code>MyClass's</code> constructor. The complete definition for <code>MyClass</code> is shown below:
 
