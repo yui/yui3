@@ -1,3 +1,0 @@
-<style>
- #cssfonts-size {}
-</style>
