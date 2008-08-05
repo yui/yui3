@@ -6,7 +6,7 @@ echo'
 ';
 if (($section != "datasource")&&($section != "element")) { echo '		<li><a href="/yui/3/examples/'.$section.'/index.html">Examples</a>: '.$component.' in action.</li>
 ';}
-if (($section != "cssfonts") && ($section != "cssreset") && ($section != "cssgrids") && ($section != "cssbase")) { echo '		<li><a href="/yui/docs/module_'.$section.'.html">API Documentation</a>: View the full API documentation for the '.$component.'.</li>
+if (($section != "cssfonts") && ($section != "cssreset") && ($section != "cssgrids") && ($section != "cssbase")) { echo '		<li><a href="/yui/3/api/module_'.$section.'.html">API Documentation</a>: View the full API documentation for the '.$component.'.</li>
 ';}
 echo '
 	<li><a href="/yui/3/download/">Download</a>: '.$component.' as part of the full YUI Library.</li>
