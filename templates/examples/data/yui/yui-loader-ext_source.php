@@ -5,55 +5,7 @@
 
 <script>
 
-// YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
-YUI({
-
-    // hack
-    comboBase: 'http://delightfuture.corp.yahoo.com/combo?',
-
-    root: '',
-
-    // Specifies whether or not to use the YUI combo service for script modules
-    // This is true by default if you have not changed the configuration for 'base'
-    // combine: true,
-
-    // We can specify a node that is the insertion point for all new nodes.  This
-    // is useful for making sure css rules are applied in the correct order.
-    insertBefore: 'styleoverrides',
-
-    // This lets you define one or more external modules that will be added to
-    // the YUI metadata.  You can define dependency relationships between your
-    // modules and also between your modules and YUI modules.  Here we are
-    // defining 2.x calendar components as external modules.  See
-    // <a href="http://developer.yahoo.com/3.x/api/Loader.html#method_addModule">
-    // the API docs</a> for a complete list of module configuration options.
-    modules: {
-        'yui2-yde': {
-            fullpath: "http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"
-        },
-        'yui2-calendar': {
-            fullpath: "http://yui.yahooapis.com/2.5.2/build/calendar/calendar-min.js",
-            requires: ['yui2-yde', 'yui2-calendarcss']
-        },
-        'yui2-calendarcss': {
-            fullpath: "http://yui.yahooapis.com/2.5.2/build/calendar/assets/skins/sam/calendar.css",
-            type: 'css'
-        }
-    },
-
-    // Specifies whether or not optional dependencies should be loaded
-    // loadOptional: true,
-
-    // By default, the minified versions of the files are loaded.  We can specify
-    // 'debug' to load versions with log statements, or 'raw' to load a version
-    // that isn't minified, but has log statements stripped.
-    filter: 'debug',
-
-    // Give up if any single node request takes more than 10 seconds.
-    timeout: 10000
-
-// 3.x node will be dynamically loaded so we can work with DOM elements
-}).use('node', function(Y, result) {
+YUI(<?php echo getYUIConfig("insertBefore: 'styleoverrides', modules: { 'yui2-yde': { fullpath: 'http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js' }, 'yui2-calendar': { fullpath: 'http://yui.yahooapis.com/2.5.2/build/calendar/calendar-min.js', requires: ['yui2-yde', 'yui2-calendarcss'] }, 'yui2-calendarcss': { fullpath: 'http://yui.yahooapis.com/2.5.2/build/calendar/assets/skins/sam/calendar.css', type: 'css' } }");?>).use('node', function(Y, result) {
 
     // The callback supplied to use() will be executed regardless of
     // whether the operation was successful or not.  The second parameter
