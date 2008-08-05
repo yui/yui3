@@ -34,7 +34,7 @@ $nav[]=array('hosting','http://developer.yahoo.com/yui/articles/hosting/','Servi
 $nav[]=array('security','http://developer.yahoo.com/security/','Security Best Practices (external)', 'Best practices for working with web services while protecting user privacy');
 ?>
 
-<div class="yui-b" id="tocWrapper">
+<div class="yui-b toc3" id="tocWrapper">
 <!-- TABLE OF CONTENTS -->
 <div id="toc">
 	
