@@ -80,12 +80,7 @@ if (!result.success) {
 
 <script>
 
-// YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 YUI({
-
-    // Specifies whether or not to use the YUI combo service for script modules
-    // This is true by default if you have not changed the configuration for 'base'
-    // combine: true,
 
     // We can specify a node that is the insertion point for all new nodes.  This
     // is useful for making sure css rules are applied in the correct order.
