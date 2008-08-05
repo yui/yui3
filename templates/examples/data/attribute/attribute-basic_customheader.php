@@ -2,6 +2,7 @@
     #example-out .entry {
         font-family:courier;
         margin-top:2px;
+        padding:2px;
     }
 
     #example-out .header {

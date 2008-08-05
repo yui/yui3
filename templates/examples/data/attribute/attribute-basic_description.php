@@ -41,7 +41,7 @@
     Y.augment(MyClass, Y.Attribute);
 </textarea>
 
-<h3>Adding Attributes To Your Custom Class</h3>
+<h3>Adding Attributes</h3>
 
 <p>We can now setup any attributes we need for <code>MyClass</code>. We can setup multiple attributes in one call using the using the <code>_initAtts</code> method (a protected method, designed to be used by the augmented class, as opposed to end users of your class). For the basic example we add 3 attributes - <code>foo</code>,<code>bar</code>, and <code>foobar</code>, and provide an initial  <code>value</code> for each. The same object literal we use to provide the value for the attribute, will also be used in the other examples to configure specific types of attributes using properties such as <code>readOnly</code>, <code>writeOnce</code>, <code>validator</code> etc..</p>
 
@@ -76,7 +76,7 @@
 
 <p><strong>NOTE:</strong> The <code>_initAtts</code> method, in addition to the default attribute configurarion, also accepts an object literal (associative array) of name/value pairs which can be used to over-ride the default values of the attributes. This is useful for classes which wish to allow the user the set the value of attributes as part of object construction, as shown by the use of the <code>cfg</code> argument above.</p>
 
-<h3>Using MyClass's Attributes</h3>
+<h3>Using Attributes</h3>
 
 <p>Now that we have <code>MyClass</code> defined with a set of attributes it supports, users can get and set attribute values on instances of <code>MyClass</code>:
 
