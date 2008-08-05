@@ -7,10 +7,10 @@ $modules["cssgrids"] = array(
 		"cheatsheet" => false 
 );	
 
-$examples["cssgrids-basic"] = array(
-	name => "Build a simple layout with YUI CSS Grids",
+$examples["cssgrids-width"] = array(
+	name => "Page Width",
 	modules => array("cssgrids"),
-	description => "CSS Grids Basic Example",
+	description => "Choose a preset page width. Choose fluid or fixed widths.",
 	sequence => array(1),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts", "cssgrids"),

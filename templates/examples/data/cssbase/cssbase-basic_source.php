@@ -4,6 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>YUI 3.x: CSS Base Basic Example</title>
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts.css" type="text/css">
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssbase/base.css" type="text/css">
 </head>
 <body>

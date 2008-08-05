@@ -1,1 +1,1 @@
-<p>CSS Base applies a consistent style foundation for common HTML elements. This example shows what that looks like.</p>
+<p>CSS Base applies a consistent style foundation for common HTML elements. This example shows what that looks like when applied on top of CSS Reset and CSS Fonts.</p>

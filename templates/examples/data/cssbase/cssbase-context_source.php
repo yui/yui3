@@ -4,6 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>YUI 3.x: CSS Reset Contextual Example</title>
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts.css" type="text/css">
     <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssbase/base-context.css" type="text/css">
 </head>
 <body>

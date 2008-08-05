@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>YUI 3.x: CSS Fonts Basic Example</title>
-    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset-min.css" type="text/css">
-    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts-min.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssreset/reset.css" type="text/css">
+    <link rel="stylesheet" href="<?php echo $buildDirectory ?>cssfonts/fonts.css" type="text/css">
 </head>
 <body>
 	<h1>This is a H1 element.</h1>
