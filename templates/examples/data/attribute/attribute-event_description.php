@@ -1,13 +1,14 @@
 <h3>Listening For Attribute Change Events</h3>
 
-<p>In this example, we'll show how you can listen for attribute change events, and interact with the event payload.</p>
+<p>In this example, we'll look at how you can setup listeners for attribute change events, and use the event payload which the listeners receive.</p>
 
 <h4>Setting Up A Custom Class With Attribute</h4>
 
-<p>First, we setup the same custom class we created for the basic example with 3 attributes <code>foo, bar and foobar</code>, using the code below:</p>
+<p>We start by setting up the same custom class we created for the <a href="attribute-basic.html">basic example</a> with 3 attributes <code>foo</code>, <code>bar</code> and <code>foobar</code>, using the code below:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
+YUI().use("attribute", function(Y) {
+
     // Setup a custom class with attribute support
     function MyClass(cfg) {
         this._initAtts(MyClass.ATTRIBUTES, cfg);
@@ -29,73 +30,70 @@
     };
 
     Y.augment(MyClass, Y.Attribute);
-</script>
+});
 </textarea>
 
-<h4>Setting Up Event Listeners</h4>
+<h4>Registering Event Listeners</h4>
 
 <p>Once we have an instance of the custom class, we can use the <code>on</code> and <code>after</code> methods provided by Attribute, to listen for changes in the value of each of the attributes:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
     var o1 = new MyClass();
 
     ...
 
-    o1.after("fooChange", function(e) {
+    o1.after("fooChange", function(event) {
         print("after fooChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
 
-    o1.after("barChange", function(e) {
+    o1.after("barChange", function(event) {
         print("after barChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
 
-    o1.on("foobarChange", function(e) {
+    o1.on("foobarChange", function(event) {
 
         // Calling preventDefault, in an "on" listener
         // will prevent the attribute change from occuring
         // and prevent the after listeners from being called
         print("on foobarChange (prevented)", "header");
-        e.preventDefault();
+        event.preventDefault();
     });
 
-    o1.after("foobarChange", function(e) {
+    o1.after("foobarChange", function(event) {
         // This will never get called, because we're
         // calling preventDefault in the "on" listener
         print("after foobarChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
-</script>
 </textarea>
 
-<p>As seen in the above code, the event type for attribute change events, is <code>attribute name + "Change"</code>, and this event type is used for both the <code>on</code> and <code>after</code> subscription methods. Whenever an attribute's value is changed through Attribute's <code>set</code> method, "on" and "after" subscribers are notified.</p>
+<p>As seen in the above code, the event type for attribute change events is created by concatenating the attribute name with <code>"Change"</code>, and this event type is used for both the <code>on</code> and <code>after</code> subscription methods. Whenever an attribute's value is changed through Attribute's <code>set</code> method, both "on" and "after" subscribers are notified.</p>
 
-<h5>On vs. After</h5>
+<h4>On vs. After</h4>
 
-<p><strong>on :</strong> Subscribers to the "on" moment, will be notified <em>before</em> any actual state change has occured. This provides the opportunity to prevent the state change from occuring, using the <code>preventDefault</code> method of the event facade object passed to the subscriber. This means that if you use <code>get</code> to retrieve the value of the attribute in an "on" subscriber, you will recieve the current, unchanged value. However the event facade does provide access to the value which the attribute is being set to, through it's <code>newVal</code> property.</p>
+<p><strong>on :</strong> Subscribers to the "on" moment, will be notified <em>before</em> any actual state change has occured. This provides the opportunity to prevent the state change from occuring, using the <code>preventDefault</code> method of the event facade object passed to the subscriber. If you use <code>get</code> to retrieve the value of the attribute in an "on" subscriber, you will recieve the current, unchanged value. However the event facade provides access to the value which the attribute is being set to, through it's <code>newVal</code> property.</p>
 
-<p><strong>after :</strong> Subscribers to the "after" moment, will be notified <em>after</em> the attribute's state has been updated. This provides the opportunity to update state across your application, in response to a change in the attribute's state.</p>
+<p><strong>after :</strong> Subscribers to the "after" moment, will be notified <em>after</em> the attribute's state has been updated. This provides the opportunity to update state in other parts of your application, in response to a change in the attribute's state.</p>
 
-<p>Based on the definition above, <code>after</code> listeners are not invoked if state change is prevented, for example, by one of the <code>on</code> listeners calling <code>preventDefault</code> on the event object, as is done in the <code>on</code> listener for <code>foobar</code>:</p>
+<p>Based on the definition above, <code>after</code> listeners are not invoked if state change is prevented, for example, due to one of the <code>on</code> listeners calling <code>preventDefault</code> on the event object, as is done in the <code>on</code> listener for the <code>foobar</code> attribute:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-    o1.on("foobarChange", function(e) {
+    o1.on("foobarChange", function(event) {
 
         // Calling preventDefault, in an "on" listener
         // will prevent the attribute change from occuring
         // and prevent the after listeners from being called
 
         print("on foobarChange (prevented)", "header");
+        event.preventDefault();
     });
-</script>
 </textarea>
 
-<h5>Event Facade</h5>
+<h4>Event Facade</h4>
 
-<p>The event facade passed to attribute change event subscribers, has the following interesting properties/methods</p>
+<p>The event object (an instance of <a href="../api/Event.Facade.html">Event.Facade</a>) passed to attribute change event subscribers, has the following interesting properties and methods:</p>
 
 <dl>
     <dt>newVal</dt>

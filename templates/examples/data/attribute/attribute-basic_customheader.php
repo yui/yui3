@@ -2,7 +2,6 @@
     #example-out .entry {
         font-family:courier;
         margin-top:2px;
-        padding:2px;
     }
 
     #example-out .header {
@@ -22,6 +21,7 @@
         overflow:auto;
         height:20em;
         width:30em;
+        padding:2px;
     }
 
 </style>

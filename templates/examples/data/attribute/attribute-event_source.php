@@ -49,36 +49,36 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     var o1 = new MyClass();
 
-    function printEvt(e) {
-        print("e.prevVal : " + e.prevVal);
-        print("e.newVal : " + e.newVal);
-        print("e.attrName : " + e.attrName);
+    function printEvt(event) {
+        print("event.prevVal : " + event.prevVal);
+        print("event.newVal : " + event.newVal);
+        print("event.attrName : " + event.attrName);
     }
 
-    o1.after("fooChange", function(e) {
+    o1.after("fooChange", function(event) {
         print("after fooChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
 
-    o1.after("barChange", function(e) {
+    o1.after("barChange", function(event) {
         print("after barChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
 
-    o1.on("foobarChange", function(e) {
+    o1.on("foobarChange", function(event) {
 
         // Calling preventDefault, in an "on" listener
         // will prevent the attribute change from occuring
         // and the after listener being called
         print("on foobarChange (prevented)", "header");
-        e.preventDefault();
+        event.preventDefault();
     });
 
-    o1.after("foobarChange", function(e) {
+    o1.after("foobarChange", function(event) {
         // This will never get called, because we're
         // calling preventDefault in the "on" listener
         print("after foobarChange", "header");
-        printEvt(e);
+        printEvt(event);
     });
 
     var attrSel = Y.Node.get("#attr");

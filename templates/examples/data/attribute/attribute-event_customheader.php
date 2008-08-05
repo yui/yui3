@@ -21,6 +21,7 @@
         overflow:auto;
         height:20em;
         width:30em;
+        padding-left:2px;
     }
 
     .attrs {
