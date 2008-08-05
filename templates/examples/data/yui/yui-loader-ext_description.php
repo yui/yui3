@@ -83,12 +83,6 @@ if (!result.success) {
 // YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 YUI({
 
-    // base: '../../build3x/',
-    comboBase: 'http://delightfuture.corp.yahoo.com/combo?',
-
-    root: '',
-    // root: '2.5.2/build/',
-
     // Specifies whether or not to use the YUI combo service for script modules
     // This is true by default if you have not changed the configuration for 'base'
     // combine: true,
