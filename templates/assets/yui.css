@@ -401,7 +401,7 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 
 
 	.apisummary table,
-	table {width:100%;margin-bottom:1em;}
+	#main table {width:100%;margin-bottom:1em;}
 
 	.apisummary table tr,
 	table tr {vertical-align:top;}

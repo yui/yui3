@@ -10,10 +10,10 @@ $nav[]=array('home','/yui/3/','YUI 3 Home', 'The Yahoo! User Interface Library (
 // $nav[]=array('home','/','YUI 3 versus YUI 2.x', 'The Yahoo! User Interface Library (YUI)');
 // $nav[]=array('faq','/yui/articles/3.x/overview/','YUI 3 Goals &amp; Philosophy', 'Introduction to YUI ');
 $nav[]=array('examples','/yui/3/examples/','YUI 3 Examples', 'Examples of every YUI utility and control in action');
-$nav[]=array('docs','/yui/yui/api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
+$nav[]=array('docs','/yui/3/api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source Code', 'The YUI Library can be downloaded from SourceForge');
 // $nav[]=array('faq','/yui/3/articles/faq/','YUI 3 FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
+$nav[]=array('license','/yui/3/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
 $nav[]=array('', '', 'YUI 3 Core', '');

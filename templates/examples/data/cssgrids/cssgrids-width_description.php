@@ -27,7 +27,7 @@
 			<td>950px. Centered. Fluid.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d2</code></td>
+			<td><code>.yui-d2f</code></td>
 			<td>950ox. Centered. Fixed.</td>
 		</tr>
 		<tr>
@@ -35,7 +35,7 @@
 			<td>974px. Centered. Fluid.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d3</code></td>
+			<td><code>.yui-d3f</code></td>
 			<td>974px. Centered. Fixed.</td>
 		</tr>
 	</tbody>

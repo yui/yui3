@@ -1,14 +1,12 @@
 <?php
 if (!isset($section)) { $section = ""; }
 
+
 $nav[]=array('', '', 'YUI 3.x Project', '');
-$nav[]=array('yui', 'http://developer.yahoo.com/yui/3/', 'Web Site (external)', 'The Yahoo! User Interface (YUI) Library, 3.x Branch, ');
-$nav[]=array('yuiblog','http://yuiblog.com','YUIBlog (external)', 'The Yahoo! User Interface Blog');
-$nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Discussion Forum (external)', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
-$nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI on Sourceforge (external)', 'The YUI Library can be downloaded from SourceForge');
-$nav[]=array('docs',$docroot.'api/index.html','API Documentation', 'Instantly searchable API documentation for the entire YUI library.');
-$nav[]=array('examples',$docroot.'examples/','Functional Examples', 'Examples of every YUI utility and control in action');
-$nav[]=array('theater','http://developer.yahoo.com/yui/theater/','YUI Theater (external)', 'Videos and podcasts from the YUI Team and from the Yahoo! frontend engineering community.');
+$nav[]=array('yui3home', 'http://developer.yahoo.com/yui/3/', 'YUI 3 Web Site (external)', 'The Yahoo! User Interface (YUI) Library, 3.x Branch, ');
+$nav[]=array('examples',$docroot.'examples/','YUI 3 Examples', 'Examples of every YUI utility and control in action');
+$nav[]=array('docs',$docroot.'api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
+$nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 on Sourceforge (external)', 'The YUI Library can be downloaded from SourceForge');
 $nav[]=array('license','http://developer.yahoo.com/yui/license.html','YUI License (external)', 'YUI is free and open, offered under a BSD license.');
 
 $nav[]=array('', '', 'YUI 3 Core - Examples', ' YUI 3 Core - Functional Examples');
@@ -36,6 +34,8 @@ $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog (external)', 'The Yahoo! U
 $nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Forum (external)', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
 $nav[]=array('groups','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum (external)', 'The Yahoo! Group yui3 is dedicated to the 3.x branch of the Yahoo! User Interface (YUI) Library.');
 $nav[]=array('poweredby','/yui/poweredby/','YUI Sightings (external)', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
+$nav[]=array('theater','http://developer.yahoo.com/yui/theater/','YUI Theater (external)', 'Videos and podcasts from the YUI Team and from the Yahoo! frontend engineering community.');
+
 
 $nav[]=array('', '', 'YUI Articles on the YUI Website', '');
 $nav[]=array('faq','http://developer.yahoo.com/yui/articles/faq/','YUI FAQ (external)', 'Answers to Frequently Asked Questions about the YUI Library');

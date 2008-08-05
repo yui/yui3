@@ -11,32 +11,28 @@
 	</thead>
 	<tbody>
 		<tr>
-			<td><code>.yui-d0</code></td>
-			<td>100%. Centered. 10px left/right margin.</td>
+			<td><code>.yui-t1</code></td>
+			<td>160 pixel column, left orientation.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d1</code></td>
-			<td>750px. Centered. Fluid.</td>
+			<td><code>.yui-t2</code></td>
+			<td>180 pixel column, left orientation.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d1f</code></td>
-			<td>750px. Centered. Fixed.</td>
+			<td><code>.yui-t3</code></td>
+			<td>300 pixel column, left orientation.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d2</code></td>
-			<td>950px. Centered. Fluid.</td>
+			<td><code>.yui-t4</code></td>
+			<td>160 pixel column, left orientation.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d2</code></td>
-			<td>950ox. Centered. Fixed.</td>
+			<td><code>.yui-t5</code></td>
+			<td>160 pixel column, left orientation.</td>
 		</tr>
 		<tr>
-			<td><code>.yui-d3</code></td>
-			<td>974px. Centered. Fluid.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d3</code></td>
-			<td>974px. Centered. Fixed.</td>
+			<td><code>.yui-t6</code></td>
+			<td>160 pixel column, left orientation.</td>
 		</tr>
 	</tbody>
 </table>
