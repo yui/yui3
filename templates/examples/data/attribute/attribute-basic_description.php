@@ -34,13 +34,11 @@
 <p>The first step in the example is to create the constructor function for our new class, to which we want to add attribute support. In our example, this class is called <code>MyClass</code>. We then augment <code>MyClass</code> with the <code>Y.Attribute</code> class, so that it receives all of <code>Attribute's</code> methods:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
     function MyClass(cfg) {
         ...
     }
 
     Y.augment(MyClass, Y.Attribute);
-</script>
 </textarea>
 
 <h3>Adding Attributes To Your Custom Class</h3>
@@ -50,7 +48,6 @@
 <p>For convenience (not required), we define the set of attributes which <code>MyClass</code> supports as a static property on our <code>MyClass</code> constructor. This static property is passed to <code>_initAtts</code> to setup the attributes, as part of <code>MyClass's</code> constructor. The complete definition for <code>MyClass</code> is shown below:
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
     function MyClass(cfg) {
         // When constructed, setup the 
         // initial attributes for the 
@@ -75,7 +72,6 @@
     
     // Augment custom class with Attribute 
     Y.augment(MyClass, Y.Attribute);
-</script>
 </textarea>
 
 <p><strong>NOTE:</strong> The <code>_initAtts</code> method, in addition to the default attribute configurarion, also accepts an object literal (associative array) of name/value pairs which can be used to over-ride the default values of the attributes. This is useful for classes which wish to allow the user the set the value of attributes as part of object construction, as shown by the use of the <code>cfg</code> argument above.</p>
@@ -85,7 +81,6 @@
 <p>Now that we have <code>MyClass</code> defined with a set of attributes it supports, users can get and set attribute values on instances of <code>MyClass</code>:
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
     // Create a new instance of MyClass, without over-riding
     // any initial values
     var o1 = new MyClass();
@@ -108,19 +103,16 @@
     print("new foo:" + o1.get("foo")); 
     print("new bar:" + o1.get("bar")); 
     print("new foobar:" + o1.get("foobar"));
-</script>
 </textarea>
 
 <p>For the second instance that we create in the example we set the values of the attributes, using the contructor configuration argument:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
     var o2 = new MyClass({
                 foo: 7,
                 bar: "Aloha World!",
                 foobar: false
              });
-</script>
 </textarea>
 
 <p>So, in this example, we see how we can setup a new class with Attribute support allowing the end user to get and set attribute values on the instances they create.</p>

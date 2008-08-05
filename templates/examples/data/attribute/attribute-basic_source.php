@@ -7,8 +7,8 @@
 
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
-    // Setup custom dummy class which is going
-    // to support managed attributes
+    // Setup custom class which we want to 
+    // add managed attribute support to
 
     function MyClass(cfg) {
 
