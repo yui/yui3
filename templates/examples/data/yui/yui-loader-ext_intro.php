@@ -2,7 +2,7 @@
 pull in additional components as needed.  In addition, it demostrates
 how to define external modules that can be loaded along side of YUI.
 </p>
-<p>This example will perform the following:</p>
+<p>This example works as follows:</p>
 <ol>
 <li>Instantiate a <code>YUI</code> instance with a configuration object that specifies parameters we need to dynamically load new modules</li>
 <li>Use <code>node</code> so that we can bind an event listener to a button.  YUI will dynamically fetch <code>node</code> and its
