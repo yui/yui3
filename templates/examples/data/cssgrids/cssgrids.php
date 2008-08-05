@@ -8,7 +8,7 @@ $modules["cssgrids"] = array(
 );	
 
 $examples["cssgrids-width"] = array(
-	name => "Page Width",
+	name => "Available Page Widths",
 	modules => array("cssgrids"),
 	description => "Choose a preset page width. Choose fluid or fixed widths.",
 	sequence => array(1),
@@ -18,15 +18,27 @@ $examples["cssgrids-width"] = array(
     bodyclass => false
 );
 
-$examples["cssgrids-pagewidth"] = array(
-	name => "Setting Page Widths with YUI CSS Grids",
+$examples["cssgrids-width-custom"] = array(
+	name => "Customize the Page Width",
 	modules => array("cssgrids"),
-	description => "Various page widths are available with CSS Grids. This example shows how to use the included page widths",
+	description => "Customization is easy when you need a specific page width.",
 	sequence => array(2),
 	newWindow => "require",
 	requires => array("cssreset", "cssfonts", "cssgrids"),
 	highlightSyntax => true,
-    bodyclass => "yui-cssreset yui-cssfonts"
+    bodyclass => false
 );
+
+	$examples["cssgrids-presets"] = array(
+		name => "Available Preset Templates",
+		modules => array("cssgrids"),
+		description => "Two-column page layouts",
+		sequence => array(2),
+		newWindow => "require",
+		requires => array("cssreset", "cssfonts", "cssgrids"),
+		highlightSyntax => true,
+	    bodyclass => false
+	);
+
 
 ?>

@@ -3,6 +3,7 @@ $title="Yahoo! UI Library: License";
 $section="license";
 $highlightSyntax = false;
 $releasenotes = false;
+$prepend = '<style>p {margin-bottom:1em;}'
 include "inc/header.inc";
 ?>
 
@@ -15,7 +16,7 @@ include "inc/header.inc";
       <h3>Copyright (c) <?php print strftime("%Y"); ?>, Yahoo! Inc.<br>
         All rights reserved.</h3>
       <p>Redistribution and use of this software in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-      <ul>
+      <ul style="margin-bottom:1em;">
         <li>Redistributions of source code must retain the above copyright notice, this list of conditions and the<br>
           following disclaimer.</li>
         <li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
@@ -41,9 +42,6 @@ include "inc/header.inc";
 $thisURI="http://developer.yahoo.com/yui/license.html";
 require_once('inc/badge.inc');
 ?>
-<h3 id="delicious">YUI Licensing on del.icio.us:</h3>
-<div class="delicious">
-<?php require('inc/badge-html.inc'); ?>
 </div>
 
 </div>
