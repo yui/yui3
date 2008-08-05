@@ -2,7 +2,7 @@
  * Percents could work for IE, but for backCompat purposes, we are using keywords.
  * x-small is for IE6/7 quirks mode.
  */
-.yui-cssfonts body {
+.yui-cssfonts body, .yui-cssfonts {
 	font:13px/1.231 arial,helvetica,clean,sans-serif;
 	*font-size:small; /* for IE */
 	*font:x-small; /* for IE in quirks mode */
