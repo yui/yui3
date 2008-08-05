@@ -425,6 +425,11 @@ YUI.prototype = {
 
             // Y.log('Use complete');
 
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
             if (Y.Env._callback) {
 
                 var cb = Y.Env._callback;
@@ -3157,7 +3162,9 @@ Y.Env.meta = {
             var f = this.onSuccess;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'success',
+                    data: this.data,
+                    success: true
                 });
             }
 
@@ -3173,13 +3180,14 @@ Y.Env.meta = {
             var f = this.onFailure;
             if (f) {
                 f.call(this.context, {
-                    msg: 'operation failed: ' + msg,
-                    data: this.data
+                    msg: 'failure: ' + msg,
+                    data: this.data,
+                    success: false
                 });
             }
         },
 
-        _onTimeout: function(msg) {
+        _onTimeout: function() {
             this._attach();
 
             // this.fire('timeout', {
@@ -3189,7 +3197,9 @@ Y.Env.meta = {
             var f = this.onTimeout;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'timeout',
+                    data: this.data,
+                    success: false
                 });
             }
         },

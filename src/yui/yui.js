@@ -425,6 +425,11 @@ YUI.prototype = {
 
             // Y.log('Use complete');
 
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
             if (Y.Env._callback) {
 
                 var cb = Y.Env._callback;
