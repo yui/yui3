@@ -15,6 +15,7 @@ $examples["yui-core"] = array(
 	description => "YUI Core",
 	sequence => array(0),
 	newWindow => "default",
+    logger => array("example"),
 	requires => array("node"),
 	highlightSyntax => true
 );
@@ -27,6 +28,7 @@ $examples["yui-simple"] = array(
 	description => "Simple YUI Use",
 	sequence => array(1),
 	newWindow => "default",
+    logger => array("example")
 	requires => array('node'),
 	highlightSyntax => true
 );
@@ -38,6 +40,8 @@ $examples["yui-more"] = array(
 	description => "Load All Modules",
 	sequence => array(2),
     newWindow => "default",
+    loggerInclude => "require",
+    logger => array("example"),
 	requires => array('node', 'io', 'anim', 'dd-drag'),
 	highlightSyntax => true
 );
@@ -49,6 +53,8 @@ $examples["yui-multi"] = array(
 	sequence => array(3),
 	newWindow => "default",
 	requires => array('anim'),
+    loggerInclude => "require",
+    logger => array("event", "example"),
 	highlightSyntax => true
 );
 
@@ -59,8 +65,22 @@ $examples["yui-compat"] = array(
 	sequence => array(4),
 	newWindow => "default",
 	requires => array('dd'),
+    loggerInclude => "require",
+    logger => array("example"),
 	highlightSyntax => true
 );
 
+
+$examples["yui-loader-ext"] = array(
+	name => "YUI Loader - Dynamically Adding YUI and External Modules",
+	modules => array("yui"),
+	description => "On-demand loading of YUI and non-YUI assets",
+	sequence => array(4),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
 
 ?>
