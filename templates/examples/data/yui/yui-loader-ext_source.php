@@ -25,7 +25,9 @@ YUI({
     // This lets you define one or more external modules that will be added to
     // the YUI metadata.  You can define dependency relationships between your
     // modules and also between your modules and YUI modules.  Here we are
-    // defining 2.x calendar components as external modules.
+    // defining 2.x calendar components as external modules.  See
+    // <a href="http://developer.yahoo.com/3.x/api/Loader.html#method_addModule">
+    // the API docs</a> for a complete list of module configuration options.
     modules: {
         'yui2-yde': {
             fullpath: "http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"
