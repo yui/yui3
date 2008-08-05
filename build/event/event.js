@@ -2069,7 +2069,7 @@ YUI.add("event-dom", function(Y) {
                     a = Y.Array(arguments, 2, true);
                     // a = a.shift();
 
-                    var context = obj || el;
+                    var context = obj || Y.get(el);
                     // if (override) {
                         // if (override === true) {
                             // context = obj;
@@ -2286,13 +2286,15 @@ YUI.add("event-dom", function(Y) {
                     var notAvail = [];
 
                     var executeItem = function (el, item) {
-                        var context = el;
+                        var context;
                         if (item.override) {
                             if (item.override === true) {
                                 context = item.obj;
                             } else {
                                 context = item.override;
                             }
+                        } else {
+                            context = Y.get(el);
                         }
                         item.fn.call(context, item.obj);
                     };
