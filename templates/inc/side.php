@@ -1,8 +1,8 @@
 <?php
 if (!isset($section)) { $section = ""; }
 
-$nav[]=array('', '', 'Yahoo! UI Library', '');
-$nav[]=array('yui', $developerHome, 'Home (external)', 'The Yahoo! User Interface Library (YUI)');
+$nav[]=array('', '', 'YUI 3.x Project', '');
+$nav[]=array('yui', 'http://developer.yahoo.com/yui/3/', 'Web Site (external)', 'The Yahoo! User Interface (YUI) Library, 3.x Branch, ');
 $nav[]=array('yuiblog','http://yuiblog.com','YUIBlog (external)', 'The Yahoo! User Interface Blog');
 $nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Discussion Forum (external)', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI on Sourceforge (external)', 'The YUI Library can be downloaded from SourceForge');
@@ -11,20 +11,31 @@ $nav[]=array('examples',$docroot.'examples/','Functional Examples', 'Examples of
 $nav[]=array('theater','http://developer.yahoo.com/yui/theater/','YUI Theater (external)', 'Videos and podcasts from the YUI Team and from the Yahoo! frontend engineering community.');
 $nav[]=array('license','http://developer.yahoo.com/yui/license.html','YUI License (external)', 'YUI is free and open, offered under a BSD license.');
 
-$nav[]=array('', '', 'YUI Functional Examples', ' - Functional Examples');
-$nav[]=array('animation',$docroot.'examples/animation/index.html','Animation', 'The YUI Animation Utility - Functional Examples');
-$nav[]=array('connection',$docroot.'examples/connection/index.html','Connection Manager', 'The YUI Connection Manager (AJAX) - Functional Examples');
-$nav[]=array('dom',$docroot.'examples/dom/index.html','Dom', 'The YUI Dom Collection - Functional Examples');
-$nav[]=array('dd',$docroot.'examples/dd/index.html','Drag &amp; Drop', 'The YUI Drag &amp; Drop Utility - Functional Examples');
-$nav[]=array('event',$docroot.'examples/event/index.html','Event', 'The YUI Event Utility - Functional Examples');
-$nav[]=array('json',$docroot.'examples/json/index.html','JSON', 'The YUI JSON Utility - Functional Examples');
-$nav[]=array('selector',$docroot.'examples/selector/index.html','Selector', 'The YUI Selector Utility - Functional Examples');
-$nav[]=array('yui',$docroot.'examples/yui/index.html','YUI Instance', 'The YUI Object - Functional Examples');
-$nav[]=array('yuiloader',$docroot.'examples/yuiloader/index.html','YUI Loader', 'The YUI Loader Utility - Functional Examples');
-$nav[]=array('yuitest',$docroot.'examples/yuitest/index.html','YUI Test', 'The YUI Test Utility - Functional Examples');
-$nav[]=array('reset',$docroot.'examples/reset/index.html','Reset CSS', 'YUI Reset CSS - Functional Examples');
-$nav[]=array('base',$docroot.'examples/base/index.html','Base CSS', 'YUI Base CSS - Functional Examples');
-$nav[]=array('fonts',$docroot.'examples/fonts/index.html','Fonts CSS', 'YUI Fonts CSS - Functional Examples');
+$nav[]=array('', '', 'YUI 3 Core - Examples', ' YUI 3 Core - Functional Examples');
+$nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Object)', 'YUI (Global Object) - Functional Examples');
+$nav[]=array('dom',$docroot.'examples/dom/index.html','CSS Fonts', 'DOM - Functional Examples');
+$nav[]=array('node',$docroot.'examples/node/index.html','CSS Grids', 'Node - Functional Examples');
+
+$nav[]=array('', '', 'YUI 3 Utilities - Examples', 'YUI Utilities - Functional Examples');
+$nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
+$nav[]=array('animation',$docroot.'examples/animation/index.html','Animation', 'Animation - Functional Examples');
+$nav[]=array('base',$docroot.'examples/base/index.html','Base', 'Base - Functional Examples');
+$nav[]=array('dd',$docroot.'examples/dd/index.html','Drag &amp; Drop', 'Drag &amp; Drop - Functional Examples');
+$nav[]=array('io',$docroot.'examples/io/index.html','IO', 'IO - Functional Examples');
+$nav[]=array('json',$docroot.'examples/json/index.html','JSON', 'JSON (JavaScript Object Notation) - Functional Examples');
+$nav[]=array('queue',$docroot.'examples/queue/index.html','Queue', 'Queue - Functional Examples');
+
+$nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');
+$nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YUI CSS Reset - Functional Examples');
+$nav[]=array('cssfonts',$docroot.'examples/cssfonts/index.html','CSS Fonts', 'YUI Fonts - Functional Examples');
+$nav[]=array('cssgrids',$docroot.'examples/cssgrids/index.html','CSS Grids', 'YUI Grids - Functional Examples');
+$nav[]=array('cssbase',$docroot.'examples/cssbase/index.html','CSS Base', 'YUI Base - Functional Examples');
+
+$nav[]=array('', '', 'The YUI Community', '');
+$nav[]=array('yuiblog','http://yuiblog.com','YUI Blog (external)', 'The Yahoo! User Interface Blog');
+$nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Forum (external)', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
+$nav[]=array('groups','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum (external)', 'The Yahoo! Group yui3 is dedicated to the 3.x branch of the Yahoo! User Interface (YUI) Library.');
+$nav[]=array('poweredby','/yui/poweredby/','YUI Sightings (external)', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
 
 $nav[]=array('', '', 'YUI Articles on the YUI Website', '');
 $nav[]=array('faq','http://developer.yahoo.com/yui/articles/faq/','YUI FAQ (external)', 'Answers to Frequently Asked Questions about the YUI Library');

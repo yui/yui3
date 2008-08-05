@@ -78,3 +78,5 @@ if (isset($customHeader) && $customHeader != "") {
 	<div id="pagetitle"><h1><?php echo $titlebar ?></h1></div>
 </div>
 <div id="bd">
+
+	<div id="bar-note"><p><strong>Note:</strong> This is YUI 3.x. Looking for <a href="http://developer.yahoo.com/yui/">YUI 2.x</a>?</p></div>
