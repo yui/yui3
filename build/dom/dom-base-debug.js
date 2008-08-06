@@ -181,6 +181,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching element or null if none found.
      */
     elementByAxis: function(element, axis, fn, all) {
+console.log(fn);
         while (element && (element = element[axis])) { // NOTE: assignment
                 if ( (all || element[TAG_NAME]) && (!fn || fn(element)) ) {
                     return element;

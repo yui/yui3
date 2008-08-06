@@ -157,7 +157,7 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
  */
 
 var TO_STRING = 'toString',
-    PARSE_INT = 'parseInt',
+    PARSE_INT = parseInt,
     RE = RegExp;
 
 Y.Color = {
@@ -437,4 +437,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});

@@ -249,13 +249,13 @@ Y.DOM = {
      */
     filterElementsBy: function(elements, fn, firstOnly) {
         var ret = (firstOnly) ? null : [];
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
-            if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
+        for (var i = 0, el; el = elements[i++];) {
+            if ( el[TAG_NAME] && (!fn || fn(el)) ) {
                 if (firstOnly) {
-                    ret = elements[i];
+                    ret = el;
                     break;
                 } else {
-                    ret[ret[LENGTH]] = elements[i];
+                    ret[ret[LENGTH]] = el;
                 }
             }
         }
@@ -312,7 +312,7 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = templateCache[tag] || doc.createElement(tag);
-        frag.innerHTML = html;
+        frag.innerHTML = Y.Lang.trim(html);
         return frag;
     },
 
@@ -1997,7 +1997,7 @@ Y.Selector.patterns = patterns;
  */
 
 var TO_STRING = 'toString',
-    PARSE_INT = 'parseInt',
+    PARSE_INT = parseInt,
     RE = RegExp;
 
 Y.Color = {

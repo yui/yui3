@@ -501,4 +501,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});
