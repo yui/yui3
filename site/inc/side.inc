@@ -20,7 +20,6 @@ $nav[]=array('', '', 'YUI 3 Core', '');
 $nav[]=array('yui','/yui/3/yui/','YUI (Global Object)', 'YUI Global Object');
 $nav[]=array('node','/yui/3/node/','Node', 'Node');
 $nav[]=array('get','/yui/3/get/','Get', 'Get');
-$nav[]=array('node','/yui/3/loader/','Loader', 'Loader');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
