@@ -27,7 +27,7 @@
 
 <p>This callback function is where we'll write all our example code. By working inside the callback function, we don't pollute the global namespace and we're also able to download the files we need on demand, rather than have them be on the page upfront.</p>
 
-<p><em>NOTE:</em> The configuration object passed to <code>YUI()</code> when creating the instance, is used to speficy how (<em>combined, separate, debug, min etc.</em>) we want the files downloaded and from where. The API documentation for the <a href="../api/YUI.html">YUI object</a>, provides more information about the configuration options available.</p>
+<p><em>NOTE:</em> The configuration object passed to <code>YUI()</code> when creating the instance, is used to specify how (<em>combined, separate, debug, min etc.</em>) we want the files downloaded and from where. The API documentation for the <a href="../api/YUI.html">YUI object</a>, provides more information about the configuration options available.</p>
 
 <h4>Defining Your Custom Class</h4>
 
