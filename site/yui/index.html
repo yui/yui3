@@ -51,7 +51,7 @@ include "../inc/header.inc";
 				
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
-				    <script type="text/javascript" src="../../build/yui/yui-debug.js"></script>
+                    &lt;script type="text/javascript" src=../../build/yui/yui-min.js" &gt;&lt;/script&gt;
 				</textarea>
 
 				<?php
@@ -262,17 +262,91 @@ include "../inc/header.inc";
                 YUI instance.</p>
                 <textarea name="code" class="JScript">
                     YUI({
-                           base: '../../3x/build/',
-                           //charset: 'utf-8',
-                           //loadOptional: true,
-                           //combine: true,
-                           //filter: 'raw'
-                           timeout: 2000
+                           base: '../../3x/build/', // the base path to the YUI install
+                           charset: 'utf-8', // specify a charset for inserted nodes, default is utf-8
+                           loadOptional: true, // automatically load optional dependencies, default false
+                           combine: true, // use the Yahoo! CDN combo service for YUI resources, default is true unless 'base' has been changed
+                           filter: 'raw', // apply a filter to load the raw or debug version of YUI files
+                           timeout: 10000, // specify the amount of time to wait for a node to finish loading before aborting
+                           insertBefore: 'customstyles', // The insertion point for new nodes
+                           modules:  { // one or more external modules that can be loaded along side of YUI
+                               json_org: {
+                                   fullpath: "http://www.json.org/json.js"
+                               },
+                               json2_org: {
+                                   fullpath: "http://www.json.org/json.js"
+                               }
+                           }
                         }).use('dd', function(Y) {
                             // All YUI modules required to get drag and drop to work are now loaded.
                         });
                                     
                 </textarea>
+
+                <p>The valid configuration options for Loader are as follows:<p>
+                <ul>
+<li>base:
+The base dir</li>
+<li>secureBase:
+The secure base dir (not implemented)</li>
+<li>comboBase:
+The YUI combo service base dir. Ex: http://yui.yahooapis.com/combo?</li>
+<li>root:
+The root path to prepend to module names for the combo service. Ex: 2.5.2/build/</li>
+<li>filter:
+A filter to apply to result urls.  This filter will modify the default
+path for all modules.  The default path for the YUI library is the
+minified version of the files (e.g., event-min.js).  The filter property
+can be a predefined filter or a custom filter.  The valid predefined 
+filters are:
+
+<ul> 
+<li>DEBUG: Selects the debug versions of the library (e.g., event-debug.js). </li>
+<li>RAW:
+Selects the non-minified version of the library (e.g., event.js).</li>
+</ul>
+You can also define a custom filter, which must be an object literal 
+containing a search expression and a replace string:
+<pre>
+myFilter: &#123; 
+'searchExp': "-min\\.js", 
+'replaceStr': "-debug.js"
+&#125;
+</pre>
+
+</li>
+<li>combine:
+Use the YUI combo service to reduce the number of http connections required to load your dependencies</li>
+<li>ignore:
+A list of modules that should never be dynamically loaded</li>
+<li>force:
+A list of modules that should always be loaded when required, even if already present on the page</li>
+<li>insertBefore:
+Node or id for a node that should be used as the insertion point for new nodes</li>
+<li>charset:
+charset for dynamic nodes</li>
+<li>timeout:
+number of milliseconds before a timeout occurs when dynamically loading nodes.  in not set, there is no timeout</li>
+<li>context:
+execution context for all callbacks</li>
+<li>modules:
+A list of module definitions.  The valid module configuration data is as follows:
+<ul>
+<li>name:       required, the component name</li>
+<li>type:       required, the component type (js or css)</li>
+<li>path:       required if fullpath is not specified, the path to the script from "base"</li>
+<li>fullpath:   required if path isn't specified, the full path to the script.  "base" will not be used to build the url</li>
+<li>requires:   array of modules required by this component</li>
+<li>optional:   array of optional modules for this component</li>
+<li>supersedes: array of the modules this component replaces</li>
+<li>after:      array of modules the components which, if present, should be sorted above this one</li>
+<li>rollup:     the number of superseded modules required for automatic rollup</li>
+</ul>
+
+
+</li>
+
+</ul>
 
 <?php # include "../inc/mobileSection.inc";?>
 <!--<p>Animation on mobile devices is limited by processor and system overhead.  Even on PCs, animation within a web browser can tax the processor, and the processing power in mobile devices is much more limited.  In general, DOM animations will look choppy on a mobile device, so you may want to avoid them altogether if designing specifically for mobile.  Using an easing method in some cases helps to make the animation appear to run more smoothly.  On the iPhone specifically, the "easeBoth" easing, in our experience, provides the smoothest animation across most animation types.</p>-->
