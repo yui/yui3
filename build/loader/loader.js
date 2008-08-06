@@ -192,6 +192,9 @@ var BASE = 'base',
                 },
                 'anim-xy': {
                     requires: ['anim-base', 'node-screen']
+                },
+                'anim-node-plugin': {
+                     requires: ['node', 'anim-base']
                 }
             }
         },
