@@ -1,0 +1,11 @@
+WARNING!!!
+
+This is not working fully ;)
+
+1. raw.json:        This file is included in the doc build
+2. loader.json:     This is a manual file I created from the loader.js meta-data. I have to reformat the loader code to make it parsable.
+3. parse_json.php:  This file open the above two files and creates the data.js file.
+4. data.js          This is the output of the parse_json.php file.
+5. config.js        This is the configurator code (warning, it looks nasty)
+6. index.php        Configurator HTML file..
+
