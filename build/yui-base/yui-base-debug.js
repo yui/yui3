@@ -153,7 +153,8 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.debug : true;
+        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+        o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
