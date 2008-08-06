@@ -13,12 +13,11 @@
     }
 
     #example-out {
-        font-size:90%;
-        margin-top:10px;
+        overflow:auto;
         border:1px solid #000;
         color:#ffffff;
         background-color:#004C6D;
-        overflow:auto;
+        margin:5px;
         height:20em;
         width:30em;
         padding:2px;

@@ -13,8 +13,7 @@
     }
 
     #example-out {
-        font-size:90%;
-        margin-top:10px;
+        margin:5px;
         border:1px solid #000;
         color:#ffffff;
         background-color:#004c6d;
@@ -28,7 +27,7 @@
         width:30em;
         border:1px solid #000;
         background-color:#cdcdcd;
-        margin-bottom:10px;
+        margin:5px;
     }
 
     .attrs .header {

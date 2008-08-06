@@ -3,8 +3,9 @@
     #boxParent {
         overflow:hidden;
         background-color:#004c6d;
-        height:20em;
+        height:25em;
         padding:10px;
+        margin:5px;
     }
 
     #boxParent .yui-box p, #attrs p {
@@ -14,7 +15,7 @@
     .attrs {
         border:1px solid #000;
         background-color:#cdcdcd;
-        margin-bottom:10px;
+        margin:5px;
     }
 
     .attrs .header {
@@ -43,6 +44,11 @@
         width:4em;
     }
 
+    .attrs .hint {
+        font-size:85%;
+        color: #004c6d;
+    }
+
     .yui-box {
         padding:5px;
         border:1px solid #000;
@@ -55,4 +61,5 @@
     .yui-box .color {
         font-family:courier;
     }
+
 </style>

@@ -21,8 +21,7 @@
     }
 
     #example-out {
-        font-size:90%;
-        margin-top:10px;
+        margin:5px;
         border:1px solid #000;
         color:#ffffff;
         background-color:#004c6d;

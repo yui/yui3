@@ -75,35 +75,51 @@ Box.ATTRIBUTES = {
 
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-    Box.prototype.constrain = function(val) {
 
+    // Get min, max unconstrained values for X
+    Box.prototype.getXConstraints = function() {
         var parentRegion = this.get("parent").get("region");
-        var BUFFER = Box.BUFFER;
+        return [parentRegion.left + Box.BUFFER, parentRegion.right - this._node.get("offsetWidth") - Box.BUFFER];
+    };
+
+    // Get min, max unconstrained values for Y
+    Box.prototype.getYConstraints = function() {
+        var parentRegion = this.get("parent").get("region");
+        return [parentRegion.top + Box.BUFFER, parentRegion.bottom - this._node.get("offsetHeight") - Box.BUFFER];
+    };
+
+    // Constrains given x,y values
+    Box.prototype.constrain = function(val) {
 
         // If the X value places the box outside it's parent,
         // modify it's value to place the box inside it's parent.
 
-        if (val[0] < parentRegion.left + BUFFER) {
-            val[0] = parentRegion.left + BUFFER;
+        var xConstraints = this.getXConstraints();
+
+        if (val[0] < xConstraints[0]) {
+            val[0] = xConstraints[0];
         } else {
-            if (val[0] + this._node.get("offsetWidth") > parentRegion.right - BUFFER) {
-                val[0] = parentRegion.right - this._node.get("offsetWidth") - BUFFER;
+            if (val[0] > xConstraints[1]) {
+                val[0] = xConstraints[1];
             }
         }
 
         // If the Y value places the box outside it's parent,
         // modify it's value to place the box inside it's parent.
 
-        if (val[1] < parentRegion.top + BUFFER) {
-            val[1] = parentRegion.top + BUFFER;
+        var yConstraints = this.getYConstraints();
+
+        if (val[1] < yConstraints[0]) {
+            val[1] = yConstraints[0];
         } else {
-            if (val[1] + this._node.get("offsetHeight") > parentRegion.bottom - BUFFER) {
-                val[1] = parentRegion.bottom - this._node.get("offsetHeight") - BUFFER;
+            if (val[1] > yConstraints[1]) {
+                val[1] = yConstraints[1];
             }
         }
 
         return val;
     };
+
 </textarea>
 
 <p>The <code>set</code>, <code>get</code> and <code>validator</code> functions are invoked with the host object as the context, so that they can refer to the host object using "<code>this</code>", as we see in the <code>set</code> function for <code>xy</code>.</p>
@@ -134,11 +150,13 @@ Box.ATTRIBUTES = {
 
 <p>The role of the <code>get</code> handler in this case is to normalize the actual stored value of the <code>color</code> attribute, so that users always receive the hex value, regardless of the actual value stored, which maybe a color keyword (e.g. <code>"red"</code>), an rgb value (e.g.<code>rbg(255,0,0)</code>), or a hex value (<code>#ff0000</code>). The <code>validator</code> ensures the the stored value is one of these three formats.</p>
 
-<h4>Syncing Changes Using Events</h4>
+<h4>Syncing Changes Using Attribute Change Events</h4>
 
 <p>Another interesting aspect of this example, is it's use of attribute change events to listen for changes to the attribute values. <code>Box</code>'s <code>_bind</code> method configures a set of attribute change event listeners which monitor changes to the <code>xy</code>, <code>color</code> and <code>parent</code> attributes and update the rendered DOM for the Box in response:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
+
+    // Bind listeners for attribute change events
     Box.prototype._bind = function() {
 
         // Reflect any changes in xy, to the rendered Node
@@ -160,6 +178,54 @@ Box.ATTRIBUTES = {
         });
 
     }
+
 </textarea>
 
 <p>Since only <code>xy</code> stores the final co-ordinates, we don't need to monitor the <code>x</code> and <code>y</code> attributes individually for changes.</p>
+
+<h4>DOM Event Listeners</h4>
+
+<p>Although not an integral part of the example, it's worth highlighting the code which is used to setup the DOM event listeners for the form elements used by the example:</p>
+
+<textarea name="code" class="JScript" cols="60" rows="1">
+    // Set references to form controls
+    var xTxt = Y.Node.get("#x");
+    var yTxt = Y.Node.get("#y");
+    var colorTxt = Y.Node.get("#color");
+
+    // Bind DOM events for Form Controls
+
+    // Use Event Delegation for the button clicks
+    Y.on("click", function(e) {
+
+        // Get Node target from the event object
+        var targetId = e.target && e.target.get("id");
+
+        switch (targetId) {
+            case "setXY":
+                box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+                break;
+            case "setX":
+                box.set("x", parseInt(xTxt.get("value")));
+                break;
+            case "setY":
+                box.set("y", parseInt(yTxt.get("value")));
+                break;
+            case "setColor":
+                box.set("color", L.trim(colorTxt.get("value")));
+                break;
+            case "setAll":
+                box.set("xy", [parseInt(xTxt.get("value")), parseInt(yTxt.get("value"))]);
+                box.set("color", L.trim(colorTxt.get("value")));
+                break;
+            case "getAll":
+                getAll();
+                break;
+            default:
+                break;
+        }
+
+    }, "#attrs");
+</textarea>
+
+<p>The above code uses the new 3.x <a href="../api/Event.Facade.html">Event Facade</a> which normalizes cross-browser access to DOM event properties, such as <code>target</code>. We use <code>target</code> to delegate event handling for <code>click</code> events which bubble up to the <code>attrs</code> element. Note the use of selector syntax when we specify the element(s) to which we want to attach DOM listeners (e.g. <code>#attrs</code>) and the use of the <a href="../api/Node.html">Node</a> facade when dealing with references to HTML elements (e.g. <code>xTxt, yTxt, colorTxt</code>.</p>
