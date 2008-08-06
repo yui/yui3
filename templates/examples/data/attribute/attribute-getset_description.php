@@ -53,7 +53,8 @@ Box.ATTRIBUTES = {
 
         set: function(val) {
             // Constrain XY value to the parent element.
-            // Return the constrain xy value, which will
+
+            // Returns the constrained xy value, which will
             // be the final value stored.
             return this.constrain(val);
         },
