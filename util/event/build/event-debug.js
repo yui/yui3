@@ -833,7 +833,7 @@ YUI.add("event-custom", function(Y) {
                     ef = this._getFacade(args);
                 }
 
-                args[0] = ef;
+                // args[0] = ef;
             }
              
             ret = s.notify(this.context, args);
@@ -943,7 +943,11 @@ YUI.add("event-custom", function(Y) {
                 es.lastLogState = es.logging;
 
 
-                var ef = (this.emitFacade) ? this._getFacade(args) : null;
+                var ef = null;
+                if (this.emitFacade) {
+                    ef = this._getFacade(args);
+                    args[0] = ef;
+                }
 
                 for (i in subs) {
                     if (subs.hasOwnProperty(i)) {
@@ -2109,7 +2113,7 @@ YUI.add("event-dom", function(Y) {
 
                     a[1] = context;
 
-                    // set context to element if not specified
+                    // set context to the Node if not specified
                     return cewrapper.subscribe.apply(cewrapper, a);
 
 

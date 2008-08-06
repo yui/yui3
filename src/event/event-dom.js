@@ -384,7 +384,7 @@ YUI.add("event-dom", function(Y) {
 
                     a[1] = context;
 
-                    // set context to element if not specified
+                    // set context to the Node if not specified
                     return cewrapper.subscribe.apply(cewrapper, a);
 
 
