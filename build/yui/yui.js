@@ -1782,7 +1782,11 @@ Y.Get = function() {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
-        if (ua.ie) {
+        // Opera only for script nodes.  Opera support onload for script
+        // nodes, but this doesn't fire when their is a load failure.
+        // The onreadystatechange appears to be a better way to respond
+        // to both success and failure.
+        if (ua.ie || (ua.opera && type === "script")) {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {

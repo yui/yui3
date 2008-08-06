@@ -122,7 +122,13 @@ Y.Get = function() {
      * @private
      */
     var _fail = function(id, msg) {
+
+
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
         // execute failure callback
         if (q.onFailure) {
             var sc=q.context || q;
@@ -192,6 +198,9 @@ Y.Get = function() {
      */
     var _finish = function(id) {
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
         q.finished = true;
 
         if (q.aborted) {
@@ -384,7 +393,11 @@ Y.Get = function() {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
-        if (ua.ie) {
+        // Opera only for script nodes.  Opera support onload for script
+        // nodes, but this doesn't fire when their is a load failure.
+        // The onreadystatechange appears to be a better way to respond
+        // to both success and failure.
+        if (ua.ie || (ua.opera && type === "script")) {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
@@ -406,8 +419,13 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
+
             n.onload = function() {
                 f(id, url);
+            };
+
+            n.onerror = function(e) {
+                _fail(id, e + ": " + url);
             };
         }
     };
