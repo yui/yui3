@@ -15,6 +15,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
 
     // add fx plugin to module body
     var content = module.query('.yui-bd').plug(Y.Plugin.NodeFX, {
+        from: { height: 0 },
         to: {
             height: function(node) { // dynamic in case of change
                 return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
@@ -22,13 +23,13 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
         },
 
         easing: Y.Easing.easeOut,
-        from: { height: 0 },
         duration: 0.5
     });
 
     var onClick = function(e) {
         module.toggleClass('yui-closed');
-        content.fx.reverse();
+        content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
+        content.fx.run();
     };
 
     // use dynamic control for dynamic behavior

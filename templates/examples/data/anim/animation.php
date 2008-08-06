@@ -42,7 +42,7 @@ $examples["colors"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-colors"),
+	requires => array("anim-color"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -68,7 +68,7 @@ $examples["anim-xy"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-xy"),
+	requires => array("anim-xy", "anim-easing"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -81,7 +81,7 @@ $examples["curve"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-curve"),
+	requires => array("anim-curve", "anim-easing"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -95,7 +95,7 @@ $examples["scroll"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-scroll"),
+	requires => array("anim-scroll", "anim-easing"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -108,7 +108,7 @@ $examples["reverse"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "suppress", 
 	newWindow => "default",
-	requires => array("anim-base, anim-easing"),
+	requires => array("node-base", "anim-node-plugin", "anim-easing"),
 	highlightSyntax => true,
 	bodyclass => false
 );
@@ -134,7 +134,7 @@ $examples["anim-chaining"] = array(
 	logger => array("anim", "example"),
 	loggerInclude => "default", 
 	newWindow => "default",
-	requires => array("anim-base"),
+	requires => array("anim-base", "anim-easing"),
 	highlightSyntax => true,
 	bodyclass => false
 );

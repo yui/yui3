@@ -55,7 +55,7 @@ module.query('.yui-hd').appendChild(control);
 <textarea name="code" class="JScript" cols="60" rows="1">
 var onClick = function(e) {
     module.toggleClass('yui-closed');
-    content.fx.reverse();
+    content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
 };
 </textarea>
 
@@ -85,7 +85,7 @@ YUI().use('animation', function(Y) {
 
     var onClick = function(e) {
         module.toggleClass('yui-closed');
-        content.fx.reverse();
+        content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
     };
 
     // use dynamic control for dynamic behavior
