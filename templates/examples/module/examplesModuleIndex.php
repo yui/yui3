@@ -74,7 +74,7 @@ if ($aCurrentExamples) {
                     </div>
                     <div class="bd">
 					<ul>
-						<li><a href="http://developer.yahoo.com/yui/<?php echo($currentModuleName);?>/">User's Guide</a> <?php echo $externalLabel; ?></li>
+						<li><a href="http://developer.yahoo.com/yui/3/<?php echo($currentModuleName);?>/">User's Guide</a> <?php echo $externalLabel; ?></li>
 <?php
 /* Currently, all modules that are not of type=="css" have API documentation conforming to the same AdamDoc URL style:*/
 if ($currentModule[type] != "css") {
