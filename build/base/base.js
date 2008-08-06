@@ -111,7 +111,7 @@ YUI.add('base', function(Y) {
      * The cfg object literal supports the following properties
      * </p>
      * <dl>
-     *    <dt>dynamic {boolean}</dt>
+     *    <dt>dynamic &#60;boolean&#62;</dt>
      *    <dd>
      *    <p>If true, a completely new class
      *    is created which extends the main class, and acts as the 
@@ -119,7 +119,7 @@ YUI.add('base', function(Y) {
      *    <p>If false, the extensions classes are augmented directly to
      *    the main class, modifying the main classes prototype.</p>
      *    </dd>
-     *    <dt>aggregates {String[]}</dt>
+     *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class in addition to the default properties build 
      *    will always aggregate - "ATTRS" and "PLUGINS", as defined by 

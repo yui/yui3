@@ -38,8 +38,8 @@
      *     <li>Specify if and how they should be cloned on 'get' (see <a href="#property_CLONE">Attribute.CLONE</a> for supported clone modes).</li>
      * </ul>
      *
-     * <em>See the addAtt method, for details about how to add attributes with
-     * a specific configuration</em>
+     * <p>See the <a href="#method_addAtt">addAtt</a> method, for details about how to add attributes with
+     * a specific configuration</p>
      *
      * @class Attribute
      * @uses Event.Target
@@ -109,28 +109,28 @@
          * The config argument object literal supports the following optional properties:
          * </p>
          * <dl>
-         *    <dt>value {Any}</dt>
+         *    <dt>value &#60;Any&#62;</dt>
          *    <dd>The initial value to set on the attribute</dd>
-         *    <dt>readOnly {Boolean}</dt>
+         *    <dt>readOnly &#60;Boolean&#62;</dt>
          *    <dd>Whether or not the attribute is read only. Attributes having readOnly set to true
          *        cannot be set by invoking the set method.</dd>
-         *    <dt>writeOnce {Boolean}</dt>
+         *    <dt>writeOnce &#60;Boolean&#62;</dt>
          *    <dd>Whether or not the attribute is "write once". Attributes having writeOnce set to true, 
          *        can only have their values set once, be it through the default configuration, 
          *        constructor configuration arguments, or by invoking set.</dd>
-         *    <dt>set {Function}</dt>
+         *    <dt>set &#60;Function&#62;</dt>
          *    <dd>The setter function to be invoked (within the context of the host object) before 
          *        the attribute is stored by a call to the set method. The value returned by the 
          *        set function will be the finally stored value.</dd>
-         *    <dt>get {Function}</dt>
+         *    <dt>get &#60;Function&#62;</dt>
          *    <dd>The getter function to be invoked (within the context of the host object) before
          *    the stored values is returned to a user invoking the get method for the attribute.
          *    The value returned by the get function is the final value which will be returned to the 
          *    user when they invoke get.</dd>
-         *    <dt>validator {Function}</dt>
+         *    <dt>validator &#60;Function&#62;</dt>
          *    <dd>The validator function which is invoked prior to setting the stored value. Returning
          *    false from the validator function will prevent the value from being stored</dd>
-         *    <dt>clone {int}</dt>
+         *    <dt>clone &#60;int&#62;</dt>
          *    <dd>If and how the value returned by a call to the get method, should be de-referenced from
          *    the stored value. By default values are not cloned, and hence a call to get will return
          *    a reference to the stored value. See Attribute.CLONE for more details about the clone 
