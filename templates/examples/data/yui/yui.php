@@ -75,7 +75,79 @@ $examples["yui-loader-ext"] = array(
 	name => "YUI Loader - Dynamically Adding YUI and External Modules",
 	modules => array("yui"),
 	description => "On-demand loading of YUI and non-YUI assets",
-	sequence => array(4),
+	sequence => array(5),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-extend"] = array(
+	name => "Create Class Hierarchies with <code>extend</code>",
+	modules => array("yui"),
+	description => "Create class hierarchies with <code>extend</code>",
+	sequence => array(6),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-augment"] = array(
+	name => "Compose Classes of Objects with <code>augment</code>",
+	modules => array("yui"),
+	description => "Creating a composition-based class structure using <code>augment</code>",
+	sequence => array(7),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-mix"] = array(
+	name => "Add Behaviors to Objects with <code>mix</code>",
+	modules => array("yui"),
+	description => "Add behaviors to objects or static classes with <code>mix</code>",
+	sequence => array(8),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-merge"] = array(
+	name => "Combine Data Sets with <code>merge</code>",
+	modules => array("yui"),
+	description => "Combine data sets and create shallow copies of objects with <code>merge</code>",
+	sequence => array(9),
+	newWindow => "default",
+	requires => array('node', 'dump'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-isa"] = array(
+	name => "Check Data Types with <code>Lang</code>",
+	modules => array("yui"),
+	description => "Check data types with the <code>Lang Utilities</code>",
+	sequence => array(10),
+	newWindow => "default",
+	requires => array('node'),
+    loggerInclude => "require",
+    logger => array("example"),
+	highlightSyntax => true
+);
+
+$examples["yui-ua"] = array(
+	name => "Browser Detection with <code>UA</code>",
+	modules => array("yui"),
+	description => "Get information about the current user agent with <code>UA</code>",
+	sequence => array(11),
 	newWindow => "default",
 	requires => array('node'),
     loggerInclude => "require",
