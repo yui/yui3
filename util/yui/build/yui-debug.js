@@ -128,6 +128,8 @@ if (typeof YUI === 'undefined' || !YUI) {
 
             // bind the specified additional modules for this instance
             Y._setup();
+
+            return Y;
         }
     };
 }
@@ -423,6 +425,11 @@ YUI.prototype = {
 
             // Y.log('Use complete');
 
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
+
             if (Y.Env._callback) {
 
                 var cb = Y.Env._callback;
@@ -611,7 +618,6 @@ YUI.add("log", function(instance) {
             // apply source filters
             if (src) {
 
-
                 var exc = c.logExclude, inc = c.logInclude;
 
                 // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
@@ -625,19 +631,17 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            if (c.useConsole && typeof console != 'undefined') {
+            if (!bail) {
 
-
-                if (!bail) {
-
-                    var f = (cat && console[cat]) ? cat : 'log',
-                        m = (src) ? src + ': ' + msg : msg;
-                    console[f](m);
+                if (c.useConsole && typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log',
+                            m = (src) ? src + ': ' + msg : msg;
+                        console[f](m);
                 }
-            }
 
-            if (Y.fire && !bail) {
-                Y.fire('yui:log', msg, cat, src);
+                if (Y.fire && !bail) {
+                    Y.fire('yui:log', msg, cat, src);
+                }
             }
         }
 
@@ -1145,8 +1149,9 @@ YUI.add("object", function(Y) {
      * @TODO Remove in PR2
      *
      * @method Object.owns
+     * @static
      * @param o {any} The object being testing
-     * @parma p {string} the property to look for
+     * @param p {string} the property to look for
      * @return {boolean} true if the object has the property on the instance
      */
     O.owns = function(o, p) {
@@ -1156,6 +1161,7 @@ YUI.add("object", function(Y) {
     /**
      * Returns an array containing the object's keys
      * @method Object.keys
+     * @static
      * @param o an object
      * @return {string[]} the keys
      */
@@ -1175,6 +1181,7 @@ YUI.add("object", function(Y) {
      * receives the value, the key, and the object
      * as paramters (in that order).
      * @method Object.each
+     * @static
      * @param o the object to iterate
      * @param f {function} the function to execute
      * @param c the execution context
@@ -2429,7 +2436,7 @@ Y.Env.meta = {
          * @method onFailure
          * @type function
          */
-        this.onFailure = Y.log;
+        this.onFailure = null;
 
         /**
          * Callback executed each time a script or css file is loaded
@@ -2494,9 +2501,9 @@ Y.Env.meta = {
          * handler
          * @property combine
          * @type boolean
-         * @default false
+         * @default true if a base dir isn't in the config
          */
-        this.combine = false;
+        this.combine = (!(BASE in o));
 
         /**
          * Ignore modules registered on the YUI global
@@ -2702,7 +2709,10 @@ Y.Env.meta = {
             var f = this.filter;
 
             if (L.isString(f)) {
+
                 f = f.toUpperCase();
+
+                this.filterName = f;
 
                 // the logger must be available in order to use the debug
                 // versions of the library
@@ -2757,7 +2767,7 @@ Y.Env.meta = {
             this.moduleInfo[name] = o;
             this.dirty = true;
 
-            //Y.log('New module ' + name);
+            // Y.log('New module ' + name);
 
             return o;
         },
@@ -3152,7 +3162,9 @@ Y.Env.meta = {
             var f = this.onSuccess;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'success',
+                    data: this.data,
+                    success: true
                 });
             }
 
@@ -3168,13 +3180,14 @@ Y.Env.meta = {
             var f = this.onFailure;
             if (f) {
                 f.call(this.context, {
-                    msg: 'operation failed: ' + msg,
-                    data: this.data
+                    msg: 'failure: ' + msg,
+                    data: this.data,
+                    success: false
                 });
             }
         },
 
-        _onTimeout: function(msg) {
+        _onTimeout: function() {
             this._attach();
 
             // this.fire('timeout', {
@@ -3184,7 +3197,9 @@ Y.Env.meta = {
             var f = this.onTimeout;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'timeout',
+                    data: this.data,
+                    success: false
                 });
             }
         },
@@ -3302,7 +3317,7 @@ Y.Env.meta = {
          */
         insert: function(o, type) {
 
-            Y.log("Insert() " + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "Loader");
 
             // build the dependency list
             this.calculate(o);
@@ -3494,7 +3509,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path);
+                    url=m.fullpath || this._url(m.path, s[i]);
                     self=this; 
 
                     fn(url, {
@@ -3557,15 +3572,32 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @return {string} the full url
          * @private
          */
-        _url: function(path) {
+        _url: function(path, name) {
             
-            var u = this.base || "", f=this.filter;
-            u = u + path;
+            var u = (this.base || "") + path, 
+                f = this.filter;
 
             if (f) {
+                var useFilter = true;
+
+                if (this.filterName == "DEBUG") {
+                
+                    var self = this, 
+                        exc = self.logExclude,
+                        inc = self.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
                 // Y.log("filter: " + f + ", " + f.searchExp + 
                 // ", " + f.replaceStr);
-                u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                }
             }
 
             // Y.log(u);

@@ -32,7 +32,6 @@ YUI.add("log", function(instance) {
             // apply source filters
             if (src) {
 
-
                 var exc = c.logExclude, inc = c.logInclude;
 
                 // console.log('checking src filter: ' + src + ', inc: ' + inc + ', exc: ' + exc);
@@ -46,19 +45,17 @@ YUI.add("log", function(instance) {
                 }
             }
 
-            if (c.useConsole && typeof console != 'undefined') {
+            if (!bail) {
 
-
-                if (!bail) {
-
-                    var f = (cat && console[cat]) ? cat : 'log',
-                        m = (src) ? src + ': ' + msg : msg;
-                    console[f](m);
+                if (c.useConsole && typeof console != 'undefined') {
+                        var f = (cat && console[cat]) ? cat : 'log',
+                            m = (src) ? src + ': ' + msg : msg;
+                        console[f](m);
                 }
-            }
 
-            if (Y.fire && !bail) {
-                Y.fire('yui:log', msg, cat, src);
+                if (Y.fire && !bail) {
+                    Y.fire('yui:log', msg, cat, src);
+                }
             }
         }
 

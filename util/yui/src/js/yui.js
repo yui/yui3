@@ -128,6 +128,8 @@ if (typeof YUI === 'undefined' || !YUI) {
 
             // bind the specified additional modules for this instance
             Y._setup();
+
+            return Y;
         }
     };
 }
@@ -422,6 +424,11 @@ YUI.prototype = {
         var onComplete = function(fromLoader) {
 
             // Y.log('Use complete');
+
+            fromLoader = fromLoader || {
+                success: true,
+                msg: 'not dynamic'
+            };
 
             if (Y.Env._callback) {
 
