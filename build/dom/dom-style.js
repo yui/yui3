@@ -217,7 +217,11 @@ Y.Color = {
             val = val.replace(Y.Color.re_hex3, '$1$1');
         }
 
-        return (val.indexOf('#') < 0 ? val = '#' + val : val).toLowerCase();
+        if (val !== 'transparent' && val.indexOf('#') < 0) {
+            val = '#' + val;
+        }
+
+        return val.toLowerCase();
     }
 };
 
@@ -417,15 +421,15 @@ IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
 
 IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
         IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
-                ComputedStyle.getBorderWidth;
+        ComputedStyle.getBorderWidth;
 
 IEComputed.marginTop = IEComputed.marginRight = IEComputed.marginBottom =
         IEComputed.marginLeft = ComputedStyle.getMargin;
 
 IEComputed.visibility = ComputedStyle.getVisibility;
-IEComputed.borderTopColor = IEComputed.borderRightColor =
-        IEComputed.borderBottomColor = IEComputed.borderLeftColor =
-                ComputedStyle.getBorderColor;
+IEComputed.borderColor = IEComputed.borderTopColor =
+        IEComputed.borderRightColor = IEComputed.borderBottomColor =
+        IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
 
 if (!Y.config.win[GET_COMPUTED_STYLE]) {
     Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
@@ -437,4 +441,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});

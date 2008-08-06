@@ -561,4 +561,4 @@ Y.Selector.patterns = patterns;
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
+}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
