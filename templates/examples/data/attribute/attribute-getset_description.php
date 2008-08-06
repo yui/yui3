@@ -1,6 +1,6 @@
 <h3>Get, Set And Validator Functions</h3>
 
-<p>Attribute lets you define get and set functions for each attribute. These functions are invoked when the user calls Attribute's <code>get</code> and <code>set</code> methods, and provide a way to modify the value returned or the value stored respectively.</p>
+<p>Attribute lets you configure <code>get</code> and <code>set</code> functions for each attribute. These functions are invoked when the user calls Attribute's <code>get</code> and <code>set</code> methods, and provide a way to modify the value returned or the value stored respectively.</p>
 
 <p>You can also define a validator function for each attribute, which is used to validate the final value before it gets stored.</p>
 
@@ -8,7 +8,7 @@
 
 <p>In this example, we'll set up a custom <code>Box</code> class representing a positionable element, with <code>x</code>, <code>y</code> and <code>xy</code> attributes.</p>
 
-<p>Only the <code>xy</code> attribute will actually store the page co-ordinate position of the box. The <code>x</code> and <code>y</code> attributes provide the user a convenient way to set only one of the co-ordinates. However we don't want to store the actual values in the <code>x</code> and <code>y</code> attributes, to avoid having to constantly sync state between all three. The <code>get</code> and <code>set</code> functions provide us with an easy way to achieve this. We'll define <code>get</code> and <code>set</code> functions for both the <code>x</code> and <code>y</code> attributes, which simply pass through to the <code>xy</code> attribute to get and set values:</p>
+<p>Only the <code>xy</code> attribute will actually store the page co-ordinate position of the box. The <code>x</code> and <code>y</code> attributes provide the user a convenient way to set only one of the co-ordinates. However we don't want to store the actual values in the <code>x</code> and <code>y</code> attributes, to avoid having to constantly sync state between all three. The <code>get</code> and <code>set</code> functions provide us with an easy way to achieve this. We'll define <code>get</code> and <code>set</code> functions for both the <code>x</code> and <code>y</code> attributes, which simply pass through to the <code>xy</code> attribute to retrieve and store values:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 // Setup a custom Box class

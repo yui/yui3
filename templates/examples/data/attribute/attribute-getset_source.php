@@ -2,21 +2,21 @@
     <div class="header">Enter new values and click the "Set" buttons</div>
     <div class="body">
         <ul class="hints">
-            <li>Try entering valid and invalid values for the x, y; or values which would place the box outside it's parent.</li>
-            <li>Try entering hex (<em>e.g. #ff0000</em>), rgb (<em>e.g. rgb(255,0,0)</em>) or keyword (<em>e.g. red</em>) color values.</li>
+            <li>Try entering both valid and invalid values for x, y; or values which would place the box outside it's parent.</li>
+            <li>Try entering rgb (<em>e.g. rgb(255,0,0)</em>), hex (<em>e.g. #ff0000</em>) or keyword (<em>e.g. red</em>) color values.</li>
         </ul>
         <p>
-            <label for="x">X:</label>
+            <label for="x">x:</label>
             <input type="text" name="x" id="x" />
             <button type="button" id="setX">Set</button>
         </p>
         <p>
-            <label for="y">Y:</label>
+            <label for="y">y:</label>
             <input type="text" name="y" id="y" />
             <button type="button" id="setY">Set</button>
         </p>
         <p>
-            <label for="color">Color:</label>
+            <label for="color">color:</label>
             <input type="text" name="color" id="color" />
             <button type="button" id="setColor">Set</button>
         </p>
@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<div id="example-container"></div>
+<div id="boxParent"></div>
 
 <script type="text/javascript">
 // Get a new YUI instance 
@@ -37,7 +37,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     // Shortcut for Y.Lang;
     var L = Y.Lang;
 
-    var exampleBox = Y.Node.get("#example-container");
+    var boxParent = Y.Node.get("#boxParent");
 
     // Setup a custom class with attribute support
     function Box(cfg) {
@@ -46,7 +46,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     }
 
     Box.prototype._createNode = function() {
-        this._node = Y.Node.create('<div class="yui-box">Positioned Box (<span class="color"></span>)</div>');
+        this._node = Y.Node.create('<div class="yui-box"><p>Positioned Box</p><p class="color"></p></div>');
         this._bind();
 
     };
@@ -62,7 +62,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
         // and output the color value received from get
         this.after("colorChange", function(event) {
             this._node.setStyle("backgroundColor", this.get("color"));
-            this._node.query("span.color").set("innerHTML", this.get("color"));
+            this._node.query("p.color").set("innerHTML", "(" + this.get("color") + ")");
         });
 
         // Append the rendered node to the parent provided
@@ -180,7 +180,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     // Create a new instance of Box
     var b = new Box({
-        parent : exampleBox
+        parent : boxParent 
     });
 
     // Set and bind form controls
@@ -195,15 +195,15 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     }
 
     Y.on("click", function() {
-        b.set("xy", [x.get("value"), y.get("value")]);
+        b.set("xy", [parseInt(x.get("value")), parseInt(y.get("value"))]);
     }, "#setXY");
 
     Y.on("click", function() {
-        b.set("x", x.get("value"));
+        b.set("x", parseInt(x.get("value")));
     }, "#setX");
     
     Y.on("click", function() {
-        b.set("y", y.get("value"));
+        b.set("y", parseInt(y.get("value")));
     }, "#setY");
     
     Y.on("click", function() {
@@ -211,7 +211,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
     }, "#setColor");
  
     Y.on("click", function() {
-        b.set("xy", [x.get("value"), y.get("value")]);
+        b.set("xy", [parseInt(x.get("value")), parseInt(y.get("value"))]);
         b.set("color", L.trim(color.get("value")));
     }, "#setAll");
  

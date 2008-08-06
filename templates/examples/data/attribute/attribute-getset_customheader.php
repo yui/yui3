@@ -1,11 +1,14 @@
 <style type="text/css">
 
-    #example-container {
-        clear:left;
+    #boxParent {
         overflow:hidden;
         background-color:#004c6d;
         height:20em;
         padding:10px;
+    }
+
+    #boxParent .yui-box p, #attrs p {
+        margin:2px;
     }
 
     .attrs {
@@ -16,7 +19,6 @@
 
     .attrs .header {
         font-weight:bold;
-        color:#004c6d;
         background-color:#aaa;
         padding:5px;
     }
@@ -24,9 +26,9 @@
     .attrs .body {
         padding:10px;
     }
-    
+ 
     .attrs .body .hints {
-        font-size:90%;
+        font-size:85%;
         border-bottom:1px solid #aaa;
     }
 
@@ -41,15 +43,11 @@
         width:4em;
     }
 
-    #attrs  p {
-        margin:2px;
-    }
-
     .yui-box {
         padding:5px;
         border:1px solid #000;
-        width:10em;
-        height:10em;
+        width:8em;
+        height:8em;
         text-align:center;
         color:#000;
     }
