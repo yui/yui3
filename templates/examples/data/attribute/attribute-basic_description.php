@@ -45,7 +45,7 @@
 
 <p>We can now setup any attributes we need for <code>MyClass</code>. We can setup multiple attributes in one call using the using the <code>_initAtts</code> method (a protected method, designed to be used by the augmented class, as opposed to end users of your class). For the basic example we add 3 attributes - <code>foo</code>,<code>bar</code>, and <code>foobar</code>, and provide an initial  <code>value</code> for each. The same object literal we use to provide the value for the attribute will also be used in the other examples to configure specific types of attributes using properties such as <code>readOnly</code>, <code>writeOnce</code>, <code>validator</code> etc..</p>
 
-<p>For convenience (not required), we define the set of attributes which <code>MyClass</code> supports as a static property on our <code>MyClass</code> constructor. This static property is passed to <code>_initAtts</code> to setup the attributes, as part of <code>MyClass's</code> constructor. The complete definition for <code>MyClass</code> is shown below:
+<p>For convenience (not required), we define the set of attributes which <code>MyClass</code> supports as a static property on our <code>MyClass</code> constructor. This static property is passed to <code>_initAtts</code> to setup the attributes, as part of <code>MyClass's</code> constructor. The complete definition for <code>MyClass</code> is shown below:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     function MyClass(cfg) {
@@ -78,7 +78,7 @@
 
 <h4>Using Attributes</h4>
 
-<p>Now that we have <code>MyClass</code> defined with a set of attributes it supports, users can get and set attribute values on instances of <code>MyClass</code>:
+<p>Now that we have <code>MyClass</code> defined with a set of attributes it supports, users can get and set attribute values on instances of <code>MyClass</code>:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     // Create a new instance of MyClass, without over-riding
