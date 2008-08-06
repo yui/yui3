@@ -18,8 +18,9 @@ $nav[]=array('license','/yui/3/license.html','YUI 3 is BSD Licensed', 'YUI is fr
 
 $nav[]=array('', '', 'YUI 3 Core', '');
 $nav[]=array('yui','/yui/3/yui/','YUI (Global Object)', 'YUI Global Object');
-$nav[]=array('dom','/yui/3/dom/','DOM', 'DOM');
 $nav[]=array('node','/yui/3/node/','Node', 'Node');
+$nav[]=array('get','/yui/3/get/','Get', 'Get');
+$nav[]=array('node','/yui/3/loader/','Loader', 'Loader');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
