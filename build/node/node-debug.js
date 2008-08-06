@@ -66,12 +66,19 @@ YUI.add('node', function(Y) {
         return ret;
     };
 
-    var wrapFn = function(node, fn) {
+    var wrapFn = function(fn) {
+        ret = null;
         if (fn) {
-            return function() {
-                return fn(node);
-            }();
+            ret = (typeof fn === 'string') ?
+            function(n) {
+                return Y.Selector.test(n, fn);
+            } : 
+            function(n) {
+                return fn(_instances[n._yuid]);
+            };
         }
+
+        return ret;
     };
 
     var getDoc = function(node) {
@@ -636,19 +643,20 @@ YUI.add('node', function(Y) {
        /*
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
-         * @param {Function} fn - A boolean method for testing elements which receives the element as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(this, fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(fn)));
         },
 
         /**
          * Returns the previous sibling that is an HTMLElement. 
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method previous
-         * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
          * @return {Node} Node instance or null if not found
          */
@@ -660,8 +668,8 @@ YUI.add('node', function(Y) {
          * Returns the next sibling that passes the boolean method. 
          * Returns the nearest HTMLElement sibling if no method provided.
          * @method next
-         * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
          * @return {Object} HTMLElement or null if not found
          */
