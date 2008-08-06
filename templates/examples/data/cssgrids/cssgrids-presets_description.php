@@ -1,6 +1,8 @@
-<h3>Setting the Page Width with YUI CSS Grids</h3>
+<h3>Choosing a Two-Column Preset Template</h3>
 
-<p>The width is set by applying a class value to a parent node. </p>
+<p>Your page can be comprised of two blocks of content. Each block is a div with one of six classes: <code>div.yui-t[1-6]</code>. Your main content block should be wrapped in another div: <code>div.yui-main</code>. (We wrap instead of overload to offer source-order independence.)</p>
+
+<p>You can choose any of the six classes below. The main column's width with be your page width minus the fixed-width of the preset template's narrow columns as in the following table, minus a 1em gutter between blocks.</p>
 
 <table border="0" cellspacing="0" cellpadding="0">
 	<thead>
@@ -12,34 +14,30 @@
 	<tbody>
 		<tr>
 			<td><code>.yui-t1</code></td>
-			<td>160 pixel column, left orientation.</td>
+			<td>160 pixel column, left side.</td>
 		</tr>
 		<tr>
 			<td><code>.yui-t2</code></td>
-			<td>180 pixel column, left orientation.</td>
+			<td>180 pixel column, left side.</td>
 		</tr>
 		<tr>
 			<td><code>.yui-t3</code></td>
-			<td>300 pixel column, left orientation.</td>
+			<td>300 pixel column, left side.</td>
 		</tr>
 		<tr>
 			<td><code>.yui-t4</code></td>
-			<td>160 pixel column, left orientation.</td>
+			<td>180 pixel column, right side.</td>
 		</tr>
 		<tr>
 			<td><code>.yui-t5</code></td>
-			<td>160 pixel column, left orientation.</td>
+			<td>240 pixel column, right side.</td>
 		</tr>
 		<tr>
 			<td><code>.yui-t6</code></td>
-			<td>160 pixel column, left orientation.</td>
+			<td>300 pixel column, right side.</td>
 		</tr>
 	</tbody>
 </table>
-
-<h3>Stacking</h3>
-
-<p>In YUI 3.x, the page width is set by choosing a class value. (In 2.x it was an ID value.) Because it's a class value you can have different and multiple widths within a page.</p>
 
 
 <h5>Note:</h5>

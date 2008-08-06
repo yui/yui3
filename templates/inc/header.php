@@ -74,7 +74,7 @@ if (isset($customHeader) && $customHeader != "") {
 		    </div>
 		</form>
     </div>
-	<div id="ygma"><a href="<?php echo $docroot ?>"><img src="<?php echo $docroot ?>assets/yui.gif"  border="0" width="378" height="28"></a></div>
+	<div id="ygma"><a href="<?php echo $docroot ?>"><img src="<?php echo $docroot ?>assets/logo.gif"  border="0" width="200" height="93"></a></div>
 	<div id="pagetitle"><h1><?php echo $titlebar ?></h1></div>
 </div>
 <div id="bd">

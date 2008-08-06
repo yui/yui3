@@ -11,8 +11,8 @@ $nav[]=array('license','http://developer.yahoo.com/yui/license.html','YUI Licens
 
 $nav[]=array('', '', 'YUI 3 Core - Examples', ' YUI 3 Core - Functional Examples');
 $nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Object)', 'YUI (Global Object) - Functional Examples');
-$nav[]=array('dom',$docroot.'examples/dom/index.html','CSS Fonts', 'DOM - Functional Examples');
-$nav[]=array('node',$docroot.'examples/node/index.html','CSS Grids', 'Node - Functional Examples');
+$nav[]=array('dom',$docroot.'examples/dom/index.html','DOM', 'DOM - Functional Examples');
+$nav[]=array('node',$docroot.'examples/node/index.html','Node', 'Node - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 Utilities - Examples', 'YUI Utilities - Functional Examples');
 $nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');

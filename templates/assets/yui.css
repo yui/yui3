@@ -47,7 +47,7 @@ h1 a:visited {color:#E76300}
 
 #logo_pane { display: none; }
 
-#ygma { margin:.5em auto 1em auto; }
+#ygma { margin:.5em auto 5em auto; }
 
 #bd ul li {margin-bottom:1em;}
 #bd ol {}
@@ -401,7 +401,7 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 
 
 	.apisummary table,
-	#main table {width:100%;margin-bottom:1em;}
+	table {width:100%;margin-bottom:1em;}
 
 	.apisummary table tr,
 	table tr {vertical-align:top;}
