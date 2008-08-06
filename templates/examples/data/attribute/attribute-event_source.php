@@ -6,7 +6,7 @@
             <select id="attr">
                 <option value="foo">foo</option>
                 <option value="bar">bar</option>
-                <option value="foobar">foobar (change will be cancelled)</option>
+                <option value="foobar">foobar (change will be prevented)</option>
             </select>
         </p>
         <p><label for="newVal">Value:</label><input type="text" id="newVal" /></p>
