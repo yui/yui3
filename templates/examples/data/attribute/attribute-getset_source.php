@@ -1,25 +1,29 @@
 <div id="attrs" class="attrs">
-    <div class="header">Enter new values and click the "Change" button:</div>
+    <div class="header">Enter new values and click the "Set" buttons</div>
     <div class="body">
+        <ul class="hints">
+            <li>Try entering valid and invalid values for the x, y; or values which would place the box outside it's parent.</li>
+            <li>Try entering hex (<em>e.g. #ff0000</em>), rgb (<em>e.g. rgb(255,0,0)</em>) or keyword (<em>e.g. red</em>) color values.</li>
+        </ul>
         <p>
             <label for="x">X:</label>
             <input type="text" name="x" id="x" />
-            <button type="button" id="changeX">Change</button>
+            <button type="button" id="setX">Set</button>
         </p>
         <p>
             <label for="y">Y:</label>
             <input type="text" name="y" id="y" />
-            <button type="button" id="changeY">Change</button>
+            <button type="button" id="setY">Set</button>
         </p>
         <p>
             <label for="color">Color:</label>
             <input type="text" name="color" id="color" />
-            <button type="button" id="changeColor">Change</button>
+            <button type="button" id="setColor">Set</button>
         </p>
     </div>
     <div class="footer">
-        <button type="button" id="changeXY">Change XY</button>
-        <button type="button" id="changeAll">Change All</button>
+        <button type="button" id="setXY">Set XY</button>
+        <button type="button" id="setAll">Set All</button>
         <button type="button" id="getAll">Get All</button>
     </div>
 </div>
@@ -49,25 +53,33 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     Box.prototype._bind = function() {
 
+        // Reflect any changes in xy, to the rendered Node
         this.after("xyChange", function() {
             this._node.setXY(this.get("xy"));
         });
 
+        // Reflect any changes in color, to the rendered Node
+        // and output the color value received from get
+        this.after("colorChange", function(event) {
+            this._node.setStyle("backgroundColor", this.get("color"));
+            this._node.query("span.color").set("innerHTML", this.get("color"));
+        });
+
+        // Append the rendered node to the parent provided
         this.after("parentChange", function(event) {
             var p = event.newVal;
             p.appendChild(this._node);
         });
 
-        this.after("colorChange", function(event) {
-            this._node.setStyle("backgroundColor", this.get("color"));
-            this._node.query("span.color").set("innerHTML", this.get("color"));
-        });
-    }
+    };
 
     Box.prototype.constrain = function(val) {
 
         var parentRegion = this.get("parent").get("region");
         var BUFFER = Box.BUFFER;
+
+        // If the X value places the box outside it's parent,
+        // modify it's value to place the box inside it's parent.
 
         if (val[0] < parentRegion.left + BUFFER) {
             val[0] = parentRegion.left + BUFFER;
@@ -76,6 +88,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
                 val[0] = parentRegion.right - this._node.get("offsetWidth") - BUFFER;
             }
         }
+
+        // If the Y value places the box outside it's parent,
+        // modify it's value to place the box inside it's parent.
 
         if (val[1] < parentRegion.top + BUFFER) {
             val[1] = parentRegion.top + BUFFER;
@@ -99,32 +114,41 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
         "x" : {
             set: function(val) {
+                // Pass through x value to xy
                 this.set("xy", [parseInt(val), this.get("y")]);
             },
 
             get: function() {
+                // Get x value from xy
                 return this.get("xy")[0];
             }
         },
 
         "y" : {
             set: function(val) {
+                // Pass through y value to xy
                 this.set("xy", [this.get("x"), parseInt(val)]);
             },
 
             get: function() {
+                // Get y value from xy
                 return this.get("xy")[1];
             }
         },
 
         "xy" : {
+            // Actual stored xy co-ordinates
             value: [0, 0],
 
             set: function(val) {
+                // Constrain XY value to the parent element.
+                // Return the constrain xy value, which will
+                // be the final value stored.
                 return this.constrain(val);
             },
 
             validator: function(val) {
+                // Ensure we only store a valid data value
                 return (L.isArray(val) && val.length == 2 && L.isNumber(val[0]) && L.isNumber(val[1]));
             }
         },
@@ -133,6 +157,9 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             value: "olive",
 
             get: function(val) {
+                // Always normalize the returned value to 
+                // a hex color value,  even if the stored 
+                // value is a keyword, or an rgb value.
                 if (val) {
                     return Y.Color.toHex(val);
                 } else {
@@ -141,6 +168,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
             },
 
             validator: function(val) {
+                // Ensure we only store rgb, hex or keyword values.
                 return (Y.Color.re_RGB.test(val) || Y.Color.re_hex.test(val) || Y.Color.KEYWORDS[val]); 
             }
         }
@@ -148,11 +176,14 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     Y.augment(Box, Y.Attribute);
 
+    // ------
+
+    // Create a new instance of Box
     var b = new Box({
-        id : "b1",
         parent : exampleBox
     });
 
+    // Set and bind form controls
     var x = Y.Node.get("#x");
     var y = Y.Node.get("#y");
     var color = Y.Node.get("#color");
@@ -165,24 +196,24 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     Y.on("click", function() {
         b.set("xy", [x.get("value"), y.get("value")]);
-    }, "#changeXY");
+    }, "#setXY");
 
     Y.on("click", function() {
         b.set("x", x.get("value"));
-    }, "#changeX");
+    }, "#setX");
     
     Y.on("click", function() {
         b.set("y", y.get("value"));
-    }, "#changeY");
+    }, "#setY");
     
     Y.on("click", function() {
         b.set("color", L.trim(color.get("value")));
-    }, "#changeColor");
+    }, "#setColor");
  
     Y.on("click", function() {
         b.set("xy", [x.get("value"), y.get("value")]);
         b.set("color", L.trim(color.get("value")));
-    }, "#changeAll");
+    }, "#setAll");
  
     Y.on("click", function() {
         getAll();

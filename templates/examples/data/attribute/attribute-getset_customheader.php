@@ -9,7 +9,6 @@
     }
 
     .attrs {
-        width:30em;
         border:1px solid #000;
         background-color:#cdcdcd;
         margin-bottom:10px;
@@ -18,6 +17,7 @@
     .attrs .header {
         font-weight:bold;
         color:#004c6d;
+        background-color:#aaa;
         padding:5px;
     }
 
@@ -25,6 +25,11 @@
         padding:10px;
     }
     
+    .attrs .body .hints {
+        font-size:90%;
+        border-bottom:1px solid #aaa;
+    }
+
     .attrs .footer {
         padding:5px;
     }
