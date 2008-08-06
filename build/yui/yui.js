@@ -1511,7 +1511,13 @@ Y.Get = function() {
      * @private
      */
     var _fail = function(id, msg) {
+
+
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
         // execute failure callback
         if (q.onFailure) {
             var sc=q.context || q;
@@ -1581,6 +1587,9 @@ Y.Get = function() {
      */
     var _finish = function(id) {
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
         q.finished = true;
 
         if (q.aborted) {
@@ -1795,8 +1804,13 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
+
             n.onload = function() {
                 f(id, url);
+            };
+
+            n.onerror = function(e) {
+                _fail(id, e + ": " + url);
             };
         }
     };
