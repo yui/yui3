@@ -181,7 +181,6 @@ Y.DOM = {
      * @return {HTMLElement | null} The matching element or null if none found.
      */
     elementByAxis: function(element, axis, fn, all) {
-console.log(fn);
         while (element && (element = element[axis])) { // NOTE: assignment
                 if ( (all || element[TAG_NAME]) && (!fn || fn(element)) ) {
                     return element;
@@ -250,13 +249,13 @@ console.log(fn);
      */
     filterElementsBy: function(elements, fn, firstOnly) {
         var ret = (firstOnly) ? null : [];
-        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
-            if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
+        for (var i = 0, el; el = elements[i++];) {
+            if ( el[TAG_NAME] && (!fn || fn(el)) ) {
                 if (firstOnly) {
-                    ret = elements[i];
+                    ret = el;
                     break;
                 } else {
-                    ret[ret[LENGTH]] = elements[i];
+                    ret[ret[LENGTH]] = el;
                 }
             }
         }
@@ -313,7 +312,7 @@ console.log(fn);
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = templateCache[tag] || doc.createElement(tag);
-        frag.innerHTML = html;
+        frag.innerHTML = Y.Lang.trim(html);
         return frag;
     },
 
@@ -564,4 +563,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' ,{requires:['event'], skinnable:false});
+}, '@VERSION@' );
