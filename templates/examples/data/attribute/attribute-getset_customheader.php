@@ -2,7 +2,7 @@
 
     #example-container {
         clear:left;
-        overflow:auto;
+        overflow:hidden;
         background-color:#004c6d;
         height:20em;
         padding:10px;
@@ -29,15 +29,27 @@
         padding:5px;
     }
 
-    .attrs label, .attrs input {
-        margin:4px;
+    .attrs label {
+        font-weight:bold;
         display:block;
+        float:left;
+        width:4em;
+    }
+
+    #attrs  p {
+        margin:2px;
     }
 
     .yui-box {
-        font-size:90%;
         padding:5px;
         border:1px solid #000;
-        background-color:#8dd5e7;
+        width:10em;
+        height:10em;
+        text-align:center;
+        color:#000;
+    }
+
+    .yui-box .color {
+        font-family:courier;
     }
 </style>
