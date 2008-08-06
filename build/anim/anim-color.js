@@ -14,8 +14,7 @@ Y.Anim.behaviors.color = {
         from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
         to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
 
-
-        if (!from || !to) {
+        if (!from || from.length < 3 || !to || to.length < 3) {
             Y.fail('invalid from or to passed to color behavior');
         }
 
@@ -35,6 +34,7 @@ Y.Anim.behaviors.color = {
 };
 
 Y.each(['backgroundColor',
+        'borderColor',
         'borderTopColor',
         'borderRightColor', 
         'borderBottomColor', 

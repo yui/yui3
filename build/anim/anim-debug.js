@@ -367,6 +367,7 @@ YUI.add('anim', function(Y) {
          * @param {NUM|String} elapsed optional Millisecond or
          * percent start time marker.
          * @method run
+         * @chainable
          */    
         run: function() {
             if (!this.get(RUNNING)) {
@@ -374,6 +375,7 @@ YUI.add('anim', function(Y) {
             } else if (this.get(PAUSED)) {
                 this._resume();
             }
+            return this;
         },
 
         /**
@@ -381,22 +383,26 @@ YUI.add('anim', function(Y) {
          * freezes it in its current state and time.
          * Calling run() will continue where it left off.
          * @method pause
+         * @chainable
          */    
         pause: function() {
             if (this.get(RUNNING)) {
                 this._pause();
             }
+            return this;
         },
 
         /**
          * Stops the animation and resets its state.
          * Calling run() will restart from the beginning.
          * @method stop
+         * @chainable
          */    
         stop: function(finish) {
             if (this.get(RUNNING) || this.get(PAUSED)) {
                 this._end(finish);
             }
+            return this;
         },
 
         _added: false,
@@ -430,7 +436,7 @@ YUI.add('anim', function(Y) {
             _setPrivate(this, START_TIME, null);
             _setPrivate(this, ELAPSED_TIME, 0);
             _setPrivate(this, PAUSED, false);
-            _setPrivate(this, REVERSE, false);
+            //_setPrivate(this, REVERSE, false);
 
             delete _running[Y.stamp(this)];
             this.fire(END, {elapsed: this.get(ELAPSED_TIME)});
@@ -442,7 +448,7 @@ YUI.add('anim', function(Y) {
                 easing = attr.easing,
                 d = attr.duration,
                 t = new Date() - this.get(START_TIME),
-                reversed = this.get('reverse'),
+                reversed = this.get(REVERSE),
                 done = (t >= d),
                 lastFrame = d,
                 attribute,
@@ -455,14 +461,14 @@ YUI.add('anim', function(Y) {
             }
 
             for (var i in attr) {
-                if (attr[i].to) { // testing if attribute
+                if (attr[i].to) {
                     attribute = attr[i];
                     setter = (i in customAttr && 'set' in customAttr[i]) ?
                             customAttr[i].set : Y.Anim.DEFAULT_SETTER;
 
                     if (!done) {
                         setter(this, i, attribute.from, attribute.to, t, d, easing, attribute.unit); 
-                    } else { // ensure final value is set
+                    } else { // ensure final frame value is set
                        // TODO: handle keyframes 
                         setter(this, i, attribute.from, attribute.to, lastFrame, d, easing, attribute.unit); 
                     }
@@ -487,7 +493,7 @@ YUI.add('anim', function(Y) {
                 if (this.get('direction') === 'alternate') {
                     this.set(REVERSE, !this.get(REVERSE)); // flip it
                 }
-                this.fire('iteration', { frames: this._actualFrames });
+                this.fire('iteration');
             } else {
                 iterCount = 0;
                 this._end();
@@ -532,7 +538,7 @@ YUI.add('anim', function(Y) {
                 }
 
                 if (!begin || !end) {
-                    Y.fail('invalid from or to passed given for ' + name, 'Anim');
+                    Y.fail('invalid "from" or "to" for "' + name + '"', 'Anim');
                     return;
                 }
 
@@ -817,7 +823,7 @@ Y.Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
-        if (typeof s === 'undefined') {
+        if (s == undefined) {
             s = 1.70158;
         }
         if (t === d) {
@@ -949,8 +955,7 @@ Y.Anim.behaviors.color = {
         from = Y.Color.re_RGB.exec(Y.Color.toRGB(from));
         to = Y.Color.re_RGB.exec(Y.Color.toRGB(to));
 
-
-        if (!from || !to) {
+        if (!from || from.length < 3 || !to || to.length < 3) {
             Y.fail('invalid from or to passed to color behavior');
         }
 
@@ -970,6 +975,7 @@ Y.Anim.behaviors.color = {
 };
 
 Y.each(['backgroundColor',
+        'borderColor',
         'borderTopColor',
         'borderRightColor', 
         'borderBottomColor', 
