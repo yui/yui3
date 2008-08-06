@@ -71,7 +71,8 @@ Box.ATTRIBUTES = {
 
 <p>The <code>validator</code> function for <code>xy</code> ensures that only valid values finally end up being stored.</p>
 
-<p>The <code>xy</code> attribute also has a <code>set</code> function configured, which makes sure that the box is always constrained to it's parent element. The <code>constrain</code> function which it delegates to, takes the xy value the user it trying to set and returns a modified, constrained value if required. The value which is returned by the <code>set</code> handler is the value which is ultimately stored for the <code>xy</code> attribute:</p>
+<p>The <code>xy</code> attribute also has a <code>set</code> function configured, which makes sure that the box is always constrained to it's parent element. The <code>constrain</code> method which it delegates to, takes the xy value the user is trying to set and returns a modified, constrained value if required. The value which is returned by the <code>set</code> handler is the value which is ultimately stored for the <code>xy</code> attribute:</p>
+
 
 <textarea name="code" class="JScript" cols="60" rows="1">
     Box.prototype.constrain = function(val) {
@@ -104,6 +105,8 @@ Box.ATTRIBUTES = {
         return val;
     };
 </textarea>
+
+<p>The <code>set</code>, <code>get</code> and <code>validator</code> functions are invoked with the host object as the context, so that they can refer to the host object using "<code>this</code>", as we see in the <code>set</code> function for <code>xy</code>.</p>
 
 <h4>The Color Attribute - Normalizing Stored Values Through Get</h4>
 
