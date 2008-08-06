@@ -33,7 +33,7 @@
 
     .attrs .header {
         font-weight:bold;
-        color:#004c6d;
+        background-color:#aaa;
         padding:5px;
     }
 
