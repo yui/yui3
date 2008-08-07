@@ -11,7 +11,7 @@ $nav[]=array('license','http://developer.yahoo.com/yui/3/license.html','YUI Lice
 
 $nav[]=array('', '', 'YUI 3 Utilities - Examples', ' YUI 3 Utilities - Functional Examples');
 $nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Prerequisite)', 'YUI (Global Prerequisite) - Functional Examples');
-$nav[]=array('animation',$docroot.'examples/animation/index.html','Animation', 'Animation - Functional Examples');
+$nav[]=array('animation',$docroot.'examples/anim/index.html','Animation', 'Animation - Functional Examples');
 $nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
 $nav[]=array('base',$docroot.'examples/base/index.html','Base', 'Base - Functional Examples');
 $nav[]=array('dd',$docroot.'examples/dd/index.html','Drag &amp; Drop', 'Drag &amp; Drop - Functional Examples');
