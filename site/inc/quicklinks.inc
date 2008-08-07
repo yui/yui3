@@ -4,7 +4,7 @@ echo'
 	<h4>More Information</h4>
 	<ul>
 ';
-if (($section != "datasource")&&($section != "element")) { echo '		<li><a href="/yui/3/examples/'.$section.'/index.html">Examples</a>: '.$component.' in action.</li>
+if (($section != "base")) { echo '		<li><a href="/yui/3/examples/'.$section.'/index.html">Examples</a>: '.$component.' in action.</li>
 ';}
 if (($section != "cssfonts") && ($section != "cssreset") && ($section != "cssgrids") && ($section != "cssbase")) { echo '		<li><a href="/yui/3/api/module_'.$section.'.html">API Documentation</a>: View the full API documentation for the '.$component.'.</li>
 ';}
