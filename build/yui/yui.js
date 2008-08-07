@@ -3101,11 +3101,11 @@ Y.Env.meta = META;
                 Y._attach(this.sorted);
             }
 
+            this._pushEvents();
+
         },
 
         _onSuccess: function() {
-
-            this._pushEvents();
 
             this._attach();
 
@@ -3506,10 +3506,9 @@ Y.Env.meta = META;
          * @param {Function} optional function reference
          * @private
          */
-        _pushEvents: function(ref) {
-            var r = ref || Y;
-            if (r.Event) {
-                r.Event._load();
+        _pushEvents: function() {
+            if (Y.Event) {
+                Y.Event._load();
             }
         },
 

@@ -393,7 +393,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name, 'info', 'YUI');
+                Y.log('module not found: ' + name, 'info', 'yui');
                 missing.push(name);
             }
 
@@ -446,7 +446,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -1526,7 +1526,7 @@ Y.Get = function() {
      */
     var _fail = function(id, msg) {
 
-        Y.log("get failure: " + msg, "warn", "Get");
+        Y.log("get failure: " + msg, "warn", "get");
 
         var q = queues[id];
         if (q.timer) {
@@ -1601,7 +1601,7 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id, "info", "Get");
+        Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id];
         if (q.timer) {
             q.timer.cancel();
@@ -1628,7 +1628,7 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Timeout " + id, "info", "Get");
+        Y.log("Timeout " + id, "info", "get");
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.context || q;
@@ -1644,7 +1644,7 @@ Y.Get = function() {
      * @private
      */
     var _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "Get");
+        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
 
         var q = queues[id];
 
@@ -1680,7 +1680,7 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
-        Y.log("attempting to load " + url, "info", "Get");
+        Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
             // Y.log('create timer');
@@ -1709,7 +1709,7 @@ Y.Get = function() {
             h.appendChild(n);
         }
         
-        Y.log("Appending node: " + url, "info", "Get");
+        Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -1812,7 +1812,7 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    Y.log(id + " onreadstatechange " + url, "info", "Get");
+                    Y.log(id + " onreadstatechange " + url, "info", "get");
                     f(id, url);
                 }
             };
@@ -1823,7 +1823,7 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    Y.log(id + " DOM2 onload " + url, "info", "Get");
+                    Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 });
             } 
@@ -1834,7 +1834,7 @@ Y.Get = function() {
         } else { 
 
             n.onload = function() {
-                Y.log(id + " onload " + url, "info", "Get");
+                Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
             };
 
@@ -1862,7 +1862,7 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            Y.log(id + " finalized ", "info", "Get");
+            Y.log(id + " finalized ", "info", "get");
             L.later(0, null, _finish, id);
         },
 
@@ -1876,7 +1876,7 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId;
             var q = queues[id];
             if (q) {
-                Y.log("Aborting " + id, "info", "Get");
+                Y.log("Aborting " + id, "info", "get");
                 q.aborted = true;
             }
         }, 
@@ -3149,18 +3149,18 @@ Y.Env.meta = META;
             // which is needed if some dependencies are already on
             // the page without their dependencies.
             if (this.attaching) {
-                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "Loader");
+                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "loader");
                 Y._attach(this.attaching);
             } else {
-                Y.log('attaching sorted list: ' + this.sorted, "info", "Loader");
+                Y.log('attaching sorted list: ' + this.sorted, "info", "loader");
                 Y._attach(this.sorted);
             }
+
+            this._pushEvents();
 
         },
 
         _onSuccess: function() {
-
-            this._pushEvents();
 
             this._attach();
 
@@ -3332,7 +3332,7 @@ Y.Env.meta = META;
          */
         insert: function(o, type) {
 
-            Y.log('Insert() ' + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "loader");
 
             // build the dependency list
             this.calculate(o);
@@ -3410,10 +3410,10 @@ Y.Env.meta = META;
 
                 if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
+Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
                     var callback=function(o) {
-                        Y.log('Combo complete: ' + o.data, "info", "Loader");
+                        Y.log('Combo complete: ' + o.data, "info", "loader");
                         this._combineComplete = true;
 
 
@@ -3452,7 +3452,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
                     return;
                 }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
+Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -3490,7 +3490,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "loader");
                     return;
                 }
 
@@ -3500,7 +3500,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 if (!m) {
 
                     var msg = "Undefined module " + s[i] + " skipped";
-                    Y.log(msg, 'warn', 'Loader');
+                    Y.log(msg, 'warn', 'loader');
                     this.inserted[s[i]] = true;
                     this.skipped[s[i]] = true;
                     continue;
@@ -3516,7 +3516,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {
@@ -3573,10 +3573,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @param {Function} optional function reference
          * @private
          */
-        _pushEvents: function(ref) {
-            var r = ref || Y;
-            if (r.Event) {
-                r.Event._load();
+        _pushEvents: function() {
+            if (Y.Event) {
+                Y.Event._load();
             }
         },
 
@@ -3641,7 +3640,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' initialized', 'info', 'YUI');
+        Y.log(Y.id + ' initialized', 'info', 'yui');
 
         if (C.core) {
 

@@ -393,7 +393,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name, 'info', 'YUI');
+                Y.log('module not found: ' + name, 'info', 'yui');
                 missing.push(name);
             }
 
@@ -446,7 +446,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -1417,7 +1417,7 @@ YUI.add("later", function(Y) {
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' initialized', 'info', 'YUI');
+        Y.log(Y.id + ' initialized', 'info', 'yui');
 
         if (C.core) {
 

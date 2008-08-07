@@ -1090,18 +1090,18 @@ Y.Env.meta = META;
             // which is needed if some dependencies are already on
             // the page without their dependencies.
             if (this.attaching) {
-                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "Loader");
+                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "loader");
                 Y._attach(this.attaching);
             } else {
-                Y.log('attaching sorted list: ' + this.sorted, "info", "Loader");
+                Y.log('attaching sorted list: ' + this.sorted, "info", "loader");
                 Y._attach(this.sorted);
             }
+
+            this._pushEvents();
 
         },
 
         _onSuccess: function() {
-
-            this._pushEvents();
 
             this._attach();
 
@@ -1273,7 +1273,7 @@ Y.Env.meta = META;
          */
         insert: function(o, type) {
 
-            Y.log('Insert() ' + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "loader");
 
             // build the dependency list
             this.calculate(o);
@@ -1351,10 +1351,10 @@ Y.Env.meta = META;
 
                 if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
+Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
                     var callback=function(o) {
-                        Y.log('Combo complete: ' + o.data, "info", "Loader");
+                        Y.log('Combo complete: ' + o.data, "info", "loader");
                         this._combineComplete = true;
 
 
@@ -1393,7 +1393,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
                     return;
                 }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
+Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -1431,7 +1431,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "loader");
                     return;
                 }
 
@@ -1441,7 +1441,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 if (!m) {
 
                     var msg = "Undefined module " + s[i] + " skipped";
-                    Y.log(msg, 'warn', 'Loader');
+                    Y.log(msg, 'warn', 'loader');
                     this.inserted[s[i]] = true;
                     this.skipped[s[i]] = true;
                     continue;
@@ -1457,7 +1457,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {
@@ -1514,10 +1514,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @param {Function} optional function reference
          * @private
          */
-        _pushEvents: function(ref) {
-            var r = ref || Y;
-            if (r.Event) {
-                r.Event._load();
+        _pushEvents: function() {
+            if (Y.Event) {
+                Y.Event._load();
             }
         },
 
