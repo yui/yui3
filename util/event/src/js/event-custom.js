@@ -468,7 +468,7 @@ YUI.add("event-custom", function(Y) {
             var es = Y.Env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {
             if (!this.silent) {
-                Y.log(msg, cat || "info", "Event");
+                Y.log(msg, cat || "info", "event");
             }
         },
 

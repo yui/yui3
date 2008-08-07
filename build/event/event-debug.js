@@ -856,7 +856,7 @@ YUI.add("event-custom", function(Y) {
             var es = Y.Env._eventstack, s =  es && es.silent;
             // if (!s && !this.silent) {
             if (!this.silent) {
-                Y.log(msg, cat || "info", "Event");
+                Y.log(msg, cat || "info", "event");
             }
         },
 
@@ -1423,7 +1423,7 @@ YUI.add("event-target", function(Y) {
 
             //if (ce && !ce.configured) {
             if (ce) {
-Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'Event');
+Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
 
                 // This event could have been published
                 ce.applyConfig(opts, true);
@@ -1789,6 +1789,8 @@ YUI.add("event-dom", function(Y) {
              */
             var _wrappers = {};
 
+            var _windowLoadKey = null;
+
             /**
              * Custom event wrapper map DOM events.  Key is 
              * Element uid stamp.  Each item is a hash of custom event
@@ -2003,7 +2005,7 @@ YUI.add("event-dom", function(Y) {
 
                     if (!fn || !fn.call) {
     // throw new TypeError(type + " addListener call failed, callback undefined");
-    Y.log(type + " addListener call failed, invalid callback", "error", "Event");
+    Y.log(type + " addListener call failed, invalid callback", "error", "event");
                         return false;
                     }
 
@@ -2087,6 +2089,19 @@ YUI.add("event-dom", function(Y) {
                         cewrapper.fn = function(e) {
                             cewrapper.fire(Y.Event.getEvent(e, el));
                         };
+
+                        if (el == Y.config.win && type == "load") {
+                            // window load happens once
+                            cewrapper.fireOnce = true;
+                            _windowLoadKey = key;
+
+                            // if the load is complete, fire immediately.
+                            // all subscribers, including the current one
+                            // will be notified.
+                            if (loadComplete) {
+                                cewrapper.fire();
+                            }
+                        }
 
                         _wrappers[key] = cewrapper;
                         _el_events[ek] = _el_events[ek] || {};
@@ -2242,7 +2257,7 @@ YUI.add("event-dom", function(Y) {
                                  !o.alert              && // o is not a window
                                  (o.item || typeof o[0] !== "undefined") );
                     } catch(ex) {
-                        Y.log("collection check failure", "warn");
+                        Y.log("collection check failure", "warn", "event");
                         return false;
                     }
 
@@ -2266,18 +2281,22 @@ YUI.add("event-dom", function(Y) {
                 _load: function(e) {
 
                     if (!loadComplete) {
+
+                        // Y.log('Load Complete', 'info', 'event');
+
                         loadComplete = true;
-                        var E = Y.Event;
 
                         // Just in case DOMReady did not go off for some reason
                         // E._ready();
-                        Y.fire && Y.fire('event:ready');
+                        if (Y.fire) {
+                            Y.fire('event:ready');
+                        }
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the
                         // the user is more likely to get the onAvailable notifications
                         // before the window load notification
-                        E._tryPreloadAttach();
+                        Y.Event._tryPreloadAttach();
 
                     }
                 },

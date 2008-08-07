@@ -1766,6 +1766,8 @@ YUI.add("event-dom", function(Y) {
              */
             var _wrappers = {};
 
+            var _windowLoadKey = null;
+
             /**
              * Custom event wrapper map DOM events.  Key is 
              * Element uid stamp.  Each item is a hash of custom event
@@ -2059,6 +2061,19 @@ YUI.add("event-dom", function(Y) {
                             cewrapper.fire(Y.Event.getEvent(e, el));
                         };
 
+                        if (el == Y.config.win && type == "load") {
+                            // window load happens once
+                            cewrapper.fireOnce = true;
+                            _windowLoadKey = key;
+
+                            // if the load is complete, fire immediately.
+                            // all subscribers, including the current one
+                            // will be notified.
+                            if (loadComplete) {
+                                cewrapper.fire();
+                            }
+                        }
+
                         _wrappers[key] = cewrapper;
                         _el_events[ek] = _el_events[ek] || {};
                         _el_events[ek][key] = cewrapper;
@@ -2234,18 +2249,21 @@ YUI.add("event-dom", function(Y) {
                 _load: function(e) {
 
                     if (!loadComplete) {
+
+
                         loadComplete = true;
-                        var E = Y.Event;
 
                         // Just in case DOMReady did not go off for some reason
                         // E._ready();
-                        Y.fire && Y.fire('event:ready');
+                        if (Y.fire) {
+                            Y.fire('event:ready');
+                        }
 
                         // Available elements may not have been detected before the
                         // window load event fires. Try to find them now so that the
                         // the user is more likely to get the onAvailable notifications
                         // before the window load notification
-                        E._tryPreloadAttach();
+                        Y.Event._tryPreloadAttach();
 
                     }
                 },
