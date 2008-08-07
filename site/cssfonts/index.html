@@ -60,18 +60,18 @@ include "../inc/header.inc";
 				<p>To use <?php echo $component;?>, include the following source file in your web page with the link element:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/reset-min.css">
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-min.css">
 				</textarea>
 				
 				<h4 id="context">Global vs. Contextual</h4>
 				
-				<p>YUI's CSS resources apply rules to HTML elements directly. If you wish to only apply the rules within specific contexts, use the <code>-context.css</code> version. The contextual version selects HTML elements only when they descend from the <code>.yui-reset</code> classname.</p>
+				<p>YUI's CSS resources apply rules to HTML elements directly. If you wish to only apply the rules within specific contexts, use the <code>-context.css</code> version. The contextual version selects HTML elements only when they descend from the <code>.yui-fonts</code> classname.</p>
 				
 				<p>Here is how to include the contextual version of <?php echo $component; ?>:</p> 
 				
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/reset-context-min.css">
+				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-context-min.css">
 				</textarea>
 				
 				<?php
@@ -184,20 +184,7 @@ include "../inc/support.inc";
 	include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		
-		
-		<div id="morereading" class="mod box4">
-			<div class="hd">
-				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
-			</div>
-			<div class="bd">
-				<ul>
-					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-			  		<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-				</ul>
-			</div>
-		</div>
+
 
 		<div id="delicious" class="mod box4">
 			<div class="bd delicious">

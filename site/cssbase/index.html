@@ -79,7 +79,7 @@ include "../inc/header.inc";
 			
 					<h3 id="code">See the Code</h3>
 
-					<p>Here is what's in <?php echo $component;?>. As you can see in the code below, or in this example showing <a href="../examples/base/base-simple.html">HTML elements after CSS Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
+					<p>Here is what's in <?php echo $component;?>. As you can see in the code below, or in this example showing <a href="../examples/cssbase/base-simple.html">HTML elements after CSS Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
 
 				<textarea name="code" class="CSS" cols="60" rows="10">
 				/* base.css, part of YUI's CSS Foundation */
@@ -156,17 +156,17 @@ include "../inc/header.inc";
 								
 				<h3 id="start">Using <?php echo $component; ?></h3>
 
-				<p><?php echo $component; ?> is easy to use. Simply including the file provides consistent styling of HTML elements. If you want </p>
+				<p><?php echo $component; ?> is easy to use. Simply including the file provides consistent styling of HTML elements.</p>
 
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
-				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-reset</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
+				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-base</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
 				<p>In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
 					
 					
 <textarea name="code" class="HTML" cols="60" rows="1">
 <div>
-	<div id="left-column" class="yui-reset"><h1>Lorem Ipsum</h1></div>
+	<div id="left-column" class="yui-base"><h1>Lorem Ipsum</h1></div>
 	<div id="right-column"><h1>Lorem Ipsum</h1></div>
 </div>
 </textarea>
@@ -193,19 +193,6 @@ include "../inc/support.inc";
 ?>
 		   </div>
 		
-		
-		<div id="morereading" class="mod box4">
-			<div class="hd">
-				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
-			</div>
-			<div class="bd">
-				<ul>
-					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-			  		<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-				</ul>
-			</div>
-		</div>
 
 		<div id="delicious" class="mod box4">
 			<div class="bd delicious">

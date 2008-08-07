@@ -86,7 +86,7 @@ include "../inc/header.inc";
 					<p>To use <?php echo $component;?>, include the following source file in your web page with the link element.</p>
 
 				<textarea name="code" class="HTML" cols="60" rows="3">
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids-min.css">
+					<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids-min.css">
 				</textarea>
 
 						<p>Grids rely on the width of an "<code>em</code>" provided by <a href="../cssfonts/">CSS Fonts</a>; therefore, that file must be included. For the sake of this document, the level playing field provided by <a href="../cssreset/">CSS Reset</a> is also assumed. Including the doctype declaration and links to the files, the top and head of your document should contain the following information:</p>
@@ -98,7 +98,9 @@ include "../inc/header.inc";
 				<head>
 					<title>YUI CSS Grids</title>
 					<!-- Source File -->
-					<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts-grids/reset-fonts-grids.css">
+						<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/resert-min.css">
+						<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-min.css">
+					<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids.css">
 				</head>
 				</textarea>
 
@@ -179,7 +181,7 @@ include "../inc/header.inc";
 
 							<h6 class="note">Note:</h6>
 
-							<p>On the advice of our designers, the 100% grid (<code>#doc3</code>) has 10px of margin on the left and right sides. This prevents the content from <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleeding</a> into the browser's chrome. If you prefer, you can set it back to zero by adding this to your document:</p>
+							<p>On the advice of our designers, the 100% grid (<code>.d0</code>) has 10px of margin on the left and right sides. This prevents the content from <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleeding</a> into the browser's chrome. If you prefer, you can set it back to zero by adding this to your document:</p>
 
 				<textarea name="code" class="HTML" cols="60" rows="3">
 				<style>
@@ -189,7 +191,7 @@ include "../inc/header.inc";
 
 							<h5 id="custom_page_width">Customizing the Page Width</h5>
 
-							<p>We've made it easy to customize the page width. Divide your desired pixel width by 13; the result is your width in ems for all non-IE browsers. For IE, divide your desired pixel with by 13.3333 to find the width in ems for IE. Here's an <a href="../examples/cssgrids/cssgrids-width-custom.html">example of a custom page width of 600px</a>, and here's what the CSS looks like: </p> 
+							<p>We've made it easy to customize the page width. Divide your desired pixel width by 13; the result is your width in ems for all non-IE browsers. For IE, divide your desired pixel with by 13.3333 to find the width in ems for IE. I find it useful to preserve up to four decimal places (1.2345) before rounding. Here's an <a href="../examples/cssgrids/cssgrids-width-custom.html">example of a custom page width of 600px</a>, and here's what the CSS looks like: </p> 
 
 				<textarea name="code" class="CSS" cols="60" rows="8">
 				<style> 
@@ -281,7 +283,7 @@ include "../inc/header.inc";
 
 				<textarea name="code" class="HTML" cols="60" rows="13">
 				...
-				<div class="doc">
+				<div class="d0">
 	               <div class="yui-t4"> <!-- change class to change preset -->
 	                  <div class="yui-main">
 	                     <div class="yui-b"></div>
@@ -374,32 +376,26 @@ include "../inc/header.inc";
 				<tr class="odd">
 					<th>Special Grid Class</th>
 					<th>Description</th>
-					<th>Example</th>
 				</tr>
 				<tr>
 					<td><code>.yui-gb</code></td>
 					<td>1/3 - 1/3 - 1/3</td>
-					<td><a href="../examples/cssgrids/grids-gb.html">Example</a></td>
 				</tr>
 				<tr class="odd">
 					<td><code>.yui-gc</code></td>
 					<td>2/3 - 1/3</td>
-					<td><a href="../examples/cssgrids/grids-gc.html">Example</a></td>
 				</tr>
 				<tr>
 					<td><code>.yui-gd</code></td>
 					<td>1/3 - 2/3</td>
-					<td><a href="../examples/cssgrids/grids-gd.html">Example</a></td>
 				</tr>
 				<tr class="odd">
 					<td><code>.yui-ge</code></td>
 					<td>3/4 - 1/4</td>
-					<td><a href="../examples/cssgrids/grids-ge.html">Example</a></td>
 				</tr>
 				<tr>
 					<td><code>.yui-gf</code></td>
 					<td>1/4 - 3/4</td>
-					<td><a href="../examples/cssgrids/grids-gf.html">Example</a></td>
 				</tr>
 				</table>
 				</div>
@@ -417,9 +413,9 @@ include "../inc/header.inc";
 
 
 
-					<h3 id="newsin3x">New in 3.x</h3>
+<!-- 					<h3 id="newsin3x">New in 3.x</h3>
 
-					<p>In 3.x, <?php echo $component; ?> began offering fixed-width layouts. These are built with pixels instead of EMs and therefore do not expand horizontally when the font size is adjusted by the user.</p>
+					<p>In 3.x, <?php echo $component; ?> began offering fixed-width layouts. These are built with pixels instead of EMs and therefore do not expand horizontally when the font size is adjusted by the user.</p> -->
 
 					<?php include "../inc/video-css.inc";?>
 				
@@ -443,19 +439,6 @@ include "../inc/support.inc";
 ?>
 		   </div>
 		
-		
-		<div id="morereading" class="mod box4">
-			<div class="hd">
-				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
-			</div>
-			<div class="bd">
-				<ul>
-					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-			  		<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-				</ul>
-			</div>
-		</div>
 
 		<div id="delicious" class="mod box4">
 			<div class="bd delicious">
