@@ -318,7 +318,10 @@ YUI.add("event-custom", function(Y) {
 
 
             if (this.fireOnce && this.fired) {
-                this._notify(s);
+
+                // this._notify(s);
+                // setTimeout(Y.bind(this._notify, this, s), 0);
+                Y.later(0, this, this._notify, s);
             }
 
             if (when == AFTER) {

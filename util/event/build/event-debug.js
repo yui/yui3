@@ -706,7 +706,10 @@ YUI.add("event-custom", function(Y) {
 
 
             if (this.fireOnce && this.fired) {
-                this._notify(s);
+
+                // this._notify(s);
+                // setTimeout(Y.bind(this._notify, this, s), 0);
+                Y.later(0, this, this._notify, s);
             }
 
             if (when == AFTER) {
@@ -1868,9 +1871,7 @@ YUI.add("event-dom", function(Y) {
                  */
                 startInterval: function() {
                     if (!this._interval) {
-                        var self = this;
-                        var callback = function() { self._tryPreloadAttach(); };
-                        this._interval = setInterval(callback, this.POLL_INTERVAL);
+this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INTERVAL);
                     }
                 },
 
@@ -1912,7 +1913,11 @@ YUI.add("event-dom", function(Y) {
                                       checkReady: checkContent });
                     }
                     _retryCount = this.POLL_RETRYS;
-                    this.startInterval();
+                    // this.startInterval();
+                    // this._tryPreloadAttach();
+
+                    // We want the first test to be immediate, but async
+                    setTimeout(Y.bind(this._tryPreloadAttach, this), 0);
                 },
 
                 /**
