@@ -9,18 +9,17 @@ $nav[]=array('docs',$docroot.'api/','YUI 3 API Docs', 'Instantly searchable API 
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 on Sourceforge (external)', 'The YUI Library can be downloaded from SourceForge');
 $nav[]=array('license','http://developer.yahoo.com/yui/3/license.html','YUI License (external)', 'YUI is free and open, offered under a BSD license.');
 
-$nav[]=array('', '', 'YUI 3 Core - Examples', ' YUI 3 Core - Functional Examples');
-$nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Object)', 'YUI (Global Object) - Functional Examples');
-$nav[]=array('dom',$docroot.'examples/dom/index.html','DOM', 'DOM - Functional Examples');
-$nav[]=array('node',$docroot.'examples/node/index.html','Node', 'Node - Functional Examples');
-
-$nav[]=array('', '', 'YUI 3 Utilities - Examples', 'YUI Utilities - Functional Examples');
-$nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
+$nav[]=array('', '', 'YUI 3 Utilities - Examples', ' YUI 3 Utilities - Functional Examples');
+$nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Prerequisite)', 'YUI (Global Prerequisite) - Functional Examples');
 $nav[]=array('animation',$docroot.'examples/animation/index.html','Animation', 'Animation - Functional Examples');
+$nav[]=array('attribute',$docroot.'examples/attribute/index.html','Attribute', 'Attribute - Functional Examples');
 $nav[]=array('base',$docroot.'examples/base/index.html','Base', 'Base - Functional Examples');
 $nav[]=array('dd',$docroot.'examples/dd/index.html','Drag &amp; Drop', 'Drag &amp; Drop - Functional Examples');
+$nav[]=array('event',$docroot.'examples/event/index.html','Event', 'Event - Functional Examples');
+$nav[]=array('event',$docroot.'examples/get/index.html','Get', 'Get - Functional Examples');
 $nav[]=array('io',$docroot.'examples/io/index.html','IO', 'IO - Functional Examples');
 $nav[]=array('json',$docroot.'examples/json/index.html','JSON', 'JSON (JavaScript Object Notation) - Functional Examples');
+$nav[]=array('node',$docroot.'examples/node/index.html','Node', 'Node - Functional Examples');
 $nav[]=array('queue',$docroot.'examples/queue/index.html','Queue', 'Queue - Functional Examples');
 
 $nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');

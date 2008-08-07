@@ -16,28 +16,19 @@ $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source 
 $nav[]=array('license','/yui/3/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
-$nav[]=array('', '', 'YUI 3 Core', '');
-$nav[]=array('yui','/yui/3/yui/','YUI (Global Object)', 'YUI Global Object');
-$nav[]=array('node','/yui/3/node/','Node', 'Node');
-$nav[]=array('get','/yui/3/get/','Get', 'Get');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
-$nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
+$nav[]=array('yui','/yui/3/yui/','YUI (Global Prerequisite)', 'YUI Global Prerequisite');
 $nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
+$nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
-// $nav[]=array('compat','/yui/3/compat/','Compat', 'Compat');
-// $nav[]=array('cookie','/yui/3/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
+$nav[]=array('event','/yui/3/event/','Event', 'Event');
+$nav[]=array('get','/yui/3/get/','Get', 'Get');
 $nav[]=array('io','/yui/3/io/','IO', 'IO');
 $nav[]=array('json','/yui/3/json/','JSON', 'JSON (JavaScript Object Notation)');
+$nav[]=array('node','/yui/3/node/','Node', 'Node');
 $nav[]=array('queue','/yui/3/queue/','Queue', 'Queue');
-
-// $nav[]=array('', '', 'Tools', '');
-// $nav[]=array('compressor','/yui/compressor/','YUI Compressor', 'YUI Compressor for CSS and JavaScript');
-// $nav[]=array('loader','/loader/','YUI Load', 'YUI Loader');
-// $nav[]=array('logger','/logger/','YUI Log', 'YUI Logger');
-// $nav[]=array('profiler','/profiler/','YUI Profiler', 'Global YUI Object');
-// $nav[]=array('yuitest','/yuitest/','YUI Test', 'YUI Test');
 
 $nav[]=array('', '', 'CSS', '');
 $nav[]=array('cssreset','/yui/3/cssreset/','CSS Reset', 'CSS Reset');
