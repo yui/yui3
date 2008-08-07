@@ -7,7 +7,7 @@ $nav[]=array('yui3home', 'http://developer.yahoo.com/yui/3/', 'YUI 3 Web Site (e
 $nav[]=array('examples',$docroot.'examples/','YUI 3 Examples', 'Examples of every YUI utility and control in action');
 $nav[]=array('docs',$docroot.'api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 on Sourceforge (external)', 'The YUI Library can be downloaded from SourceForge');
-$nav[]=array('license','http://developer.yahoo.com/yui/license.html','YUI License (external)', 'YUI is free and open, offered under a BSD license.');
+$nav[]=array('license','http://developer.yahoo.com/yui/3/license.html','YUI License (external)', 'YUI is free and open, offered under a BSD license.');
 
 $nav[]=array('', '', 'YUI 3 Core - Examples', ' YUI 3 Core - Functional Examples');
 $nav[]=array('yui',$docroot.'examples/yui/index.html','YUI (Global Object)', 'YUI (Global Object) - Functional Examples');

@@ -58,7 +58,7 @@ YUI().use('dd-drop', 'dd-constrain');
 <h3>Making the Nodes draggable</h3>
 <p>Now that we have a YUI instance with the <code>dd-drop</code> module, we need to instantiate the <code>Drag</code> instance on each Drag Node.</p>
 <p>In this example we are using the data config option of the drag to associate data with this Drag instance.</p>
-<p>So we have setup an object literal containing information about our drag items.</p>
+<p>So we have set up an object literal containing information about our drag items.</p>
 <textarea name="code" class="JScript">
     var data = {
         'drag1': { color: 'white', size: 'x-small', price: '$5.00' },
@@ -79,7 +79,7 @@ YUI().use('dd-drop', 'dd-constrain', function(Y) {
         'drag4': { color: 'red', size: 'large', price: '$10.00' },
         'drag5': { color: 'purple', size: 'x-large', price: '$15.00' }
     };
-    //Get all the div's with the class drag
+    //Get all the divs with the class drag
     var drags = Y.Node.all('#play div.drag');
     //Walk through each one
     drags.each(function(v, k, items) {
@@ -99,7 +99,7 @@ YUI().use('dd-drop', 'dd-constrain', function(Y) {
             //Attach the data here..
             data: thisData
         });
-        //Simple listener for missed drops to move it back to it's start position.
+        //Simple listener for missed drops to move it back to its start position.
         dd.on('drag:dropmiss', function() {
             this.get('node').setStyles({
                 top: '',
@@ -112,7 +112,7 @@ YUI().use('dd-drop', 'dd-constrain', function(Y) {
 
 
 <h3>Setting up the Drop Target</h3>
-<p>Here we setup the Drop Target and assign a listener to it.</p>
+<p>Here we set up the Drop Target and assign a listener to it.</p>
 <textarea name="code" class="JScript">
 var drop = new Y.DD.Drop({
     node: '#drop'
@@ -121,7 +121,7 @@ var drop = new Y.DD.Drop({
 drop.on('drop:hit', function(e) {
     //Now we get the drag instance that triggered the drop hit
     var drag = e.drag;
-    //Reset it's position
+    //Reset its position
     drag.get('node').setStyles({
         top: '',
         left: ''

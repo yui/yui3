@@ -6,7 +6,7 @@ YUI().use('anim', function(Y) {
 </textarea>
 
 <h3>Using Animation</h3>
-<p>Now lets setup a simple animation on the Node <code>#demo</code>.</p>
+<p>Now let's setup a simple animation on the Node <code>#demo</code>.</p>
 <textarea name="code" class="JScript">
 YUI().use('anim', function(Y) {
     var anim = new Y.Anim({
@@ -36,7 +36,7 @@ var Y2 = YUI().use('dd-drag', function(Y) {
 </textarea>
 
 <h3>Making the node draggable</h3>
-<p>Now lets make the same node draggable (while it's animated).</p>
+<p>Now let's make the same node draggable (while it's animated).</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drag', function(Y) {
     var dd = new Y.DD.Drag({

@@ -13,8 +13,13 @@ include($docroot."inc/header.php");
 <div id="yui-main">
 	<div class="yui-b" id="main">
 		<div class="yui-g">
-            <h2>Welcome to the Yahoo! User Interface Library (YUI)</h2>
-<p>Thanks for downloading the YUI Library of JavaScript and CSS components.  The files you've downloaded contain all of the source code for YUI (in the <a href="build/"><code>/build</code></a> directory) as well as <a href="#examples">functional examples</a> for each component.  They also contain documentation in the form of <a href="api/index.html">API docs</a>.  <a href="http://developer.yahoo.com/yui/docs/assets/cheatsheets.zip">PDF cheatsheets for most components are available as an external download</a>.</p>
+            <h2>YUI 3.x Preview Release 1</h2>
+
+				<p>The YUI team is pleased to announce the YUI 3.0 Preview Release 1. This preview is an early look at what we're working on for the next generation of YUI Library. Please <a href="api/">review the API</a>, play with <a href="examples/">the examples</a>, and read the documentation on the <a href="http://developer.yahoo.com/yui/3/">3.x web site</a> for details; you can find us with questions or comments on the <a href="http://tech.groups.yahoo.com/group/yui3/">YUI 3.x discussion group</a>.</p>
+		
+				<p>Please keep in mind that this is an early <em>preview</em>, not a production-quality (or even a beta) release. Things will change. Optimization and refactoring will continue. But we didn't want to wait to get feedback from the community.</p>
+		
+				<p>This YUI 3.x PR1 is part of the broader <a href="http://developer.yahoo.com/yui">YUI Library</a> project, which is a coherent collection of JavaScript and CSS resources that make it easier to build richly interactive applications in web browsers. They have been released as open source under a <a href="license.html">BSD license</a> and are free for all uses.</p>
 
 <h3>Getting Started:</h3>
 <ol>

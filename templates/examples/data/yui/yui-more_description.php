@@ -13,7 +13,7 @@
 
 <h3>Setting up the YUI Instance</h3>
 
-<p>When we create our <code>YUI</code> instance, will tell it to load the <code>*</code> module.
+<p>When we create our <code>YUI</code> instance, we'll tell it to load the <code>*</code> module.
 
 <p>The <code>*</code> module is a shorthand module name for all modules on the page.  This way you don't
 have to supply the full list of requirements to the <code>use</code> method.</p>

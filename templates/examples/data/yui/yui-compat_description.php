@@ -1,5 +1,5 @@
 <h3>Including YUI 2.x</h3>
-<p>First we will include the code for the 2.x Calendar Control and it's dependencies.</p>
+<p>First we will include the code for the 2.x Calendar Control and its dependencies.</p>
 <textarea name="code" class="HTML">
 &lt;!-- css --&gt;
 &lt;link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/calendar/assets/skins/sam/calendar.css"&gt;
@@ -16,7 +16,7 @@ YUI().use('dd-drag', function(Y) {
 </textarea>
 
 <h3>Creating the Calendar</h3>
-<p>Now that we have our tools in place, lets create the calendar</p>
+<p>Now that we have our tools in place, let's create the calendar.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drag', function(Y) {
     var cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');
@@ -39,7 +39,7 @@ YUI().use('dd-drag', function(Y) {
 </textarea>
 
 <h3>Handling the Calendars Select Event with Node</h3>
-<p>Now we need to hookup the <code>selectEvent</code> and handle that with 3.x's <code>Node</code>.</p>
+<p>Now we need to hook up the <code>selectEvent</code> and handle that with 3.x's <code>Node</code>.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drag', function(Y) {
     var cal1 = new YAHOO.widget.Calendar('cal1', 'cal1Cont');

@@ -335,17 +335,19 @@ var jsonStr = Y.JSON.stringify(deep,null,2);
 <?php include("../inc/examplesNav/".$section.".inc"); ?>
 		   </div>
 		   
-		   	<div id="morereading">
-				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-				
+		<div id="morereading" class="mod box4">
+			<div class="hd">
+				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
+			</div>
+			<div class="bd">
 				<ul>
 					<li><a href="http://www.json.org/">JSON.org</a></li>
 					<li><a href="http://tools.ietf.org/html/rfc4627">RFC 4627</a></li>
 				  	<li><a href="http://en.wikipedia.org/wiki/JSON">JSON on Wikipedia</a></li>
 					<li><a href="http://oreilly.com/catalog/9780596517748/index.html">JavaScript: The Good Parts</a>, by Douglas Crockford</li>
-
 			   </ul>
 		   </div>
+		</div>
 		   
 <?php 
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";

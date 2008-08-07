@@ -81,13 +81,13 @@
 }
 </textarea>
 
-<h3>Setting up the YUI Instance</h3>
+<h4>Setting up the YUI Instance</h4>
 <p>Now we need to create our YUI instance and tell it to load the <code>dd-drop</code>, <code>dd-proxy</code> and <code>dd-constrain</code> modules.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain');
 </textarea>
 
-<h3>Setting up the Drop Targets</h3>
+<h4>Setting up the Drop Targets</h4>
 <p>Now that we have a YUI instance with the requested modules, we are going to create our Drop Targets.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
@@ -113,7 +113,7 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
 });
 </textarea>
 
-<h3>Setting up the Drag Nodes</h3>
+<h4>Setting up the Drag Nodes</h4>
 <p>Now we need to create the Drag Nodes and assign them to the proper group.</p>
 <textarea name="code" class="JScript">
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
@@ -146,8 +146,8 @@ YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
         });
 });
 </textarea>
-<h3>Handling the Drops and Moments</h3>
-<p>Now we are going to listen for 4 Drag Events: <code>drag:start, drag:end, drag:drophit, drag:dropmiss</code></p>
+<h4>Handling the Drops and Moments</h4>
+<p>Now we are going to listen for Four Drag Events: <code>drag:start, drag:end, drag:drophit, drag:dropmiss</code></p>
 <textarea name="code" class="JScript">
 drag.on('drag:start', function() {
     //In this event we setup some styles to make the nodes look pretty
@@ -157,7 +157,7 @@ drag.on('drag:start', function() {
         if (!this._playerStart) {
             this._playerStart = this.nodeXY;
         }
-    //Put the drag's html inside the proxy
+    //Put the Drag's HTML inside the proxy
     p.set('innerHTML', n.get('innerHTML'));
     //set some styles on the proxy
     p.setStyles({
@@ -172,7 +172,7 @@ drag.on('drag:end', function() {
     n.setStyle('opacity', '1');
 });
 drag.on('drag:drophit', function(e) {
-    //If we drop on a target, move to it's position
+    //If we drop on a target, move to its position
     var xy = e.drop.get('node').getXY();
     this.get('node').setXY(xy);
 });
@@ -185,7 +185,7 @@ drag.on('drag:dropmiss', function(e) {
 });
 </textarea>
 
-<h3>Full Javascript Code</h3>
+<h4>Full Javascript Code</h4>
 <textarea name="code" class="JScript">
 YUI().use('dd-drop', 'dd-proxy', 'dd-constrain', function(Y) {
     

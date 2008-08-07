@@ -1,4 +1,4 @@
-<h2 class="first">Use <code>Y.JSON.parse</code> in the success handler</h2>
+<h3 class="first">Use <code>Y.JSON.parse</code> in the success handler</h3>
 <p>Pass the XHR <code>responseText</code> to <code>Y.JSON.parse</code> and capture the return value.  Note that the parse method can throw a <code>SyntaxError</code> exception, so be sure to wrap the call in a <code>try/catch</code> block.</p>
 
 <textarea name="code" class="JScript" rows="1" cols="60">
