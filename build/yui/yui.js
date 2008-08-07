@@ -154,7 +154,9 @@ YUI.prototype = {
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
-        o.throwFail = ('throwFail' in o) ? o.debug : true;
+
+        // @TODO default throwFail to true in PR2
+        // o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
