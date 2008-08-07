@@ -4,20 +4,6 @@
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/calendar/calendar-min.js"></script> 
 
-<style>
-#cal1Cont div.calheader {
-    cursor: move;
-}
-#results {
-    background-color:#8DD5E7;
-    border:1px solid black;
-    position: absolute;
-    top: 15px;
-    right: 5px;
-    width: 300px;
-}
-</style>
-
 <div id="cal1Cont"></div>
 
 <div id="results">Click a date..</div>
