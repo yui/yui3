@@ -1808,7 +1808,7 @@ Y.Get = function() {
         // nodes, but this doesn't fire when their is a load failure.
         // The onreadystatechange appears to be a better way to respond
         // to both success and failure.
-        if (ua.ie || (ua.opera && type === "script")) {
+        if (ua.ie) {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
