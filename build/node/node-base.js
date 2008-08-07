@@ -15,21 +15,6 @@ YUI.add('node-base', function(Y) {
      * @constructor
      */
 
-    var BASE_NODE                   = 0, 
-        ELEMENT_NODE                = 1,
-        //ATTRIBUTE_NODE              = 2,
-        //TEXT_NODE                   = 3,
-        //CDATA_SECTION_NODE          = 4,
-        //ENTITY_REFERENCE_NODE       = 5,
-        //ENTITY_NODE                 = 6,
-        //PROCESSING_INSTRUCTION_NODE = 7,
-        //COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9; //,
-        //DOCUMENT_TYPE_NODE          = 10,
-        //DOCUMENT_FRAGMENT_NODE      = 11,
-        //NOTATION_NODE               = 12;
-
-
     var OWNER_DOCUMENT = 'ownerDocument',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
@@ -45,7 +30,6 @@ YUI.add('node-base', function(Y) {
 
     var slice = [].slice;
 
-    // private factory
     var wrapDOM = function(node) {
         var ret = null,
             yuid = (node) ? node._yuid : null,
@@ -67,7 +51,7 @@ YUI.add('node-base', function(Y) {
     };
 
     var wrapFn = function(fn) {
-        ret = null;
+        var ret = null;
         if (fn) {
             ret = (typeof fn === 'string') ?
             function(n) {
@@ -127,145 +111,6 @@ YUI.add('node-base', function(Y) {
         _nodes[this._yuid][method](a, b, c, d, e);
         return this;
     };
-
-    var PROPS_WRAP = {
-        /**
-         * Returns a Node instance. 
-         * @attribute parentNode
-         * @type Node
-         */
-        'parentNode': BASE_NODE,
-
-        /**
-         * Returns a NodeList instance. 
-         * @attribute childNodes
-         * @type NodeList
-         */
-        'childNodes': BASE_NODE,
-
-        /**
-         * Returns a NodeList instance. 
-         * @attribute children
-         * @type NodeList
-         */
-        'children': function(node) {
-            node = _nodes[node._yuid];
-            var children = node.children;
-
-            if (children === undefined) {
-                var childNodes = node.childNodes;
-                children = [];
-
-                for (var i = 0, len = childNodes.length; i < len; ++i) {
-                    if (childNodes[i][TAG_NAME]) {
-                        children[children.length] = childNodes[i];
-                    }
-                }
-            }
-            return children;
-        },
-
-        /**
-         * Returns a Node instance. 
-         * @attribute firstChild
-         * @type Node
-         */
-        'firstChild': BASE_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute lastChild
-         * @type Node
-         */
-        'lastChild': BASE_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute previousSibling
-         * @type Node
-         */
-        'previousSibling': BASE_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute previousSibling
-         * @type Node
-         */
-        'nextSibling': BASE_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute ownerDocument
-         * @type Doc
-         */
-        'ownerDocument': BASE_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute offsetParent
-         * @type Node
-         */
-        'offsetParent': ELEMENT_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute documentElement
-         * @type Node
-         */
-        'documentElement': DOCUMENT_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute body
-         * @type Node
-         */
-        'body': DOCUMENT_NODE,
-
-        // form
-        /**
-         * Returns a NodeList instance. 
-         * @attribute elements
-         * @type NodeList
-         */
-        'elements': ELEMENT_NODE,
-
-        // table
-        /**
-         * Returns a NodeList instance. 
-         * @attribute rows
-         * @type NodeList
-         */
-        'rows': ELEMENT_NODE,
-
-        /**
-         * Returns a NodeList instance. 
-         * @attribute cells
-         * @type NodeList
-         */
-        'cells': ELEMENT_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute tHead
-         * @type Node
-         */
-        'tHead': ELEMENT_NODE,
-
-        /**
-         * Returns a Node instance. 
-         * @attribute tFoot
-         * @type Node
-         */
-        'tFoot': ELEMENT_NODE,
-
-        /**
-         * Returns a NodeList instance. 
-         * @attribute tBodies
-         * @type NodeList
-         */
-        'tBodies': ELEMENT_NODE
-    };
-
     var METHODS = {
         /**
          * Passes through to DOM method.
@@ -442,9 +287,29 @@ YUI.add('node-base', function(Y) {
          */
         'options': function(node) {
             return (node) ? node.getElementsByTagName('option') : [];
+        },
+
+        /**
+         * Returns a NodeList instance. 
+         * @attribute children
+         * @type NodeList
+         */
+        'children': function(node) {
+            node = _nodes[node._yuid];
+            var children = node.children;
+
+            if (children === undefined) {
+                var childNodes = node.childNodes;
+                children = [];
+
+                for (var i = 0, child; child = childNodes[i++];) {
+                    if (child[TAG_NAME]) {
+                        children[children.length] = child;
+                    }
+                }
+            }
+            return children;
         }
-
-
     };
 
     Node.setters = function(prop, fn) {
@@ -547,24 +412,24 @@ YUI.add('node-base', function(Y) {
          * @return {any} Current value of the property
          */
         get: function(prop) {
-            var val;
-            var node = _nodes[this._yuid];
-            if (prop in GETTERS) { // use custom getter
-                val = GETTERS[prop](this, prop);
-            } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                if (typeof PROPS_WRAP[prop] === 'function') {
-                    val = PROPS_WRAP[prop](this);
-                } else {
-                    val = node[prop];
+            var node = _nodes[this._yuid],
+                isDOM = false,
+                val = (prop in GETTERS) ? GETTERS[prop](this, prop) : node[prop];
+
+            if (val) { // falsey is safe
+                if (val[NODE_TYPE] || ( ( val.item || val.push ) && val.length) ) { // wrap DOM node, collection or array (could be from GETTER)
+                        isDOM = true;
                 }
 
-                if (_restrict && _restrict[this._yuid] && !Y.DOM.contains(node, val)) {
-                    val = null; // not allowed to go outside of root node
-                } else {
-                    val = wrapDOM(val);
+                if (isDOM) { // need wrapping and possibly restricting
+                    if (_restrict && _restrict[this._yuid] && val[NODE_TYPE] && !Y.DOM.contains(node, val)) {
+                        val = null; // not allowed to go outside of root node
+                    } else {
+                        val = wrapDOM(val);
+                    }
+                } else if (!RE_VALID_PROP_TYPES.test(typeof val)) { // not safe to read (window, etc.)
+                    val = undefined;
                 }
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
-                val = node[prop];
             }
             return val;
         },
