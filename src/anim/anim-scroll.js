@@ -1,5 +1,6 @@
 /**
- * Adds scroll behaviors to Anim.
+ * Adds support for the <code>scroll</code> property in <code>to</code>
+ * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
  * @for Anim

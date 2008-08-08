@@ -17,6 +17,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /**
  * The easing module provides methods for customizing
  * how an animation behaves during each run.
+ * @class Easing
  * @module anim
  * @submodule anim-easing
  */

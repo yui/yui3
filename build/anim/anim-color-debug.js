@@ -1,7 +1,8 @@
 YUI.add('anim-color', function(Y) {
 
 /**
- * Adds color behaviors to Anim.
+ * Adds support for color properties in <code>to</code>
+ * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
  * @for Anim

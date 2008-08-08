@@ -15,8 +15,28 @@ YUI.add('anim', function(Y) {
     var RUNNING = 'running',
         START_TIME = 'startTime',
         ELAPSED_TIME = 'elapsedTime',
+        /**
+        * @event start
+        * @description fires when an animation begins.
+        * @param {Event} ev The start event.
+        * @type Event.Custom
+        */
         START = 'start',
+
+        /**
+        * @event tween
+        * @description fires every frame of the animation.
+        * @param {Event} ev The tween event.
+        * @type Event.Custom
+        */
         TWEEN = 'tween',
+
+        /**
+        * @event end
+        * @description fires after the animation completes.
+        * @param {Event} ev The end event.
+        * @type Event.Custom
+        */
         END = 'end',
         NODE = 'node',
         PAUSED = 'paused',
@@ -38,47 +58,11 @@ YUI.add('anim', function(Y) {
             });
         }
     };
-
-    /**
-     * Provides an API for animating objects.
-     * Usage:
-     * <pre>
-     *  var anim = new Y.Anim({
-     *      node: '#foo',
-     *
-     *      from: {
-     *          opacity: 0
-     *      },
-     *
-     *      to: {
-     *          height: 200,
-     *
-     *          width: function(node) {
-     *              return node.get('offsetHeight') / 2;
-     *          },
-     *
-     *          opacity: 1
-     *       },
-     *
-     *       easing: Y.Easing.easeOut
-     *  });
-     *   
-     *  anim.run(); 
-     * </pre>
-     *
-     * @class Y.Anim
-     */
     Y.Anim = function() {
         Y.Anim.superclass.constructor.apply(this, arguments);
         _instances[Y.stamp(this)] = this;
     };
 
-    /**
-     * The lowercase name of the class.
-     *
-     * @property NAME
-     * @static
-     */
     Y.Anim.NAME = 'anim';
 
     /**
@@ -196,6 +180,7 @@ YUI.add('anim', function(Y) {
          * @attribute startTime
          * @type Int
          * @default 0 
+         * @readOnly
          */
         startTime: {
             value: 0,
@@ -207,6 +192,7 @@ YUI.add('anim', function(Y) {
          * @attribute elapsedTime
          * @type Int
          * @default 0 
+         * @readOnly
          */
         elapsedTime: {
             value: 0,
@@ -218,6 +204,7 @@ YUI.add('anim', function(Y) {
          * @attribute running 
          * @type Boolean
          * @default false 
+         * @readOnly
          */
         running: {
             get: function() {
@@ -243,6 +230,7 @@ YUI.add('anim', function(Y) {
          * @attribute iterationCount
          * @type Int
          * @default 0
+         * @readOnly
          */
         iterationCount: {
             value: 0,
@@ -267,6 +255,7 @@ YUI.add('anim', function(Y) {
          * @attribute running 
          * @type Boolean
          * @default false 
+         * @readOnly
          */
         paused: {
             readOnly: true,
@@ -274,7 +263,7 @@ YUI.add('anim', function(Y) {
         },
 
         /**
-         * Whether or not the animation is currently reversed.
+         * If true, animation begins from last frame
          * @attribute reverse
          * @type Boolean
          * @default false 
@@ -287,9 +276,8 @@ YUI.add('anim', function(Y) {
     };
 
     /**
-     * Starts all animation instances.
-     * Only one thread can run at a time.
-     * @method start
+     * Runs all animation instances.
+     * @method run
      * @static
      */    
     Y.Anim.run = function() {
@@ -364,7 +352,6 @@ YUI.add('anim', function(Y) {
     var proto = {
         /**
          * Starts or resumes an animation.
-         * @param {NUM|String} elapsed optional Millisecond or
          * percent start time marker.
          * @method run
          * @chainable
@@ -393,8 +380,7 @@ YUI.add('anim', function(Y) {
         },
 
         /**
-         * Stops the animation and resets its state.
-         * Calling run() will restart from the beginning.
+         * Stops the animation and resets its time.
          * @method stop
          * @chainable
          */    
@@ -423,12 +409,26 @@ YUI.add('anim', function(Y) {
             _setPrivate(this, START_TIME, null);
             _setPrivate(this, PAUSED, true);
             delete _running[Y.stamp(this)];
+
+            /**
+            * @event pause
+            * @description fires when an animation is paused.
+            * @param {Event} ev The pause event.
+            * @type Event.Custom
+            */
             this.fire('pause');
         },
 
         _resume: function() {
             _setPrivate(this, PAUSED, false);
             _running[Y.stamp(this)] = this;
+
+            /**
+            * @event resume
+            * @description fires when an animation is resumed (run from pause).
+            * @param {Event} ev The pause event.
+            * @type Event.Custom
+            */
             this.fire('resume');
         },
 
@@ -493,6 +493,12 @@ YUI.add('anim', function(Y) {
                 if (this.get('direction') === 'alternate') {
                     this.set(REVERSE, !this.get(REVERSE)); // flip it
                 }
+                /**
+                * @event iteration
+                * @description fires when an animation begins an iteration.
+                * @param {Event} ev The iteration event.
+                * @type Event.Custom
+                */
                 this.fire('iteration');
             } else {
                 iterCount = 0;
@@ -596,6 +602,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /**
  * The easing module provides methods for customizing
  * how an animation behaves during each run.
+ * @class Easing
  * @module anim
  * @submodule anim-easing
  */
@@ -921,7 +928,8 @@ Y.Easing = {
     }
 };
 /**
- * Adds scroll behaviors to Anim.
+ * Adds support for the <code>xy</code> property in <code>from</code> and 
+ * <code>to</code> attributes.
  * @module anim
  * @submodule anim-xy
  * @for Anim
@@ -942,7 +950,8 @@ Y.Anim.behaviors.xy = {
 };
 
 /**
- * Adds color behaviors to Anim.
+ * Adds support for color properties in <code>to</code>
+ * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-color
  * @for Anim
@@ -985,7 +994,8 @@ Y.each(['backgroundColor',
         }
 );
 /**
- * Adds scroll behaviors to Anim.
+ * Adds support for the <code>scroll</code> property in <code>to</code>
+ * and <code>from</code> attributes.
  * @module anim
  * @submodule anim-scroll
  * @for Anim
@@ -1017,26 +1027,11 @@ Y.Anim.behaviors.scroll = {
 };
 
 /**
- * Adds bezier curve behaviors to Anim.
+ * Adds support for the <code>curve</code> property for the <code>to</code> 
+ * attribute.  A curve is zero or more control points and an end point.
  * @module anim
  * @submodule anim-curve
  * @for Anim
- */
-
-/**
- * Usage:
- * <pre>
- *  var anim = new Y.Anim({
- *      node: '#foo',
- *
- *      to: {
- *          curve: [ [0, 100], [500, 200], [800, 300] ]
- *       }
- *  });
- *   
- *  anim.run(); 
- * </pre>
- *
  */
 
 Y.Anim.behaviors.curve = {

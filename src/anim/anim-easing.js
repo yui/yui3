@@ -15,6 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 /**
  * The easing module provides methods for customizing
  * how an animation behaves during each run.
+ * @class Easing
  * @module anim
  * @submodule anim-easing
  */
@@ -242,7 +243,7 @@ Y.Easing = {
      * @return {Number} The computed value for the current animation frame
      */
     backIn: function (t, b, c, d, s) {
-        if (typeof s === 'undefined') {
+        if (s == undefined) {
             s = 1.70158;
         }
         if (t === d) {

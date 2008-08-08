@@ -1,26 +1,11 @@
 YUI.add('anim-curve', function(Y) {
 
 /**
- * Adds bezier curve behaviors to Anim.
+ * Adds support for the <code>curve</code> property for the <code>to</code> 
+ * attribute.  A curve is zero or more control points and an end point.
  * @module anim
  * @submodule anim-curve
  * @for Anim
- */
-
-/**
- * Usage:
- * <pre>
- *  var anim = new Y.Anim({
- *      node: '#foo',
- *
- *      to: {
- *          curve: [ [0, 100], [500, 200], [800, 300] ]
- *       }
- *  });
- *   
- *  anim.run(); 
- * </pre>
- *
  */
 
 Y.Anim.behaviors.curve = {
