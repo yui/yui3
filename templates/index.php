@@ -37,7 +37,7 @@ include($docroot."inc/header.php");
 <!--stacked three-column grid-->
 <div class="yui-gb">
 	<div class="yui-u first">
-        <h4>YUI Core:</h4>
+        <h4>YUI 3.x Utilities:</h4>
         <ul>
         <?php
             $aUtils = getModulesByType("core",$modules);
@@ -45,9 +45,6 @@ include($docroot."inc/header.php");
 	            echo "<li><a href='examples/$key/index.html'>".$aUtil[name]."</a></li>\n";
             }
         ?>
-        </ul>
-		<h4>Utilities:</h4>
-		<ul>
         <?php
             $aUtils = getModulesByType("utility",$modules);
             foreach($aUtils as $key=>$aUtil) {

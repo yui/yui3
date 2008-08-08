@@ -22,6 +22,7 @@ $nav[]=array('yui','/yui/3/yui/','YUI (Global Prerequisite)', 'YUI Global Prereq
 $nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
+$nav[]=array('base','/yui/3/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
 $nav[]=array('event','/yui/3/event/','Event', 'Event');
 $nav[]=array('get','/yui/3/get/','Get', 'Get');
