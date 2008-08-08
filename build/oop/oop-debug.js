@@ -280,24 +280,55 @@ YUI.add("oop", function(Y) {
      * supplied object's context, optionally adding any additional
      * supplied parameters to the end of the arguments the function
      * is executed with.
+     *
+     * In some cases it is preferable to have the additional arguments
+     * applied to the beginning of the function signature.  For instance,
+     * FireFox setTimeout/setInterval supplies a parameter that other
+     * browsers do not.  @see rbind for a version that does this.
+     * Note: YUI provides a later() function which wraps setTimeout/setInterval,
+     * providing context adjustment and parameter addition.  This can be 
+     * used instead of setTimeout/setInterval, avoiding the arguments
+     * collection issue when using bind() in FireFox.
+     *
      * @TODO review param order for PR2
      * @method bind
+     * @param f {Function} the function to bind
+     * @param c the execution context
+     * @param args* 0..n arguments to append to the end of arguments collection
+     * supplied to the function
+     * @return {function} the wrapped function
+     */
+    Y.bind = function(f, c) {
+        var a = Y.Array(arguments, 2, true);
+        return function () {
+            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
+        };
+    };
+
+    /*
+     * Returns a function that will execute the supplied function in the
+     * supplied object's context, optionally adding any additional
+     * supplied parameters to the beginning of the arguments collection the 
+     * supplied to the function.
+     *
+     * In some cases it is preferable to have the additional arguments
+     * applied to the end of the function signature.  @see bind for a version 
+     * that does this.
+     *
+     * @TODO consider adding this in PR2
+     *
+     * @method rbind
      * @param f {Function} the function to bind
      * @param c the execution context
      * @param args* 0..n arguments to append to the arguments collection for the function
      * @return {function} the wrapped function
      */
-    Y.bind = function(f, c) {
-        // if (!f) {
-            // Y.log('no f');
-        // }
-        var a = Y.Array(arguments, 2, true);
-        return function () {
-            // @todo bind args first, or function args first?
-            // return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
-            return f.apply(c || f, Y.Array(arguments, 0, true).concat(a));
-        };
-    };
+    // Y.rbind = function(f, c) {
+    //     var a = Y.Array(arguments, 2, true);
+    //     return function () {
+    //         return f.apply(c || f, a.concat(Y.Array(arguments, 0, true)));
+    //     };
+    // };
 
 
 }, "@VERSION@");
