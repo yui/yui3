@@ -35,20 +35,11 @@ include "../inc/header.inc";
 					<div class="clear"></div>
 				</div><!-- /promo -->
 				
-				<h3 id="start">Getting Started</h3>
-				
-				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-<!-- Dependencies -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js" type="text/javascript"></script>
-
-<!-- Source file -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/queue/queue-min.js" type="text/javascript"></script>
-				</textarea>
-
-				<?php include "../inc/include-notice.inc"; ?>
+				<?php
+                    $componentShort = "Queue";
+                    $requiredModules = array("queue");
+                    include("../inc/gettingStarted.inc");
+                ?>
 				
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
@@ -232,7 +223,7 @@ Y.Queue(
                         <td></td>
                     </tr>
                     <tr>
-                        <td><code>complete</code></td>
+                        <td><code>end</code></td>
                         <td>After the last callback is finished executing.  <em>NOT</em> when the Queue is <code>stop</code>ped.</td>
                         <td></td>
                     </tr>

@@ -10,7 +10,7 @@ YUI.add('queue', function(Y) {
  *    <li><code>fn</code> - {Function} REQUIRED the callback function.</li>
  *    <li><code>timeout</code> - {number} millisecond delay to wait after previous callback completion before executing this callback.  Negative values cause immediate blocking execution.  Default 0.</li>
  *    <li><code>until</code> - {Function} boolean function executed before each iteration.  Return true to indicate callback completion.</li>
- *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the chain. Incompatible with <code>until</code>.</li>
+ *    <li><code>iterations</code> - {Number} number of times to execute the callback before proceeding to the next callback in the queue. Incompatible with <code>until</code>.</li>
  * </ul>
  *
  * @module queue
@@ -58,11 +58,11 @@ Y.Queue.prototype = {
         // in an execution mode, return
         if (!c) {
             /**
-             * Event fired when the callback queue is emptied via execution
-             * (not via a call to chain.stop()).
-             * @event complete
+             * Event fired after the last queued callback is executed.  Not
+             * fired if the Queue is stopped via q.stop().
+             * @event end
              */
-            this.fire('complete');
+            this.fire('end');
             return this;
         } else if (this.id) {
             return this;
@@ -170,7 +170,7 @@ Y.Queue.prototype = {
     /**
      * Add any number of callbacks to the end of the queue
      * @method add
-     * @param c {Function|Object}* Any number of callbacks
+     * @param callback* {Function|Object} Any number of callbacks
      * @return {Queue} the Queue instance
      */
     add  : function () {
@@ -187,10 +187,10 @@ Y.Queue.prototype = {
     },
 
     /**
-     * Pause the execution of the Queue after the current execution of the
-     * current callback completes.  If called interstitially, clears the
-     * timeout for the pending callback. Paused Queue can be restarted with
-     * chain.run()
+     * Pause the execution of the Queue after the execution of the current
+     * callback completes.  If called from code outside of a queued callback,
+     * clears the timeout for the pending callback. Paused Queue can be
+     * restarted with q.run()
      * @method pause
      * @return {Queue} the Queue instance
      */
