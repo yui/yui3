@@ -3,6 +3,32 @@
  * @submodule event-dom
  * @module event
  */
+(function() {
+
+    var add = function(el, type, fn, capture) {
+        if (el.addEventListener) {
+                el.addEventListener(type, fn, !!capture);
+        } else if (el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+        } 
+    },
+
+    remove = function(el, type, fn, capture) {
+        if (el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+        } else if (el.detachEvent) {
+                el.detachEvent("on" + type, fn);
+        }
+    },
+
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        remove(window, "load", onLoad);
+    };
+
+    // for the moment each instance will get its own load/unload listeners
+    add(window, "load", onLoad);
+
 YUI.add("event-dom", function(Y) {
 
     /*
@@ -371,7 +397,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                             // if the load is complete, fire immediately.
                             // all subscribers, including the current one
                             // will be notified.
-                            if (loadComplete) {
+                            if (YUI.Env.windowLoaded) {
                                 cewrapper.fire();
                             }
                         }
@@ -588,14 +614,12 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                         return;
                     }
 
-                    if (Y.UA.ie) {
+                    if (Y.UA.ie && !YUI.Env.DOMReady) {
                         // Hold off if DOMReady has not fired and check current
                         // readyState to protect against the IE operation aborted
                         // issue.
-                        if (!this.DOMReady) {
-                            this.startInterval();
-                            return;
-                        }
+                        this.startInterval();
+                        return;
                     }
 
                     this.locked = true;
@@ -653,7 +677,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                             if (el) {
                                 // The element is available, but not necessarily ready
                                 // @todo should we test parentNode.nextSibling?
-                                if (loadComplete || el.nextSibling) {
+                                if (loadComplete || el.get('nextSibling')) {
                                     executeItem(el, item);
                                     _avail[i] = null;
                                 }
@@ -768,16 +792,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @static
                  * @private
                  */
-                nativeAdd: function(el, type, fn, capture) {
-                    if (el.addEventListener) {
-                            el.addEventListener(type, fn, !!capture);
-                    } else if (el.attachEvent) {
-                            el.attachEvent("on" + type, fn);
-                    } 
-                    // else {
-                      //   Y.log('DOM evt error');
-                    // }
-                },
+                nativeAdd: add,
 
                 /**
                  * Basic remove listener
@@ -790,13 +805,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @static
                  * @private
                  */
-                nativeRemove: function(el, type, fn, capture) {
-                    if (el.removeEventListener) {
-                            el.removeEventListener(type, fn, !!capture);
-                    } else if (el.detachEvent) {
-                            el.detachEvent("on" + type, fn);
-                    }
-                }
+                nativeRemove: remove
             };
 
         }();
@@ -804,8 +813,8 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
         var E = Y.Event;
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
-        if (Y.UA.ie) {
-            Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
+        if (Y.UA.ie && Y.on) {
+            Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
         E.Custom = Y.CustomEvent;
@@ -829,10 +838,11 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
             return E.removeListener(el, type, fn, data, context);
         };
 
-        // for the moment each instance will get its own load/unload listeners
-        E.nativeAdd(window, "load", E._load);
+        E.attach("load", E._load, window, E);
         E.nativeAdd(window, "unload", E._unload);
 
         E._tryPreloadAttach();
 
 }, "3.0.0");
+
+})();

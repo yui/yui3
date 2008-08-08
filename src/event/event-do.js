@@ -34,6 +34,7 @@ YUI.add("aop", function(Y) {
          * @static
          */
         before: function(fn, obj, sFn, c) {
+            // Y.log('Do before: ' + sFn, 'info', 'event');
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));

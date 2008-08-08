@@ -169,6 +169,7 @@ YUI.add("aop", function(Y) {
          * @static
          */
         before: function(fn, obj, sFn, c) {
+            // Y.log('Do before: ' + sFn, 'info', 'event');
             var f = fn;
             if (c) {
                 var a = [fn, c].concat(Y.Array(arguments, 4, true));
@@ -1634,34 +1635,37 @@ Y.log("publish applying config to published event: '"+type+"' exists", 'info', '
 
 
 }, "3.0.0");
+
 /*
  * DOMReady
  * @submodule event-ready
  * @module event
  */
-YUI.add("event-ready", function(Y) {
 
-    if (Y === YUI) {
-        return;
-    }
+(function() {
 
-    var env = YUI.Env, C = Y.config, D = C.doc, POLL_INTERVAL = C.pollInterval || 20;
+var Env = YUI.Env, 
+    C = YUI.config, 
+    D = C.doc, 
+    POLL_INTERVAL = C.pollInterval || 20;
 
-    if (!env._ready) {
+    if (!Env._ready) {
 
-        env._ready = function() {
-            if (!env.DOMReady) {
-                env.DOMReady=true;
+        Env.windowLoaded = false;
 
-                // Fire the content ready custom event
-                // E.DOMReadyEvent.fire();
+        Env._ready = function() {
+            if (!Env.DOMReady) {
+                Env.DOMReady=true;
 
                 // Remove the DOMContentLoaded (FF/Opera)
-
                 if (D.removeEventListener) {
-                    D.removeEventListener("DOMContentLoaded", env._ready, false);
+                    D.removeEventListener("DOMContentLoaded", _ready, false);
                 }
             }
+        };
+
+        var _ready = function(e) {
+            YUI.Env._ready();
         };
 
         // create custom event
@@ -1674,67 +1678,84 @@ YUI.add("event-ready", function(Y) {
         // This isolates what appears to be a safe moment to manipulate
         // the DOM prior to when the document's readyState suggests
         // it is safe to do so.
-        if (Y.UA.ie) {
+        if (navigator.userAgent.match(/MSIE/)) {
 
-            env._dri = setInterval(function() {
-                var n = D.createElement('p');  
+            Env._dri = setInterval(function() {
                 try {
                     // throws an error if doc is not ready
-                    n.doScroll('left');
-                    clearInterval(env._dri);
-                    env._dri = null;
-                    env._ready();
-                    n = null;
+                    document.documentElement.doScroll('left');
+                    clearInterval(Env._dri);
+                    Env._dri = null;
+                    _ready();
                 } catch (ex) { 
-                    n = null;
-                }
-            }, POLL_INTERVAL); 
-
-        
-        // The document's readyState in Safari currently will
-        // change to loaded/complete before images are loaded.
-        } else if (Y.UA.webkit && Y.UA.webkit < 525) {
-
-            env._dri = setInterval(function() {
-                var rs=D.readyState;
-                if ("loaded" == rs || "complete" == rs) {
-                    clearInterval(env._dri);
-                    env._dri = null;
-                    env._ready();
                 }
             }, POLL_INTERVAL); 
 
         // FireFox and Opera: These browsers provide a event for this
         // moment.  The latest WebKit releases now support this event.
         } else {
-            D.addEventListener("DOMContentLoaded", env._ready, false);
+            D.addEventListener("DOMContentLoaded", _ready, false);
         }
 
         /////////////////////////////////////////////////////////////
-
     }
 
-    Y.publish('event:ready', {
-        fireOnce: true
-    });
+    YUI.add("event-ready", function(Y) {
 
-    var yready = function() {
-        Y.fire('event:ready');
-    };
+        if (Y === YUI) {
+            return;
+        }
 
-    if (env.DOMReady) {
-        yready();
-    } else {
-        Y.before(yready, env, "_ready");
-    }
+        Y.publish('event:ready', {
+            fireOnce: true
+        });
 
+        var yready = function() {
+            Y.fire('event:ready');
+        };
 
-}, "3.0.0");
+        if (Env.DOMReady) {
+            // Y.log('DOMReady already fired', 'info', 'event');
+            yready();
+        } else {
+            // Y.log('setting up before listener', 'info', 'event');
+            Y.before(yready, Env, "_ready");
+        }
+
+    }, "3.0.0");
+
+})();
 /*
  * The YUI DOM event system
  * @submodule event-dom
  * @module event
  */
+(function() {
+
+    var add = function(el, type, fn, capture) {
+        if (el.addEventListener) {
+                el.addEventListener(type, fn, !!capture);
+        } else if (el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+        } 
+    },
+
+    remove = function(el, type, fn, capture) {
+        if (el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+        } else if (el.detachEvent) {
+                el.detachEvent("on" + type, fn);
+        }
+    },
+
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        remove(window, "load", onLoad);
+    };
+
+    // for the moment each instance will get its own load/unload listeners
+    add(window, "load", onLoad);
+
 YUI.add("event-dom", function(Y) {
 
     /*
@@ -2103,7 +2124,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                             // if the load is complete, fire immediately.
                             // all subscribers, including the current one
                             // will be notified.
-                            if (loadComplete) {
+                            if (YUI.Env.windowLoaded) {
                                 cewrapper.fire();
                             }
                         }
@@ -2320,14 +2341,12 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                         return;
                     }
 
-                    if (Y.UA.ie) {
+                    if (Y.UA.ie && !YUI.Env.DOMReady) {
                         // Hold off if DOMReady has not fired and check current
                         // readyState to protect against the IE operation aborted
                         // issue.
-                        if (!this.DOMReady) {
-                            this.startInterval();
-                            return;
-                        }
+                        this.startInterval();
+                        return;
                     }
 
                     this.locked = true;
@@ -2385,7 +2404,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                             if (el) {
                                 // The element is available, but not necessarily ready
                                 // @todo should we test parentNode.nextSibling?
-                                if (loadComplete || el.nextSibling) {
+                                if (loadComplete || el.get('nextSibling')) {
                                     executeItem(el, item);
                                     _avail[i] = null;
                                 }
@@ -2500,16 +2519,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @static
                  * @private
                  */
-                nativeAdd: function(el, type, fn, capture) {
-                    if (el.addEventListener) {
-                            el.addEventListener(type, fn, !!capture);
-                    } else if (el.attachEvent) {
-                            el.attachEvent("on" + type, fn);
-                    } 
-                    // else {
-                      //   Y.log('DOM evt error');
-                    // }
-                },
+                nativeAdd: add,
 
                 /**
                  * Basic remove listener
@@ -2522,13 +2532,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @static
                  * @private
                  */
-                nativeRemove: function(el, type, fn, capture) {
-                    if (el.removeEventListener) {
-                            el.removeEventListener(type, fn, !!capture);
-                    } else if (el.detachEvent) {
-                            el.detachEvent("on" + type, fn);
-                    }
-                }
+                nativeRemove: remove
             };
 
         }();
@@ -2536,8 +2540,8 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
         var E = Y.Event;
 
         // Process onAvailable/onContentReady items when when the DOM is ready in IE
-        if (Y.UA.ie) {
-            Y.subscribe && Y.on('event:ready', E._tryPreloadAttach, E, true);
+        if (Y.UA.ie && Y.on) {
+            Y.on('event:ready', E._tryPreloadAttach, E, true);
         }
 
         E.Custom = Y.CustomEvent;
@@ -2561,13 +2565,14 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
             return E.removeListener(el, type, fn, data, context);
         };
 
-        // for the moment each instance will get its own load/unload listeners
-        E.nativeAdd(window, "load", E._load);
+        E.attach("load", E._load, window, E);
         E.nativeAdd(window, "unload", E._unload);
 
         E._tryPreloadAttach();
 
 }, "3.0.0");
+
+})();
 /*
  * A wrapper for DOM events and Custom Events
  * @submodule event-facade
