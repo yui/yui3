@@ -285,15 +285,15 @@
 
         /**
          * <p>
-         * Alias for the <a href="Event.Target.html#method_subscribe">Event.Target subscribe method</a>.
+         * Alias for the Event.Target <a href="Event.Target.html#method_subscribe">subscribe</a> method.
          * </p>
          * 
          * <p>Subscribers using this method to listen for attribute change events will be notified just
          * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
-         * invoked.</p>.
+         * invoked.</p>
          * 
-         * <p>The <a href="Event.Target.html#method_after">after</p> method, inherited from Event Target, can be used by subscribers
-         * who wish to be notified <strong>after</code> the attribute's value has changed.</p>
+         * <p>The <a href="Event.Target.html#method_after">after</a> method, inherited from Event Target, can be used by subscribers
+         * who wish to be notified <strong>after</strong> the attribute's value has changed.</p>
          * 
          * @param {String} type The event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
          * for the attribute "enabled", the event type will be "enabledChange".
