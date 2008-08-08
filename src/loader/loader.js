@@ -8,7 +8,8 @@
  * this network to reduce the number of http connections required to download 
  * YUI files.
  *
- * @module loader
+ * @module yui
+ * @submodule loader
  */
 
 /**
@@ -83,6 +84,10 @@
  * </ul>
  */
 
+// @TODO backed out the custom event changes so that the event system
+// isn't required in the seed build.  If needed, we may want to 
+// add them back if the event system is detected.
+
 /*
  * Executed when the loader successfully completes an insert operation
  * This can be subscribed to normally, or a listener can be passed
@@ -110,80 +115,88 @@
 
 YUI.add("loader", function(Y) {
 
-    var BASE = 'base', 
-        CSS = 'css',
-        JS = 'js',
-        RESET = 'cssreset',
-        FONTS = 'cssfonts',
-        GRIDS = 'cssgrids',
-        VERSION = '@VERSION@',
-        ROOT = VERSION + '/build/';
-
-Y.Env.meta = {
+var BASE = 'base', 
+    CSS = 'css',
+    JS = 'js',
+    CSSRESET = 'cssreset',
+    CSSFONTS = 'cssfonts',
+    CSSGRIDS = 'cssgrids',
+    CSSBASE = 'cssbase',
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    YUI_CSS = ['reset', 'fonts', 'grids', 'base'],
+    VERSION = '@VERSION@',
+    ROOT = VERSION + '/build/',
+    CONTEXT = '-context',
+    META = {
 
     version: VERSION,
 
     root: ROOT,
 
-    // base: 'http://yui.yahooapis.com/' + ROOT,
-    base: '../../build/',
+    base: 'http://yui.yahooapis.com/' + ROOT,
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
     modules: {
 
-      dom: {
-          requires: ['event'],
-          supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector'],
-          rollup: 3
-      },
+       dom: {
+            requires: ['event'],
+            submodules: {
+                'dom-base': {
+                    requires: ['event']
+                },
+                'dom-style': {
+                    requires: ['dom-base']
 
-      'dom-base': {
-          path: 'dom/dom-base-min.js',
-          requires: ['event']
-      },
+                },
+                'dom-screen': {
+                    requires: ['dom-base', 'dom-style']
+                },
+                selector: {
+                    requires: ['dom-base']
+                }
+            }
+        },
 
-      'dom-style': {
-          path: 'dom/dom-style-min.js',
-          requires: ['dom-base']
+        node: {
+            requires: ['dom'],
+            submodules: {
+                'node-base': {
+                    requires: ['dom-base', 'selector']
+                },
+                'node-style': {
+                    requires: ['dom-style', 'node-base']
+                },
+                'node-screen': {
+                    requires: ['dom-screen', 'node-base']
+                }
+            }
+        },
 
-      },
-
-      'dom-screen': {
-          path: 'dom/dom-screen-min.js',
-          requires: ['dom-base', 'dom-style']
-      },
-
-      selector: {
-          path: 'dom/selector-min.js',
-          requires: ['dom-base']
-      },
-
-
-      node: {
-          supersedes: ['node-base', 'node-style', 'node-screen'],
-          requires: ['dom'],
-          rollup: 2
-      },
-
-      'node-base': {
-          path: 'node/node-base-min.js',
-          requires: ['dom-base', 'selector']
-      },
-
-      'node-style': {
-          path: 'node/node-style-min.js',
-          requires: ['dom-style', 'node-base']
-      },
-
-      'node-screen': {
-          path: 'node/node-screen-min.js',
-          requires: ['dom-screen', 'node-base']
-      },
-
-
-        animation: {
-            requires: ['dom', 'base']
+        anim: {
+            requires: [BASE, 'node'],
+            submodules: {
+                'anim-base': {
+                    requires: ['base', 'node-style']
+                },
+                'anim-color': {
+                    requires: ['anim-base']
+                },
+                'anim-curve': {
+                    requires: ['anim-xy']
+                },
+                'anim-easing': {
+                },
+                'anim-scroll': {
+                    requires: ['anim-base']
+                },
+                'anim-xy': {
+                    requires: ['anim-base', 'node-screen']
+                },
+                'anim-node-plugin': {
+                     requires: ['node', 'anim-base']
+                }
+            }
         },
 
         attribute: { 
@@ -200,73 +213,48 @@ Y.Env.meta = {
         
         cookie: { },
 
-        cssbase: {
-            type: CSS,
-            after: [RESET, FONTS, GRIDS],
-            path: 'cssbase/base.css'
-        },
+        // Note: CSS attributes are modified programmatically to reduce metadata size
+        // cssbase: {
+        //     after: CSS_AFTER
+        // },
 
-        cssfonts: {
-            type: CSS,
-            path: 'cssfonts/fonts.css'
-        },
-
-        cssgrids: {
-            type: CSS,
-            requires: [FONTS],
-            optional: [RESET],
-            path: 'cssgrids/grids.css'
-        },
-
-        cssreset: {
-            type: CSS,
-            path: 'cssreset/reset.css'
-        },
-
-        'dd-ddm-base': {
-            path: 'dd/dd-ddm-base-min.js',
-            requires: ['node', BASE]
-        }, 
-        'dd-ddm':{
-            path: 'dd/dd-ddm-min.js',
-            requires: ['dd-ddm-base']
-        }, 
-        'dd-ddm-drop':{
-            path: 'dd/dd-ddm-drop-min.js',
-            requires: ['dd-ddm']
-        }, 
-        'dd-drag':{
-            path: 'dd/dd-drag-min.js',
-            requires: ['dd-ddm-base']
-        }, 
-        'dd-drop':{
-            path: 'dd/dd-drop-min.js',
-            requires: ['dd-ddm-drop']
-        }, 
-        'dd-proxy':{
-            path: 'dd/dd-proxy-min.js',
-            requires: ['dd-drag']
-        }, 
-        'dd-constrain':{
-            path: 'dd/dd-constrain-min.js',
-            requires: ['dd-drag', 'dd-proxy']
-        }, 
-        'dd-plugin':{
-            path: 'dd/dd-plugin-min.js',
-            requires: ['dd-drag'],
-            optional: ['dd-constrain', 'dd-proxy']
-        },
-        'dd-drop-plugin':{
-            path: 'dd/dd-drop-plugin-min.js',
-            requires: ['dd-drop']
-        },
+        // cssgrids: {
+        //     requires: [CSSFONTS],
+        //     optional: [CSSRESET]
+        // },
 
         'dd':{
-            path: 'dd/dd-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-proxy'],
-            rollup: 5
+            submodules: {
+                'dd-ddm-base': {
+                    requires: ['node', BASE]
+                }, 
+                'dd-ddm':{
+                    requires: ['dd-ddm-base']
+                }, 
+                'dd-ddm-drop':{
+                    requires: ['dd-ddm']
+                }, 
+                'dd-drag':{
+                    requires: ['dd-ddm-base']
+                }, 
+                'dd-drop':{
+                    requires: ['dd-ddm-drop']
+                }, 
+                'dd-proxy':{
+                    requires: ['dd-drag']
+                }, 
+                'dd-constrain':{
+                    requires: ['dd-drag', 'dd-proxy']
+                }, 
+                'dd-plugin':{
+                    requires: ['dd-drag'],
+                    optional: ['dd-constrain', 'dd-proxy']
+                },
+                'dd-drop-plugin':{
+                    requires: ['dd-drop']
+                }
+            }
         },
-
 
         dump: { },
 
@@ -274,49 +262,83 @@ Y.Env.meta = {
             requires: ['oop']
         },
         
-        io: { },
-
-        'json-parse': {
-            path: 'json/json-parse-min.js'
-        },
-
-        'json-stringify': {
-            path: 'json/json-stringify-min.js'
+        io: { 
+            requires: ['node']
         },
 
         json: {
-            supersedes: ['json-parse', 'json-stringify']
+            submodules: {
+                'json-parse': {
+                },
+
+                'json-stringify': {
+                }
+            }
         },
         
-        oop: { },
+        oop: { 
+            requires: ['yui-base']
+        },
 
         queue: { },
 
         substitute: {
             optional: ['dump']
-        }
+        },
+
+        // Since YUI is required for everything else, it should not be specified as
+        // a dependency.
+        yui: {
+            supersedes: ['yui-base', 'get', 'loader']
+        },
+
+        'yui-base': { }
     }
 };
+
+var _path = function(dir, file, type) {
+    return dir + '/' + file + '-min.' + (type || CSS);
+};
+
+var _cssmeta = function() {
+    var mods = META.modules;
+    // modify the meta info for YUI CSS
+    for (var i=0; i<YUI_CSS.length; i=i+1) {
+        var bname = YUI_CSS[i],
+            mname = CSS + bname;
+
+        mods[mname] = {
+            type: CSS,
+            path: _path(mname, bname)
+        };
+
+        // define -context module
+        var contextname = mname + CONTEXT;
+        bname = bname + CONTEXT;
+
+        mods[contextname] = {
+            type: CSS,
+            path: _path(mname, bname)
+        };
+
+        if (mname == CSSGRIDS) {
+            mods[mname].requires = [CSSFONTS];
+            mods[mname].optional = [CSSRESET];
+            mods[contextname].requires = [CSSFONTS + CONTEXT];
+            mods[contextname].optional = [CSSRESET + CONTEXT];
+        } else if (mname == CSSBASE) {
+            mods[mname].after = CSS_AFTER;
+            mods[contextname].after = CSS_AFTER;
+        }
+    }
+}();
+
+Y.Env.meta = META;
 
 
     var L=Y.Lang, env=Y.Env,
         PROV = "_provides", SUPER = "_supersedes",
         REQ = "expanded";
-
-    var _Y = {
-
-        // dupsAllowed: {'yahoo': true, 'get': true},
-        dupsAllowed: {},
-
-        /*
-         * The library metadata for the current release
-         * @property YUIInfo
-         * @static
-         */
-        // info: '@yuiinfo@', 
-        info: Y.Env.meta
-
-    };
 
     Y.Loader = function(o) {
 
@@ -349,7 +371,7 @@ Y.Env.meta = {
          * @method onFailure
          * @type function
          */
-        this.onFailure = Y.log;
+        this.onFailure = null;
 
         /**
          * Callback executed each time a script or css file is loaded
@@ -399,7 +421,7 @@ Y.Env.meta = {
          * @type string
          * @default http://yui.yahooapis.com/[YUI VERSION]/build/
          */
-        this.base = _Y.info.base;
+        this.base = Y.Env.meta.base;
 
         /**
          * Base path for the combo service
@@ -407,16 +429,16 @@ Y.Env.meta = {
          * @type string
          * @default http://yui.yahooapis.com/combo?
          */
-        this.comboBase = _Y.info.comboBase;
+        this.comboBase = Y.Env.meta.comboBase;
 
         /**
          * If configured, YUI JS resources will use the combo
          * handler
          * @property combine
          * @type boolean
-         * @default false
+         * @default true if a base dir isn't in the config
          */
-        this.combine = false;
+        this.combine = (!(BASE in o));
 
         /**
          * Ignore modules registered on the YUI global
@@ -432,7 +454,7 @@ Y.Env.meta = {
          * @type string
          * @default [YUI VERSION]/build/
          */
-        this.root = _Y.info.root;
+        this.root = Y.Env.meta.root;
 
         /**
          * Timeout value in milliseconds.  If set, this value will be used by
@@ -504,10 +526,10 @@ Y.Env.meta = {
          * The library metadata
          * @property moduleInfo
          */
-        // this.moduleInfo = Y.merge(_Y.info.moduleInfo);
+        // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
         this.moduleInfo = {};
         
-        var defaults = _Y.info.modules;
+        var defaults = Y.Env.meta.modules;
 
         for (var i in defaults) {
             if (defaults.hasOwnProperty(i)) {
@@ -622,7 +644,10 @@ Y.Env.meta = {
             var f = this.filter;
 
             if (L.isString(f)) {
+
                 f = f.toUpperCase();
+
+                this.filterName = f;
 
                 // the logger must be available in order to use the debug
                 // versions of the library
@@ -648,6 +673,7 @@ Y.Env.meta = {
          *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
          *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
          *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
+         *     <dt>submodules:</dt> <dd>a has of submodules</dd>
          * </dl>
          * @method addModule
          * @param o An object containing the module data
@@ -657,7 +683,8 @@ Y.Env.meta = {
          */
         addModule: function(o, name) {
 
-            o.name = o.name || name;
+            name = name || o.name;
+            o.name = name;
 
             if (!o || !o.name) {
                 return false;
@@ -668,16 +695,34 @@ Y.Env.meta = {
             }
 
             if (!o.path && !o.fullpath) {
-                o.path = name + "/" + name + "-min." + o.type;
+                // o.path = name + "/" + name + "-min." + o.type;
+                o.path = _path(name, name, o.type);
             }
 
             o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
             o.requires = o.requires || [];
 
+            // Y.log('New module ' + name);
+
+            // Handle submodule logic
+            var subs = o.submodules;
+            if (subs) {
+                var sup = [], l=0;
+
+                for (var i in subs) {
+                    var s = subs[i];
+                    s.path = _path(name, i, o.type);
+                    this.addModule(s, i);
+                    sup.push(i);
+                    l++;
+                }
+
+                o.supersedes = sup;
+                o.rollup = Math.min(l-1, 4);
+            }
+
             this.moduleInfo[name] = o;
             this.dirty = true;
-
-            //Y.log('New module ' + name);
 
             return o;
         },
@@ -862,20 +907,20 @@ Y.Env.meta = {
                 Y.mix(l, Y.Array.hash(this.ignore));
             }
 
+            // expand the list to include superseded modules
+            for (j in l) {
+                // Y.log("expanding: " + j);
+                if (l.hasOwnProperty(j)) {
+                    Y.mix(l, this.getProvides(j));
+                }
+            }
+
             // remove modules on the force list from the loaded list
             if (this.force) {
                 for (i=0; i<this.force.length; i=i+1) {
                     if (this.force[i] in l) {
                         delete l[this.force[i]];
                     }
-                }
-            }
-
-            // expand the list to include superseded modules
-            for (j in l) {
-                // Y.log("expanding: " + j);
-                if (l.hasOwnProperty(j)) {
-                    Y.mix(l, this.getProvides(j));
                 }
             }
 
@@ -973,7 +1018,8 @@ Y.Env.meta = {
                         for (j=0;j<s.length;j=j+1) {
 
                             // if the superseded module is loaded, we can't load the rollup
-                            if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                            if (this.loaded[s[j]]) {
                                 roll = false;
                                 break;
                             // increment the counter if this module is required.  if we are
@@ -1044,18 +1090,18 @@ Y.Env.meta = {
             // which is needed if some dependencies are already on
             // the page without their dependencies.
             if (this.attaching) {
-                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "Loader");
+                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "loader");
                 Y._attach(this.attaching);
             } else {
-                Y.log('attaching sorted list: ' + this.sorted, "info", "Loader");
+                Y.log('attaching sorted list: ' + this.sorted, "info", "loader");
                 Y._attach(this.sorted);
             }
+
+            this._pushEvents();
 
         },
 
         _onSuccess: function() {
-
-            this._pushEvents();
 
             this._attach();
 
@@ -1072,7 +1118,9 @@ Y.Env.meta = {
             var f = this.onSuccess;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'success',
+                    data: this.data,
+                    success: true
                 });
             }
 
@@ -1088,13 +1136,14 @@ Y.Env.meta = {
             var f = this.onFailure;
             if (f) {
                 f.call(this.context, {
-                    msg: 'operation failed: ' + msg,
-                    data: this.data
+                    msg: 'failure: ' + msg,
+                    data: this.data,
+                    success: false
                 });
             }
         },
 
-        _onTimeout: function(msg) {
+        _onTimeout: function() {
             this._attach();
 
             // this.fire('timeout', {
@@ -1104,7 +1153,9 @@ Y.Env.meta = {
             var f = this.onTimeout;
             if (f) {
                 f.call(this.context, {
-                    data: this.data
+                    msg: 'timeout',
+                    data: this.data,
+                    success: false
                 });
             }
         },
@@ -1222,7 +1273,7 @@ Y.Env.meta = {
          */
         insert: function(o, type) {
 
-            Y.log("Insert() " + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "loader");
 
             // build the dependency list
             this.calculate(o);
@@ -1300,10 +1351,10 @@ Y.Env.meta = {
 
                 if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
+Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
                     var callback=function(o) {
-                        Y.log('Combo complete: ' + o.data, "info", "Loader");
+                        Y.log('Combo complete: ' + o.data, "info", "loader");
                         this._combineComplete = true;
 
 
@@ -1342,7 +1393,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
                     return;
                 }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
+Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -1380,7 +1431,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "loader");
                     return;
                 }
 
@@ -1390,7 +1441,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 if (!m) {
 
                     var msg = "Undefined module " + s[i] + " skipped";
-                    Y.log(msg, 'warn', 'Loader');
+                    Y.log(msg, 'warn', 'loader');
                     this.inserted[s[i]] = true;
                     this.skipped[s[i]] = true;
                     continue;
@@ -1406,7 +1457,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {
@@ -1414,7 +1465,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path);
+                    url=m.fullpath || this._url(m.path, s[i]);
                     self=this; 
 
                     fn(url, {
@@ -1463,10 +1514,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @param {Function} optional function reference
          * @private
          */
-        _pushEvents: function(ref) {
-            var r = ref || Y;
-            if (r.Event) {
-                r.Event._load();
+        _pushEvents: function() {
+            if (Y.Event) {
+                Y.Event._load();
             }
         },
 
@@ -1477,15 +1527,32 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @return {string} the full url
          * @private
          */
-        _url: function(path) {
+        _url: function(path, name) {
             
-            var u = this.base || "", f=this.filter;
-            u = u + path;
+            var u = (this.base || "") + path, 
+                f = this.filter;
 
             if (f) {
+                var useFilter = true;
+
+                if (this.filterName == "DEBUG") {
+                
+                    var self = this, 
+                        exc = self.logExclude,
+                        inc = self.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
                 // Y.log("filter: " + f + ", " + f.searchExp + 
                 // ", " + f.replaceStr);
-                u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                }
             }
 
             // Y.log(u);

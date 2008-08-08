@@ -7,7 +7,8 @@ YUI.add("get", function(Y) {
 /**
  * Provides a mechanism to fetch remote resources and
  * insert them into a document.
- * @module get
+ * @module yui
+ * @submodule get
  */
 
 /**
@@ -121,8 +122,14 @@ Y.Get = function() {
      * @private
      */
     var _fail = function(id, msg) {
-        Y.log("get failure: " + msg, "warn", "Get");
+
+        Y.log("get failure: " + msg, "warn", "get");
+
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
         // execute failure callback
         if (q.onFailure) {
             var sc=q.context || q;
@@ -191,8 +198,11 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id, "info", "Get");
+        Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
         q.finished = true;
 
         if (q.aborted) {
@@ -215,7 +225,7 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Timeout " + id, "info", "Get");
+        Y.log("Timeout " + id, "info", "get");
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.context || q;
@@ -231,7 +241,7 @@ Y.Get = function() {
      * @private
      */
     var _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "Get");
+        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
 
         var q = queues[id];
 
@@ -267,7 +277,7 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
-        Y.log("attempting to load " + url, "info", "Get");
+        Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
             // Y.log('create timer');
@@ -296,7 +306,7 @@ Y.Get = function() {
             h.appendChild(n);
         }
         
-        Y.log("Appending node: " + url, "info", "Get");
+        Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -391,11 +401,15 @@ Y.Get = function() {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
+        // Opera only for script nodes.  Opera support onload for script
+        // nodes, but this doesn't fire when their is a load failure.
+        // The onreadystatechange appears to be a better way to respond
+        // to both success and failure.
         if (ua.ie) {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    Y.log(id + " onload " + url, "info", "Get");
+                    Y.log(id + " onreadstatechange " + url, "info", "get");
                     f(id, url);
                 }
             };
@@ -406,7 +420,7 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    Y.log(id + " DOM2 onload " + url, "info", "Get");
+                    Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 });
             } 
@@ -415,9 +429,14 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
+
             n.onload = function() {
-                Y.log(id + " onload " + url, "info", "Get");
+                Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
+            };
+
+            n.onerror = function(e) {
+                _fail(id, e + ": " + url);
             };
         }
     };
@@ -440,7 +459,7 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            Y.log(id + " finalized ", "info", "Get");
+            Y.log(id + " finalized ", "info", "get");
             L.later(0, null, _finish, id);
         },
 
@@ -454,7 +473,7 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId;
             var q = queues[id];
             if (q) {
-                Y.log("Aborting " + id, "info", "Get");
+                Y.log("Aborting " + id, "info", "get");
                 q.aborted = true;
             }
         }, 

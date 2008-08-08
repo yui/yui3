@@ -42,9 +42,10 @@ YUI({
     //loadOptional: true,
     // combine: true,
     filter: 'debug',
+    // logInclude: { event: true },
     timeout: 2000
 // }).use('compat', 'dd-dragdrop-all', function(Y) {
-}).use('dd-dragdrop-all', function(Y) {
+}).use('dd', function(Y) {
 
     Y.log('custom event success');
 
