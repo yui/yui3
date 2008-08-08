@@ -28,7 +28,8 @@ $examples["event-timing"] = array(
 	logger => array("event", "example"),
 	loggerInclude => "require", 
 	newWindow => "suppress",
-	requires => array("node"),
+	requires => array("*"),
+	//requires => array("node"),
 	highlightSyntax => true
 );
 
