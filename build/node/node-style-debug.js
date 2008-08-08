@@ -9,7 +9,7 @@ YUI.add('node-style', function(Y) {
 
 Y.Node.addDOMMethods([
     /**
-     * Returns the given style attribute value from the node.
+     * Returns the style's current value.
      * @method getStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
@@ -17,7 +17,7 @@ Y.Node.addDOMMethods([
     'getStyle',
 
     /**
-     * Returns the computed value for the given style attribute.
+     * Returns the computed value for the given style property.
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -25,7 +25,7 @@ Y.Node.addDOMMethods([
     'getComputedStyle',
 
     /**
-     * Applies a CSS style to the node.
+     * Sets a style property of the node.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 

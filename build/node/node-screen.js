@@ -9,11 +9,46 @@ YUI.add('node-screen', function(Y) {
  */
 
     Y.each([
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property winWidth
+         * @type {Int}
+         */
         'winWidth',
+
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property winHeight
+         * @type {Int}
+         */
         'winHeight',
+
+        /**
+         * Document width 
+         * @property winHeight
+         * @type {Int}
+         */
         'docWidth',
+
+        /**
+         * Document height 
+         * @property docHeight
+         * @type {Int}
+         */
         'docHeight',
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property docScrollX
+         * @type {Int}
+         */
         'docScrollX',
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property docScrollY
+         * @type {Int}
+         */
         'docScrollY'
         ],
         function(v, n) {
@@ -32,7 +67,7 @@ YUI.add('node-screen', function(Y) {
         'getXY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
@@ -50,7 +85,7 @@ YUI.add('node-screen', function(Y) {
         'getX',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param {Int} x X value for new position (coordinates are page-based)
@@ -68,7 +103,7 @@ YUI.add('node-screen', function(Y) {
         'getY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param {Int} y Y value for new position (coordinates are page-based)
@@ -87,13 +122,13 @@ YUI.add('node-screen', function(Y) {
 var ATTR = [
         /**
          * Returns a region object for the node 
-         * @attribute region
+         * @property region
          * @type Node
          */
         'region',
         /**
          * Returns a region object for the node's viewport 
-         * @attribute viewportRegion
+         * @property viewportRegion
          * @type Node
          */
         'viewportRegion'
@@ -107,7 +142,7 @@ Y.each(ATTR, function(v, n) {
 
 Y.Node.addDOMMethods([
     /**
-     * Removes a class name from a given element or collection of elements.
+     * Determines whether or not the node is currently visible in the viewport. 
      * @method inViewportRegion         
      * @return {Boolean} Whether or not the node is currently positioned
      * within the viewport's region

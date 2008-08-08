@@ -7,11 +7,46 @@
  */
 
     Y.each([
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property winWidth
+         * @type {Int}
+         */
         'winWidth',
+
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property winHeight
+         * @type {Int}
+         */
         'winHeight',
+
+        /**
+         * Document width 
+         * @property winHeight
+         * @type {Int}
+         */
         'docWidth',
+
+        /**
+         * Document height 
+         * @property docHeight
+         * @type {Int}
+         */
         'docHeight',
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property docScrollX
+         * @type {Int}
+         */
         'docScrollX',
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property docScrollY
+         * @type {Int}
+         */
         'docScrollY'
         ],
         function(v, n) {
@@ -30,7 +65,7 @@
         'getXY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
@@ -48,7 +83,7 @@
         'getX',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param {Int} x X value for new position (coordinates are page-based)
@@ -66,7 +101,7 @@
         'getY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param {Int} y Y value for new position (coordinates are page-based)

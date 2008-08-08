@@ -9,13 +9,13 @@
 var ATTR = [
         /**
          * Returns a region object for the node 
-         * @attribute region
+         * @property region
          * @type Node
          */
         'region',
         /**
          * Returns a region object for the node's viewport 
-         * @attribute viewportRegion
+         * @property viewportRegion
          * @type Node
          */
         'viewportRegion'
@@ -29,7 +29,7 @@ Y.each(ATTR, function(v, n) {
 
 Y.Node.addDOMMethods([
     /**
-     * Removes a class name from a given element or collection of elements.
+     * Determines whether or not the node is currently visible in the viewport. 
      * @method inViewportRegion         
      * @return {Boolean} Whether or not the node is currently positioned
      * within the viewport's region

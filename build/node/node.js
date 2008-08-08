@@ -9,7 +9,10 @@ YUI.add('node', function(Y) {
     /**
      * The Node class provides a wrapper for manipulating DOM Nodes.
      * Node properties can be accessed via the set/get methods.
-     * Use Y.get() or Y.Node.get() to retrieve Node instances.
+     * Use Y.get() to retrieve Node instances.
+     *
+     * <strong>NOTE:</strong> All node properties are accessed using the
+     * <code>set</code> and <code>get</code> methods.
      *
      * @class Node
      * @constructor
@@ -94,7 +97,7 @@ YUI.add('node', function(Y) {
 
     };
 
-    /**
+    /*
      * Wraps the input and outputs of a node instance
      */
     var nodeInOut = function(method, a, b, c, d, e) {
@@ -129,21 +132,21 @@ YUI.add('node', function(Y) {
     var PROPS_WRAP = {
         /**
          * Returns a Node instance. 
-         * @attribute parentNode
+         * @property parentNode
          * @type Node
          */
         'parentNode': BASE_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute childNodes
+         * @property childNodes
          * @type NodeList
          */
         'childNodes': BASE_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute children
+         * @property children
          * @type NodeList
          */
         'children': function(node) {
@@ -165,56 +168,56 @@ YUI.add('node', function(Y) {
 
         /**
          * Returns a Node instance. 
-         * @attribute firstChild
+         * @property firstChild
          * @type Node
          */
         'firstChild': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute lastChild
+         * @property lastChild
          * @type Node
          */
         'lastChild': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute previousSibling
+         * @property previousSibling
          * @type Node
          */
         'previousSibling': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute previousSibling
+         * @property previousSibling
          * @type Node
          */
         'nextSibling': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute ownerDocument
+         * @property ownerDocument
          * @type Doc
          */
         'ownerDocument': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute offsetParent
+         * @property offsetParent
          * @type Node
          */
         'offsetParent': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute documentElement
+         * @property documentElement
          * @type Node
          */
         'documentElement': DOCUMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute body
+         * @property body
          * @type Node
          */
         'body': DOCUMENT_NODE,
@@ -222,7 +225,7 @@ YUI.add('node', function(Y) {
         // form
         /**
          * Returns a NodeList instance. 
-         * @attribute elements
+         * @property elements
          * @type NodeList
          */
         'elements': ELEMENT_NODE,
@@ -230,35 +233,35 @@ YUI.add('node', function(Y) {
         // table
         /**
          * Returns a NodeList instance. 
-         * @attribute rows
+         * @property rows
          * @type NodeList
          */
         'rows': ELEMENT_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute cells
+         * @property cells
          * @type NodeList
          */
         'cells': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute tHead
+         * @property tHead
          * @type Node
          */
         'tHead': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute tFoot
+         * @property tFoot
          * @type Node
          */
         'tFoot': ELEMENT_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute tBodies
+         * @property tBodies
          * @type NodeList
          */
         'tBodies': ELEMENT_NODE
@@ -425,7 +428,7 @@ YUI.add('node', function(Y) {
     var GETTERS = {
         /**
          * Normalizes nodeInnerText and textContent. 
-         * @attribute text
+         * @property text
          * @type String
          */
         'text': function(node) {
@@ -434,7 +437,7 @@ YUI.add('node', function(Y) {
 
         /**
          * Returns a nodeList of option elements 
-         * @attribute options
+         * @property options
          * @type String
          */
         'options': function(node) {
@@ -624,9 +627,9 @@ YUI.add('node', function(Y) {
 
         /**
          * Compares nodes to determine if they match.
-         * Node instances can be compared to each other and/or HTMLElements/selectors.
+         * Node instances can be compared to each other and/or HTMLElements.
          * @method compareTo
-         * @param {String | HTMLElement | Node} refNode The reference node to compare to the node.
+         * @param {HTMLElement | Node} refNode The reference node to compare to the node.
          * @return {Boolean} True if the nodes match, false if they do not. 
          */
         compareTo: function(refNode) {
@@ -646,8 +649,8 @@ YUI.add('node', function(Y) {
         },
 
         /**
-         * Returns the previous sibling that is an HTMLElement. 
-         * Returns the nearest HTMLElement sibling if no method provided.
+         * Returns the previous matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
          * @method previous
          * @param {String | Function} fn A selector or boolean method for testing elements.
          * If a function is used, it receives the current node being tested as the only argument.
@@ -659,13 +662,13 @@ YUI.add('node', function(Y) {
         }, 
 
         /**
-         * Returns the next sibling that passes the boolean method. 
-         * Returns the nearest HTMLElement sibling if no method provided.
+         * Returns the next matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
          * @method next
          * @param {String | Function} fn A selector or boolean method for testing elements.
          * If a function is used, it receives the current node being tested as the only argument.
          * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-         * @return {Object} HTMLElement or null if not found
+         * @return {Node} Node instance or null if not found
          */
         next: function(fn, all) {
             return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'nextSibling', wrapFn(fn)), all);
@@ -729,16 +732,22 @@ YUI.add('node', function(Y) {
         },
 
         /**
-         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+         * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
          * @method contains
-         * @param {String | HTMLElement} needle The possible descendent
-         * @return {Boolean} Whether or not this node is an ancestor of needle
-         * @chainable
+         * @param {Node | HTMLElement} needle The possible node or descendent
+         * @return {Boolean} Whether or not this node is the needle its ancestor
          */
         contains: function(needle) {
             return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
         },
 
+        /**
+         * Applies the supplied plugin to the node.
+         * @method plug
+         * @param {Function} The plugin Class to apply
+         * @param {Object} config An optional config to pass to the constructor
+         * @chainable
+         */
         plug: function(PluginClass, config) {
             config = config || {};
             config.owner = this;
@@ -749,11 +758,11 @@ YUI.add('node', function(Y) {
         },
 
         /**
-         * Determines whether an HTMLElement is attached to a document.
+         * Determines whether the node is appended to the document.
          * @method inDoc
          * @param {Node|HTMLElement} doc optional An optional document to check against.
          * Defaults to current document. 
-         * @return {Boolean} Whether or not this node is attached to the document. 
+         * @return {Boolean} Whether or not this node is appended to the document. 
          */
         inDoc: function(doc) {
             var node = _nodes[this._yuid];
@@ -771,22 +780,14 @@ YUI.add('node', function(Y) {
     });
 
     /** 
-     *  Creates a Node instance from an HTML string
+     * Creates a Node instance from an HTML string
      * @method create
-     * @param {String | Array} html HTML string
+     * @param {String} html HTML string
      */
     Node.create = function(html) {
         return wrapDOM(Y.DOM.create(html));
     };
 
-    /** 
-     * Returns a node instance wrapping the DOM element with the given ID. 
-     * @method getById
-     * @static
-     * @param {String} id The ID to retrieve 
-     * @param {Node|HTMLElement} doc optional An optional document to search. 
-     * Defaults to current document.
-     */
     Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
         return wrapDOM(doc.getElementById(id));
@@ -838,7 +839,7 @@ YUI.add('node', function(Y) {
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
-     * @return {NodeList} A wrapper instance for the supplied nodes.
+     * @return {NodeList} A NodeList instance for the supplied nodes.
      */
     Node.all = function(nodes, doc) {
         if (nodes instanceof NodeList) {
@@ -992,7 +993,7 @@ YUI.add('node', function(Y) {
 
 Y.Node.addDOMMethods([
     /**
-     * Returns the given style attribute value from the node.
+     * Returns the style's current value.
      * @method getStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
@@ -1000,7 +1001,7 @@ Y.Node.addDOMMethods([
     'getStyle',
 
     /**
-     * Returns the computed value for the given style attribute.
+     * Returns the computed value for the given style property.
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -1008,7 +1009,7 @@ Y.Node.addDOMMethods([
     'getComputedStyle',
 
     /**
-     * Applies a CSS style to the node.
+     * Sets a style property of the node.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 
@@ -1033,31 +1034,31 @@ Y.Node.addDOMMethods([
 
     Y.Node.addDOMMethods([
         /**
-         * Determines whether an HTMLElement has the given className.
+         * Determines whether the node has the given className.
          * @method hasClass
          * @param {String} className the class name to search for
-         * @return {Boolean} A boolean value or array of boolean values
+         * @return {Boolean} Whether or not the node has the given class. 
          */
         'hasClass',
 
         /**
-         * Adds a class name to a given element or collection of elements.
+         * Adds a class name to the node.
          * @method addClass         
-         * @param {String} className the class name to add to the class attribute
+         * @param {String} className the class name to add to the node's class attribute
          * @chainable
          */
         'addClass',
 
         /**
-         * Removes a class name from a given element or collection of elements.
+         * Removes a class name from the node.
          * @method removeClass         
-         * @param {String} className the class name to remove from the class attribute
+         * @param {String} className the class name to remove from the node's class attribute
          * @chainable
          */
         'removeClass',
 
         /**
-         * Replace a class with another class for a given element or collection of elements.
+         * Replace a class with another class.
          * If no oldClassName is present, the newClassName is simply added.
          * @method replaceClass  
          * @param {String} oldClassName the class name to be replaced
@@ -1085,13 +1086,13 @@ Y.Node.addDOMMethods([
 var ATTR = [
         /**
          * Returns a region object for the node 
-         * @attribute region
+         * @property region
          * @type Node
          */
         'region',
         /**
          * Returns a region object for the node's viewport 
-         * @attribute viewportRegion
+         * @property viewportRegion
          * @type Node
          */
         'viewportRegion'
@@ -1105,7 +1106,7 @@ Y.each(ATTR, function(v, n) {
 
 Y.Node.addDOMMethods([
     /**
-     * Removes a class name from a given element or collection of elements.
+     * Determines whether or not the node is currently visible in the viewport. 
      * @method inViewportRegion         
      * @return {Boolean} Whether or not the node is currently positioned
      * within the viewport's region
@@ -1154,11 +1155,46 @@ Y.Node.methods({
  */
 
     Y.each([
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property winWidth
+         * @type {Int}
+         */
         'winWidth',
+
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property winHeight
+         * @type {Int}
+         */
         'winHeight',
+
+        /**
+         * Document width 
+         * @property winHeight
+         * @type {Int}
+         */
         'docWidth',
+
+        /**
+         * Document height 
+         * @property docHeight
+         * @type {Int}
+         */
         'docHeight',
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property docScrollX
+         * @type {Int}
+         */
         'docScrollX',
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property docScrollY
+         * @type {Int}
+         */
         'docScrollY'
         ],
         function(v, n) {
@@ -1177,7 +1213,7 @@ Y.Node.methods({
         'getXY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
@@ -1195,7 +1231,7 @@ Y.Node.methods({
         'getX',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param {Int} x X value for new position (coordinates are page-based)
@@ -1213,7 +1249,7 @@ Y.Node.methods({
         'getY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param {Int} y Y value for new position (coordinates are page-based)
