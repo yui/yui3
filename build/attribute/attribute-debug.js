@@ -86,7 +86,7 @@ YUI.add('attribute', function(Y) {
             var d = this.data;
 
             if (key) {
-                return d[key] && d[key][name];
+                return (d[key] && name in d[key]) ?  d[key][name] : undefined;
             } else {
                 var o = {};
 
