@@ -192,12 +192,12 @@ YUI.add('attribute', function(Y) {
      * <dl>
      *     <dt>Attribute.CLONE.DEEP</dt>
      *     <dd>Will result in a deep cloned value being returned
-     *        (using Y.clone). This can be expensive for complex
+     *        (using YUI's clone method). This can be expensive for complex
      *        objects.
      *     </dd>
      *     <dt>Attribute.CLONE.SHALLOW</dt>
      *     <dd>Will result in a shallow cloned value being returned
-     *        (using Y.merge).
+     *        (using YUI's merge method).
      *     </dd>
      *     <dt>Attribute.CLONE.IMMUTABLE</dt>
      *     <dd>Will result in a deep cloned value being returned
@@ -313,6 +313,8 @@ YUI.add('attribute', function(Y) {
          * @param {String} key The attribute whose value will be returned. If
          * the value of the attribute is an Object, dot notation can be used to
          * obtain the value of a property of the object (e.g. <code>get("x.y.z")</code>)
+         * 
+         * @return {Any} The current value of the attribute
          */
         get: function(name) {
 
@@ -355,6 +357,8 @@ YUI.add('attribute', function(Y) {
          * @param {Object} opts Optional event data. This object will be mixed into
          * the event facade passed as the first argument to subscribers 
          * of attribute change events
+         * 
+         * @return {Object} Reference to the host object
          */
         set: function(name, val, opts) {
 
@@ -403,8 +407,24 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
+         * <p>
          * Alias for the <a href="Event.Target.html#method_subscribe">Event.Target subscribe method</a>.
+         * </p>
+         * 
+         * <p>Subscribers using this method to listen for attribute change events will be notified just
+         * <strong>before</strong> the state of the attribute has been modified, and before the default handler has been
+         * invoked.</p>.
+         * 
+         * <p>The <a href="Event.Target.html#method_after">after</p> method, inherited from Event Target, can be used by subscribers
+         * who wish to be notified <strong>after</code> the attribute's value has changed.</p>
+         * 
+         * @param type {String} the event type. For attribute change events, the event type is "[Attribute Name]Change", e.g.
+         * for the attribute "enabled", the event type will be "enabledChange".
+         * @param fn {Function} the subscribed function to invoke
+         * @param context Optional execution context
+         * @param args* 0..n additional arguments to append to supply to the subscribed function when the event fires.
          * @method on
+         * @return {Event.Handle} The handle object for unsubscribing the subscriber from the event.
          */
         on : function() {
             return this.subscribe.apply(this, arguments);
@@ -672,6 +692,7 @@ YUI.add('attribute', function(Y) {
          * @private 
          * @param {Any} val Value to clone
          * @param {int} type Clone type to use, See the CLONE property
+         * @return {Any} The cloned copy of the object, based on the provided type.
          */
         _cloneAttVal : function(val, type) {
             switch(type) {
