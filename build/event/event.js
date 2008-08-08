@@ -820,9 +820,9 @@ YUI.add("event-custom", function(Y) {
                 
                 if (!ef) {
                     ef = this._getFacade(args);
+                    args[0] = ef;
                 }
 
-                // args[0] = ef;
             }
              
             ret = s.notify(this.context, args);
@@ -919,7 +919,7 @@ YUI.add("event-custom", function(Y) {
                 this.currentTarget = this.host || this.currentTarget;
 
                 this.fired = true;
-                this.details = args;
+                this.details = args.slice(); // original arguments in the details
 
 
                 var hasSub = false;
@@ -1727,7 +1727,6 @@ var Env = YUI.Env,
         remove(window, "load", onLoad);
     };
 
-    // for the moment each instance will get its own load/unload listeners
     add(window, "load", onLoad);
 
 YUI.add("event-dom", function(Y) {

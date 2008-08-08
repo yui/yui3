@@ -26,7 +26,6 @@
         remove(window, "load", onLoad);
     };
 
-    // for the moment each instance will get its own load/unload listeners
     add(window, "load", onLoad);
 
 YUI.add("event-dom", function(Y) {

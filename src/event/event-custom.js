@@ -446,9 +446,9 @@ YUI.add("event-custom", function(Y) {
                 
                 if (!ef) {
                     ef = this._getFacade(args);
+                    args[0] = ef;
                 }
 
-                // args[0] = ef;
             }
              
             ret = s.notify(this.context, args);
@@ -549,7 +549,7 @@ YUI.add("event-custom", function(Y) {
                 this.currentTarget = this.host || this.currentTarget;
 
                 this.fired = true;
-                this.details = args;
+                this.details = args.slice(); // original arguments in the details
 
                 // this.log("Firing " + this  + ", " + "args: " + args);
                 this.log("Firing " + this.type);
