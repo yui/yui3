@@ -153,7 +153,10 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.debug : true;
+        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+
+        // @TODO default throwFail to true in PR2
+        // o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -392,7 +395,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name, 'info', 'YUI');
+                Y.log('module not found: ' + name, 'info', 'yui');
                 missing.push(name);
             }
 
@@ -445,7 +448,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
@@ -1524,8 +1527,14 @@ Y.Get = function() {
      * @private
      */
     var _fail = function(id, msg) {
-        Y.log("get failure: " + msg, "warn", "Get");
+
+        Y.log("get failure: " + msg, "warn", "get");
+
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
+
         // execute failure callback
         if (q.onFailure) {
             var sc=q.context || q;
@@ -1594,8 +1603,11 @@ Y.Get = function() {
      * @private
      */
     var _finish = function(id) {
-        Y.log("Finishing transaction " + id, "info", "Get");
+        Y.log("Finishing transaction " + id, "info", "get");
         var q = queues[id];
+        if (q.timer) {
+            q.timer.cancel();
+        }
         q.finished = true;
 
         if (q.aborted) {
@@ -1618,7 +1630,7 @@ Y.Get = function() {
      * @private
      */
     var _timeout = function(id) {
-        Y.log("Timeout " + id, "info", "Get");
+        Y.log("Timeout " + id, "info", "get");
         var q = queues[id];
         if (q.onTimeout) {
             var sc=q.context || q;
@@ -1634,7 +1646,7 @@ Y.Get = function() {
      * @private
      */
     var _next = function(id, loaded) {
-        Y.log("_next: " + id + ", loaded: " + loaded, "info", "Get");
+        Y.log("_next: " + id + ", loaded: " + loaded, "info", "get");
 
         var q = queues[id];
 
@@ -1670,7 +1682,7 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
-        Y.log("attempting to load " + url, "info", "Get");
+        Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
             // Y.log('create timer');
@@ -1699,7 +1711,7 @@ Y.Get = function() {
             h.appendChild(n);
         }
         
-        Y.log("Appending node: " + url, "info", "Get");
+        Y.log("Appending node: " + url, "info", "get");
 
         // FireFox does not support the onload event for link nodes, so there is
         // no way to make the css requests synchronous. This means that the css 
@@ -1794,11 +1806,15 @@ Y.Get = function() {
         var f = trackfn || _next;
 
         // IE supports the readystatechange event for script and css nodes
+        // Opera only for script nodes.  Opera support onload for script
+        // nodes, but this doesn't fire when their is a load failure.
+        // The onreadystatechange appears to be a better way to respond
+        // to both success and failure.
         if (ua.ie) {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
-                    Y.log(id + " onload " + url, "info", "Get");
+                    Y.log(id + " onreadstatechange " + url, "info", "get");
                     f(id, url);
                 }
             };
@@ -1809,7 +1825,7 @@ Y.Get = function() {
             if (type === "script") {
                 // Safari 3.x supports the load event for script nodes (DOM2)
                 n.addEventListener("load", function() {
-                    Y.log(id + " DOM2 onload " + url, "info", "Get");
+                    Y.log(id + " DOM2 onload " + url, "info", "get");
                     f(id, url);
                 });
             } 
@@ -1818,9 +1834,14 @@ Y.Get = function() {
         // script nodes.  Opera, but not FF, supports the onload event for link
         // nodes.
         } else { 
+
             n.onload = function() {
-                Y.log(id + " onload " + url, "info", "Get");
+                Y.log(id + " onload " + url, "info", "get");
                 f(id, url);
+            };
+
+            n.onerror = function(e) {
+                _fail(id, e + ": " + url);
             };
         }
     };
@@ -1843,7 +1864,7 @@ Y.Get = function() {
          * @private
          */
         _finalize: function(id) {
-            Y.log(id + " finalized ", "info", "Get");
+            Y.log(id + " finalized ", "info", "get");
             L.later(0, null, _finish, id);
         },
 
@@ -1857,7 +1878,7 @@ Y.Get = function() {
             var id = (L.isString(o)) ? o : o.tId;
             var q = queues[id];
             if (q) {
-                Y.log("Aborting " + id, "info", "Get");
+                Y.log("Aborting " + id, "info", "get");
                 q.aborted = true;
             }
         }, 
@@ -2155,111 +2176,89 @@ Y.Get = function() {
 
 YUI.add("loader", function(Y) {
 
-    var BASE = 'base', 
-        CSS = 'css',
-        JS = 'js',
-        RESET = 'cssreset',
-        FONTS = 'cssfonts',
-        GRIDS = 'cssgrids',
-        VERSION = '@VERSION@',
-        ROOT = VERSION + '/build/';
-
-Y.Env.meta = {
+var BASE = 'base', 
+    CSS = 'css',
+    JS = 'js',
+    CSSRESET = 'cssreset',
+    CSSFONTS = 'cssfonts',
+    CSSGRIDS = 'cssgrids',
+    CSSBASE = 'cssbase',
+    CSS_AFTER = [CSSRESET, CSSFONTS, CSSGRIDS, 'cssreset-context', 'cssfonts-context', 'cssgrids-context'],
+    YUI_CSS = ['reset', 'fonts', 'grids', 'base'],
+    VERSION = '@VERSION@',
+    ROOT = VERSION + '/build/',
+    CONTEXT = '-context',
+    META = {
 
     version: VERSION,
 
     root: ROOT,
 
     base: 'http://yui.yahooapis.com/' + ROOT,
-    // base: '../../build/',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
     modules: {
 
-      dom: {
-          requires: ['event'],
-          supersedes: ['dom-base', 'dom-style', 'dom-screen', 'selector'],
-          rollup: 3
-      },
+       dom: {
+            requires: ['event'],
+            submodules: {
+                'dom-base': {
+                    requires: ['event']
+                },
+                'dom-style': {
+                    requires: ['dom-base']
 
-      'dom-base': {
-          path: 'dom/dom-base-min.js',
-          requires: ['event']
-      },
+                },
+                'dom-screen': {
+                    requires: ['dom-base', 'dom-style']
+                },
+                selector: {
+                    requires: ['dom-base']
+                }
+            }
+        },
 
-      'dom-style': {
-          path: 'dom/dom-style-min.js',
-          requires: ['dom-base']
+        node: {
+            requires: ['dom'],
+            submodules: {
+                'node-base': {
+                    requires: ['dom-base', 'selector']
+                },
+                'node-style': {
+                    requires: ['dom-style', 'node-base']
+                },
+                'node-screen': {
+                    requires: ['dom-screen', 'node-base']
+                }
+            }
+        },
 
-      },
-
-      'dom-screen': {
-          path: 'dom/dom-screen-min.js',
-          requires: ['dom-base', 'dom-style']
-      },
-
-      selector: {
-          path: 'dom/selector-min.js',
-          requires: ['dom-base']
-      },
-
-
-      node: {
-          supersedes: ['node-base', 'node-style', 'node-screen'],
-          requires: ['dom'],
-          rollup: 2
-      },
-
-      'node-base': {
-          path: 'node/node-base-min.js',
-          requires: ['dom-base', 'selector']
-      },
-
-      'node-style': {
-          path: 'node/node-style-min.js',
-          requires: ['dom-style', 'node-base']
-      },
-
-      'node-screen': {
-          path: 'node/node-screen-min.js',
-          requires: ['dom-screen', 'node-base']
-      },
-
-      anim: {
-          supersedes: ['anim-base', 'anim-color', 'anim-curve', 'anim-easing', 'anim-scroll', 'anim-xy'],
-          requires: ['base', 'node']
-      },
-
-      'anim-base': {
-          path: 'anim/anim-base-min.js',
-          requires: ['base', 'node-style']
-      },
-
-      'anim-color': {
-          path: 'anim/anim-color-min.js',
-          requires: ['anim-base']
-      },
-
-      'anim-curve': {
-          path: 'anim/anim-curve-min.js',
-          requires: ['anim-xy']
-      },
-
-      'anim-easing': {
-          path: 'anim/anim-easing-min.js'
-      },
-
-      'anim-scroll': {
-          path: 'anim/anim-scroll-min.js',
-          requires: ['anim-base']
-      },
-
-      'anim-xy': {
-          path: 'anim/anim-xy-min.js',
-          requires: ['anim-base', 'node-screen']
-      },
-
+        anim: {
+            requires: [BASE, 'node'],
+            submodules: {
+                'anim-base': {
+                    requires: ['base', 'node-style']
+                },
+                'anim-color': {
+                    requires: ['anim-base']
+                },
+                'anim-curve': {
+                    requires: ['anim-xy']
+                },
+                'anim-easing': {
+                },
+                'anim-scroll': {
+                    requires: ['anim-base']
+                },
+                'anim-xy': {
+                    requires: ['anim-base', 'node-screen']
+                },
+                'anim-node-plugin': {
+                     requires: ['node', 'anim-base']
+                }
+            }
+        },
 
         attribute: { 
             requires: ['event']
@@ -2275,73 +2274,48 @@ Y.Env.meta = {
         
         cookie: { },
 
-        cssbase: {
-            type: CSS,
-            after: [RESET, FONTS, GRIDS],
-            path: 'cssbase/base.css'
-        },
+        // Note: CSS attributes are modified programmatically to reduce metadata size
+        // cssbase: {
+        //     after: CSS_AFTER
+        // },
 
-        cssfonts: {
-            type: CSS,
-            path: 'cssfonts/fonts.css'
-        },
-
-        cssgrids: {
-            type: CSS,
-            requires: [FONTS],
-            optional: [RESET],
-            path: 'cssgrids/grids.css'
-        },
-
-        cssreset: {
-            type: CSS,
-            path: 'cssreset/reset.css'
-        },
-
-        'dd-ddm-base': {
-            path: 'dd/dd-ddm-base-min.js',
-            requires: ['node', BASE]
-        }, 
-        'dd-ddm':{
-            path: 'dd/dd-ddm-min.js',
-            requires: ['dd-ddm-base']
-        }, 
-        'dd-ddm-drop':{
-            path: 'dd/dd-ddm-drop-min.js',
-            requires: ['dd-ddm']
-        }, 
-        'dd-drag':{
-            path: 'dd/dd-drag-min.js',
-            requires: ['dd-ddm-base']
-        }, 
-        'dd-drop':{
-            path: 'dd/dd-drop-min.js',
-            requires: ['dd-ddm-drop']
-        }, 
-        'dd-proxy':{
-            path: 'dd/dd-proxy-min.js',
-            requires: ['dd-drag']
-        }, 
-        'dd-constrain':{
-            path: 'dd/dd-constrain-min.js',
-            requires: ['dd-drag', 'dd-proxy']
-        }, 
-        'dd-plugin':{
-            path: 'dd/dd-plugin-min.js',
-            requires: ['dd-drag'],
-            optional: ['dd-constrain', 'dd-proxy']
-        },
-        'dd-drop-plugin':{
-            path: 'dd/dd-drop-plugin-min.js',
-            requires: ['dd-drop']
-        },
+        // cssgrids: {
+        //     requires: [CSSFONTS],
+        //     optional: [CSSRESET]
+        // },
 
         'dd':{
-            path: 'dd/dd-min.js',
-            supersedes: ['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin', 'dd-drag-proxy'],
-            rollup: 5
+            submodules: {
+                'dd-ddm-base': {
+                    requires: ['node', BASE]
+                }, 
+                'dd-ddm':{
+                    requires: ['dd-ddm-base']
+                }, 
+                'dd-ddm-drop':{
+                    requires: ['dd-ddm']
+                }, 
+                'dd-drag':{
+                    requires: ['dd-ddm-base']
+                }, 
+                'dd-drop':{
+                    requires: ['dd-ddm-drop']
+                }, 
+                'dd-proxy':{
+                    requires: ['dd-drag']
+                }, 
+                'dd-constrain':{
+                    requires: ['dd-drag', 'dd-proxy']
+                }, 
+                'dd-plugin':{
+                    requires: ['dd-drag'],
+                    optional: ['dd-constrain', 'dd-proxy']
+                },
+                'dd-drop-plugin':{
+                    requires: ['dd-drop']
+                }
+            }
         },
-
 
         dump: { },
 
@@ -2353,16 +2327,14 @@ Y.Env.meta = {
             requires: ['node']
         },
 
-        'json-parse': {
-            path: 'json/json-parse-min.js'
-        },
-
-        'json-stringify': {
-            path: 'json/json-stringify-min.js'
-        },
-
         json: {
-            supersedes: ['json-parse', 'json-stringify']
+            submodules: {
+                'json-parse': {
+                },
+
+                'json-stringify': {
+                }
+            }
         },
         
         oop: { 
@@ -2385,25 +2357,49 @@ Y.Env.meta = {
     }
 };
 
+var _path = function(dir, file, type) {
+    return dir + '/' + file + '-min.' + (type || CSS);
+};
+
+var _cssmeta = function() {
+    var mods = META.modules;
+    // modify the meta info for YUI CSS
+    for (var i=0; i<YUI_CSS.length; i=i+1) {
+        var bname = YUI_CSS[i],
+            mname = CSS + bname;
+
+        mods[mname] = {
+            type: CSS,
+            path: _path(mname, bname)
+        };
+
+        // define -context module
+        var contextname = mname + CONTEXT;
+        bname = bname + CONTEXT;
+
+        mods[contextname] = {
+            type: CSS,
+            path: _path(mname, bname)
+        };
+
+        if (mname == CSSGRIDS) {
+            mods[mname].requires = [CSSFONTS];
+            mods[mname].optional = [CSSRESET];
+            mods[contextname].requires = [CSSFONTS + CONTEXT];
+            mods[contextname].optional = [CSSRESET + CONTEXT];
+        } else if (mname == CSSBASE) {
+            mods[mname].after = CSS_AFTER;
+            mods[contextname].after = CSS_AFTER;
+        }
+    }
+}();
+
+Y.Env.meta = META;
+
 
     var L=Y.Lang, env=Y.Env,
         PROV = "_provides", SUPER = "_supersedes",
         REQ = "expanded";
-
-    var _Y = {
-
-        // dupsAllowed: {'yahoo': true, 'get': true},
-        dupsAllowed: {},
-
-        /*
-         * The library metadata for the current release
-         * @property YUIInfo
-         * @static
-         */
-        // info: '@yuiinfo@', 
-        info: Y.Env.meta
-
-    };
 
     Y.Loader = function(o) {
 
@@ -2486,7 +2482,7 @@ Y.Env.meta = {
          * @type string
          * @default http://yui.yahooapis.com/[YUI VERSION]/build/
          */
-        this.base = _Y.info.base;
+        this.base = Y.Env.meta.base;
 
         /**
          * Base path for the combo service
@@ -2494,7 +2490,7 @@ Y.Env.meta = {
          * @type string
          * @default http://yui.yahooapis.com/combo?
          */
-        this.comboBase = _Y.info.comboBase;
+        this.comboBase = Y.Env.meta.comboBase;
 
         /**
          * If configured, YUI JS resources will use the combo
@@ -2519,7 +2515,7 @@ Y.Env.meta = {
          * @type string
          * @default [YUI VERSION]/build/
          */
-        this.root = _Y.info.root;
+        this.root = Y.Env.meta.root;
 
         /**
          * Timeout value in milliseconds.  If set, this value will be used by
@@ -2591,10 +2587,10 @@ Y.Env.meta = {
          * The library metadata
          * @property moduleInfo
          */
-        // this.moduleInfo = Y.merge(_Y.info.moduleInfo);
+        // this.moduleInfo = Y.merge(Y.Env.meta.moduleInfo);
         this.moduleInfo = {};
         
-        var defaults = _Y.info.modules;
+        var defaults = Y.Env.meta.modules;
 
         for (var i in defaults) {
             if (defaults.hasOwnProperty(i)) {
@@ -2738,6 +2734,7 @@ Y.Env.meta = {
          *     <dt>rollup:</dt>     <dd>the number of superseded modules required for automatic rollup</dd>
          *     <dt>fullpath:</dt>   <dd>If fullpath is specified, this is used instead of the configured base + path</dd>
          *     <dt>skinnable:</dt>  <dd>flag to determine if skin assets should automatically be pulled in</dd>
+         *     <dt>submodules:</dt> <dd>a has of submodules</dd>
          * </dl>
          * @method addModule
          * @param o An object containing the module data
@@ -2747,7 +2744,8 @@ Y.Env.meta = {
          */
         addModule: function(o, name) {
 
-            o.name = o.name || name;
+            name = name || o.name;
+            o.name = name;
 
             if (!o || !o.name) {
                 return false;
@@ -2758,16 +2756,34 @@ Y.Env.meta = {
             }
 
             if (!o.path && !o.fullpath) {
-                o.path = name + "/" + name + "-min." + o.type;
+                // o.path = name + "/" + name + "-min." + o.type;
+                o.path = _path(name, name, o.type);
             }
 
             o.ext = ('ext' in o) ? o.ext : (this._internal) ? false : true;
             o.requires = o.requires || [];
 
+            // Y.log('New module ' + name);
+
+            // Handle submodule logic
+            var subs = o.submodules;
+            if (subs) {
+                var sup = [], l=0;
+
+                for (var i in subs) {
+                    var s = subs[i];
+                    s.path = _path(name, i, o.type);
+                    this.addModule(s, i);
+                    sup.push(i);
+                    l++;
+                }
+
+                o.supersedes = sup;
+                o.rollup = Math.min(l-1, 4);
+            }
+
             this.moduleInfo[name] = o;
             this.dirty = true;
-
-            // Y.log('New module ' + name);
 
             return o;
         },
@@ -3063,7 +3079,8 @@ Y.Env.meta = {
                         for (j=0;j<s.length;j=j+1) {
 
                             // if the superseded module is loaded, we can't load the rollup
-                            if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                            if (this.loaded[s[j]]) {
                                 roll = false;
                                 break;
                             // increment the counter if this module is required.  if we are
@@ -3134,18 +3151,18 @@ Y.Env.meta = {
             // which is needed if some dependencies are already on
             // the page without their dependencies.
             if (this.attaching) {
-                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "Loader");
+                Y.log('attaching Y supplied deps: ' + this.attaching, "info", "loader");
                 Y._attach(this.attaching);
             } else {
-                Y.log('attaching sorted list: ' + this.sorted, "info", "Loader");
+                Y.log('attaching sorted list: ' + this.sorted, "info", "loader");
                 Y._attach(this.sorted);
             }
+
+            this._pushEvents();
 
         },
 
         _onSuccess: function() {
-
-            this._pushEvents();
 
             this._attach();
 
@@ -3317,7 +3334,7 @@ Y.Env.meta = {
          */
         insert: function(o, type) {
 
-            Y.log('Insert() ' + (type || ''), "info", "Loader");
+            Y.log('Insert() ' + (type || ''), "info", "loader");
 
             // build the dependency list
             this.calculate(o);
@@ -3395,10 +3412,10 @@ Y.Env.meta = {
 
                 if (this._combining.length) {
 
-Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
+Y.log('Attempting to combine: ' + this._combining, "info", "loader");
 
                     var callback=function(o) {
-                        Y.log('Combo complete: ' + o.data, "info", "Loader");
+                        Y.log('Combo complete: ' + o.data, "info", "loader");
                         this._combineComplete = true;
 
 
@@ -3437,7 +3454,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "Loader");
                     return;
                 }
 
-Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
+Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 // The global handler that is called when each module is loaded
                 // will pass that module name to this function.  Storing this
@@ -3475,7 +3492,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the same module when loading a rollup.  We can safely
                 // skip the subsequent requests
                 if (s[i] === this._loading) {
-                    Y.log("still loading " + s[i] + ", waiting", "info", "Loader");
+                    Y.log("still loading " + s[i] + ", waiting", "info", "loader");
                     return;
                 }
 
@@ -3485,7 +3502,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 if (!m) {
 
                     var msg = "Undefined module " + s[i] + " skipped";
-                    Y.log(msg, 'warn', 'Loader');
+                    Y.log(msg, 'warn', 'loader');
                     this.inserted[s[i]] = true;
                     this.skipped[s[i]] = true;
                     continue;
@@ -3501,7 +3518,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
                 // the css separately from the script.
                 if (!this.loadType || this.loadType === m.type) {
                     this._loading = s[i];
-                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "Loader");
+                    Y.log("attempting to load " + s[i] + ", " + this.base, "info", "loader");
 
                     var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
                         onsuccess=function(o) {
@@ -3558,10 +3575,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
          * @param {Function} optional function reference
          * @private
          */
-        _pushEvents: function(ref) {
-            var r = ref || Y;
-            if (r.Event) {
-                r.Event._load();
+        _pushEvents: function() {
+            if (Y.Event) {
+                Y.Event._load();
             }
         },
 
@@ -3617,7 +3633,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
  */
 (function() {
 
-    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core', 'ua'], core,
 
     M = function(Y) {
 
@@ -3626,7 +3642,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' initialized', 'info', 'YUI');
+        Y.log(Y.id + ' initialized', 'info', 'yui');
 
         if (C.core) {
 
@@ -3634,7 +3650,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "Loader");
 
         } else {
 
-            core = ["object", "ua", "later"];
+            core = ["object", "later"];
 
             core.push(
               "get", 

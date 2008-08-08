@@ -1,1 +1,12 @@
-YUI
+The YUI Global
+    Provides core YUI functionality, including module registration and consumption utils,
+    language/array/object utilities, browser detection, a setTimout/setInterval wrapper,
+    and dynamic loading of script and css files.
+
+    The yui module is a rollup of the following modules:
+        yui-base
+        get
+        loader
+
+3.0.0pr1
+    Inital release

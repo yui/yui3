@@ -14,7 +14,7 @@
         // apply the minimal required functionality
         Y.use.apply(Y, min);
 
-        Y.log(Y.id + ' initialized', 'info', 'YUI');
+        Y.log(Y.id + ' initialized', 'info', 'yui');
 
         if (C.core) {
 

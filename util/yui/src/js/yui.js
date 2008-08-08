@@ -153,7 +153,10 @@ YUI.prototype = {
         o.win = w;
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
-        o.useConsole = ('useConsole' in o) ? o.debug : true;
+        o.useConsole = ('useConsole' in o) ? o.useConsole: true;
+
+        // @TODO default throwFail to true in PR2
+        // o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -392,7 +395,7 @@ YUI.prototype = {
                 req = m.details.requires;
                 use = m.details.use;
             } else {
-                Y.log('module not found: ' + name, 'info', 'YUI');
+                Y.log('module not found: ' + name, 'info', 'yui');
                 missing.push(name);
             }
 
@@ -445,7 +448,7 @@ YUI.prototype = {
 
         // dynamic load
         if (Y.Loader && missing.length) {
-            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'YUI');
+            Y.log('Attempting to dynamically load the missing modules ' + missing, 'info', 'yui');
             loader = new Y.Loader(Y.config);
             loader.onSuccess = onComplete;
             loader.onFailure = onComplete;
