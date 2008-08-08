@@ -43,26 +43,11 @@ include "../inc/header.inc";
 					<div class="clear"></div>
 				</div><!-- /promo -->
 				
-				<h3 id="start">Getting Started</h3>
-				
-				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-<!-- Dependencies -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/yui/yui.js"></script>
-
-<!-- Source file -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/json/json-parse-min.js"></script>
-<!-- OR -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/json/json-stringify-min.js"></script>
-<!-- OR -->
-<script src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/json/json-min.js"></script>
-				</textarea>
-
 				<?php
-				include "../inc/include-notice.inc";
-				?>
+                    $componentShort = "JSON";
+                    $requiredModules = array("json");
+                    include("../inc/gettingStarted.inc");
+                ?>
 				
 				<h3 id="using">Using the <?php echo $component;?></h3>
 			
@@ -88,13 +73,13 @@ include "../inc/header.inc";
                 <p>To minimize the code footprint when some functionality is not required, JSON has been broken up into the following modules:</p>
                 <dl>
                     <dt><code>json-parse</code></dt>
-                    <dd>Adds <code>Y.JSON.parse(..)</code> method to the YUI instance.  Use this module if all you will be doing is parsing JSON.</dd>
+                    <dd>Adds <code>Y.JSON.parse(..)</code> method to the YUI instance.  Use this module if all you will be doing is parsing JSON strings.</dd>
 
                     <dt><code>json-stringify</code></dt>
-                    <dd>Adds <code>Y.JSON.stringify(..)</code> method and its supporting methods and properties to the YUI instance.  Use this module if all you will be doing is serializing JavaScript objects to JSON.</dd>
+                    <dd>Adds <code>Y.JSON.stringify(..)</code> method and its supporting methods and properties to the YUI instance.  Use this module if all you will be doing is serializing JavaScript objects to JSON strings.</dd>
 
                     <dt><code>json</code></dt>
-                    <dd>A rollup of <code>json-parse</code> and <code>json-stringify</code> modules.  Use this if you need to parse JSON and serialize objects to JSON.</dd>
+                    <dd>A rollup of <code>json-parse</code> and <code>json-stringify</code> modules.  Use this if you need to both parse JSON strings and serialize objects to JSON strings.</dd>
                 </dl>
 
 				<h4 id="parse">Parsing JSON strings into native JavaScript values</h4>
