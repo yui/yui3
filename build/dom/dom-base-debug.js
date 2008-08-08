@@ -46,7 +46,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
-        return Y.DOM._getDoc(doc).getElementById(id); // @tested
+        return Y.DOM._getDoc(doc).getElementById(id);
     },
 
     /**
@@ -60,7 +60,7 @@ Y.DOM = {
         if (text === UNDEFINED && INNER_TEXT in element) {
             text = element[INNER_TEXT];
         } 
-        return text || ''; // @tested
+        return text || ''; 
     },
 
     /**
@@ -73,29 +73,28 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn); // @tested
+        return Y.DOM._childBy(element, null, fn); 
     },
 
     firstChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn); // @tested
+        return Y.DOM._childBy(element, tag, fn); 
     },
 
     /**
      * Finds the lastChild of the given HTMLElement.
      * @method lastChild
      * @param {HTMLElement} element The html element.
-     * @param {String} tag The tag to search for.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first found is returned.
      * @return {HTMLElement | null} The first matching child html element.
      */
     lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn, true); // @tested
+        return Y.DOM._childBy(element, null, fn, true); 
     },
 
     lastChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn, true); // @tested
+        return Y.DOM._childBy(element, tag, fn, true); 
     },
 
     /**
@@ -121,7 +120,7 @@ Y.DOM = {
                     }
                 }
 
-                return elements; // @tested
+                return elements; 
             };
         } else {
             return function(element, tag, fn) {
@@ -137,7 +136,7 @@ Y.DOM = {
                         };
                     }
 
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn); // @tested
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn); 
                 }
                 return elements;
             };
@@ -154,17 +153,47 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn); // @tested
+        return Y.DOM.childrenByTag(element, null, fn); 
     },
 
-    previous: function(element, fn) {
+    /**
+     * Finds the previous sibling of the element.
+     * @method previous
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the first sibling is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
+    previous: function(element, fn, all) {
         return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn);
     },
 
+    /**
+     * Finds the next sibling of the element.
+     * @method next
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the first sibling is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
     next: function(element, fn) {
         return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn);
     },
 
+    /**
+     * Finds the ancestor of the element.
+     * @method ancestor
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the parentNode is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
     ancestor: function(element, fn) {
         return Y.DOM.elementByAxis(element, PARENT_NODE, fn);
     },
@@ -176,7 +205,7 @@ Y.DOM = {
      * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
      * @param {Function} fn optional An optional boolean test to apply.
      * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-     * The optional function is passed the current HTMLElement being tested as its only argument.
+     * The optional function is passed the current DOM node being tested as its only argument.
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.
      */
@@ -220,8 +249,8 @@ Y.DOM = {
      * @param {HTMLElement} root optional An optional root element to start from.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements with the given tag are returned.
-     * @return {Array} The collection of matching elements.
+     * If no function is given, the first match is returned.
+     * @return {HTMLElement} The matching element.
      */
     firstByTag: function(tag, root, fn) {
         root = root || Y.config.doc;
@@ -273,7 +302,8 @@ Y.DOM = {
     contains: function(element, needle) {
         var ret = false;
 
-        if (!needle || !element) {
+        if (!needle || !needle[NODE_TYPE] || !element || !element[NODE_TYPE]) {
+            Y.log('invalid input to contains', 'WARN', 'DOM');
             ret = false;
         } else if (element[CONTAINS])  {
             if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
@@ -290,6 +320,13 @@ Y.DOM = {
         return ret;
     },
 
+    /**
+     * Returns an HTMLElement for the given string of HTML.
+     * @method create
+     * @param {String} html The string of HTML to convert to a DOM element. 
+     * @param {Document} document An optional document to create the node with.
+     * @return {HTMLElement} The newly created element. 
+     */
     create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html);
@@ -494,10 +531,11 @@ var CLASS_NAME = 'className';
 
 Y.mix(Y.DOM, {
     /**
-     * Determines whether an HTMLElement has the given className.
+     * Determines whether a DOM element has the given className.
      * @method hasClass
+     * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to search for
-     * @return {Boolean | Array} A boolean value or array of boolean values
+     * @return {Boolean} Whether or not the element has the given class. 
      */
     hasClass: function(node, className) {
         var re = Y.DOM._getRegExp('(?:^|\\s+)' + className + '(?:\\s+|$)');
@@ -505,10 +543,10 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Adds a class name to a given element or collection of elements.
+     * Adds a class name to a given DOM element.
      * @method addClass         
+     * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to add to the class attribute
-     * @return {Boolean | Array} A pass/fail boolean or array of booleans
      */
     addClass: function(node, className) {
         if (!Y.DOM.hasClass(node, className)) { // skip if already present 
@@ -517,10 +555,10 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Removes a class name from a given element or collection of elements.
+     * Removes a class name from a given element.
      * @method removeClass         
+     * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to remove from the class attribute
-     * @return {Boolean | Array} A pass/fail boolean or array of booleans
      */
     removeClass: function(node, className) {
         if (className && Y.DOM.hasClass(node, className)) {
@@ -530,18 +568,16 @@ Y.mix(Y.DOM, {
             if ( Y.DOM.hasClass(node, className) ) { // in case of multiple adjacent
                 Y.DOM.removeClass(node, className);
             }
-
-            //Y.log('removeClass removing ' + className, 'info', 'Node');
         }                 
     },
 
     /**
-     * Replace a class with another class for a given element or collection of elements.
+     * Replace a class with another class for a given element.
      * If no oldClassName is present, the newClassName is simply added.
      * @method replaceClass  
+     * @param {HTMLElement} element The DOM element. 
      * @param {String} oldClassName the class name to be replaced
      * @param {String} newClassName the class name that will be replacing the old class name
-     * @return {Boolean | Array} A pass/fail boolean or array of booleans
      */
     replaceClass: function(node, oldC, newC) {
         //Y.log('replaceClass replacing ' + oldC + ' with ' + newC, 'info', 'Node');
@@ -552,6 +588,7 @@ Y.mix(Y.DOM, {
     /**
      * If the className exists on the node it is removed, if it doesn't exist it is added.
      * @method toggleClass  
+     * @param {HTMLElement} element The DOM element. 
      * @param {String} className the class name to be toggled
      */
     toggleClass: function(node, className) {

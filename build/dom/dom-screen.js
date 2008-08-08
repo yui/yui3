@@ -33,6 +33,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
+     * @return {Int} The pixel height of the viewport.
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node)[HEIGHT];
@@ -42,6 +43,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
+     * @return {Int} The pixel width of the viewport.
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node)[WIDTH];
@@ -51,6 +53,7 @@ Y.mix(Y.DOM, {
     /**
      * Document height 
      * @method docHeight
+     * @return {Int} The pixel height of the document.
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node)[HEIGHT];
@@ -60,6 +63,7 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
+     * @return {Int} The pixel width of the document.
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node)[WIDTH];
@@ -69,6 +73,7 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll vertically 
      * @method docScrollX
+     * @return {Int} The scroll amount in pixels.
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc();
@@ -78,6 +83,7 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll horizontally 
      * @method docScrollY
+     * @return {Int} The scroll amount in pixels.
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc();
@@ -375,9 +381,10 @@ var getOffsets = function(r1, r2) {
 
 Y.mix(Y.DOM, {
     /**
-     * Returns an Object literal containing the following about this node: (top, right, bottom, left) positions, height and width
+     * Returns an Object literal containing the following about this element: (top, right, bottom, left)
      * @method region
-     @return {Object} Object literal containing the following about this node: (top, right, bottom, left) positions, height and width
+     * @param {HTMLElement} element The DOM element. 
+     @return {Object} Object literal containing the following about this element: (top, right, bottom, left)
      */
     region: function(node) {
         var x = Y.DOM.getXY(node),
@@ -402,10 +409,10 @@ Y.mix(Y.DOM, {
     /**
      * Find the intersect information for the passes nodes.
      * @method intersect
-     * @param {Object} node The first node 
-     * @param {Object} node2 The other node to check the interect with
-     * @param {Object} altRegion An object literal containing the region for the first node if we already have the data (for performance i.e. DragDrop)
-     * @return {Object} Returns an Object literal with the intersect information for the nodes
+     * @param {HTMLElement} element The first element 
+     * @param {HTMLElement | Object} element2 The element or region to check the interect with
+     * @param {Object} altRegion An object literal containing the region for the first element if we already have the data (for performance i.e. DragDrop)
+     @return {Object} Object literal containing the following intersection data: (top, right, bottom, left, area, yoff, xoff, inRegion)
      */
     intersect: function(node, node2, altRegion) {
         var r = altRegion || Y.DOM.region(node), region = {};
@@ -470,9 +477,10 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Check if any part of this node is in the viewport
+     * Check if any part of this element is in the viewport
      * @method inViewportRegion
-     * $param {Boolean} all Should all of the node be inside the region
+     * @param {HTMLElement} element The DOM element. 
+     * @param {Boolean} all Should all of the node be inside the region
      * @param {Object} altRegion An object literal containing the region for this node if we already have the data (for performance i.e. DragDrop)
      * @return {Boolean} True if in region, false if not.
      */
@@ -481,6 +489,11 @@ Y.mix(Y.DOM, {
             
     },
 
+    /**
+     * Returns an Object literal containing the following about the visible region of viewport: (top, right, bottom, left)
+     * @method viewportRegion
+     @return {Object} Object literal containing the following about the visible region of the viewport: (top, right, bottom, left)
+     */
     viewportRegion: function(node) {
         node = node || Y.config.doc.documentElement;
         var r = {
@@ -495,4 +508,4 @@ Y.mix(Y.DOM, {
 });
 
 
-}, '@VERSION@' ,{requires:['dom-base', 'dom-style'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});

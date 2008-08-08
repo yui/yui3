@@ -6,7 +6,7 @@
  */
 
 var TO_STRING = 'toString',
-    PARSE_INT = 'parseInt',
+    PARSE_INT = parseInt,
     RE = RegExp;
 
 Y.Color = {
@@ -66,7 +66,11 @@ Y.Color = {
             val = val.replace(Y.Color.re_hex3, '$1$1');
         }
 
-        return (val.indexOf('#') < 0 ? val = '#' + val : val).toLowerCase();
+        if (val !== 'transparent' && val.indexOf('#') < 0) {
+            val = '#' + val;
+        }
+
+        return val.toLowerCase();
     }
 };
 

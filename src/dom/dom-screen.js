@@ -31,6 +31,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner height of the viewport (exludes scrollbar). 
      * @method winHeight
+     * @return {Int} The pixel height of the viewport.
      */
     winHeight: function(node) {
         var h = Y.DOM._getWinSize(node)[HEIGHT];
@@ -41,6 +42,7 @@ Y.mix(Y.DOM, {
     /**
      * Returns the inner width of the viewport (exludes scrollbar). 
      * @method winWidth
+     * @return {Int} The pixel width of the viewport.
      */
     winWidth: function(node) {
         var w = Y.DOM._getWinSize(node)[WIDTH];
@@ -51,6 +53,7 @@ Y.mix(Y.DOM, {
     /**
      * Document height 
      * @method docHeight
+     * @return {Int} The pixel height of the document.
      */
     docHeight:  function(node) {
         var h = Y.DOM._getDocSize(node)[HEIGHT];
@@ -61,6 +64,7 @@ Y.mix(Y.DOM, {
     /**
      * Document width 
      * @method docWidth
+     * @return {Int} The pixel width of the document.
      */
     docWidth:  function(node) {
         var w = Y.DOM._getDocSize(node)[WIDTH];
@@ -71,6 +75,7 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll vertically 
      * @method docScrollX
+     * @return {Int} The scroll amount in pixels.
      */
     docScrollX: function(node) {
         var doc = Y.DOM._getDoc();
@@ -80,6 +85,7 @@ Y.mix(Y.DOM, {
     /**
      * Amount page has been scroll horizontally 
      * @method docScrollY
+     * @return {Int} The scroll amount in pixels.
      */
     docScrollY:  function(node) {
         var doc = Y.DOM._getDoc();

@@ -35,10 +35,10 @@ Y.mix(Y.DOM, {
 
 
     /**
-     * Applies a CSS style to a given node.
+     * Sets a style property for a given element.
      * @method setStyle
      * @param {HTMLElement} An HTMLElement to apply the style to.
-     * @param {String} att The style attribute to set. 
+     * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
     setStyle: function(node, att, val) {
@@ -59,10 +59,10 @@ Y.mix(Y.DOM, {
     },
 
     /**
-     * Returns a CSS style for the given node.
+     * Returns the current style value for the given property.
      * @method getStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style attribute to get. 
+     * @param {String} att The style property to get. 
      */
     getStyle: function(node, att) {
         var style = node[STYLE],
@@ -102,7 +102,8 @@ Y.mix(Y.DOM, {
      * Returns the computed style for the given node.
      * @method getComputedStyle
      * @param {HTMLElement} An HTMLElement to get the style from.
-     * @param {String} att The style attribute to get. 
+     * @param {String} att The style property to get. 
+     * @return {String} The computed value of the style property. 
      */
     getComputedStyle: function(node, att) {
         var val = '',
@@ -442,4 +443,4 @@ Y.DOM.IE.ComputedStyle = ComputedStyle;
 
 
 
-}, '@VERSION@' ,{requires:['dom-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dom-base']});
