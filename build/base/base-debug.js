@@ -133,6 +133,7 @@ YUI.add('base', function(Y) {
      * @param {Function[]} extensions The set of extension classes which will be
      * augmented/aggregated to the built class.
      * @param {Object} cfg
+     * @return {Function} A custom class, created from the provided main and extension classes
      */
     Base.build = function(main, extensions, cfg) {
 
@@ -260,8 +261,9 @@ YUI.add('base', function(Y) {
      * based. This class will be extended to create the class for the custom instance
      * @param {Array} extensions The list of extension classes used to augment the
      * main class with.
-     * @param {Any*} args  Zero or more arguments to pass to the constructor of the 
+     * @param {Any*} args* 0..n arguments to pass to the constructor of the 
      * newly created class, when creating the instance.
+     * @return {Object} An instance of the custom class
      */
     Base.create = function(main, extensions, args) {
         var c = Base.build(main, extensions, {dynamic:true}),
@@ -284,6 +286,7 @@ YUI.add('base', function(Y) {
          * @final
          * @chainable
          * @param {Object} config Object literal of configuration property name/value pairs
+         * @return {Base} A reference to this object
          */
         init: function(config) {
             Y.log('init called', 'life', 'base');
@@ -334,6 +337,7 @@ YUI.add('base', function(Y) {
          * from proceeding.
          * </p>
          * @method destroy
+         * @return {Base} A reference to this object
          * @final
          * @chainable
          */
@@ -367,6 +371,7 @@ YUI.add('base', function(Y) {
          * Default init event handler
          *
          * @method _defInitFn
+         * @param {Object} config Object literal of configuration property name/value pairs
          * @protected
          */
         _defInitFn : function(config) {
@@ -393,10 +398,10 @@ YUI.add('base', function(Y) {
 
         /**
          * Returns the top down class hierarchy for this object,
-         * with Base being the first class in the array
+         * with Base being the first class in the array.
          *
          * @protected
-         * @return {Array} array of classes
+         * @return {Function[]} An Array of classes (constructor functions), making up the class heirarchy for this object
          */
         _getClasses : function() {
             if (!this._classes) {
@@ -419,7 +424,7 @@ YUI.add('base', function(Y) {
          * method on the prototype of each class in the hierarchy.
          * 
          * @method _initHierarchy
-         * @param {Object} userConf Config hash containing attribute name/value pairs
+         * @param {Object} userConf Object literal containing attribute name/value pairs
          * @private
          */
         _initHierarchy : function(userConf) {
@@ -463,8 +468,11 @@ YUI.add('base', function(Y) {
         },
 
         /**
-         * Default toString implementation
+         * Default toString implementation. Provides the constructor NAME
+         * and the instance ID.
+         * 
          * @method toString
+         * @return {String} String representation for this object
          */
         toString: function() {
             return this.constructor.NAME + "[" + Y.stamp(this) + "]";
@@ -483,11 +491,11 @@ YUI.add('base', function(Y) {
          * @param {String} type The type of event to subscribe to. If 
          * the type string does not contain a prefix ("prefix:eventType"), 
          * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn The callback, invoked when the event is fired.
-         * @param {Object} context The execution context
-         * @param {Object*} args* 1..n params to supply to the callback
+         * @param {Function} fn The subscribed callback function, invoked when the event is fired.
+         * @param {Object} context Optional execution context for the callback.
+         * @param {Any*} args* 0..n params to supply to the callback
          * 
-         * @return {Event.Handle} unsubscribe handle
+         * @return {Event.Handle} An event handle which can be used to unsubscribe the subscribed callback.
          */
         subscribe : function() {
             var a = arguments;
@@ -510,9 +518,8 @@ YUI.add('base', function(Y) {
          * @param {String|Object} type The type of the event, or an object that contains
          * a 'type' property. If the type does not contain a prefix ("prefix:eventType"),
          * the name property of the instance will be used as the default prefix.
-         * @param {Object*} arguments an arbitrary set of parameters to pass to 
-         * the handler.
-         * @return {boolean} the return value from Event.Target.fire
+         * @param {Any*} args* 0..n Additional arguments to pass to subscribers.
+         * @return {boolean} The return value from Event Target's <a href="Event.Target.html#method_fire">fire</a> method.
          *
          */
         fire : function() {
@@ -541,7 +548,7 @@ YUI.add('base', function(Y) {
          * contain a prefix ("prefix:eventType"), the name property of the instance will 
          * be used as the default prefix.
          * @param {Object} opts Optional config params (see Event.Target <a href="Event.Target.html#method_publish">publish</a> for details)
-         * @return {Event.Custom} the custom event
+         * @return {Event.Custom} The published custom event object
          */
         publish : function() {
             var a = arguments;
@@ -564,9 +571,10 @@ YUI.add('base', function(Y) {
          * @param {String} type The type of event to subscribe to. If 
          * the type string does not contain a prefix ("prefix:eventType"), 
          * the name property of the instance will be used as the default prefix.
-         * @param {Function} fn  The callback
-         * @param {Object} context The execution context
-         * @param {Object*} args* 1..n params to supply to the callback
+         * @param {Function} fn  The subscribed callback function
+         * @param {Object} context Optional execution context for the callback
+         * @param {Any*} args* 0..n params to supply to the callback
+         * @return {Event.Handle} Event handle which can be used to unsubscribe the subscribed callback.
          */
         after : function() {
             var a = arguments;
@@ -583,16 +591,16 @@ YUI.add('base', function(Y) {
          * of the instance to the event type, if absent.
          * </p>
          * @method unsubscribe
-         * @param type {String|Object} Either the handle to the subscriber or the 
+         * @param {String|Object} type Either the handle to the subscriber or the 
          *                        type of event.  If the type
          *                        is not specified, it will attempt to remove
          *                        the listener from all hosted events. If 
          *                        the type string does not contain a prefix 
          *                        ("prefix:eventType"), the name property of the 
          *                        instance will be used as the default prefix.
-         * @param fn   {Function} The subscribed function to unsubscribe, if not
+         * @param {Function} fn The subscribed function to unsubscribe, if not
          *                          supplied, all subscribers will be removed.
-         * @param context  {Object}   The custom object passed to subscribe.  This is
+         * @param {Object} context The custom object passed to subscribe.  This is
          *                        optional, but if supplied will be used to
          *                        disambiguate multiple listeners that are the same
          *                        (e.g., you subscribe many object using a function
@@ -618,9 +626,10 @@ YUI.add('base', function(Y) {
          * of the instance to the event type, if absent.
          * </p>
          * @method unsubscribeAll
-         * @param type {String}   The type, or name of the event. If 
+         * @param {String} type The type, or name of the event. If 
          * the type string does not contain a prefix ("prefix:eventType"), 
-         * the name property of the instance will be used as the default prefix.
+         * the name property of the instance will be used as the default prefix
+         * @return {int} The number of listeners unsubscribed
          */
         unsubscribeAll: function(type) {
             var a = arguments;
@@ -635,6 +644,7 @@ YUI.add('base', function(Y) {
          * @method _prefixEvtType
          * @private
          * @param {String} type The event name
+         * @return {String} The prefixed event name
          */
         _prefixEvtType: function(type) {
             if (type.indexOf(SEP) === -1 && this.name) {
