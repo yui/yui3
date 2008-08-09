@@ -1,280 +1,238 @@
 <?php 
-$title="Yahoo! UI Library: Graded Browser Support";
+$title="Graded Browser Support";
 $section="gbs";
-$highlightSyntax=false;
+$component="Graded Browser Support";
+$highlightSyntax = false;
+$releasenotes = false;
 include "../../inc/header.inc";
 ?>
 
 <div id="yui-main">
-<div class="yui-b">
+	<div class="yui-b">
+ 		<div class="yui-ge">
+       		<div class="yui-u first" id="main">
+            <!-- main column -->
+				<h2><?php echo $component;?></h2>
+				<div id="promo" class="component">
+					<p>This article describes our graded continuum of browser support. The first part of the document lists the browsers currently receiving A-grade support. The lower part of the document describes the context, approach, and background.</p>
+					<div id="jumps">
+						<h4>On This Page</h4>
+						<ul>
+							<li><a href="#gbschart">A-Grade GBS Chart</a>
+								<ul>
+									<li><a href="#changes">Recent Chart Changes</a></li>
+									<li><a href="#forecast">GBS Forecast</a></li>
+									<li><a href="#archive">GBS Archive</a></li>	
+								</ul>
+							</li>
+							<li><a href="#history">About the GBS Approach</a>
+								<ul style="margin-bottom:0;">
+									<li><a href="#define-support">What Does Support Mean?</a></li>
+									<li><a href="#progressive-enhancement">Progressive Enhancement vs. Graceful Degradation</a></li>
+									<li><a href="#what-are-grades">What are Grades of Support?</a></li>
+									<li><a href="#the-three-grades">Three Grades of Support</a></li>
+								</ul>
+							</li>
+						</ul>
+		        		<div class="clear"></div>
+					</div>
+		    	</div><!-- /promo -->
 
-<link rel="stylesheet" href="http://yui.yahooapis.com/2.5.2/build/fonts/fonts-min.css" type="text/css" media="screen" title="no title" charset="utf-8">
-<style type="text/css">
-/*#doc {width:550px;margin:1em auto;text-align:left;}*/
-#ygma {margin-bottom:1em;}
-h1 {font-size:175%;}
-h2 {font-size:122%;border-width:0;}
-h2.byline {font-size:100%;text-align:left;margin-top:2em; margin-bottom: 2em;font-weight:normal;}
-h3 {font-size:100%;}
-h4 {display:block;}
-h1,h2,h3,p,ul {margin-bottom:1em;}
-h1 {margin-top:0; padding-top:0;}
-h2 {margin-top:0; padding-top:.5em;}
-blockquote {margin:1em 2em 1em 2em;font-style:italic;}
-li h3 {margin-bottom:0;}
-abbr {cursor:help;}
-.gloss {color:#E76300;font-weight:bold;}
-ul,ol {margin-left:1.5em;margin-bottom:1.5em;}
-ol {padding-left:2em;}
+				<h3 id="gbschart">A-Grade Browser Support Chart</h3>
 
-blockquote {margin:1em 2em 1em 2em;font-style:italic;}
-#graded-browsers {}
-#graded-browsers table {margin-bottom:1em;margin-top:1em;}
-#graded-browsers caption {margin:1em;}
-#graded-browsers th,#graded-browsers td {padding:.6em;border:1px solid #fff;}
-#graded-browsers th, #graded-browsers th abbr {color:#000;}
-#graded-browsers th {background-color:#ddd;font-family:verdana;font-size:85%;}
-#graded-browsers th, #graded-browsers td {border-width:0 1px 1px 0;border-collapse:collapse;}
-#graded-browsers td.xgrade {color:#555;background-color:#FFFBCF;}
-#graded-browsers td.cgrade {color:#555;background-color:#FFBFBF}
-#graded-browsers td.na {color:#AAA;}
-#graded-browsers td.agrade {background-color:#CFC;}
-#graded-browsers tr.first th {text-align:center;}
-#graded-browsers tr th {text-align:right;}
-#graded-browsers abbr {cursor:help;}
+				<p>This chart lists browsers that receive A-grade support as defined by <a href="gbs.html">Graded Browser Support</a>.</p>
 
-#history, #gbschart {border-top:1px dashed #999999;}
-p.chart-notes {font-family:verdana;font-size:85%;}
-</style>
+				<div id="graded-browsers">
+					<table summary="This chart lists browsers that receive A-Grade support as defined by Graded Browser Support.">   
+						<tbody>
+							<tr class="first">
+								<td></td>
+								<th scope="col" id="Windows_2000" abbr="Win 2000" class="pc"><abbr title="Microsoft Windows 2000">Win 2000</abbr></th>
+								<th scope="col" id="Windows_XP" abbr="Win XP" class="pc"><abbr title="Microsoft Windows XP">Win XP</abbr></th>
+								<th scope="col" id="Windows_Vista" abbr="Win Vista" class="pc"><abbr title="Microsoft Windows Vista">Win Vista</abbr></th>
+								<th scope="col" id="Macintosh_10.4" abbr="Mac 10.4" class="mac"><abbr title="Macintosh 10.4">Mac 10.4</abbr></th>
+								<th scope="col" id="Macintosh_10.5" abbr="Mac 10.5" class="mac"><abbr title="Macintosh 10.5">Mac 10.5</abbr></th>
+				   			</tr>
+							<tr>
+								<th scope="row" id="Mozilla_Firefox_3.0.&#0134;" abbr="Firefox 3.0.&#0134;"><abbr title="Mozilla Firefox 2.0.&#0134;">Firefox 3.&#0134;</abbr></th>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+							</tr> 
+							<tr>
+								<th scope="row" id="Mozilla_Firefox_2.0.&#0134;" abbr="Firefox 2.0.&#0134;"><abbr title="Mozilla Firefox 2.0.&#0134;">Firefox 2.&#0134;</abbr></th>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+								<td class="na"></td>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+							</tr>
+							<tr>
+								<th scope="row" id="Internet_Explorer_7.0" abbr="IE 7"><abbr title="Internet Explorer 7.0">IE 7.0</abbr></th>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+								<td class="na"></td>
+								<td class="na"></td>
+							</tr>
+							<tr>
+								<th scope="row" id="Internet_Explorer_6.0" abbr="IE 6"><abbr title="Internet Explorer 6.0">IE 6.0</abbr></th>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>
+								<td class="na"></td>
+								<td class="na"></td>
+								<td class="na"></td>
+							</tr>
+							<tr>
+								<th scope="row" id="Opera_9.5&#0134;"><abbr title="Opera 9.&#0134;" abbr="Opera 9.&#0134;">Opera 9.5&#0134;</abbr></th>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+								<td class="na"></td>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+							</tr>
+							<tr>
+								<th scope="row" id="Apple Safari_3.0&#0134;" abbr="Safari 3.0&#0134;"><abbr title="Apple Safari 3.0&#0134;">Safari 3.1&#0134;</abbr></th>
+								<td class="na"></td>
+								<td class="na"></td>
+								<td class="na"></td>
+								<td class="agrade">A-grade</td>
+								<td class="agrade">A-grade</td>          
+							</tr> 
+						</tbody>
+					</table>
+				</div>
 
+				<p class="chart-notes">The dagger symbol (as in "Firefox 3.&#0134;") indicates that the most-current non-beta version at that branch level receives support. Put another way, &#0134; means "the most recent" instead of "all."</p>
 
-<h1>Graded Browser Support</h1>
+				<h4 id="notes">Recent Changes</h4>
 
-<ul>
-	<li><a href="#gbschart">A-Grade GBS Chart</a></li>
-	<li><a href="#changes">Recent Chart Changes</a></li>
-	<li><a href="#history">About the GBS Approach</a>
-		<ul style="margin-bottom:0;">
-			<li><a href="#define-support">What Does “Support” Mean?</a></li>
-			<li><a href="#progressive-enhancement">Progressive Enhancement vs. Graceful Degradation</a></li>
-			<li><a href="#what-are-grades">What are Grades of Support?</a></li>
-			<li><a href="#the-three-grades">Three Grades of Support</a></li>
-		</ul>
-	</li>
-	<li><a href="#forecast">The GBS Forecast</a></li>
-	<li><a href="#archive">The GBS Archive</a></li>	
-</ul>
+				<h5 id="changes">Primary Changes</h5>
 
-<h2 id="gbschart">A-Grade Browser Support Chart</h2>
+				<ul>
+					<li>A-grade support for Firefox 3 begins.</li>
+					<li>A-grade support for Firefox 2 is reduced to Win XP and Mac 10.5.</li>
+					<li>A-grade support for Opera 9.5 begins on Win XP and Mac 10.5.</li>
+					<li>A-grade support for Win 98 is discontinued, as previously forecast.</li>
+				</ul>
 
-<p>This chart lists browsers that receive A-grade support as defined by <a href="gbs.html">Graded Browser Support</a>.</p>
+				<h4 id="forecast">GBS Forecast</h4>
 
+				<p>In addition to the effective-immediately changes, we’re keeping our eyes on pending developments.</p>
 
-<div id="graded-browsers">
-<table summary="This chart lists browsers that receive A-Grade support as defined by Graded Browser Support.">   
-   <tbody><tr class="first">
-      <td></td>
-      <th scope="col" id="Windows_2000" abbr="Win 2000" class="pc"><abbr title="Microsoft Windows 2000">Win 2000</abbr></th>
-      <th scope="col" id="Windows_XP" abbr="Win XP" class="pc"><abbr title="Microsoft Windows XP">Win XP</abbr></th>
-      <th scope="col" id="Windows_Vista" abbr="Win Vista" class="pc"><abbr title="Microsoft Windows Vista">Win Vista</abbr></th>
-      <th scope="col" id="Macintosh_10.4" abbr="Mac 10.4" class="mac"><abbr title="Macintosh 10.4">Mac 10.4</abbr></th>
-      <th scope="col" id="Macintosh_10.5" abbr="Mac 10.5" class="mac"><abbr title="Macintosh 10.5">Mac 10.5</abbr></th>
-   </tr>
-   <tr>
-      <th scope="row" id="Mozilla_Firefox_3.0.&#0134;" abbr="Firefox 3.0.&#0134;"><abbr title="Mozilla Firefox 2.0.&#0134;">Firefox 3.&#0134;</abbr></th>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-   </tr> 
-   <tr>
-      <th scope="row" id="Mozilla_Firefox_2.0.&#0134;" abbr="Firefox 2.0.&#0134;"><abbr title="Mozilla Firefox 2.0.&#0134;">Firefox 2.&#0134;</abbr></th>
-      <td class="na"></td>
-      <td class="agrade">A-grade</td>
-      <td class="na"></td>
-      <td class="na"></td>
-      <td class="agrade">A-grade</td>
-   </tr>
-   <tr>
-      <th scope="row" id="Internet_Explorer_7.0" abbr="IE 7"><abbr title="Internet Explorer 7.0">IE 7.0</abbr></th>
-      <td class="na"></td>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-      <td class="na"></td>
-      <td class="na"></td>
-   </tr>
-   <tr>
-      <th scope="row" id="Internet_Explorer_6.0" abbr="IE 6"><abbr title="Internet Explorer 6.0">IE 6.0</abbr></th>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>
-      <td class="na"></td>
-      <td class="na"></td>
-      <td class="na"></td>
-   </tr>
-   <tr>
-      <th scope="row" id="Opera_9.5&#0134;"><abbr title="Opera 9.&#0134;" abbr="Opera 9.&#0134;">Opera 9.5&#0134;</abbr></th>
-	  <td class="na"></td>
-     
-      <td class="agrade">A-grade</td>
-      <td class="na"></td>
-      <td class="na"></td>
-      <td class="agrade">A-grade</td>
-   </tr>
-   <tr>
-      <th scope="row" id="Apple Safari_3.0&#0134;" abbr="Safari 3.0&#0134;"><abbr title="Apple Safari 3.0&#0134;">Safari 3.1&#0134;</abbr></th>
-      <td class="na"></td>
-      <td class="na"></td>
-      <td class="na"></td>
-      <td class="agrade">A-grade</td>
-      <td class="agrade">A-grade</td>          
-   </tr> 
-</tbody></table>
-</div>
+				<ul>
+					<li><h5>Internet Explorer 8</h5>
+						<p>GBS does not extend A-grade support to beta versions of browsers. (They receive X-grade support by definition.) However, it's important to be aware of forthcoming releases, especially from established brands that enjoy rapid adoption once generally available (GA). We are currently watching the development progress of Internet Explorer 8.</p>	
+						<p>We made an exception to our "no-betas" stance during IE7's beta phase in recognition of IE's market share and ability to promote rapid adoption. The exception -- committing development and QA resources to provide A-Grade prior to a GA release -- gives us an opportunity to learn the new browser's quirks and provide feedback while it is still being developed. And it means our sites are prepared when it goes GA. We will likely extend the same accommodation to IE8. Stay tuned.</p>
+					</li>
+				</ul>
 
-<p class="chart-notes">The dagger symbol (as in "Firefox 3.&#0134;") indicates that the most-current non-beta version at that branch level receives support. Put another way, &#0134; means "the most recent" instead of "all."</p>
+				<h4 id="archive">GBS Archive</h4>
 
+				<p>This page is the permanent home of the current A-Grade chart. Updates are publicized on the <a href="http://yuiblog.com">YUI Blog</a>. You may always reference past updates on the blog via the links gathered here.</p>
 
-<h2 id="notes">Notes</h2>
+				<ul>
+					<li><a href="http://yuiblog.com/blog/2008/07/03/gbs-update-20080703/">GBS Update, 2008-07-03</a></li>
+					<li><a href="http://yuiblog.com/blog/2008/02/19/gbs-update-20080219/">GBS Update, 2008-02-19</a></li>
+				</ul>
 
-<h3 id="changes">Primary Changes</h3>
+				<h2 id="history">Graded Browser Support: History and Rationale</h2>
 
-<ul>
+				<p>In the first 10 years of professional web development, back in the early &#8216;90s, browser support was binary: Do you &#8212; or don&#8217;t you &#8212; support a given browser? When the answer was &#8220;No&#8221;, user access to the site was often actively prevented. In the years following <abbr title="Internet Explorer">IE</abbr>5&#8217;s release in 1998, professional web designers and developers have become accustomed to asking at the outset of any new undertaking, &#8220;Do I have to support Netscape 4.x browsers for this project?&#8221;</p>
+
+				<p>By contrast, in modern web development we must support <em>all</em> browsers. Choosing to exclude a segment of users is inappropriate, and, with a &#8220;Graded Browser Support&#8221; strategy, unnecessary.</p>
+
+				<p>Graded Browser Support offers two fundamental ideas:</p> 
+		
+				<ul>
+					<li>A broader and more reasonable definition of &#8220;support.&#8221;</li>
+					<li>The notion of &#8220;grades&#8221; of support.</li>
+				</ul>
+
+				<h3 id="define-support">What Does &#8220;Support&#8221; Mean?</h3>
+
+				<p>Support does not mean that everybody gets the same thing. Expecting two users using different browser software to have an identical experience fails to embrace or acknowledge the heterogeneous essence of the Web. In fact, requiring the same experience for all users creates a barrier to participation. Availability and accessibility of content should be our key priority.</p>
+
+				<p>Consider television. At the core: TV distributes information. A hand-cranked emergency radio is capable of receiving television audio transmissions. It would be counter-productive to prevent access to this content, even though it&#8217;s a fringe experience.</p>
+
+				<p>Some viewers still have black-and-white televisions. Broadcasting only in black-and-white &#8212; the &#8220;lowest common denominator&#8221; approach &#8212; ensures a shared experience but benefits no one. Excluding the black-and-white television owners &#8212; the &#8220;you must be this tall to ride&#8221; approach &#8212; provides no benefit either.</p>
+
+				<p>An appropriate support strategy allows every user to consume as much visual and interactive richness as their environment can support. This approach&#8212;commonly referred to as <em>progressive enhancement</em> &#8212; builds a rich experience on top of an accessible core, without compromising that core.</p>
+
+				<h4 id="progressive-enhancement">Progressive Enhancement vs. Graceful Degradation </h4>
+
+				<p>The concepts of <em>graceful degradation</em> and <em>progressive enhancement</em> are often applied to describe browser support strategies. Indeed, they are closely related approaches to the engineering of &#8220;fault tolerance&#8221;.</p>
+
+				<p>These two concepts influence decision-making about browser support. Because they reflect different priorities, they frame the support discussion differently. Graceful degradation prioritizes <em>presentation</em>, and permits less widely-used browsers to receive less (and give less to the user). Progressive enhancement puts <em>content</em> at the center, and allows most browsers to receive more (and show more to the user). While close in meaning, progressive enhancement is a healthier and more forward-looking approach. Progressive enhancement is a core concept of Graded Browser Support.</p>
+
+				<h3 id="what-are-grades">What are Grades of Support?</h3>
+
+				<p>While an inclusive definition of browser support is necessary, the support continuum does present design, development, and testing challenges. If anything goes, how do I know when the experience is broken? To address this question and return a sense of order to the system, we define <em>grades</em> of support. There are three grades: A-, C-, and X-grade support.</p> 
+
+				<p>Before examining each grade, here are some characteristics useful for defining levels of support.</p>
+
+				<p><span class="gloss">Identified vs. Unknown</span> There are over 10,000 browser brands, versions, and configurations and that number is growing. It is possible to group known browsers together.</p>
+
+				<p><span class="gloss">Capable vs. Incapable</span> No two browsers have an identical implementation. However, it is possible to group browsers according to their support for most web standards.</p>
 	
-	<li>A-grade support for Firefox 3 begins.</li>
-	<li>A-grade support for Firefox 2 is reduced to Win XP and Mac 10.5.</li>
-	<li>A-grade support for Opera 9.5 begins on Win XP and Mac 10.5.</li>
-	<li>A-grade support for Win 98 is discontinued, as previously forecast.</li>
-</ul>
-
-<h3 id="forecast">GBS Forecast</h3>
-
-<p>In addition to the effective-immediately changes, we’re keeping our eyes on pending developments.</p>
-
-<ul>
-	<li><h4>Internet Explorer 8</h4>
-		<p>GBS does not extend A-grade support to beta versions of browsers. (They receive X-grade support by definition.) However, it's important to be aware of forthcoming releases, especially from established brands that enjoy rapid adoption once generally available (GA). We are currently watching the development progress of Internet Explorer 8.</p>	
-		<p>We made an exception to our "no-betas" stance during IE7's beta phase in recognition of IE's market share and ability to promote rapid adoption. The exception -- committing development and QA resources to provide A-Grade prior to a GA release -- gives us an opportunity to learn the new browser's quirks and provide feedback while it is still being developed. And it means our sites are prepared when it goes GA. We will likely extend the same accommodation to IE8. Stay tuned.</p>
-	</li>
-	<!-- ><li><h4></h4>
-		<p></p>
-	</li>-->
-</ul>
-
-<h2 id="archive">The GBS Archive</h2>
-
-<p>This page is the permanent home of the current A-Grade chart. Updates are publicized on the <a href="http://yuiblog.com">YUI Blog</a>. You may always reference past updates on the blog via the links gathered here.</p>
-
-<ul>
-<li><a href="http://yuiblog.com/blog/2008/07/03/gbs-update-20080703/">GBS Update, 2008-07-03</a></li>
-	<li><a href="http://yuiblog.com/blog/2008/02/19/gbs-update-20080219/">GBS Update, 2008-02-19</a></li>
-</ul>
-
-
-<!-- 
-<h3 id="additional-changes">Additional changes this quarter</h3>
-
-<ol>
-	<li></li>
-</ol> -->
-
-
-
-<h2 id="history">Graded Browser Support: History and Rationale</h2>
-
-
-<p>In the first 10 years of professional web development, back in the early &#8216;90s, browser support was binary: Do you &#8212; or don&#8217;t you &#8212; support a given browser? When the answer was &#8220;No&#8221;, user access to the site was often actively prevented. In the years following <abbr title="Internet Explorer">IE</abbr>5&#8217;s release in 1998, professional web designers and developers have become accustomed to asking at the outset of any new undertaking, &#8220;Do I have to support Netscape 4.x browsers for this project?&#8221;</p>
-
-<p>By contrast, in modern web development we must support <em>all</em> browsers. Choosing to exclude a segment of users is inappropriate, and, with a &#8220;Graded Browser Support&#8221; strategy, unnecessary.</p>
-
-<p>Graded Browser Support offers two fundamental ideas:</p> 
-<ul>
-	<li>A broader and more reasonable definition of &#8220;support.&#8221;</li>
-	<li>The notion of &#8220;grades&#8221; of support.</li>
-</ul>
-
-<h3 id="define-support">What Does &#8220;Support&#8221; Mean?</h3>
-
-<p>Support does not mean that everybody gets the same thing. Expecting two users using different browser software to have an identical experience fails to embrace or acknowledge the heterogeneous essence of the Web. In fact, requiring the same experience for all users creates a barrier to participation. Availability and accessibility of content should be our key priority.</p>
-
-<p>Consider television. At the core: TV distributes information. A hand-cranked emergency radio is capable of receiving television audio transmissions. It would be counter-productive to prevent access to this content, even though it&#8217;s a fringe experience.</p>
-
-<p>Some viewers still have black-and-white televisions. Broadcasting only in black-and-white &#8212; the &#8220;lowest common denominator&#8221; approach &#8212; ensures a shared experience but benefits no one. Excluding the black-and-white television owners &#8212; the &#8220;you must be this tall to ride&#8221; approach &#8212; provides no benefit either.</p>
-
-<p>An appropriate support strategy allows every user to consume as much visual and interactive richness as their environment can support. This approach&#8212;commonly referred to as <em>progressive enhancement</em> &#8212; builds a rich experience on top of an accessible core, without compromising that core.</p>
-
-<h4 id="progressive-enhancement">Progressive Enhancement vs. Graceful Degradation </h4>
-
-<p>The concepts of <em>graceful degradation</em> and <em>progressive enhancement</em> are often applied to describe browser support strategies. Indeed, they are closely related approaches to the engineering of &#8220;fault tolerance&#8221;.</p>
-
-<p>These two concepts influence decision-making about browser support. Because they reflect different priorities, they frame the support discussion differently. Graceful degradation prioritizes <em>presentation</em>, and permits less widely-used browsers to receive less (and give less to the user). Progressive enhancement puts <em>content</em> at the center, and allows most browsers to receive more (and show more to the user). While close in meaning, progressive enhancement is a healthier and more forward-looking approach. Progressive enhancement is a core concept of Graded Browser Support.</p>
-
-<h3 id="what-are-grades">What are Grades of Support?</h3>
-
-<p>While an inclusive definition of browser support is necessary, the support continuum does present design, development, and testing challenges. If anything goes, how do I know when the experience is broken? To address this question and return a sense of order to the system, we define <em>grades</em> of support. There are three grades: A-, C-, and X-grade support.</p> 
-
-<p>Before examining each grade, here are some characteristics useful for defining levels of support.</p>
-
-<p><span class="gloss">Identified vs. Unknown</span> There are over 10,000 browser brands, versions, and configurations and that number is growing. It is possible to group known browsers together.</p>
-
-<p><span class="gloss">Capable vs. Incapable</span> No two browsers have an identical implementation. However, it is possible to group browsers according to their support for most web standards.</p>
+				<p><span class="gloss">Modern vs. Antiquated</span> As newer browser versions are released, the relevancy of earlier versions decreases.</p>
 	
-<p><span class="gloss">Modern vs. Antiquated</span> As newer browser versions are released, the relevancy of earlier versions decreases.</p>
-	
-<p><span class="gloss">Common vs. Rare</span> There are thousands of browsers in use, but only a few dozen are widely used.</p>
+				<p><span class="gloss">Common vs. Rare</span> There are thousands of browsers in use, but only a few dozen are widely used.</p>
 
+				<h3 id="the-three-grades">The Three Grades of Support</h3>
 
-<h3 id="the-three-grades">The Three Grades of Support</h3>
+				<h4 id="c-grade">C-grade</h4>
 
-<h4 id="c-grade">C-grade</h4>
+				<p>C-grade is the base level of support, providing core content and functionality. It is sometimes called core support. Delivered via nothing more than semantic <abbr title="HyperText Markup Language">HTML</abbr>, the content and experience is highly accessible, unenhanced by decoration or advanced functionality, and forward and backward compatible. Layers of style and behavior are omitted.</p>
 
-<p>C-grade is the base level of support, providing core content and functionality. It is sometimes called core support. Delivered via nothing more than semantic <abbr title="HyperText Markup Language">HTML</abbr>, the content and experience is highly accessible, unenhanced by decoration or advanced functionality, and forward and backward compatible. Layers of style and behavior are omitted.</p>
+				<p>C-grade browsers are identified on a blacklist. Approximately 3% of our audience receives a C-grade experience.</p>
 
-<p>C-grade browsers are identified on a blacklist. Approximately 3% of our audience receives a C-grade experience.</p>
+				<p>Summary: C-grade browsers are identified, incapable, antiquated and rare. <abbr title="Quality Assurance">QA</abbr> tests a sampling of C-grade browsers, and bugs are addressed with high priority.</p>
 
-<p>Summary: C-grade browsers are identified, incapable, antiquated and rare. <abbr title="Quality Assurance">QA</abbr> tests a sampling of C-grade browsers, and bugs are addressed with high priority.</p>
+				<h4 id="a-grade">A-grade</h4>
 
-<h4 id="a-grade">A-grade</h4>
+				<p>A-grade support is the highest support level. By taking full advantage of the powerful capabilities of modern web standards, the A-grade experience provides advanced functionality and visual fidelity.</p>
 
-<p>A-grade support is the highest support level. By taking full advantage of the powerful capabilities of modern web standards, the A-grade experience provides advanced functionality and visual fidelity.</p>
+				<p>A-grade browsers are identified on a whitelist. Approximately 96% of our audience enjoys an A-grade experience.</p>
 
-<p>A-grade browsers are identified on a whitelist. Approximately 96% of our audience enjoys an A-grade experience.</p>
+				<p>Summary: A-grade browsers are identified, capable, modern and common. QA tests all A-grade browsers, and bugs are addressed with high priority.</p>
 
-<p>Summary: A-grade browsers are identified, capable, modern and common. QA tests all A-grade browsers, and bugs are addressed with high priority.</p>
+				<h4 id="x-grade">X-grade</h4>
 
-<h4 id="x-grade">X-grade</h4>
+				<p>X-grade provides support for unknown, fringe or rare browsers. Browsers receiving X-grade support are assumed to be capable. (If a browser is shown to be incapable &#8212; if it chokes on modern methodologies and its user would be better served without decoration or functionality &#8212; then it is considered a C-grade browser.) </p>
 
-<p>X-grade provides support for unknown, fringe or rare browsers. Browsers receiving X-grade support are assumed to be capable. (If a browser is shown to be incapable &#8212; if it chokes on modern methodologies and its user would be better served without decoration or functionality &#8212; then it is considered a C-grade browser.) </p>
+				<p>X-grade browsers include all browsers not on the C-grade blacklist or the A-grade whitelist. Approximately 1% of our audience receives the X-grade experience.</p>
 
-<p>X-grade browsers include all browsers not on the C-grade blacklist or the A-grade whitelist. Approximately 1% of our audience receives the X-grade experience.</p>
+				<p>Summary: X-grade browsers are generally unknown, assumed to be capable, modern, and rare or fringe. QA does not test, and bugs are not opened against X-grade browsers.</p>
 
-<p>Summary: X-grade browsers are generally unknown, assumed to be capable, modern, and rare or fringe. QA does not test, and bugs are not opened against X-grade browsers.</p>
+				<h4 id="a-grade-vs-x-grade">The Relationship Between A- and X-grade Support</h4>
 
-<h4 id="a-grade-vs-x-grade">The Relationship Between A- and X-grade Support</h4>
+				<p>A bit more on the relationship between A and X grade browsers: One unexpected instance of X-grade is a newly-released version of an A-grade browser. Since thorough QA testing is an A-grade requirement, a brand-new (and therefore untested) browser does not qualify as an A-grade browser. This example highlights a strength of the Graded Browser Support approach. The only practical difference between A and X-grade browsers is that QA actively tests against A-grade browsers.</p>
 
-<p>A bit more on the relationship between A and X grade browsers: One unexpected instance of X-grade is a newly-released version of an A-grade browser. Since thorough QA testing is an A-grade requirement, a brand-new (and therefore untested) browser does not qualify as an A-grade browser. This example highlights a strength of the Graded Browser Support approach. The only practical difference between A and X-grade browsers is that QA actively tests against A-grade browsers.</p>
+				<p>Unlike the C-grade, which receives only <abbr title="HyperText Markup Language">HTML</abbr>, X-grade receives everything that A-grade does. Though a brand-new browser might be characterized initially as a X-grade browser, we give its users every chance to have the same experience as A-grade browsers.</p>
 
-<p>Unlike the C-grade, which receives only <abbr title="HyperText Markup Language">HTML</abbr>, X-grade receives everything that A-grade does. Though a brand-new browser might be characterized initially as a X-grade browser, we give its users every chance to have the same experience as A-grade browsers.</p>
+				<h3 id="testing">Quality Assurance (QA) Testing</h3>
 
-<h3 id="testing">Quality Assurance (QA) Testing</h3>
+				<p>Grading the browser ecosystem enables meaningful, targeted, and cost-effective QA testing. As noted, representative C-grade testing and systematic A-grade testing ensures a usable and verified experience for approximately 99% of our audience. A-grade testing must be thorough and complete, while C-grade testing can be accomplished with one or two representative browsers (e.g., Netscape 4.x and <a href="http://lynx.browser.org/">Lynx</a>).</p>
 
-<p>Grading the browser ecosystem enables meaningful, targeted, and cost-effective QA testing. As noted, representative C-grade testing and systematic A-grade testing ensures a usable and verified experience for approximately 99% of our audience. A-grade testing must be thorough and complete, while C-grade testing can be accomplished with one or two representative browsers (e.g., Netscape 4.x and <a href="http://lynx.browser.org/">Lynx</a>).</p>
+				<p>It&#8217;s worth reiterating that testing resources do <em>not</em> examine X-grade browsers.</p>
 
-<p>It&#8217;s worth reiterating that testing resources do <em>not</em> examine X-grade browsers.</p>
+				<p>Methodologies including <a href="http://hesketh.com/publications/inclusive_web_design_for_the_future/">layered development via progressive enhancement</a>, <a href="http://www.onlinetools.org/articles/unobtrusivejavascript/">Unobtrusive Javascript</a>, and <a href="http://domscripting.com/blog/display/41">Hijax</a> ensure that higher layers don&#8217;t disrupt lower layers. However, representative testing of the core experience is critical. If you choose to adopt a Graded Browser support regime for your own web applications, be sure your site&#8217;s core content and functionality is accessible without images, <abbr title="Cascading Style Sheets">CSS</abbr>, and <abbr title="JavaScript">JS</abbr>. Ensure that the keyboard is adequate for task completion and that when your site is accessed by a C-grade browser all advanced functionality prompts are hidden.</p>
 
-<p>Methodologies including <a href="http://hesketh.com/publications/inclusive_web_design_for_the_future/">layered development via progressive enhancement</a>, <a href="http://www.onlinetools.org/articles/unobtrusivejavascript/">Unobtrusive Javascript</a>, and <a href="http://domscripting.com/blog/display/41">Hijax</a> ensure that higher layers don&#8217;t disrupt lower layers. However, representative testing of the core experience is critical. If you choose to adopt a Graded Browser support regime for your own web applications, be sure your site&#8217;s core content and functionality is accessible without images, <abbr title="Cascading Style Sheets">CSS</abbr>, and <abbr title="JavaScript">JS</abbr>. Ensure that the keyboard is adequate for task completion and that when your site is accessed by a C-grade browser all advanced functionality prompts are hidden.</p>
+				<h3 id="conclusion">In Conclusion</h3>
 
-<h3 id="conclusion">In Conclusion</h3>
+				<p>Graded Browser Support provides an inclusive definition of support and a framework for taming the ever-expanding world of browsers and frontend technologies.</p> 
 
-<p>Graded Browser Support provides an inclusive definition of support and a framework for taming the ever-expanding world of browsers and frontend technologies.</p> 
+				<p><a href="http://www.w3.org/People/domain?domain=Management#timbl%40w3.org">Tim Berners-Lee</a>, inventor of the World Wide Web and director of the <abbr title="World Wide Web Consortium"><a href="http://www.w3.org/">W3C</a></abbr>, has said it best:</p> 
 
-<p><a href="http://www.w3.org/People/domain?domain=Management#timbl%40w3.org">Tim Berners-Lee</a>, inventor of the World Wide Web and director of the <abbr title="World Wide Web Consortium"><a href="http://www.w3.org/">W3C</a></abbr>, has said it best:</p> 
-
-<blockquote cite="http://en.thinkexist.com/quotation/anyone_who_slaps_a-this_page_is_best_viewed_with/334172.html">
-	<p>&#8220;Anyone who slaps a &#8216;this page is best viewed with Browser X&#8217; label on a Web page appears to be yearning for the bad old days, before the Web, when you had very little chance of reading a document written on another computer, another word processor, or another network.&#8221;</p>
-</blockquote>
-
-</div>
+				<blockquote cite="http://en.thinkexist.com/quotation/anyone_who_slaps_a-this_page_is_best_viewed_with/334172.html">
+					<p>&#8220;Anyone who slaps a &#8216;this page is best viewed with Browser X&#8217; label on a Web page appears to be yearning for the bad old days, before the Web, when you had very little chance of reading a document written on another computer, another word processor, or another network.&#8221;</p>
+				</blockquote>
+			</div>
+		</div>
+	</div>
 </div>
 <?php include "../../inc/side.inc" ?>
 <?php include "../../inc/footer.inc" ?>
