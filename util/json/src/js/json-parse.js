@@ -1,8 +1,25 @@
 /**
+ * The JSON Utility provides methods to serialize JavaScript objects into
+ * JSON strings and parse JavaScript objects from strings containing JSON data.
+ * Three modules are available for inclusion:
+ * <ol>
+ * <li>1. <code>json-parse</code> for parsing JSON strings into native JavaScript data</li>
+ * <li>2. <code>json-stringify</code> for stringification of JavaScript objects into JSON strings</li>
+ * <li>3. <code>json</code> for both parsing and stringification</li>
+ * </ol>
+ * 
+ * Both <code>json-parse</code> and <code>json-stringify</code> create functions in a static JSON class under your YUI instance (e.g. Y.JSON.parse(..)).
+ * @module json
+ * @class JSON
+ * @static
+ */
+
+/**
  * Provides Y.JSON.parse method to take JSON strings and return native
  * JavaScript objects.
- * @module json-parse
- * @class JSON
+ * @module json
+ * @submodule json-parse
+ * @for JSON
  * @static
  */
 Y.JSON = Y.JSON || {};

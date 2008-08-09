@@ -1,7 +1,8 @@
 /**
  * Provides Y.JSON.stringify method for converting objects to JSON strings.
- * @module json-stringify
- * @class JSON
+ * @module json
+ * @submodule json-stringify
+ * @for JSON
  * @static
  */
 var isA = Y.Lang.isArray;
