@@ -16,7 +16,7 @@ include "../inc/header.inc";
 			
 				<div id="promo" class="component">
 					
-					<p>The foundational <?php echo $component;?> removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset loaded, begin writing the explicit CSS your project needs.</p>
+					<p>The foundational <?php echo $component;?> removes the inconsistent styling of HTML elements provided by browsers. This creates a dependably flat foundation to built upon. With CSS Reset loaded, write explicit CSS your project needs.</p>
 					
 					<p><strong>Note:</strong> <a href="../cssbase/">CSS Base</a> can compliment CSS Reset by applying a style foundation for common HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.</p>						
 							
@@ -29,7 +29,7 @@ include "../inc/header.inc";
 										<ul>
 										<li><a href="#dependencies">Include Dependencies</a></li>
 											<li><a href="#context">Global vs. Contextual</a></li>
-											<li><a href="#cssfoundation">The YUI CSS Foundation</a></li>
+											<!-- <li><a href="#cssfoundation">The YUI CSS Foundation</a></li> -->
 										</ul></li>
 									<li><a href="#using">Using <?php echo $component;?></a></li>
 									<li><a href="#video">Video: The YUI CSS Foundation</a></li>
@@ -57,10 +57,10 @@ include "../inc/header.inc";
 				<!-- Source File -->
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/reset-min.css">
 				</textarea>
-				
+
 				<h4 id="context">Global vs. Contextual</h4>
 				
-				<p>YUI's CSS resources apply rules to HTML elements directly. If you wish to only apply the rules within specific contexts, use the <code>-context.css</code> version. The contextual version selects HTML elements only when they descend from the <code>.yui-reset</code> classname.</p>
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui-reset</code> classname.</p>
 				
 				<p>Here is how to include the contextual version of <?php echo $component; ?>:</p> 
 				
@@ -74,12 +74,12 @@ include "../inc/header.inc";
 				?>
 				
 				<?php
-				include "../inc/include-notice.inc";
+				// include "../inc/include-notice.inc";
 				?>
 								
 				<h3 id="start">Using <?php echo $component; ?></h3>
 				
-				<p><?php echo $component; ?> is easy to use. By simply including the file it removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
+				<p><?php echo $component; ?> is easy to use. When <?php echo $component; ?> is loaded it removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
 				
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		

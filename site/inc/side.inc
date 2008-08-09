@@ -44,11 +44,11 @@ $nav[]=array('groups','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum', 
 $nav[]=array('poweredby','/yui/poweredby/','YUI Sightings', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
 
 $nav[]=array('', '', 'YUI Articles', '');
-$nav[]=array('gbs','/yui/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
-$nav[]=array('faq','/yui/articles/faq/','FAQ (General)', 'Answers to Frequently Asked Questions about the YUI Library');
+$nav[]=array('gbs','/yui/3/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
+$nav[]=array('faq','/yui/3/articles/faq/','FAQ (General)', 'Answers to Frequently Asked Questions about the YUI Library');
 // $nav[]=array('faq','/yui/3/articles/faq/','FAQ  (YUI 3.x)', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
-$nav[]=array('hosting','/yui/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
+$nav[]=array('reportingbugs','/yui/3/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
+$nav[]=array('hosting','/yui/3/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
 // $nav[]=array('security','/yui/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');
 // $nav[]=array('skinning','/yui/articles/skinning/','Skinning YUI', 'Modifying YUI\'s visual "skin" and building skins of your own');
 // $nav[]=array('customwidgets','http://yuiblog.com/blog/2008/06/24/buildingwidgets','Building Custom Widgets', 'Building your own custom widgets using the YUI infrastructure and tools.');

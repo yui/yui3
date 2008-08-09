@@ -28,7 +28,7 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a><ul>
 										<li><a href="#dependencies">Include Dependencies</a></li>
 											<li><a href="#context">Global vs. Contextual</a></li>
-											<li><a href="#cssfoundation">The YUI CSS Foundation</a></li>
+											<!-- <li><a href="#cssfoundation">The YUI CSS Foundation</a></li> -->
 										</ul>
 									</li>
 									<li><a href="#using">Using <?php echo $component;?></a><ul>
@@ -65,10 +65,10 @@ include "../inc/header.inc";
 				
 				<h4 id="context">Global vs. Contextual</h4>
 				
-				<p>YUI's CSS resources apply rules to HTML elements directly. If you wish to only apply the rules within specific contexts, use the <code>-context.css</code> version. The contextual version selects HTML elements only when they descend from the <code>.yui-fonts</code> classname.</p>
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui-fonts</code> classname.</p>
 				
 				<p>Here is how to include the contextual version of <?php echo $component; ?>:</p> 
-				
+
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				<!-- Source File -->
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-context-min.css">
@@ -79,7 +79,7 @@ include "../inc/header.inc";
 				?>
 				
 				<?php
-				include "../inc/include-notice.inc";
+				// include "../inc/include-notice.inc";
 				?>
 								
 			
@@ -95,11 +95,11 @@ include "../inc/header.inc";
 
 				<h4 id="default">Default Text</h4>
 
-				<p>With the CSS linked into the page, all text renders in the Arial font, at 13 pixel size, with 16 pixel line-height. The <code>pre</code> and <code>code</code> elements use the "monospace" font-family. <a href="../examples/cssfonts/fonts-simple.html">Here's an example of HTML elements after Fonts has been applied</a>.</p>
+				<p>With the CSS linked into the page, all text renders in the Arial font, at 13 pixel size, with 16 pixel line-height. The <code>pre</code> and <code>code</code> elements use the "monospace" font-family. <a href="../examples/cssfonts/cssfonts-basic.html">Here's an example of HTML elements after Fonts has been applied</a>.</p>
 
 				<h4 id="fontsize">Font-size Adjustment</h4>
 
-				<p>To change the size of a font, use a percentage value from the <a href="#chart">chart</a> below. Always use percentages as the units because they render more consistently than ems, and because they allow user-initiated resizing (unlike pixels). <a href="../examples/cssfonts/fonts-size.html">See the example</a>.</p>
+				<p>To change the size of a font, use a percentage value from the <a href="#chart">chart</a> below. Always use percentages as the units because they render more consistently than ems, and because they allow user-initiated resizing (unlike pixels). <a href="../examples/cssfonts/cssfonts-size.html">See the example</a>.</p>
 
 				<textarea name="code" class="CSS" cols="60" rows="1">
 				<style>
@@ -138,7 +138,7 @@ include "../inc/header.inc";
 				</div>
 
 				<h3 id="family">Font-family Adjustment</h3>
-				<p>Arial is the default font-family for all text (except <code>pre</code> and <code>code</code>) when you use Fonts CSS. Specify a new font-family when you want something other than Arial. <a href="../examples/cssfonts/fonts-family.html">See the example</a>.</p>
+				<p>Arial is the default font-family for all text (except <code>pre</code> and <code>code</code>) when you use Fonts CSS. Specify a new font-family when you want something other than Arial. <a href="../examples/cssfonts/cssfonts-family.html">See the example</a>.</p>
 
 				<textarea name="code" class="CSS" cols="60" rows="1">
 				<style>
@@ -154,7 +154,7 @@ include "../inc/header.inc";
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
 				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-fonts</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
-				<p>In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
+				<p>The following code snippet show how you might apply <?php echo $component ?> to one of two columns:</p>
 					
 <textarea name="code" class="HTML" cols="60" rows="1">
 <div>
@@ -162,8 +162,10 @@ include "../inc/header.inc";
 	<div id="right-column"><h1>Lorem Ipsum</h1></div>
 </div>
 </textarea>
+
+	<p>Here is another example showing how to <a href="../examples/cssfonts/cssfonts-context.html">apply <?php echo $component; ?> to a subset of a page</a>.</p>
 					 				
-				<?php include "../inc/video-css.inc";?>
+				<!-- <?php include "../inc/video-css.inc";?> -->
 				
 
 <?php # include "../inc/mobileSection.inc";?>

@@ -16,7 +16,7 @@ include "../inc/header.inc";
 			
 				<div id="promo" class="component">
 					
-					<p><?php echo $component;?> is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">CSS Reset</a>, <a href="../cssfonts/">CSS Fonts</a>, and <a href="../cssgrids/">CSS Grids</a>). CSS Base applies a style foundation for HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/articles/gbs">A-grade browsers</a>.</p>
+					<p><?php echo $component;?> is an optional CSS file that complements YUI's core CSS foundation (<a href="../cssreset/">CSS Reset</a>, <a href="../cssfonts/">CSS Fonts</a>, and <a href="../cssgrids/">CSS Grids</a>). CSS Base applies a style foundation for HTML elements that is consistent for <a href="http://developer.yahoo.com/yui/3/articles/gbs">A-grade browsers</a>.</p>
 					<p>CSS Base may also be useful as a template for your own base file, or a snippets library for styling HTML elements.</p>
 							
 					<div class="yui-g">
@@ -28,7 +28,7 @@ include "../inc/header.inc";
 										<ul>
 										<li><a href="#dependencies">Include Dependencies</a></li>
 											<li><a href="#context">Global vs. Contextual</a></li>
-											<li><a href="#cssfoundation">The YUI CSS Foundation</a></li>
+											<!-- <li><a href="#cssfoundation">The YUI CSS Foundation</a></li> -->
 										</ul></li>
 									<li><a href="#using">Using <?php echo $component;?></a></li>
 									<li><a href="#video">Video: The YUI CSS Foundation</a></li>
@@ -59,7 +59,7 @@ include "../inc/header.inc";
 				
 				<h4 id="context">Global vs. Contextual</h4>
 				
-				<p>YUI's CSS resources use <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>. Alternate versions of the files use descendent selectors exclusively. Alternate versions of the filesIf you wish to only apply the rules within specific contexts, use the <code>*-context.css</code> version. The contextual version of CSS Base (base-context-min.css) selects HTML elements only when they descend from the <code>yui-cssbase</code> class name.</p>
+				<p>YUI's CSS resources apply rules to HTML elements directly (using <a href="http://www.w3.org/TR/CSS21/selector.html#type-selectors">type selectors</a>). An alternate version of the resource is available that target elements by context only. This contextual <code>-context.css</code> version selects HTML elements only when they descend from the <code>.yui-base</code> classname.</p>
 				
 				<p>Here is how to include the contextual version of <?php echo $component; ?>:</p> 
 				
@@ -67,19 +67,19 @@ include "../inc/header.inc";
 				<!-- Source File -->
 				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssbase/base-context-min.css">
 				</textarea>
-				s
+				
 				<?php
 				include "../inc/css-foundation-overview.inc";
 				?>
 				
 				<?php
-				include "../inc/include-notice.inc";
+				// include "../inc/include-notice.inc";
 				?>
 								
 			
 					<h3 id="code">See the Code</h3>
 
-					<p>Here is what's in <?php echo $component;?>. As you can see in the code below, or in this example showing <a href="../examples/cssbase/base-simple.html">HTML elements after CSS Base has been applied</a>, it creates a familiar presentation for HTML elements.</p>
+					<p>Here are the contents of <?php echo $component;?>.</p>
 
 				<textarea name="code" class="CSS" cols="60" rows="10">
 				/* base.css, part of YUI's CSS Foundation */
@@ -156,22 +156,24 @@ include "../inc/header.inc";
 								
 				<h3 id="start">Using <?php echo $component; ?></h3>
 
-				<p><?php echo $component; ?> is easy to use. Simply including the file provides consistent styling of HTML elements.</p>
-
+				<p><?php echo $component; ?> is easy to use. Simply including the file provides consistent styling of HTML elements. <a href="../examples/cssbase/cssbase-simple.html">Here's an example of HTML elements with <?php echo $component; ?> applied</a>.</p>
+				
 				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
 				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-base</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
-				<p>In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
-					
-					
+			
+				<p>The following code snippet show how you might apply <?php echo $component ?> to one of two columns:</p>
+										
 <textarea name="code" class="HTML" cols="60" rows="1">
 <div>
 	<div id="left-column" class="yui-base"><h1>Lorem Ipsum</h1></div>
 	<div id="right-column"><h1>Lorem Ipsum</h1></div>
 </div>
 </textarea>
-					 				
-				<?php include "../inc/video-css.inc";?>
+
+				<p>Here is another example showing how to <a href="../examples/cssbase/cssbase-context.html">apply <?php echo $component; ?> to a subset of a page</a>.</p>
+				
+				<!-- <?php include "../inc/video-css.inc";?> -->
 				
 
 <?php # include "../inc/mobileSection.inc";?>
