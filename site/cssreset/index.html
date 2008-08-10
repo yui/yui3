@@ -31,8 +31,12 @@ include "../inc/header.inc";
 											<li><a href="#context">Global vs. Contextual</a></li>
 											<!-- <li><a href="#cssfoundation">The YUI CSS Foundation</a></li> -->
 										</ul></li>
-									<li><a href="#using">Using <?php echo $component;?></a></li>
-									<li><a href="#video">Video: The YUI CSS Foundation</a></li>
+									<li><a href="#using">Using <?php echo $component;?></a>
+										<ul>
+											<li><a href="#start-globally">Using <?php echo $component; ?> Globally</a></li>
+											<li><a href="#start-contextually">Using <?php echo $component; ?> Contextually</a></li>
+										</ul></li>
+									<!-- <li><a href="#video">Video: The YUI CSS Foundation</a></li> -->
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
 									
@@ -79,9 +83,13 @@ include "../inc/header.inc";
 								
 				<h3 id="start">Using <?php echo $component; ?></h3>
 				
+				<h4 id="start-globally">Using <?php echo $component; ?> Globally</h4>
+				
 				<p><?php echo $component; ?> is easy to use. When <?php echo $component; ?> is loaded it removes the inconsistent styling of HTML elements provided by browsers. Now, just begin writing the CSS rules your project needs without being burdened by what the browser <em>thinks</em> you need.</p>
 				
-				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
+				<p>Here is an <a href="../examples/cssreset/cssreset-basic.html">example page showing HTML elements</a> once <?php echo $component; ?> has been included in the page globally.</p>
+				
+				<h4 id="start-contextually">Using <?php echo $component; ?> Contextually</h4>				
 		
 				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to nodes that descend from a node with a class value of <code>.yui-reset</code>. In this example, <?php echo $component ?> applies to the <code>h1</code> in the left column, but does not impact the <code>h1</code> in the right column:</p>
 					
@@ -91,7 +99,9 @@ include "../inc/header.inc";
 	<div id="right-column"><h1>Lorem Ipsum</h1></div>
 </div>
 </textarea>
-					 				
+		
+					<p>Here is an <a href="../examples/cssreset/cssreset-context.html">example page where only a portion of the page is impacted</a> because it is being used contextually.</p>
+					
 				<?php include "../inc/video-css.inc";?>
 				
 

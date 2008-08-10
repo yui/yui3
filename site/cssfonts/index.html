@@ -35,9 +35,10 @@ include "../inc/header.inc";
 											<li><a href="#default">Default Text</a></li>
 											<li><a href="#fontsize">Font-Size Adjustment</a></li>
 											<li><a href="#family">Font-Family Adjustment</a></li>
+											<li><a href="#start-contextually">Using <?php echo $component; ?> Contextually</a></li>
 										</ul>
 									</li>
-									<li><a href="#video">Video: The YUI CSS Foundation</a></li>
+									<!-- <li><a href="#video">Video: The YUI CSS Foundation</a></li> -->
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
 									
@@ -151,9 +152,10 @@ include "../inc/header.inc";
 				</textarea>
 				
 				
-				<h4 id="start-in-context">Using <?php echo $component; ?> In Specific Contexts</h4>				
+				<h4 id="start-contextually">Using <?php echo $component; ?> In Specific Contexts</h4>				
 		
 				<p>If you're using the contextual version, <?php echo $component; ?>'s rules are only applied to elements that descend from a node with a class value of <code>.yui-fonts</code>. The classname can go as high in the DOM tree as desired, including on the <code>&lt;HTML&ht;</code> element directly.</p>
+				
 				<p>The following code snippet show how you might apply <?php echo $component ?> to one of two columns:</p>
 					
 <textarea name="code" class="HTML" cols="60" rows="1">
@@ -163,9 +165,9 @@ include "../inc/header.inc";
 </div>
 </textarea>
 
-	<p>Here is another example showing how to <a href="../examples/cssfonts/cssfonts-context.html">apply <?php echo $component; ?> to a subset of a page</a>.</p>
+	<p>Here is an example showing how to <a href="../examples/cssfonts/cssfonts-context.html">apply <?php echo $component; ?> to a subset of a page</a>.</p>
 					 				
-				<!-- <?php include "../inc/video-css.inc";?> -->
+				<?php # include "../inc/video-css.inc";?>
 				
 
 <?php # include "../inc/mobileSection.inc";?>

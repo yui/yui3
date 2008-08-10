@@ -49,7 +49,7 @@ h1 a:visited {color:#E76300}
 
 #ygma { margin:.5em auto 1em auto; }
 
-#bd ul li {margin-bottom:1em;}
+/*#bd ul li {margin-bottom:1em;}*/
 #bd ol {}
 #bd ol li p { margin-left:0}
 #bd ol li ol {list-style:lower-alpha}

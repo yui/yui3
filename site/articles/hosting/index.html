@@ -101,9 +101,9 @@ YAHOO.yui.configurator();
 ?>
 
 <div id="yui-main">
-<div class="yui-b">
+<div class="yui-b" id="main">
 
-<h1>Serving YUI Files from Yahoo! Servers</h1>
+<h2>Serving YUI Files from Yahoo! Servers</h2>
 
 <p>by Eric Miraglia; <em>Last Updated: March 12, 2008</em></p>
 
@@ -161,14 +161,14 @@ will update with the optimized dependency list.-->
 </div>
 
 
-<h3 id="background">Background of YUI Hosting by Yahoo!</h3>
+<h4 id="background">Background of YUI Hosting by Yahoo!</h4>
 
 <p>With the release of YUI version 2.2.0 in Februrary, 2007, Yahoo! opened up free YUI hosting from the Yahoo! network (via <code>yui.yahooapis.com</code>) to all YUI implementers. For more about this decision and its rationale, please refer to "<a href="http://yuiblog.com/blog/2007/02/22/free-yui-hosting">Free Hosting of YUI Files from Yahoo!</a>" on the <a href="http://yuiblog.com">YUIBlog</a>.  Since that date, all YUI releases have been posted to <code>yui.yahooapis.com</code>.  Beginning with the 2.4.1 YUI release, <a href="http://yuiblog.com/blog/2008/01/15/hosting-yui-in-china/">YUI files have also been posted to <code>cn.yui.yahooapis.com</code></a>; for users in mainland China, this latter host is much more performant.</p>
 
 <p>YUI consists of three classes of static resources: JavaScript files, CSS files (providing a default visual treatment for some UI controls), and images (supporting the default visual treatment). </p>
 <p>If appropriate to your application's deployment and its security/privacy regime, you may choose to use Yahoo!'s network to serve YUI files. To do so, you need simply to reference YUI JavaScript and CSS files in their appropriate locations on Yahoo! servers. When you do this, image files referenced within the default YUI CSS files will be served from Yahoo!'s network as well. Yahoo! specifies no service-level agreement for availability of these files, but the filepaths specified below are the same ones Yahoo! developers use for many YUI deployments &mdash; Yahoo! hosting is optimized for fast response times, good cache hit rates, and the use of gzip compression during HTTP transport.</p>
 
-<h3>Hosted Files:</h3>
+<h4>Hosted Files:</h4>
 <p>When you <a href="http://developer.yahoo.com/yui/download/">download the YUI Library</a>, the YUI build directory contains three types of JavaScript files for each component:</p>
 <ol>
   <li><strong>Minified (e.g. &quot;animation-min.js&quot;):</strong> The minified file has been stripped of comments, white space, and some line breaks to make it as compact as possible.</li>
@@ -176,14 +176,14 @@ will update with the optimized dependency list.-->
   <li><strong>Debug (e.g. &quot;animation-debug.js&quot;):</strong> The fully commented file, including debug statements that output to the <a href="http://developer.yahoo.com/yui/logger/">Logger</a> interface if present.  </li>
 </ol>
 
-<h3 id="tou">Terms of Use:</h3>
+<h4 id="tou">Terms of Use:</h4>
 
 <p>Yahoo!'s hosting of YUI files is covered by all applicable sections of the <a href="http://developer.yahoo.com/terms/">Terms of Use governing Yahoo! APIs</a>; your use of YUI files from Yahoo!'s servers constitutes an agreement to those terms.  Access of YUI files from Yahoo!'s servers will be recorded in Yahoo!'s Web traffic logs.  Please be sure that this usage is fully consistent with your own user privacy agreement before deploying YUI files from Yahoo! servers as part of your application.</p>
 
 
 
 
-<h3 id="filepaths">Filepaths for YUI Library Component Files as of Version <?php echo($yuiCurrentVersion);?>: </h3>
+<h4 id="filepaths">Filepaths for YUI Library Component Files as of Version <?php echo($yuiCurrentVersion);?>: </h4>
 <p>Individual files for each component are available for inclusion via the following <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags (<strong>note:</strong> use <code>cn.yui.yahoapis.com</code> if most of your users are in mainland China):</p>
 
 <pre><textarea name="code" class="HTML:nogutter:nocontrols" cols="60" rows="1">
@@ -277,7 +277,7 @@ YAHOO.widget.Chart.SWFURL = "http://yui.yahooapis.com/<?php echo($yuiCurrentVers
 <script type="text/javascript" src="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/container/container_core-min.js"></script>
 </textarea>
 
-<h3 id="aggregates">Filepaths for Aggregate Files:</h3>
+<h4 id="aggregates">Filepaths for Aggregate Files:</h4>
 <p>YUI is distributed with four aggregate files that package components commonly deployed together.  You can read more about each of these aggregate files in the README documents that accompany them in <a href="http://developer.yahoo.com/yui/download/">the YUI distribution</a>:</p>
 
 <ol>
