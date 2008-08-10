@@ -22,7 +22,7 @@ $nav[]=array('yui','/yui/3/yui/','YUI (Global Prerequisite)', 'YUI Global Prereq
 $nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
-$nav[]=array('base','/yui/3/cookie/','Cookie', 'Cookie');
+$nav[]=array('cookie','/yui/3/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
 $nav[]=array('event','/yui/3/event/','Event', 'Event');
 $nav[]=array('get','/yui/3/get/','Get', 'Get');
@@ -39,9 +39,9 @@ $nav[]=array('cssbase','/yui/3/cssbase/','CSS Base', 'CSS Base');
 
 $nav[]=array('', '', 'The YUI Community', '');
 $nav[]=array('yuiblog','http://yuiblog.com','YUI Blog', 'The Yahoo! User Interface Blog');
-$nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Forum', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
-$nav[]=array('groups','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum', 'The Yahoo! Group yui3 is dedicated to the 3.x branch of the Yahoo! User Interface (YUI) Library.');
-$nav[]=array('poweredby','/yui/poweredby/','YUI Sightings', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
+// $nav[]=array('groups','http://tech.groups.yahoo.com/group/ydn-javascript/','YUI Forum', 'The Yahoo! Group YDN-JavaScript hosts the YUI community forum');
+$nav[]=array('groups3','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum', 'The Yahoo! Group yui3 is dedicated to the 3.x branch of the Yahoo! User Interface (YUI) Library.');
+// $nav[]=array('poweredby','/yui/poweredby/','YUI Sightings', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
 
 $nav[]=array('', '', 'YUI Articles', '');
 $nav[]=array('gbs','/yui/3/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
@@ -99,10 +99,10 @@ for ($i=0; $i<count($nav); $i++)
 	echo $text;
 	if ($link) {
 		if($sect=="theater") {
-			echo " <img src='http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/bsc/vidcam12_1.gif'>";
+			echo "<!-- <img src='http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/bsc/vidcam12_1.gif'> -->";
 		}
 		if($sect=="groups") {
-			echo " <img src='http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/bsc/post12_1.gif'>";
+			echo "<!-- <img src='http://us.i1.yimg.com/us.yimg.com/i/nt/ic/ut/bsc/post12_1.gif'> -->";
 		}
 		$aBeta = array();
 //		$aBeta = array("selector", "profiler", "profilerviewer", "imagecropper", "resize", "layout",  "element", "editor", "datasource", "datatable", "yuiloader", "cookie");

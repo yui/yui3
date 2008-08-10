@@ -364,25 +364,18 @@ include "../inc/support.inc";
 ?>
 		   </div>
 
-		   	<div id="morereading">
-				<h3>More Reading about the YUI <?php echo $component;?>:</h3>
-
-				<ul>
-					<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-				  	<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-					<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-
-			   </ul>
-		   </div>
-
-<?php
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-require_once('../inc/badge.inc');
-?>
-<h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
-<div class="delicious">
-<?php require('../inc/badge-html.inc'); ?>
-</div>
+			<div id="delicious" class="mod box4">
+				<div class="hd delicious">
+					<h4>YUI <?php echo $component;?> on del.icio.us:</h4>
+				</div>
+				<div class="bd delicious">
+            		<?php
+                   	$thisURI="http://developer.yahoo.com/yui/3/$section/";
+                   	require_once('../inc/badge.inc');
+					?>
+         			<?php require('../inc/badge-html.inc'); ?>
+         		</div>
+        	</div>
 
 		 </div>
       </div>

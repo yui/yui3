@@ -287,15 +287,18 @@ $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
 require_once('../inc/badge.inc');
 ?>
 
-	<div id="delicious" class="mod box4">
-		<div class="bd delicious">
-			<?php 
-			$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-			require_once('../inc/badge.inc');
-			?>
-			<?php require('../inc/badge-html.inc'); ?>
-		</div>
-	</div>
+<div id="delicious" class="mod box4">
+   <div class="hd delicious">
+    <h4>YUI <?php echo $component;?> on del.icio.us:</h4>
+   </div>
+   <div class="bd delicious">
+       <?php
+        $thisURI="http://developer.yahoo.com/yui/3/$section/";
+        require_once('../inc/badge.inc');
+       ?>
+       <?php require('../inc/badge-html.inc'); ?>
+   </div>
+</div>
 
 		 	</div>
       	</div>
