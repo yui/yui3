@@ -33,9 +33,9 @@ include("'.$docroot.'inc/header.inc");
 
 <h2>Official YUI Examples</h2>
 	
-<p>Every YUI Library component ships with a series of <?php echo sizeof($examples);?> examples that illustrate its implementation.  These examples can serve as starting points for your exploration of YUI, as code snippets to get you started in your own programming, or simply as an inspiration as to how various interaction patterns can be enabled in the web browser via YUI.</p>
+<p>The YUI Library 3.x ships with a series of <?php echo sizeof($examples);?> examples that illustrate the implementation of its components. The examples can be starting points for your exploration, code snippets to jump-start your own programming, or simply inspiration as to how various interaction patterns can be enabled in the web browser via YUI.</p>
 
-<p>The navigation controls on the left side of this page allow you to explore these examples component-by-component; on this page you'll find the full index of library examples with a link to and short description of each one.</p>
+<p>This page allow you to explore these examples component-by-component; on this page you'll find the full index of library examples with the link and short description of each.</p>
 <?php
 foreach($aTypes as $thisType) {
     $exHtml = "";
