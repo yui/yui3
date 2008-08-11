@@ -1,3 +1,4 @@
+/* color and iteration examples */
 a#demo {
     background:#8dd5e7;
     border:1px solid #004c6d;
@@ -9,6 +10,7 @@ a#demo {
     text-align:center;
 }
 
+/* xy and curve examples */
 span#demo {
     background:#ffa928;
     display:block;
@@ -16,133 +18,43 @@ span#demo {
     width:10px;
 }
 
+/* module examples */
 div#demo {
     position:relative;
     width:22em;
     overflow:hidden;
 }
 
-div#demo .yui-scroll {
-    height:10em;
-    overflow:hidden;
-}
-
-div#demo div.yui-bd p {
-    margin:0.3em 20px 0 0;
-}
-
-div#demo .yui-bd p em {
-    font-weight:bold;
+div#demo {
+    border-bottom:1px solid #7a97bb;
 }
 
 div#demo .yui-hd {
     background: #406ed9;
     border:1px solid #243356;
     position:relative;
-    white-space:nowrap;
     zoom:1;
 }
 
 div#demo .yui-hd h4 {
+    border:0;
     color:#fff;
     margin:0;
 }
 
 #demo .yui-hd a { /* module control (close remove, etc) */
+    background:url(sprite.png) no-repeat;
     color:#abceff;
     cursor:pointer;
     cursor:hand;
-    font:90%/1 arial;
-    padding:0.25em;
     right:5px;
-    top:5px;
-    position:absolute;
-    text-decoration:none;
-}
-
-#demo .yui-hd .yui-scroll-controls {
-    background:#dfdfdf;
-    border-left:1px solid #7a97bb;
-    height:10em;
-    width:16px;
-    position:absolute;
-    right:0;
-    bottom:-10.1em;
-}
-
-div#demo .yui-remove em {
-    display:-moz-inline-stack;
-    display:inline-block;
-    text-align:center;
-}
-
-#demo a.yui-remove em {
-    border:1px solid #abceff;
-    padding:0 0 0.1em;
-    width:1em;
-}
-
-div#demo a.yui-remove:hover {
-    color:#fff;
-}
-
-div#demo a.yui-remove:hover em {
-    border-color:#fff;
-}
-
-#demo a.yui-toggle {
-    right:10px;
     top:7px;
-}
-
-#demo.yui-closed .yui-toggle {
-    top:3px;
-    right:7px;
-}
-
-#demo .yui-scroll-controls em,
-#demo .yui-toggle em {
-    font:0/0 arial;
-    border:6px solid #406ed9; 
-    border-color:#abceff #406ed9 #406ed9;
-}
-
-#demo.yui-closed .yui-toggle em {
-    border-color:#406ed9 #406ed9 #406ed9 #abceff;
-}
-
-#demo a.yui-toggle:hover em {
-    border-color:#fff #406ed9 #406ed9;
-}
-
-#demo .yui-scroll-controls a {
-    right:-1px;
-    top:-6px;
-}
-
-#demo .yui-scroll-controls a.yui-scrolldown {
-    top:auto;
-    bottom:0;
-}
-
-#demo a.yui-scrolldown em {
-    border-color:#406ed9 #dfdfdf #dfdfdf;
-}
-
-#demo a.yui-scrollup em {
-    border-color:#dfdfdf #dfdfdf #406ed9;
-}
-
-div#demo a.yui-scrollup:hover em {
-    border-bottom-color:#ffa928;
-}
-
-div#demo a.yui-scrolldown:hover em {
-    border-top-color:#ffa928;
-}
-
-div#demo.yui-closed a.yui-toggle:hover em {
-    border-color:#406ed9 #406ed9 #406ed9 #fff;
+    position:absolute;
+    text-indent:-999px;
+    height:12px;
+    width:24px;
+    overflow:hidden;
+    text-decoration:none;
 }
 
 div#demo .yui-bd {
@@ -150,10 +62,7 @@ div#demo .yui-bd {
     border:solid #7a97bb;
     border-width:0 1px;
     overflow:hidden;
-}
-
-div#demo {
-    border-bottom:1px solid #7a97bb;
+    zoom:1;
 }
 
 div#demo .yui-hd,
@@ -162,3 +71,63 @@ div#demo .yui-bd p {
     padding:0.5em 1em;
 }
 
+div#demo div.yui-bd p {
+    margin:0.3em 10px 0 0; /* right margin for scrollbar space */
+}
+
+div#demo .yui-bd p em {
+    font-weight:bold;
+}
+
+/* basic example */
+div#demo a.yui-remove {
+    background-position:0 -300px;
+    height:16px;
+    width:26px;
+}
+
+/* scroll example */
+div#demo .yui-scroll {
+    height:10em;
+    overflow:hidden;
+}
+
+#demo .yui-hd .yui-scroll-controls { /* fake scrollbar */
+    background:#dfdfdf;
+    border-left:1px solid #7a97bb;
+    height:10em;
+    width:13px;
+    position:absolute;
+    right:0;
+    bottom:-10.1em;
+    overflow:hidden;
+}
+
+#demo .yui-hd .yui-scroll-controls a {
+    top:0;
+    right:0;
+    height:14px;
+    width:14px;
+    Xborder:1px solid #000;
+}
+
+#demo .yui-scroll-controls a.yui-scrollup {
+    background-position:-12px -752px; /* scroll up icon */
+}
+
+#demo .yui-scroll-controls a.yui-scrolldown {
+    background-position:-12px -804px; /* scroll down icon */
+    top:auto;
+    bottom:0;
+}
+
+/* reverse and easing examples */
+#demo a.yui-toggle {
+    background-position:0 -400px; /* close (minus) icon */
+    height:15px;
+    width:15px;
+}
+
+#demo.yui-closed a.yui-toggle {
+    background-position:0 -350px; /* open (plus) icon */
+}
