@@ -82,7 +82,7 @@ YUI.add("cookie", function(Y){
          * Formats a cookie value for an object containing multiple values.
          * @param {Object} hash An object of key-value pairs to create a string for.
          * @return {String} A string suitable for use as a cookie value.
-         * @method _createCookieHash
+         * @method _createCookieHashString
          * @private
          * @static
          */
@@ -104,7 +104,7 @@ YUI.add("cookie", function(Y){
         
         /**
          * Parses a cookie hash string into an object.
-         * @param {String} text The cookie hash string to parse. The string should already be URL-decoded.
+         * @param {String} text The cookie hash string to parse (format: n1=v1&n2=v2).
          * @return {Object} An object containing entries for each cookie value.
          * @method _parseCookieHash
          * @private
@@ -244,7 +244,7 @@ YUI.add("cookie", function(Y){
          * @param {String} name The name of the cookie to retrieve.
          * @return {Object} An object of name-value pairs if the cookie with the given name
          *      exists, null if it does not.
-         * @method getHash
+         * @method getSubs
          * @static
          */
         getSubs : function (name /*:String*/) /*:Object*/ {
