@@ -29,7 +29,7 @@ var anim = new Y.Anim({
 });
 </textarea>
 
-<h3>Runnint the Animation</h3>
+<h3>Running the Animation</h3>
 <p>Next we need a handler to run when the link is moused over, and reverse when moused out.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
 var hover = function(e) {

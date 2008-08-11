@@ -8,7 +8,7 @@
         <p><em>Follow the instructions above to see the animation in action.</em></p>
     </div>
 </div>
-<p>Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken.</p> 
+<p>This is placeholder text used to demonstrate how the above animation affects subsequent content.</p> 
 <script type="text/javascript">
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules; ?>, function(Y) {
     var module = Y.get('#demo');

@@ -1,7 +1,7 @@
 <div id="demo" class="yui-module">
     <div class="yui-hd">
         <h4>Animation Demo</h4>
-        <a href="remove.php?id=#demo" title="remove module" class="yui-remove"><em>x</em></a>
+        <a href="remove.php?id=#demo" title="remove module" class="yui-remove"><em>remove</em></a>
     </div>
     <div class="yui-bd">
         <p>This an example of what you can do with the YUI Animation Utility.</p>
