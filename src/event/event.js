@@ -113,7 +113,7 @@ YUI.add("event", function(Y) {
      * callback, object (method host), methodName, context, 1-n arguments
      *
      * @method after
-     * @return unsubscribe handle
+     * @return {Event.Handle} unsubscribe handle
      */
     Y.after = function(type, f, o) {
         if (Y.Lang.isFunction(type)) {

@@ -191,6 +191,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  *                   will execute in the context of that object
                  * @param checkContent {boolean} check child node readiness (onContentReady)
                  * @static
+                 * @deprecated This will be replaced with a special Y.on custom event
                  */
                 // @TODO fix arguments
                 onAvailable: function(id, fn, p_obj, p_override, checkContent) {
@@ -232,6 +233,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  *                   exectute in the context of that object
                  *
                  * @static
+                 * @deprecated This will be replaced with a special Y.on custom event
                  */
                 // @TODO fix arguments
                 onContentReady: function(id, fn, p_obj, p_override) {
@@ -266,6 +268,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @optional args 1..n arguments to send to the listener
                  *
                  * @static
+                 * @deprecated Use Y.on('event:ready');
                  */
                 onDOMReady: function(fn) {
                     // var ev = Y.Event.DOMReadyEvent;
@@ -293,6 +296,7 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  *                        could not have the listener attached,
                  *                        or if the operation throws an exception.
                  * @static
+                 * @deprecated Use Y.on instead.  This will be removed in PR2
                  */
                 addListener: function(el, type, fn, obj) {
 
@@ -433,7 +437,9 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                 },
 
                 /**
-                 * Removes an event listener
+                 * Removes an event listener.  Supports the signature the event was bound
+                 * with, but the preferred way to remove listeners is using the handle
+                 * that is returned when using Y.on
                  *
                  * @method removeListener
                  *
