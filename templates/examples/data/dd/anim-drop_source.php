@@ -10,6 +10,9 @@
         p, h2 {
             margin: 1em;
         }
+        body {
+            text-align: left;
+        }
         .anim {
             position: relative;
             height: 50px;
@@ -132,10 +135,10 @@ YUI(<?php echo $yuiConfig ?>).use('dd', 'anim', function(Y) {
                 },
                 direction: 'normal',
                 iterations: 1,
-                duration: .5
+                duration: .5,
+                //We are using reverse above for the "bouncing", reset it here.
+                reverse: false
             });
-            //We are using reverse above for the "bouncing", reset it here.
-            this.fx.set('reverse', false);
 
             //On end, add a class and destroy the target
             this.fx.on('end', function() {

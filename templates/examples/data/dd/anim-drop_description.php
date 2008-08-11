@@ -211,10 +211,10 @@ YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
                 },
                 direction: 'normal',
                 iterations: 1,
-                duration: .5
+                duration: .5,
+                //We are using reverse above for the "bouncing", reset it here.
+                reverse: false
             });
-            //We are using reverse above for the "bouncing", reset it here.
-            this.fx.set('reverse', false);
 
             //On end, add a class and destroy the target
             this.fx.on('end', function() {
