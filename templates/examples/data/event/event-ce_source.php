@@ -29,7 +29,7 @@ function(Y) {
     var bubbleTarget = new BubbleTarget();
 
     //Now we'll subscribe to the "publisher:testEvent" -- note
-    //that we cand do this even before this event is published:
+    //that we can do this even before this event is published:
     bubbleTarget.subscribe("publisher:testEvent", function(e) {
         Y.log("publisher:testEvent fired on the BubbleTarget object.", "info", "example");
     });
