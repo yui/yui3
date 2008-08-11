@@ -33,10 +33,9 @@
       Last Updated:  7th January 2007                             */
    /***************************************************************/
    
-   //define('CACHE_PATH', '/home/y/share/htdocs/yui/tmp/');
-   //define('CACHE_PATH', '/Sites/yui/tmp/');
-   define('CACHE_PATH', '/Users/natek/Sites/tmp/');      
-
+   define('CACHE_PATH', '/home/y/share/htdocs/yui/tmp/');
+   //define('CACHE_PATH', '/Sites/yui/temp/');
+      
    class PhpCache {
       var $sFile;
       var $sFileLock;

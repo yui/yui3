@@ -34,15 +34,8 @@
    /***************************************************************/
    
    // required files
-// define('CACHE_PATH', '/home/y/share/htdocs/yui/tmp/');
-define('CACHE_PATH', '/Users/natek/Sites/yui-site/yahoo/properties/webservices/site/yui/tmp/');
-//   define('CACHE_PATH', '/Users/natek/Sites/tmp/');
-
-require_once("http.inc");
-include "rss-feed.inc";
-
- //  require_once('http.inc');
-//   require_once('php-cache.inc');
+   require_once('http.inc');
+   require_once('php-cache.inc');
    
    // RssObject, RssChannel and RssItem are support objects which represent the structure of the returned data
    class RssObject {
