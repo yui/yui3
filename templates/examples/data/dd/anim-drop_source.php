@@ -130,9 +130,13 @@ YUI(<?php echo $yuiConfig ?>).use('dd', 'anim', function(Y) {
                     top: 15,
                     opacity: .5
                 },
+                direction: 'normal',
                 iterations: 1,
                 duration: .5
             });
+            //We are using reverse above for the "bouncing", reset it here.
+            this.fx.set('reverse', false);
+
             //On end, add a class and destroy the target
             this.fx.on('end', function() {
                 this.drop.get('node').addClass('done');
