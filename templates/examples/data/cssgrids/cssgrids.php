@@ -33,12 +33,25 @@ $examples["cssgrids-width-custom"] = array(
 		name => "Available Preset Templates",
 		modules => array("cssgrids"),
 		description => "Two-column page layouts",
-		sequence => array(2),
+		sequence => array(3),
 		newWindow => "require",
 		requires => array("cssreset", "cssfonts", "cssgrids"),
 		highlightSyntax => true,
 	    bodyclass => false
 	);
+
+
+$examples["cssgrids-nesting-grids"] = array(
+	name => "Nesting Grids",
+	modules => array("cssgrids"),
+	description => "Use nesting grids to define sub-regions",
+	sequence => array(4),
+	newWindow => "require",
+	requires => array("cssreset", "cssfonts", "cssgrids"),
+	highlightSyntax => true,
+    bodyclass => false
+);
+
 
 
 ?>

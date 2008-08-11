@@ -36,8 +36,8 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a>
 										<ul>
 										<li><a href="#dependencies">Include Dependencies</a></li>
-											<li><a href="#context">Global vs. Contextual</a></li>
-											<li><a href="#cssfoundation">The YUI CSS Foundation</a></li>
+											<!-- <li><a href="#context">Global vs. Contextual</a></li> -->
+											<!-- <li><a href="#cssfoundation">The YUI CSS Foundation</a></li> -->
 										</ul></li>
 									<li><a href="#using">Using <?php echo $component;?></a><ul>
 											<li><a href="#page_width">Page Widths</a></li>
@@ -123,7 +123,7 @@ include "../inc/header.inc";
 
 						<h4 id="page_width">Choose the Overall Page Width</h4>
 						
-						<p>With YUI Grids you define the overall page width by setting a class on the containing node. You can choose from a 100% layout or fixed-width or relative-width pages at 750, 950, or 974 pixels.
+						<p>Define the overall page width by setting a class on the containing node. You can choose from a 100% layout and six fixed-width or relative-width pages at 750, 950, or 974 pixels.
 
 							<table class="auto">
 								<thead>
@@ -167,7 +167,7 @@ include "../inc/header.inc";
 							
 							<h5>The Code</h5>	
 							
-							<p>Here is what you page may look like after you've picked your page width:</p>
+							<p>Here is what your page may look like after you've picked your page width:</p>
 							
 							<textarea name="code" class="HTML" cols="60" rows="17">
 							<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -186,7 +186,7 @@ include "../inc/header.inc";
 							
 							<h6>Fixed vs Relative</h6>
 							
-							<p>YUI Grids generally declares widths in relative units (that change size based on the users' font-size or zoom factor). For fixed page widths, append an <smp>f</smp> to the class name. For example, for a fixed-width 750px page, use <code>div.yui-d1<strong>f</strong></code> instead of <code>div.yui-d1</code>.
+							<p>YUI Grids generally declares widths in relative units (that change size based on the users' font-size or zoom factor). For fixed page widths append an <smp>f</smp> to the class name. For example, for a fixed-width 750px page, use <code>div.yui-d1<strong>f</strong></code> instead of <code>div.yui-d1</code>.
 
 
 							<h5>Example: Page Width</h5>
@@ -204,8 +204,8 @@ include "../inc/header.inc";
 
 							<h5 id="custom_page_width">Customizing the Page Width</h5>
 
-							<p>We've made it easy to customize the page width. <code>pixels/13 = ems</code> for all non-IE browsers. For IE, pixels/13.3333 = ems. (I find it useful to preserve up to four decimal places (1.2345) before rounding.)</p>
-							<p>In a style block, declare the non-IE number first, then declare the IE number using the *-property filter. The following code creates a 600 pixel layout that responds to zooming and font-size adjustments:</p>
+							<p>We've made it easy to customize the page width. <code>pixels/13 = ems</code> for all non-IE browsers. For IE, <strong>pixels/13.3333 = ems</strong>. (I find it useful to preserve up to four decimal places (1.2345) before rounding.)</p>
+							<p>In a style block, declare the non-IE number first, then declare the IE number using the <strong>*-property</strong> filter. The following code creates a 600 pixel layout that responds to zooming and font-size adjustments:</p>
 						
 							<textarea name="code" class="CSS" cols="60" rows="8">
 							<style> 
@@ -240,7 +240,7 @@ include "../inc/header.inc";
 						 			<li>YUI Fonts does a good job of normalizing the width of an <code>em</code>, but we're still obliged to provide a slightly different value for IE.</li>
 									<li>Be sure the <code>width</code> value for IE comes <em>after</em> the value for everybody else.</li>
 									<li>Setting the <code>min-width</code> is optional, but helps the grid maintain integrity as the viewport shrinks.</li>
-									<li>The <code>text-align</code> and <code>margin</code> are used to help center the page, and should not generally be modified.</li>
+									<li>The <code>text-align</code> and <code>margin</code> are used to help center the page, and should generally not be modified.</li>
 								</ol>
 								
 							<h5>Example: Custom Page Width</h5>
@@ -263,18 +263,6 @@ include "../inc/header.inc";
 							      <div class="yui-b"><!-- narrow content block --></div>
 							...
 							</textarea>
-
-
-
-
-
-
-
-
-
-
-
-
 
 							<h4 id="available_templates">Available Template Presets</h4>
 							
@@ -315,7 +303,7 @@ include "../inc/header.inc";
 								</tbody>
 							</table>
 
-							<p> Here's what the code looks like to choose a template preset, in this case "t4" which puts a 180 pixel column on the right side:</p>
+							<p> Here's what the code looks like to choose a template preset, in this case "yui-<strong>t4</strong>" which puts a 180 pixel column on the right side:</p>
 
 							<textarea name="code" class="HTML" cols="60" rows="13">
 							...
@@ -332,17 +320,35 @@ include "../inc/header.inc";
 							
 							<h6 id="source-order-independence">Source-Order Independence</h6>
 
-							<p>In some cases you may want your secondary content block to appear before your main content block in your markup. For example, some sites put their navigation in the secondary block, yet want it to appear first in the markup for accessibility or search engine optimization (<a href="http://en.wikipedia.org/wiki/Seo">SEO</a>) reasons. YUI's CSS Grids offers source-order independence at the <code>yui-b</code> level without impacting the visual layout of your page. In other words, the "b" wrapped in "main" can come before or after the naked "b" without impacting your visual layout.</p>
+							<p>In some cases you may want your secondary content block to appear before your main content block in your markup. For example, some sites put their navigation in the secondary block yet want it to appear first in the markup for accessibility or search engine optimization (<a href="http://en.wikipedia.org/wiki/Seo">SEO</a>) reasons. YUI's CSS Grids offers source-order independence at the <code>yui-b</code> level without impacting the visual layout of your page. In other words, the "b" wrapped in "main" can come before or after the naked "b" without impacting your visual layout.</p>
 							
-
-
-
-
-
-
-
-
-
+							<p>The following two code blocks render visually identically even though the source code is ordered differently:</p>
+							
+							<textarea name="code" class="HTML" cols="60" rows="13">
+							...
+							<div class="yui-d0">
+				               <div class="yui-t4"> <!-- change class to change preset -->
+				                  <div class="yui-b"></div>
+				                  <div class="yui-main">
+				                     <div class="yui-b"></div>
+				                  </div>
+				               </div>
+				            </div>
+							...
+							</textarea>
+							
+							<textarea name="code" class="HTML" cols="60" rows="13">
+							...
+							<div class="yui-d0">
+				               <div class="yui-t4"> <!-- change class to change preset -->
+				                  <div class="yui-main">
+				                     <div class="yui-b"></div>
+				                  </div>
+				                  <div class="yui-b"></div>
+				               </div>
+				            </div>
+							...
+							</textarea>
 
 							<h4 id="nesting_grids">Using Nesting Grids</h4>
 
@@ -390,8 +396,8 @@ include "../inc/header.inc";
 							         </div>
 							      </div>
 							   </div>
-							</div> -->
-							...
+							</div>
+							... -->
 							</textarea>
 
 							<h4 id="special_grids">Using Special Nesting Grids</h4>
