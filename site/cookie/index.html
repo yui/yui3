@@ -131,6 +131,7 @@ include "../inc/header.inc";
 					<p>The <code>get()</code> method retrieves cookies that are accessible by the current page. If a cookie doesn't exist,
 					<code>get()</code> returns <code>null</code>.</p>
 					<textarea name="code" class="JScript" cols="60" rows="1">
+						//create a YUI instance and use the cookie module.
 						var Y = new YUI().use('cookie');
 					    var value = Y.Cookie.get("name");
 					</textarea>
