@@ -20,7 +20,7 @@
       $oHttp = new Http();
    	$oJSON = new Services_JSON();
       
-      if (($sDeliciousStats = $oHttp->Get("http://badges.del.icio.us/feeds/json/url/data?url=$sDeliciousUrl")) && ($aDeliciousStats = $oJSON->decode($sDeliciousStats))) {
+      if (($sDeliciousStats = $oHttp->Get("http://feeds.delicious.com/feeds/json/url/data?url=$sDeliciousUrl")) && ($aDeliciousStats = $oJSON->decode($sDeliciousStats))) {
    	   $oDeliciousStats = $aDeliciousStats[0];
    	   $iMin = $iMax = 0;
    	   
