@@ -1,4 +1,4 @@
-<?php 
+<?php
 $title="The Cookie Utility";
 $section="cookie";
 $component="Cookie Utility";
@@ -11,9 +11,9 @@ include "../inc/header.inc";
 		<div class="yui-ge">
 			<div class="yui-u first" id="main">
 			<!-- main column -->
-			
+
 				<h2><?php echo $component;?></h2>
-			
+
 				<div id="promo" class="component">
 					<p>The YUI Cookie utility provides a simple API for interacting with cookies, including the creation and manipulation of subcookies.</p>
 
@@ -41,14 +41,14 @@ include "../inc/header.inc";
 							include('../inc/quicklinks.inc');
 							?>
 						</div>
-					</div>				
+					</div>
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
+
 				<h3 id="start">Getting Started</h3>
-				
+
 				<h4 id="dependencies">Include Dependencies</h4>
-				
+
 				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
 				<textarea name="code" class="HTML" cols="60" rows="1">
 				&lt;!-- Dependencies --&gt;
@@ -61,60 +61,68 @@ include "../inc/header.inc";
 				<?php
 				include "../inc/include-notice.inc";
 				?>
-				
-			
-				
+
+
+
 
 				<h3 id="using">Using the <?php echo $component;?></h3>
-			
+
 				<p>This section describes how to use the <?php echo $component;?> in further detail.  It contains these subsections:</p>
-				
+
 				<ul class="topspace">
 					<li><a href="#create">Creating Cookies</a></li>
 					<li><a href="#read">Reading Cookies</a></li>
 					<li><a href="#delete">Deleting Cookies</a></li>
 					<li><a href="#sub">Subcookies</a></li>
 				</ul>
-				
+
 					<h4 id="create">Creating Cookies</h4>
 
 					<p>The simplest way to create a cookie is to provide a name and a value to the <code>set()</code> method:</p>
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    YAHOO.util.Cookie.set("name", "value");
-					</textarea>  
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+						Y.Cookie.set("name", "value");
+					</textarea>
 					<p>This example creates a cookie called &quot;name&quot; that has a value of &quot;value&quot;. Since
 					this cookie is created with all of the default settings, it becomes a session cookie.</p>
-					<p>There is a third argument for <code>set()</code>, which is an object containing additional settings for the cookie. 
+					<p>There is a third argument for <code>set()</code>, which is an object containing additional settings for the cookie.
 					To create a persistent cookie, you can specify an expiration date by supplying a <code>Date</code> object:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    YAHOO.util.Cookie.set("name", "value", { expires: new Date("January 12, 2025") });
-					</textarea>  
-					
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+					    Y.Cookie.set("name", "value", { expires: new Date("January 12, 2025") });
+					</textarea>
+
 					<p>By providing an &quot;expires&quot; option in the third argument, the cookie persists until the given date. In this example,
 					the cookie will remain until January 12, 2025. The value for &quot;expires&quot; must be a <code>Date</code> object, otherwise
 					it is ignored.</p>
-					
+
 					<p>It's possible to restrict access to a cookie by setting path and/or domain information. Setting a path on the cookie restricts access to pages that match that path; setting a domain restricts access to pages on a given domain (typically used to allow cookie access across subdomains). Both options can be easily set using the &quot;path&quot; and &quot;domain&quot; options:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    YAHOO.util.Cookie.set("name", "value", {
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+					    Y.Cookie.set("name", "value", {
 					        path: "/",           //all pages
 					        domain: "yahoo.com"   //any subdomain of yahoo.com, including www.yahoo.com
 					    });
 					</textarea>
-					
+
 					<p>In this example, a cookie is created that can be accessed from all pages on a yahoo.com subdomain. This cookie would
 					then be accessible from pages on <a href="http://sports.yahoo.com">sports.yahoo.com</a> as well as <a href="http://www.yahoo.com">www.yahoo.com</a>.
 					The &quot;path&quot; and &quot;domain&quot; options need not be used together; they may be used independently as well.</p>
 					<p>The last option is &quot;secure&quot;, which indicates that the cookie should only be accessible via SSL on a page
 					using the HTTPS protocol. All other aspects of the cookie remain the same based on the other options provided. To set a
 					secure cookie, use the &quot;secure&quot; option:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    YAHOO.util.Cookie.set("name", "value", { secure: true });
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+					    Y.Cookie.set("name", "value", { secure: true });
 					</textarea>
-					
+
 					<p>This code creates a secure cookie by setting the &quot;secure&quot; option to <code>true</code>. Note that this will only
 					work if the page calling this code uses the HTTPS protocol, otherwise the cookie will be created with default options.</p>
 
@@ -123,23 +131,28 @@ include "../inc/header.inc";
 					<p>The <code>get()</code> method retrieves cookies that are accessible by the current page. If a cookie doesn't exist,
 					<code>get()</code> returns <code>null</code>.</p>
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    var value = YAHOO.util.Cookie.get("name");
-					</textarea>  
-					
+						var Y = new YUI().use('cookie');
+					    var value = Y.Cookie.get("name");
+					</textarea>
+
 					<p>This example retrieves the cookie called &quot;name&quot; and stores its value in the variable <code>value</code>. By default, values returned by <code>get()</code> are strings (if the cookie exists) or <code>null</code> (if the cookie doesn't exist). You 					can change the return value by providing a conversion function as the second argument. For example, to return a number, you can pass in the native <code>Number()</code> function:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    var value = YAHOO.util.Cookie.get("age", Number);
-					</textarea>  
-					
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+					    var value = Y.Cookie.get("age", Number);
+					</textarea>
+
 					<p>In this code, the returned cookie value will be a number if the cookie exists (it will still be <code>null</code> if the cookie doesn't exist). Other native functions that convert values are <code>Boolean()</code> and <code>Date</code>, or you can define your own conversion function:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
-					    var value = YAHOO.util.Cookie.get("code", function(stringValue){
+						//create a YUI instance and use the cookie module.
+						var Y = new YUI().use('cookie');
+					    var value = Y.Cookie.get("code", function(stringValue){
 					        return parseInt(stringValue, 16);   //create a number from a hexadecimal code
 					    });
-					</textarea>  
-					
+					</textarea>
+
 					<p>Conversion functions accept a single argument, the string value of the cookie, and must return a value. In this example, the
 					conversion function expects a hexadecimal code to be returned and passes it into <code>parseInt()</code> to convert the value
 					into a number. Note that the conversion function is never called if the cookie doesn't exist (<code>get()</code> always returns
@@ -149,18 +162,20 @@ include "../inc/header.inc";
 
 					<p>When a cookie is no longer need, it can be removed from the browser by calling the <code>remove()</code> method. This method
 					takes two arguments: the name of the cookie to remove and an optional cookie options object. A cookie created with specific
-					options can only be deleted by specifying the same options. For instance, a cookie created with a <code>domain</code> property 
+					options can only be deleted by specifying the same options. For instance, a cookie created with a <code>domain</code> property
 					of &quot;yahoo.com&quot; can only be deleted by also specifying the <code>domain</code> property as &quot;yahoo.com&quot;. Examples:</p>
-				
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
 					//delete the cookie named "code"
-					YAHOO.util.Cookie.remove("code");
+					Y.Cookie.remove("code");
 
 					//delete the cookie named "info" on the "yahoo.com" domain
-					YAHOO.util.Cookie.remove("info", { domain: "yahoo.com" });
+					Y.Cookie.remove("info", { domain: "yahoo.com" });
 
 					//delete a secure cookie named "username"
-					YAHOO.util.Cookie.remove("username", { secure: true });
+					Y.Cookie.remove("username", { secure: true });
 					</textarea>
 
 					<h4 id="sub">Subcookies</h4>
@@ -174,23 +189,26 @@ include "../inc/header.inc";
 					value, use the <code>setSub()</code> method. This method accepts four arguments: the cookie name, the subcookie name, the subcookie value,
 					and an optional options object. Note that the options object works on the entire cookie, it is not specific to the subcookie.</p>
 					<textarea name="code" class="JScript" cols="60" rows="1">
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
+
 					//set a cookie named "name" with a subcookie named "subname" whose value is "value"
-					YAHOO.util.Cookie.setSub("name", "subname", "value");
+					Y.Cookie.setSub("name", "subname", "value");
 
 					//set a second subcookie on "name", with a name of "subname2" and a value of "value2"
-					YAHOO.util.Cookie.setSub("name", "subname2", "value2");
+					Y.Cookie.setSub("name", "subname2", "value2");
 
 					//set subcookie on the "yahoo.com" domain
-					YAHOO.util.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
+					Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
 
 					//set subcookie to a secure cookie named "user"
-					YAHOO.util.Cookie.setSub("user", "name", "ace123", { secure:true });
-					</textarea>  
-					
+					Y.Cookie.setSub("user", "name", "ace123", { secure:true });
+					</textarea>
+
 					<p>It's possible to set the entire contents of a subcookie by using the <code>setSubs()</code> method, which accepts three arguments:
 					the name of the cookie, and object containing name-value pairs, and an optional cookie options object. For instance, this code
 					sets three subcookies at once:</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
 					var oData = {
 					    name: "ace123",
@@ -198,79 +216,90 @@ include "../inc/header.inc";
 					    track: true
 					};
 
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
 					//set a cookie named "user" with subcookies
-					YAHOO.util.Cookie.setSubs("user", oData);
-					</textarea>  
+					Y.Cookie.setSubs("user", oData);
+					</textarea>
 					<p>Note that calls to <code>setSubs()</code> will always completely overwrite the cookie.</p>
 					<p>To retrieve subcookie values, there are two methods. The first is <code>getSub()</code>, which retrieves a single subcookie value.
 					This method accepts three arguments: the cookie name, the subcookie name, and an optional converter function. As with <code>get()</code>,
 					the converter function changes the data or type of data retrieved from the cookie before it's returned (and isn't called at all
 					if the cookie or subcookie doesn't exist):</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
+
 					//get subcookie
-					var sValue = YAHOO.util.Cookie.getSub("name", "subname");
+					var sValue = Y.Cookie.getSub("name", "subname");
 
 					//get subcookie and convert to number
-					var nValue = YAHOO.util.Cookie.getSub("user", "age", Number);
+					var nValue = Y.Cookie.getSub("user", "age", Number);
 
 					//get subcookie and convert from hex code to decimal number
-					var iValue = YAHOO.util.Cookie.getSub("settings", "bgcolor", function(stringValue){
+					var iValue = Y.Cookie.getSub("settings", "bgcolor", function(stringValue){
 					    return parseInt(stringValue, 16);   //create a number from a hexadecimal code
 					});
-					</textarea>  
-					
+					</textarea>
+
 					<p>The second method to retrieve subcookies is <code>getSubs()</code>, which retrieves all subcookies and returns an object
 					with name-value pairs for each subcookie. The <code>getSubs()</code> method takes a single argument, the name of the cookie
 					containing subcookies to retrieve. The returned value is either an object or <code>null</code> if the cookie doesn't exist.</p>
-					
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
+
 					//get all subcookies
-					var oData = YAHOO.util.Cookie.getSubs("name");
+					var oData = Y.Cookie.getSubs("name");
 					var sSubValue = oData.subname;
 
 					//get all subcookies
-					var oUser = YAHOO.util.Cookie.getSubs("user");
+					var oUser = Y.Cookie.getSubs("user");
 					var sUserName = oUser.name;
-					</textarea>  
-					
+					</textarea>
+
 					<p>Removing subcookies is accomplished using the <code>removeSub()</code> method. This method accepts three arguments: the cookie name, the subcookie name, and an optional cookie options object. The options object, if specified, must have the same options
 					as when the cookie was originally created. Example:</p>
-	
+
 					<textarea name="code" class="JScript" cols="60" rows="1">
+					//create a YUI instance and use the cookie module.
+					var Y = new YUI().use('cookie');
+
 					//set subcookie on the "yahoo.com" domain
-					YAHOO.util.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
+					Y.Cookie.setSub("info", "age", 22, { domain: "yahoo.com" });
 
 					//remove the subcookie
-					YAHOO.util.Cookie.removeSub("info", "age", { domain: "yahoo.com" });
+					Y.Cookie.removeSub("info", "age", { domain: "yahoo.com" });
 					</textarea>
-					
+
 					<p>Removing a subcookie keeps all other subcookies for that cookie intact. If you want to remove all subcookies, it's easiest
 					to use <code>remove()</code> to remove the entire cookie.</p>
-			
+
 <?php include "../inc/mobileSection.inc";?>
 
 <p>The Cookie utility works without any major issues on the Nokia N95 and Apple iPhone default browsers and we'd expect similar behavior on other A-Grade-based mobile browsers.</p>
 
-	
-	
-<?php 
+
+
+<?php
 include "../inc/support.inc";
 ?>
 
 		</div>
 <div class="yui-u sidebar">
 
-	<?php 
+	<?php
 	include "../inc/cheatsheet.inc";
 	?>
-			
+
 			<div id="examples">
-<?php 
+<?php
 	# include("../inc/examplesNav/".$section.".inc");
 ?>
 		   </div>
-		
+
 		<!-- <div id="morereading" class="mod box4">
 			<div class="hd">
 				<h4>More Reading about the YUI <?php echo $component;?>:</h4>
@@ -281,12 +310,23 @@ include "../inc/support.inc";
 			   </ul>
 		   </div>
 		</div> -->
-		   
-<?php 
+
+<?php
 $thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
 require_once('../inc/badge.inc');
 ?>
 
+<<<<<<< index.html
+	<div id="delicious" class="mod box4">
+		<div class="bd delicious">
+			<?php
+			$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
+			require_once('../inc/badge.inc');
+			?>
+			<?php require('../inc/badge-html.inc'); ?>
+		</div>
+	</div>
+=======
 <div id="delicious" class="mod box4">
    <div class="hd delicious">
     <h4>YUI <?php echo $component;?> on del.icio.us:</h4>
@@ -299,6 +339,7 @@ require_once('../inc/badge.inc');
        <?php require('../inc/badge-html.inc'); ?>
    </div>
 </div>
+>>>>>>> 1.4
 
 		 	</div>
       	</div>
