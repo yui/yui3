@@ -1,9 +1,11 @@
 <?php 
 $title="The Event Utility";
 $section="event";
-$component=" Event Utility";
+$component="Event Utility";
 $highlightSyntax = true;
 $releasenotes = true;
+$componentShort="event";
+$requiredModules=Array("node");
 include "../inc/header.inc";
 ?>
 <div id="yui-main">
@@ -54,20 +56,9 @@ include "../inc/header.inc";
 					</div>				
 					<div class="clear"></div>
 				</div><!-- /promo -->
-				
-				<h3 id="start">Getting Started</h3>
-				
-				<h4 id="dependencies">Include Dependencies</h4>
-				
-				<p>To use the <?php echo $component;?>, include the following source files in your web page with the script tag:</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-<!-- -->
-				</textarea>
 
-				<?php
-				include "../inc/include-notice.inc";
-				?>
-               
+<?php include "../inc/gettingStarted.inc"; ?>
+
 				
               <h3 id="domEvents">DOM Events</h3>
                 <p>To attach an event handler to the DOM, simply define your event handler and pass the event handler to the Event Utility along with a reference to the event for which you want to listen and the element to which you want attach the handler: </p>
@@ -81,8 +72,9 @@ function handleClick(e) {
 
 //assuming we have an element on the page with an ID
 //attribute "foo":
-var Y = YUI();
-Y.on("click", handleClick, "#foo");</textarea></pre>
+YUI().use('node', function(Y) {
+    Y.on("click", handleClick, "#foo");
+});</textarea></pre>
 
     <p>These lines of code:</p>
     <ul>
@@ -97,24 +89,25 @@ Y.on("click", handleClick, "#foo");</textarea></pre>
    
     <p>To attach an event handler to multiple elements, use CSS selector syntax (as above) that selects multiple elements, pass in multiple selector strings as an array, pass in an array of Node instances, or pass in an array of direct element references:</p>
 
-<pre><textarea name="code" class="JScript" cols="60" rows="1">var Y = YUI();
+<pre><textarea name="code" class="JScript" cols="60" rows="1">YUI().use('node', function(Y) {
 
-//elements can be targeted using selector syntax:
-Y.on("click", handleClick, "#foo p"); //targets all p elements that are descendants
-									  //of #foo
-                                      
-//elements can be targeted by Node references:
-var foo = Y.Node.get("#foo");
-Y.on("click", handleClick, foo);
-foo.on("click", handleClick); //same as above
+    //elements can be targeted using selector syntax:
+    Y.on("click", handleClick, "#foo p"); //targets all p elements that are descendants
+                                          //of #foo
+                                          
+    //elements can be targeted by Node references:
+    var foo = Y.Node.get("#foo");
+    Y.on("click", handleClick, foo);
+    foo.on("click", handleClick); //same as above
 
-//elements can be passed in as direct references:
-var foo = document.getElementById("foo");
-Y.on("click", handleClick, foo);
+    //elements can be passed in as direct references:
+    var foo = document.getElementById("foo");
+    Y.on("click", handleClick, foo);
 
-//In all cases, you can pass in an array instead of a
-//single item:
-Y.on("click", handleClick, ["#foo p", "#bar"])</textarea></pre>
+    //In all cases, you can pass in an array instead of a
+    //single item:
+    Y.on("click", handleClick, ["#foo p", "#bar"]);
+});</textarea></pre>
 <h4 id="on">Using <code>on</code>: Controlling Context and Arguments</h4>
 
 <p>When you call <code>Y.on</code>, you have the following arguments to work with:</p>
@@ -140,22 +133,23 @@ Y.on("click", handleClick, ["#foo p", "#bar"])</textarea></pre>
 <p>Script:</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">//Create YUI instance:
-var Y = new YUI().use("dump");
+YUI().use("dump", "node", function(Y) {
 
-//create arbitrary context object:
-var contextObj = {
-	name: "context"
-};
+    //create arbitrary context object:
+    var contextObj = {
+        name: "context"
+    };
 
-//function to handle click events and report information about them:
-function handleClick(e, arg1, arg2) {
-	Y.log("Context object:" + Y.dump(this));
-	Y.log("Event facade object:" + Y.dump(e));
-	Y.log(arguments);
-}
+    //function to handle click events and report information about them:
+    function handleClick(e, arg1, arg2) {
+        Y.log("Context object:" + Y.dump(this));
+        Y.log("Event facade object:" + Y.dump(e));
+        Y.log(arguments);
+    }
 
-//subscribe odd numbered list items to the click event
-Y.on("click", handleClick, "#list .odd", contextObj, "argumentOne", "argumentTwo");</textarea>
+    //subscribe odd numbered list items to the click event
+    Y.on("click", handleClick, "#list .odd", contextObj, "argumentOne", "argumentTwo");
+});</textarea>
 
 <p>When you run this code and click on "Item one" or "Item three", the following information will be sent to <code>Y.log</code>:</p>
 
@@ -183,36 +177,37 @@ Event facade object: {
 </ol>
 <p>Sample code for each of these methods:</p>
 <textarea name="code" class="JScript" cols="60" rows="1">//Get a YUI instance:
-var Y = YUI();
+YUI().use('node', function(Y) {
 
-//an event handler:
-function handleClick(e) {
-	Y.log(e);
-}
+    //an event handler:
+    function handleClick(e) {
+        Y.log(e);
+    }
 
-//attach an event handler to element foo:
-var fooHandle = Y.on("click", handleClick, "#foo");
+    //attach an event handler to element foo:
+    var fooHandle = Y.on("click", handleClick, "#foo");
 
-//detach the handler using the handle:
-fooHandle.detach();
+    //detach the handler using the handle:
+    fooHandle.detach();
 
-//detach the handler via detach:
-Y.detach("click", handleClick, "#foo");
+    //detach the handler via detach:
+    Y.detach("click", handleClick, "#foo");
 
-//or pass the event handle to detach:
-Y.detach(fooHandle);</textarea>
+    //or pass the event handle to detach:
+    Y.detach(fooHandle);
+});</textarea>
 
 <p><code>Event.purgeElement</code> lets you remove all listeners that were registered via <code>on</code> from an element. Optionally, a specific type of listener can be specified. In addition, The element's children can also be purged.
 </p>
 <textarea name="code" class="JScript" cols="60" rows="1">//get a YUI instance:
-var Y = YUI();
-
-// purge all listeners:
-Y.Event.purgeElement("#foo");
-// all listeners and recurse children:
-Y.Event.purgeElement("#foo", true);
-// only click listeners, and don't recurse:
-Y.Event.purgeElement("#foo", false, "click");</textarea>
+YUI().use('node', function(Y) {
+    // purge all listeners:
+    Y.Event.purgeElement("#foo");
+    // all listeners and recurse children:
+    Y.Event.purgeElement("#foo", true);
+    // only click listeners, and don't recurse:
+    Y.Event.purgeElement("#foo", false, "click");
+});</textarea>
 
 <h3 id="onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</h3>
 <p><code>onAvailable</code> lets you define a function that will execute as soon as an element
@@ -228,17 +223,18 @@ Y.Event.purgeElement("#foo", false, "click");</textarea>
 <pre><textarea name="code" class="JScript" cols="60" rows="1">
  &lt;script type="text/javascript"&gt;
  
- var Y = YUI();
+ YUI().use('node', function(Y) {
 
- function TestObj(id) {
-   Y.Event.onAvailable(id, this.handleOnAvailable, this); 
- }
+     function TestObj(id) {
+       Y.Event.onAvailable(id, this.handleOnAvailable, this); 
+     }
 
- TestObj.prototype.handleOnAvailable = function(me) {
-   Y.log(this.id + " is available");
- }
+     TestObj.prototype.handleOnAvailable = function(me) {
+       Y.log(this.id + " is available");
+     }
 
- var obj = new TestObj("myelementid");
+     var obj = new TestObj("myelementid");
+ });
  &lt;/script&gt;
 
  &lt;div id="myelementid"&gt;my element&lt;/div&gt;
@@ -253,17 +249,17 @@ Y.Event.purgeElement("#foo", false, "click");</textarea>
 <p>DOM readiness is achieved before images have finished loading, however, so <code>event:ready</code> is often an excellent alternative to using the <code>window</code> object's <code>load</code> event.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
-var Y = YUI();
+YUI().use('node', function(Y) {
+     function init() {
+        Y.Node.get("#hidden_element").set("visibility", "");
+     }
+     Y.on("event:ready", init);
 
- function init() {
-    Y.Node.get("#hidden_element").set("visibility", "");
- }
- Y.on("event:ready", init);
-
- // As with all custom events, you can pass
- // a context object and arguments that will be
- // passed to your handlers:
- // Y.on("event:ready", init, contexObject, argumentOne, argumentTwo, argumentN);
+     // As with all custom events, you can pass
+     // a context object and arguments that will be
+     // passed to your handlers:
+     // Y.on("event:ready", init, contexObject, argumentOne, argumentTwo, argumentN);
+});
 </textarea>
 
 
@@ -279,15 +275,16 @@ var Y = YUI();
 <p>The most common way to create a Custom Event is to <code>augment</code> an object with <code>Event.Target</code>, making it able to host Custom Events and be a target Custom Events that are bubbling from other hosts.: </p>
 <textarea name="code" class="JScript" cols="60" rows="1">
 //Create a YUI instance:
-var Y = YUI();
+YUI().use('node', function(Y) {
 
-//Define a constructor:
-function CustomObject() {
-	//create a custom event:
-    this.publish("CustomObject:testEvent");
-}
-//augment the CustomObject with Event.Target:
-Y.augment(Publisher, Y.Event.Target);
+    //Define a constructor:
+    function CustomObject() {
+        //create a custom event:
+        this.publish("CustomObject:testEvent");
+    }
+    //augment the CustomObject with Event.Target:
+    Y.augment(Publisher, Y.Event.Target);
+});
 </textarea>
 <p>
 The <code>publish</code> constructor creates a new Custom Event; it takes one required parameter and one optional parameters:
