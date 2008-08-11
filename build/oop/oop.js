@@ -136,7 +136,6 @@ YUI.add("oop", function(Y) {
      * Static members will not be inherited.
      *
      * @method extend
-     * @static
      * @param {Function} r   the object to modify
      * @param {Function} s the object to inherit
      * @param {Object} px prototype properties to add/override
@@ -279,7 +278,7 @@ YUI.add("oop", function(Y) {
      * In some cases it is preferable to have the additional arguments
      * applied to the beginning of the function signature.  For instance,
      * FireFox setTimeout/setInterval supplies a parameter that other
-     * browsers do not.  @see rbind for a version that does this.
+     * browsers do not.  
      * Note: YUI provides a later() function which wraps setTimeout/setInterval,
      * providing context adjustment and parameter addition.  This can be 
      * used instead of setTimeout/setInterval, avoiding the arguments
