@@ -40,7 +40,7 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
         'techcrunch': {
             id: 'techcrunch',
             title: 'TechCrunch',
-            url: 'feeds.feedburner.com/Techcrunch'
+            url: 'feedproxy.google.com/Techcrunch'
         },
         'smashing': {
             id: 'smashing',
@@ -424,7 +424,9 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
             return false;
         }
         if (e.drop.get('node').get('tagName').toLowerCase() === 'li') {
-            _moveMod(e.drag, e.drop);
+            if (e.drop.get('node').hasClass('item')) {
+                _moveMod(e.drag, e.drop);
+            }
         }
     });
 
