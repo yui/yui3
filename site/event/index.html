@@ -86,7 +86,7 @@ YUI().use('node', function(Y) {
 
     <p>These lines of code:</p>
     <ul>
-        <li>Create a YUI instance &mdash; Event Utility is always available, so <code>Y.yui().use("event")</code> is not necessary.</li>
+        <li>Create a YUI instance &mdash; Event Utility relies on <code>node</code>, so <code>Y.yui().use("node")</code> will load everything required to use the utility.</li>
         <li>Define a callback function, <code>handleClick(e)</code>, to handle  the specified
           event.</li>
         <li>Call the <code>on</code> method on the YUI instance (<code>Y</code>) to 
@@ -249,12 +249,26 @@ YUI().use('node', function(Y) {
 
 </textarea></pre>
 
-<p>The <code>onContentReady</code> method shares an identical syntax with <code>onAvailable</code>.  The material difference between the two methods is that <code>onContentReady</code> waits until both the target element and its <code>nextSibling</code> in the DOM respond to <code>getElementById</code>.  This guarantees that the target element's contents will have loaded fully (excepting any dynamic content you might add later via script).  If <code>onContentReady</code> never detects a <code>nextSibling</code>, it fires with the <code>window.load</code> event.</p>
+<p>The <code>onContentReady</code> method shares an identical syntax with
+<code>onAvailable</code>.  The material difference between the two methods is
+that <code>onContentReady</code> waits until both the target element and its
+<code>nextSibling</code> in the DOM respond to <code>getElementById</code>.
+This guarantees that the target element's contents will have loaded fully
+(excepting any dynamic content you might add later via script).  If
+<code>onContentReady</code> never detects a <code>nextSibling</code>, it fires
+with the <code>window.load</code> event.</p>
 
 <h3 id="ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</h3>
-<p>The <code>event:ready</code> custom event lets you define a function that will execute as soon as the DOM is in a usable state.  The DOM is not deemed "usable" until it is structurally complete; a number of bugs, primarily in IE, can lead to the browser crashing or failing to load the page successfully if scripts attempt to insert information into the DOM prior to the DOM being in a complete state.</p>
+<p>The <code>event:ready</code> custom event lets you define a function that
+will execute as soon as the DOM is in a usable state.  The DOM is not deemed
+"usable" until it is structurally complete; a number of bugs, primarily in IE,
+can lead to the browser crashing or failing to load the page successfully if
+scripts attempt to insert information into the DOM prior to the DOM being in a
+complete state.</p>
 
-<p>DOM readiness is achieved before images have finished loading, however, so <code>event:ready</code> is often an excellent alternative to using the <code>window</code> object's <code>load</code> event.</p>
+<p>DOM readiness is achieved before images have finished loading, however, so
+<code>event:ready</code> is often an excellent alternative to using the
+<code>window</code> object's <code>load</code> event.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 YUI().use('node', function(Y) {
