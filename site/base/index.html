@@ -18,7 +18,7 @@ include "../inc/header.inc";
                     <p>Base is designed to be a low level class from which other attribute and event target based classes in the
                     YUI library can be derived. It provides a standard template for creating attribute based objects across the 
                     library and provides a consistent <code>init()</code> and <code>destroy()</code> sequence, by chaining initialization (<code>initializer</code>) 
-                    and destruction (<code>destructor</code>) methods for the class hierarcy.</p>
+                    and destruction (<code>destructor</code>) methods for the class hierarchy.</p>
                     <div class="yui-g">
                         <div class="yui-u first">
                             <div id="jumps">
@@ -95,7 +95,7 @@ include "../inc/header.inc";
             <p>Base itself augments <code>Attribute</code>, which in turn augments <code>Event.Target</code>, making Base an Attribute provider and 
             an Event Target.</p>
 
-            <p>Base's contructor expects a configuration object literal, which is used to setup initial values for attributes during construction (discussed below).</p>
+            <p>Base's contructor expects a configuration object literal, which is used to set up initial values for attributes during construction (discussed below).</p>
 
             <h4 id="staticprops">Static Properties</h4>
 
@@ -222,7 +222,7 @@ include "../inc/header.inc";
 
             <h4 id="initdestroy">Initialization and Destruction</h4>
 
-            <p>Base implements final versions of it's <code>init</code> and <code>destroy</code> methods used to establish the init and destroy lifecycle phases.
+            <p>Base implements final versions of its <code>init</code> and <code>destroy</code> methods used to establish the init and destroy lifecycle phases.
             Classes extending Base can perform operations during initialization or destruction, by defining prototype level <code>initializer</code> and <code>destructor</code> methods respectively:</p>
 
             <textarea name="code" class="JScript" cols="60" rows="1">
@@ -255,16 +255,16 @@ include "../inc/header.inc";
                 <dt><code>initializer()</code></dt>
                 <dd>
                     Base's <code>init</code> method will invoke the <code>initializer</code> method for each class in the hierarchy - starting from the Base class first and ending with the sub-class being instantiated,
-                    when it is called as part of Base's constructor. The <code>initializer</code> method for each class is invoked after it's attributes have been initialized 
+                    when it is called as part of Base's constructor. The <code>initializer</code> method for each class is invoked after its attributes have been initialized 
                     (as discussed above) and will receive the configuration object literal passed to the <code>init</code> method.
                 </dd>
                 <dt><code>destructor()</code></dt>
                 <dd>
-                    Base's <code>destroy</code> method when called, will invoke the <code>destructor</code> method for each class in the hierarchy - starting from the sub-class instantiated to create the instance, and ending with the Base class (the opposite of initialization).
+                    Base's <code>destroy</code> method, when called, will invoke the <code>destructor</code> method for each class in the hierarchy - starting from the sub-class instantiated to create the instance, and ending with the Base class (the opposite of initialization).
                 </dd>
             </dl>
 
-            <p>If your class does not require any code to be executed during <code>init</code> or <code>destroy</code>, you do not need to define the corresponding <code>initializer</code> or <code>destructor</code> method on it's prototype.</p>
+            <p>If your class does not require any code to be executed during <code>init</code> or <code>destroy</code>, you do not need to define the corresponding <code>initializer</code> or <code>destructor</code> method on its prototype.</p>
 
             <h4 id="buildcreate">Build and Create</h4>
 

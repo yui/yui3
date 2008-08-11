@@ -2,9 +2,9 @@
 
 <h4 id="dependencies">Include Dependencies</h4>
 
-<p>The easiest way to include the source files for <?php echo $componentShort; ?> and it dependencies, 
+<p>The easiest way to include the source files for <?php echo $componentShort; ?> and its dependencies, 
 is to add the YUI seed file to your page, using the following script tag, and 
-allow the YUI instance to download any additional files which maybe required:</p>
+allow the YUI instance to download any additional files which may be required:</p>
 
 <textarea name="code" class="HTML" cols="60" rows="1">
 &lt;!-- YUI Seed --&gt;
@@ -14,7 +14,7 @@ allow the YUI instance to download any additional files which maybe required:</p
 <p>The YUI instance will automatically pull down <?php echo $componentShort; ?>'s source files, along 
 with any dependent files missing from the page, when the <code><?php echo $section; ?></code> 
 module is used in your code. This helps you avoid having to manually manage the 
-list of files which need to be included on your page to support multiple components, 
+list of files which needs to be included on your page to support multiple components, 
 while also optimizing your initial page weight by loading files only when they are 
 required.</p>
 
