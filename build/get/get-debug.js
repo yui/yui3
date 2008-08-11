@@ -455,6 +455,7 @@ Y.Get = function() {
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
+         * @static
          * @param id {string} the transaction id
          * @private
          */
@@ -466,6 +467,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
+         * @static
          * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */

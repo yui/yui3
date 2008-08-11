@@ -649,6 +649,7 @@ YUI.add("lang", function(Y) {
     /**
      * Provides the language utilites and extensions used by the library
      * @class Lang
+     * @static
      */
     Y.Lang = Y.Lang || {};
 
@@ -663,6 +664,7 @@ YUI.add("lang", function(Y) {
      * properties.
      * @TODO can we kill this cross frame hack?
      * @method isArray
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is an array
      */
@@ -677,6 +679,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a boolean
      * @method isBoolean
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a boolean
      */
@@ -687,6 +690,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a function
      * @method isFunction
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a function
      */
@@ -697,6 +701,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the supplied object is a date instance
      * @method isDate
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a date
      */
@@ -707,6 +712,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is null
      * @method isNull
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is null
      */
@@ -717,6 +723,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a legal number
      * @method isNumber
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a number
      */
@@ -728,6 +735,7 @@ YUI.add("lang", function(Y) {
      * Determines whether or not the provided object is of type object
      * or function
      * @method isObject
+     * @static
      * @param o The object to test
      * @param failfn {boolean} fail if the input is a function
      * @return {boolean} true if o is an object
@@ -739,6 +747,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is a string
      * @method isString
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a string
      */
@@ -749,6 +758,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is undefined
      * @method isUndefined
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is undefined
      */
@@ -760,6 +770,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns a string without any leading or trailing whitespace.  If 
      * the input is not a string, the input will be returned untouched.
      * @method trim
+     * @static
      * @param s {string} the string to trim
      * @return {string} the trimmed string
      */
@@ -776,7 +787,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns false for null/undefined/NaN, true for other values, 
      * including 0/false/''
      * @method isValue
-     * @param the item to test
+     * @static
+     * @param o The item to test
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
