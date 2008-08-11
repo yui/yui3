@@ -40,8 +40,11 @@
 
 	.yui-grids .yui-d0, /* 100% */
 	.yui-grids .yui-d1, /* 750px */
+	.yui-grids .yui-d1f, /* 750px fixed */
 	.yui-grids .yui-d2, /* 950px */
+	.yui-grids .yui-d2f, /* 950px fixed */
 	.yui-grids .yui-d3, /* 974px */
+	.yui-grids .yui-d3f, /* 974px fixed */
 	.yui-t1,
 	.yui-t2,
 	.yui-t3,

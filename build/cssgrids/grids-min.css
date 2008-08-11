@@ -40,8 +40,11 @@
 
 	.yui-d0, /* 100% */
 	.yui-d1, /* 750px */
+	.yui-d1f, /* 750px fixed */
 	.yui-d2, /* 950px */
+	.yui-d2f, /* 950px fixed */
 	.yui-d3, /* 974px */
+	.yui-d3f, /* 974px fixed */
 	.yui-t1,
 	.yui-t2,
 	.yui-t3,

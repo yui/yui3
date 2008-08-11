@@ -1,50 +1,16 @@
-<h3>Setting the Page Width with YUI CSS Grids</h3>
+	<h3 id="custom_page_width">Customizing the Page Width</h3>
 
-<p>The width is set by applying a class value to a parent node.</p>
+	<p>We've made it easy to customize the page width. <code>pixels/13 = ems</code> for all non-IE browsers. For IE, pixels/13.3333 = ems. (I find it useful to preserve up to four decimal places (1.2345) before rounding.)</p>
+	
+	<h4 class="note">Notes on Customizing Page Widths</h4>
 
-<table border="0" cellspacing="0" cellpadding="0">
-	<thead>
-		<tr>
-			<th>Class Value</th>
-			<th>Description</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td><code>.yui-d0</code></td>
-			<td>100%. Centered. 10px left/right margin.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d1</code></td>
-			<td>750px. Centered. Fluid.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d1f</code></td>
-			<td>750px. Centered. Fixed.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d2</code></td>
-			<td>950px. Centered. Fluid.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d2f</code></td>
-			<td>950ox. Centered. Fixed.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d3</code></td>
-			<td>974px. Centered. Fluid.</td>
-		</tr>
-		<tr>
-			<td><code>.yui-d3f</code></td>
-			<td>974px. Centered. Fixed.</td>
-		</tr>
-	</tbody>
-</table>
-
-<h3>Stacking</h3>
-
-<p>In YUI 3.x, the page width is set by choosing a class value. (In 2.x it was an ID value.) Because it's a class value you can have different and multiple widths within a page.</p>
-
-
-<h5>Note:</h5>
-<p>Because CSS examples are susceptible to other CSS on the page, this example is only available in a new window at the above link.</p>
+	<p>Here are some other things to keep in mind.</p>
+ 		<ol>
+ 			<li>The width is set in <code>em</code>s because <code>em</code>s scale with user-initiated font-size adjustment.</li>
+ 			<li>YUI Fonts does a good job of normalizing the width of an <code>em</code>, but we're still obliged to provide a slightly different value for IE.</li>
+			<li>Be sure the <code>width</code> value for IE comes <em>after</em> the value for everybody else.</li>
+			<li>Setting the <code>min-width</code> is optional, but helps the grid maintain integrity as the viewport shrinks.</li>
+			<li>The <code>text-align</code> and <code>margin</code> are used to help center the page, and should not generally be modified.</li>
+		</ol>
+	
+	
