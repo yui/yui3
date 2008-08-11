@@ -1212,6 +1212,7 @@ YUI.add("ua", function(Y) {
     /**
      * Browser/platform detection
      * @class UA
+     * @static
      */
     Y.UA = function() {
 
@@ -1221,6 +1222,7 @@ YUI.add("ua", function(Y) {
              * Internet Explorer version number or 0.  Example: 6
              * @property ie
              * @type float
+             * @static
              */
             ie:0,
 
@@ -1228,6 +1230,7 @@ YUI.add("ua", function(Y) {
              * Opera version number or 0.  Example: 9.2
              * @property opera
              * @type float
+             * @static
              */
             opera:0,
 
@@ -1243,6 +1246,7 @@ YUI.add("ua", function(Y) {
              * </pre>
              * @property gecko
              * @type float
+             * @static
              */
             gecko:0,
 
@@ -1268,6 +1272,7 @@ YUI.add("ua", function(Y) {
              * http://developer.apple.com/internet/safari/uamatrix.html
              * @property webkit
              * @type float
+             * @static
              */
             webkit:0,
 
@@ -1278,6 +1283,7 @@ YUI.add("ua", function(Y) {
              * devices with the WebKit-based browser, and Opera Mini.  
              * @property mobile 
              * @type string
+             * @static
              */
             mobile: null 
         };
@@ -1860,6 +1866,7 @@ Y.Get = function() {
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
+         * @static
          * @param id {string} the transaction id
          * @private
          */
@@ -1871,6 +1878,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
+         * @static
          * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
