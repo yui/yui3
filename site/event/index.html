@@ -17,9 +17,17 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-					 <p>YUI's Event Utility facilitates the creation of event-driven applications in the browser by giving you a simplified interface for responding DOM events. The Event Utility package also includes the Custom Event object; Custom Events allow you to publish the interesting moments or events in your own code so that other components on the page can subscribe to those events and respond to them.</p>
+                     <p>YUI's Event Utility facilitates the creation of
+                     event-driven applications in the browser by giving you a
+                     simplified interface for responding to DOM events. The Event
+                     Utility package also includes the Custom Event object;
+                     Custom Events allow you to publish the interesting moments
+                     or events in your own code so that other components on the
+                     page can subscribe to those events and respond to
+                     them.</p>
                     
-                    <p>The Event Utility package provides the following features: </p>
+                    <p>The Event Utility package provides the following
+                    features: </p>
 
     <ul>
       <li>DOM event handling</li>
@@ -244,7 +252,7 @@ YUI().use('node', function(Y) {
 <p>The <code>onContentReady</code> method shares an identical syntax with <code>onAvailable</code>.  The material difference between the two methods is that <code>onContentReady</code> waits until both the target element and its <code>nextSibling</code> in the DOM respond to <code>getElementById</code>.  This guarantees that the target element's contents will have loaded fully (excepting any dynamic content you might add later via script).  If <code>onContentReady</code> never detects a <code>nextSibling</code>, it fires with the <code>window.load</code> event.</p>
 
 <h3 id="ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</h3>
-<p>The <code>event:ready</code> custom event lets you define a function that will execute as soon as the DOM is in a usable state.  The DOM is is not deemed "usable" until it is structurally complete; a number of bugs, primarily in IE, can lead to the browser crashing or failing to load the page successfully if scripts attempt to insert information into the DOM prior to the DOM being in a complete state.</p>
+<p>The <code>event:ready</code> custom event lets you define a function that will execute as soon as the DOM is in a usable state.  The DOM is not deemed "usable" until it is structurally complete; a number of bugs, primarily in IE, can lead to the browser crashing or failing to load the page successfully if scripts attempt to insert information into the DOM prior to the DOM being in a complete state.</p>
 
 <p>DOM readiness is achieved before images have finished loading, however, so <code>event:ready</code> is often an excellent alternative to using the <code>window</code> object's <code>load</code> event.</p>
 
