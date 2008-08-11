@@ -38,13 +38,7 @@ with the modules you need, specified as the first set of arguments to the
     });
 </textarea>
 
-<p>The last argument passed to <code>use</code> is a callback function. The callback function will be 
-invoked as soon as the YUI instance is done downloading any required files missing from 
-your page, and populated the local YUI instance with the classes which make up 
-the <code><?php echo $section; ?></code> module and any modules it depends on. 
-A reference to the populated YUI instance (<code>Y</code>) is passed back to the 
-callback function inside which you can start writing your application code based on your own, custom 
-instance of <code>YUI</code>.</p>
+<p>The last argument passed to <code>use</code> is a callback function. The callback function will be invoked as soon as the YUI instance is done downloading any required files missing from your page, and populated the local YUI instance with the classes which make up the <code><?php echo $section; ?></code> module and any modules it depends on. A reference to the populated YUI instance (<code>Y</code>) is passed back to the callback function inside which you can start writing your application code based on your own custom instance of <code>YUI</code>.</p>
 
 <p>For more information on creating instances of YUI and the 
 <a href="../yui/index.html#use"><code>use</code> method</a>, see the 
