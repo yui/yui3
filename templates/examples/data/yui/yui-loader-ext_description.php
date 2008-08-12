@@ -1,10 +1,10 @@
 <h3>Creating your YUI instance</h3>
-<p>Now we need to create our YUI instance with the <code>node</code> module, so we can attach a listener to a button.</p>
+<p>First, we need to create our YUI instance with the <code>node</code> module, so we can attach a listener to a button.</p>
 <textarea name="code" class="JScript">YUI().use('node', function(Y) {
 });
 </textarea>
 
-<p>YUI accepts a configuration object when you create an instance.  Your dynamic loading options can be defined here.</p>
+<p>YUI accepts a configuration object when you create an instance.  Your dynamic-loading options can be defined here.</p>
 <textarea name="code" class="JScript">YUI({
 
     // We can specify a node that is the insertion point for all new nodes.  This
@@ -37,7 +37,7 @@
 
 <h3>Creating the Calendar</h3>
 <p>Now that we have our core YUI instance in place, we add an event listener to
-a button that will dynamically load YUI 3.x drag and drop, and YUI 2.x calendar.</p>
+a button that will dynamically load YUI 3.x Drag &amp; Drop and YUI 2.x Calendar.</p>
 <textarea name="code" class="JScript">// The callback supplied to use() will be executed regardless of
 // whether the operation was successful or not.  The second parameter
 // is a result object that has the status of the operation.  We can
