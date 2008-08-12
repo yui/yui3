@@ -1,2 +1,2 @@
-<p>This example demonstrates using a single event listener on an list to delegate clicks its items clicks.</p>
+<p>This example demonstrates using a single event listener on a list to delegate clicks on the list items.</p>
 
