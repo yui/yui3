@@ -182,31 +182,12 @@ include "../inc/support.inc";
 		include("../inc/examplesNav/".$section.".inc");
 	?>
 	    
-	<div id="morereading" class="mod box4">
-		<div class="hd">
-			<h4>More Reading about YUI's <?php echo $component;?></h4>
-		</div>
-		<div class="bd">
-			<ul>
-				<li><a href="http://informationr.net/ir/12-2/TB0701.html">Artisinal Animation</a>, by Terrence Brooks</li>
-		  		<li>From <a href="http://simon.incutio.com/slides/2006/xtech/yui-notes.html#animation">The Yahoo! User Interface Library</a>, by Simon Willison</li>
-				<li><a href="http://www.hedgerwow.com/360/mwd/accordion/demo.php?page=1">Accordion Menu made with YUI</a>, by Hedger Wang</li>
-			</ul>
-		</div>
-	</div>
-		   
-	<?php 
-	$thisURI="http://developer.yahoo.com/yui/animation/";
-	require_once('../inc/badge.inc');
-	?>
-	<div id="delicious" class="mod box4">
-		<div class="hd">
-			<h4>YUI's <?php echo $component;?> on del.icio.us</h4>
-		</div>
-		<div class="bd delicious">
-			<?php require('../inc/badge-html.inc'); ?>
-		</div>
-	</div>
+	   
+
+	<!-- delicious module -->
+	<?php require('../inc/mod-delicious.inc'); ?>
+	<!-- /delicious module -->
+
 
 			<!-- /sidebar -->
 			</div>

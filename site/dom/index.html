@@ -148,14 +148,10 @@ include "../inc/support.inc";
 			   </ul>
 		   </div>
 		   
-<?php 
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-require_once('../inc/badge.inc');
-?>
-<h3 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h3>
-<div class="delicious">
-<?php require('../inc/badge-html.inc'); ?>
-</div>
+		<!-- delicious module -->
+		<?php require('../inc/mod-delicious.inc'); ?>
+		<!-- /delicious module -->
+
 
 		 </div>
       </div>

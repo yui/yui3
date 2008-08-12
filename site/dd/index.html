@@ -497,20 +497,10 @@ include "../inc/support.inc";
 			   </ul>
 		   </div-->
 		   
-<?php 
-$thisURI="http://developer.yahoo.com/yui/3/dd/";
-require_once('../inc/badge.inc');
-?>
-<div class="mod box4">
-	<div class="hd">
-		<h4 id="delicious">YUI <?php echo $component;?> on del.icio.us:</h4>
-	</div>
-	<div class="bd">
-		<div class="delicious">
-		<?php require('../inc/badge-html.inc'); ?>
-		</div>
-	</div>
-</div>
+		<!-- delicious module -->
+		<?php require('../inc/mod-delicious.inc'); ?>
+		<!-- /delicious module -->
+
 
 		 </div>
       </div>

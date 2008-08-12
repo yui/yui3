@@ -312,35 +312,11 @@ include "../inc/support.inc";
 		   </div>
 		</div> -->
 
-<?php
-$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-require_once('../inc/badge.inc');
-?>
 
-<<<<<<< index.html
-	<div id="delicious" class="mod box4">
-		<div class="bd delicious">
-			<?php
-			$thisURI="http://developer.yahoo.com/yui/<?php echo $section;?>/";
-			require_once('../inc/badge.inc');
-			?>
-			<?php require('../inc/badge-html.inc'); ?>
-		</div>
-	</div>
-=======
-<div id="delicious" class="mod box4">
-   <div class="hd delicious">
-    <h4>YUI <?php echo $component;?> on del.icio.us:</h4>
-   </div>
-   <div class="bd delicious">
-       <?php
-        $thisURI="http://developer.yahoo.com/yui/3/$section/";
-        require_once('../inc/badge.inc');
-       ?>
-       <?php require('../inc/badge-html.inc'); ?>
-   </div>
-</div>
->>>>>>> 1.4
+		<!-- delicious module -->
+		<?php require('../inc/mod-delicious.inc'); ?>
+		<!-- /delicious module -->
+
 
 		 	</div>
       	</div>
