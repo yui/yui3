@@ -1,4 +1,6 @@
-<h2 class="first">Instantiate YUI</h2>
+<h2 class="first">Using <code>extend</code></h2>
+
+<h3>Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -10,8 +12,8 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 function(Y) {
 </textarea>
 
-<h2>Creating a class hierarchy</h2>
-<p>In this example, we create a class <code>Bird</code> then create a subclass <code>Chicken</code>.
+<h3>Creating a class hierarchy</h3>
+<p>In this example, we create a class <code>Bird</code> then create a subclass <code>Chicken</code>.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">
 
@@ -35,8 +37,8 @@ Chicken.prototype.flighted = false; // Override default for all Chickens
 
 </textarea>
 
-<h2><code>instanceof</code> many classes</h2>
-<p>Unlike classes composed with augmentation, extending subclasses are also
+<h3><code>instanceof</code> many classes</h3>
+<p>Unlike classes composed with augmentation, subclasses created with <code>extend</code> are also
 considered instances of their superclass and all classes higher up the
 inheritance tree.</p>
 
@@ -75,5 +77,5 @@ showInheritance = function () {
 Y.on('click', showInheritance, '#demo_btn');
 </textarea>
 
-<h2>Other architecture strategies</h2>
+<h3>Other architecture strategies</h3>
 <p>Take a look at <code>augment</code> and <code>mix</code> for different strategies of managing your code structure.
