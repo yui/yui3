@@ -1045,7 +1045,7 @@ YUI.add("io", function (Y) {
 	*      transport supported is Flash (e.g., { xdr: 'flash' }).</p>
 	*
 	* <p><strong>form</strong>: This is a defined object used to process HTML form as data.  The
-	*       properties are:</p>
+	*       properties of <code>form</code> are:</p>
 	*       <ul>
 	*	      <li>id: object, //HTML form object or id of HTML form</li>
 	*         <li>useDisabled: boolean, //Allow disabled HTML form field values
@@ -1079,8 +1079,7 @@ YUI.add("io", function (Y) {
 	*          as a method of a base object. Defining "context" will preserve
 	*          the proper reference of "this" used in the event handler.</p>
 	* <p><strong>headers</strong>: This is a defined object of client headers, as many as.
-	*         desired for the transaction.  These headers are sentThe object
-	*         pattern is:</p>
+	*         desired for the transaction.  The property for <code>header</code> is:</p>
 	*		  <ul>
 	*		    <li>header: value</li>
 	*         </ul>
