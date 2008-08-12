@@ -6,6 +6,10 @@ YAHOO.util.Event.onDOMReady(function() {
 
         chart = null,
 
+        colors = ["#00b8bf", "#8dd5e7","#edff9f", "#ffa928", "#c0fff6", "#d00050",
+                  "#c6c6c6", "#c3eafb","#fcffad", "#cfff83", "#444444", "#4d95dd",
+                  "#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77"];
+
         current = {
             sizes : [],
             used : {
@@ -58,13 +62,23 @@ YAHOO.util.Event.onDOMReady(function() {
         chart = new YAHOO.widget.PieChart( "chart", data, {
                 dataField: "size",
                 categoryField: "name",
+                seriesDef: [ {
+                    style: {
+                        colors: [
+                            0x00b8bf, 0x8dd5e7, 0xedff9f, 0xffa928, 0xc0fff6, 0xd00050,
+                            0xc6c6c6, 0xc3eafb, 0xfcffad, 0xcfff83, 0x444444, 0x4d95dd,
+                            0xb8ebff, 0x60558f, 0x737d7e, 0xa64d9a, 0x8e9a9b, 0x803e77
+                        ]
+                    }
+                    }
+                ],
                 style: {
                     padding: 10, 
                     legend: {
-                        display:"right"
+                        display:"none"
                     }
                 }
-         });
+        });
     };
 
     function prettySize(size) {

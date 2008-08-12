@@ -59,6 +59,20 @@ $prepend='
         #chart {
             height:20em;
         }
+
+        #legendBox {
+            background-color:#fff;
+            padding:5px;
+        }
+        
+        #legendBox .legendHeader {
+            padding:2px;
+            font-weight:bold;
+        }
+
+        #legendBox .ul {
+            border-top:1px solid #ccc;
+        }
 	</style>';
 include "../inc/header.inc";
 ?>
@@ -119,7 +133,13 @@ include "../inc/header.inc";
                     </div>
                     <div id="weight" class="panel">
                         <div class="hd" id="total"></div>
-                        <div id="chart" class="bd"></div>
+                        <div class="bd">
+                            <div id="chart"></div>
+                            <div id="legendBox">
+                                <div class="title">LEGEND</div>
+                                <ul id="legend"></ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
