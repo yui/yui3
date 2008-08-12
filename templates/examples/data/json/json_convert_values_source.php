@@ -104,9 +104,7 @@ var example = {
                 html[j++] = '</td></tr>';
             }
         } else {
-            html = [
-                '<tbody><tr><td colspan="4">No Inventory data</td></tr></tbody>'
-            ];
+            html[j++] = '<tr><td colspan="4">No Inventory data</td></tr>';
         }
         html[j] = "</tbody>";
 
@@ -120,8 +118,7 @@ Y.get('#demo_go').on('click', function (e) {
 
     // Store the requested currency
     var sel = Y.get("#demo select");
-    example.currency = sel.get('value');
-    //example.currency = sel.get('options').item(sel.get("selectedIndex")).get('value');
+    example.currency = sel.get("options").item(sel.get("selectedIndex")).get("value");
 
     Y.io('<?php echo($assetsDirectory) ?>data.php',{
         timeout : 3000,

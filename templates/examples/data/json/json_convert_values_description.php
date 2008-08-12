@@ -55,7 +55,8 @@ Y.get('#demo_go').on('click', function (e) {
     this.set('disabled',true);
 
     // Store the requested currency
-    example.currency = Y.get("#demo select").get('value');
+    var sel = Y.get("#demo select");
+    example.currency = sel.get("options").item(sel.get("selectedIndex")).get("value");
 
     // Send the request for the JSON data
     Y.io('<?php echo($assetsDirectory) ?>data.php',{
@@ -165,9 +166,7 @@ var example = {
                 html[j++] = '</td></tr>';
             }
         } else {
-            html = [
-                '<tbody><tr><td colspan="4">No Inventory data</td></tr></tbody>'
-            ];
+            html[j++] = '<tr><td colspan="4">No Inventory data</td></tr>';
         }
         html[j] = "</tbody>";
 
@@ -180,7 +179,8 @@ Y.get('#demo_go').on('click', function (e) {
     this.set('disabled',true);
 
     // Store the requested currency
-    example.currency = Y.get("#demo select").get('value');
+    var sel = Y.get("#demo select");
+    example.currency = sel.get("options").item(sel.get("selectedIndex")).get("value");
 
     Y.io('<?php echo($assetsDirectory) ?>data.php',{
         timeout : 3000,
