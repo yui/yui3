@@ -1,4 +1,7 @@
-<h2 class="first">Instantiate YUI</h2>
+<h2 class="first">Using <code>merge</code></h2>
+
+
+<h3 class="first">Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -9,7 +12,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 function(Y) {
 </textarea>
 
-<h2>Merging hash tables</h2>
+<h3>Merging hash tables</h3>
 <p>When the "Merge" button is clicked, we merge three object literals in the form
 of hash tables.  Note the key values in later parameters override those in
 previous parameters.</p>
@@ -37,7 +40,7 @@ Y.on('click', doMerge, '#demo_btn');
 
 </textarea>
 
-<h2>Creating Shallow Copies</h2>
+<h3>Creating Shallow Copies</h3>
 <p>When the "Copy" button is clicked, we create use merge on a single
 object in order to create a shallow clone.  The code illustrates the
 fact that object properties of the result object are shared with

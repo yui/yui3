@@ -1,4 +1,6 @@
-<h2 class="first">Instantiate YUI</h2>
+<h2 class="first">Type Checking with YUI</h2>
+
+<h3>Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -9,7 +11,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 function(Y) {
 </textarea>
 
-<h2>Checking types</h2>
+<h3>Checking types</h3>
 <p>In this example, we use a few of the type-checking methods available in
 <code>Lang</code> to test various types of data.</p>
 
@@ -24,16 +26,3 @@ var checkType = function (val) {
 };
 </textarea>
 
-<h2>Other type checking methods</h2>
-<p><code>Lang</code> currently supports the following type checking methods:</p>
-<ul>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isArray">isArray</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isBoolean">isBoolean</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isFunction">isFunction</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isNull">isNull</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isNumber">isNumber</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isObject">isObject</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isString">isString</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isUndefined">isUndefined</a></li>
-    <li><a href="http://developer.yahoo.com/yui/api/Lang.html#isValue">isValue</a></li>
-</ul>

@@ -11,10 +11,10 @@ browser environment to be just right.  Though many techniques are very
 accurate, 100% accuracy can't be guaranteed.</p>
 
 <p>Use the <code>UA</code> object to inform you of what browser your
-page is being viewed in, but for your own sake, do not infer anything from
-this.</p>
+page is being viewed in, but avoid using this technique unless feature detection
+will not serve your purpose.</p>
 
-<h2>What UA looks like</h2>
+<h3>What UA looks like</h3>
 
 <p><code>UA</code> is an object literal containing keys for most major user
 agents.  The key corresponding to the current browser is assigned a version
@@ -33,10 +33,10 @@ if (Y.UA.webkit) {} // Safari, Webkit
 
 <p>There's more information on the <code>UA</code> object and value
 ranges in the <a
-href="http://developer.yahoo.com/yui/api/UA.html">API
+href="http://developer.yahoo.com/yui/3/api/UA.html">API
 Documentation</a>.</p>
 
-<h2 class="first">Instantiate YUI</h2>
+<h3 class="first">Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -47,7 +47,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 function(Y) {
 </textarea>
 
-<h2>User Agent Info</h2>
+<h3>User Agent Info</h3>
 <p>In this simple example, we use the <code>each</code> to iterate the <code>UA</code> object.
 </p>
 
