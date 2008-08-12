@@ -237,6 +237,17 @@ YAHOO.util.Event.onDOMReady(function() {
     function updateState(loader) {
         outputResources(getIncludes(loader));
         renderChart(current.sizes);
+        updateCheckBoxes(current.used);
+    }
+
+    function updateCheckBoxes(modsUsed) {
+
+        var checks = Sel.query("li input[id^=check_]", "mods"); 
+
+        for (var i = 0; i < checks.length; i++) {
+            var mod = checks[i].id.replace("check_", "");
+            checks[i].checked = modsUsed[mod];
+        }
     }
 
     function handleModuleSelection(name, stateChange) {

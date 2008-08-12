@@ -92,7 +92,7 @@ include "../inc/header.inc";
                 </div>
                 <div class="yui-u">
                     <div id="resources" class="panel">
-                        <div class="hd">Options</div>
+                        <div class="hd">Resource Tags</div>
                         <div class="bd">
                             <textarea class="HTML" cols="60" rows="1" id="loaderOutput" name="loaderOutput">
                             </textarea>
