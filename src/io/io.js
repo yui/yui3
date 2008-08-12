@@ -1031,29 +1031,30 @@ YUI.add("io", function (Y) {
 	* @description Method for requesting a transaction. Each transaction may include
 	* a configuration object.  Its properties are:
 	*
-	* method: HTTP method verb (e.g., GET or POST). If this property is not
-	*         not defined, the default value will be GET.
 	*
-	* data: This is the name-value string that will be sent as the transaction
+	* <p><strong>method</strong>: HTTP method verb (e.g., GET or POST). If this property is not
+	*         not defined, the default value will be GET.</p>
+	*
+	* <p><strong>data</strong>: This is the name-value string that will be sent as the transaction
     *		data.  If the request is HTTP GET, the data become part of
-    *		querystring. If HTTP POST, the data are sent in the message body.
+    *		querystring. If HTTP POST, the data are sent in the message body.</p>
 	*
-	* xdr: Defines the transport to be used for cross-domain requests.  By
+	* <p><strong>xdr</strong>: Defines the transport to be used for cross-domain requests.  By
 	*      setting this property, the transaction will use the specified
 	*      transport instead of XMLHttpRequest.  Currently, the only alternate
-	*      transport supported is Flash (e.g., { xdr: 'flash' }).
+	*      transport supported is Flash (e.g., { xdr: 'flash' }).</p>
 	*
-	* form: This is a defined object used to process HTML form as data.  The
-	*       properties are:
+	* <p><strong>form</strong>: This is a defined object used to process HTML form as data.  The
+	*       properties are:</p>
 	*       <ul>
 	*	      <li>id: object, //HTML form object or id of HTML form</li>
 	*         <li>useDisabled: boolean, //Allow disabled HTML form field values
 	*                      to be sent as part of the data.</li>
     *       </ul>
     *
-    * on: This is a defined object used to create and handle specific
+    * <p><strong>on</strong>: This is a defined object used to create and handle specific
     *     events during a transaction lifecycle.  These events will fire in
-    *     addition to the global io events. The events are:
+    *     addition to the global io events. The events are:</p>
     *	  <ul><li>start - This event is fired when a request is sent to a resource.</li>
     *     <li>complete - This event fires when the transaction is complete.</li>
     *     <li>success - This event fires when the response status resolves to
@@ -1063,35 +1064,35 @@ YUI.add("io", function (Y) {
     *	  <li>abort - This even is fired when a transaction abort is fire by
     *             timeout, or when it is manually aborted.</li></ul>
     *
-    *     The properties are:
+    *     <p>The properties of <code>on</code> are:</p>
     *     <ul>
 	*       <li>start: function(id, args){},</li>
 	*       <li>complete: function(id, responseobject, args){},</li>
 	*       <li>success: function(id, responseobject, args){},</li>
 	*       <li>failure: function(id, responseobject, args){},</li>
 	*       <li>abort: function(id, args){}</li>
+	*       <li>Each property can reference a function or be written as an inline
+	*           function.</li>
 	*     </ul>
-	*	  Each property can reference a function or be written as an
-	*     inline function.
 	*
-	* context: Object reference for an event handler when it is implemented
+	* <p><strong>context</strong>: Object reference for an event handler when it is implemented
 	*          as a method of a base object. Defining "context" will preserve
-	*          the proper reference of "this" used in the event handler.
-	* headers: This is a defined object of client headers, as many as.
+	*          the proper reference of "this" used in the event handler.</p>
+	* <p><strong>headers</strong>: This is a defined object of client headers, as many as.
 	*         desired for the transaction.  These headers are sentThe object
-	*         pattern is:
+	*         pattern is:</p>
 	*		  <ul>
 	*		    <li>header: value</li>
 	*         </ul>
 	*
-	* timeout: This value, defined as milliseconds, is a time threshold for the
+	* <p><strong>timeout</strong>: This value, defined as milliseconds, is a time threshold for the
 	*          transaction. When this threshold is reached, and the transaction's
-	*          Complete event has not yet fired, the transaction will be aborted.
-	* arguments: Object, array, string, or number passed to all registered
+	*          Complete event has not yet fired, the transaction will be aborted.</p>
+	* <p><strong>arguments</strong>: Object, array, string, or number passed to all registered
 	*            event handlers.  This value is available as the second
 	*            argument in the "start" and "abort" event handlers; and, it is
 	*            the third argument in the "complete", "success", and "failure"
-	*            event handlers.
+	*            event handlers.</p>
 	*
 	* @method io
 	* @public
