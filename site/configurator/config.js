@@ -196,8 +196,11 @@ YAHOO.util.Event.onDOMReady(function() {
                 loadOptional: current.optional,
  
                 combo: current.combo,
-                base: current.base
             });
+
+            if (current.base != "") {
+                loader.base = current.base;
+            }
 
             loader.calculate();
 
