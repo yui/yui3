@@ -25,7 +25,7 @@ include "../inc/header.inc";
 									<li><a href="#using">Using the <?php echo $component;?></a>
 										<ul class="topspace">
 										<li><a href="#node-using">Using YUI.Node</a></li>
-										<li><a href="#node-issues">Known Issues</a></li>
+										<li><a href="#node-migration">Migration from YAHOO.util.Dom</a></li>
 										</ul></li>
 									<li><a href="#support">Support &amp; Community</a></li>
 									<li><a href="#filingbugs">Bug Reports &amp; Feature Requests</a></li>
@@ -167,26 +167,25 @@ include "../inc/header.inc";
 					<li><a href="http://www.w3.org/TR/css3-selectors/">CSS Level 3 Selectors</a></li>
 					<li><a href="http://www.w3.org/TR/selectors-api/">Selectors API</a></li>
 				</ul>
-<?php # include "../inc/mobileSection.inc";?>
-<?php
-include "../inc/support.inc";
-?>
-                                <h4>Migration Table</h4>
+
+            <h3 id="node-migration">Migration Table</h3>
+            <p>Most of the functionality from <code>YAHOO.util.Dom</code> is now available via <code>Node</code></p>
+            <p><strong>Note</strong> In the snippets below, <code>myNode</code> is an instance of <code>Node</code>.  Methods that normally would return DOM nodes now return Node instances.</p>
             <table class="yui-table">
                 <thead>
                     <tr>
-                        <th>2.x</th>
+                        <th>2.x (via YAHOO.util.Dom)</th>
                         <th>3.0</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Dom.addClass</td>
-                        <td>Node.addClass</td>
+                        <td>myNode.addClass</td>
                     </tr>
                     <tr>
                         <td>batch</td>
-                        <td>Y.each</td>
+                        <td>NodeList[methodName], NodeList.each, or Y.each</td>
                     </tr>
                     <tr>
                         <td>generateId</td>
@@ -194,163 +193,167 @@ include "../inc/support.inc";
                     </tr>
                     <tr>
                         <td>get</td>
-                        <td>Doc.get</td>
+                        <td>Y.get <strong>Note</strong> strings are now treated as selectors (e.g. "Y.get('#foo')" vs. "YAHOO.util.Dom.get('foo')")</td>
                     </tr>
                     <tr>
                         <td>getAncestorBy</td>
-                        <td>Node.ancestor</td>
+                        <td>myNode.ancestor</td>
                     </tr>
                     <tr>
                         <td>getAncestorByClassName</td>
-                        <td>Node.ancestor</td>
+                        <td>myNode.ancestor</td>
                     </tr>
                     <tr>
                         <td>getAncestorByTagName</td>
-                        <td>Node.ancestor</td>
+                        <td>myNode.ancestor</td>
                     </tr>
                     <tr>
                         <td>getChildren</td>
-                        <td>Node.get('children')</td>
+                        <td>myNode.get('children')</td>
                     </tr>
                     <tr>
                         <td>getChildrenBy</td>
-                        <td>Node.queryAll</td>
+                        <td>myNode.queryAll</td>
                     </tr>
                     <tr>
                         <td>getClientRegion</td>
-                        <td></td>
+                        <td>myNode.get('viewportRegion')</td>
                     </tr>
                     <tr>
                         <td>getDocumentHeight</td>
-                        <td>Y.Doc.get('height')</td>
+                        <td>myNode.get('docHeight')</td>
                     </tr>
                     <tr>
                         <td>getDocumentScrollLeft</td>
-                        <td>Y.Doc.get('scrollLeft')</td>
+                        <td>myNode.get('docScrollX')</td>
                     </tr>
                     <tr>
                         <td>getDocumentScrollTop</td>
-                        <td>Y.Doc.get('scrollTop')</td>
+                        <td>myNode.get('docscrollY')</td>
                     </tr>
                     <tr>
                         <td>getDocumentWidth</td>
-                        <td>Y.Doc.get('width')</td>
+                        <td>myNode.get('docWidth')</td>
                     </tr>
                     <tr>
                         <td>getElementsBy</td>
-                        <td>Y.Doc.queryAll</td>
+                        <td>myNode.queryAll</td>
                     </tr>
                     <tr>
                         <td>getElementsByClassName</td>
-                        <td>Y.Doc.queryAll</td>
+                        <td>myNode.queryAll</td>
                     </tr>
                     <tr>
                         <td>getFirstChild</td>
-                        <td>Y.Node.query</td>
+                        <td>myNode.query</td>
                     </tr>
                     <tr>
                         <td>getFirstChildBy</td>
-                        <td>Y.Node.query</td>
+                        <td>myNode.query</td>
                     </tr>
                     <tr>
                         <td>getLastChild</td>
-                        <td>Y.Node.query</td>
+                        <td>myNode.query</td>
                     </tr>
                     <tr>
                         <td>getLastChildBy</td>
-                        <td>Y.Node.query</td>
+                        <td>myNode.query</td>
                     </tr>
                     <tr>
                         <td>getNextSibling</td>
-                        <td>Y.Node.nextSibling</td>
+                        <td>myNode.next</td>
                     </tr>
                     <tr>
                         <td>getNextSiblingBy</td>
-                        <td>Y.Node.nextSibling</td>
+                        <td>myNode.next</td>
                     </tr>
                     <tr>
                         <td>getPreviousSibling</td>
-                        <td>Y.Node.previousSibling</td>
+                        <td>myNode.previous</td>
                     </tr>
                     <tr>
                         <td>getPreviousSiblingBy</td>
-                        <td>Y.Node.previousSibling</td>
+                        <td>myNode.previous</td>
                     </tr>
                     <tr>
                         <td>getRegion</td>
-                        <td></td>
+                        <td>myNode.get('region')</td>
                     </tr>
                     <tr>
                         <td>getStyle</td>
-                        <td>Y.Node.getStyle</td>
+                        <td>myNode.getStyle</td>
                     </tr>
                     <tr>
                         <td>getViewportHeight</td>
-                        <td>node.get('winHeight')</td>
+                        <td>myNode.get('winHeight')</td>
                     </tr>
                     <tr>
                         <td>getViewportWidth</td>
-                        <td>node.get('winWidth')</td>
+                        <td>myNode.get('winWidth')</td>
                     </tr>
                     <tr>
                         <td>getX</td>
-                        <td>Y.Node.getXY</td>
+                        <td>myNode.getXY</td>
                     </tr>
                     <tr>
                         <td>getY</td>
-                        <td>Y.Node.getXY</td>
+                        <td>myNode.getXY</td>
                     </tr>
                     <tr>
                         <td>getXY</td>
-                        <td>Y.Node.getXY</td>
+                        <td>myNode.getXY</td>
                     </tr>
                     <tr>
                         <td>hasClass</td>
-                        <td>Node.hasClass</td>
+                        <td>myNode.hasClass</td>
                     </tr>
                     <tr>
                         <td>inDocument</td>
-                        <td>Y.Node.contains</td>
+                        <td>myNode.inDoc</td>
                     </tr>
                     <tr>
                         <td>insertAfter</td>
-                        <td>Y.Node.insertBefore</td>
+                        <td>TBD</td>
                     </tr>
                     <tr>
                         <td>insertBefore</td>
-                        <td>Y.Node.insertBefore</td>
+                        <td>TBD</td>
                     </tr>
                     <tr>
                         <td>isAncestor</td>
-                        <td>Y.Node.contains</td>
+                        <td>myNode.contains (<strong>Note</strong> myNode.contains(myNode) === true)</td>
                     </tr>
                     <tr>
                         <td>removeClass</td>
-                        <td>Y.Node.removeClass</td>
+                        <td>myNode.removeClass</td>
                     </tr>
                     <tr>
                         <td>replaceClass</td>
-                        <td>Y.Node.replaceClass</td>
+                        <td>myNode.replaceClass</td>
                     </tr>
                     <tr>
                         <td>setStyle</td>
-                        <td>Y.Node.setStyle</td>
+                        <td>myNode.setStyle</td>
                     </tr>
                     <tr>
                         <td>setX</td>
-                        <td>Y.Node.setXY</td>
+                        <td>myNode.setXY</td>
                     </tr>
                     <tr>
                         <td>setY</td>
-                        <td>Y.Node.setXY</td>
+                        <td>myNode.setXY</td>
                     </tr>
                     <tr>
                         <td>setXY</td>
-                        <td>Y.Node.setXY</td>
+                        <td>myNode.setXY</td>
                     </tr>
                 </tbody>
             </table>
 
+<?php # include "../inc/mobileSection.inc";?>
+<?php
+include "../inc/support.inc";
+?>
 		</div>
 <div class="yui-u sidebar">
 
