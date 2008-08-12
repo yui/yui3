@@ -944,7 +944,7 @@ YUI.add("io", function (Y) {
 	* to facilitate cross-domain HTTP requests.  This is the
 	* interface for _initTransport
 	*
-	* @method transport
+	* @method io.transport
 	* @public
 	* @static
     * @param {object} t - configuration object for the transport.
@@ -957,7 +957,7 @@ YUI.add("io", function (Y) {
 	* request before it is sent to the resource. This is the
 	* interface for _queue().
 	*
-	* @method queue
+	* @method io.queue
 	* @public
 	* @static
     * @param {string} uri - qualified path to transaction resource.
@@ -970,7 +970,7 @@ YUI.add("io", function (Y) {
 	* @description Method to query the current size of the queue, or to
 	* set a maximum queue size.  This is the interface for _size().
 	*
-	* @method size
+	* @method io.queue.size
 	* @public
 	* @static
 	* @param {number} i - Specified maximum size of queue.
