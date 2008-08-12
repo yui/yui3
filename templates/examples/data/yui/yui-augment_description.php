@@ -1,4 +1,7 @@
-<h2 class="first">Instantiate YUI</h2>
+<h2 class="first">Using <code>augment</code></h2>
+
+
+<h3>Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -8,10 +11,11 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 // will be loaded automatically.
 </textarea>
 
-<h2>The example: Any class can be an Event.Target</h2>
+<h3>The example: Any class can be an <code>Event.Target</code></h3>
+
 <p>This example creates a custom class, then augments it with
 <code>Event.Target</code> (functionality included in the <a
-href="http://developer.yahoo.com/yui/event/">YUI Event Utility</a>).  Using the
+href="http://developer.yahoo.com/yui/3/event/">YUI Event Utility</a>).  Using the
 packaged functionality of <code>Event.Target</code>, the code for
 <code>Foo</code> is able to focus on the functionality unique to its
 purpose.</p>
@@ -49,10 +53,11 @@ function(Y) {
 
 </textarea>
 
-<h2>Composition, not inheritance</h2>
+<h3>Composition, not inheritance</h3>
 <p>If <code>Foo</code> were a part of a class hierarchy, it would be improper
-to include <code>Event.Target</code> in the inheritance chain, since the
-purpose of the two are fundamentally different.</p>
+to include <code>Event.Target</code> in the inheritance chain, because its custom event
+functionality is not an intrinsic characteristic but rather an ancillary, generic
+capability that many classes share.</p>
 
 <p>Unlike <code>extend</code>ed classes, the relationship between a class and
 the classes augmenting it is not an indication of type hierarchy.  The intent
@@ -60,7 +65,7 @@ of <code>augment</code> is to aid in extracting nonessential behaviors or
 behaviors shared by many classes, allowing for a composition-style class
 architecture.</p>
 
-<img src="<?= "$assetsDirectory/composition_diagram.png" ?>" alt="Diagram showing class hierarchy, highlighting has-a relationship"/>
+<img src="<?php echo "$assetsDirectory/composition_diagram.png" ?>" alt="Diagram showing class hierarchy, highlighting has-a relationship"/>
 
 <p>This may appear similar to multiple inheritance, but it's not.
 <code>augment</code> simply adds the public methods and members from one class
