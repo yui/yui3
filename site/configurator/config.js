@@ -139,37 +139,6 @@ YAHOO.util.Event.onDOMReady(function() {
         dp.SyntaxHighlighter.HighlightAll(outputEl.id);
     }
 
-    /*
-    function loaderPrep() {
-
-        console.log('loader: ', currentUse);
- 
-        YUI().use(function(Y) {
-            var loader = new Y.Loader({
-                require: currentUse,
-                force: currentUse,
-                filter: type 
-            });
-            loader.calculate();
-
-            var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
-
-            if (l) {
-                for (i=0; i<l; i=i+1)  {
-                    m = loader.moduleInfo[s[i]];
-                    if (m.type == 'js') {
-                        if (Dom.get('check_' + m.name)) {
-                            Dom.get('check_' + m.name).checked = true;
-                        }
-                    }
-                }
-            }
-            updateModList(true);
-            outputIncludes(loader);
-        });
-    };
-    */
-
     function primeLoader() {
 
         YUI().use(function(Y) {
@@ -257,52 +226,78 @@ YAHOO.util.Event.onDOMReady(function() {
 
     function handleModuleSelection(name, stateChange) {
         var cfg = configData[name];
+        if (cfg) {
+ 
+            if (stateChange != undefined) {
+                if (stateChange) {
+                    current.used[name] = true;
+                } else {
+                    delete current.used[name];
+                }
+            }
 
-        if (stateChange != undefined) {
-            if (stateChange) {
-                current.used[name] = true;
+            if(!cfg.isSubMod) {
+                handleModuleDependencies(name, cfg, stateChange);
             } else {
-                delete current.used[name];
+                handleSubModuleDependencies(name, cfg, stateChange);
+            }
+
+            if (stateChange !== undefined) {
+                primeLoader();
             }
         }
+    }
 
-        if (cfg && !cfg.isSubMod) {
-            subModsHeaderEl.innerHTML = "Sub Modules: " + name;
-
-            if (cfg.submodules) {
-                var submods = cfg.submodules;
-
-                subModsEl.innerHTML = "";
-
-                for (var submod in submods) {
-                    var submodcfg = configData[submod];
-                    if (submodcfg) {
-                        var isChecked = (stateChange === undefined && (current.used[submod] || current.used[name]) || stateChange) ? "checked" : "";
-
-                        var li = document.createElement('li');
-                        li.innerHTML = '<input type="checkbox" id="check_' + submod + 
-                                       '" ' + isChecked + '> <label for="check_' + submod + 
-                                       '">' + submod + ': <span class="size">(' + 
-                                       prettySize(submodcfg.sizes[current.filter]) + ')</span></label>';
-                        li.id = "mod_" + submod;
-                        subModsEl.appendChild(li);
- 
-                        if (stateChange !== undefined) {
-                            if (isChecked) {
-                                current.used[submod] = true;
-                            } else {
-                                delete current.used[submod];
-                            }
-                        }
+    function handleSubModuleDependencies(name, cfg, stateChange) {
+        if (stateChange !== undefined && !stateChange) {
+            var parentModule = cfg.module;
+            for (var sm in configData[parentModule].submodules) {
+                if (Dom.get("check_" + sm).checked) {
+                    current.used[sm] = true;
+                } else {
+                    if (current.used[sm]) {
+                        delete current.used[sm];
                     }
                 }
-            } else {
-                subModsEl.innerHTML = NO_SUBMODULES_MESSAGE;
             }
+            delete current.used[parentModule];
         }
+    }
 
-        if (stateChange !== undefined) {
-            primeLoader();
+    function handleModuleDependencies(name, cfg, stateChange) {
+        subModsHeaderEl.innerHTML = "Sub Modules: " + name;
+
+        if (cfg.submodules) {
+            var submods = cfg.submodules;
+
+            subModsEl.innerHTML = "";
+
+            for (var submod in submods) {
+                var submodcfg = configData[submod];
+                if (submodcfg) {
+                    var isChecked = (stateChange === undefined && (current.used[submod] || current.used[name]) || stateChange) ? "checked" : "";
+
+                    var li = document.createElement('li');
+                    li.innerHTML = '<input type="checkbox" id="check_' + submod + 
+                                   '" ' + isChecked + '> <label for="check_' + submod + 
+                                   '">' + submod + ': <span class="size">(' + 
+                                   prettySize(submodcfg.sizes[current.filter]) + ')</span></label>';
+                    li.id = "mod_" + submod;
+                    subModsEl.appendChild(li);
+
+                    if (stateChange !== undefined) {
+                        if (isChecked) {
+                            current.used[submod] = true;
+                        } else {
+                            delete current.used[submod];
+                        }
+                    }
+
+                    submodcfg.module = name;
+                }
+            }
+        } else {
+            subModsEl.innerHTML = NO_SUBMODULES_MESSAGE;
         }
     }
 
