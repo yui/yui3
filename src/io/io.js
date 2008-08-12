@@ -5,11 +5,11 @@ YUI.add("io", function (Y) {
 	*/
 
    /**
-    * The io class is a utility that brokers HTTP requests through a simplified
-    * interface.  Specifically, it allows JavaScript to make HTTP requests to
-    * a resource without a page reload.  The underlying transport for making
-    * same-domain requests is the XMLHttpRequest object.  YUI.io can also use
-    * Flash, if specified as a transport, for cross-domain requests.
+    * The IO class is a utility that brokers HTTP requests through a simplified
+    * interface.  It allows JavaScript to make HTTP requests to
+    * a resource without incurring a page reload.  The underlying transport for making
+    * same-domain requests is the XMLHttpRequest object.  IO can also use
+    * Flash, if specified as a transport, for making cross-domain requests.
     *
 	* @class io
 	*/
