@@ -25,5 +25,14 @@ $examples["json_freeze_thaw"] = array(
 	requires => array("node","json"),
 	highlightSyntax => true
 );
+$examples["json_convert_values"] = array(
+	name => "Adding new object members during parsing",
+	modules => array("json"),
+	description => "Using a currency conversion calculation to add a new price member to a JSON response",
+	sequence => array(1),
+	newWindow => "default",
+	requires => array("node","io","json-parse"),
+	highlightSyntax => true
+);
 
 ?>
