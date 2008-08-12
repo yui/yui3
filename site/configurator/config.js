@@ -61,7 +61,7 @@ YAHOO.util.Event.onDOMReady(function() {
                     legend: {
                         display:"right"
                     }
-                },
+                }
          });
     };
 
@@ -172,16 +172,18 @@ YAHOO.util.Event.onDOMReady(function() {
 
         YUI().use(function(Y) {
 
-            mods = [];
+            var mods = [];
             for (var i in current.used) {
                 if (YAHOO.lang.hasOwnProperty(current.used, i)) {
                     mods[mods.length] = i;
                 }
             }
-
-            console.log('loader require: ', mods);
-            console.log('loader rollup: ', current.rollup);
-            console.log('loader filter: ', current.filter);
+            
+            if (window.console) {
+                console.log('loader require: ', mods);
+                console.log('loader rollup: ', current.rollup);
+                console.log('loader filter: ', current.filter);
+            }
  
             var loader = new Y.Loader({
                 require: mods,
@@ -191,7 +193,7 @@ YAHOO.util.Event.onDOMReady(function() {
                 filter: current.filter,
                 loadOptional: current.optional,
  
-                combo: current.combo,
+                combo: current.combo
             });
 
             if (current.base != "") {
@@ -202,7 +204,9 @@ YAHOO.util.Event.onDOMReady(function() {
 
             var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
 
-            console.log('loader sorted: ', loader.sorted);
+            if (window.console) {
+                console.log('loader sorted: ', loader.sorted);
+            }
 
             current.used = getUsed(loader.sorted);
             current.sizes = getSizes(loader.sorted);
@@ -419,34 +423,30 @@ YAHOO.util.Event.onDOMReady(function() {
             }
         });
 
-        Event.on(configEl, 'change', function(e) {
-            var t = Event.getTarget(e), handled = true;
+       Event.on(fileTypeEl, 'change', function() {
+            current.filter = this.options[this.selectedIndex].value;
+            primeLoader();
+        });
 
-            switch(t.id) {
-                case fileTypeEl.id:
-                    current.filter = t.options[t.selectedIndex].value;
-                    break;
-                case comboEl.id:
-                    current.combo = t.checked;
-                    baseEl.disabled = t.checked;
-                    break;
-                case rollupEl.id:
-                    current.rollup = t.checked;
-                    break;
-                case baseEl.id:
-                    current.base = YAHOO.lang.trim(t.value);
-                    break;
-                case optionalEl.id:
-                    current.optional = this.checked;
-                    break;
-                default:
-                    handled = false;
-                    break;
-            }
+        Event.on(comboEl, 'change', function() {
+            current.combo = this.checked;
+            baseEl.disabled = this.checked;
+            primeLoader();
+        });
 
-            if (handled) {
-                primeLoader();
-            }
+        Event.on(rollupEl, 'change', function() {
+            current.rollup = this.checked;
+            primeLoader();
+        });
+
+        Event.on(baseEl, 'change', function() {
+            current.base = YAHOO.lang.trim(this.value);
+            primeLoader();
+        });
+
+        Event.on(optionalEl, 'change', function() {
+            current.optional = this.checked;
+            primeLoader();
         });
     }
 
