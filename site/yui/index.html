@@ -15,8 +15,8 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-                    <p>The YUI Global Object provides a single global starting point which all of the YUI Library code interacts with. It must be included on every page that utilizes the YUI Library, and it must appear before any of the other YUI components.</p>
-                    <p>The YUI Global Object also contains a number of methods that are used throughout the library, however it should not be used in its default state. The YUI Global Object is an instatiatable object used to create YUI instances.</p>
+                    <p>The YUI module is the single core dependency for all YUI 3.x implementations.  It must be included on all pages that use YUI &mdash; and it is the only dependency required to start writing YUI code.  The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a "seed" for your implementation.  You provide the YUI module list you're using and the code that makes use of those modules; YUI will fetch all necessary components in a single, optimized HTTP request before executing your dependent code.  While you may use some of the script and CSS loading facilities of the YUI module in your own implementation, this module's core purpose is to serve as a small seed from which complex, highly modular implementations can grow.</p>
+                    <p>The YUI module creates a global YUI object.  This object is instantiable, and it is used to create YUI instances to which are bound specific functional modules.  A page can share a single YUI instance or can use different, insular instances for each piece of functionality on the page.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
