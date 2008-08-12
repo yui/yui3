@@ -20,8 +20,10 @@ YAHOO.util.Event.onDOMReady(function() {
 
         },
 
+        modInfoEl = Dom.get('modInfo'), 
         modsEl = Dom.get('mods'), 
         subModsEl = Dom.get('subMods'), 
+        configEl = Dom.get('config'), 
         comboEl = Dom.get('combo'), 
         fileTypeEl = Dom.get('fileType'),
         rollupEl = Dom.get('rollup'),
@@ -49,11 +51,9 @@ YAHOO.util.Event.onDOMReady(function() {
         data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
         data.responseSchema = { fields: [ "name", "size" ] };
        
-//        if (!chart) {
+        YAHOO.widget.Chart.SWFURL = "http:/"+"/yui.yahooapis.com/2.5.2/build/charts/assets/charts.swf";
 
-            YAHOO.widget.Chart.SWFURL = "http:/"+"/yui.yahooapis.com/2.5.2/build/charts/assets/charts.swf";
-
-            chart = new YAHOO.widget.PieChart( "chart", data, {
+        chart = new YAHOO.widget.PieChart( "chart", data, {
                 dataField: "size",
                 categoryField: "name",
                 style: {
@@ -62,11 +62,7 @@ YAHOO.util.Event.onDOMReady(function() {
                         display:"right"
                     }
                 },
-            });
-            
-//        } else {
-//            chart.set("dataSource", data);
-//        }
+         });
     };
 
     function prettySize(size) {
@@ -379,6 +375,16 @@ YAHOO.util.Event.onDOMReady(function() {
 
     function bindFormElements() {
 
+        comboEl.checked = current.combo;
+        optionalEl.checked = current.optional;
+        rollupEl.checked = current.rollup;
+        fileTypeEl.value = current.filter;
+        baseEl.value = current.base;
+
+        if (current.combo) {
+            baseEl.disabled = true;
+        }
+
         Event.on(modsEl, 'click', function(e) {
             var t = Event.getTarget(e), name;
 
@@ -399,48 +405,52 @@ YAHOO.util.Event.onDOMReady(function() {
             }
         });
 
-        Event.on(modsEl, 'mouseover', function(e) {
+        Event.on(modInfoEl, 'mouseover', function(e) {
             var t = Event.getTarget(e), name;
             if (t.tagName.toLowerCase() == 'li') {
                 Dom.addClass(t, "yui-hover");
             }
         });
 
-        Event.on(modsEl, 'mouseout', function(e) {
+        Event.on(modInfoEl, 'mouseout', function(e) {
             var t = Event.getTarget(e), name;
             if (t.tagName.toLowerCase() == 'li') {
                 Dom.removeClass(t, "yui-hover");
             }
         });
 
-        Event.on(fileTypeEl, 'change', function() {
-            current.filter = this.options[this.selectedIndex].value;
-            primeLoader();
-        });
+        Event.on(configEl, 'change', function(e) {
+            var t = Event.getTarget(e), handled = true;
 
-        Event.on(comboEl, 'change', function() {
-            current.combo = this.checked;
-            baseEl.disabled = this.checked;
-            primeLoader();
-        });
+            switch(t.id) {
+                case fileTypeEl.id:
+                    current.filter = t.options[t.selectedIndex].value;
+                    break;
+                case comboEl.id:
+                    current.combo = t.checked;
+                    baseEl.disabled = t.checked;
+                    break;
+                case rollupEl.id:
+                    current.rollup = t.checked;
+                    break;
+                case baseEl.id:
+                    current.base = YAHOO.lang.trim(t.value);
+                    break;
+                case optionalEl.id:
+                    current.optional = this.checked;
+                    break;
+                default:
+                    handled = false;
+                    break;
+            }
 
-        Event.on(rollupEl, 'change', function() {
-            current.rollup = this.checked;
-            primeLoader();
-        });
-
-        Event.on(baseEl, 'change', function() {
-            current.base = YAHOO.lang.trim(this.value);
-            primeLoader();
-        });
-
-        Event.on(optionalEl, 'change', function() {
-            current.optional = this.checked;
-            primeLoader();
+            if (handled) {
+                primeLoader();
+            }
         });
     }
 
-    function initModules() {
+    function addModules() {
 
         var sorted = [], cfg, name;
 
@@ -470,7 +480,7 @@ YAHOO.util.Event.onDOMReady(function() {
         }
     }
 
-    initModules();
+    addModules();
     bindFormElements();
     primeLoader();
 
