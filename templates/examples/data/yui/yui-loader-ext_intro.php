@@ -4,7 +4,7 @@ how to define external modules that can be loaded alongside YUI.
 </p>
 <p>This example works as follows:</p>
 <ol>
-<li>Instantiate as <code>YUI</code> instance with a configuration object that specifies parameters we need to dynamically load new modules.</li>
+<li>A <code>YUI</code> instance is created with a configuration object that defines parameters we need to dynamically load new modules.</li>
 <li><code>node</code> is used so that we can bind an event listener to a button.  YUI will dynamically fetch <code>node</code> and its
 dependencies.  By default, these dependencies will be fetched from the Yahoo! CDN and will be combined into a single file.</li>
 <li>A click listener is added to a button.</li>
