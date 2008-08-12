@@ -37,12 +37,25 @@ $prepend='
             font-size:85%;
             color:#aaa;
         }
+        .desc {
+            border:1px solid #000;
+            background-color: #fff;
+            padding:5px;
+            font-size:85%;
+        }
+
+        #modDesc.yui-hidden, #subModDesc.yui-hidden {
+            display:none;
+        }
+
         #subMods.modList li.yui-hover {
             cursor:auto;
         }
+
         #config label {
             margin-right: 2em;
         }
+
         #chart {
             height:20em;
         }
@@ -81,7 +94,7 @@ include "../inc/header.inc";
                                 <div class="hd">Modules</div>
                                 <div class="bd">
                                     <ul id="mods" class="modList"></ul>
-                                    <div id="modDesc" class="desc"></div>
+                                    <div id="modDesc" class="desc yui-hidden"></div>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +103,7 @@ include "../inc/header.inc";
                                 <div class="hd">Sub Modules</div>
                                 <div class="bd">
                                     <ul id="subMods" class="modList"></ul>
-                                    <div id="subModDesc" class="desc"></div>
+                                    <div id="subModDesc" class="desc yui-hidden"></div>
                                 </div>
                             </div>
                         </div>

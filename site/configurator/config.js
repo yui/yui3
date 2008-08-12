@@ -22,6 +22,8 @@ YAHOO.util.Event.onDOMReady(function() {
 
         modInfoEl = Dom.get('modInfo'), 
         modsEl = Dom.get('mods'), 
+        modDescEl = Dom.get('modDesc'), 
+        subModDescEl = Dom.get('subModDesc'), 
         subModsEl = Dom.get('subMods'), 
         configEl = Dom.get('config'), 
         comboEl = Dom.get('combo'), 
@@ -278,10 +280,11 @@ YAHOO.util.Event.onDOMReady(function() {
                         var isChecked = (stateChange === undefined && (current.used[submod] || current.used[name]) || stateChange) ? "checked" : "";
 
                         var li = document.createElement('li');
-                        li.innerHTML = '<input type="checkbox" id="check_' + submodcfg.info.name + 
-                                       '" ' + isChecked + '> <label for="check_' + submodcfg.info.name + 
-                                       '">' + submodcfg.info.name + ': <span class="size">(' + 
+                        li.innerHTML = '<input type="checkbox" id="check_' + submod + 
+                                       '" ' + isChecked + '> <label for="check_' + submod + 
+                                       '">' + submod + ': <span class="size">(' + 
                                        prettySize(submodcfg.sizes[current.filter]) + ')</span></label>';
+                        li.id = "mod_" + submod;
                         subModsEl.appendChild(li);
  
                         if (stateChange !== undefined) {
@@ -302,80 +305,6 @@ YAHOO.util.Event.onDOMReady(function() {
             primeLoader();
         }
     }
-/*
-    function updateModList(currList) {
-
-        // console.info('updateModList: ', check);
-
-        var modEls = Sel.query('#modlist li input');
-
-        var sizes = [],
-            used = [];
-
-        subModsEl.innerHTML = '';
-
-        for (var i = 0; i < modEls.length; i++) {
-
-            var modEl = modEls[i];
-            var mod = modEl.id.replace('check_', '');
-            var modcfg = configData[mod];
-
-            if (currList) {
-                modEl.checked = currList[modcfg.info.name];
-            }
-
-            if (modEl.checked) {
-
-                if (!modcfg.submodules) {
-
-                    used[used.length] = mod;
-                    sizes[sizes.length] = { 
-                        name: mod, 
-                        size: modcfg.sizes[current.filter] 
-                    };
-
-                    var li = document.createElement('li');
-                    li.innerHTML = '<input type="checkbox" id="mod_' + modcfg.info.name + 
-                                  '" checked> <label for="mod_' + modcfg.info.name + '">' + 
-                                  modcfg.info.name + ': (' + prettySize(modcfg.sizes[current.filter]) + ')</label>';
-                    subModsEl.appendChild(li);
- 
-                } else {
-
-                    var submods = modcfg.submodules;
-
-                    for (var m in submods) {
-                            var submodcfg = submods[m];
-                            if (submodcfg) {
-
-                                used[used.length] = m;
-                                sizes[sizes.length] = { 
-                                    name: submodcfg.info.name, 
-                                    size: submodcfg.sizes[current.filter] 
-                                };
-
-                                var isChecked = !currList || currList[m];
-
-                                var li = document.createElement('li');
-                                li.innerHTML = '<input type="checkbox" id="mod_' + submodcfg.info.name + 
-                                               '" ' + isChecked + '> <label for="mod_' + submodcfg.info.name + 
-                                               '">' + submodcfg.info.name + ': (' + prettySize(submodcfg.sizes[current.filter]) +
-                                               ')</label>';
-                                subModsEl.appendChild(li);
-                            }
-                    }
-                }
-            }
-        }
-        
-        if (!currList) {
-            primeLoader(used);
-        }
-        renderChart(sizes);
-
-        fileSizes = sizes;
-    };
-*/
 
     function bindFormElements() {
 
@@ -410,9 +339,17 @@ YAHOO.util.Event.onDOMReady(function() {
         });
 
         Event.on(modInfoEl, 'mouseover', function(e) {
-            var t = Event.getTarget(e), name;
+            var t = Event.getTarget(e), name, descEl, desc;
             if (t.tagName.toLowerCase() == 'li') {
                 Dom.addClass(t, "yui-hover");
+ 
+                name = t.id.replace('mod_', '');
+                desc = configData[name].info.desc;
+                if (desc) {
+                    descEl = (t.parentNode.id == "subMods") ? subModDescEl : modDescEl;
+                    descEl.innerHTML = desc;
+                    Dom.removeClass(descEl, "yui-hidden");
+                }
             }
         });
 
@@ -420,10 +357,16 @@ YAHOO.util.Event.onDOMReady(function() {
             var t = Event.getTarget(e), name;
             if (t.tagName.toLowerCase() == 'li') {
                 Dom.removeClass(t, "yui-hover");
+
+                name = t.id.replace('mod_', '');
+                descEl = (t.parentNode.id == "subMods") ? subModDescEl : modDescEl;
+                descEl.innerHTML = "";
+                Dom.addClass(descEl, "yui-hidden");
             }
         });
 
-       Event.on(fileTypeEl, 'change', function() {
+        // TODO: Change does not seem to bubble in IE6. See if there are alternatives
+        Event.on(fileTypeEl, 'change', function() {
             current.filter = this.options[this.selectedIndex].value;
             primeLoader();
         });
