@@ -1,4 +1,6 @@
-<h2 class="first">Instantiate YUI</h2>
+<h2 class="first">Using <code>mix</code></h2>
+
+<h3>Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
 <script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
@@ -9,7 +11,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 function(Y) {
 </textarea>
 
-<h2>Adding functionality to individual objects</h2>
+<h3>Adding functionality to individual objects</h3>
 <p>Static classes, such as <code>DOM</code>, are implemented as object literals
 with keys corresponding to public class methods.  As such, static classes
 aren't candidates for instantiation or prototype extention.  To add
@@ -69,7 +71,7 @@ Y.on('click', Y.example.PageController.logConst,
 
 </textarea>
 
-<h2>Much like <code>augment</code></h2>
+<h3>Much like <code>augment</code></h3>
 <p><code>mix</code> works in similar fashion to <code>augment</code>.  In fact, <code>augment</code> uses <code>mix</code> under the hood.  However, rather than adding functionality to class definitions (i.e. function prototypes), <code>mix</code> can work with any object, including object literals and class instances.</p>
 
 <p>See <code>augment</code> and <code>extend</code> for other techniques to help manage your code structure.</p>
