@@ -128,7 +128,7 @@ a.fx.on('tween', function() {
     if (Y.DD.DDM.activeDrag) {
         //Size this shim
         this.drop.sizeShim();
-        //Force an over target check since we might not be moving the mouse..
+        //Force an over target check since we might not be moving the mouse.
         Y.Lang.later(0, a, function() {
             this.drop._handleTargetOver();
         });
@@ -224,7 +224,7 @@ YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
             //Run this animation
             this.fx.run();
             
-            //others that where dropped on..
+            //others that were dropped on.
             Y.each(e.others, function(v, k) {
                 var node = v.get('node');
                 node.fx.run();
@@ -238,7 +238,7 @@ YUI().use('dd-drop', 'anim', 'dd-plugin', 'dd-drop-plugin', function(Y) {
             if (Y.DD.DDM.activeDrag) {
                 //Size this shim
                 this.drop.sizeShim();
-                //Force an over target check since we might not be moving the mouse..
+                //Force an over target check since we might not be moving the mouse.
                 Y.Lang.later(0, a, function() {
                     this.drop._handleTargetOver();
                 });
