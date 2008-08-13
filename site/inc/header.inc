@@ -79,10 +79,14 @@ if ($prepend) { /*there is additional css or header information for this page --
                         <li>Web</li -->
                     </ul>
                     <span class="srchFld">
-						<form action="http://search.yahoo.com/search" method="get"><input type="text" name="va" value="" id="searchFld">
-							<input type="hidden" name="vs" value="developer.yahoo.com">
-							<input type="hidden" name="vs" value="yuiblog.com">
-							<input type="submit" naame="sub" value="Search" id="sub" class="ygbt">
+						<form action="http://search.yahoo.com/search" method="get">
+							<div id="sitesearch">
+								<input type="text" name="va" value="" id="searchinput">
+								<input type="hidden" name="vs" value="developer.yahoo.com">
+								<input type="hidden" name="vs" value="yuiblog.com">
+								<input type="submit" name="sub" value="Search" id="searchsubmit" class="ygbt">
+							</div>
+							<div id="searchcontainer"></div>
 						</form>
 					</span>
                 </div>

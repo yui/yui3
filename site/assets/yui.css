@@ -237,8 +237,8 @@ p.loggerButton {text-align:center;}
 
 /*for site search suggest via autocomplete*/
 #ygunav {overflow:visible !important;}
-#sitesearch {float:right; width:37em; position:relative; text-align:right; z-index:1000;}
-#searchinput {width:15em; font-size:11px; font-weight:bold; position:relative; top:2px;}
+/*#sitesearch {float:right; width:37em; position:relative; text-align:right; z-index:1000;} */
+/*#searchinput {width:15em; font-size:11px; font-weight:bold; position:relative; top:2px;}*/
 #searchcontainer {text-align:left; width:40em; overflow:hidden; line-height:normal; position:absolute;}
 #searchcontainer .yui-ac-bd {font-size:10px; color:#666; background-color:#EAEFF2; text-align:left;}
 #searchcontainer li {overflow:hidden; text-overflow:ellipsis; -o-text-overflow:ellipsis; cursor:pointer; padding-top:2px; }
@@ -510,9 +510,9 @@ table.auto {width:auto;}
 #headeraR ul li.first{border-left:0;}
 #searchArea{z-index:190;position:relative;margin-top:1.2em;width:29em;text-align:right;}
 ul.srchOptns li{margin-top:.3em;}
-#searchFld{margin:0 2px 0 .4em;width:15em;height:1.3em;font-size:85%;font-weight:bold;}
 
-	
+/*#searchFld{margin:0 2px 0 .4em;width:15em;height:1.3em;font-size:85%;font-weight:bold;} */
+	{margin:0 2px 0 .4em;width:15em;height:1.3em;font-size:85%;font-weight:bold;}
 	#doc3 {margin:0;}
 	#doc3 #bd {margin-left:10px;margin-right:10px;}
 	
