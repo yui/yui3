@@ -18,7 +18,7 @@ include "../inc/header.inc";
                     <div id="resources" class="panel">
                         <div class="hd">Results <span id="finalWeight"></span></div>
                         <div class="bd">
-                            <textarea class="HTML" cols="60" rows="4" id="loaderOutput" name="loaderOutput"><!-- Tags generated will be displayed here --></textarea>
+                            <textarea class="HTML" cols="60" rows="6" id="loaderOutput" name="loaderOutput"><!-- Generated tags will be displayed here --></textarea>
                         </div>
                     </div>
                     <div id="config" class="panel">
@@ -31,9 +31,9 @@ include "../inc/header.inc";
                                 </select>
                                 </label>
                                 <label>Base Path: <input type="text" id="base" value="" disabled/></label>
-                                <label><input type="checkbox" id="combo" checked /> Use Combo Handler</label>
+                                <label><input type="checkbox" id="combo" checked /> Combine JS Files</label>
                                 <label><input type="checkbox" id="rollup" checked /> Allow Rollups</label>
-                                <label><input type="checkbox" id="optional" checked /> Load Optional</label>
+                                <label><input type="checkbox" id="optional" checked /> Include Optional Modules</label>
                         </div>
                     </div>
                     <div class="yui-gb first" id="modInfo">

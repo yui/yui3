@@ -32,9 +32,8 @@
 
 #modPanel .modGroupHd {
     border-bottom:1px solid #D9D9D9;
-    font-weight:normal;
+    font-weight:bold;
     margin-bottom:12px;
-    text-transform:uppercase;
 }
 
 .modList {
@@ -46,7 +45,7 @@
 }
 
 .modList li.yui-hover {
-    background-color:#6C8EA1;
+    background-color:#a1c5da;
     color:#ffffff;
     cursor:pointer;
 }
