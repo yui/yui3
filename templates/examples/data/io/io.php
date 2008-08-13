@@ -4,7 +4,7 @@
 $modules["io"] = array(
 							"name" => "IO Utility",/*module/yui component name*/
 							"type" => "utility",/*utility, widget or css*/
-							"description" => "<p>The IO Utility provides support for HTTP transactions using a convenient interface normalized across the A-Grade browsers.  It also supports </p>", /*this description appears on the component's examples index page; USE COMPLETE MARKUP...THE FORMATTING SCRIPT WILL NOT WRAP THIS IN <P> TAGS, AS THERE MAY BE MORE THAN ONE PARAGRAPH.*/
+							"description" => "<p>The IO Utility provides support for HTTP transactions using a convenient interface normalized across the A-Grade browsers.</p>", /*this description appears on the component's examples index page; USE COMPLETE MARKUP...THE FORMATTING SCRIPT WILL NOT WRAP THIS IN <P> TAGS, AS THERE MAY BE MORE THAN ONE PARAGRAPH.*/
 							"cheatsheet" => false
 						);
 

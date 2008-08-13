@@ -2,7 +2,7 @@
 
 $modules["node"] = array(
 		"name" => "Node Utility",
-		"type" => "utility",
+		"type" => "core",
         /*this description appears on the component's examples index page*/
 		"description" => "Node Examples", 
 		"cheatsheet" => false 

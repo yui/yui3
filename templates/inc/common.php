@@ -10,8 +10,9 @@ $loggerAvailable = false;
 $aTypes = array('core', 'utility', 'tool', 'css');
 
 $oTypeNames = array('css'=>'YUI 3 CSS Foundation',
+					'core'=>'YUI 3 Core',
                     'utility'=>'YUI 3 Utilities', 
-                    'core'=>'YUI 3 Core JavaScript', 
+                    'infra'=>'YUI 3 Component Infrastructure',
                     'tool'=>'YUI 3 Developer Tools');
 
 //ydn indicates whether this is for the website or for distribution
