@@ -21,7 +21,7 @@ YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 			id:'flash', //We'll reference this id in the xdr configuration of our transaction.
 			yid: Y.id,  //The yid provides a link from the Flash-based XDR engine
 						//and the YUI instance.
-			src:'../../build/io/io.swf' //Relative path to the .swf file from the current page.
+			src:'../../build/io/io.swf?t=' + new Date().valueOf().toString() //Relative path to the .swf file from the current page.
 		};
 		Y.io.transport(xdrConfig);
 
