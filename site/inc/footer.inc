@@ -28,7 +28,10 @@ dp.SyntaxHighlighter.HighlightAll('code');
 if (substr_count($_SERVER["REQUEST_URI"], "articles/hosting")) {
 	echo '<script type="text/javascript" src="/yui/build/yuiloader-dom-event/yuiloader-dom-event.js?v='.$yuiCurrentVersion.'"></script>';
 } else {
-	echo '<script type="text/javascript" src="http://yui.yahooapis.com/combo?'.$yuiUseVersion.'/build/yuiloader-dom-event/yuiloader-dom-event.js&'.$yuiUseVersion.'/build/autocomplete/autocomplete-min.js"></script>';
+	//If this isn't the Configurator page, include the basic rollup:
+	if (!substr_count($_SERVER["REQUEST_URI"], "configurator")) {
+		echo '<script type="text/javascript" src="http://yui.yahooapis.com/combo?'.$yuiUseVersion.'/build/yuiloader-dom-event/yuiloader-dom-event.js&'.$yuiUseVersion.'/build/autocomplete/autocomplete-min.js"></script>';
+	}
 }
 
 

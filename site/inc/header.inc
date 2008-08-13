@@ -36,7 +36,7 @@ if (!isset($assetsDirectory)) { $assetsDirectory="assets/"; }
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title><?php if (isset($title)) { echo $title ; } else {?>Yahoo! Search Web Services<?php } ?></title>
+	<title><?php if (isset($title)) { echo $title ; } else {?>Yahoo! User Interface Library<?php } ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <?php if (isset($metainfo)) { echo $metainfo; } ?>
 	<link rel="stylesheet" type="text/css" href="/yui/3/assets/yui.css">
