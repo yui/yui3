@@ -13,7 +13,7 @@
 	<!--Use a real form that works without JavaScript:-->
 	<form method="GET" action="http://siteexplorer.search.yahoo.com/advsearch" id="siteExplorer">
 
-        <label for="searchString">Site URL:</label> <input type="text" name="searchString" id="p" value="http://developer.yahoo.com/yui/3" size="40">
+        <label for="searchString">Site URL:</label> <input type="text" name="searchString" id="p" value="http://developer.yahoo.com/yui" size="40">
         
         <input type="hidden" name="bwm" value="i">
         <input type="hidden" name="bwms" value="p">
