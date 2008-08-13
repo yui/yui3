@@ -53,7 +53,7 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
 	Y.io.transport({
 		id: 'flash',
 		yid: Y.id,
-		src: assetsDir + 'io.swf'
+		src: yuiConfig.base + 'io/io.swf'
     });
     
     //Simple method for stopping event propagation
@@ -79,7 +79,7 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
         //Walk the list
         Y.each(list, function(v, k) {
             //Get all the li's in the list
-            var lis = Y.Node.get('#' + k).queryAll('li.item');
+            var lis = Y.all('#' + k + ' li.item');
             lis.each(function(v2, k2) {
                 //Get the drag instance for the list item
                 var dd = Y.DD.DDM.getDrag('#' + v2.get('id'));
@@ -502,15 +502,13 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
     });
 
     //Create simple targets for the main lists..
-    
-    var uls = Y.Node.get('#play').queryAll('ul.list');
-    Y.each(uls, function(v, k, items) {
+    var uls = Y.all('#play ul.list');
+    uls.each(function(v, k, items) {
         var tar = new Y.DD.Drop({
             node: items.item(k),
             padding: '20 0'
         });
     });
-    
     
     
     Y.on('io:xdrReady', function() {
