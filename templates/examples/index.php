@@ -92,7 +92,7 @@ foreach($aTypes as $thisType) {
                         <p>The scores of examples on this page are a worthwhile place to start, but the official YUI examples are just the tip of the iceberg when it comes to YUI sample code and YUI-powered sites from which you can gather additional ideas.  Here are a few YUI-related sites that we find ourselves going back to again and again.</p>
                         <ul>
                             <li><a href="http://blog.davglass.com/files/yui/">Dav Glass's Blog</a>: Dav, who is now a member of the YUI team, has the most extensive set of YUI-focused examples anywhere on the web.</li>
-                            <li><a href="http://yazaar.org/">Planet Yazaar</a>: YUI community member Ted Husted started the Yazaar site to collect great code samples from around the YUI world.</li>
+                            <li><a href="http://www.satyam.com.ar/yui/">Satyam's YUI Site</a>: Satyam is a well-known YUI expert who has assisted thousands of developers with their YUI implementations.</li>
                         </ul>
                     </div>
                 </div>
