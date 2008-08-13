@@ -1,5 +1,9 @@
 #!/home/y/bin/php
 <?php
+#!/usr/bin/php
+
+//This path may need to be changed
+$gzip = '/usr/bin/gzip';
 
 $builddir = '../../build/';
 
@@ -42,6 +46,7 @@ foreach ($modules as $mod => $config) {
         $config->sizes = new stdclass();
     }
     if (is_file($path)) {
+        /*
         $size = filesize($path);
         $dPath = str_replace('-min', '-debug', $path);
         $fPath = str_replace('-min', '', $path);   
@@ -52,6 +57,8 @@ foreach ($modules as $mod => $config) {
         if (is_file($fPath)) {
             $config->sizes->raw = filesize($fPath);
         }
+        */
+        getFileSizes($config, $path);
     }
 
     if (isset($config->submodules)) {
@@ -143,5 +150,42 @@ function PrettySize($size) {
         }       
     }
     return $mysize;
+}
+
+function getFileSizes($config, $path) {
+    global $gzip;
+    if (!is_dir('./tmp')) {
+        mkdir('./tmp');
+    }
+    $fileName = pathinfo($path);
+    $size = filesize($path);
+    copy($path, './tmp/'.$fileName['basename']);
+    system($gzip.' ./tmp/'.$fileName['basename']);
+    $gzSize = filesize('./tmp/'.$fileName['basename'].'.gz');
+    unlink('./tmp/'.$fileName['basename'].'.gz');
+
+
+    $dPath = str_replace('-min', '-debug', $path);
+    $fPath = str_replace('-min', '', $path);   
+    $config->sizes->min = $size;
+    $config->sizes->mingz = $gzSize;
+    if (is_file($dPath)) {
+        $dFileName = pathinfo($path);
+        copy($dPath, './tmp/'.$dFileName['basename']);
+        $config->sizes->debug = filesize($dPath);
+        system($gzip.' ./tmp/'.$dFileName['basename']);
+        $gzSize = filesize('./tmp/'.$dFileName['basename'].'.gz');
+        $config->sizes->debuggz = $gzSize;
+        unlink('./tmp/'.$dFileName['basename'].'.gz');
+    }
+    if (is_file($fPath)) {
+        $fFileName = pathinfo($path);
+        copy($fPath, './tmp/'.$fFileName['basename']);
+        $config->sizes->raw = filesize($fPath);
+        system($gzip.' ./tmp/'.$fFileName['basename']);
+        $gzSize = filesize('./tmp/'.$fFileName['basename'].'.gz');
+        $config->sizes->rawgz = $gzSize;
+        unlink('./tmp/'.$fFileName['basename'].'.gz');
+    }
 }
 ?>
