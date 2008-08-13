@@ -4,16 +4,21 @@
 }
 
 .panel .hd {
-    background-color:#6C8EA1;
-    color: #fff;
-    font-weight:bold;
+    background:url(../assets/gradient-mod.png) repeat-x 0 0;
+    font-weight:normal;
     font-size:108%;
     padding:5px;
+    padding-right:0;
+    color:#89B31F;
 }
 
 .panel .bd {
-    background:#F2FBFF url(../assets/gradient-promo.png) repeat-x scroll 0 0;
     padding:5px;
+    padding-right:0;
+}
+
+#resources .bd {
+    padding-right:5px;
 }
 
 #loaderOutput {
@@ -32,8 +37,12 @@
 
 #modPanel .modGroupHd {
     border-bottom:1px solid #D9D9D9;
-    font-weight:bold;
-    margin-bottom:12px;
+    font-weight:normal;
+    text-transform:uppercase;
+    color:#666;
+    font-size:85%;
+    margin:6px;
+    padding:4px 5px 4px 0pt;
 }
 
 .modList {
@@ -45,7 +54,7 @@
 }
 
 .modList li.yui-hover {
-    background-color:#a1c5da;
+    background-color:#edff9f;
     color:#ffffff;
     cursor:pointer;
 }
@@ -70,7 +79,6 @@
 }
 
 #modDesc {
-    clear:left;
     border:1px solid #000;
     background-color: #edff9f;
     padding:5px;

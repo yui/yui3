@@ -49,7 +49,7 @@
     var Y = YUI();
 
     var outputAnim = new YAHOO.util.ColorAnim(outputEl, 
-        {backgroundColor: {from: '#8DD5E7', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
+        {backgroundColor: {from: '#edff9f', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
     );
 
     function prettySize(size) {
@@ -265,8 +265,8 @@
         }
    
         var prettyTotal = prettySize(total);
-        totalEl.innerHTML = 'Total Weight: ' + prettyTotal;
-        totalWeightEl.innerHTML = "(Total Weight: " + prettyTotal + ")";
+        totalEl.innerHTML = 'Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
+        totalWeightEl.innerHTML = ' - Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
     }
 
     function handleModuleSelection(name, stateChange) {
@@ -365,7 +365,7 @@
                 }
             }
         } else {
-            subModsEl.innerHTML = "<li><strong>" + name  + "</strong> does not have any sub modules.</li>";
+            subModsEl.innerHTML = "<li>&quot;" + name  + "&quot; does not have any sub modules.</li>";
         }
     }
 
