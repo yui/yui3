@@ -2342,6 +2342,8 @@ var BASE = 'base',
         event: { 
             requires: ['oop']
         },
+
+        get: { },
         
         io: { 
             requires: ['node']
@@ -2356,6 +2358,8 @@ var BASE = 'base',
                 }
             }
         },
+
+        loader: { },
         
         oop: { 
             requires: ['yui-base']
