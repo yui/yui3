@@ -46,6 +46,7 @@
     var NO_SUBMODULES_MESSAGE = "This module does not have any sub-modules";
     var GB = 1024 * 1024 * 1024;
     var MB = 1024 * 1024;
+    var Y = YUI();
 
     function prettySize(size) {
         if (size > GB) {
@@ -108,69 +109,66 @@
 
     function primeLoader() {
 
-        YUI().use(function(Y) {
+        var mods = [], hackYuiRollup = false;
 
-            var mods = [], hackYuiRollup = false;
+        // Loader Hacks
 
-            // Loader Hacks
+        // Rollup yui if yui-base, get and loader selected
+        if (current.rollup 
+            && current.selected["yui-base"] 
+            && current.selected["get"] 
+            && current.selected["loader"] 
+            && !current.selected["yui"]) {
+           hackYuiRollup = true;
+           mods[mods.length] = "yui";
+        }
 
-            // Rollup yui if yui-base, get and loader selected
-            if (current.rollup 
-                && current.selected["yui-base"] 
-                && current.selected["get"] 
-                && current.selected["loader"] 
-                && !current.selected["yui"]) {
-               hackYuiRollup = true;
-               mods[mods.length] = "yui";
-            }
+        // Make sure either yui or yui-base are included
+        if (mods.length == 0 && !current.selected["yui-base"] && !current.selected["yui"]) {
+            mods[mods.length] = "yui-base";
+        }
 
-            // Make sure either yui or yui-base are included
-            if (mods.length == 0 && !current.selected["yui-base"] && !current.selected["yui"]) {
+        // Make sure yui, yui-base are added first, with yui superceding yui-base
+        if (mods.length == 0 && (current.selected["yui-base"] || current.selected["yui"])) {
+            if (current.selected["yui"]) {
+                mods[mods.length] = "yui";
+            } else {
                 mods[mods.length] = "yui-base";
             }
+        }
 
-            // Make sure yui, yui-base are added first, with yui superceding yui-base
-            if (mods.length == 0 && (current.selected["yui-base"] || current.selected["yui"])) {
-                if (current.selected["yui"]) {
-                    mods[mods.length] = "yui";
-                } else {
-                    mods[mods.length] = "yui-base";
+        for (var i in current.selected) {
+            if (Lang.hasOwnProperty(current.selected, i)) {
+                if (i != "yui" && i != "yui-base" && 
+                        !(hackYuiRollup && (i == "get" || i == "loader" || i == "yui-base"))) {
+                    mods[mods.length] = i;
                 }
             }
+        }
 
-            for (var i in current.selected) {
-                if (Lang.hasOwnProperty(current.selected, i)) {
-                    if (i != "yui" && i != "yui-base" && 
-                            !(hackYuiRollup && (i == "get" || i == "loader" || i == "yui-base"))) {
-                        mods[mods.length] = i;
-                    }
-                }
-            }
- 
-            var loader = new Y.Loader({
-                require: mods,
-                force: mods,
+        var loader = new Y.Loader({
+            require: mods,
+            force: mods,
 
-                allowRollup: current.rollup, 
-                filter: current.filter,
-                loadOptional: current.optional,
- 
-                combo: current.combo
-            });
+            allowRollup: current.rollup, 
+            filter: current.filter,
+            loadOptional: current.optional,
 
-            if (current.base != "") {
-                loader.base = current.base;
-            }
-
-            loader.calculate();
-
-            var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
-
-            current.required = getRequired(loader.sorted);
-            current.sizes = getSizes(loader.sorted);
-
-            showResults(loader);
+            combo: current.combo
         });
+
+        if (current.base != "") {
+            loader.base = current.base;
+        }
+
+        loader.calculate();
+
+        var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
+
+        current.required = getRequired(loader.sorted);
+        current.sizes = getSizes(loader.sorted);
+
+        showResults(loader);
     }
 
     function getRequired(sortedList) {
