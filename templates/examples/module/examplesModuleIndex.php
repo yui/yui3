@@ -25,7 +25,7 @@ if($modules[$currentModuleName]) {
     	$highlightSyntax = false;
     	$releasenotes = false;
         include("'.$docroot.'inc/header.inc"); 
-        ?>\n\n';
+        ?>';
         //END YDN PAGE VARIABLES AND HEADER INCLUDE
     } else {
 	    include($docroot."inc/header.php");
