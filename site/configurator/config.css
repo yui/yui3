@@ -16,6 +16,13 @@
     padding:5px;
 }
 
+#loaderOutput {
+    font-family:monospace;
+    font-size:85%;
+    width:66%;
+    white-space:nowrap;
+}
+
 #configurator li {
     list-style-type: none;
     padding-top: 2px;
@@ -53,15 +60,21 @@
 }
 
 #modPanel .bd, #subModPanel .bd {
+    position:relative;
     overflow:auto;
     height:30em;
 }
 
 #modDesc {
+    clear:left;
     border:1px solid #000;
     background-color: #edff9f;
     padding:5px;
     font-size:85%;
+}
+
+#desc-unit-ie6 {
+    _width: 31%;
 }
 
 #modDesc .hd {

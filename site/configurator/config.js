@@ -7,10 +7,6 @@
 
         chart = null,
 
-        colors = ["#00b8bf", "#8dd5e7","#edff9f", "#ffa928", "#c0fff6", "#d00050",
-                  "#c6c6c6", "#c3eafb","#fcffad", "#cfff83", "#444444", "#4d95dd",
-                  "#b8ebff", "#60558f", "#737d7e", "#a64d9a", "#8e9a9b", "#803e77"];
-
         current = {
             required : [],
             sizes : [],
@@ -28,9 +24,11 @@
         jsModsEl = Dom.get('jsMods'), 
         cssModsEl = Dom.get('cssMods'), 
         subModsEl = Dom.get('subMods'), 
+
         modDescEl = Dom.get('modDesc'), 
         modDescHdEl = Sel.query('#modDesc .hd')[0], 
         modDescBdEl = Sel.query('#modDesc .bd')[0], 
+
         configEl = Dom.get('config'), 
         comboEl = Dom.get('combo'), 
         fileTypeEl = Dom.get('fileType'),
@@ -42,68 +40,18 @@
         chartEl = Dom.get('chart'),
         legendEl = Dom.get('legend'),
         totalEl = Sel.query('#weight .hd')[0],
+        totalWeightEl = Dom.get("finalWeight"),
         subModsHeaderEl = Sel.query('#subModPanel .hd')[0];
 
     var NO_SUBMODULES_MESSAGE = "This module does not have any sub-modules";
-
-    function renderChart(sizes) {
-
-        var total = 0;
-
-        for (var i = 0; i < sizes.length; i++) {
-            total += sizes[i].size;
-        }
-
-        totalEl.innerHTML = 'Total: ' + prettySize(total);
-
-        var data = new YAHOO.util.DataSource(sizes);
-        data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-        data.responseSchema = { fields: [ "name", "size" ] };
-       
-        YAHOO.widget.Chart.SWFURL = "http:/"+"/yui.yahooapis.com/2.5.2/build/charts/assets/charts.swf";
-
-        chart = new YAHOO.widget.PieChart( "chart", data, {
-                dataField: "size",
-                categoryField: "name",
-                /*
-                seriesDef: [ {
-                    style: {
-                        colors: [
-                            0x00b8bf, 0x8dd5e7, 0xedff9f, 0xffa928, 0xc0fff6, 0xd00050,
-                            0xc6c6c6, 0xc3eafb, 0xfcffad, 0xcfff83, 0x444444, 0x4d95dd,
-                            0xb8ebff, 0x60558f, 0x737d7e, 0xa64d9a, 0x8e9a9b, 0x803e77
-                        ]
-                    }
-                    }
-                ],
-                */
-                style: {
-                    padding: 5, 
-                    legend: {
-                        display:"bottom"
-                    }
-                }
-        });
-
-        /*
-        var sizes = current.sizes;
-        var cl = colors.length;
-
-        for (var j = 0; j < sizes.length; j++) {
-            sizes[j].color = colors[j%cl];
-            legendEl.innerHTML += '<li><div class="legendColor" style="float:left;width:1em;height:1em;background-color:' + 
-                                    sizes[j].color + '">&nbsp;</div><span>' + sizes[j].name + '</span></li>'; 
-        }
-        */
-    };
+    var GB = 1024 * 1024 * 1024;
+    var MB = 1024 * 1024;
 
     function prettySize(size) {
-        var gb = 1024 * 1024 * 1024;
-        var mb = 1024 * 1024;
-        if (size > gb) {
-            mysize = Math.round(size / gb) + " GB";
-        } else if (size > mb) {
-            mysize = Math.round(size / mb) + " MB";
+        if (size > GB) {
+            mysize = Math.round(size / GB) + " GB";
+        } else if (size > MB) {
+            mysize = Math.round(size / MB) + " MB";
         } else if ( size >= 1024 ) {
             mysize = Math.round(size / 1024) + " Kb";
         } else {
@@ -141,7 +89,7 @@
                     }
 
                     if(comboEl.checked) {
-                        combourl.push(loader.root + m.path);
+                        combourl.push(loader.root + loader._url(m.path));
                     } else {
                         url = m.fullpath || loader._url(m.path);
                         out.push('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>');                        
@@ -158,32 +106,45 @@
         return out;
     }
 
-    function outputResources(buffer) {
-        var oldout = Dom.getElementsByClassName('dp-highlighter', 'div', resourcesEl);
-        if (oldout && oldout.length > 0) {
-            var el = oldout[0];
-            el.parentNode.removeChild(el);
-        }
-
-        outputEl.value = buffer.join('\n');
-        dp.SyntaxHighlighter.HighlightAll(outputEl.id);
-    }
-
     function primeLoader() {
 
         YUI().use(function(Y) {
 
-            var mods = [];
-            for (var i in current.selected) {
-                if (Lang.hasOwnProperty(current.selected, i)) {
-                    mods[mods.length] = i;
+            var mods = [], hackYuiRollup = false;
+
+            // Loader Hacks
+
+            // Rollup yui if yui-base, get and loader selected
+            if (current.rollup 
+                && current.selected["yui-base"] 
+                && current.selected["get"] 
+                && current.selected["loader"] 
+                && !current.selected["yui"]) {
+               hackYuiRollup = true;
+               mods[mods.length] = "yui";
+            }
+
+            // Make sure either yui or yui-base are included
+            if (mods.length == 0 && !current.selected["yui-base"] && !current.selected["yui"]) {
+                mods[mods.length] = "yui-base";
+            }
+
+            // Make sure yui, yui-base are added first, with yui superceding yui-base
+            if (mods.length == 0 && (current.selected["yui-base"] || current.selected["yui"])) {
+                if (current.selected["yui"]) {
+                    mods[mods.length] = "yui";
+                } else {
+                    mods[mods.length] = "yui-base";
                 }
             }
- 
-            if (window.console) {
-                console.log('loader selected: ', mods);
-                console.log('loader rollup: ', current.rollup);
-                console.log('loader filter: ', current.filter);
+
+            for (var i in current.selected) {
+                if (Lang.hasOwnProperty(current.selected, i)) {
+                    if (i != "yui" && i != "yui-base" && 
+                            !(hackYuiRollup && (i == "get" || i == "loader" || i == "yui-base"))) {
+                        mods[mods.length] = i;
+                    }
+                }
             }
  
             var loader = new Y.Loader({
@@ -205,17 +166,10 @@
 
             var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
 
-
             current.required = getRequired(loader.sorted);
             current.sizes = getSizes(loader.sorted);
 
-            if (window.console) {
-                console.log('loader sorted: ', loader.sorted);
-                console.log('loader required: ', current.required);
-                console.log('loader sizes: ', current.sizes);
-            }
-
-            updateState(loader);
+            showResults(loader);
         });
     }
 
@@ -251,25 +205,56 @@
         return sizes;
     }
 
-    function updateState(loader) {
-        outputResources(getIncludes(loader));
-        renderChart(current.sizes);
-
-        // No Longer feeding loader out back to checkboxes
-        // updateCheckBoxes(current.selected);
+    function showResults(loader) {
+        updateResourceUI(getIncludes(loader));
+        updateChartUI(current.sizes);
+        updateTotalsUI(current.sizes);
     }
 
-    /*
-    function updateCheckBoxes(modsUsed) {
-
-        var checks = Sel.query("li input[id^=check_]", "mods"); 
-
-        for (var i = 0; i < checks.length; i++) {
-            var mod = checks[i].id.replace("check_", "");
-            checks[i].checked = modsUsed[mod];
+    function updateSizeUI() {
+        var sizeEls = Dom.getElementsByClassName("size", "span", modInfoEl), name, el;
+        for (var i = 0, l = sizeEls.length; i < l; i++) {
+           el = sizeEls[i];
+           name = el.id.replace("size_", "");
+           el.innerHTML = "(" + prettySize(configData[name].sizes[current.filter]) + ")";
         }
     }
-    */
+
+    function updateChartUI(sizes) {
+
+        var data = new YAHOO.util.DataSource(sizes);
+        data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+        data.responseSchema = { fields: [ "name", "size" ] };
+       
+        YAHOO.widget.Chart.SWFURL = "http:/"+"/yui.yahooapis.com/2.5.2/build/charts/assets/charts.swf";
+
+        // Unfortunately, resetting pie chart data set is buggy
+        chart = new YAHOO.widget.PieChart( "chart", data, {
+                dataField: "size",
+                categoryField: "name",
+                style: {
+                    padding: 5, 
+                    legend: {
+                        display:"bottom"
+                    }
+                }
+        });
+    };
+
+    function updateResourceUI(buffer) {
+        outputEl.value = buffer.join('\n');
+    }
+
+    function updateTotalsUI(sizes) {
+        var total = 0, prettyTotal;
+        for (var i = 0; i < sizes.length; i++) {
+            total += sizes[i].size;
+        }
+   
+        var prettyTotal = prettySize(total);
+        totalEl.innerHTML = 'Total Weight: ' + prettyTotal;
+        totalWeightEl.innerHTML = "(Total Weight: " + prettyTotal + ")";
+    }
 
     function handleModuleSelection(name, stateChange) {
         var cfg = configData[name];
@@ -336,10 +321,14 @@
 
                     var li = document.createElement('li');
                     li.id = "mod_" + submod;
+                    li.className = "modentry";
+
                     subModsEl.appendChild(li);
+ 
                     createModuleSelectionElement(submod, submodcfg, li);
+                    createSizeElement(submodcfg, li);
+
                     submodcfg._selectionEl.set("checked", isChecked);
-                    createSizeElement(submodcfg.sizes[current.filter], li);
 
                     if (stateChange !== undefined) {
                         if (isChecked) {
@@ -374,6 +363,14 @@
             if (t.id.indexOf("mod_") !== -1) {
                 name = t.id.replace('mod_', '');
                 handleModuleSelection(name);
+            }
+        });
+
+        Event.on("loaderOutput", 'focus', function(e) {
+            try {
+                this.select();
+            } catch(e) {
+                // ignore
             }
         });
 
@@ -414,19 +411,19 @@
             }
         });
 
-        // TODO: Change does not seem to bubble in IE6. See if there are alternatives
         Event.on(fileTypeEl, 'change', function() {
             current.filter = this.options[this.selectedIndex].value;
+            updateSizeUI();
             primeLoader();
         });
 
-        Event.on(comboEl, 'change', function() {
+        Event.on(comboEl, 'click', function() {
             current.combo = this.checked;
             baseEl.disabled = this.checked;
             primeLoader();
         });
 
-        Event.on(rollupEl, 'change', function() {
+        Event.on(rollupEl, 'click', function() {
             current.rollup = this.checked;
             primeLoader();
         });
@@ -436,7 +433,7 @@
             primeLoader();
         });
 
-        Event.on(optionalEl, 'change', function() {
+        Event.on(optionalEl, 'click', function() {
             current.optional = this.checked;
             primeLoader();
         });
@@ -465,11 +462,32 @@
             btn._moduleName = name;
     }
 
-    function createSizeElement(size, parent) {
+    function createSizeElement(cfg, parent) {
         var s = document.createElement("span");
+        var size = cfg.sizes[current.filter]; 
         parent.appendChild(s);
         s.className = "size";
+        s.id = "size_" + cfg.info.name;
         s.innerHTML = '(' + prettySize(size) + ')';
+    }
+
+    function hackYuiConfigData() {
+
+        var yuiCfg = configData["yui"];
+
+        hackSubModule(yuiCfg, configData["yui-base"]);
+        hackSubModule(yuiCfg, configData["get"]);
+        hackSubModule(yuiCfg, configData["loader"]);
+    }
+
+    function hackSubModule(moduleCfg, submoduleCfg) {
+        if (moduleCfg && submoduleCfg) {
+           submoduleCfg.isSubMod = true;
+           if (!moduleCfg.submodules) {
+               moduleCfg.submodules = {};
+           }
+           moduleCfg.submodules[submoduleCfg.info.name] = submoduleCfg;
+        }
     }
 
     function addModules() {
@@ -479,7 +497,7 @@
         for (name in configData) {
             if (Lang.hasOwnProperty(configData, name)) {
                 cfg = configData[name];
-                if (cfg.type == 'js' && !cfg.isSubMod && name !== 'yui' && name !== 'yui-base') {
+                if (cfg.type == 'js' && !cfg.isSubMod && name !== 'yui') {
                     js.push(name);
                 }
 
@@ -490,7 +508,6 @@
         }
 
         js.sort();
-        js.splice(0, 0, 'yui-base');
         js.splice(0, 0, 'yui');
 
         for (i=0; i < js.length; i++) {
@@ -509,7 +526,7 @@
             jsModsEl.appendChild(li);
 
             createModuleSelectionElement(name, cfg, li);
-            createSizeElement(cfg.sizes[current.filter], li);
+            createSizeElement(cfg, li);
         }
 
         css.sort();
@@ -531,9 +548,11 @@
             cssModsEl.appendChild(li);
 
             createModuleSelectionElement(name, cfg, li);
-            createSizeElement(cfg.sizes[current.filter], li);
+            createSizeElement(cfg, li);
         }
     }
+
+    hackYuiConfigData();
 
     Event.onDOMReady(function() {
         addModules();

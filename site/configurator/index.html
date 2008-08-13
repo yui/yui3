@@ -1,7 +1,7 @@
 <?php
 $title="The YUI Configurator";
 $section="yui3configurator";
-$highlightSyntax = true;
+$highlightSyntax = false;
 $prepend='
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.1/build/assets/skins/sam/skin.css">
     <link rel="stylesheet" type="text/css" href="config.css">
@@ -16,10 +16,12 @@ include "../inc/header.inc";
             <div id="configurator">
                 <div>
                     <div id="resources" class="panel">
-                        <div class="hd">Resource Tags</div>
+                        <div class="hd">Results <span id="finalWeight"></span></div>
                         <div class="bd">
-                            <textarea class="HTML" cols="60" rows="1" id="loaderOutput" name="loaderOutput">
+                            <textarea class="HTML" cols="60" rows="4" id="loaderOutput" name="loaderOutput">
+                                <!-- Tags generated will be displayed here --> 
                             </textarea>
+                            <div id="includedModules"></div>
                         </div>
                     </div>
                     <div id="config" class="panel">
@@ -57,7 +59,7 @@ include "../inc/header.inc";
                                 </div>
                             </div>
                         </div>
-                        <div class="yui-u">
+                        <div id="desc-unit-ie6" class="yui-u">
                             <div id="modDesc" class="yui-hidden">
                                 <div class="hd"></div>
                                 <div class="bd"></div>
@@ -70,12 +72,6 @@ include "../inc/header.inc";
                         <div class="hd" id="total"></div>
                         <div class="bd">
                             <div id="chart"></div>
-                            <!--
-                            <div id="legendBox">
-                                <div class="title">LEGEND</div>
-                                <ul id="legend"></ul>
-                            </div>
-                            -->
                         </div>
                     </div>
                 </div>
@@ -84,14 +80,9 @@ include "../inc/header.inc";
     </div>
 </div>
 
-<script type="text/javascript" src="../build/yui/yui-min.js"></script> 
+<script type="text/javascript" src="../build/yui/yui-min.js"></script>
 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/utilities/utilities.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/selector/selector-beta-min.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/json/json-min.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/datasource/datasource-beta-min.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/button/button-min.js"></script> 
-<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/charts/charts-experimental-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js"></script>
 
 <script type="text/javascript" src="data.js"></script>
 <script type="text/javascript" src="config.js"></script>
