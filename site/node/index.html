@@ -15,7 +15,7 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 
 				<div id="promo" class="component">
-                                    <p>The <code>Node</code> utility provides an expressive way to work with DOM nodes.  Each <code>Node</code> instance represents an underlying DOM node, and each <code>NodeList</code> represents a collection of DOM nodes.  This allows you to write your DOM script more intuitively (e.g. "YAHOO.util.Dom.addClass(domNode, 'selected')" vs. "myNode.addClass('selected')").  Additionally, <code>Node</code> facilitates sandboxing and secure mashups by providing a central interface for DOM interactions, making it easier to lock things down as needed.</p>
+                                    <p>The <code>Node</code> Utility provides an expressive way to collect, create,  and manipulate DOM nodes.  Each <code>Node</code> instance represents an underlying DOM node, and each <code>NodeList</code> represents a collection of DOM nodes. With <code>Node</code>, you can manage classNames ("myNode.addClass('foo')") and styles ("myNode.setStyle('opacity', 0.5)"), create elements ("Y.Node.create('<div id="foo" class="foo"><p>foo</p></div>')"), and much more.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
 							<div id="jumps">
@@ -66,7 +66,7 @@ include "../inc/header.inc";
                                 This example demonstrates the two ways to <code>get</code> a node.
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     var node1 = Y.get('#main');
                                     var node2 = Y.get(document.body);
                                 });
@@ -91,7 +91,7 @@ include "../inc/header.inc";
                                 This is an example of getting and setting various properties.
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     var node = Y.get('#foo');
                                     var parent = node.get('parentNode'); // Node instance
 
@@ -107,7 +107,7 @@ include "../inc/header.inc";
                                 <p>Event handlers receive a normalized event object as their argument.</p>
                                 <p>Note that all fields of the event object that would normally be DOM elements are now <code>Y.Node</code> instances.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     Y.get('#demo', on('click', function(e) {
                                         e.preventDefault();
                                         alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
@@ -120,7 +120,7 @@ include "../inc/header.inc";
                                 <p>The <code>Y.Node</code> api provides all of the DOM methods you would expect, plus a few extras to help with common tasks.</p>
                                 <p>As with properties and events, any methods that would normally return DOM nodes instead return <code>Y.Node</code> instances.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     var node = Y.get('#demo');
                                     var node2 = node.appendChild(Y.get('#foo p'));
                                     node2.addClass('bar');
@@ -132,14 +132,14 @@ include "../inc/header.inc";
                                 <p>The <code>Y.NodeList</code> provides a node-like interface for manipulating multiple nodes through a single interface.</p>
                                 <p>The <code>Y.all</code> method is the simplest way to get a <code>NodeList</code>.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     Y.all('#demo li').addClass('bar');
                                 });
 				</textarea>
 
                                 <p><code>Y.Node</code> api returns <code>Y.NodeList</code> instances when the DOM would normally return a collection of elements.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     Y.get('#demo').get('children').addClass('bar');
                                 });
 				</textarea>
@@ -147,7 +147,7 @@ include "../inc/header.inc";
 				<h4 id="node-query">Node Queries</h4>
                                 <p>Selector queries are a powerful way to test and manipulate nodes.  All <code>Y.Node</code> instances support <code>query</code>, <code>queryAll</code>, and <code>test</code>.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-                                YUI().use('*', function(Y)) {
+                                YUI().use('node', function(Y)) {
                                     var node = Y.get('#demo');
 
                                     var node2 = node.query('p');
