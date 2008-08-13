@@ -271,7 +271,7 @@
         totalWeightEl.innerHTML = ' - Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
 
         var weightTab = tabView.get("tabs")[1];
-        weightTab.set("label", "Weight Breakup - " + prettyTotal + "");
+        weightTab.set("label", "Page Weight Analysis - " + prettyTotal + "");
 
         if (YAHOO.env.ua.gecko) {
             var tabEl = weightTab.get("element");
