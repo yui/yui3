@@ -1,4 +1,4 @@
-<p>This example employs the <a href="http://developer.yahoo.com/yui/get/">YUI
+<p>This example employs the <a href="http://developer.yahoo.com/yui/3/get/">YUI
 Get Utility</a> in a simple use case: retrieving JSON data from a cross-domain
 web service. While this is a relatively common usage, it's important to
 understand the security ramifications of this technique. Scripts loaded via the
@@ -13,7 +13,7 @@ Search web service called <a
 href="http://developer.yahoo.com/search/siteexplorer/V1/inlinkData.html">Site
 Explorer</a> to return a list of inbound links for a given URL. The principal
 difference between this example and similar examples using <a
-href="http://developer.yahoo.com/yui/connection/">YUI IO Utility</a> is
+href="http://developer.yahoo.com/yui/3/io/">YUI IO Utility</a> is
 that this technique does not require a server-side proxy. The browser connects
 directly to the third-party web service without bouncing through a proxy page
 as is required when using the XMLHttpRequest object (on which IO Utility

@@ -1,6 +1,6 @@
 <h2 class="first">Using the Get Utility to Get a Script File with JSON-formatted Contents</h2>
 
-<p>Here, we'll use <a href="http://developer.yahoo.com/yui/get/">the YUI Get Utility</a> to retrieve data via the <a href="http://developer.yahoo.com/search/siteexplorer/V1/inlinkData.html">Yahoo! Search Site-Explorer web service</a>, one of many Yahoo! APIs that support JSON.</p>
+<p>Here, we'll use <a href="http://developer.yahoo.com/yui/3/get/">the YUI Get Utility</a> to retrieve data via the <a href="http://developer.yahoo.com/search/siteexplorer/V1/inlinkData.html">Yahoo! Search Site-Explorer web service</a>, one of many Yahoo! APIs that support JSON.</p>
 
 <p>This example has the following dependencies:</p>
 
@@ -13,7 +13,7 @@
 	<!--Use a real form that works without JavaScript:-->
 	<form method="GET" action="http://siteexplorer.search.yahoo.com/advsearch" id="siteExplorer">
 
-        <label for="searchString">Site URL:</label> <input type="text" name="searchString" id="p" value="http://developer.yahoo.com/yui" size="40">
+        <label for="searchString">Site URL:</label> <input type="text" name="searchString" id="p" value="http://developer.yahoo.com/yui/3" size="40">
         
         <input type="hidden" name="bwm" value="i">
         <input type="hidden" name="bwms" value="p">

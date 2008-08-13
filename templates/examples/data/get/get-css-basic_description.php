@@ -118,7 +118,7 @@ borderButton.on("checkedChange", onCheckedChange);
 backgroundButton.on("checkedChange", onCheckedChange);
 textButton.on("checkedChange", onCheckedChange);</textarea>
 
-<p>In the codeblock above, we call the <code>purge</code> method to remove CSS files when Buttons are unchecked.  The <code>purge</code> function is part of <a href="http://developer.yahoo.com/yui/get/#args">the callback object</a> passed to the <code>onSuccess</code> or <code>onFailure</code> handler registered with the Get Utilty when the <code>css</code> method is called.  In our <code>onSuccess</code> handler, we will save that callback object in an associative array so we can access <code>purge</code> as needed when a Button is unchecked: </p>
+<p>In the codeblock above, we call the <code>purge</code> method to remove CSS files when Buttons are unchecked.  The <code>purge</code> function is part of <a href="http://developer.yahoo.com/yui/3/get/#args">the callback object</a> passed to the <code>onSuccess</code> or <code>onFailure</code> handler registered with the Get Utilty when the <code>css</code> method is called.  In our <code>onSuccess</code> handler, we will save that callback object in an associative array so we can access <code>purge</code> as needed when a Button is unchecked: </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">// As noted above, in onSuccess we want to save the callback
 // object in an associative array indexed by CSS file name so that
