@@ -1,8 +1,9 @@
-YAHOO.util.Event.onDOMReady(function() {
+(function() {
 
     var Dom = YAHOO.util.Dom,
         Event = YAHOO.util.Event,
         Sel = YAHOO.util.Selector,
+        Lang = YAHOO.lang,
 
         chart = null,
 
@@ -174,7 +175,7 @@ YAHOO.util.Event.onDOMReady(function() {
 
             var mods = [];
             for (var i in current.selected) {
-                if (YAHOO.lang.hasOwnProperty(current.selected, i)) {
+                if (Lang.hasOwnProperty(current.selected, i)) {
                     mods[mods.length] = i;
                 }
             }
@@ -282,10 +283,10 @@ YAHOO.util.Event.onDOMReady(function() {
                 }
             }
 
-            if(!cfg.isSubMod) {
-                handleModuleDependencies(name, cfg, stateChange);
-            } else {
+            if(cfg.isSubMod) {
                 handleSubModuleDependencies(name, cfg, stateChange);
+            } else {
+                handleModuleDependencies(name, cfg, stateChange);
             }
 
             if (stateChange !== undefined) {
@@ -296,17 +297,27 @@ YAHOO.util.Event.onDOMReady(function() {
 
     function handleSubModuleDependencies(name, cfg, stateChange) {
         if (stateChange !== undefined && !stateChange) {
-            var parentModule = cfg.module;
-            for (var sm in configData[parentModule].submodules) {
-                if(configData[sm]._selectionEl.get("checked")) {
-                    current.selected[sm] = true;
-                } else {
-                    if (current.selected[sm]) {
-                        delete current.selected[sm];
+
+            var parentName = cfg.module,
+                parentCfg = configData[parentName],
+                submodules = parentCfg.submodules,
+                submodCfg;
+
+            for (var sm in submodules) {
+                submodCfg = configData[sm];
+                if (submodCfg) {
+                    if(submodCfg._selectionEl.get("checked")) {
+                        current.selected[sm] = true;
+                    } else {
+                        if (current.selected[sm]) {
+                            delete current.selected[sm];
+                        }
                     }
                 }
             }
-            delete current.selected[parentModule];
+
+            parentCfg._selectionEl.set("checked", false);
+            delete current.selected[parentName];
         }
     }
 
@@ -321,7 +332,7 @@ YAHOO.util.Event.onDOMReady(function() {
             for (var submod in submods) {
                 var submodcfg = configData[submod];
                 if (submodcfg) {
-                    var isChecked = (stateChange === undefined && (current.selected[submod] || current.selected[name]) || stateChange) ? "checked" : "";
+                    var isChecked = (stateChange === undefined && (current.selected[submod] || current.selected[name]) || stateChange);
 
                     var li = document.createElement('li');
                     li.id = "mod_" + submod;
@@ -466,13 +477,15 @@ YAHOO.util.Event.onDOMReady(function() {
         var js = [], css = [], i, li, cfg, name, className;
 
         for (name in configData) {
-            cfg = configData[name];
-            if (cfg.type == 'js' && !cfg.isSubMod && name !== 'yui' && name !== 'yui-base') {
-                js.push(name);
-            }
+            if (Lang.hasOwnProperty(configData, name)) {
+                cfg = configData[name];
+                if (cfg.type == 'js' && !cfg.isSubMod && name !== 'yui' && name !== 'yui-base') {
+                    js.push(name);
+                }
 
-            if (cfg.type == 'css') {
-                css.push(name);
+                if (cfg.type == 'css') {
+                    css.push(name);
+                }
             }
         }
 
@@ -522,8 +535,10 @@ YAHOO.util.Event.onDOMReady(function() {
         }
     }
 
-    addModules();
-    bindFormElements();
-    primeLoader();
+    Event.onDOMReady(function() {
+        addModules();
+        bindFormElements();
+        primeLoader();
+    });
 
-});
+})();
