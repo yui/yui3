@@ -13,7 +13,7 @@ $nav[]=array('examples','/yui/3/examples/','YUI 3 Examples', 'Examples of every 
 $nav[]=array('docs','/yui/3/api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source Code', 'The YUI Library can be downloaded from SourceForge');
 // $nav[]=array('faq','/yui/3/articles/faq/','YUI 3 FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('license','/yui/3/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
+$nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
 
@@ -52,7 +52,7 @@ $nav[]=array('gbs','/yui/articles/gbs/','Graded Browser Support', 'Yahoo!\'s phi
 $nav[]=array('faq','/yui/articles/faq/','FAQ (General)', 'Answers to Frequently Asked Questions about the YUI Library');
 // $nav[]=array('faq','/yui/3/articles/faq/','FAQ  (YUI 3.x)', 'Answers to Frequently Asked Questions about the YUI Library');
 $nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
-$nav[]=array('hosting','/yui/3/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
+//$nav[]=array('hosting','/yui/3/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
 // $nav[]=array('security','/yui/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');
 // $nav[]=array('skinning','/yui/articles/skinning/','Skinning YUI', 'Modifying YUI\'s visual "skin" and building skins of your own');
 // $nav[]=array('customwidgets','http://yuiblog.com/blog/2008/06/24/buildingwidgets','Building Custom Widgets', 'Building your own custom widgets using the YUI infrastructure and tools.');
