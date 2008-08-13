@@ -1,1 +1,49 @@
-3.0.0 PR1
+YUI 3.0.0 PR1
+
+This is a preview release of a subset of the components under development for YUI 3.0.  
+This is not production quality software.  It is an early distribution released so that 
+the team can get some early feedback on the direction we are taking in the development 
+of the next major revision to the library.
+
+The release include the core components:
+     - YUI  (global object)
+     - Node
+     - Event
+The functionality provided by YUI’s 3.x Core had previously been covered in the 
+YAHOO Global Object, Dom, and Event components in the 2.x releases.
+
+In addition the following component infrastructure components have been added:
+    - Base     
+    - Attribute
+
+The following list outlines the utilities that have been included in this release.  
+Many are enhanced versions migrated from the 2.x library.
+    - Animation
+    - Cookie
+    - Drag & Drop
+    - Get
+    - IO (formerly Connection Manager)
+    - JSON
+    - Queue (yielding utility making use of timeout chains)
+
+In addition, updated versions of the CSS components are also available
+    - CSS Base
+    - CSS Reset 
+    - CSS Fonts
+    - CSS Grids
+These components are evolutions of the CSS foundation found in YUI 2.x.
+
+The YUI 3.x website is located at  http://developer.yahoo.com/yui/3/.  You will find 
+more detailed documentation of these components there as well as number of examples 
+demonstrating their use.
+
+Please take some time to review the new design and experiment with these new libraries.  
+We want to hear your feedback.  A new developer forum has been initiated for discussions 
+on YUI 3.  Please join us in the forum titled yui3  at http://groups.yahoo.com/ to post 
+any questions and review other developers' progress as they begin to explore the preview 
+release.  Should you find bugs or have feature requests,  please add them to our bug 
+repository on SourceForge following the standard bug-reporting procedure outlined at 
+http://developer.yahoo.com/yui/articles/reportingbugs/ .  Please remember to set the 
+Group field in your bug report so that we can correctly review the item against the 
+correct version of the sources.
+
