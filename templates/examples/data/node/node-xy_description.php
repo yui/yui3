@@ -18,6 +18,7 @@ Y.get('document').on('click', onClick);
 </textarea>
 
 <h3>Full Script Source</h3>
+<textarea name="code" class="JScript">
 YUI().use('*', function(Y) {
     var onClick = function(e) {
         Y.get('#demo').setXY([e.pageX, e.pageY]);
