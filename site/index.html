@@ -86,9 +86,18 @@ p#compressor {margin-top:0.2em;}
 			   ?>
 
 
-			<!-- delicious module -->
-			<?php require('inc/mod-delicious.inc'); ?>
-			<!-- /delicious module -->
+			<div id="delicious" class="mod box4">
+				<div class="hd">
+					<h4>YUI 3.x on Delicious</h4>
+				</div>
+				<?php 
+				$thisURI="http://developer.yahoo.com/yui/3/".$section."/";
+				require_once('inc/badge.inc');
+				?>
+				<div class="bd">
+					<?php require('inc/badge-html.inc'); ?>
+				</div>
+			</div>
 				
 		</div><!-- /div#index-secondary-->
 
@@ -131,7 +140,7 @@ p#compressor {margin-top:0.2em;}
 						</ul>
 						<h4>YUI 3 Component Infrastructure</h4>
 						<ul>
-							<li><a href="attribute/">Attribute</a></li>
+							<li><a href="attribute/">Attribute</a></li>x
 							<li><a href="base/">Base</a></li>
 						</ul>
 				 	</div><!-- /div.yui-u> -->
