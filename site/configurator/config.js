@@ -7,12 +7,11 @@
 
         chart = null,
 
+
         current = {
             required : [],
             sizes : [],
-            selected : {
-                yui: true
-            },
+            selected : {},
             filter : 'min',
             rollup : true,
             combo : true,
@@ -171,10 +170,15 @@
         showResults(loader);
     }
 
-    function getRequired(sortedList) {
-        var req = {};
-        for (var i = 0; i < sortedList.length; i++) {
-            req[sortedList[i]] = true;
+    function getRequired(modList) {
+        var req = {}, mod;
+        if (modList) {
+            for (var i = 0; i < modList.length; i++) {
+                mod = modList[i];
+                if (configData[mod]) {
+                    req[mod] = true;
+                }
+            }
         }
         return req;
     }
@@ -449,7 +453,7 @@
                 id: "check_" + name,
                 value: name,
                 container: parent,
-                checked: (name == "yui"),
+                checked: (!!current.selected[name]),
                 onclick: {
                     fn: function() {
                         handleModuleSelection(name, this.get("checked"));
@@ -556,6 +560,9 @@
     hackYuiConfigData();
 
     Event.onDOMReady(function() {
+        
+        current.selected = getRequired(YAHOO.configurator.INIT_SELECTION || ["yui"]);
+
         addModules();
         bindFormElements();
         primeLoader();
