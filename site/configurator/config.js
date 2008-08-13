@@ -95,7 +95,9 @@
                     }
 
                     if(comboEl.checked) {
-                        combourl.push(loader.root + loader._url(m.path));
+                        var filter = loader.FILTERS[current.filter.toUpperCase()];
+                        var filteredPath = (filter) ? m.path.replace(new RegExp(filter.searchExp), filter.replaceStr) : m.path; 
+                        combourl.push(loader.root + filteredPath);
                     } else {
                         url = m.fullpath || loader._url(m.path);
                         out.push('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>');                        
@@ -268,7 +270,18 @@
         totalEl.innerHTML = 'Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
         totalWeightEl.innerHTML = ' - Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
 
-        tabView.get("tabs")[1].set("label", "Weight Breakup - " + prettyTotal + "");
+        var weightTab = tabView.get("tabs")[1];
+        weightTab.set("label", "Weight Breakup - " + prettyTotal + "");
+
+        if (YAHOO.env.ua.gecko) {
+            var tabEl = weightTab.get("element");
+            if (tabEl) {
+                Dom.addClass(tabEl, "yui-force-redraw");
+                setTimeout(function() {
+                    Dom.removeClass(tabEl, "yui-force-redraw");
+                }, 100);
+            }
+        }
     }
 
     function handleModuleSelection(name, stateChange) {
