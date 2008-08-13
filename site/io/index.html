@@ -81,8 +81,7 @@ include "../inc/header.inc";
 				<p>
 				This is an example GET transaction, handling the response at the earliest opportunity.
 				</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;script&gt;
+				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO module.
 				var Y = new YUI().use("io");
 				var uri = "get.php?foo=bar";
@@ -104,7 +103,6 @@ include "../inc/header.inc";
 				// Make an HTTP request to 'get.php'.
 				// NOTE: This transaction does not use a configuration object.
 				var request = Y.io(uri);
-				&lt;/script&gt;
 				</textarea>
 
 				<h3 id="IO">Using IO</h3>
