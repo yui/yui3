@@ -9,9 +9,6 @@
         zoom: 1;
     }
     #play:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
-    #play ul li {
-        margin: 2px;
-    }
     #play ul {
         border: 1px solid black;
         margin: 10px;
@@ -19,21 +16,24 @@
         height: 300px;
         float: left;
         padding: 0;
-
+        zoom: 1;
+        position: relative;
     }
     #play ul li {
+        background-image: none;
         list-style-type: none;
         padding-left: 20px;
         padding: 5px;
         margin: 2px;
         cursor: move;
         zoom: 1;
+        position: relative;
     }
-    li.list1 {
+    #play ul li.list1 {
         background-color: #8DD5E7;
         border:1px solid #004C6D;
     }
-    li.list2 {
+    #play ul li.list2 {
         background-color: #EDFF9F;
         border:1px solid #CDCDCD;
     }
