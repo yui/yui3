@@ -41,9 +41,8 @@
         legendEl = Dom.get('legend'),
         totalEl = Sel.query('#weight .hd')[0],
         totalWeightEl = Dom.get("finalWeight"),
-        subModsHeaderEl = Sel.query('#subModPanel .hd')[0];
+        subModsHeaderEl = Sel.query('#subModPanel .hd')[0],
 
-    var NO_SUBMODULES_MESSAGE = "This module does not have any sub-modules",
         GB = 1024 * 1024 * 1024,
         MB = 1024 * 1024;
 
@@ -321,25 +320,36 @@
     }
 
     function updateStateFromModule(name, cfg, stateChange) {
+ 
         subModsHeaderEl.innerHTML = "Sub Modules: " + name;
+
+        var recreate = (!current.subModulesDisplayed || current.subModulesDisplayed != name);
+
+        current.subModulesDisplayed = name;
 
         if (cfg.submodules) {
             var submods = cfg.submodules;
 
-            subModsEl.innerHTML = "";
+            if (recreate) {
+                Event.purgeElement(subModsEl, true);
+                subModsEl.innerHTML = "";
+            }
 
             for (var submod in submods) {
                 var submodcfg = configData[submod];
                 if (submodcfg) {
                     var isChecked = (stateChange === undefined && (current.selected[submod] || current.selected[name]) || stateChange);
 
-                    var li = document.createElement('li');
-                    li.id = "mod_" + submod;
-                    li.className = "modentry";
+                    if (recreate) {
+                        var li = document.createElement('li');
+                        li.id = "mod_" + submod;
+                        li.className = "modentry";
 
-                    subModsEl.appendChild(li);
- 
-                    createModuleSelectionElement(submod, submodcfg, li);
+                        subModsEl.appendChild(li);
+     
+                        createModuleSelectionElement(submod, submodcfg, li);
+                        createSizeElement(submodcfg, li);
+                    }
 
                     submodcfg._selectionEl.set("checked", isChecked);
 
@@ -352,12 +362,10 @@
                     }
 
                     submodcfg.module = name;
-
-                    createSizeElement(submodcfg, li);
                 }
             }
         } else {
-            subModsEl.innerHTML = NO_SUBMODULES_MESSAGE;
+            subModsEl.innerHTML = "<li><strong>" + name  + "</strong> does not have any sub modules.</li>";
         }
     }
 
