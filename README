@@ -5,14 +5,14 @@ This is not production quality software.  It is an early distribution released s
 the team can get some early feedback on the direction we are taking in the development 
 of the next major revision to the library.
 
-The release include the core components:
+The release includes the core components:
      - YUI  (global object)
      - Node
      - Event
 The functionality provided by YUI’s 3.x Core had previously been covered in the 
 YAHOO Global Object, Dom, and Event components in the 2.x releases.
 
-In addition the following component infrastructure components have been added:
+In addition, the following infrastructure components have been added:
     - Base     
     - Attribute
 
