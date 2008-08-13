@@ -13,6 +13,7 @@ $nav[]=array('examples','/yui/3/examples/','YUI 3 Examples', 'Examples of every 
 $nav[]=array('docs','/yui/3/api/','YUI 3 API Docs', 'Instantly searchable API documentation for the entire YUI library.');
 $nav[]=array('sourceforge','http://sourceforge.net/projects/yui/','YUI 3 Source Code', 'The YUI Library can be downloaded from SourceForge');
 // $nav[]=array('faq','/yui/3/articles/faq/','YUI 3 FAQ', 'Answers to Frequently Asked Questions about the YUI Library');
+$nav[]=array('yui3configurator','/yui/3/configurator/','YUI Dependency Configurator', 'Choose the optimal YUI configuraton for your implementation, with files hosted by Yahoo! or on your own servers.');
 $nav[]=array('license','/yui/license.html','YUI 3 is BSD Licensed', 'YUI is free and open, offered under a BSD license.');
 
 
