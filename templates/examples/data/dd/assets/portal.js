@@ -53,7 +53,7 @@ YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
 	Y.io.transport({
 		id: 'flash',
 		yid: Y.id,
-		src: yuiConfig.base + 'io/io.swf'
+		src: yuiConfig.base + 'io/io.swf?stamp=' + (new Date()).getTime()
     });
     
     //Simple method for stopping event propagation
