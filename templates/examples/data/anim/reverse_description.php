@@ -22,6 +22,7 @@ var module = Y.get('#demo');
 
 // add fx plugin to module body
 var content = module.query('.yui-bd').plug(Y.Plugin.NodeFX, {
+    from: { height: 0 },
     to: {
         height: function(node) { // dynamic in case of change
             return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
@@ -67,11 +68,12 @@ module.query('.yui-toggle').on('click', onClick);
 
 <h3>Full Script Source</h3>
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI().use('animation', function(Y) {
+YUI().use('anim', function(Y) {
     var module = Y.get('#demo');
 
     // add fx plugin to module body
     var content = module.query('.yui-bd').plug(Y.Plugin.NodeFX, {
+        from: { height: 0 },
         to: {
             height: function(node) { // dynamic in case of change
                 return node.get('scrollHeight'); // get expanded height (offsetHeight may be zero)
@@ -79,13 +81,13 @@ YUI().use('animation', function(Y) {
         },
 
         easing: Y.Easing.easeOut,
-        from: { height: 0 },
         duration: 0.5
     });
 
     var onClick = function(e) {
         module.toggleClass('yui-closed');
         content.fx.set('reverse', !content.fx.get('reverse')); // toggle reverse 
+        content.fx.run();
     };
 
     // use dynamic control for dynamic behavior

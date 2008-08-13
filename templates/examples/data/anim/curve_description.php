@@ -37,7 +37,7 @@ Y.get('document').on('click', onClick);
 
 <h3>Full Script Source</h3>
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI().use('anim-curve', 'anim-easing', function(Y) {
+YUI().use('anim', function(Y) {
     var node = Y.get('#demo');
 
     var anim = new Y.Anim({

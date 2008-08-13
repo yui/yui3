@@ -56,7 +56,7 @@ Y.all('#demo .yui-hd a').on('click', onClick);
 
 <h3>Full Script Source</h3>
 <textarea name="code" class="JScript" cols="60" rows="1">
-YUI().use('animation', function(Y) {
+YUI().use('anim', function(Y) {
     var node = Y.get('#demo .yui-bd');
     var anim = new Y.Anim({
         node: node,
