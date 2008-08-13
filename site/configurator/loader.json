@@ -1,778 +1,797 @@
-{
-    "data": {
-        "dom-base": {
-            "requires": [
-                "event"
-            ], 
-            "path": "dom/dom-base-min.js", 
-            "name": "dom-base", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dom-style": {
-            "requires": [
-                "dom-base"
-            ], 
-            "path": "dom/dom-style-min.js", 
-            "name": "dom-style", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dom-screen": {
-            "requires": [
-                "dom-base", 
-                "dom-style"
-            ], 
-            "path": "dom/dom-screen-min.js", 
-            "name": "dom-screen", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "selector": {
-            "requires": [
-                "dom-base"
-            ], 
-            "path": "dom/selector-min.js", 
-            "name": "selector", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dom": {
-            "requires": [
-                "event"
-            ], 
-            "submodules": {
-                "dom-base": {
-                    "requires": [
-                        "event"
-                    ], 
-                    "path": "dom/dom-base-min.js", 
-                    "name": "dom-base", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dom-style": {
-                    "requires": [
-                        "dom-base"
-                    ], 
-                    "path": "dom/dom-style-min.js", 
-                    "name": "dom-style", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dom-screen": {
-                    "requires": [
-                        "dom-base", 
-                        "dom-style"
-                    ], 
-                    "path": "dom/dom-screen-min.js", 
-                    "name": "dom-screen", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "selector": {
-                    "requires": [
-                        "dom-base"
-                    ], 
-                    "path": "dom/selector-min.js", 
-                    "name": "selector", 
-                    "type": "js", 
-                    "ext": false
-                }
-            }, 
-            "name": "dom", 
-            "type": "js", 
-            "path": "dom/dom-min.js", 
-            "ext": false, 
-            "supersedes": [
-                "dom-base", 
-                "dom-style", 
-                "dom-screen", 
-                "selector"
-            ], 
-            "rollup": 3
-        }, 
-        "node-base": {
-            "requires": [
-                "dom-base", 
-                "selector"
-            ], 
-            "path": "node/node-base-min.js", 
-            "name": "node-base", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "node-style": {
-            "requires": [
-                "dom-style", 
-                "node-base"
-            ], 
-            "path": "node/node-style-min.js", 
-            "name": "node-style", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "node-screen": {
-            "requires": [
-                "dom-screen", 
-                "node-base"
-            ], 
-            "path": "node/node-screen-min.js", 
-            "name": "node-screen", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "node": {
-            "requires": [
-                "dom"
-            ], 
-            "submodules": {
-                "node-base": {
-                    "requires": [
-                        "dom-base", 
-                        "selector"
-                    ], 
-                    "path": "node/node-base-min.js", 
-                    "name": "node-base", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "node-style": {
-                    "requires": [
-                        "dom-style", 
-                        "node-base"
-                    ], 
-                    "path": "node/node-style-min.js", 
-                    "name": "node-style", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "node-screen": {
-                    "requires": [
-                        "dom-screen", 
-                        "node-base"
-                    ], 
-                    "path": "node/node-screen-min.js", 
-                    "name": "node-screen", 
-                    "type": "js", 
-                    "ext": false
-                }
-            }, 
-            "name": "node", 
-            "type": "js", 
-            "path": "node/node-min.js", 
-            "ext": false, 
-            "supersedes": [
-                "node-base", 
-                "node-style", 
-                "node-screen"
-            ], 
-            "rollup": 2
-        }, 
-        "anim-base": {
-            "requires": [
-                "base", 
-                "node-style"
-            ], 
-            "path": "anim/anim-base-min.js", 
-            "name": "anim-base", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim-color": {
-            "requires": [
-                "anim-base"
-            ], 
-            "path": "anim/anim-color-min.js", 
-            "name": "anim-color", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim-curve": {
-            "requires": [
-                "anim-xy"
-            ], 
-            "path": "anim/anim-curve-min.js", 
-            "name": "anim-curve", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim-easing": {
-            "path": "anim/anim-easing-min.js", 
-            "name": "anim-easing", 
-            "type": "js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "anim-scroll": {
-            "requires": [
-                "anim-base"
-            ], 
-            "path": "anim/anim-scroll-min.js", 
-            "name": "anim-scroll", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim-xy": {
-            "requires": [
-                "anim-base", 
-                "node-screen"
-            ], 
-            "path": "anim/anim-xy-min.js", 
-            "name": "anim-xy", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim-node-plugin": {
-            "requires": [
-                "node", 
-                "anim-base"
-            ], 
-            "path": "anim/anim-node-plugin-min.js", 
-            "name": "anim-node-plugin", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "anim": {
-            "requires": [
-                "base", 
-                "node"
-            ], 
-            "submodules": {
-                "anim-base": {
-                    "requires": [
-                        "base", 
-                        "node-style"
-                    ], 
-                    "path": "anim/anim-base-min.js", 
-                    "name": "anim-base", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "anim-color": {
-                    "requires": [
-                        "anim-base"
-                    ], 
-                    "path": "anim/anim-color-min.js", 
-                    "name": "anim-color", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "anim-curve": {
-                    "requires": [
-                        "anim-xy"
-                    ], 
-                    "path": "anim/anim-curve-min.js", 
-                    "name": "anim-curve", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "anim-easing": {
-                    "path": "anim/anim-easing-min.js", 
-                    "name": "anim-easing", 
-                    "type": "js", 
-                    "ext": false, 
-                    "requires": [
-                    ]
-                }, 
-                "anim-scroll": {
-                    "requires": [
-                        "anim-base"
-                    ], 
-                    "path": "anim/anim-scroll-min.js", 
-                    "name": "anim-scroll", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "anim-xy": {
-                    "requires": [
-                        "anim-base", 
-                        "node-screen"
-                    ], 
-                    "path": "anim/anim-xy-min.js", 
-                    "name": "anim-xy", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "anim-node-plugin": {
-                    "requires": [
-                        "node", 
-                        "anim-base"
-                    ], 
-                    "path": "anim/anim-node-plugin-min.js", 
-                    "name": "anim-node-plugin", 
-                    "type": "js", 
-                    "ext": false
-                }
-            }, 
-            "name": "anim", 
-            "type": "js", 
-            "path": "anim/anim-min.js", 
-            "ext": false, 
-            "supersedes": [
-                "anim-base", 
-                "anim-color", 
-                "anim-curve", 
-                "anim-easing", 
-                "anim-scroll", 
-                "anim-xy", 
-                "anim-node-plugin"
-            ], 
-            "rollup": 4
-        }, 
-        "attribute": {
-            "requires": [
-                "event"
-            ], 
-            "name": "attribute", 
-            "type": "js", 
-            "path": "attribute/attribute-min.js", 
-            "ext": false
-        }, 
-        "base": {
-            "requires": [
-                "attribute"
-            ], 
-            "name": "base", 
-            "type": "js", 
-            "path": "base/base-min.js", 
-            "ext": false
-        }, 
-        "compat": {
-            "requires": [
-                "node"
-            ], 
-            "name": "compat", 
-            "type": "js", 
-            "path": "compat/compat-min.js", 
-            "ext": false
-        }, 
-        "cookie": {
-            "name": "cookie", 
-            "type": "js", 
-            "path": "cookie/cookie-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "dd-ddm-base": {
-            "requires": [
-                "node", 
-                "base"
-            ], 
-            "path": "dd/dd-ddm-base-min.js", 
-            "name": "dd-ddm-base", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-ddm": {
-            "requires": [
-                "dd-ddm-base"
-            ], 
-            "path": "dd/dd-ddm-min.js", 
-            "name": "dd-ddm", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-ddm-drop": {
-            "requires": [
-                "dd-ddm"
-            ], 
-            "path": "dd/dd-ddm-drop-min.js", 
-            "name": "dd-ddm-drop", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-drag": {
-            "requires": [
-                "dd-ddm-base"
-            ], 
-            "path": "dd/dd-drag-min.js", 
-            "name": "dd-drag", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-drop": {
-            "requires": [
-                "dd-ddm-drop"
-            ], 
-            "path": "dd/dd-drop-min.js", 
-            "name": "dd-drop", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-proxy": {
-            "requires": [
-                "dd-drag"
-            ], 
-            "path": "dd/dd-proxy-min.js", 
-            "name": "dd-proxy", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-constrain": {
-            "requires": [
-                "dd-drag", 
-                "dd-proxy"
-            ], 
-            "path": "dd/dd-constrain-min.js", 
-            "name": "dd-constrain", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-plugin": {
-            "requires": [
-                "dd-drag"
-            ], 
-            "optional": [
-                "dd-constrain", 
-                "dd-proxy"
-            ], 
-            "path": "dd/dd-plugin-min.js", 
-            "name": "dd-plugin", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd-drop-plugin": {
-            "requires": [
-                "dd-drop"
-            ], 
-            "path": "dd/dd-drop-plugin-min.js", 
-            "name": "dd-drop-plugin", 
-            "type": "js", 
-            "ext": false
-        }, 
-        "dd": {
-            "submodules": {
-                "dd-ddm-base": {
-                    "requires": [
-                        "node", 
-                        "base"
-                    ], 
-                    "path": "dd/dd-ddm-base-min.js", 
-                    "name": "dd-ddm-base", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-ddm": {
-                    "requires": [
-                        "dd-ddm-base"
-                    ], 
-                    "path": "dd/dd-ddm-min.js", 
-                    "name": "dd-ddm", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-ddm-drop": {
-                    "requires": [
-                        "dd-ddm"
-                    ], 
-                    "path": "dd/dd-ddm-drop-min.js", 
-                    "name": "dd-ddm-drop", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-drag": {
-                    "requires": [
-                        "dd-ddm-base"
-                    ], 
-                    "path": "dd/dd-drag-min.js", 
-                    "name": "dd-drag", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-drop": {
-                    "requires": [
-                        "dd-ddm-drop"
-                    ], 
-                    "path": "dd/dd-drop-min.js", 
-                    "name": "dd-drop", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-proxy": {
-                    "requires": [
-                        "dd-drag"
-                    ], 
-                    "path": "dd/dd-proxy-min.js", 
-                    "name": "dd-proxy", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-constrain": {
-                    "requires": [
-                        "dd-drag", 
-                        "dd-proxy"
-                    ], 
-                    "path": "dd/dd-constrain-min.js", 
-                    "name": "dd-constrain", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-plugin": {
-                    "requires": [
-                        "dd-drag"
-                    ], 
-                    "optional": [
-                        "dd-constrain", 
-                        "dd-proxy"
-                    ], 
-                    "path": "dd/dd-plugin-min.js", 
-                    "name": "dd-plugin", 
-                    "type": "js", 
-                    "ext": false
-                }, 
-                "dd-drop-plugin": {
-                    "requires": [
-                        "dd-drop"
-                    ], 
-                    "path": "dd/dd-drop-plugin-min.js", 
-                    "name": "dd-drop-plugin", 
-                    "type": "js", 
-                    "ext": false
-                }
-            }, 
-            "name": "dd", 
-            "type": "js", 
-            "path": "dd/dd-min.js", 
-            "ext": false, 
-            "requires": [
-            ], 
-            "supersedes": [
-                "dd-ddm-base", 
-                "dd-ddm", 
-                "dd-ddm-drop", 
-                "dd-drag", 
-                "dd-drop", 
-                "dd-proxy", 
-                "dd-constrain", 
-                "dd-plugin", 
-                "dd-drop-plugin"
-            ], 
-            "rollup": 4
-        }, 
-        "dump": {
-            "name": "dump", 
-            "type": "js", 
-            "path": "dump/dump-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "event": {
-            "requires": [
-                "oop"
-            ], 
-            "name": "event", 
-            "type": "js", 
-            "path": "event/event-min.js", 
-            "ext": false
-        }, 
-        "io": {
-            "requires": [
-                "node"
-            ], 
-            "name": "io", 
-            "type": "js", 
-            "path": "io/io-min.js", 
-            "ext": false
-        }, 
-        "json-parse": {
-            "path": "json/json-parse-min.js", 
-            "name": "json-parse", 
-            "type": "js", 
-            "ext": false, 
-            "requires": [
-            ], 
-            "expanded": [
-            ]
-        }, 
-        "json-stringify": {
-            "path": "json/json-stringify-min.js", 
-            "name": "json-stringify", 
-            "type": "js", 
-            "ext": false, 
-            "requires": [
-            ], 
-            "expanded": [
-            ]
-        }, 
-        "json": {
-            "submodules": {
-                "json-parse": {
-                    "path": "json/json-parse-min.js", 
-                    "name": "json-parse", 
-                    "type": "js", 
-                    "ext": false, 
-                    "requires": [
-                    ], 
-                    "expanded": [
-                    ]
-                }, 
-                "json-stringify": {
-                    "path": "json/json-stringify-min.js", 
-                    "name": "json-stringify", 
-                    "type": "js", 
-                    "ext": false, 
-                    "requires": [
-                    ], 
-                    "expanded": [
-                    ]
-                }
-            }, 
-            "name": "json", 
-            "type": "js", 
-            "path": "json/json-min.js", 
-            "ext": false, 
-            "requires": [
-            ], 
-            "supersedes": [
-                "json-parse", 
-                "json-stringify"
-            ], 
-            "rollup": 1, 
-            "expanded": [
-                "json-parse", 
-                "json-stringify"
-            ]
-        }, 
-        "oop": {
-            "requires": [
-                "yui-base"
-            ], 
-            "name": "oop", 
-            "type": "js", 
-            "path": "oop/oop-min.js", 
-            "ext": false
-        }, 
-        "queue": {
-            "name": "queue", 
-            "type": "js", 
-            "path": "queue/queue-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "substitute": {
-            "optional": [
-                "dump"
-            ], 
-            "name": "substitute", 
-            "type": "js", 
-            "path": "substitute/substitute-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "yui": {
-            "supersedes": [
-                "yui-base", 
-                "get", 
-                "loader"
-            ], 
-            "name": "yui", 
-            "type": "js", 
-            "path": "yui/yui-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "yui-base": {
-            "name": "yui-base", 
-            "type": "js", 
-            "path": "yui-base/yui-base-min.js", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssreset": {
-            "type": "css", 
-            "path": "cssreset/reset-min.css", 
-            "name": "cssreset", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssreset-context": {
-            "type": "css", 
-            "path": "cssreset/reset-context-min.css", 
-            "name": "cssreset-context", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssfonts": {
-            "type": "css", 
-            "path": "cssfonts/fonts-min.css", 
-            "name": "cssfonts", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssfonts-context": {
-            "type": "css", 
-            "path": "cssfonts/fonts-context-min.css", 
-            "name": "cssfonts-context", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssgrids": {
-            "type": "css", 
-            "path": "cssgrids/grids-min.css", 
-            "requires": [
-                "cssfonts"
-            ], 
-            "optional": [
-                "cssreset"
-            ], 
-            "name": "cssgrids", 
-            "ext": false
-        }, 
-        "cssgrids-context": {
-            "type": "css", 
-            "path": "cssgrids/grids-context-min.css", 
-            "requires": [
-                "cssfonts-context"
-            ], 
-            "optional": [
-                "cssreset-context"
-            ], 
-            "name": "cssgrids-context", 
-            "ext": false
-        }, 
-        "cssbase": {
-            "type": "css", 
-            "path": "cssbase/base-min.css", 
-            "after": [
-                "cssreset", 
-                "cssfonts", 
-                "cssgrids", 
-                "cssreset-context", 
-                "cssfonts-context", 
-                "cssgrids-context"
-            ], 
-            "name": "cssbase", 
-            "ext": false, 
-            "requires": [
-            ]
-        }, 
-        "cssbase-context": {
-            "type": "css", 
-            "path": "cssbase/base-context-min.css", 
-            "after": [
-                "cssreset", 
-                "cssfonts", 
-                "cssgrids", 
-                "cssreset-context", 
-                "cssfonts-context", 
-                "cssgrids-context"
-            ], 
-            "name": "cssbase-context", 
-            "ext": false, 
-            "requires": [
-            ]
-        }
-    }
+{ 
+  "data" : {
+	"dom-base": {
+		"requires": [
+			"event"
+		], 
+		"path": "dom/dom-base-min.js", 
+		"name": "dom-base", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dom-style": {
+		"requires": [
+			"dom-base"
+		], 
+		"path": "dom/dom-style-min.js", 
+		"name": "dom-style", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dom-screen": {
+		"requires": [
+			"dom-base", 
+			"dom-style"
+		], 
+		"path": "dom/dom-screen-min.js", 
+		"name": "dom-screen", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"selector": {
+		"requires": [
+			"dom-base"
+		], 
+		"path": "dom/selector-min.js", 
+		"name": "selector", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dom": {
+		"requires": [
+			"event"
+		], 
+		"submodules": {
+			"dom-base": {
+				"requires": [
+					"event"
+				], 
+				"path": "dom/dom-base-min.js", 
+				"name": "dom-base", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dom-style": {
+				"requires": [
+					"dom-base"
+				], 
+				"path": "dom/dom-style-min.js", 
+				"name": "dom-style", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dom-screen": {
+				"requires": [
+					"dom-base", 
+					"dom-style"
+				], 
+				"path": "dom/dom-screen-min.js", 
+				"name": "dom-screen", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"selector": {
+				"requires": [
+					"dom-base"
+				], 
+				"path": "dom/selector-min.js", 
+				"name": "selector", 
+				"type": "js", 
+				"ext": false
+			}
+		}, 
+		"name": "dom", 
+		"type": "js", 
+		"path": "dom/dom-min.js", 
+		"ext": false, 
+		"supersedes": [
+			"dom-base", 
+			"dom-style", 
+			"dom-screen", 
+			"selector"
+		], 
+		"rollup": 3
+	}, 
+	"node-base": {
+		"requires": [
+			"dom-base", 
+			"selector"
+		], 
+		"path": "node/node-base-min.js", 
+		"name": "node-base", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"node-style": {
+		"requires": [
+			"dom-style", 
+			"node-base"
+		], 
+		"path": "node/node-style-min.js", 
+		"name": "node-style", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"node-screen": {
+		"requires": [
+			"dom-screen", 
+			"node-base"
+		], 
+		"path": "node/node-screen-min.js", 
+		"name": "node-screen", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"node": {
+		"requires": [
+			"dom"
+		], 
+		"submodules": {
+			"node-base": {
+				"requires": [
+					"dom-base", 
+					"selector"
+				], 
+				"path": "node/node-base-min.js", 
+				"name": "node-base", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"node-style": {
+				"requires": [
+					"dom-style", 
+					"node-base"
+				], 
+				"path": "node/node-style-min.js", 
+				"name": "node-style", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"node-screen": {
+				"requires": [
+					"dom-screen", 
+					"node-base"
+				], 
+				"path": "node/node-screen-min.js", 
+				"name": "node-screen", 
+				"type": "js", 
+				"ext": false
+			}
+		}, 
+		"name": "node", 
+		"type": "js", 
+		"path": "node/node-min.js", 
+		"ext": false, 
+		"supersedes": [
+			"node-base", 
+			"node-style", 
+			"node-screen"
+		], 
+		"rollup": 2
+	}, 
+	"anim-base": {
+		"requires": [
+			"base", 
+			"node-style"
+		], 
+		"path": "anim/anim-base-min.js", 
+		"name": "anim-base", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim-color": {
+		"requires": [
+			"anim-base"
+		], 
+		"path": "anim/anim-color-min.js", 
+		"name": "anim-color", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim-curve": {
+		"requires": [
+			"anim-xy"
+		], 
+		"path": "anim/anim-curve-min.js", 
+		"name": "anim-curve", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim-easing": {
+		"path": "anim/anim-easing-min.js", 
+		"name": "anim-easing", 
+		"type": "js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"anim-scroll": {
+		"requires": [
+			"anim-base"
+		], 
+		"path": "anim/anim-scroll-min.js", 
+		"name": "anim-scroll", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim-xy": {
+		"requires": [
+			"anim-base", 
+			"node-screen"
+		], 
+		"path": "anim/anim-xy-min.js", 
+		"name": "anim-xy", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim-node-plugin": {
+		"requires": [
+			"node", 
+			"anim-base"
+		], 
+		"path": "anim/anim-node-plugin-min.js", 
+		"name": "anim-node-plugin", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"anim": {
+		"requires": [
+			"base", 
+			"node"
+		], 
+		"submodules": {
+			"anim-base": {
+				"requires": [
+					"base", 
+					"node-style"
+				], 
+				"path": "anim/anim-base-min.js", 
+				"name": "anim-base", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"anim-color": {
+				"requires": [
+					"anim-base"
+				], 
+				"path": "anim/anim-color-min.js", 
+				"name": "anim-color", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"anim-curve": {
+				"requires": [
+					"anim-xy"
+				], 
+				"path": "anim/anim-curve-min.js", 
+				"name": "anim-curve", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"anim-easing": {
+				"path": "anim/anim-easing-min.js", 
+				"name": "anim-easing", 
+				"type": "js", 
+				"ext": false, 
+				"requires": [
+				]
+			}, 
+			"anim-scroll": {
+				"requires": [
+					"anim-base"
+				], 
+				"path": "anim/anim-scroll-min.js", 
+				"name": "anim-scroll", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"anim-xy": {
+				"requires": [
+					"anim-base", 
+					"node-screen"
+				], 
+				"path": "anim/anim-xy-min.js", 
+				"name": "anim-xy", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"anim-node-plugin": {
+				"requires": [
+					"node", 
+					"anim-base"
+				], 
+				"path": "anim/anim-node-plugin-min.js", 
+				"name": "anim-node-plugin", 
+				"type": "js", 
+				"ext": false
+			}
+		}, 
+		"name": "anim", 
+		"type": "js", 
+		"path": "anim/anim-min.js", 
+		"ext": false, 
+		"supersedes": [
+			"anim-base", 
+			"anim-color", 
+			"anim-curve", 
+			"anim-easing", 
+			"anim-scroll", 
+			"anim-xy", 
+			"anim-node-plugin"
+		], 
+		"rollup": 4
+	}, 
+	"attribute": {
+		"requires": [
+			"event"
+		], 
+		"name": "attribute", 
+		"type": "js", 
+		"path": "attribute/attribute-min.js", 
+		"ext": false
+	}, 
+	"base": {
+		"requires": [
+			"attribute"
+		], 
+		"name": "base", 
+		"type": "js", 
+		"path": "base/base-min.js", 
+		"ext": false
+	}, 
+	"compat": {
+		"requires": [
+			"node"
+		], 
+		"name": "compat", 
+		"type": "js", 
+		"path": "compat/compat-min.js", 
+		"ext": false
+	}, 
+	"cookie": {
+		"name": "cookie", 
+		"type": "js", 
+		"path": "cookie/cookie-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"dd-ddm-base": {
+		"requires": [
+			"node", 
+			"base"
+		], 
+		"path": "dd/dd-ddm-base-min.js", 
+		"name": "dd-ddm-base", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-ddm": {
+		"requires": [
+			"dd-ddm-base"
+		], 
+		"path": "dd/dd-ddm-min.js", 
+		"name": "dd-ddm", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-ddm-drop": {
+		"requires": [
+			"dd-ddm"
+		], 
+		"path": "dd/dd-ddm-drop-min.js", 
+		"name": "dd-ddm-drop", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-drag": {
+		"requires": [
+			"dd-ddm-base"
+		], 
+		"path": "dd/dd-drag-min.js", 
+		"name": "dd-drag", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-drop": {
+		"requires": [
+			"dd-ddm-drop"
+		], 
+		"path": "dd/dd-drop-min.js", 
+		"name": "dd-drop", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-proxy": {
+		"requires": [
+			"dd-drag"
+		], 
+		"path": "dd/dd-proxy-min.js", 
+		"name": "dd-proxy", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-constrain": {
+		"requires": [
+			"dd-drag", 
+			"dd-proxy"
+		], 
+		"path": "dd/dd-constrain-min.js", 
+		"name": "dd-constrain", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-plugin": {
+		"requires": [
+			"dd-drag"
+		], 
+		"optional": [
+			"dd-constrain", 
+			"dd-proxy"
+		], 
+		"path": "dd/dd-plugin-min.js", 
+		"name": "dd-plugin", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd-drop-plugin": {
+		"requires": [
+			"dd-drop"
+		], 
+		"path": "dd/dd-drop-plugin-min.js", 
+		"name": "dd-drop-plugin", 
+		"type": "js", 
+		"ext": false
+	}, 
+	"dd": {
+		"submodules": {
+			"dd-ddm-base": {
+				"requires": [
+					"node", 
+					"base"
+				], 
+				"path": "dd/dd-ddm-base-min.js", 
+				"name": "dd-ddm-base", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-ddm": {
+				"requires": [
+					"dd-ddm-base"
+				], 
+				"path": "dd/dd-ddm-min.js", 
+				"name": "dd-ddm", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-ddm-drop": {
+				"requires": [
+					"dd-ddm"
+				], 
+				"path": "dd/dd-ddm-drop-min.js", 
+				"name": "dd-ddm-drop", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-drag": {
+				"requires": [
+					"dd-ddm-base"
+				], 
+				"path": "dd/dd-drag-min.js", 
+				"name": "dd-drag", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-drop": {
+				"requires": [
+					"dd-ddm-drop"
+				], 
+				"path": "dd/dd-drop-min.js", 
+				"name": "dd-drop", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-proxy": {
+				"requires": [
+					"dd-drag"
+				], 
+				"path": "dd/dd-proxy-min.js", 
+				"name": "dd-proxy", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-constrain": {
+				"requires": [
+					"dd-drag", 
+					"dd-proxy"
+				], 
+				"path": "dd/dd-constrain-min.js", 
+				"name": "dd-constrain", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-plugin": {
+				"requires": [
+					"dd-drag"
+				], 
+				"optional": [
+					"dd-constrain", 
+					"dd-proxy"
+				], 
+				"path": "dd/dd-plugin-min.js", 
+				"name": "dd-plugin", 
+				"type": "js", 
+				"ext": false
+			}, 
+			"dd-drop-plugin": {
+				"requires": [
+					"dd-drop"
+				], 
+				"path": "dd/dd-drop-plugin-min.js", 
+				"name": "dd-drop-plugin", 
+				"type": "js", 
+				"ext": false
+			}
+		}, 
+		"name": "dd", 
+		"type": "js", 
+		"path": "dd/dd-min.js", 
+		"ext": false, 
+		"requires": [
+		], 
+		"supersedes": [
+			"dd-ddm-base", 
+			"dd-ddm", 
+			"dd-ddm-drop", 
+			"dd-drag", 
+			"dd-drop", 
+			"dd-proxy", 
+			"dd-constrain", 
+			"dd-plugin", 
+			"dd-drop-plugin"
+		], 
+		"rollup": 4
+	}, 
+	"dump": {
+		"name": "dump", 
+		"type": "js", 
+		"path": "dump/dump-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"event": {
+		"requires": [
+			"oop"
+		], 
+		"name": "event", 
+		"type": "js", 
+		"path": "event/event-min.js", 
+		"ext": false
+	}, 
+	"get": {
+		"name": "get", 
+		"type": "js", 
+		"path": "get/get-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"io": {
+		"requires": [
+			"node"
+		], 
+		"name": "io", 
+		"type": "js", 
+		"path": "io/io-min.js", 
+		"ext": false
+	}, 
+	"json-parse": {
+		"path": "json/json-parse-min.js", 
+		"name": "json-parse", 
+		"type": "js", 
+		"ext": false, 
+		"requires": [
+		], 
+		"expanded": [
+		]
+	}, 
+	"json-stringify": {
+		"path": "json/json-stringify-min.js", 
+		"name": "json-stringify", 
+		"type": "js", 
+		"ext": false, 
+		"requires": [
+		], 
+		"expanded": [
+		]
+	}, 
+	"json": {
+		"submodules": {
+			"json-parse": {
+				"path": "json/json-parse-min.js", 
+				"name": "json-parse", 
+				"type": "js", 
+				"ext": false, 
+				"requires": [
+				], 
+				"expanded": [
+				]
+			}, 
+			"json-stringify": {
+				"path": "json/json-stringify-min.js", 
+				"name": "json-stringify", 
+				"type": "js", 
+				"ext": false, 
+				"requires": [
+				], 
+				"expanded": [
+				]
+			}
+		}, 
+		"name": "json", 
+		"type": "js", 
+		"path": "json/json-min.js", 
+		"ext": false, 
+		"requires": [
+		], 
+		"supersedes": [
+			"json-parse", 
+			"json-stringify"
+		], 
+		"rollup": 1, 
+		"expanded": [
+			"json-parse", 
+			"json-stringify"
+		]
+	}, 
+	"loader": {
+		"name": "loader", 
+		"type": "js", 
+		"path": "loader/loader-min.js", 
+		"ext": false, 
+		"requires": [
+		], 
+		"expanded": [
+		]
+	}, 
+	"oop": {
+		"requires": [
+			"yui-base"
+		], 
+		"name": "oop", 
+		"type": "js", 
+		"path": "oop/oop-min.js", 
+		"ext": false
+	}, 
+	"queue": {
+		"name": "queue", 
+		"type": "js", 
+		"path": "queue/queue-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"substitute": {
+		"optional": [
+			"dump"
+		], 
+		"name": "substitute", 
+		"type": "js", 
+		"path": "substitute/substitute-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"yui": {
+		"supersedes": [
+			"yui-base", 
+			"get", 
+			"loader"
+		], 
+		"name": "yui", 
+		"type": "js", 
+		"path": "yui/yui-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"yui-base": {
+		"name": "yui-base", 
+		"type": "js", 
+		"path": "yui-base/yui-base-min.js", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssreset": {
+		"type": "css", 
+		"path": "cssreset/reset-min.css", 
+		"name": "cssreset", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssreset-context": {
+		"type": "css", 
+		"path": "cssreset/reset-context-min.css", 
+		"name": "cssreset-context", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssfonts": {
+		"type": "css", 
+		"path": "cssfonts/fonts-min.css", 
+		"name": "cssfonts", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssfonts-context": {
+		"type": "css", 
+		"path": "cssfonts/fonts-context-min.css", 
+		"name": "cssfonts-context", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssgrids": {
+		"type": "css", 
+		"path": "cssgrids/grids-min.css", 
+		"requires": [
+			"cssfonts"
+		], 
+		"optional": [
+			"cssreset"
+		], 
+		"name": "cssgrids", 
+		"ext": false
+	}, 
+	"cssgrids-context": {
+		"type": "css", 
+		"path": "cssgrids/grids-context-min.css", 
+		"requires": [
+			"cssfonts-context"
+		], 
+		"optional": [
+			"cssreset-context"
+		], 
+		"name": "cssgrids-context", 
+		"ext": false
+	}, 
+	"cssbase": {
+		"type": "css", 
+		"path": "cssbase/base-min.css", 
+		"after": [
+			"cssreset", 
+			"cssfonts", 
+			"cssgrids", 
+			"cssreset-context", 
+			"cssfonts-context", 
+			"cssgrids-context"
+		], 
+		"name": "cssbase", 
+		"ext": false, 
+		"requires": [
+		]
+	}, 
+	"cssbase-context": {
+		"type": "css", 
+		"path": "cssbase/base-context-min.css", 
+		"after": [
+			"cssreset", 
+			"cssfonts", 
+			"cssgrids", 
+			"cssreset-context", 
+			"cssfonts-context", 
+			"cssgrids-context"
+		], 
+		"name": "cssbase-context", 
+		"ext": false, 
+		"requires": [
+		]
+	}
 }
+}
+
