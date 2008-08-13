@@ -4,6 +4,7 @@ $section="node";
 $component="Node Utility";
 $highlightSyntax = true;
 $releasenotes = true;
+$prepend = '<style type="text/css">table th code { text-transform:none; }</style>';
 include "../inc/header.inc";
 ?>
 <div id="yui-main">
@@ -174,13 +175,13 @@ include "../inc/header.inc";
             <table class="yui-table">
                 <thead>
                     <tr>
-                        <th>2.x (via YAHOO.util.Dom)</th>
+                        <th>2.x <code>(via YAHOO.util.Dom)</code></th>
                         <th>3.0</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Dom.addClass</td>
+                        <td>addClass</td>
                         <td>myNode.addClass</td>
                     </tr>
                     <tr>
