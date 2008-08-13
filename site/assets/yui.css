@@ -446,8 +446,8 @@ table.auto {width:auto;}
 #topContainer{margin-left:auto;margin-right:auto;/*width:74.8em;*/}
 #topIntCont{width:74.8em;float:left;height:1.7em;}
 #headerMaxCont{width:100%;height:4.1em;background:url('http://l.yimg.com/a/i/ydn/header-top-bkg.jpg') repeat-x #0066a0;}
-#headerContainer{margin-left:auto;margin-right:auto;width:100%;height:4.15em;padding-right:10px;}
-#headerMainSandbag {position:absolute;width:123.5em;height:4.1em;top:0em;left:50%;margin-left:-62.1em;}
+#headerContainer{margin-left:auto;margin-right:auto;height:4.15em;}
+#headerMainSandbag {position:absolute;width:100%;height:4.1em;top:0;left:50%;margin-left:-62.1em;}
 #headerMainSandbag {background: transparent url('http://l.yimg.com/a/i/ydn/header-top.jpg') no-repeat 50% top;z-index:0;}
 #headerSubSandbag {position:absolute;width:123.5em;height:1.9em;top:5.77em;left:50%;margin-left:-62.1em;}
 #headerSubSandbag {background: transparent url('http://l.yimg.com/a/i/ydn/header-sub.jpg') no-repeat 50% top;z-index:0;}
