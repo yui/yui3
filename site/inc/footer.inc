@@ -1,12 +1,25 @@
 
-	<div id="ft">
-        <p class="first">Copyright &copy; <?php print strftime("%Y"); ?> Yahoo! Inc. All rights reserved.</p>
-        <p><a href="http://privacy.yahoo.com/privacy/us/devel/index.html">Privacy Policy</a> - 
-            <a href="http://docs.yahoo.com/info/terms/">Terms of Service</a> - 
-            <a href="http://docs.yahoo.com/info/copyright/copyright.html">Copyright Policy</a> - 
-            <a href="http://careers.yahoo.com/">Job Openings</a></p>
-	</div>
+
 </div>
+
+
+<div>
+    <div id="footerBotMainCont">
+    <div id="footerBotMaxCont">
+    <div id="footerBotContainer">
+    <div id="footerBotInternal">
+    <div id="ydnfoot_bot">
+    <div id="footerLegal">
+        <p>Copyright &copy; <?php print strftime("%Y"); ?> Yahoo! Inc. All rights reserved. <a href="http://info.yahoo.com/copyright/details.html" rel="nofollow">Copyright</a> | <a href="http://info.yahoo.com/privacy/us/yahoo/devel/details.html" rel="nofollow">Privacy Policy</a> | <a href="http://developer.yahoo.com/terms/" rel="nofollow">Terms of Use</a> | <a href="http://careers.yahoo.com/">Job Openings</a></p>
+    </div>
+    </div>
+    </div> <!-- end id="ydnfoot" -->
+    </div>
+    </div>
+    </div>
+
+</div>
+
 
 <?php
 //include code for syntax-highlighting boxes, mostly found on landing and example pages
@@ -53,6 +66,7 @@ if (!substr_count($_SERVER["REQUEST_URI"], "ydn.corp")) {?>
 <?php
 }
 ?>
+
 
 <!--MyBlogLog instrumentation-->
 <script type="text/javascript" src="http://track2.mybloglog.com/js/jsserv.php?mblID=2007020704011645"></script>
