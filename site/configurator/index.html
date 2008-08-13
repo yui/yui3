@@ -4,76 +4,8 @@ $section="yui3configurator";
 $highlightSyntax = true;
 $prepend='
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.1/build/assets/skins/sam/skin.css">
-    <style type="text/css">
-        .panel {
-            border:1px solid #D9D9D9;
-            margin:1em 0 1em 0;
-        }
-        .panel .hd {
-            background-color:#6C8EA1;
-            color: #fff;
-            font-weight:bold;
-            font-size:108%;
-            padding:5px;
-        }
-        .panel .bd {
-            background:#F2FBFF url(../assets/gradient-promo.png) repeat-x scroll 0 0;
-            padding:5px;
-        }
-        .modList {
-            margin: 1em;
-        }
-        .modList li {
-            list-style-type: none;
-            padding-top: 2px;
-            padding-bottom: 2px;
-        }
-        .modList li.yui-hover {
-            background-color:#6C8EA1;
-            color:#ffffff;
-            cursor:pointer;
-        }
-        .modList li .size {
-            font-size:85%;
-            color:#aaa;
-        }
-        .desc {
-            border:1px solid #000;
-            background-color: #fff;
-            padding:5px;
-            font-size:85%;
-        }
-
-        #modDesc.yui-hidden, #subModDesc.yui-hidden {
-            display:none;
-        }
-
-        #subMods.modList li.yui-hover {
-            cursor:auto;
-        }
-
-        #config label {
-            margin-right: 2em;
-        }
-
-        #chart {
-            height:20em;
-        }
-
-        #legendBox {
-            background-color:#fff;
-            padding:5px;
-        }
-        
-        #legendBox .legendHeader {
-            padding:2px;
-            font-weight:bold;
-        }
-
-        #legendBox .ul {
-            border-top:1px solid #ccc;
-        }
-	</style>';
+    <link rel="stylesheet" type="text/css" href="config.css">
+';
 include "../inc/header.inc";
 ?>
 
@@ -81,34 +13,39 @@ include "../inc/header.inc";
     <div class="yui-b">
         <div id="main">
             <h2>YUI Configurator</h2>
-            <div id="configurator" class="yui-gc">
-                <div class="yui-u first">
+            <div id="configurator">
+                <div>
+                    <div id="resources" class="panel">
+                        <div class="hd">Resource Tags</div>
+                        <div class="bd">
+                            <textarea class="HTML" cols="60" rows="1" id="loaderOutput" name="loaderOutput">
+                            </textarea>
+                        </div>
+                    </div>
                     <div id="config" class="panel">
                         <div class="hd">Options</div>
                         <div class="bd">
-                            <p>
                                 <label><input type="checkbox" id="rollup" checked /> Allow Rollups</label>
                                 <label><input type="checkbox" id="optional" checked /> Load Optional</label>
                                 <label><input type="checkbox" id="combo" checked /> Use Combo Handler</label>
-                            </p>
-                            <p>
+                                <label>Base Path: <input type="text" id="base" value="" disabled/></label>
                                 <label> File Type: <select id="fileType">
                                 <option value="min" selected> Min </option>
                                 <option value="raw"> Full </option>
                                 <option value="debug"> Debug </option>
                                 </select>
                                 </label>
-                                <label>Base Path: <input type="text" id="base" value="" disabled/></label>
-                            </p>
                         </div>
                     </div>
-                    <div class="yui-g first" id="modInfo">
+                    <div class="yui-gb first" id="modInfo">
                         <div class="yui-u first">
                             <div id="modPanel" class="panel">
                                 <div class="hd">Modules</div>
                                 <div class="bd">
-                                    <ul id="mods" class="modList"></ul>
-                                    <div id="modDesc" class="desc yui-hidden"></div>
+                                    <div class="modGroupHd">JavaScript Modules</div>
+                                    <ul id="jsMods" class="modList"></ul>
+                                    <div class="modGroupHd">CSS Modules</div>
+                                    <ul id="cssMods" class="modList"></ul>
                                 </div>
                             </div>
                         </div>
@@ -117,28 +54,28 @@ include "../inc/header.inc";
                                 <div class="hd">Sub Modules</div>
                                 <div class="bd">
                                     <ul id="subMods" class="modList"></ul>
-                                    <div id="subModDesc" class="desc yui-hidden"></div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="yui-u">
+                            <div id="modDesc" class="yui-hidden">
+                                <div class="hd"></div>
+                                <div class="bd"></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="yui-u">
-                    <div id="resources" class="panel">
-                        <div class="hd">Resource Tags</div>
-                        <div class="bd">
-                            <textarea class="HTML" cols="60" rows="1" id="loaderOutput" name="loaderOutput">
-                            </textarea>
-                        </div>
-                    </div>
+                <div>
                     <div id="weight" class="panel">
                         <div class="hd" id="total"></div>
                         <div class="bd">
                             <div id="chart"></div>
+                            <!--
                             <div id="legendBox">
                                 <div class="title">LEGEND</div>
                                 <ul id="legend"></ul>
                             </div>
+                            -->
                         </div>
                     </div>
                 </div>
@@ -153,6 +90,7 @@ include "../inc/header.inc";
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/selector/selector-beta-min.js"></script>
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/json/json-min.js"></script> 
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/datasource/datasource-beta-min.js"></script> 
+<script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/button/button-min.js"></script> 
 <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/charts/charts-experimental-min.js"></script> 
 
 <script type="text/javascript" src="data.js"></script>

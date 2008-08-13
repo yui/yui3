@@ -1,0 +1,108 @@
+.panel {
+    border:1px solid #D9D9D9;
+    margin:0 0 1em 0;
+}
+
+.panel .hd {
+    background-color:#6C8EA1;
+    color: #fff;
+    font-weight:bold;
+    font-size:108%;
+    padding:5px;
+}
+
+.panel .bd {
+    background:#F2FBFF url(../assets/gradient-promo.png) repeat-x scroll 0 0;
+    padding:5px;
+}
+
+#configurator li {
+    list-style-type: none;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#modPanel .modGroupHd {
+    border-bottom:1px solid #D9D9D9;
+    font-weight:normal;
+    margin-bottom:12px;
+    text-transform:uppercase;
+}
+
+.modList {
+    margin: 0.5em;
+}
+
+.modList li .yui-button {
+    vertical-align:middle;
+}
+
+.modList li.yui-hover {
+    background-color:#6C8EA1;
+    color:#ffffff;
+    cursor:pointer;
+}
+
+.modList .hasSubModules {
+    background:url(assets/rt-arrow-large.png) no-repeat 99% center;
+}
+
+.modList li .size {
+    font-size:85%;
+    color:#aaa;
+}
+
+#modPanel .bd, #subModPanel .bd {
+    overflow:auto;
+    height:30em;
+}
+
+#modDesc {
+    border:1px solid #000;
+    background-color: #edff9f;
+    padding:5px;
+    font-size:85%;
+}
+
+#modDesc .hd {
+    font-weight:bold;
+    font-size:108%;
+}
+
+#modDesc.yui-hidden {
+    display:none;
+}
+
+#subMods.modList li.yui-hover {
+    cursor:auto;
+}
+
+#config label {
+    margin-right: 2em;
+}
+
+#chart {
+    height:20em;
+}
+
+#legendBox {
+    background-color:#fff;
+    padding:5px;
+}
+
+#legendBox .title {
+    padding:2px;
+    font-weight:bold;
+    border-bottom: 1px solid #ccc;
+}
+
+#legend li .legendColor{
+    margin-right: 2px;
+    line-height:1em;
+    vertical-align:middle;
+}
+
+#legend li span {
+    line-height:1em;
+    vertical-align:middle;
+}
