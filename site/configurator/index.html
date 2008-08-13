@@ -81,7 +81,31 @@ include "../inc/header.inc";
                     </div>
                 </div>
             </div>
-        </div>
+            <br />
+            <h2>Configuring Your YUI 3.x Implementation:</h2>
+            
+            <h3>Seed Files and Self-Completion versus Static Implementations</h3>
+            
+            <p>There are two principal ways of putting YUI 3.x on the page:</p>
+            
+          <ol>
+           	  <li><strong>Use the YUI seed file and its self-completion capability:</strong> If you include the YUI seed module (the full YUI module, including all of its submodules) on each page, your YUI implementations can load all other YUI functionality on demand using the intrinsic dependency calculator and loader.  YUI can self-complete any implementation and will do so using a single HTTP request (when properly configured).  For many uses, this is the simplest and most performant approach to using YUI.  See <a href="/yui/3/yui/">the YUI module's User's Guide</a> for more information on this approach; most <a href="/yui/3/examples/">YUI examples</a> make use of this approach as well.  When you are using this approach, the only module you need to select in the Dependency Configurator above is the YUI module.</li>
+                <li><strong>Calculate your full dependency list and include all necessary files on the page:</strong> If you want to load the full set of required YUI modules via a <code>script</code> tag directly on the page, use the Dependency Configurator above to select the modules and submodules that are required for your implementation.  Note that in most cases you will not need all submodules for a given component &mdash; most animations are not animations of color, for example, and so don't require the <code>anim-color</code> submodule.  Similarly, if you are taking this approach (and will not be loading any YUI files dynamically you may not need the <code>get</code> and <code>loader</code> submodules for the YUI component, and you can save pageweight by just including <code>yui-base</code>.
+          </ol>
+            
+            <h3>Using the Dependency Configurator</h3>
+            
+            <p>The new YUI 3.x Dependency Configurator above is a work in progress, so please bear with us as we continue to work on improving the user experience.  Here's the quick overview of its intended usage:</p>
+            
+            <ul>
+            	<li><strong>Choose your options settings.</strong>  By default, files will be served from Yahoo's CDN, combo-handling will be used to create single HTTP requests for CSS and JS files, and the smallest (minified) files will be used.  You can modify all of those settings as desired.</li>
+                <li><strong>Are you using the seed file? </strong>Read the section above carefully &mdash; if you plan to use YUI's self-completing loading capability, the only component you need to load is the full YUI module.</li>
+                <li><strong>If you're using more than the seed file, choose the modules/submodules that you plan to use.</strong> If you are configuring a more complex implementation that uses more than the seed file to begin with, you can choose the specific modules you want to use.  For each module, there may be submodules; where these are present, choose just the submodules you plan to use in order to keep your implementation as light as possible. As you hover over a module or submodule, descriptive text appears on the right side of the screen to help guide you as to the nature of that element. <strong>Note:</strong> If you know you will not be loading any modules dynamically (via YUI's <code>use</code> method), you may be able to lighten your implmentation slightly by unselecting the YUI component's <code>get</code> and <code>loader</code> submodules.</li>
+                <li><strong>Explore the pageweight impact of your choices.</strong>  The <em>Page Weight Analysis</em> tab will reveal details about the k-weight of the YUI components you've chosen to use.  Note that the <em>minified</em> weight is the size of the files as they consumed by the browser; the <em>gzipped</em> weight is the amount of data that is actually transmitted over the wire to the browser.</li>
+            </ul>
+            <h3>More About Files Hosted by Yahoo!</h3>
+            <p>You can read more about using YUI files directly from Yahoo's servers on YUI's main<a href="/yui/articles/hosting/"> Configuration and Hosting</a> page.</p>
+      </div>
     </div>
 </div>
 
