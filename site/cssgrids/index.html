@@ -71,10 +71,10 @@ include "../inc/header.inc";
 
 					<p>We use and recommend the 4.01 Strict !DOCTYPE to trigger Standards Mode in browsers that have multiple rendering modes:</p>
 
-	<textarea name="code" class="HTML" cols="60" rows="2">
-	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
-	"http://www.w3.org/TR/html4/strict.dtd">
-	</textarea>
+					<textarea name="code" class="HTML" cols="60" rows="2">
+					<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+					"http://www.w3.org/TR/html4/strict.dtd">
+					</textarea>
 
 					<p>To use <?php echo $component;?>, include the following source file in your web page with the link element.</p>
 
@@ -90,23 +90,15 @@ include "../inc/header.inc";
 				<html>
 				<head>
 					<title>YUI CSS Grids</title>
-					<!-- Source File -->
+					<!-- Source Files -->
 						<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/resert-min.css">
 						<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-min.css">
 						<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids.css">
 				</head>
 				</textarea>
 
-						<h4>The YUI CSS Foundation</h4>
-
-						<p>Note: If you are using the entire YUI CSS foundation, including the <a href="../cssreset/">Reset</a>, <a href="../cssfonts/">Fonts</a>, and <a href="../cssgrids/">Grids</a> packages, we have provided a concatenated and minified aggregate file for you to use.  Including the "reset-fonts-grids.css" file will give you more efficient pageload performance as compared to including each of the foundation files separately.</p>
-
-				<textarea name="code" class="HTML" cols="60" rows="5">
-				<!-- Source File -->
-				<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/reset-fonts-grids/reset-fonts-grids.css">
-				</textarea>
 				<?php
-				// include "../inc/include-notice.inc";
+				# include "../inc/include-notice.inc";
 				?>
 
 						<h3 id="using">Using YUI CSS Grids</h3>
@@ -174,8 +166,10 @@ include "../inc/header.inc";
 							<html>
 								<head>
 									<title>YUI CSS Grids </title>
-									<!-- Source File -->
-									<link rel="stylesheet" type="text/css" href="reset-fonts-grids.css">
+									<!-- Source Files -->
+										<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssreset/resert-min.css">
+										<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssfonts/fonts-min.css">
+										<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/<?php echo($yuiCurrentVersion);?>/build/cssgrids/grids.css">
 								</head>
 								<body>
 									<div class="yui-d0">
@@ -185,15 +179,12 @@ include "../inc/header.inc";
 							</textarea>													
 							
 							<h6>Fixed vs Relative</h6>
-							
 							<p>YUI Grids generally declares widths in relative units (that change size based on the users' font-size or zoom factor). For fixed page widths append an <smp>f</smp> to the class name. For example, for a fixed-width 750px page, use <code>div.yui-d1<strong>f</strong></code> instead of <code>div.yui-d1</code>.
-
 
 							<h5>Example: Page Width</h5>
 							<p>This example illustrates the <a href="../examples/cssgrids/cssgrids-width.html">included page widths</a>.</p>					
 
 							<h6 class="note">Note on 100% Layout</h6>
-
 							<p>On the advice of our designers, the 100% grid (<code>.yui-d0</code>) has 10px of margin on the left and right sides. This prevents the content from <a href="http://en.wikipedia.org/wiki/Bleed_%28printing%29">bleeding</a> into the browser's chrome. If you prefer, you can set it back to zero by adding this to your document:</p>
 								
 							<textarea name="code" class="HTML" cols="60" rows="3">
@@ -244,15 +235,11 @@ include "../inc/header.inc";
 								</ol>
 								
 							<h5>Example: Custom Page Width</h5>
-							
 							<p>This example illustrates the <a href="../examples/cssgrids/cssgrids-width-custom.html">included page widths</a>.</p>
 									
 							<h4 id="preset_templates">Using Template Presets</h4>
-
 							<p>Most web pages have a main block of content and a secondary block of content. Should the narrow block be on the left or the right? How wide should it be?</p>
-							
 							<p><em>Templates Presets</em> in CSS Grids allow you to choose the positioning of these blocks (narrow on the left or the right?) as well as the fixed width of the secondary (narrow) block. The main block will take the remaining available space, which varies depending on the overall page width.</p>
-
 							<p>The two blocks on the page are both defined as <code>div.yui-b</code>, where "<strong>b</strong>" stands for <strong>b</strong>lock. Wrap the block considered "main" in another div, <code>div.yui-main</code>. It will look like this:</p>
 
 							<textarea name="code" class="HTML" cols="60" rows="8">
