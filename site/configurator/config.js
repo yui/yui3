@@ -326,7 +326,6 @@
                     subModsEl.appendChild(li);
  
                     createModuleSelectionElement(submod, submodcfg, li);
-                    createSizeElement(submodcfg, li);
 
                     submodcfg._selectionEl.set("checked", isChecked);
 
@@ -339,6 +338,8 @@
                     }
 
                     submodcfg.module = name;
+
+                    createSizeElement(submodcfg, li);
                 }
             }
         } else {
@@ -465,9 +466,11 @@
     function createSizeElement(cfg, parent) {
         var s = document.createElement("span");
         var size = cfg.sizes[current.filter]; 
-        parent.appendChild(s);
+
         s.className = "size";
         s.id = "size_" + cfg.info.name;
+        parent.appendChild(s);
+
         s.innerHTML = '(' + prettySize(size) + ')';
     }
 
