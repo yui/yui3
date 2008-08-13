@@ -29,10 +29,41 @@
     border:1px solid #000;
 }
 
-#configurator li {
+#modInfo li {
     list-style-type: none;
     padding-top: 2px;
     padding-bottom: 2px;
+}
+
+#configurator .yui-content {
+    padding:10px;
+    background-color:#fff;
+}
+
+#configurator .yui-nav li {
+    white-space:nowrap;
+}
+
+#configurator .yui-nav li em {
+    font-style:normal;    
+}
+
+#configurator .yui-nav li.selected a {
+    color:#fff;    
+}
+
+#configurator .yui-nav li.selected a:hover {
+    color:#fff;
+    text-decoration:none;
+}
+
+#configurator .yui-nav li a {
+    color:#000;    
+}
+
+#configurator .yui-nav li a:hover {
+    color:#000;
+    text-decoration:none;
 }
 
 #modPanel .modGroupHd {

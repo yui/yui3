@@ -6,6 +6,7 @@
         Lang = YAHOO.lang,
 
         chart = null,
+        tabView = null,
 
         current = {
             initialLoad : true,
@@ -216,8 +217,7 @@
 
     function showResults(loader) {
         updateResourceUI(getIncludes(loader));
-        updateChartUI(current.sizes);
-        updateTotalsUI(current.sizes);
+        updateWeightUI(current.sizes);
     }
 
     function updateSizeUI() {
@@ -230,6 +230,8 @@
     }
 
     function updateChartUI(sizes) {
+
+        console.log("Updating Chart");
 
         var data = new YAHOO.util.DataSource(sizes);
         data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
@@ -258,15 +260,17 @@
         }
     }
 
-    function updateTotalsUI(sizes) {
+    function updateWeightUI(sizes) {
         var total = 0, prettyTotal;
         for (var i = 0; i < sizes.length; i++) {
             total += sizes[i].size;
         }
-   
+
         var prettyTotal = prettySize(total);
         totalEl.innerHTML = 'Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
         totalWeightEl.innerHTML = ' - Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
+
+        tabView.get("tabs")[1].set("label", "Weight Breakup - " + prettyTotal + "");
     }
 
     function handleModuleSelection(name, stateChange) {
@@ -580,6 +584,13 @@
     Event.onDOMReady(function() {
         
         current.selected = toModuleHash(YAHOO.configurator.INIT_SELECTION || ["yui"]);
+
+        tabView = new YAHOO.widget.TabView("configurator");
+        tabView.on("activeTabChange", function(e) {
+            if (this.get("activeIndex") == 1) {
+                updateChartUI(current.sizes);
+            }
+        });
 
         addModules();
         bindFormElements();

@@ -13,64 +13,70 @@ include "../inc/header.inc";
     <div class="yui-b">
         <div id="main">
             <h2>YUI Configurator</h2>
-            <div id="configurator">
-                <div>
-                    <div id="resources" class="panel">
-                        <div class="hd">Results <span id="finalWeight"></span></div>
-                        <div class="bd">
-                            <textarea class="HTML" cols="60" rows="6" id="loaderOutput" name="loaderOutput"><!-- Generated tags will be displayed here --></textarea>
+            <div id="configurator" class="yui-navset">
+                <ul class="yui-nav">
+                    <li class="selected"><a href="#configTab"><em>Configuration</em></a></li>
+                    <li><a href="#weightTab"><em>Weight Breakup</em></a></li>
+                </ul>            
+                <div class="yui-content">
+                    <div id="configTab">
+                        <div id="resources" class="panel">
+                            <div class="hd">Results <span id="finalWeight"></span></div>
+                            <div class="bd">
+                                <textarea class="HTML" cols="60" rows="6" id="loaderOutput" name="loaderOutput"><!-- Generated tags will be displayed here --></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div id="config" class="panel">
-                        <div class="hd">Options</div>
-                        <div class="bd">
-                                <label> File Type: <select id="fileType">
-                                <option value="min" selected> Min </option>
-                                <option value="raw"> Raw </option>
-                                <option value="debug"> Debug </option>
-                                </select>
-                                </label>
-                                <label>Base Path: <input type="text" id="base" value="" disabled/></label>
-                                <label><input type="checkbox" id="combo" checked /> Combine JS Files</label>
-                                <label><input type="checkbox" id="rollup" checked /> Allow Rollups</label>
-                                <label><input type="checkbox" id="optional" checked /> Include Optional Modules</label>
+                        <div id="config" class="panel">
+                            <div class="hd">Options</div>
+                            <div class="bd">
+                                    <label> File Type: <select id="fileType">
+                                    <option value="min" selected> Min </option>
+                                    <option value="raw"> Raw </option>
+                                    <option value="debug"> Debug </option>
+                                    </select>
+                                    </label>
+                                    <label>Base Path: <input type="text" id="base" value="" disabled/></label>
+                                    <label><input type="checkbox" id="combo" checked /> Combine JS Files</label>
+                                    <label><input type="checkbox" id="rollup" checked /> Allow Rollups</label>
+                                    <label><input type="checkbox" id="optional" checked /> Include Optional Modules</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="yui-gb first" id="modInfo">
-                        <div class="yui-u first">
-                            <div id="modPanel" class="panel">
-                                <div class="hd">Modules</div>
-                                <div class="bd">
-                                    <div class="modGroupHd">JavaScript Modules</div>
-                                    <ul id="jsMods" class="modList"></ul>
-                                    <div class="modGroupHd">CSS Modules</div>
-                                    <ul id="cssMods" class="modList"></ul>
+                        <div class="yui-gb first" id="modInfo">
+                            <div class="yui-u first">
+                                <div id="modPanel" class="panel">
+                                    <div class="hd">Modules</div>
+                                    <div class="bd">
+                                        <div class="modGroupHd">JavaScript Modules</div>
+                                        <ul id="jsMods" class="modList"></ul>
+                                        <div class="modGroupHd">CSS Modules</div>
+                                        <ul id="cssMods" class="modList"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="yui-u">
+                                <div id="subModPanel" class="panel">
+                                    <div class="hd">Sub Modules</div>
+                                    <div class="bd">
+                                        <ul id="subMods" class="modList">
+                                            <li>Click on a module row to view it's sub modules</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="desc-unit-ie6" class="yui-u">
+                                <div id="modDesc" class="yui-hidden">
+                                    <div class="hd"></div>
+                                    <div class="bd"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="yui-u">
-                            <div id="subModPanel" class="panel">
-                                <div class="hd">Sub Modules</div>
-                                <div class="bd">
-                                    <ul id="subMods" class="modList">
-                                        <li>Click on a module row to view it's sub modules</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="desc-unit-ie6" class="yui-u">
-                            <div id="modDesc" class="yui-hidden">
-                                <div class="hd"></div>
-                                <div class="bd"></div>
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <div>
-                    <div id="weight" class="panel">
-                        <div class="hd" id="total"></div>
-                        <div class="bd">
-                            <div id="chart"></div>
+                    <div id="weightTab">
+                        <div id="weight" class="panel">
+                            <div class="hd" id="total"></div>
+                            <div class="bd">
+                                <div id="chart"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +87,7 @@ include "../inc/header.inc";
 
 <script type="text/javascript" src="../build/yui/yui-min.js"></script>
 
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/animation/animation-min.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/animation/animation-min.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js&2.5.2/build/tabview/tabview-min.js"></script>
 
 <script type="text/javascript">
     YAHOO.namespace("configurator");
