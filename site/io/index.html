@@ -83,26 +83,28 @@ include "../inc/header.inc";
 				</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO module.
-				var Y = new YUI().use("io");
-				var uri = "get.php?foo=bar";
+				YUI().use("io", function(Y) {
+					var uri = "get.php?foo=bar";
 
-				// Define a function to handle the response data.
-				function complete(id, o, args) {
-				  var id = id; // Transaction ID.
-				  var data = o.responseText; // Response data.
-				  var args = args[1]; // 'ipsum'.
-				};
+					// Define a function to handle the response data.
+					function complete(id, o, args) {
+					  var id = id; // Transaction ID.
+					  var data = o.responseText; // Response data.
+					  var args = args[1]; // 'ipsum'.
+					};
 
-				// Subscribe to event "io:complete", and pass an array
-				// as an argument to the event handler "complete". Since
-				// "complete" is global.
-				// At this point in the transaction lifecycle, success or
-				// failure is not yet know.
-				Y.on('io:complete', complete, this, ['lorem', 'ipsum']);
+					// Subscribe to event "io:complete", and pass an array
+					// as an argument to the event handler "complete". Since
+					// "complete" is global.
+					// At this point in the transaction lifecycle, success or
+					// failure is not yet know.
+					Y.on('io:complete', complete, this, ['lorem', 'ipsum']);
 
-				// Make an HTTP request to 'get.php'.
-				// NOTE: This transaction does not use a configuration object.
-				var request = Y.io(uri);
+					// Make an HTTP request to 'get.php'.
+					// NOTE: This transaction does not use a configuration object.
+					var request = Y.io(uri);
+					};
+				);
 				</textarea>
 
 				<h3 id="IO">Using IO</h3>
@@ -184,7 +186,7 @@ include "../inc/header.inc";
 				<p>
 				This is an example of a configuration object, with all properties defined.
 				</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
+				<textarea name="code" class="JScript" cols="60" rows="1">
 				/*
 				 * This is an example configuration object will all properties defined.
 				 *
@@ -294,7 +296,7 @@ include "../inc/header.inc";
 							<td><strong>io:start</strong></td>
 							<td>
 							<p>Fires when a request is made to a resource.  The event handler's arguments signature is:</p>
-							<textarea name="code" class="HTML" cols="60" rows="1">
+							<textarea name="code" class="JScript" cols="60" rows="1">
 							function onStart(transactionid, arguments) {
 							  // transactionid : The transaction's ID.
 							  // arguments: Array ['foo','bar'].
@@ -309,7 +311,7 @@ include "../inc/header.inc";
 							<td><strong>io:complete</strong></td>
 							<td>
 							<p>Fires after "io:start", when the transaction is complete and response data are available.  This is the earliest opportunity to access any response data.  The event handler's arguments signature is:</p>
-							<textarea name="code" class="HTML" cols="60" rows="1">
+							<textarea name="code" class="JScript" cols="60" rows="1">
 							function onComplete(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
@@ -325,7 +327,7 @@ include "../inc/header.inc";
 							<td><strong>io:success</strong></td>
 							<td>
 							<p>Fires after the "complete" event, when the response HTTP status resolves to 2xx.  The event handler's arguments signature is:</p>
-							<textarea name="code" class="HTML" cols="60" rows="1">
+							<textarea name="code" class="JScript" cols="60" rows="1">
 							function onSuccess(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
@@ -341,7 +343,7 @@ include "../inc/header.inc";
 							<td><strong>io:failure</strong></td>
 							<td>
 							<p>Fires after the "complete" event, when the response HTTP status resolves to 4xx. 5xx, or any undefined HTTP status.  The event handler's arguments signature is:</p>
-							<textarea name="code" class="HTML" cols="60" rows="1">
+							<textarea name="code" class="JScript" cols="60" rows="1">
 							function onFailure(transactionid, response, arguments) {
 							  // transactionid : The transaction's ID.
 							  // response: The response object.
@@ -356,7 +358,7 @@ include "../inc/header.inc";
 							<td><strong>io:abort</strong></td>
 							<td>
 							<p>Fires when a request times out, or when the transaction is explicitly aborted.  The event handler's arguments signature is:</p>
-							<textarea name="code" class="HTML" cols="60" rows="1">
+							<textarea name="code" class="JScript" cols="60" rows="1">
 							function onFailure(transactionid, arguments) {
 							  // transactionid : The transaction's ID.
 							  // arguments: Number 0.
@@ -377,49 +379,50 @@ include "../inc/header.inc";
 				</table>
 
 				<p>The following example demonstrates an IO transaction with an event handler subscribed to "io:complete".</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
+				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO module.
-				var Y = new YUI().use("io");
-
-				/*
-				 * Create a function as the event handler for the event "io:complete".
-				 *
-				 * The function will receive the following arguments:
-				 * - The ID of the transaction
-				 * - Object containing the response data.
-				 * - Argument one defined when subscribing to the event(e.g., "foo").
-				 * - Argument two defined when subscribing to the event(e.g., "bar").
-				 */
-				function onComplete(transactionId, responseObject, arg1, arg2) {
+				YUI().use("io", function(Y) {
 					/*
-					 * The argument 'responseObject' is the response object.  Its
-					 * properties are:
-					 * - status
-					 * - statusText
-					 * - getResponseHeader(headerName)
-					 * - getAllResponseHeaders
-					 * - responseText
-					 * - responseXML
+					 * Create a function as the event handler for the event "io:complete".
 					 *
-					 * NOTE: In an XDR transaction, only the responseText property is defined.
+					 * The function will receive the following arguments:
+					 * - The ID of the transaction
+					 * - Object containing the response data.
+					 * - Argument one defined when subscribing to the event(e.g., "foo").
+					 * - Argument two defined when subscribing to the event(e.g., "bar").
 					 */
-				};
+					function onComplete(transactionId, responseObject, arg1, arg2) {
+						/*
+						 * The argument 'responseObject' is the response object.  Its
+						 * properties are:
+						 * - status
+						 * - statusText
+						 * - getResponseHeader(headerName)
+						 * - getAllResponseHeaders
+						 * - responseText
+						 * - responseXML
+						 *
+						 * NOTE: In an XDR transaction, only the responseText property is defined.
+						 */
+					};
 
-				/*
-				 * Subscribe to the event "io:complete", using Y.on.
-				 *
-				 * - 'io:complete' : Subscribe to this IO event.
-				 * - onComplete : The event handler to be subscribed to 'io:complete'.
-				 * - this : The execution context of the event handler, in this case 'this'
-				 *          since the doComplete is defined as a global function.
-				 * - 'foo' : The first argument received by the event handler.
-				 * - 'bar' : The second argument received by the event handler.
-				 *           Additional arguments can be defined, as desired.
-				 */
-				Y.on('io:complete', onComplete, this, "foo", "bar");
+					/*
+					 * Subscribe to the event "io:complete", using Y.on.
+					 *
+					 * - 'io:complete' : Subscribe to this IO event.
+					 * - onComplete : The event handler to be subscribed to 'io:complete'.
+					 * - this : The execution context of the event handler, in this case 'this'
+					 *          since the doComplete is defined as a global function.
+					 * - 'foo' : The first argument received by the event handler.
+					 * - 'bar' : The second argument received by the event handler.
+					 *           Additional arguments can be defined, as desired.
+					 */
+					Y.on('io:complete', onComplete, this, "foo", "bar");
 
-				// Starts the transaction.
-				var request = Y.io(uri);
+					// Starts the transaction.
+					var request = Y.io(uri);
+					};
+				);
 				</textarea>
 
 				<h4 id="xdr">Cross-Domain Transactions</h4>
@@ -446,89 +449,88 @@ include "../inc/header.inc";
 				<p>
 				The following example demonstrates a cross-domain transaction, starting with the initialization of the XDR transport, and subscribing to three global IO events.
 				</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;script&gt;
+				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO.
-				var Y = new YUI().use('io');
+				YUI().use("io", function(Y) {
+					// Create a configuration object containing three defined properties:
+					// id: Identifies the transport to be used.
+					// yid: The ID of the YUI instance.
+					// src: The path to the Flash file.
+					var xdrCfg = {
+						id:'flash',
+						yid: Y.id,
+						src:'io.swf'
+					};
 
-				// Create a configuration object containing three defined properties:
-				// id: Identifies the transport to be used.
-				// yid: The ID of the YUI instance.
-				// src: The path to the Flash file.
-				var xdrCfg = {
-					id:'flash',
-					yid: Y.id,
-					src:'io.swf'
-				};
+					// Initialize the define transport
+					Y.io.transport(xdrCfg);
 
-				// Initialize the define transport
-				Y.io.transport(xdrCfg);
+					// Define the configurations to be used for each transaciton.
+					// Since cfg.method isn't defined, the HTTP method will
+					// default to GET.
+					var cfg = {
+					  data: "xdr=true", // Transaction data sent to the URI.
+					  use: 'flash', // Instruct IO to use the XDR transport.
+					  timeout: 3000, // Abort the transaction, if it is still pending, after 3000ms.
+					  arguments: {
+						start: 'foo',
+						complete: 'bar',
+						abort: 'baz'
+					  } // An object passed, as an argument, to the event handlers.
+					};
 
-				// Define the configurations to be used for each transaciton.
-				// Since cfg.method isn't defined, the HTTP method will
-				// default to GET.
-				var cfg = {
-				  data: "xdr=true", // Transaction data sent to the URI.
-				  use: 'flash', // Instruct IO to use the XDR transport.
-				  timeout: 3000, // Abort the transaction, if it is still pending, after 3000ms.
-				  arguments: {
-				    start: 'foo',
-				    complete: 'bar',
-				    abort: 'baz'
-				  } // An object passed, as an argument, to the event handlers.
-				};
+					/*
+					 * GlobalEventHandler is an example object that encapsulates
+					 * event handlers for "io:start", "io:complete", and "io:abort".
+					 *
+					 * start( ) // Event handler for "io:start"
+					 * complete( ) // Event handler for "io:complete".
+					 * abort( ) // Event handler for "io:abort".
+					 */
+					var GlobalEventHandler = {
+					  start: function(id, args) {
+						var args = args.start // 'foo'
+					  },
+					  complete: function(id, o, args) {
+						var args = args.complete // 'bar'
 
-				/*
-				 * GlobalEventHandler is an example object that encapsulates
-				 * event handlers for "io:start", "io:complete", and "io:abort".
-				 *
-				 * start( ) // Event handler for "io:start"
-				 * complete( ) // Event handler for "io:complete".
-				 * abort( ) // Event handler for "io:abort".
-				 */
-				var GlobalEventHandler = {
-				  start: function(id, args) {
-				    var args = args.start // 'foo'
-				  },
-				  complete: function(id, o, args) {
-				    var args = args.complete // 'bar'
+						// Note: Only strings are supported in an XDR response.
+						// o.responseXML is not supported at this time.
+						var data = o.responseText;
+					  },
+					  abort: function(id, args) {
+						var args = args.abort // args = 'baz'
+					  }
+					};
 
-				    // Note: Only strings are supported in an XDR response.
-				    // o.responseXML is not supported at this time.
-				    var data = o.responseText;
-				  },
-				  abort: function(id, args) {
-				    var args = args.abort // args = 'baz'
-				  }
-				};
+					// Subscribe GlobalEventHandler.start to event "io:start".
+					Y.on('io:start', GlobalEventHandler.start, this);
+					// Subscribe GlobalEventHandler.complete to event "io:complete".
+					Y.on('io:complete', GlobalEventHandler.complete, this);
+					// Subscribe GlobalEventHandler to event "io:abort".
+					Y.on('io:abort', GlobalEventHandler.abort, this);
+					&lt;/script&gt;
 
-				// Subscribe GlobalEventHandler.start to event "io:start".
-				Y.on('io:start', GlobalEventHandler.start, this);
-				// Subscribe GlobalEventHandler.complete to event "io:complete".
-				Y.on('io:complete', GlobalEventHandler.complete, this);
-				// Subscribe GlobalEventHandler to event "io:abort".
-				Y.on('io:abort', GlobalEventHandler.abort, this);
-				&lt;/script&gt;
-
-				// Start the transaction
-				var request = Y.io(uri, cfg);
+					// Start the transaction
+					var request = Y.io(uri, cfg);
+					}
+				);
 				</textarea>
 
 				<h4 id="headers">Setting HTTP Headers</h4>
 				<p>
 				IO can be configured to send default HTTP Headers for all transactions, in addition to any HTTP headers defined in the configuration object.  Headers can be set or removed as needed.  The following example shows how to set and how to delete default headers in IO:
 				</p>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;script&gt;
-				// Create a YUI instance using IO.
-				var Y = new YUI().use('io');
+				<textarea name="code" class="JScript" cols="60" rows="1">
+				YUI().use("io", function(Y) {
 
-				// Set a new default HTTP header.
-				Y.io.header('Content-Type', 'application/json');
+					// Set a new default HTTP header.
+					Y.io.header('Content-Type', 'application/json');
 
-				// To remove an existing header, use the same method, but omit the value.
-				Y.io.header('Content-Type');
-				&lt;/script&gt;
+					// To remove an existing header, use the same method, but omit the value.
+					Y.io.header('Content-Type');
+					};
+				);
 				</textarea>
 
 				<h4 id="queue">Queue</h4>
@@ -570,33 +572,32 @@ include "../inc/header.inc";
 					</tr>
 					</tbody>
 				</table>
-				<textarea name="code" class="HTML" cols="60" rows="1">
-				&lt;script&gt;
+				<textarea name="code" class="JScript" cols="60" rows="1">
 				// Create a YUI instance using IO.
-				var Y = new YUI().use('io');
+				YUI().use("io", function(Y) {
 
-				// Stop the queue so transactions can be stored.
-				Y.queue.stop();
+					// Stop the queue so transactions can be stored.
+					Y.queue.stop();
 
-				// Send three transactions into the queue for storage.
-				var task0 = Y.queue(uri);
-				var task1 = Y.queue(uri);
-				var task2 = Y.queue(uri);
+					// Send three transactions into the queue for storage.
+					var task0 = Y.queue(uri);
+					var task1 = Y.queue(uri);
+					var task2 = Y.queue(uri);
 
-				// This IO request is processed immediately.
-				var task3 = Y.io(uri);
+					// This IO request is processed immediately.
+					var task3 = Y.io(uri);
 
-				// Promote task2 to the top of the queue.
-				Y.queue.promote(task2);
+					// Promote task2 to the top of the queue.
+					Y.queue.promote(task2);
 
-				// Purge task1 from the queue.
-				Y.queue.purge(task1);
+					// Purge task1 from the queue.
+					Y.queue.purge(task1);
 
-				// Re-start the queue.
-				// Transactions are sent in the following order: task2, task0.
-				Y.queue.start();
-
-				&lt;/script&gt;
+					// Re-start the queue.
+					// Transactions are sent in the following order: task2, task0.
+					Y.queue.start();
+					};
+				);
 				</textarea>
 
 				<h3 id="issues">Known Issues</h3>
