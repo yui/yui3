@@ -201,7 +201,8 @@
             if (cfg) {
                 sizes[sizes.length] = { 
                     name: cfg.info.name, 
-                    size: cfg.sizes[current.filter]
+                    size: cfg.sizes[current.filter],
+                    sizegz: cfg.sizes[current.filter+"gz"]
                 };
             }
         }
@@ -227,21 +228,21 @@
         for (var i = 0, l = sizeEls.length; i < l; i++) {
            el = sizeEls[i];
            name = el.id.replace("size_", "");
-           el.innerHTML = "(" + prettySize(configData[name].sizes[current.filter]) + ")";
+           el.innerHTML = "(" + prettySize(configData[name].sizes[current.filter]) + ", " + current.filter + ")";
         }
     }
 
-    function updateChartUI(sizes) {
+    function updateChartUI(sizes, gz) {
 
         var data = new YAHOO.util.DataSource(sizes);
         data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-        data.responseSchema = { fields: [ "name", "size" ] };
-       
+        data.responseSchema = { fields: [ "name", (gz) ? "sizegz" : "size" ] };
+
         YAHOO.widget.Chart.SWFURL = "http:/"+"/yui.yahooapis.com/2.5.2/build/charts/assets/charts.swf";
 
         // Unfortunately, resetting pie chart data set is buggy
         chart = new YAHOO.widget.PieChart( "chart", data, {
-                dataField: "size",
+                dataField: (gz) ? "sizegz" : "size",
                 categoryField: "name",
                 style: {
                     padding: 5, 
@@ -261,17 +262,23 @@
     }
 
     function updateWeightUI(sizes) {
-        var total = 0, prettyTotal;
+        var total = 0, totalGz = 0, prettyTotal, prettyTotalGz;
+
         for (var i = 0; i < sizes.length; i++) {
             total += sizes[i].size;
+            totalGz += sizes[i].sizegz;
         }
 
         var prettyTotal = prettySize(total);
-        totalEl.innerHTML = 'Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
-        totalWeightEl.innerHTML = ' - Total Weight: ' + prettyTotal + ' <span class="yui-' + current.filter + '">(' + current.filter + ')</span>';
+        var prettyTotalGz = prettySize(totalGz);
+
+        var totalHtml = '<span class="yui-' + current.filter + '">' + prettyTotal + ' (' + current.filter + ')</span>, <span class="' + current.filter + '-gz">' + prettyTotalGz + ' (' + current.filter  + ', gzipped)</span>';
+
+        totalEl.innerHTML = "Total Weight - " + totalHtml;
+        totalWeightEl.innerHTML = ' - ' + totalHtml;
 
         var weightTab = tabView.get("tabs")[1];
-        weightTab.set("label", "Page Weight Analysis - " + prettyTotal + "");
+        weightTab.set("label", "Page Weight Analysis - " + totalHtml);
 
         if (YAHOO.env.ua.gecko) {
             var tabEl = weightTab.get("element");
@@ -506,7 +513,7 @@
         s.id = "size_" + cfg.info.name;
         parent.appendChild(s);
 
-        s.innerHTML = '(' + prettySize(size) + ')';
+        s.innerHTML = '(' + prettySize(size) + ', ' + current.filter +')';
     }
 
     function hackYuiConfigData() {
