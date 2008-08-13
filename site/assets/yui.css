@@ -436,3 +436,9 @@ table.auto {width:auto;}
 #main .examplesTable h4 {margin:0;color:#FFF;}
 #main .promo a {color:#333;}
 #main .promo .newWindowButton a {text-decoration:underline;color:#2288BB;}
+
+/* IE6 hack for 3 column layout */
+#infra.yui-u {
+    _width:31%;
+}
+
