@@ -413,6 +413,8 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 
 	.apisummary table td,
 	table td {background-color:#e5edf1;}
+	.apisummary table tr.odd,
+	table tr.odd td {background-color:#F5F8F9;}
 
 	.apisummary table th,
 	.apisummary table td,

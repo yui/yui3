@@ -27,7 +27,6 @@ $nav[]=array('io',$docroot.'examples/io/index.html','IO', 'IO - Functional Examp
 $nav[]=array('json',$docroot.'examples/json/index.html','JSON', 'JSON (JavaScript Object Notation) - Functional Examples');
 $nav[]=array('queue',$docroot.'examples/queue/index.html','Queue', 'Queue - Functional Examples');
 
-
 $nav[]=array('', '', 'YUI 3 CSS - Examples', 'YUI CSS - Functional Examples');
 $nav[]=array('cssreset',$docroot.'examples/cssreset/index.html','CSS Reset', 'YUI CSS Reset - Functional Examples');
 $nav[]=array('cssfonts',$docroot.'examples/cssfonts/index.html','CSS Fonts', 'YUI Fonts - Functional Examples');

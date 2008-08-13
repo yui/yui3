@@ -60,8 +60,7 @@ if (isset($customHeader) && $customHeader != "") {
 	<div id="ygunav">
 		<p>
             <em>
-                <a href="http://developer.yahoo.com">Yahoo! Developer Network Home</a> <i> - </i>	
-                <a href="http://help.yahoo.com/help/us/ysearch">Help</a>
+                <a href="http://developer.yahoo.com/yui/3/">YUI 3.x Home</a> <i> - </i>	
             </em>
 		</p>
 		<form action="http://search.yahoo.com/search" id="sitesearchform">
