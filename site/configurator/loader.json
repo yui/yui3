@@ -339,15 +339,6 @@
 		"path": "base/base-min.js", 
 		"ext": false
 	}, 
-	"compat": {
-		"requires": [
-			"node"
-		], 
-		"name": "compat", 
-		"type": "js", 
-		"path": "compat/compat-min.js", 
-		"ext": false
-	}, 
 	"cookie": {
 		"name": "cookie", 
 		"type": "js", 
