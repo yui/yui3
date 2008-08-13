@@ -15,9 +15,13 @@ include "../inc/header.inc";
                 <h2><?php echo $component;?></h2>
 
                 <div id="promo" class="component">
-                   <p>The Attribute utility allows you to add attributes to any class through an augmentable Attribute interface. The interface adds <code>get</code> and <code>set</code> methods to your class for attribute access, in addition to supporting change events allowing you to listen for changes in attribute values.</p>
+                    <p>The Attribute Utility allows you to add attributes to any class through an augmentable Attribute interface. 
+                       The interface adds <code>get</code> and <code>set</code> methods to your class for attribute access, as well as 
+                       support for change events that can be used to listen for changes in attribute values.</p>
 
-<p>Additionally, attributes can be configured with custom get, set and validation handlers and can also be specified as read-only or write-once. Attributes can also be configured to protect their stored values, using a deep or shallow clone when returning values through <code>get</code>.</p>
+                    <p>In addition, attributes can be configured with custom get, set and validation handlers. Attributes can be specified as 
+                    read-only or write-once. Attributes can also be configured to protect their stored values, using a deep or 
+                    shallow clone when returning values through <code>get</code>.</p>
 
                     <div class="yui-g">
                         <div class="yui-u first">
@@ -81,7 +85,7 @@ YUI().use("attribute", function(Y) {
 });
 </textarea>
 
-                <p>Instances of your class will now have Attribute methods available, which your class can use to configure attributes for you class and which users of your
+                <p>Instances of your class will now have Attribute methods available, which your class can use to configure attributes for itself, and which users of your
                 class can use to get and set attribute values. See the <a href="../api/Attribute.html">Attribute api documentation</a> for a complete list of 
                 methods which Attribute will add to your class.</p>
 
@@ -181,7 +185,7 @@ o.set("attrB", "Hello World!");
                                 <p>Validation function, which if defined, is called after the custom 'set' handler, but before the attribute value is 
                                 stored. The validation function is passed the value which the user is trying to set (after any modification by the 
                                 'set' handler).</p>
-                                <p>If the function returns <code>false</code> the attribute's stored value is not updated. If it returns
+                                <p>If the function returns <code>false</code>, the attribute's stored value is not updated. If it returns
                                 <code>true</code>, the attribute's stored value is updated.</p>
                             </td>
                         </tr>
@@ -222,7 +226,7 @@ o.set("attrB", "Hello World!");
 
                                 <dt>Attribute.CLONE.IMMUTABLE</dt>
                                 <dd>Will result in a deep cloned value being returned when using the get method. 
-                                Additionally users will not be able to set properties within the attribute's value using <code>set's</code> sub-attribute 
+                                Additionally users will not be able to set properties within the attribute's value using <code>set's</code> sub attribute 
                                 notation (<code>obj.set("x.y.z", 5)</code>). However the value of the attribute can be changed, making it different from a readOnly 
                                 attribute.</dd>
 
@@ -314,13 +318,13 @@ o.set("attrB", "Hello World!");
                 <h6>On</h6>
 
                 <p>Listeners registered using the <code>on</code> method, are notifed <strong>before</strong> the stored state of the attribute has been updated. 
-                Funtions registered as "on" listeners recieve an <code>Event</code> object as the first argument (actually an
+                Functions registered as "on" listeners receive an <code>Event</code> object as the first argument (actually an
                 instance of <a href="../api/Event.Facade.html"><code>Event.Facade</code></a>) which contains information 
                 about the attribute being modified.</p>
 
                 <p>Since these listeners are invoked before any state change has occured, they have the ability to
                 prevent the change in state from occuring, by invoking <code>event.preventDefault()</code> on 
-                the event object passed to them</p>
+                the event object passed to them.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">o.on("enabledChange", function(event) {
 
@@ -342,7 +346,7 @@ o.set("attrB", "Hello World!");
                 receives an <code>Event</code> object as the first parameter.</p>
 
                 <p>Based on the definition above, "after" listeners are not invoked if state change is prevented, 
-                for example, due to one of the "on" listeners calling <code>preventDefault</code> on the event object</p>
+                for example, due to one of the "on" listeners calling <code>preventDefault</code> on the event object.</p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">o.after("enabledChange", function(event) {
 
@@ -368,9 +372,9 @@ o.set("attrB", "Hello World!");
                     <dt>attrName</dt>
                     <dd>The name of the attribute which is being set</dd>
                     <dt>subAttrName</dt>
-                    <dd>Attribute also allows you to set individual properties of attributes having values which are objects through the 
-                    <code>set</code> method (e.g. <code>o.set("X.a.b", 5)</code>, discussed below). This event property will contain the complete dot notation path for the object property which was changed
-                    <p>For example, during <code>o.set("X.a.b", 5);</code>, <code>event.subAttrName</code> will be <code>"X.a.b"</code>, the path of the property which was modified, and <code>event.attrName</code> will be <code>"X"</code>, the attribute name.</dd>
+                    <dd><p>Attribute also allows you to set individual properties of attributes having values which are objects through the 
+                    <code>set</code> method (e.g. <code>o.set("X.a.b", 5)</code>, discussed below). This event property will contain the complete dot notation path for the object property which was changed.</p>
+                    <p>For example, during <code>o.set("X.a.b", 5);</code>, <code>event.subAttrName</code> will be <code>"X.a.b"</code>, the path of the property which was modified, and <code>event.attrName</code> will be <code>"X"</code>, the attribute name.</p></dd>
                     <dt>preventDefault()<dt>
                     <dd>This method can be called in an "on" listener function to prevent the attribute's value from being updated (the default behavior). Calling this method in an "after" listener has no impact, since the default behavior has already been invoked.</dd>
                     <dt>stopImmediatePropagation()</dt>
