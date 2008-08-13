@@ -120,11 +120,6 @@ img.example {clear:right;margin-bottom:10px;margin-left:10px;border:0;float:righ
 
 /*rss reader styles*/
 p.loading-content {background-image:url(http://us.i1.yimg.com/us.yimg.com/i/ydn/yuiweb/img/busy_arrow.gif); background-position:top left; background-repeat:no-repeat; height:20px;padding:4px 0 0 25px; margin:0;}
-#doc3 ul.yuirssreader {margin:0; padding:0;}
-#doc3 ul.yuirssreader li {list-style-type:none;padding:5px 0 0 12px; margin:0;}
-#doc3 ul.yuirssreader li p {margin:0; padding:0;}
-ul.yuirssreader cite {color:#666666; margin:0;}
-span.yuirssreader-date {font-size:77%; color:#E76300;}
 img.icon-rss {display:inline;border:none !important;position:relative;top:2px;left:1px;}
 
 #index-secondary {width:316px;float:right;margin-left:10px;}
@@ -186,7 +181,8 @@ p.loggerButton {text-align:center;}
 .theater img {border:1px solid #666;}
 .theater img.last {border:1px solid #666;}
 .theater p.details {font-size:77%; color:#666; margin:.2em 0 0 0; padding:0;}
-.theater p.description, #doc3 .theater ul li  {font-size:85%; margin:0; padding:0; color:#333;}
+.theater p.description,
+ #doc3 .theater ul li  {font-size:85%; margin:0; padding:0; color:#333;}
 
 #readmePanel .hd { font-weight:bold; font-size:129%; color:#fff; background:#89d; }
 #readmePanel .bd {text-align:left; overflow:auto;}
@@ -342,6 +338,8 @@ span.desc {text-transform:uppercase;font-size:77%;font-family:verdana;display:bl
 .sidebar .mod .bd li,
 .sidebar .mod .bd p {font-size:85%;color:#666;}
 .sidebar .mod p {margin:1em 0;}
+.sidebar .mod li p {margin:0 0 1em 0;}
+.sidebar .mod .bd li p {font-size:100%;}
 .sidebar .mod h5 {font-size:85%;font-weight:normal;text-transform:uppercase;color:#666;border-bottom:1px solid #D9D9D9;margin-bottom:6px;}
 /* lists */
 .sidebar .mod ul {margin:0;padding:0;}
@@ -364,7 +362,6 @@ a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-rep
 	.box3 .bd {border:1px solid #fff;border-bottom-width:0;}
 	.box3 .ft {border:1px solid #fff;border-top-width:0;}
 	/* for cheatsheet download tracking*/
-	.box3 #pdf-single {}
 	.box3 a#pdf-all {padding-left:16px;background:url(../assets/download-arrow.png) no-repeat 0 0px;}
 
 	.box4 {border:1px solid #D9D9D9;background:url(../assets/gradient-mod.png) repeat-x 0 0;}

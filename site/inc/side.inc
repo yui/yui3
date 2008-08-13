@@ -17,18 +17,22 @@ $nav[]=array('license','/yui/3/license.html','YUI 3 is BSD Licensed', 'YUI is fr
 
 
 
-$nav[]=array('', '', 'YUI 3 Utilities', '');
+$nav[]=array('', '', 'YUI 3 Core', '');
 $nav[]=array('yui','/yui/3/yui/','YUI (Global Prerequisite)', 'YUI Global Prerequisite');
-$nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
+$nav[]=array('node','/yui/3/node/','Node', 'Node');
+$nav[]=array('event','/yui/3/event/','Event', 'Event');
+
+$nav[]=array('', '', 'YUI 3 Component Infrastructure', '');
 $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
+
+$nav[]=array('', '', 'YUI 3 Utilities', '');
+$nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
 $nav[]=array('cookie','/yui/3/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
-$nav[]=array('event','/yui/3/event/','Event', 'Event');
 $nav[]=array('get','/yui/3/get/','Get', 'Get');
 $nav[]=array('io','/yui/3/io/','IO', 'IO');
 $nav[]=array('json','/yui/3/json/','JSON', 'JSON (JavaScript Object Notation)');
-$nav[]=array('node','/yui/3/node/','Node', 'Node');
 $nav[]=array('queue','/yui/3/queue/','Queue', 'Queue');
 
 $nav[]=array('', '', 'CSS', '');
@@ -44,10 +48,10 @@ $nav[]=array('groups3','http://tech.groups.yahoo.com/group/yui3/','YUI 3 Forum',
 // $nav[]=array('poweredby','/yui/poweredby/','YUI Sightings', 'YUI is used by Yahoo! and by hundreds of other sites, including many you know and love.');
 
 $nav[]=array('', '', 'YUI Articles', '');
-$nav[]=array('gbs','/yui/3/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
-$nav[]=array('faq','/yui/3/articles/faq/','FAQ (General)', 'Answers to Frequently Asked Questions about the YUI Library');
+$nav[]=array('gbs','/yui/articles/gbs/','Graded Browser Support', 'Yahoo!\'s philosophy of Graded Browser Support');
+$nav[]=array('faq','/yui/articles/faq/','FAQ (General)', 'Answers to Frequently Asked Questions about the YUI Library');
 // $nav[]=array('faq','/yui/3/articles/faq/','FAQ  (YUI 3.x)', 'Answers to Frequently Asked Questions about the YUI Library');
-$nav[]=array('reportingbugs','/yui/3/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
+$nav[]=array('reportingbugs','/yui/articles/reportingbugs/','Bug Reports/Feature Requests', 'Reporting Bugs and Making Feature Requests for YUI Components');
 $nav[]=array('hosting','/yui/3/articles/hosting/','Serving YUI Files from Yahoo!', 'Serve YUI source files from Yahoo! -- free, fast, and simple');
 // $nav[]=array('security','/yui/security/','Security Best Practices', 'Best practices for working with web services while protecting user privacy');
 // $nav[]=array('skinning','/yui/articles/skinning/','Skinning YUI', 'Modifying YUI\'s visual "skin" and building skins of your own');
