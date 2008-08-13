@@ -86,9 +86,7 @@ include "../inc/header.inc";
 
                 <p>Provided a string containing data in JSON format, simply pass the string to <code>parse</code> and capture the return value.  You'll need to wrap the call in a <code>try/catch</code> block because invalid JSON will cause <code>parse</code> to throw a JavaScript error.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
-(function () {
-
-var Y = new YUI().use('json-parse');
+YUI().use('json-parse', function (Y) {
 
 var jsonString = '{"products":['+
     '{"id":1,"price":.99,"inStock":true,"name":"grapes"},'+
@@ -112,7 +110,7 @@ for (var i = data.products.length - 1; i >= 0; --i) {
     }
 }
 
-})();
+});
                 </textarea>
 				
 				<h5 id="reviver">Using the &quot;reviver&quot; parameter</h5>
@@ -120,9 +118,7 @@ for (var i = data.products.length - 1; i >= 0; --i) {
                 <p>Typical uses of reviver functions are filtering, formatting, and value conversion.</p>
 				
 				<textarea name="code" class="JScript" cols="60" rows="1">
-(function () {
-
-var Y = new YUI().use('json-parse');
+YUI().use('json-parse', function (Y) {
 
 var jsonString = '{"products":['+
     '{"id":1,"price":.99,"inStock":true,"name":"grapes"},'+
@@ -159,7 +155,7 @@ catch (e) {
 alert(data.products.length); // 1
 alert(data.products[0].price); // $0.99
 
-})();
+});
                 </textarea>
 
                 <h5 id="avoid_eval">A word of caution against using <code>eval</code></h5>
@@ -178,15 +174,14 @@ var data = Y.JSON.parse(shouldBeJsonData);
                 <p>To convert a JavaScript object (or any permissable value) to a JSON string, pass that object to <code>Y.JSON.stringify</code> and capture the returned string.  Note that cyclical references will be converted to <code>null</code>.</p>
 
                 <textarea name="code" class="JScript" rows="1" cols="60">
-(function () {
+YUI().use("json-stringify", function (Y) {
+
 var myData = {
     troop : [
         { name: "Ashley", age: 12 },
         { name: "Abby", age:9 }
     ]
 }; 
-
-var Y = new YUI().use("json-stringify");
 
 var jsonStr = Y.JSON.stringify(myData);
 
@@ -201,14 +196,14 @@ alert(jsonStr);
 // Note NEWKEY is null
 // {"troop":[{"name":"Ashley","age":12,"NEWKEY":null},{"name":"Abby","age":9}]}
 
-})();
+});
                 </textarea>
 
                 <h5 id="whitelist">Using a whitelist</h5>
                 <p>To serialize only a fixed subset of keys, provide an array of key names as the second parameter to <code>stringify</code>.</p>
 
                 <textarea name="code" class="JScript" rows="1" cols="60">
-(function () {
+YUI().use("json-stringify", function (Y) {
 
 // a detailed object record set
 var records = [
@@ -218,8 +213,6 @@ var records = [
     {id:4, name: "Chaz",  age: 26, favorite_color: "plaid"}
 ];
 
-var Y = new YUI().use("json-stringify");
-
 // Use an array of acceptable object key names as a whitelist.
 // To create a JSON string with only age and id
 var jsonStr = Y.JSON.stringify(records,["id","age"]);
@@ -227,14 +220,14 @@ var jsonStr = Y.JSON.stringify(records,["id","age"]);
 alert(jsonStr);
 // [{"id":1,"age":47},{"id":2,"age":30},{"id":3,"age":13},{"id":4,"age":26}]
 
-})();
+});
                 </textarea>
 
                 <h5 id="replacer">Using a custom &quot;replacer&quot; function</h5>
                 <p>For more granular control of how values in your object are serialized, you can pass a replacer function as the second parameter to <code>stringify</code>.  The replacer will be called for each key value pair, and executed from the context of the key's host object.  The return value of the replacer will be serialized in place of the raw value.</p>
 
                 <textarea name="code" class="JScript" rows="1" cols="60">
-(function () {
+YUI().use("json-stringify", function (Y) {
 
 // a detailed object record set
 var records = [
@@ -244,8 +237,6 @@ var records = [
     {id:4, name: "Chaz",  birthdate: "5/22/1975", favorite_color: "plaid"}
 ];
 
-var Y = new YUI().use("json-stringify");
-
 // Create a replacer to blacklist the id and convert the birthdate to a Date
 var replacer = function (key,val) {
     // blacklist id and favorite_color
@@ -253,7 +244,7 @@ var replacer = function (key,val) {
         return undefined;
 
     // convert birthdate to a Date instance (serialized as UTC date string)
-    } else if (key === 'birtdate') {
+    } else if (key === 'birthdate') {
         var d = new Date(),
             bd = val.split('/');
         d.setFullYear(bd[2],bd[0]-1,bd[1]);
@@ -269,14 +260,14 @@ var jsonStr = Y.JSON.stringify(records,replacer);
 alert(jsonStr);
 // [{"name":"Bobby","birthdate":"1964-02-28T08:00:00Z"},{"name":"Sally","birthdate":"1983-09-30T07:00:00Z"},{"name":"Tommy","birthdate":"1990-03-11T08:00:00Z"},{"name":"Chaz","birthdate":"1975-05-23T07:00:00Z"}]
 
-})();
+});
                 </textarea>
                 
                 <h5 id="depth">Limiting object inspection depth</h5>
                 <p>For deeply nested object structures, you can limit the depth to which <code>stringify</code> will serialize the input by passing an integer as the third parameter.</p>
 
                 <textarea name="code" class="JScript" rows="1" cols="60">
-(function () {
+YUI().use('json-stringify', function (Y) {
 
 // A deeply nested structure
 var deep = {
@@ -297,15 +288,13 @@ var deep = {
     }
 };
 
-var Y = new YUI().use('json-stringify');
-
 // Stop at Level 2
 var jsonStr = Y.JSON.stringify(deep,null,2);
 
 // jsonStr contains no content for the children object at Level 2
 // {"name":"Level 1","children":{"name":"Level 2","children":{},"enough":true}}
 
-})();
+});
                 </textarea>
 
 <?php # include "../inc/mobileSection.inc";?>

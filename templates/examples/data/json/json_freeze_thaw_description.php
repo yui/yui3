@@ -64,7 +64,7 @@ example.data = {
 </textarea>
 
 <h3>Thawing from the inside out and the <code>Date</code> instance</h3>
-<p>The reviver function passed to </code>JSON.parse</code> is applied to all key:value pairs in the raw parsed object from the deepest keys to the highest level.  In our case, this means that the <code>name</code> and <code>discovered</code> properties will be passed through the reviver, and <em>then</em> the object containing those keys will be passed through.</p>
+<p>The reviver function passed to <code>JSON.parse</code> is applied to all key:value pairs in the raw parsed object from the deepest keys to the highest level.  In our case, this means that the <code>name</code> and <code>discovered</code> properties will be passed through the reviver, and <em>then</em> the object containing those keys will be passed through.</p>
 <p>We'll take advantage of this by watching for UTC formatted date strings (the default JSON serialization for Dates) and reviving them into proper <code>Date</code> instances before the containing object gets its turn in the reviver.</p>
 <textarea name="code" class="JScript" cols="60" rows="1">
 var example = {

@@ -88,9 +88,7 @@ include "../inc/header.inc";
 				<p><code>Y.Queue</code> can be called as a factory method or constructor.  You can seed the constructor call with any number of callbacks or just <code>add</code> them in after instantiation.  When you've built up your Queue, set it in motion by calling its <code>run</code> method.</p>
 
 				<textarea name="code" class="JScript" cols="60" rows="1">
-(function () {
-
-var Y = new YUI().use("queue");
+YUI().use("queue", function (Y) {
 
 // Called as instance constructor
 var q1 = new Y.Queue();
@@ -103,16 +101,14 @@ var q2 = Y.Queue(myfunc1,myfunc3);
 q2.add(myfunc3);
 q2.run();
 
-})();
+});
 				</textarea>
                 
 				<h5 id="stopping">Pausing and stopping a Queue</h5>
                 <p>Queues can be <code>pause</code>d to wait for an external process to complete, such as an XHR call via <a href="../io/"><code>Y.io</code></a>, or <code>stop</code>ped to terminate execution and flush the Queue.</p>
 
 				<textarea name="code" class="JScript" cols="60" rows="1">
-(function () {
-
-var Y = new YUI().use("io","queue","json-parse");
+YUI().use("io","queue","json-parse", function (Y) {
 
 // Use factory style construction, seed with all callbacks, and immediately run
 Y.Queue(
@@ -157,7 +153,7 @@ Y.Queue(
     },
     MyApp.doSomethingElse).run();
 
-})();
+});
 				</textarea>
 
 				<h5 id="callbacks">About Queue callbacks</h5>

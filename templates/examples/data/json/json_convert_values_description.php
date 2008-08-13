@@ -15,7 +15,7 @@
     {"SKU":"38-38281", "Price":8.25,   "Item":"Basketball Shorts"},
     {"SKU":"82-38333", "Price":1.39,   "Item":"Lip balm"},
     {"SKU":"21-38485", "Price":0.07,   "Item":"Ping Pong ball"},
-    {"SKU":"83-38285", "Price":3.99,   "Item" :"Hockey Puck"}
+    {"SKU":"83-38285", "Price":3.99,   "Item":"Hockey Puck"}
 ]
 </textarea>
 
