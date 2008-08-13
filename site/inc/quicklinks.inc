@@ -10,7 +10,7 @@ if (($section != "cssfonts") && ($section != "cssreset") && ($section != "cssgri
 ';}
 echo '
 	<li><a href="/yui/3/download/">Download</a>: '.$component.' as part of the full YUI Library.</li>
-	<li><a href="/yui/3/articles/hosting/">Free Hosting</a> on our fast edge servers with combo-loading.</li>
+	<li><a href="/yui/3/configurator/">Free Hosting</a> on our fast edge servers with combo-loading.</li>
 		<!-- 
 		masked for initial release
 		<li><a id="releasenotes" href="/yui/3/build/'.$section.'/README">Release notes</a> and detailed change log.</li> 

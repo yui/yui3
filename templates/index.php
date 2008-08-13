@@ -26,7 +26,7 @@ include($docroot."inc/header.php");
 			<ol class="gettingstarted">
 				<li><strong>Check out the examples of YUI in action.</strong> We recommend starting with the base <a href="examples/yui/">YUI module</a> and then moving on to <a href="examples/node/">Node</a>.  Other utilities like <a href="examples/io/">IO</a> and <a href="examples/dd/">Drag and Drop</a> make for good points of exploration. If you're interested in YUI's CSS components, read through the examples for <a href="examples/cssreset/">Reset</a>, <a href="examples/cssbase/">Base</a>, <a href="examples/cssfonts/">Fonts</a>, and <a href="examples/cssgrids/">Grids</a> in that order.</li>
 		  		<li><strong>Remember that there are full user's guides</strong> for each component here on the website. If you have any questions about a component as you play with the examples, check out the component's user's guide (by following any of the links along the left side of the page) or the <a href="api/">searchable API documentation</a>.</li>
-				<li><strong>Start building.</strong> Use the <a href="http://developer.yahoo.com/yui/3/articles/hosting/">YUI 3 Configurator</a> to configure a page for YUI 3 usage or base your exploration off of one of the existing <a href="examples/">examples</a>.</li>
+				<li><strong>Start building.</strong> Use the <a href="configurator/">YUI 3 Configurator</a> to configure a page for YUI 3 usage or base your exploration off of one of the existing <a href="examples/">examples</a>.</li>
 			  	<li><strong>Become a member of the YUI community.</strong> As YUI 3 moves through its preview phase, developers and community members are discussing it <a href="http://tech.groups.yahoo.com/group/yui3/">in the YUI 3 forums</a>. </li>
 			</ol>
 
