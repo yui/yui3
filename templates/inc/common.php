@@ -7,7 +7,7 @@ $developerHome = 'http://developer.yahoo.com/yui/3';
 
 $loggerAvailable = false;
 
-$aTypes = array('core', 'utility', 'tool', 'css');
+$aTypes = array('core', 'infra', 'utility', 'tool', 'css');
 
 $oTypeNames = array('css'=>'YUI 3 CSS Foundation',
 					'core'=>'YUI 3 Core',
