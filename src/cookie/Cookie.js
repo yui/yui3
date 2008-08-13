@@ -1,7 +1,6 @@
 /**
  * Utilities for cookie management
  * @module cookie
- * @beta
  */
 
 YUI.add("cookie", function(Y){ 
