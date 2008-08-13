@@ -231,8 +231,6 @@
 
     function updateChartUI(sizes) {
 
-        console.log("Updating Chart");
-
         var data = new YAHOO.util.DataSource(sizes);
         data.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
         data.responseSchema = { fields: [ "name", "size" ] };
