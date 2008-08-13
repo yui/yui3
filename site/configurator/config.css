@@ -19,8 +19,9 @@
 #loaderOutput {
     font-family:monospace;
     font-size:85%;
-    width:66%;
-    white-space:nowrap;
+    width:100%;
+    background-color:#fff;
+    border:1px solid #000;
 }
 
 #configurator li {
@@ -48,6 +49,10 @@
     background-color:#6C8EA1;
     color:#ffffff;
     cursor:pointer;
+}
+
+#subMods.modList li.yui-hover {
+    cursor:auto;
 }
 
 .modList .hasSubModules {
@@ -86,36 +91,10 @@
     display:none;
 }
 
-#subMods.modList li.yui-hover {
-    cursor:auto;
-}
-
 #config label {
     margin-right: 2em;
 }
 
 #chart {
     height:20em;
-}
-
-#legendBox {
-    background-color:#fff;
-    padding:5px;
-}
-
-#legendBox .title {
-    padding:2px;
-    font-weight:bold;
-    border-bottom: 1px solid #ccc;
-}
-
-#legend li .legendColor{
-    margin-right: 2px;
-    line-height:1em;
-    vertical-align:middle;
-}
-
-#legend li span {
-    line-height:1em;
-    vertical-align:middle;
 }

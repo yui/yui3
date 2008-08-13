@@ -7,8 +7,8 @@
 
         chart = null,
 
-
         current = {
+            initialLoad : true,
             required : [],
             sizes : [],
             selected : {},
@@ -34,6 +34,7 @@
         rollupEl = Dom.get('rollup'),
         optionalEl = Dom.get('optional'), 
         baseEl = Dom.get('base'),
+        
         outputEl = Dom.get('loaderOutput'),
         resourcesEl = Dom.get('resources'),
         chartEl = Dom.get('chart'),
@@ -42,10 +43,15 @@
         totalWeightEl = Dom.get("finalWeight"),
         subModsHeaderEl = Sel.query('#subModPanel .hd')[0];
 
-    var NO_SUBMODULES_MESSAGE = "This module does not have any sub-modules";
-    var GB = 1024 * 1024 * 1024;
-    var MB = 1024 * 1024;
+    var NO_SUBMODULES_MESSAGE = "This module does not have any sub-modules",
+        GB = 1024 * 1024 * 1024,
+        MB = 1024 * 1024;
+
     var Y = YUI();
+
+    var outputAnim = new YAHOO.util.ColorAnim(outputEl, 
+        {backgroundColor: {from: '#8DD5E7', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
+    );
 
     function prettySize(size) {
         if (size > GB) {
@@ -106,11 +112,11 @@
         return out;
     }
 
-    function primeLoader() {
+    function load() {
 
         var mods = [], hackYuiRollup = false;
 
-        // Loader Hacks
+        /* Loader Hacks */
 
         // Rollup yui if yui-base, get and loader selected
         if (current.rollup 
@@ -164,13 +170,15 @@
 
         var s = loader.sorted, l = s.length, m, url, out = [], combo = [];
 
-        current.required = getRequired(loader.sorted);
-        current.sizes = getSizes(loader.sorted);
+        current.required = toModuleHash(loader.sorted);
+        current.sizes = toSizeArray(loader.sorted);
 
         showResults(loader);
+
+        current.initialLoad = false;
     }
 
-    function getRequired(modList) {
+    function toModuleHash(modList) {
         var req = {}, mod;
         if (modList) {
             for (var i = 0; i < modList.length; i++) {
@@ -183,11 +191,11 @@
         return req;
     }
 
-    function getSizes(sortedList) {
+    function toSizeArray(modList) {
         var sizes = [];
 
-        for (var i = 0; i < sortedList.length; i++) {
-            var cfg = configData[sortedList[i]];
+        for (var i = 0; i < modList.length; i++) {
+            var cfg = configData[modList[i]];
             if (cfg) {
                 sizes[sizes.length] = { 
                     name: cfg.info.name, 
@@ -245,6 +253,10 @@
 
     function updateResourceUI(buffer) {
         outputEl.value = buffer.join('\n');
+        if (!current.initialLoad) {
+            outputAnim.stop();
+            outputAnim.animate();
+        }
     }
 
     function updateTotalsUI(sizes) {
@@ -271,18 +283,18 @@
             }
 
             if(cfg.isSubMod) {
-                handleSubModuleDependencies(name, cfg, stateChange);
+                updateStateFromSubModule(name, cfg, stateChange);
             } else {
-                handleModuleDependencies(name, cfg, stateChange);
+                updateStateFromModule(name, cfg, stateChange);
             }
 
             if (stateChange !== undefined) {
-                primeLoader();
+                load();
             }
         }
     }
 
-    function handleSubModuleDependencies(name, cfg, stateChange) {
+    function updateStateFromSubModule(name, cfg, stateChange) {
         if (stateChange !== undefined && !stateChange) {
 
             var parentName = cfg.module,
@@ -308,7 +320,7 @@
         }
     }
 
-    function handleModuleDependencies(name, cfg, stateChange) {
+    function updateStateFromModule(name, cfg, stateChange) {
         subModsHeaderEl.innerHTML = "Sub Modules: " + name;
 
         if (cfg.submodules) {
@@ -385,7 +397,6 @@
                 name = t.id.replace('mod_', '');
                 cfg = configData[name];
 
-                // className = (cfg.submodules) ? "yui-hover-submodules" : "yui-hover";
                 Dom.addClass(t, "yui-hover");
  
                 desc = configData[name].info.desc;
@@ -405,7 +416,6 @@
                 name = t.id.replace('mod_', '');
                 cfg = configData[name];
 
-                // className = (cfg.submodules) ? "yui-hover-submodules" : "yui-hover";
                 Dom.removeClass(t, "yui-hover");
 
                 modDescHdEl.innerHTML = "";
@@ -417,28 +427,28 @@
         Event.on(fileTypeEl, 'change', function() {
             current.filter = this.options[this.selectedIndex].value;
             updateSizeUI();
-            primeLoader();
+            load();
+        });
+
+        Event.on(baseEl, 'change', function() {
+            current.base = YAHOO.lang.trim(this.value);
+            load();
         });
 
         Event.on(comboEl, 'click', function() {
             current.combo = this.checked;
             baseEl.disabled = this.checked;
-            primeLoader();
+            load();
         });
 
         Event.on(rollupEl, 'click', function() {
             current.rollup = this.checked;
-            primeLoader();
-        });
-
-        Event.on(baseEl, 'change', function() {
-            current.base = YAHOO.lang.trim(this.value);
-            primeLoader();
+            load();
         });
 
         Event.on(optionalEl, 'click', function() {
             current.optional = this.checked;
-            primeLoader();
+            load();
         });
     }
 
@@ -561,11 +571,11 @@
 
     Event.onDOMReady(function() {
         
-        current.selected = getRequired(YAHOO.configurator.INIT_SELECTION || ["yui"]);
+        current.selected = toModuleHash(YAHOO.configurator.INIT_SELECTION || ["yui"]);
 
         addModules();
         bindFormElements();
-        primeLoader();
+        load();
     });
 
 })();

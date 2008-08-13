@@ -18,10 +18,7 @@ include "../inc/header.inc";
                     <div id="resources" class="panel">
                         <div class="hd">Results <span id="finalWeight"></span></div>
                         <div class="bd">
-                            <textarea class="HTML" cols="60" rows="4" id="loaderOutput" name="loaderOutput">
-                                <!-- Tags generated will be displayed here --> 
-                            </textarea>
-                            <div id="includedModules"></div>
+                            <textarea class="HTML" cols="60" rows="4" id="loaderOutput" name="loaderOutput"><!-- Tags generated will be displayed here --></textarea>
                         </div>
                     </div>
                     <div id="config" class="panel">
@@ -82,16 +79,19 @@ include "../inc/header.inc";
 
 <script type="text/javascript" src="../build/yui/yui-min.js"></script>
 
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/animation/animation-min.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js"></script>
 
 <script type="text/javascript">
     YAHOO.namespace("configurator");
     <?php
         $modules = null;
         if (isset($_GET["modules"])) {
-            $modules = split(",", $_GET["modules"]);
+            $moduleStr = $_GET["modules"];
+            if ($moduleStr) {
+                $modules = split(",", $moduleStr);
+            }
         }
-        if (isset($modules) && sizeof($modules) > 0) { ?>
+        if ($modules && sizeof($modules) > 0) { ?>
             YAHOO.configurator.INIT_SELECTION = <?php echo "[\"".join("\", \"", $modules)."\"]" ?>;
         <?php }
     ?>
