@@ -39,7 +39,7 @@ Documentation</a>.</p>
 <h3 class="first">Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
-<script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>yui/yui.js"></script>
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 // This method is in the core of the library, so we don't have to use() any
 // additional modules to access it.  However, this example requires 'node'.

@@ -1,19 +1,9 @@
 
 <!-- include event dependencies -->
-<!--
-<script type="text/javascript" src="<?php echo $buildpath ?>oop/oop-debug.js"></script>
-<script type="text/javascript" src="<?php echo $buildpath ?>event/event-debug.js"></script>
-<script type="text/javascript" src="<?php echo $buildpath ?>dom/dom-debug.js"></script>
-<script type="text/javascript" src="<?php echo $buildpath ?>node/node-debug.js"></script>
--->
-
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/oop/oop-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/event/event-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/node/node-debug.js"></script>
-
-
-
+<script type="text/javascript" src="<?php echo $buildDirectory ?>oop/oop-debug.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>event/event-debug.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>dom/dom-debug.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>node/node-debug.js"></script>
 <div id="contentContainer">
 <div id="demo"></div>
 

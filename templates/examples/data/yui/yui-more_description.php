@@ -2,13 +2,13 @@
 <p>Here we are including any additional dependencies we need within the page instead of relying on loader to pull them in dynamically.</p>
 <textarea name="code" class="JScript">
 <!-- include yui core -->
-<script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>yui/yui.js"></script>
 
 <!-- include all requirements for node -->
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/oop/oop-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/event/event-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/node/node-debug.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>oop/oop.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>event/event.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>dom/dom.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>node/node.js"></script>
 </textarea>
 
 <h3>Setting up the YUI Instance</h3>

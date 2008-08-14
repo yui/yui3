@@ -4,7 +4,7 @@
 <h3>Instantiate YUI</h3>
 <textarea name="code" class="JScript">
 <!-- include yui -->
-<script type="text/javascript" src="<?php echo $buildpath ?>yui/yui.js"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>yui/yui.js"></script>
 YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>,
 // This method is in the 'oop' module.  Since we require 'node'
 // for this example, and 'node' requires 'oop', the 'oop' module
