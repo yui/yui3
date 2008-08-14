@@ -66,7 +66,7 @@ if ($prepend) { /*there is additional css or header information for this page --
 	<div id="headerMainSandbag"></div>
 	<div id="headerContainer">
 		<span id="headeraL">
-			<a href="/"><img src="http://l.yimg.com/a/i/ydn/ydn-logo.gif" class="ydnLogo" height="53" width="408" alt="Yahoo! Developer Network"></a>
+			<a href="http://developer.yahoo.com/"><img src="http://l.yimg.com/a/i/ydn/ydn-logo.gif" class="ydnLogo" height="53" width="408" alt="Yahoo! Developer Network"></a>
 		</span>
 		<span id="headeraR">
 			<div id="searchArea">
