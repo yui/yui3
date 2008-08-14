@@ -62,42 +62,37 @@ if ($prepend) { /*there is additional css or header information for this page --
 
 </head>
 <body id="yahoo-com" class="<?php echo $bodyclass; ?>">
-	
- <div id="headerMaxCont">
-		<div id="headerMainSandbag"></div>
-        <div id="headerContainer">
-            <span id="headeraL">
-                <a href="/"><img src="http://l.yimg.com/a/i/ydn/ydn-logo.gif" class="ydnLogo" height="53" width="408" alt="Yahoo! Developer Network"></a>
-            </span>
-            <span id="headeraR">
-                <div id="searchArea">
-                    <ul class="srchOptns">
-                        <!-- li class="first"><strong>YDN Site</strong></li>
-                        <li>Code</li>
-                        <li>Web</li -->
-                    </ul>
-                    <span class="srchFld">
-						<form action="http://search.yahoo.com/search" method="get">
-							<div id="sitesearch">
-								<input type="text" name="va" value="" id="searchinput">
-								<input type="hidden" name="vs" value="developer.yahoo.com">
-								<input type="hidden" name="vs" value="yuiblog.com">
-								<input type="submit" name="sub" value="Search" id="searchsubmit" class="ygbt">
-							</div>
-							<div id="searchcontainer"></div>
-						</form>
-					</span>
-                </div>
-            </span>
-        </div>
-    </div>
-	
-	
-<div id="doc3" class="yui-t2">
-<div id="hd">
-
-   
-	<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/yui/3">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui/">YUI 2.x</a> site?</p></div>
-	<div id="pagetitle"><h1>YUI 3: <?php echo $titlebar ?></h1></div>
+<div id="headerMaxCont">
+	<div id="headerMainSandbag"></div>
+	<div id="headerContainer">
+		<span id="headeraL">
+			<a href="/"><img src="http://l.yimg.com/a/i/ydn/ydn-logo.gif" class="ydnLogo" height="53" width="408" alt="Yahoo! Developer Network"></a>
+		</span>
+		<span id="headeraR">
+			<div id="searchArea">
+				<ul class="srchOptns">
+					<!-- li class="first"><strong>YDN Site</strong></li>
+					<li>Code</li>
+					<li>Web</li -->
+				</ul>
+				<span class="srchFld">
+					<form action="http://search.yahoo.com/search" method="get">
+						<div id="sitesearch">
+							<input type="text" name="va" value="" id="searchinput">
+							<input type="hidden" name="vs" value="developer.yahoo.com">
+							<input type="hidden" name="vs" value="yuiblog.com">
+							<input type="submit" name="sub" value="Search" id="searchsubmit" class="ygbt">
+						</div>
+						<div id="searchcontainer"></div>
+					</form>
+				</span>
+			</div>
+		</span>
+	</div>
 </div>
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+		<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/yui/3">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui/">YUI 2.x</a> site?</p></div>
+		<div id="pagetitle"><h1>YUI 3: <?php echo $titlebar ?></h1></div>
+	</div>
 <div id="bd">
