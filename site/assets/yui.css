@@ -583,6 +583,6 @@ ul.srchOptns li{margin-top:.3em;}
 
 /* IE6 hack for 3 column layout */
 #infra.yui-u {
-    _width:31%;
+    *width:31%;
 }
 
