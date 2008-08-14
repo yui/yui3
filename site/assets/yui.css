@@ -72,7 +72,7 @@ h3.methods { border-top:none; margin-top:0; margin-bottom:.2em; font-size: 100%;
 #ft p { padding-bottom:2em; margin:0; text-align:center; font-size:80%; line-height:1.4em}
 #ft p.first { padding:1em 0 0 0; margin:0; }
 
-#pagetitle {background:#fff url(../assets/gradient-mod.png) repeat-x;margin:0 10px;border-color:#D9D9D9;margin-bottom:10px;clear:both;}
+#pagetitle {background:#fff url(../assets/gradient-mod.png) repeat-x;border-color:#D9D9D9;margin-bottom:10px;clear:both;}
 #pagetitle h1 {padding:4px;margin:0; color:#333; font-size:123.1%; font-weight:bold; position:relative;}
 #pagetitle h1 em {color:#FF9933; font-size:60%; font-weight:bold; font-style:normal; position:relative;}
 
