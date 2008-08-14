@@ -109,7 +109,7 @@ include "../inc/header.inc";
                                 <p>Note that all fields of the event object that would normally be DOM elements are now <code>Y.Node</code> instances.</p>
 				<textarea name="code" class="JScript" cols="60" rows="1">
                                 YUI().use('node', function(Y)) {
-                                    Y.get('#demo', on('click', function(e) {
+                                    Y.get('#demo').on('click', function(e) {
                                         e.preventDefault();
                                         alert('event: ' + e.type + ' target: ' + e.target.get('tagName')); 
                                     });
