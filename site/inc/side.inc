@@ -28,7 +28,7 @@ $nav[]=array('attribute','/yui/3/attribute/','Attribute', 'Attribute');
 $nav[]=array('base','/yui/3/base/','Base', 'Base');
 
 $nav[]=array('', '', 'YUI 3 Utilities', '');
-$nav[]=array('animation','/yui/3/animation/','Animation', 'Animation');
+$nav[]=array('anim','/yui/3/animation/','Animation', 'Animation');
 $nav[]=array('cookie','/yui/3/cookie/','Cookie', 'Cookie');
 $nav[]=array('dd','/yui/3/dd/','Drag & Drop', 'Drag & Drop (DD)');
 $nav[]=array('get','/yui/3/get/','Get', 'Get');
