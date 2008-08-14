@@ -62,10 +62,8 @@ if ($prepend) { /*there is additional css or header information for this page --
 
 </head>
 <body id="yahoo-com" class="<?php echo $bodyclass; ?>">
-<div id="doc3" class="yui-t2">
-<div id="hd">
-
-    <div id="headerMaxCont">
+	
+ <div id="headerMaxCont">
 		<div id="headerMainSandbag"></div>
         <div id="headerContainer">
             <span id="headeraL">
@@ -93,7 +91,12 @@ if ($prepend) { /*there is additional css or header information for this page --
             </span>
         </div>
     </div>
+	
+	
+<div id="doc3" class="yui-t2">
+<div id="hd">
 
+   
 	<div id="bar-note"><p><strong>Note:</strong> This is the <a href="/yui/3">YUI 3.x</a> site. Looking for the <a href="http://developer.yahoo.com/yui/">YUI 2.x</a> site?</p></div>
 	<div id="pagetitle"><h1>YUI 3: <?php echo $titlebar ?></h1></div>
 </div>

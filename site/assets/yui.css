@@ -511,10 +511,6 @@ table.auto {width:auto;}
 #searchArea{z-index:190;position:relative;margin-top:1.2em;width:29em;text-align:right;}
 ul.srchOptns li{margin-top:.3em;}
 
-/*#searchFld{margin:0 2px 0 .4em;width:15em;height:1.3em;font-size:85%;font-weight:bold;} */
-	{margin:0 2px 0 .4em;width:15em;height:1.3em;font-size:85%;font-weight:bold;}
-	#doc3 {margin:0;}
-	#doc3 #bd {margin-left:10px;margin-right:10px;}
 	
 	
 	/*new footer*/
