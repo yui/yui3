@@ -1,5 +1,5 @@
 //Use loader to grab the modules needed
-YUI(yuiConfig).use('dd', 'anim', 'easing', 'io', 'cookie', 'json', function(Y) {
+YUI(yuiConfig).use('dd', 'anim', 'anim-easing', 'io', 'cookie', 'json', function(Y) {
     //Y.DD.DDM._debugShim = true;
 
     //Setup some private variables..
