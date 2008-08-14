@@ -32,7 +32,7 @@
 </div>
 <script>
 var assetsDir = "<?php echo $assetsDirectory ?>";
-var buildDir = "<?php echo $buildDirectory ?>";
+var buildDir = "../../build";
 var yuiConfig = <?php echo $yuiConfig ?>;
 </script>
 <script src="<?php echo $assetsDirectory ?>portal.js"></script>
