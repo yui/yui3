@@ -62,7 +62,7 @@ if ($releasenotes) {
 
 //hide site search enhancement on QA during testing
 if (!substr_count($_SERVER["REQUEST_URI"], "ydn.corp")) {?>
-<script type="text/javascript" src="/yui/docs/assets/yuiSiteSearch.js?v=1"></script>
+<!--<script type="text/javascript" src="/yui/docs/assets/yuiSiteSearch.js?v=1"></script>-->
 <?php
 }
 ?>
