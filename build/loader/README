@@ -2,5 +2,11 @@ YUI Loader
     Added dynamic loading of YUI and external script and css files.
     Calculates dependencies and optimizes the selection of file includes.
 
+
+3.0.0pr2
+    - get requires yui-base
+    - loader requires get
+    - combo url build process protects against undefined modules
+
 3.0.0pr1
     Initial Release

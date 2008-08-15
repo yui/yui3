@@ -262,7 +262,9 @@ var BASE = 'base',
             requires: ['oop']
         },
 
-        get: { },
+        get: { 
+            requires: ['yui-base']
+        },
         
         io: { 
             requires: ['node']
@@ -278,7 +280,9 @@ var BASE = 'base',
             }
         },
 
-        loader: { },
+        loader: { 
+            requires: ['get']
+        },
         
         oop: { 
             requires: ['yui-base']
@@ -1343,7 +1347,7 @@ Y.Env.meta = META;
                     m = this.getModule(s[i]);
 // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                     // Do not try to combine non-yui JS
-                    if (m.type == JS && !m.ext) {
+                    if (m && m.type == JS && !m.ext) {
                         url += this.root + m.path;
                         if (i < len-1) {
                             url += '&';

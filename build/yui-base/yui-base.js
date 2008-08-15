@@ -360,13 +360,14 @@ YUI.prototype = {
         }
        
 
-        // use loader to optimize and sort the requirements if it
-        // is available.
+        // use loader to expand dependencies and sort the 
+        // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
+            loader.allowRollup = false;
             loader.calculate();
             a = loader.sorted;
         }
