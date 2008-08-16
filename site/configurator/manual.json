@@ -1,0 +1,78 @@
+{ 
+    "categories" : {
+        "css" : {
+            "name" : "CSS"
+        }, 
+        "tool" : {
+            "name" : "Tools"
+        },
+        "core" : {
+            "name" : "Core"
+        },
+        "util" : {
+            "name" : "Utilities"
+        },
+        "infra" : {
+            "name" : "Component Infrastructure"
+        },
+        "widget" : {
+            "name" : "Widgets"
+        },
+        "other" : {
+            "name" : "Other"
+        }
+    },
+    "modules" : {
+        "dom-base" : {"cat": "util", "name":""},
+        "dom-style" : {"cat": "util", "name":""},
+        "dom-screen" : {"cat": "util", "name":""},
+        "selector" : {"cat": "core", "name":""},
+        "dom" : {"cat": "core", "name":""},
+        "node-base" : {"cat": "core", "name":""},
+        "node-style" : {"cat": "core", "name":""},
+        "node-screen" : {"cat": "core", "name":""},
+        "node" : {"cat": "core", "name":""},
+        "anim-base" : {"cat": "util", "name":""},
+        "anim-color" : {"cat": "util", "name":""},
+        "anim-curve" : {"cat": "util", "name":""},
+        "anim-easing" : {"cat": "util", "name":""},
+        "anim-scroll" : {"cat": "util", "name":""},
+        "anim-xy" : {"cat": "util", "name":""},
+        "anim-node-plugin" : {"cat": "util", "name":""},
+        "anim" : {"cat": "util", "name":""},
+        "attribute" : {"cat": "infra", "name":""},
+        "base" : {"cat": "infra", "name":""},
+        "cookie" : {"cat": "util", "name":""},
+        "dd-ddm-base" : {"cat": "util", "name":""},
+        "dd-ddm" : {"cat": "util","name":""},
+        "dd-ddm-drop" : {"cat": "util", "name":""},
+        "dd-drag" : {"cat": "util", "name":""},
+        "dd-drop" : {"cat": "util", "name":""},
+        "dd-proxy" : {"cat": "util", "name":""},
+        "dd-constrain" : {"cat": "util", "name":""},
+        "dd-plugin" : {"cat": "util", "name":""},
+        "dd-drop-plugin" : {"cat": "util", "name":""},
+        "dd" : {"cat": "util", "name":""},
+        "dump" : {"cat": "util", "name":""},
+        "event" : {"cat": "core", "name":""},
+        "get" : {"cat": "core", "name":""},
+        "io" : {"cat": "util", "name":""},
+        "json-parse" : {"cat": "util", "name":""},
+        "json-stringify" : {"cat": "util", "name":""},
+        "json" : {"cat": "util", "name":""},
+        "loader" : {"cat": "core", "name":""},
+        "oop" : {"cat": "core", "name":""},
+        "queue" : {"cat": "util", "name":""},
+        "substitute" : {"cat": "util", "name":""},
+        "yui" : {"cat": "core", "name":""},
+        "yui-base" : {"cat": "core", "name":""},
+        "cssreset" : {"cat": "css", "name":""},
+        "cssreset-context" : {"cat": "css", "name":""},
+        "cssfonts" : {"cat": "css", "name":""},
+        "cssfonts-context" : {"cat": "css", "name":""},
+        "cssgrids" : {"cat": "css", "name":""},
+        "cssgrids-context" : {"cat": "css", "name":""},
+        "cssbase" : {"cat": "css", "name":""},
+        "cssbase-context" : {"cat": "css", "name":""}
+    }
+}
