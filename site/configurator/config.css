@@ -94,7 +94,7 @@
 }
 
 .modList .hasSubModules {
-    background:url(assets/rt-arrow-large.png) no-repeat 99% center;
+    background:url(assets/rt-arrow-large.png) no-repeat 99% 50%;
 }
 
 .modList li .size {
@@ -140,3 +140,11 @@
     padding:1px;
 }
 
+.modList .yui-button button { 
+    display: block; 
+    white-space: nowrap; 
+    width: 10em; 
+    text-align:left;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}

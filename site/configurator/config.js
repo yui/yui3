@@ -8,34 +8,37 @@
         chart = null,
         tabView = null,
 
+        moduleData = configData.modules,
+        categoryData = configData.categories,
+        categoryOrder = ["core", "utils", "infra", "css", "tools", "other"],
+
         current = {
             initialLoad : true,
             required : [],
             sizes : [],
             selected : {},
             filter : 'min',
-            rollup : true,
+            rollup : false,
             combo : true,
             optional : true,
             base: ""
         },
 
-        modInfoEl = Dom.get('modInfo'), 
-        jsModsEl = Dom.get('jsMods'), 
-        cssModsEl = Dom.get('cssMods'), 
-        subModsEl = Dom.get('subMods'), 
+        modInfoEl = Dom.get('modInfo'),
+        modsBdEl = Sel.query('#modPanel .bd')[0],
+        subModsEl = Dom.get('subMods'),
 
-        modDescEl = Dom.get('modDesc'), 
-        modDescHdEl = Sel.query('#modDesc .hd')[0], 
-        modDescBdEl = Sel.query('#modDesc .bd')[0], 
+        modDescEl = Dom.get('modDesc'),
+        modDescHdEl = Sel.query('#modDesc .hd')[0],
+        modDescBdEl = Sel.query('#modDesc .bd')[0],
 
-        configEl = Dom.get('config'), 
-        comboEl = Dom.get('combo'), 
+        configEl = Dom.get('config'),
+        comboEl = Dom.get('combo'),
         fileTypeEl = Dom.get('fileType'),
         rollupEl = Dom.get('rollup'),
-        optionalEl = Dom.get('optional'), 
+        optionalEl = Dom.get('optional'),
         baseEl = Dom.get('base'),
-        
+
         outputEl = Dom.get('loaderOutput'),
         resourcesEl = Dom.get('resources'),
         chartEl = Dom.get('chart'),
@@ -49,7 +52,7 @@
 
     var Y = YUI();
 
-    var outputAnim = new YAHOO.util.ColorAnim(outputEl, 
+    var outputAnim = new YAHOO.util.ColorAnim(outputEl,
         {backgroundColor: {from: '#edff9f', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
     );
 
@@ -94,18 +97,18 @@
                         jsPushed = true;
                     }
 
-                    if(comboEl.checked) {
+                    if(current.combo) {
                         var filter = loader.FILTERS[current.filter.toUpperCase()];
                         var filteredPath = (filter) ? m.path.replace(new RegExp(filter.searchExp), filter.replaceStr) : m.path; 
                         combourl.push(loader.root + filteredPath);
                     } else {
                         url = m.fullpath || loader._url(m.path);
-                        out.push('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>');                        
+                        out.push('<script type="text/javascript" src="' + url + '"></scr' + 'ipt>');
                     }
                 }
             }
 
-            if(comboEl.checked && combourl.length) {
+            if(current.combo && combourl.length) {
                 var src = loader.comboBase + combourl.join("&");
                 out.push('<script type="text/javascript" src="' + src + '"></scr' + 'ipt>');
             }
@@ -185,7 +188,7 @@
         if (modList) {
             for (var i = 0; i < modList.length; i++) {
                 mod = modList[i];
-                if (configData[mod]) {
+                if (moduleData[mod]) {
                     req[mod] = true;
                 }
             }
@@ -197,10 +200,10 @@
         var sizes = [];
 
         for (var i = 0; i < modList.length; i++) {
-            var cfg = configData[modList[i]];
+            var cfg = moduleData[modList[i]];
             if (cfg) {
                 sizes[sizes.length] = { 
-                    name: cfg.info.name, 
+                    name: modList[i], 
                     size: cfg.sizes[current.filter],
                     sizegz: cfg.sizes[current.filter+"gz"]
                 };
@@ -228,7 +231,7 @@
         for (var i = 0, l = sizeEls.length; i < l; i++) {
            el = sizeEls[i];
            name = el.id.replace("size_", "");
-           el.innerHTML = "(" + prettySize(configData[name].sizes[current.filter]) + ", " + current.filter + ")";
+           el.innerHTML = "(" + prettySize(moduleData[name].sizes[current.filter]) + ", " + current.filter + ")";
         }
     }
 
@@ -292,7 +295,7 @@
     }
 
     function handleModuleSelection(name, stateChange) {
-        var cfg = configData[name];
+        var cfg = moduleData[name];
         if (cfg) {
  
             if (stateChange != undefined) {
@@ -319,12 +322,12 @@
         if (stateChange !== undefined && !stateChange) {
 
             var parentName = cfg.module,
-                parentCfg = configData[parentName],
+                parentCfg = moduleData[parentName],
                 submodules = parentCfg.submodules,
                 submodCfg;
 
             for (var sm in submodules) {
-                submodCfg = configData[sm];
+                submodCfg = moduleData[sm];
                 if (submodCfg) {
                     if(submodCfg._selectionEl.get("checked")) {
                         current.selected[sm] = true;
@@ -342,35 +345,32 @@
     }
 
     function updateStateFromModule(name, cfg, stateChange) {
+        var li, submods, submod, submodcfg, recreate, isChecked;
  
         subModsHeaderEl.innerHTML = "Sub Modules: " + name;
 
-        var recreate = (!current.subModulesDisplayed || current.subModulesDisplayed != name);
+        recreate = (!current.subModulesDisplayed || current.subModulesDisplayed != name);
 
         current.subModulesDisplayed = name;
 
         if (cfg.submodules) {
-            var submods = cfg.submodules;
+            submods = cfg.submodules;
 
             if (recreate) {
                 Event.purgeElement(subModsEl, true);
                 subModsEl.innerHTML = "";
             }
 
-            for (var submod in submods) {
-                var submodcfg = configData[submod];
+            for (submod in submods) {
+                submodcfg = moduleData[submod];
+
                 if (submodcfg) {
-                    var isChecked = (stateChange === undefined && (current.selected[submod] || current.selected[name]) || stateChange);
+                    isChecked = (stateChange === undefined && (current.selected[submod] || current.selected[name]) || stateChange);
 
                     if (recreate) {
-                        var li = document.createElement('li');
-                        li.id = "mod_" + submod;
-                        li.className = "modentry";
-
-                        subModsEl.appendChild(li);
-     
+                        li = createModuleListEntry(submod, submodcfg, subModsEl);
                         createModuleSelectionElement(submod, submodcfg, li);
-                        createSizeElement(submodcfg, li);
+                        createSizeElement(submod, submodcfg, li);
                     }
 
                     submodcfg._selectionEl.set("checked", isChecked);
@@ -405,7 +405,8 @@
 
         Event.on("modPanel", 'click', function(e) {
             var t = Event.getTarget(e), name;
-            if (t.id.indexOf("mod_") !== -1) {
+            t = Dom.hasClass(t, "modentry") ? t : Dom.getAncestorByClassName(t, "modentry");
+            if (t) {
                 name = t.id.replace('mod_', '');
                 handleModuleSelection(name);
             }
@@ -425,11 +426,11 @@
             t = Dom.hasClass(t, "modentry") ? t : Dom.getAncestorByClassName(t, "modentry");
             if (t) {
                 name = t.id.replace('mod_', '');
-                cfg = configData[name];
+                cfg = moduleData[name];
 
                 Dom.addClass(t, "yui-hover");
  
-                desc = configData[name].info.desc;
+                desc = moduleData[name].info.desc;
                 if (desc) {
                     modDescHdEl.innerHTML = name;
                     modDescBdEl.innerHTML = desc;
@@ -444,7 +445,7 @@
             t = Dom.hasClass(t, "modentry") ? t : Dom.getAncestorByClassName(t, "modentry");
             if (t) {
                 name = t.id.replace('mod_', '');
-                cfg = configData[name];
+                cfg = moduleData[name];
 
                 Dom.removeClass(t, "yui-hover");
 
@@ -468,6 +469,7 @@
         Event.on(comboEl, 'click', function() {
             current.combo = this.checked;
             baseEl.disabled = this.checked;
+            rollupEl.checked = !this.checked;
             load();
         });
 
@@ -495,34 +497,84 @@
                 container: parent,
                 checked: (!!current.selected[name]),
                 onclick: {
-                    fn: function() {
+                    fn: function(e) {
+                        Event.stopPropagation(e);
                         handleModuleSelection(name, this.get("checked"));
                     }
-                }
+                },
+                width: "10em"
             });
 
             cfg._selectionEl = btn;
             btn._moduleName = name;
+
+            return btn;
     }
 
-    function createSizeElement(cfg, parent) {
+    function createSizeElement(name, cfg, parent) {
+
         var s = document.createElement("span");
         var size = cfg.sizes[current.filter]; 
 
         s.className = "size";
-        s.id = "size_" + cfg.info.name;
+        s.id = "size_" + name;
         parent.appendChild(s);
 
         s.innerHTML = '(' + prettySize(size) + ', ' + current.filter +')';
+
+        return s;
+    }
+
+    function createCategory(cat, mods) {
+
+        var name, cfg, i, li, div, ul, className, listId = "mods_" + cat;
+
+        div = document.createElement("div");
+        div.className = "modGroupHd";
+        div.innerHTML = categoryData[cat].name;
+        
+        ul = document.createElement("ul");
+        ul.id = listId;
+        ul.className = "modList";
+
+        modsBdEl.appendChild(div);
+        modsBdEl.appendChild(ul);
+
+        var modsList = Dom.get(listId);
+
+        for (i = 0; i < mods.length; i++) {
+
+            name = mods[i];
+            cfg = moduleData[name];
+
+            li = createModuleListEntry(name, cfg, modsList);
+            createModuleSelectionElement(name, cfg, li);
+            createSizeElement(name, cfg, li);
+        }
+    }
+
+    function createModuleListEntry(name, cfg, parent) {
+        var li = document.createElement("li"),
+            className = "modentry";
+
+            if (cfg.submodules) {
+                className += " hasSubModules";
+            }
+            li.className = className;
+            li.id = "mod_" + name;
+
+            parent.appendChild(li);
+
+            return li;
     }
 
     function hackYuiConfigData() {
 
-        var yuiCfg = configData["yui"];
+        var yuiCfg = moduleData["yui"];
 
-        hackSubModule(yuiCfg, configData["yui-base"]);
-        hackSubModule(yuiCfg, configData["get"]);
-        hackSubModule(yuiCfg, configData["loader"]);
+        hackSubModule(yuiCfg, moduleData["yui-base"]);
+        hackSubModule(yuiCfg, moduleData["get"]);
+        hackSubModule(yuiCfg, moduleData["loader"]);
     }
 
     function hackSubModule(moduleCfg, submoduleCfg) {
@@ -531,76 +583,40 @@
            if (!moduleCfg.submodules) {
                moduleCfg.submodules = {};
            }
-           moduleCfg.submodules[submoduleCfg.info.name] = submoduleCfg;
+           moduleCfg.submodules[submoduleCfg.name] = submoduleCfg;
         }
     }
 
     function addModules() {
 
-        var js = [], css = [], i, li, cfg, name, className;
+        var split = {}, i, cfg, name, cat;
 
-        for (name in configData) {
-            if (Lang.hasOwnProperty(configData, name)) {
-                cfg = configData[name];
-                if (cfg.type == 'js' && !cfg.isSubMod && name !== 'yui') {
-                    js.push(name);
-                }
-
-                if (cfg.type == 'css') {
-                    css.push(name);
+        for (name in moduleData) {
+            if (Lang.hasOwnProperty(moduleData, name)) {
+                cfg = moduleData[name];
+                if (!cfg.isSubMod && name !== "yui") {
+                    cat = cfg.info.cat;
+                    (split[cat] = split[cat] || []).push(name);
                 }
             }
         }
 
-        js.sort();
-        js.splice(0, 0, 'yui');
-
-        for (i=0; i < js.length; i++) {
-
-            name = js[i];
-            cfg = configData[name];
-
-            li = document.createElement('li');
-            li.id = "mod_" + name;
-            className = "modentry";
-            if (cfg.submodules) {
-                className += " hasSubModules";
+        for (cat in split) {
+            if (Lang.hasOwnProperty(split, cat)) {
+                split[cat].sort();
+                if (cat == "core") {
+                    split[cat].splice(0,0,"yui");
+                }
             }
-            li.className = className;
-
-            jsModsEl.appendChild(li);
-
-            createModuleSelectionElement(name, cfg, li);
-            createSizeElement(cfg, li);
-        }
-
-        css.sort();
-
-        for (i=0; i < css.length; i++) {
-
-            name = css[i];
-            cfg = configData[name];
-
-            li = document.createElement('li');
-            li.id = "mod_" + name;
-
-            className = "modentry";
-            if (cfg.submodules) {
-                className += " hasSubModules";
-            }
-            li.className = className;
-
-            cssModsEl.appendChild(li);
-
-            createModuleSelectionElement(name, cfg, li);
-            createSizeElement(cfg, li);
+            createCategory(cat, split[cat]);
         }
     }
+
 
     hackYuiConfigData();
 
     Event.onDOMReady(function() {
-        
+
         current.selected = toModuleHash(YAHOO.configurator.INIT_SELECTION || ["yui"]);
 
         tabView = new YAHOO.widget.TabView("configurator");
