@@ -469,7 +469,7 @@
         Event.on(comboEl, 'click', function() {
             current.combo = this.checked;
             baseEl.disabled = this.checked;
-            rollupEl.checked = !this.checked;
+            current.rollup = rollupEl.checked = !this.checked;
             load();
         });
 
