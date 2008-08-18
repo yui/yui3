@@ -36,7 +36,7 @@ node.on('click', onClick);
 YUI().use('*', function(Y) {
     var node = Y.get('#demo p');
 
-    onClick = function(e) {
+    var onClick = function(e) {
         var node = e.currentTarget;
         var html = 'I am a child of ' + node.get('parentNode').get('id') + '.';
         node.set('innerHTML', html);
