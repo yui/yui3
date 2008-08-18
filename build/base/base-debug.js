@@ -80,7 +80,7 @@ YUI.add('base', function(Y) {
          * @default false
          * @type boolean
          */
-        intialized: {
+        initialized: {
             readOnly:true,
             value:false
         },
