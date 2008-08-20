@@ -56,6 +56,7 @@
     line-height:1em;
     padding:0 0.5em;
     margin-left:1em;
+    border:1px solid #666;
 }
 
 #selectedModules ol {
@@ -63,13 +64,15 @@
     font-size:108%;
 }
 
-#selectedModules li, #selectedModules li p {
-    margin-bottom:.2em;
-    padding:2px;
+#selectedModules li {
+    margin-bottom:1px;
     position:relative;
 }
 
 #selectedModules li p {
+    position:relative;
+    padding:2px;
+    margin-bottom:0;
     font-weight:bold;
     zoom:1;
 }
@@ -77,10 +80,8 @@
 #selectedModules li p .size {
     font-weight:normal;
     font-size:85%;
-    display:block;
     position:absolute;
-    right:2px;
-    top:2px;
+    right:4px;
     zoom:1;
 }
 
@@ -100,8 +101,9 @@
 }
 
 #selectedModules .submods {
-    margin-left:1em; 
+    margin-left:2em; 
     font-weight:normal;
+    padding:0 2px 2px 2px;
 }
 
 #loaderOutput {

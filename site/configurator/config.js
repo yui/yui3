@@ -333,7 +333,7 @@
         selModsBdEl.innerHTML = bd.join("");
 
         ft[ft.length] = '<p class="totals">';
-        ft[ft.length] = '<span class="dependency">&nbsp;</span> Dependencies : <span class="total">'
+        ft[ft.length] = '<span class="dependency">&nbsp;</span> Dependencies/Rollups : <span class="total">'
         ft[ft.length] = prettySize(totals.dependency.s);
         ft[ft.length] = '</span> (';
         ft[ft.length] = current.filter;
@@ -667,6 +667,7 @@
     function hackSubModule(moduleCfg, submoduleCfg) {
         if (moduleCfg && submoduleCfg) {
            submoduleCfg.isSubMod = true;
+           moduleCfg.rollup = true;
            if (!moduleCfg.submodules) {
                moduleCfg.submodules = {};
            }
