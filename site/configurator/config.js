@@ -42,6 +42,7 @@
         outputEl = Dom.get('loaderOutput'),
         resourcesEl = Dom.get('resources'),
         selModsBdEl = Sel.query('#selectedModules .bd')[0],
+        selModsFtEl = Sel.query('#selectedModules .ft')[0],
         chartEl = Dom.get('chart'),
         legendEl = Dom.get('legend'),
         totalEl = Sel.query('#weight .hd')[0],
@@ -273,7 +274,7 @@
 
     function updateRequiredModsUI(selected, required) {
 
-        var html = ["<ol>"], className, m, sm, submodsHTML, sizeHTML, sizes;
+        var bd = ["<ol>"], ft = [], className, m, sm, submodsHTML, sizeHTML, sizes, size, sizegz, totals = {selected:{s:0,gz:0}, dependency:{s:0,gz:0}};
 
         for (m in required) {
             if (Lang.hasOwnProperty(required, m)) {
@@ -295,20 +296,54 @@
 
                 sizes = moduleData[m].sizes;
 
-                sizeHTML = prettySize(sizes[current.filter]) + " (" + current.filter + ")";
-                // sizeHTML += ", " + prettySize(sizes[current.filter + "gz"]) + " (" + current.filter + ", gzipped)";
+                size = sizes[current.filter];
+                sizegz = sizes[current.filter + "gz"];
 
-                html[html.length] = '<li class="' + className  + '" title="' + className  + '"><p><span>' + m + '</span><span class="size">' + sizeHTML + '</span></p>';
-                if (submodsHTML) {
-                    html[html.length] = submodsHTML;
+                if (selected[m]) {
+                    totals.selected.s += size;
+                    totals.selected.gz += sizegz;
+                } else {
+                    totals.dependency.s += size;
+                    totals.dependency.gz += sizegz;
                 }
-                html[html.length] = '</li>';
+
+                sizeHTML = prettySize(size) + " (" + current.filter + ")";
+                // sizeHTML += ", " + prettySize(sizegz) + " (" + current.filter + ", gzipped)";
+
+                bd[bd.length] = '<li class="';
+                bd[bd.length] = className;
+                bd[bd.length] = '" title="';
+                bd[bd.length] = className;
+                bd[bd.length] = '"><p><span>';
+                bd[bd.length] = m;
+                bd[bd.length] = '</span><span class="size">';
+                bd[bd.length] = sizeHTML;
+                bd[bd.length] = '</span></p>';
+
+                if (submodsHTML) {
+                    bd[bd.length] = submodsHTML;
+                }
+
+                bd[bd.length] = '</li>';
             }
         }
 
-        html[html.length] =["</ol>"];
+        bd[bd.length] =["</ol>"];
 
-        selModsBdEl.innerHTML = html.join("");
+        selModsBdEl.innerHTML = bd.join("");
+
+        ft[ft.length] = '<p class="totals">';
+        ft[ft.length] = '<span class="dependency">&nbsp;</span> Dependencies : <span class="total">'
+        ft[ft.length] = prettySize(totals.dependency.s);
+        ft[ft.length] = '</span> (';
+        ft[ft.length] = current.filter;
+        ft[ft.length] = ') <span class="selected">&nbsp;</span> Selected : <span class="total">';
+        ft[ft.length] = prettySize(totals.selected.s);
+        ft[ft.length] = '</span> (';
+        ft[ft.length] = current.filter;
+        ft[ft.length] = ')</p>';
+
+        selModsFtEl.innerHTML = ft.join("");
 
         if (!current.initialLoad) {
             outputModsAnim.stop();

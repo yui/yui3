@@ -17,25 +17,45 @@
 
 #selectedModules .bd, #resources .bd {
     padding:0px;
-    border:1px solid #aaa;
-    height:15em;
-    overflow:auto;
+    border:0px solid #aaa;
     font-size:85%;
-}
-
-#loaderOutput {
-    font-family:monospace;
-    width:100%;
-    height:100%;
-    _height:15em; /* Using abs. height due to IE6 */
-    background-color:#fff;
-    border:0;
-    margin:0;
-    padding:0;
+    position:relative;
 }
 
 #resources .bd {
+    height:15em;
+    overflow:auto;
+}
+
+#selectedModules .bd {
+    height:12.5em;
+    overflow:auto;
+}
+
+#selectedModules .ft {
+    font-size:85%;
+    height:2.5em;
+    border:0;
+    padding0;
+    background-color:#999;
+    color:#fff;
     overflow:hidden;
+    font-weight:bold;
+}
+
+#selectedModules .ft .totals {
+    line-height:2.5em;
+    padding:0 1em;
+    margin:0;
+    font-size:108%;
+    text-align:right;
+}
+
+#selectedModules .ft .totals .selected, #selectedModules .ft .totals .dependency  {
+    width:1em;
+    line-height:1em;
+    padding:0 0.5em;
+    margin-left:1em;
 }
 
 #selectedModules ol {
@@ -82,7 +102,21 @@
 #selectedModules .submods {
     margin-left:1em; 
     font-weight:normal;
-    font-size:85%;
+}
+
+#loaderOutput {
+    font-family:monospace;
+    width:100%;
+    height:100%;
+    _height:15em; /* Using abs. height due to IE6 */
+    background-color:#fff;
+    border:0;
+    margin:0;
+    padding:0;
+}
+
+#resources .bd {
+    overflow:hidden;
 }
 
 #modInfo li {
@@ -198,7 +232,7 @@
 }
 
 .yui-force-redraw {
-    padding:1px;
+    margin:1px;
 }
 
 .modList .yui-button button { 
