@@ -19,7 +19,6 @@
     padding:0px;
     border:0px solid #aaa;
     font-size:85%;
-    position:relative;
 }
 
 #resources .bd {
@@ -30,13 +29,14 @@
 #selectedModules .bd {
     height:12.5em;
     overflow:auto;
+    position:relative;
 }
 
 #selectedModules .ft {
     font-size:85%;
     height:2.5em;
     border:0;
-    padding0;
+    padding:0;
     background-color:#999;
     color:#fff;
     overflow:hidden;
@@ -173,7 +173,7 @@
 }
 
 .modList {
-    margin: 0.5em;
+    margin:0.5em;
 }
 
 .modList li .yui-button {
@@ -226,7 +226,7 @@
 }
 
 #configOpts label {
-    margin-right: 2em;
+    margin-right:2em;
 }
 
 #chart {

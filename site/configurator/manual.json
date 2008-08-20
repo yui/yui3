@@ -65,7 +65,7 @@
         "queue" : {"cat": "util", "name":""},
         "substitute" : {"cat": "util", "name":""},
         "yui" : {"cat": "core", "name":""},
-        "yui-base" : {"cat": "core", "name":""},
+        "yui-base" : {"cat": "core", "name":"", "description":"The YUI core, without get or loader built in. You can use this lighter version of YUI if you're manually including all required files on the page and don't require YUI to pull in missing file dependencies dynamically."},
         "cssreset" : {"cat": "css", "name":""},
         "cssreset-context" : {"cat": "css", "name":""},
         "cssfonts" : {"cat": "css", "name":""},

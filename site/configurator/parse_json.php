@@ -96,6 +96,11 @@ foreach ($modules as $mod => $config) {
             }
         }
     }
+
+    // YUI submodule hack
+    if ($mod == "get" || $mod == "loader") {
+        $config->info->desc = $api->modules->yui->subdata->$mod->description;
+    }
 }
 
 $out->modules = $modules;

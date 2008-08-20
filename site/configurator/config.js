@@ -430,7 +430,7 @@
                 }
             }
 
-            parentCfg._selectionEl.set("checked", false);
+            parentCfg._selectionEl.set("checked", false, true);
             delete current.selected[parentName];
         }
     }
@@ -464,7 +464,7 @@
                         createSizeElement(submod, submodcfg, li);
                     }
 
-                    submodcfg._selectionEl.set("checked", isChecked);
+                    submodcfg._selectionEl.set("checked", isChecked, true);
 
                     if (stateChange !== undefined) {
                         if (isChecked) {
@@ -590,10 +590,12 @@
                 onclick: {
                     fn: function(e) {
                         Event.stopPropagation(e);
-                        handleModuleSelection(name, this.get("checked"));
                     }
-                },
-                width: "10em"
+                }
+            });
+
+            btn.on("checkedChange", function(e) {
+                handleModuleSelection(this._moduleName, e.newValue);
             });
 
             cfg._selectionEl = btn;
