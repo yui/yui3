@@ -15,17 +15,74 @@
     padding:5px;
 }
 
-#resources .bd {
-    padding-right:5px;
+#selectedModules .bd, #resources .bd {
+    padding:0px;
+    border:1px solid #aaa;
+    height:15em;
+    overflow:auto;
+    font-size:85%;
 }
 
 #loaderOutput {
     font-family:monospace;
-    font-size:85%;
     width:100%;
-    _width:99%;
+    height:100%;
+    _height:15em; /* Using abs. height due to IE6 */
     background-color:#fff;
-    border:1px solid #000;
+    border:0;
+    margin:0;
+    padding:0;
+}
+
+#resources .bd {
+    overflow:hidden;
+}
+
+#selectedModules ol {
+    padding-left:5px;
+    font-size:108%;
+}
+
+#selectedModules li, #selectedModules li p {
+    margin-bottom:.2em;
+    padding:2px;
+    position:relative;
+}
+
+#selectedModules li p {
+    font-weight:bold;
+    zoom:1;
+}
+
+#selectedModules li p .size {
+    font-weight:normal;
+    font-size:85%;
+    display:block;
+    position:absolute;
+    right:2px;
+    top:2px;
+    zoom:1;
+}
+
+#selectedModules .selected {
+    background-color:#426fd9;
+}
+
+#selectedModules .selected p {
+    color:#fff;
+}
+
+#selectedModules .dependency {
+    background-color:#edff9f;
+}
+
+#selectedModules .rollup {
+}
+
+#selectedModules .submods {
+    margin-left:1em; 
+    font-weight:normal;
+    font-size:85%;
 }
 
 #modInfo li {
@@ -128,7 +185,11 @@
     display:none;
 }
 
-#config label {
+#configOpts {
+    margin-top:2em;
+}
+
+#configOpts label {
     margin-right: 2em;
 }
 

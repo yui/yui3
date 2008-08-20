@@ -37,6 +37,7 @@ foreach ($modules as $mod => $config) {
         $config->info = new stdclass();
     }
 
+    // Pick up Description from manual.json or api.json
     if (isset($manual->modules->$mod->description)) {
         $config->info->desc = $manual->modules->$mod->description;
     } else if(isset($api->modules->$mod->description)) {
@@ -45,6 +46,7 @@ foreach ($modules as $mod => $config) {
         $config->info->desc = UNKNOWN_DESC;
     }
 
+    // Pick up Category from manual.json or api.json
     if (isset($manual->modules->$mod->cat)) {
         $config->info->cat = $manual->modules->$mod->cat;
     } else if(isset($api->modules->$mod->cat)) {
@@ -53,6 +55,8 @@ foreach ($modules as $mod => $config) {
         $config->info->cat = UNKNOWN_CAT;
     }
 
+    // Pick up canonical name from manual.json or api.json,
+    // else fall back on module id
     if (isset($manual->modules->$mod->name)) {
         $config->info->name = $manual->modules->$mod->name;
     } else if(isset($api->modules->$mod->name)) {
@@ -61,6 +65,7 @@ foreach ($modules as $mod => $config) {
         $config->info->name = tolowercase($mod);
     }
 
+    // Calculate file sizes
     if (!$config->path) {
         $config->path = $mod.'/'.$mod.'-min.js';
     }
@@ -75,6 +80,8 @@ foreach ($modules as $mod => $config) {
         getFileSizes($config, $path);
     }
 
+    // Setup submodule structure, and mark submodules with
+    // isSubMod flag.
     if (isset($config->submodules)) {
         foreach($config->submodules as $submod => $config) {
             if (!isset($modules->$submod)) {

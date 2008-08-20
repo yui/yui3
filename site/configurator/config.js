@@ -14,9 +14,9 @@
 
         current = {
             initialLoad : true,
-            required : [],
-            sizes : [],
             selected : {},
+            required : {},
+            sizes : [],
             filter : 'min',
             rollup : false,
             combo : true,
@@ -32,7 +32,7 @@
         modDescHdEl = Sel.query('#modDesc .hd')[0],
         modDescBdEl = Sel.query('#modDesc .bd')[0],
 
-        configEl = Dom.get('config'),
+        configOptsEl = Dom.get('configOpts'),
         comboEl = Dom.get('combo'),
         fileTypeEl = Dom.get('fileType'),
         rollupEl = Dom.get('rollup'),
@@ -41,6 +41,7 @@
 
         outputEl = Dom.get('loaderOutput'),
         resourcesEl = Dom.get('resources'),
+        selModsBdEl = Sel.query('#selectedModules .bd')[0],
         chartEl = Dom.get('chart'),
         legendEl = Dom.get('legend'),
         totalEl = Sel.query('#weight .hd')[0],
@@ -52,7 +53,11 @@
 
     var Y = YUI();
 
-    var outputAnim = new YAHOO.util.ColorAnim(outputEl,
+    var outputFilesAnim = new YAHOO.util.ColorAnim(outputEl,
+        {backgroundColor: {from: '#edff9f', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
+    );
+
+    var outputModsAnim = new YAHOO.util.ColorAnim(selModsBdEl,
         {backgroundColor: {from: '#edff9f', to: '#fff' }}, 1.5, YAHOO.util.Easing.easeIn
     );
 
@@ -223,6 +228,7 @@
 
     function showResults(loader) {
         updateResourceUI(getIncludes(loader));
+        updateRequiredModsUI(current.selected, current.required);
         updateWeightUI(current.sizes);
     }
 
@@ -258,9 +264,55 @@
 
     function updateResourceUI(buffer) {
         outputEl.value = buffer.join('\n');
+
         if (!current.initialLoad) {
-            outputAnim.stop();
-            outputAnim.animate();
+            outputFilesAnim.stop();
+            outputFilesAnim.animate();
+        }
+    }
+
+    function updateRequiredModsUI(selected, required) {
+
+        var html = ["<ol>"], className, m, sm, submodsHTML, sizeHTML, sizes;
+
+        for (m in required) {
+            if (Lang.hasOwnProperty(required, m)) {
+                submodsHTML = "";
+                className = (selected[m]) ? "selected" : "dependency";
+
+                if (moduleData[m].rollup !== undefined) {
+
+                    className += " rollup";
+
+                    if (moduleData[m].submodules) {
+                        submodsHTML = [];
+                        for (sm in moduleData[m].submodules) {
+                            submodsHTML[submodsHTML.length] = sm;
+                        }
+                        submodsHTML = ' <p class="submods">' + submodsHTML.join(", ") + '</p>';
+                    }
+                }
+
+                sizes = moduleData[m].sizes;
+
+                sizeHTML = prettySize(sizes[current.filter]) + " (" + current.filter + ")";
+                // sizeHTML += ", " + prettySize(sizes[current.filter + "gz"]) + " (" + current.filter + ", gzipped)";
+
+                html[html.length] = '<li class="' + className  + '" title="' + className  + '"><p><span>' + m + '</span><span class="size">' + sizeHTML + '</span></p>';
+                if (submodsHTML) {
+                    html[html.length] = submodsHTML;
+                }
+                html[html.length] = '</li>';
+            }
+        }
+
+        html[html.length] =["</ol>"];
+
+        selModsBdEl.innerHTML = html.join("");
+
+        if (!current.initialLoad) {
+            outputModsAnim.stop();
+            outputModsAnim.animate();
         }
     }
 

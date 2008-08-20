@@ -20,13 +20,24 @@ include "../inc/header.inc";
                 </ul>            
                 <div class="yui-content">
                     <div id="configTab">
-                        <div id="resources" class="panel">
-                            <div class="hd">Results <span id="finalWeight"></span></div>
-                            <div class="bd">
-                                <textarea class="HTML" cols="60" rows="6" id="loaderOutput" name="loaderOutput"><!-- Generated tags will be displayed here --></textarea>
+                        <!-- 2 Column Grid -->
+                        <div id="results" class="yui-g">
+                            <div class="yui-u first">
+                                <div id="resources" class="panel">
+                                    <div class="hd">Results <span id="finalWeight"></span></div>
+                                    <div class="bd">
+                                        <textarea class="HTML" cols="60" rows="6" id="loaderOutput" name="loaderOutput"><!-- Generated tags will be displayed here --></textarea>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div id="config" class="panel">
+                            <div class="yui-u">
+                                <div id="selectedModules" class="panel">
+                                    <div class="hd">Required Modules (Selected + Dependencies/Rollups)</div>
+                                    <div class="bd"></div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div id="configOpts" class="panel">
                             <div class="hd">Options</div>
                             <div class="bd">
                                     <label> File Type: <select id="fileType">
@@ -41,6 +52,7 @@ include "../inc/header.inc";
                                     <label><input type="checkbox" id="optional" checked /> Include Optional Modules</label>
                             </div>
                         </div>
+                        <!-- 3 Column Grid -->
                         <div class="yui-gb first" id="modInfo">
                             <div class="yui-u first">
                                 <div id="modPanel" class="panel">
@@ -105,8 +117,6 @@ include "../inc/header.inc";
 </div>
 
 <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/yui/yui-min.js"></script>
-
-<!--<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yahoo-dom-event/yahoo-dom-event.js&2.5.2/build/animation/animation-min.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/json/json-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js&2.5.2/build/tabview/tabview-min.js"></script>-->
 
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.5.2/build/yuiloader-dom-event/yuiloader-dom-event.js&2.5.2/build/animation/animation-min.js&2.5.2/build/autocomplete/autocomplete-min.js&2.5.2/build/element/element-beta-min.js&2.5.2/build/button/button-min.js&2.5.2/build/json/json-min.js&2.5.2/build/datasource/datasource-beta-min.js&2.5.2/build/charts/charts-experimental-min.js&2.5.2/build/selector/selector-beta-min.js&2.5.2/build/tabview/tabview-min.js"></script>
 
