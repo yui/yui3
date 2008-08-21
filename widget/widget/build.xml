@@ -6,7 +6,7 @@
 
     <property file="build.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
-    
+
     <target name="register" description="Widget ClassNameManager Combo" depends="YuiModuleTargets.register">
         <concat destfile="${component.builddir}/${component.basefilename}.js" append="true">
             <filelist dir="${srcdir}/build/classnamemanager" files="classnamemanager.js" />

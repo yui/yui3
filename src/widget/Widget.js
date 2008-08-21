@@ -13,7 +13,6 @@ var _WIDGET = "widget",
 	_WIDTH = "width",
 	_HEIGHT = "height",
 	_UI = "ui",
-	_DIV = "div",
 	_EMPTY = "",
 	_HYPHEN = "-";
 
@@ -73,13 +72,13 @@ function Widget(config) {
 Widget.NAME = _WIDGET;
 
 /**
- * Static property outlining the markup template for the class in JsonML.
+ * Static property outlining the markup template for the class in HTML.
  *
  * @property YUI.Widget.TEMPLATE
  * @type {Array}
  * @static
  */
-Widget.TEMPLATE = [_DIV, [_DIV]];
+Widget.TEMPLATE = "<div><div></div></div>";
 
 /**
  * Static property used to define the default attribute 
@@ -254,8 +253,8 @@ var proto = {
 	 * representing a CSS selector used to retrieve a YUI.Node reference.
 	 */
 	render: function(parentNode) {
-		if (this.destroyed) {
-			throw('render failed; widget has been destroyed');
+		if (this.get("destroyed")) {
+			Y.log("Render failed; widget has been destroyed", "error", "widget");
 		}
 
 		if (L.isString(parentNode)) {
@@ -459,7 +458,9 @@ var proto = {
 			this._unplug(ns);
 		} else {
 			for (ns in this._plugins) {
-				this._unplug(ns);
+				if (Y.Object.owns(this._plugins, ns)) {
+					this._unplug(ns);
+				}
 			}
 		}
 		return this;

@@ -3,14 +3,11 @@
 <head>
     <title>Widget Class</title>
 
-    <script type="text/javascript" src="../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../build/dom/dom.js"></script>    
-    <script type="text/javascript" src="../build/attribute/attribute.js"></script>
-    <script type="text/javascript" src="../build/base/base.js"></script>
-    <script type="text/javascript" src="../build/widget/widget.js"></script>
+    <script type="text/javascript" src="../build/yui/yui-debug.js"></script>
+    <script type="text/javascript" src="../build/widget/widget-debug.js"></script>
 
     <style type="text/css">
-        .foo {
+        .yui-widget {
             background:#ccc;
             height:100px;
             overflow:hidden;
@@ -21,11 +18,9 @@
         }
 
         .yui-widget-focus {
-        
-			background-color: yellow;
-        
+            background-color: yellow;
         }
-        
+
     </style>
 </head>
 <body class="yui-skin-sam">
@@ -40,35 +35,28 @@
 	<div id="widget-3-container"></div>
 
     <script type="text/javascript">
-        (function() {
+        YUI({filter:"debug", base:"../build/"}).use("oop", "widget", function(Y) {
 
-            var Y = YUI().use("nodeextras", "base", "plugin", "classnamemanager", "widget");
+			widget = new Y.Widget({ boundingBox: 'body > div.foo', width: 200 });
+			widget.render();
 
-			Y.Event.onDOMReady(function () {
-
-				widget = new Y.Widget({ boundingBox: 'body > div.foo', width: 200 });
-				widget.render();
-	
-	
-				widget.on('click', function(e) {
-					Y.log('"widget:focus" Custom Event');
-				});
-	
-				Y.on('click', Y.bind(widget.show, widget), '#control-show');
-				Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
-	
-	
-				widget2 = new Y.Widget({ boundingBox: 'body > #bar' });
-				widget2.render();
-	
-				Y.log(Y.Widget.getByNodeId("foobar"));
-	
-				widget3 = new Y.Widget({ width: 200 });
-				widget3.render(Y.Node.get("#widget-3-container"));
-			
+			widget.on('click', function(e) {
+				Y.log('"widget:focus" Custom Event');
 			});
 
-        })();
+			Y.on('click', Y.bind(widget.show, widget), '#control-show');
+			Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
+
+
+			widget2 = new Y.Widget({ boundingBox: 'body > #bar' });
+			widget2.render();
+
+			Y.log(Y.Widget.getByNodeId("foobar"));
+
+			widget3 = new Y.Widget({ width: 200, height:200 });
+			widget3.render(Y.Node.get("#widget-3-container"));
+
+        });
     </script>
 </body>
 </html>
