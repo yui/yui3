@@ -8,5 +8,9 @@ The YUI Global
         get
         loader
 
+
+3.0.0pr2
+    - The initial dependency calculation should not allow automatic rollup.
+
 3.0.0pr1
     Inital release

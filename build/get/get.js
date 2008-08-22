@@ -401,6 +401,7 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };

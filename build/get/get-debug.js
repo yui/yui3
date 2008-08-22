@@ -410,6 +410,7 @@ Y.Get = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
                     Y.log(id + " onreadstatechange " + url, "info", "get");
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };

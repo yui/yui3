@@ -155,8 +155,7 @@ YUI.prototype = {
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
 
-        // @TODO default throwFail to true in PR2
-        // o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -520,7 +519,7 @@ YUI.prototype = {
         instance.log(msg, "error"); // don't scrub this one
 
         if (this.config.throwFail) {
-            throw e || new Error(msg);
+            throw (e || new Error(msg)); 
         }
 
         return this;
@@ -1834,6 +1833,7 @@ Y.Get = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
                     Y.log(id + " onreadstatechange " + url, "info", "get");
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };
@@ -2305,7 +2305,7 @@ var BASE = 'base',
         //     optional: [CSSRESET]
         // },
 
-        'dd':{
+        dd:{
             submodules: {
                 'dd-ddm-base': {
                     requires: ['node', BASE]

@@ -223,7 +223,7 @@ var BASE = 'base',
         //     optional: [CSSRESET]
         // },
 
-        'dd':{
+        dd:{
             submodules: {
                 'dd-ddm-base': {
                     requires: ['node', BASE]
