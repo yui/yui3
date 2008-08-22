@@ -468,7 +468,7 @@ YUI.add("event-custom", function(Y) {
          * @param cat {string} log category
          */
         log: function(msg, cat) {
-            var es = Y.Env._eventstack, s =  es && es.silent;
+            var es = Y.Env._eventstack, s =  es && es.logging;
             // if (!s && !this.silent) {
             if (!this.silent) {
                 Y.log(msg, cat || "info", "event");
