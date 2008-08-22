@@ -860,7 +860,7 @@ YUI.add("event-custom", function(Y) {
             var es = Y.Env._eventstack, s =  es && es.logging;
             // if (!s && !this.silent) {
             if (!this.silent) {
-                Y.log(msg, cat || "info", "event");
+                Y.log(this.id + ': ' + msg, cat || "info", "event");
             }
         },
 
