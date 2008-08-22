@@ -11,6 +11,7 @@ The YUI Global
 
 3.0.0pr2
     - The initial dependency calculation should not allow automatic rollup.
+    - Y.fail with throw/rethrow errors by default (throwFail is now true).
 
 3.0.0pr1
     Inital release

@@ -515,11 +515,11 @@ YUI.prototype = {
      * @return {YUI} this YUI instance
      */
     fail: function(msg, e) {
-        var instance = this;
-        instance.log(msg, "error"); // don't scrub this one
-
         if (this.config.throwFail) {
             throw (e || new Error(msg)); 
+        } else {
+            var instance = this;
+            instance.log(msg, "error"); // don't scrub this one
         }
 
         return this;
