@@ -23,7 +23,8 @@ YUI.add("log", function(instance) {
     instance.log = function(msg, cat, src) {
 
         var Y = instance, c = Y.config, es = Y.Env._eventstack,
-            bail = (es && es.logging);
+            // bail = (es && es.logging);
+            bail = false; 
 
         // suppress log message if the config is off or the event stack
         // or the event call stack contains a consumer of the yui:log event
