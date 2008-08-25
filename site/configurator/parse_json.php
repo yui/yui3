@@ -114,7 +114,7 @@ fclose($fp);
 function getFileSizes($config, $path) {
     global $gzip;
     if (!is_dir('./tmp')) {
-        mkdir('./tmp');
+        mkdir('./tmp', 0755);
     }
     $fileName = pathinfo($path);
     $size = filesize($path);
