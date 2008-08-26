@@ -822,7 +822,7 @@ YUI.add("event-custom", function(Y) {
             var c = this.obj || defaultContext, ret = true;
 
             try {
-                ret = this.wrappedFn.apply(c, args);
+                ret = this.wrappedFn.apply(c, args || []);
             } catch(e) {
                 Y.fail(this + ' failed: ' + e.message, e);
             }

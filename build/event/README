@@ -1,5 +1,8 @@
 YUI Event Utility
     DOM event utilities and the YUI custom event system
 
+3.0.0pr2
+    - Fixed IE notification error when no arguments are supplied
+
 3.0.0pr1
     Initial Release

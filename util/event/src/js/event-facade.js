@@ -2,6 +2,8 @@
  * A wrapper for DOM events and Custom Events
  * @submodule event-facade
  * @module event
+ *
+ * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
  */
 YUI.add("event-facade", function(Y) {
 

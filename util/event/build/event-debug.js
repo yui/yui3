@@ -1211,7 +1211,7 @@ YUI.add("event-custom", function(Y) {
             var c = this.obj || defaultContext, ret = true;
 
             try {
-                ret = this.wrappedFn.apply(c, args);
+                ret = this.wrappedFn.apply(c, args || []);
             } catch(e) {
                 Y.fail(this + ' failed: ' + e.message, e);
             }
@@ -2582,6 +2582,8 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
  * A wrapper for DOM events and Custom Events
  * @submodule event-facade
  * @module event
+ *
+ * @TODO constants? LEFTBUTTON, MIDDLEBUTTON, RIGHTBUTTON, keys
  */
 YUI.add("event-facade", function(Y) {
 
