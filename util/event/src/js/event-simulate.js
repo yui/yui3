@@ -564,5 +564,9 @@ YUI.add("event-simulate", function(Y) {
                 options.keyCode, options.charCode);       
         };
     });
+    
+    /*
+     * TODO: focus(), blur(), submit()
+     */
 
 }, "3.0.0", { requires: ["event-dom"] });
