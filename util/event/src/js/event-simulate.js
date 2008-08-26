@@ -565,8 +565,24 @@ YUI.add("event-simulate", function(Y) {
         };
     });
     
+    /**
+     * Simulates the event with the given name on a target.
+     * @param {HTMLElement} target The DOM element that's the target of the event.
+     * @param {String} type The type of event to simulate (i.e., "click").
+     * @param {Object} options (Optional) Extra options to copy onto the event object.
+     * @return {void}
+     * @method simulate
+     * @static
+     * @for Y.Event
+     */
+    Y.Event.simulate = function(target, type, options){
+        if (isFunction(Y.Event[type])){
+            Y.Event[type](target, options);
+        }
+    };
+    
     /*
      * TODO: focus(), blur(), submit()
      */
 
-}, "3.0.0", { requires: ["event-dom"] });
+}, "@VERSION@", { requires: ["lang","event-dom"] });
