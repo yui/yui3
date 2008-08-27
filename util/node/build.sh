@@ -24,6 +24,14 @@ echo "Building node-screen"
 echo "****************************************"
 ant -q all
 
+ln -sf build.sim.xml build.xml
+wait
+ln -sf build.sim.properties build.properties
+echo "****************************************"
+echo "Building node-event-simulate"
+echo "****************************************"
+ant -q all
+
 ln -sf build.node-all.xml build.xml
 wait
 ln -sf build.node-all.properties build.properties
