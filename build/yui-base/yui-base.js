@@ -236,7 +236,6 @@ YUI.prototype = {
      * Register a module
      * @method add
      * @param name {string} module name
-     * @param namespace {string} name space for the module
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string

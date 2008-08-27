@@ -169,6 +169,9 @@ var BASE = 'base',
                 },
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
+                },
+                'node-event-simulate': {
+                    requires: ['node-base']
                 }
             }
         },
@@ -1190,7 +1193,7 @@ Y.Env.meta = META;
                 }
 
                 // external css files should be sorted below yui css
-                if (mm.ext && mm.type == CSS && (!other.ext)) {
+                if (mm.ext && mm.type == CSS && !other.ext && other.type == CSS) {
                     return true;
                 }
 
