@@ -3,7 +3,6 @@
  * @submodule node-event-simulate
  * @module node-event
  */
-YUI.add("node-event-simulate", function(Y) {
 
     /**
      * Simulates an event on the node.
@@ -18,4 +17,3 @@ YUI.add("node-event-simulate", function(Y) {
         Y.Event.simulate(Y.Node.getDOMNode(this), type, options);
     };
 
-}, "@VERSION@", { requires: ["node","event-simulate"] });
