@@ -130,6 +130,7 @@ YUI.add("event", function(Y) {
           "event-target", 
           "event-ready",
           "event-dom", 
-          "event-facade"
+          "event-facade",
+          "event-simulate"
           ]
 });
