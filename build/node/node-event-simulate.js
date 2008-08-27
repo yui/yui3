@@ -1,4 +1,4 @@
-YUI.add('node-event-simulation', function(Y) {
+YUI.add('node-event-simulate', function(Y) {
 
 /*
  * Functionality to simulate events.
