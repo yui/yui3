@@ -15,7 +15,7 @@ include "../inc/header.inc";
 				<h2><?php echo $component;?></h2>
 			
 				<div id="promo" class="component">
-                    <p>The YUI module is the single core dependency for all YUI 3.x implementations.  It must be included on all pages that use YUI &mdash; and it is the only dependency required to start writing YUI code.  The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a "seed" for your implementation.  You provide the YUI module list you're using and the code that makes use of those modules; YUI will fetch all necessary components in a single, optimized HTTP request before executing your dependent code.  While you may use some of the script and CSS loading facilities of the YUI module in your own implementation, this module's core purpose is to serve as a small seed from which complex, highly modular implementations can grow.</p>
+                    <p>The YUI module is the single core dependency for all YUI 3.x implementations.  It must be included on all pages that use YUI &mdash; and it is the only dependency required to start writing YUI code.  The YUI module contains loader functionality and a dependency calculator, allowing it to serve as a "seed" for your implementation.  You provide the YUI module list you're using and the code that makes use of those modules; YUI will fetch all necessary components in a single, optimized HTTP request before executing your dependent code.  While you may use some of the script- and CSS-loading facilities of the YUI module in your own implementation, this module's core purpose is to serve as a small seed from which complex, highly modular implementations can grow.</p>
                     <p>The YUI module creates a global YUI object.  This object is instantiable, and it is used to create YUI instances to which are bound specific functional modules.  A page can share a single YUI instance or can use different, insular instances for each piece of functionality on the page.</p>
 					<div class="yui-g">
 						<div class="yui-u first">
@@ -83,7 +83,7 @@ include "../inc/header.inc";
                     the same page without fear of breaking existing code.</li>
                     <li><strong>Sandboxing</strong>: The new YUI Global Object is now smarter than ever, allowing you to create an instance of YUI in your own namespace and only load the modules that you need.
                     It makes it easier for multiple developers to work on different parts of the page with different modules with less worry of them stepping on each other's toes.</li>
-                    <li><strong>Versioning</strong> <em>(future)</em>: In the future YUI modules will be version stamped. For easier mixing of old and new modules on the same page.</li>
+                    <li><strong>Versioning</strong> <em>(future)</em>: In the future, we intend to version-stamp YUI modules; this will make it easier to support mulitple versions of YUI modules on the same page.  While this will never be an optimal practice, it does make certain transitions easier to facilitate.</li>
                     <li><strong>More Dynamic</strong>: With Loader built into the core, loading files when you need them just got easier.</li>
                     <li><strong>Selector Powered</strong>: Using Selector as its base for node handling, you now get more power and ease of use for free.</li>
                     <li><strong>Event Normalization</strong>: With the new Event Facade, you get maximum event normalization for cleaner cross browser code.</li>
