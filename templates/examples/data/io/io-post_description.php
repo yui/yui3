@@ -63,7 +63,7 @@ Y.on('io:failure', handleFailure);</textarea>
 
 <h3>Initiate the POST Transaction</h3>
 <p>
-The final step in this example is to start the IO POST transaction when a button on the page is clicked.  We have a button with an ID of <code>makeRequest</code>; we wire that button to the IO request with the following code:
+The final step in this example is to start the IO POST transaction when a button on the page is clicked.  We have a button with an ID of <code>requestButton</code>; we wire that button to the IO request with the following code:
 </p>
 
 <textarea name="code" class="JScript" cols="60" rows="1">//Handler to make our XHR request when the button is clicked:
