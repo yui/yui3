@@ -35,26 +35,26 @@ function(Y) {
         var chicken = new Chicken('Little'),
             results = Y.get('#demo');
 
-        results.set('innerHTML', results.get('innerHTML') + 
-            (chicken instanceof Object) ?
+        results.set('innerHTML', results.get('innerHTML') +
+            ((chicken instanceof Object) ?
                 "<p>chicken IS an instance of Object.</p>" :
-                "<p>chicken IS NOT an instance of Object.</p>");
+                "<p>chicken IS NOT an instance of Object.</p>"));
 
         results.set('innerHTML', results.get('innerHTML') + 
-            (chicken instanceof Bird) ?
+            ((chicken instanceof Bird) ?
                 "<p>chicken IS an instance of Y.example.Bird.</p>" :
-                "<p>chicken IS NOT an instance of Y.example.Bird.</p>");
+                "<p>chicken IS NOT an instance of Y.example.Bird.</p>"));
 
         results.set('innerHTML', results.get('innerHTML') + 
-            (chicken instanceof Chicken) ?
+            ((chicken instanceof Chicken) ?
                 "<p>chicken IS an instance of Y.example.Chicken.</p>" :
-                "<p>chicken IS NOT an instance of Y.example.Chicken.</p>");
+                "<p>chicken IS NOT an instance of Y.example.Chicken.</p>"));
 
         // Chicken instances inherit Bird methods and members
         results.set('innerHTML', results.get('innerHTML') + 
-            (chicken.isFlighted()) ?
+            ((chicken.isFlighted()) ?
                 "<p>chicken CAN fly.</p>" :
-                "<p>chicken CAN NOT fly.</p>");
+                "<p>chicken CAN NOT fly.</p>"));
 
         results.set('innerHTML', results.get('innerHTML') + 
             "<p>chicken's name is " + chicken.getName() + ".</p>");
