@@ -455,9 +455,9 @@ YUI.prototype = {
      * Returns the namespace specified and creates it if it doesn't exist
      * <pre>
      * YUI.namespace("property.package");
-     * YUI.namespace("YUI.property.package");
+     * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YUI.property, then
+     * Either of the above would create YAHOO.property, then
      * YUI.property.package
      *
      * Be careful when naming packages. Reserved words may work in some browsers
@@ -476,7 +476,7 @@ YUI.prototype = {
         for (i=0; i<a.length; i=i+1) {
             d = a[i].split(".");
             o = this;
-            for (j=(d[0] == "YUI") ? 1 : 0; j<d.length; j=j+1) {
+            for (j=(d[0] == "YAHOO") ? 1 : 0; j<d.length; j=j+1) {
                 o[d[j]] = o[d[j]] || {};
                 o = o[d[j]];
             }

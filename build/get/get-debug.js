@@ -277,6 +277,14 @@ Y.Get = function() {
         } 
 
         var url = q.url[0];
+
+        // if the url is undefined, this is probably a trailing comma problem in IE
+        if (!url) {
+            q.url.shift(); 
+            Y.log('skipping empty url');
+            return _next(id);
+        }
+
         Y.log("attempting to load " + url, "info", "get");
 
         if (q.timeout) {
