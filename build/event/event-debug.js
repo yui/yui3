@@ -2476,8 +2476,13 @@ this._interval = setInterval(Y.bind(this._tryPreloadAttach, this), this.POLL_INT
                  * @static
                  */           
                 getListeners: function(el, type) {
-                    var results=[], ek = Y.stamp(el), key = (type) ? 'event:' + type : null,
-                        evts = _el_events[ek];
+                    var evts = _el_events[ek];
+
+                    if (!evts) {
+                        return null;
+                    }
+
+                    var results=[], ek = Y.stamp(el), key = (type) ? 'event:' + type : null;
 
                     if (key) {
                         if (evts[key]) {

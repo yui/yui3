@@ -3,6 +3,8 @@ YUI Event Utility
 
 3.0.0pr2
     - Fixed IE notification error when no arguments are supplied
+    - Added event-simulate
+    - getListeners works when the element has none.
 
 3.0.0pr1
-    Initial Release
+    - Initial Release
