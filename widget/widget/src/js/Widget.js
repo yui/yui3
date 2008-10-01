@@ -14,7 +14,11 @@ var _WIDGET = "widget",
 	_HEIGHT = "height",
 	_UI = "ui",
 	_EMPTY = "",
-	_HYPHEN = "-";
+	_HYPHEN = "-",
+    _BOUNDING_BOX = "boundingBox",
+    _CONTENT_BOX = "contentBox",
+    _PARENT_NODE = "parentNode",
+    _TAB_INDEX = "tabIndex";
 
 // Widget nodeid-to-instance map for now, 1-to-1. 
 // Expand to nodeid-to-arrayofinstances if required.
@@ -41,22 +45,10 @@ var _instances = {};
 function Widget(config) {
 	Y.log('constructor called', 'life', 'Widget');
 
-	this.uid = Y.guid(_WIDGET);
+	this.id = Y.guid(_WIDGET);
 	this.rendered = false;
 	this._plugins = {};
-
-	var boundingBox;
-
-	if (!config.boundingBox) { // create from template if no bounding box provided
-		config = Y.merge(config);
-		
-		boundingBox = Y.Node.create(this.constructor.TEMPLATE || Widget.TEMPLATE);
-		
-		config.boundingBox = boundingBox;
-		config.contentBox = boundingBox.get("firstChild");
-		
-	}
-
+    
 	Widget.superclass.constructor.apply(this, arguments);
 }
 
@@ -72,13 +64,43 @@ function Widget(config) {
 Widget.NAME = _WIDGET;
 
 /**
- * Static property outlining the markup template for the class in HTML.
+ * Static property outlining the markup template for content box.
  *
- * @property YUI.Widget.TEMPLATE
- * @type {Array}
+ * @property YUI.Widget.CONTENT_TEMPLATE
+ * @type {String}
  * @static
  */
-Widget.TEMPLATE = "<div><div></div></div>";
+Widget.CONTENT_TEMPLATE = "<div></div>";
+/**
+ * Static property outlining the markup template for bounding box.
+ *
+ * @property YUI.Widget.BOUNDING_TEMPLATE
+ * @type {String}
+ * @static
+ */
+Widget.BOUNDING_TEMPLATE = "<div></div>";
+
+/**
+ * Static property listing the styles that are mimiced on the bounding box from the content box.
+ *
+ * @property YUI.Widget.WRAP_STYLES
+ * @type {Object}
+ * @static
+ */
+
+Widget.WRAP_STYLES = {
+    height: '100%',
+    width: '100%',
+    zIndex: false,
+    position: 'static',
+    top: '0',
+    left: '0',
+    bottom: '',
+    right: '',
+    padding: '',
+    margin: ''
+};
+
 
 /**
  * Static property used to define the default attribute 
@@ -88,7 +110,6 @@ Widget.TEMPLATE = "<div><div></div></div>";
  * @type {Object}
  */
 Widget.ATTRS = {
-
 	/**
 	* @attribute boundingBox
 	* @description The outermost DOM node for the Widget, used for sizing and positioning 
@@ -97,8 +118,9 @@ Widget.ATTRS = {
 	* @type YUI.Node
 	*/
 	boundingBox: {
-		set: function(val) {
-			return this._initNode(val);
+        value: null,
+		set: function(node) {
+            return this._setBoundingBox(node);
 		},
 		writeOnce: true
 	},
@@ -110,9 +132,24 @@ Widget.ATTRS = {
 	* @type YUI.Node
 	*/            
 	contentBox: {
-		writeOnce: true
+		writeOnce: true,
+        value: null,
+        set: function(node) {
+            return this._setContentBox(node);
+        }
 	},
 
+	/**
+	* @attribute tabIndex
+	* @description The tabIndex that should be given to the bounding box
+	* @type Number
+	*/
+    tabIndex: {
+        value: 0,
+        set: function(index) {
+            this._setTabIndex(index);
+        }
+    },
 
 	/**
 	* @attribute hasFocus
@@ -168,6 +205,12 @@ Widget.ATTRS = {
 	width: {
 		// Default to not set on element style
 		value: _EMPTY
+	},
+
+
+	moveStyles: {
+        //writeOnce: true,
+		value: false
 	},
 
 	/**
@@ -230,7 +273,6 @@ var proto = {
 			delete _instances[this.id];
 		}
 	},
-
 	/**
 	 * Establishes the initial DOM for the widget. Invoking this
 	 * method will lead to the creating of all DOM elements for
@@ -257,18 +299,9 @@ var proto = {
 			Y.log("Render failed; widget has been destroyed", "error", "widget");
 		}
 
-		if (L.isString(parentNode)) {
-			parentNode = Y.Node.get(parentNode);
-		}
-
-		// append to parent if provided, or to body if no parent and not in body 
-		parentNode = parentNode || Y.Node.get("body");
-		if (parentNode && !parentNode.contains(this._boundingBox)) {
-			parentNode.appendChild(this._boundingBox);
-		}
-
 		if (!this.rendered && this.fire("beforeRender") !== false) {
 			this._uiInitNode();
+            this._renderBox(parentNode);
 
 			this._bindUI();
 			this._syncUI();
@@ -295,7 +328,7 @@ var proto = {
 	renderer: function() {},
 
 	/**
-	 * Configures/Setsup listeners to bind Widget State to UI/DOM
+	 * Configures/Sets up listeners to bind Widget State to UI/DOM
 	 * 
 	 * This method is not called by framework and is not chained 
 	 * automatically for the class hierarchy.
@@ -394,8 +427,8 @@ var proto = {
 	 * @method getNodeAttr
 	 */
 	getNodeAttr: function(attr) {
-		if (this._boundingBox) {
-			return this._boundingBox.att(attr);
+		if (this.get(_BOUNDING_BOX)) {
+			return this.get(_BOUNDING_BOX).att(attr);
 		}
 		return undefined;
 	},
@@ -407,8 +440,8 @@ var proto = {
 	 * @chain             
 	 */
 	setNodeAttr: function(attr, val) {
-		if (this._boundingBox) {
-			this._boundingBox.att(attr, val);
+		if (this.get(_BOUNDING_BOX)) {
+			this.get(_BOUNDING_BOX).att(attr, val);
 		}
 		return this;
 	},
@@ -544,7 +577,143 @@ var proto = {
 			}
 		}
 	},
+    /**
+    * @private
+    * @method _moveStyles
+    * @description Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
+    * @param {YUI.Node} nodeFrom The node to gather the styles from
+    * @param {YUI.Node} nodeTo The node to apply the styles to
+    */
+    _moveStyles: function(nodeFrom, nodeTo) {
+        var styles = (this.constructor.WRAP_STYLES || Widget.WRAP_STYLES),
+            pos = nodeFrom.getStyle('position'),
+            xy = [0,0],
+            h, w;
 
+        if (!this.get('height')) {
+            h = this.get('contentBox').get('offsetHeight');
+        }
+        if (!this.get('width')) {
+            w = this.get('contentBox').get('offsetWidth');
+        }
+
+        if (pos === 'absolute') {
+            xy = nodeFrom.getXY();
+            nodeTo.setStyles({
+                right: 'auto',
+                bottom: 'auto'
+            });
+            nodeFrom.setStyles({
+                right: 'auto',
+                bottom: 'auto'
+            });
+        }
+        Y.each(styles, function(v, k) {
+            var s = nodeFrom.getStyle(k);
+            nodeTo.setStyle(k, s);
+            if (v === false) {
+                nodeFrom.setStyle(k, '');
+            } else {
+                nodeFrom.setStyle(k, v);
+            }
+        });
+        if (pos === 'absolute') {
+            nodeTo.setXY(xy);
+        }
+
+        if (h) {
+            this.set('height', h);
+        }
+        if (w) {
+            this.set('width', w);
+        }
+
+    },
+    /**
+    * @private
+    * @method _renderBox
+    * @description Helper method to collect the boundingBox and contentBox, set styles and append to parentNode
+    * @param {YUI.Node} parentNode The parentNode to render the widget to.
+    */
+    _renderBox: function(parentNode) {
+        var content = this.get(_CONTENT_BOX),
+            bounding = this.get(_BOUNDING_BOX);
+
+		if (L.isString(parentNode)) {
+			parentNode = Y.Node.get(parentNode);
+		}
+		// append to parent if provided, or to body if no parent and not in body
+		parentNode = parentNode || Y.Node.get("body");
+		if (parentNode && !parentNode.contains(this.get(_BOUNDING_BOX))) {
+			parentNode.appendChild(this.get(_BOUNDING_BOX));
+		}
+        
+        if (!bounding.contains(content)) {
+            console.log('moveStyles: ', this.get('moveStyles'));
+            if (this.get('moveStyles')) {
+                this._moveStyles(content, bounding);
+            }
+            if (content.get(_PARENT_NODE)) {
+                content.get(_PARENT_NODE).replaceChild(bounding, content);
+            }
+            bounding.appendChild(content);
+        }
+    },
+    /**
+    * @private
+    * @method _setBoundingBox
+    * @description Setter for boundingBox config
+    * @param Node/String
+    * @return YUI.Node
+    */
+    _setBoundingBox: function(node) {
+        node = Y.Node.get(node);
+        if (!node) {
+            node = Y.Node.create(this.constructor.BOUNDING_TEMPLATE || Widget.BOUNDING_TEMPLATE);
+        }
+        var sid = Y.stamp(node);
+        if (!node.get('id')) {
+            node.set('id', sid);
+        }
+        return node;
+    },
+    /**
+    * @private
+    * @method _setContentBox
+    * @description Setter for contentBox config
+    * @param Node/String
+    * @return YUI.Node
+    */
+    _setContentBox: function(node) {
+        node = Y.Node.get(node);
+        if (!node) {
+            //TODO Can we make this assumption? Is the firstChild always the content?
+            /*
+            if (this.get(_BOUNDING_BOX).get('firstChild')) {
+                node = this.get(_BOUNDING_BOX).get('firstChild');
+            }
+            */
+            //if (!node) {
+                node = Y.Node.create(this.constructor.CONTENT_TEMPLATE || Widget.CONTENT_TEMPLATE);
+            //}
+        }
+        var sid = Y.stamp(node);
+        if (!node.get('id')) {
+            node.set('id', sid);
+        }
+        return node;
+    },
+    /**
+    * @private
+    * @method _setTabIndex
+    * @description Setter for tabIndex config
+    * @param Number
+    */
+    _setTabIndex: function(index) {
+        if (this.get(_BOUNDING_BOX)) {
+            this.get(_BOUNDING_BOX).set(_TAB_INDEX, this.get(_TAB_INDEX));
+        }
+    },
 
 	/**
 	 * Sets up listeners to synchronize UI state to attribute
@@ -559,8 +728,8 @@ var proto = {
 		this.on('heightChange', this._onHeightChange);
 		this.on('widthChange', this._onWidthChange);
 		this.on('hasFocusChange', this._onHasFocusChange);
-		this._boundingBox.on(_FOCUS, Y.bind(this._onFocus, this));
-		this._boundingBox.on("blur", Y.bind(this._onBlur, this));
+		this.get(_BOUNDING_BOX).on(_FOCUS, Y.bind(this._onFocus, this));
+		this.get(_BOUNDING_BOX).on("blur", Y.bind(this._onBlur, this));
 	},
 
 
@@ -589,7 +758,7 @@ var proto = {
 		if (L.isNumber(val)) {
 			val = val + this.DEF_UNIT;
 		}
-		this._boundingBox.setStyle(_HEIGHT, val);
+		this.get(_BOUNDING_BOX).setStyle(_HEIGHT, val);
 	},
 
 	/**
@@ -603,7 +772,7 @@ var proto = {
 		if (L.isNumber(val)) {
 			val = val + this.DEF_UNIT;
 		}
-		this._boundingBox.setStyle(_WIDTH, val);
+		this.get(_BOUNDING_BOX).setStyle(_WIDTH, val);
 	},
 
 	/**
@@ -618,9 +787,9 @@ var proto = {
 		var sClassName = this.getClassName(_HIDDEN);
 
 		if (val === true) { 
-			this._boundingBox.removeClass(sClassName); 
+			this.get(_BOUNDING_BOX).removeClass(sClassName); 
 		} else {
-			this._boundingBox.addClass(sClassName); 
+			this.get(_BOUNDING_BOX).addClass(sClassName); 
 		}
 	},
 
@@ -635,9 +804,9 @@ var proto = {
 		var sClassName = this.getClassName(_DISABLED);
 
 		if (val === true) {
-			this._boundingBox.addClass(sClassName);
+			this.get(_BOUNDING_BOX).addClass(sClassName);
 		} else {
-			this._boundingBox.removeClass(sClassName);
+			this.get(_BOUNDING_BOX).removeClass(sClassName);
 		}
 	},
 
@@ -654,58 +823,18 @@ var proto = {
 		var sClassName = this.getClassName(_FOCUS);
 
 		if (val === true) {
-			this._boundingBox.addClass(sClassName);
+			this.get(_BOUNDING_BOX).addClass(sClassName);
 			if (src !== _UI) {
-				this._boundingBox.focus();
+				this.get(_BOUNDING_BOX).focus();
 			}
 			
 		} else {
-			this._boundingBox.removeClass(sClassName);
+			this.get(_BOUNDING_BOX).removeClass(sClassName);
 			if (src !== _UI) {
-				this._boundingBox.blur();
+				this.get(_BOUNDING_BOX).blur();
 			}
 		}
 	
-	},
-
-	/**
-	 * Initializes widget state based on the node value
-	 * provided, which maybe an instance of Y.Node, or a selector
-	 * string
-	 * 
-	 * @method _initNode
-	 * @protected
-	 * @param {Node | String} node An instance of Y.Node, 
-	 * representing the widget's bounding box, or a selector
-	 * string which can be used to retrieve it. 
-	 */
-	_initNode: function(node) {
-		// TODO: Looking at the node impl, this should 
-		// also take care of id generation, if an id doesn't exist
-		if (L.isString(node)) {
-			node = Y.Node.get(node);
-		}
-
-		// Node not found
-		if (node) {
-			this.id = node.get("id");
-			this._boundingBox = node;
-
-			var contentBox = node.get("firstChild");
-			
-			if (contentBox) {
-				this._contentBox = contentBox;
-				this.set("contentBox", contentBox);
-			}
-			else {
-				throw("node for content box not found");					
-			}
-		}
-		else {
-			throw("node for bounding box not found");                
-		}
-
-		return node;
 	},
 
 	/**
@@ -716,24 +845,9 @@ var proto = {
 	 * @protected
 	 */
 	_uiInitNode: function() {
-		var classes = this._getClasses(), 
-			constructor,
-			classname;
-
-		// Starting from 1, because we don't need Base (yui-base) marker
-		for (var i = 1; i < classes.length; i++) {
-			constructor = classes[i];
-			if (constructor.NAME) {
-			
-				classname = this._className;
-			
-				this._boundingBox.addClass(classname);
-				this._contentBox.addClass(classname + _HYPHEN + _CONTENT);
-			}
-		}
-		
-		this._boundingBox.set("tabIndex", 0);
-
+        this.get(_BOUNDING_BOX).addClass(this._className);
+        this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
+        this._setTabIndex(this.get(_TAB_INDEX));
 	},
 
 	/**
