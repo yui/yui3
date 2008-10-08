@@ -1970,8 +1970,8 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              * @deprecated This will be replaced with a special Y.on custom event
              */
             // @TODO fix arguments
-            onContentReady: function(id, fn, p_obj, p_override) {
-                return this.onAvailable(id, fn, p_obj, p_override, true);
+            onContentReady: function(id, fn, p_obj, p_override, compat) {
+                return this.onAvailable(id, fn, p_obj, p_override, true, compat);
             },
 
             /**
