@@ -4,7 +4,7 @@
  */
 YUI.add("event", function(Y) {
 
-    /**
+    /*
      * Subscribes to the yui:load event, which fires when a Y.use operation
      * is complete.
      * @method ready

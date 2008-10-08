@@ -412,7 +412,30 @@ YUI.add('compat', function(Y) {
         Y.mix(Y.Event, o);
 
         /**
-         * Calls Y.Event.attach with the correct event order
+         * Calls Y.Event.attach with the correct argument order
+         * @method removeListener
+         */
+        Y.Event.removeListener = function(el, type, fn, data, override) {
+
+            var context, a=[type, fn, el];
+
+            if (data) {
+
+                if (override) {
+                    context = (override === true) ? data : override;
+                }
+
+                a.push(context);
+                a.push(data);
+            }
+
+            a.push(COMPAT_ARG);
+
+            return Y.Event.detach.apply(Y.Event, a);
+        };
+
+        /**
+         * Calls Y.Event.detach with the correct argument order
          * @method addListener
          */
         Y.Event.addListener = function(el, type, fn, data, override) {
@@ -448,6 +471,12 @@ YUI.add('compat', function(Y) {
 
         Y.Event.onContentReady = function(id, fn, p_obj, p_override) {
             return newOnavail(id, fn, p_obj, p_override, true, true);
+        };
+
+        Y.Event.onDOMReady = function(fn) {
+            var a = Y.Array(arguments, 0, true);
+            a.unshift('event:ready');
+            return Y.on.apply(Y, a);
         };
 
         Y.util.Event = Y.Event;

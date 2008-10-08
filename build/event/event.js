@@ -4,7 +4,7 @@
  */
 YUI.add("event", function(Y) {
 
-    /**
+    /*
      * Subscribes to the yui:load event, which fires when a Y.use operation
      * is complete.
      * @method ready
@@ -1687,6 +1687,36 @@ var Env = YUI.Env,
             return;
         }
 
+        /**
+         * Executes the supplied callback when the DOM is first usable.  This
+         * will execute immediately if called after the DOMReady event has
+         * fired.   @todo the DOMContentReady event does not fire when the
+         * script is dynamically injected into the page.  This means the
+         * DOMReady custom event will never fire in FireFox or Opera when the
+         * library is injected.  It _will_ fire in Safari, and the IE 
+         * implementation would allow for us to fire it if the defered script
+         * is not available.  We want this to behave the same in all browsers.
+         * Is there a way to identify when the script has been injected 
+         * instead of included inline?  Is there a way to know whether the 
+         * window onload event has fired without having had a listener attached 
+         * to it when it did so?
+         *
+         * <p>The callback is a Event.Custom, so the signature is:</p>
+         * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+         * <p>For DOMReady events, there are no fire argments, so the
+         * signature is:</p>
+         * <p>"DOMReady", [], obj</p>
+         *
+         *
+         * @event event:ready 
+         * @for Event
+         *
+         * @param {function} fn what to execute when the element is found.
+         * @optional context execution context
+         * @optional args 1..n arguments to send to the listener
+         *
+         */
+
         Y.publish('event:ready', {
             fireOnce: true
         });
@@ -1947,44 +1977,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 return this.onAvailable(id, fn, p_obj, p_override, true, compat);
             },
 
-            /**
-             * Executes the supplied callback when the DOM is first usable.  This
-             * will execute immediately if called after the DOMReady event has
-             * fired.   @todo the DOMContentReady event does not fire when the
-             * script is dynamically injected into the page.  This means the
-             * DOMReady custom event will never fire in FireFox or Opera when the
-             * library is injected.  It _will_ fire in Safari, and the IE 
-             * implementation would allow for us to fire it if the defered script
-             * is not available.  We want this to behave the same in all browsers.
-             * Is there a way to identify when the script has been injected 
-             * instead of included inline?  Is there a way to know whether the 
-             * window onload event has fired without having had a listener attached 
-             * to it when it did so?
-             *
-             * <p>The callback is a Event.Custom, so the signature is:</p>
-             * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
-             * <p>For DOMReady events, there are no fire argments, so the
-             * signature is:</p>
-             * <p>"DOMReady", [], obj</p>
-             *
-             *
-             * @method onDOMReady
-             *
-             * @param {function} fn what to execute when the element is found.
-             * @optional context execution context
-             * @optional args 1..n arguments to send to the listener
-             *
-             * @static
-             * @deprecated Use Y.on('event:ready');
-             */
-            onDOMReady: function(fn) {
-                // var ev = Y.Event.DOMReadyEvent;
-                // ev.subscribe.apply(ev, arguments);
-                var a = Y.Array(arguments, 0, true);
-                a.unshift(EVENT_READY);
-                Y.on.apply(Y, a);
-            },
-
 
             /**
              * Appends an event handler
@@ -2017,7 +2009,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                     compat = true;
                     trimmedArgs.pop();
-                    //debugger;
                 }
 
                 if (!fn || !fn.call) {
@@ -2070,7 +2061,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     } else {
 
                         return this.onAvailable(el, function() {
-                            //debugger;
                             E.attach.apply(E, args);
                         }, E, true, false, compat);
                     }
@@ -2078,7 +2068,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 // Element should be an html element or an array if we get here.
                 if (!el) {
-                    //debugger;
                     return false;
                 }
 
@@ -2135,8 +2124,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 // remove the 'obj' param
                 trimmedArgs.splice(2, 1);
 
-                // debugger;
-
                 // set context to the Node if not specified
                 return cewrapper.subscribe.apply(cewrapper, trimmedArgs);
 
@@ -2147,7 +2134,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              * with, but the preferred way to remove listeners is using the handle
              * that is returned when using Y.on
              *
-             * @method removeListener
+             * @method detach
              *
              * @param {String|HTMLElement|Array|NodeList} el An id, an element 
              *  reference, or a collection of ids and/or elements to remove
@@ -2158,27 +2145,44 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              * @return {boolean} true if the unbind was successful, false *  otherwise.
              * @static
              */
-            removeListener: function(el, type, fn) {
+            detach: function(type, fn, el, obj) {
 
-                if (el && el.detach) {
-                    return el.detach();
+                var args=Y.Array(arguments, 0, true), compat;
+
+                if (args[args.length-1] === COMPAT_ARG) {
+                    compat = true;
+                    // args.pop();
                 }
+
+                if (type && type.detach) {
+                    return type.detach();
+                }
+
                 var i, len, li;
 
                 // The el argument can be a string
                 if (typeof el == "string") {
-                    el = Y.get(el);
+
+                    // el = Y.get(el);
+                    el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+
                 // The el argument can be an array of elements or element ids.
                 } else if ( this._isValidCollection(el)) {
+
                     var ok = true;
-                    for (i=0,len=el.length; i<len; ++i) {
-                        ok = ( this.removeListener(el[i], type, fn) && ok );
+                    for (i=0, len=el.length; i<len; ++i) {
+
+                        args[2] = el[i];
+
+                        // ok = ( this.detach(el[i], type, fn) && ok );
+                        ok = ( Y.Event.detach.apply(Y.Event, args) && ok );
                     }
+
                     return ok;
+
                 }
 
                 if (!fn || !fn.call) {
-                    //return false;
                     return this.purgeElement(el, false, type);
                 }
 
@@ -2351,7 +2355,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                             _avail[i] = null;
                         } else {
                             notAvail.push(item);
-                            //debugger;
                         }
                     }
                 }
@@ -2514,23 +2517,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
     E.Custom = Y.CustomEvent;
     E.Subscriber = Y.Subscriber;
     E.Target = Y.EventTarget;
-
-    /*
-     * Y.Event.on is an alias for addListener
-     * @method on
-     * @see addListener
-     * @static
-     */
-    // E.attach = function(type, fn, el) {
-    //     var a = Y.Array(arguments, 0, true),
-    //         oEl = a.splice(2, 1);
-    //     a.unshift(oEl[0]);
-    //     return E.addListener.apply(E, a);
-    // };
-
-    E.detach = function(type, fn, el, data, context) {
-        return E.removeListener(el, type, fn, data, context);
-    };
 
     add(window, "load", E._load);
     add(window, "unload", E._unload);

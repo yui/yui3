@@ -69,6 +69,36 @@ var Env = YUI.Env,
             return;
         }
 
+        /**
+         * Executes the supplied callback when the DOM is first usable.  This
+         * will execute immediately if called after the DOMReady event has
+         * fired.   @todo the DOMContentReady event does not fire when the
+         * script is dynamically injected into the page.  This means the
+         * DOMReady custom event will never fire in FireFox or Opera when the
+         * library is injected.  It _will_ fire in Safari, and the IE 
+         * implementation would allow for us to fire it if the defered script
+         * is not available.  We want this to behave the same in all browsers.
+         * Is there a way to identify when the script has been injected 
+         * instead of included inline?  Is there a way to know whether the 
+         * window onload event has fired without having had a listener attached 
+         * to it when it did so?
+         *
+         * <p>The callback is a Event.Custom, so the signature is:</p>
+         * <p>type &lt;string&gt;, args &lt;array&gt;, customobject &lt;object&gt;</p>
+         * <p>For DOMReady events, there are no fire argments, so the
+         * signature is:</p>
+         * <p>"DOMReady", [], obj</p>
+         *
+         *
+         * @event event:ready 
+         * @for Event
+         *
+         * @param {function} fn what to execute when the element is found.
+         * @optional context execution context
+         * @optional args 1..n arguments to send to the listener
+         *
+         */
+
         Y.publish('event:ready', {
             fireOnce: true
         });
