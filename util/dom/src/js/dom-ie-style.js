@@ -195,15 +195,15 @@ IEComputed.color = IEComputed.backgroundColor = ComputedStyle.getColor;
 
 IEComputed[BORDER_TOP_WIDTH] = IEComputed[BORDER_RIGHT_WIDTH] =
         IEComputed[BORDER_BOTTOM_WIDTH] = IEComputed[BORDER_LEFT_WIDTH] =
-                ComputedStyle.getBorderWidth;
+        ComputedStyle.getBorderWidth;
 
 IEComputed.marginTop = IEComputed.marginRight = IEComputed.marginBottom =
         IEComputed.marginLeft = ComputedStyle.getMargin;
 
 IEComputed.visibility = ComputedStyle.getVisibility;
-IEComputed.borderTopColor = IEComputed.borderRightColor =
-        IEComputed.borderBottomColor = IEComputed.borderLeftColor =
-                ComputedStyle.getBorderColor;
+IEComputed.borderColor = IEComputed.borderTopColor =
+        IEComputed.borderRightColor = IEComputed.borderBottomColor =
+        IEComputed.borderLeftColor = ComputedStyle.getBorderColor;
 
 if (!Y.config.win[GET_COMPUTED_STYLE]) {
     Y.DOM[GET_COMPUTED_STYLE] = ComputedStyle.get; 
