@@ -4,15 +4,15 @@ YUI.add('node', function(Y) {
      * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
      * @module node
      * @submodule node-base
-     */     
+     */    
 
     /**
      * The Node class provides a wrapper for manipulating DOM Nodes.
      * Node properties can be accessed via the set/get methods.
      * Use Y.get() to retrieve Node instances.
      *
-     * <strong>NOTE:</strong> All node properties are accessed using the
-     * <code>set</code> and <code>get</code> methods.
+     * <strong>NOTE:</strong> Node properties are accessed using
+     * the <code>set</code> and <code>get</code> methods.
      *
      * @class Node
      * @constructor
@@ -32,6 +32,7 @@ YUI.add('node', function(Y) {
         //DOCUMENT_FRAGMENT_NODE      = 11,
         //NOTATION_NODE               = 12;
 
+
     var OWNER_DOCUMENT = 'ownerDocument',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
@@ -47,6 +48,7 @@ YUI.add('node', function(Y) {
 
     var slice = [].slice;
 
+    // private factory
     var wrapDOM = function(node) {
         var ret = null,
             yuid = (node) ? node._yuid : null,
@@ -266,6 +268,7 @@ YUI.add('node', function(Y) {
          */
         'tBodies': ELEMENT_NODE
     };
+
     var METHODS = {
         /**
          * Passes through to DOM method.
@@ -435,14 +438,11 @@ YUI.add('node', function(Y) {
             return Y.DOM.getText(_nodes[node._yuid]);
         },
 
-        /**
-         * Returns a nodeList of option elements 
-         * @property options
-         * @type String
-         */
         'options': function(node) {
             return (node) ? node.getElementsByTagName('option') : [];
         }
+
+
     };
 
     Node.setters = function(prop, fn) {
@@ -684,8 +684,9 @@ YUI.add('node', function(Y) {
 
         attach: function(type, fn, arg) {
             var args = slice.call(arguments, 0);
-            args.unshift(_nodes[this._yuid]);
-            return Y.Event.addListener.apply(Y.Event, args);
+            //args.unshift(_nodes[this._yuid]);
+            args.splice(2, 0, _nodes[this._yuid]);
+            return Y.Event.attach.apply(Y.Event, args);
         },
 
        /**
