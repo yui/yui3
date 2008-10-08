@@ -43,7 +43,7 @@ YUI.add("array", function(Y) {
         var t = (al) ? 2 : Y.Array.test(o);
         switch (t) {
             case 1:
-                return (i) ? o.slice(o, i) : o;
+                // return (i) ? o.slice(i) : o;
             case 2:
                 return Native.slice.call(o, i || 0);
             default:

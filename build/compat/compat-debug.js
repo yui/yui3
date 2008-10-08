@@ -1,7 +1,7 @@
 YUI.add('compat', function(Y) {
 
-// Compatibility layer for 2.x
-//YUI.add("compat", function(Y) {
+
+    var COMPAT_ARG = '~yui|2|compat~';
 
 
     if (YUI !== window.YAHOO) {
@@ -58,7 +58,8 @@ YUI.add('compat', function(Y) {
             return Y.mix(r, s, (wl), wl, 1);
         },
 
-        extend: Y.bind(Y.extend, Y), 
+        // extend: Y.bind(Y.extend, Y), 
+        extend: Y.extend,
         // merge: Y.bind(Y.merge, Y)
         merge: Y.merge
     }, true);
@@ -201,7 +202,7 @@ YUI.add('compat', function(Y) {
              * @private
              */
             _getScroll: function() {
-                var dd = document.documentElement, db = document.body;
+                var d = Y.config.doc, dd = d.documentElement, db = d.body;
                 if (dd && (dd.scrollTop || dd.scrollLeft)) {
                     return [dd.scrollTop, dd.scrollLeft];
                 } else if (db) {
@@ -411,15 +412,53 @@ YUI.add('compat', function(Y) {
 
         Y.mix(Y.Event, o);
 
+        /**
+         * Calls Y.Event.attach with the correct event order
+         * @method addListener
+         */
+        Y.Event.addListener = function(el, type, fn, data, override) {
+
+            // Y.log('addListener:');
+            // Y.log(Y.Array(arguments, 0, true), 1);
+
+            // var a = Y.Array(arguments, 0, true), el = a.shift();
+            // a.splice(2, 0, el);
+            // return Y.Event.attach.apply(Y.Event, a);
+            var context, a=[type, fn, el];
+
+            if (data) {
+
+                if (override) {
+                    context = (override === true) ? data : override;
+                }
+
+                a.push(context);
+                a.push(data);
+            }
+
+            a.push(COMPAT_ARG);
+
+            return Y.Event.attach.apply(Y.Event, a);
+        };
+
+        Y.Event.on = Y.Event.addListener;
+
+        var newOnavail = Y.Event.onAvailable;
+
+        Y.Event.onAvailable = function(id, fn, p_obj, p_override) {
+            return newOnavail(id, fn, p_obj, p_override, false, true);
+        };
+
+        Y.Event.onContentReady = function(id, fn, p_obj, p_override) {
+            return newOnavail(id, fn, p_obj, p_override, true, true);
+        };
+
         Y.util.Event = Y.Event;
 
         Y.register("event", Y, {version: "@VERSION@", build: "@BUILD@"});
     }
 
 
-    // @todo subscribe register to the module added event to pick
-    // modules registered with the new method.
-//}, "3.0.0");
 (function() {
     var propertyCache = {};
     var patterns = {

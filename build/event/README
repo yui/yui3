@@ -2,9 +2,13 @@ YUI Event Utility
     DOM event utilities and the YUI custom event system
 
 3.0.0pr2
-    - Fixed IE notification error when no arguments are supplied
-    - Added event-simulate
-    - getListeners works when the element has none.
+    - Fixed IE notification error when no arguments are supplied.
+    - Added event-simulate.
+    - getListeners works when the element has no listeners defined.
+    - Event.addListener removed.  Exists only in compat layer.
+    - addListerer triggers 2.x event behavior.
+    - Removed extra undefined parameter passed to DOM event listeners.
+    - Compat layer contains Event.on.
 
 3.0.0pr1
     - Initial Release

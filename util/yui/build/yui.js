@@ -155,8 +155,7 @@ YUI.prototype = {
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
 
-        // @TODO default throwFail to true in PR2
-        // o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -237,7 +236,6 @@ YUI.prototype = {
      * Register a module
      * @method add
      * @param name {string} module name
-     * @param namespace {string} name space for the module
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string
@@ -360,13 +358,14 @@ YUI.prototype = {
         }
        
 
-        // use loader to optimize and sort the requirements if it
-        // is available.
+        // use loader to expand dependencies and sort the 
+        // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
+            loader.allowRollup = false;
             loader.calculate();
             a = loader.sorted;
         }
@@ -456,9 +455,9 @@ YUI.prototype = {
      * Returns the namespace specified and creates it if it doesn't exist
      * <pre>
      * YUI.namespace("property.package");
-     * YUI.namespace("YUI.property.package");
+     * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YUI.property, then
+     * Either of the above would create YAHOO.property, then
      * YUI.property.package
      *
      * Be careful when naming packages. Reserved words may work in some browsers
@@ -477,7 +476,7 @@ YUI.prototype = {
         for (i=0; i<a.length; i=i+1) {
             d = a[i].split(".");
             o = this;
-            for (j=(d[0] == "YUI") ? 1 : 0; j<d.length; j=j+1) {
+            for (j=(d[0] == "YAHOO") ? 1 : 0; j<d.length; j=j+1) {
                 o[d[j]] = o[d[j]] || {};
                 o = o[d[j]];
             }
@@ -502,11 +501,11 @@ YUI.prototype = {
      * @return {YUI} this YUI instance
      */
     fail: function(msg, e) {
-        var instance = this;
-        instance.log(msg, "error"); // don't scrub this one
-
         if (this.config.throwFail) {
-            throw e || new Error(msg);
+            throw (e || new Error(msg)); 
+        } else {
+            var instance = this;
+            instance.log(msg, "error"); // don't scrub this one
         }
 
         return this;
@@ -599,7 +598,8 @@ YUI.add("log", function(instance) {
     instance.log = function(msg, cat, src) {
 
         var Y = instance, c = Y.config, es = Y.Env._eventstack,
-            bail = (es && es.logging);
+            // bail = (es && es.logging);
+            bail = false; 
 
         // suppress log message if the config is off or the event stack
         // or the event call stack contains a consumer of the yui:log event
@@ -649,6 +649,7 @@ YUI.add("lang", function(Y) {
     /**
      * Provides the language utilites and extensions used by the library
      * @class Lang
+     * @static
      */
     Y.Lang = Y.Lang || {};
 
@@ -663,6 +664,7 @@ YUI.add("lang", function(Y) {
      * properties.
      * @TODO can we kill this cross frame hack?
      * @method isArray
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is an array
      */
@@ -677,6 +679,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a boolean
      * @method isBoolean
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a boolean
      */
@@ -687,6 +690,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a function
      * @method isFunction
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a function
      */
@@ -697,6 +701,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the supplied object is a date instance
      * @method isDate
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a date
      */
@@ -707,6 +712,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is null
      * @method isNull
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is null
      */
@@ -717,6 +723,7 @@ YUI.add("lang", function(Y) {
     /**
      * Determines whether or not the provided object is a legal number
      * @method isNumber
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a number
      */
@@ -728,6 +735,7 @@ YUI.add("lang", function(Y) {
      * Determines whether or not the provided object is of type object
      * or function
      * @method isObject
+     * @static
      * @param o The object to test
      * @param failfn {boolean} fail if the input is a function
      * @return {boolean} true if o is an object
@@ -739,6 +747,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is a string
      * @method isString
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is a string
      */
@@ -749,6 +758,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
     /**
      * Determines whether or not the provided object is undefined
      * @method isUndefined
+     * @static
      * @param o The object to test
      * @return {boolean} true if o is undefined
      */
@@ -760,6 +770,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns a string without any leading or trailing whitespace.  If 
      * the input is not a string, the input will be returned untouched.
      * @method trim
+     * @static
      * @param s {string} the string to trim
      * @return {string} the trimmed string
      */
@@ -776,7 +787,8 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * Returns false for null/undefined/NaN, true for other values, 
      * including 0/false/''
      * @method isValue
-     * @param the item to test
+     * @static
+     * @param o The item to test
      * @return {boolean} true if it is not null/undefined/NaN || false
      */
     L.isValue = function(o) {
@@ -831,7 +843,7 @@ YUI.add("array", function(Y) {
         var t = (al) ? 2 : Y.Array.test(o);
         switch (t) {
             case 1:
-                return (i) ? o.slice(o, i) : o;
+                // return (i) ? o.slice(i) : o;
             case 2:
                 return Native.slice.call(o, i || 0);
             default:
@@ -1198,6 +1210,7 @@ YUI.add("ua", function(Y) {
     /**
      * Browser/platform detection
      * @class UA
+     * @static
      */
     Y.UA = function() {
 
@@ -1207,6 +1220,7 @@ YUI.add("ua", function(Y) {
              * Internet Explorer version number or 0.  Example: 6
              * @property ie
              * @type float
+             * @static
              */
             ie:0,
 
@@ -1214,6 +1228,7 @@ YUI.add("ua", function(Y) {
              * Opera version number or 0.  Example: 9.2
              * @property opera
              * @type float
+             * @static
              */
             opera:0,
 
@@ -1229,6 +1244,7 @@ YUI.add("ua", function(Y) {
              * </pre>
              * @property gecko
              * @type float
+             * @static
              */
             gecko:0,
 
@@ -1254,6 +1270,7 @@ YUI.add("ua", function(Y) {
              * http://developer.apple.com/internet/safari/uamatrix.html
              * @property webkit
              * @type float
+             * @static
              */
             webkit:0,
 
@@ -1264,6 +1281,7 @@ YUI.add("ua", function(Y) {
              * devices with the WebKit-based browser, and Opera Mini.  
              * @property mobile 
              * @type string
+             * @static
              */
             mobile: null 
         };
@@ -1664,6 +1682,13 @@ Y.Get = function() {
 
         var url = q.url[0];
 
+        // if the url is undefined, this is probably a trailing comma problem in IE
+        if (!url) {
+            q.url.shift(); 
+            return _next(id);
+        }
+
+
         if (q.timeout) {
             q.timer = L.later(q.timeout, q, _timeout, id);
         }
@@ -1792,6 +1817,7 @@ Y.Get = function() {
             n.onreadystatechange = function() {
                 var rs = this.readyState;
                 if ("loaded" === rs || "complete" === rs) {
+                    n.onreadystatechange = null;
                     f(id, url);
                 }
             };
@@ -1835,6 +1861,7 @@ Y.Get = function() {
         /**
          * Called by the the helper for detecting script load in Safari
          * @method _finalize
+         * @static
          * @param id {string} the transaction id
          * @private
          */
@@ -1845,6 +1872,7 @@ Y.Get = function() {
         /**
          * Abort a transaction
          * @method abort
+         * @static
          * @param o {string|object} Either the tId or the object returned from
          * script() or css()
          */
@@ -2197,6 +2225,9 @@ var BASE = 'base',
                 },
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
+                },
+                'node-event-simulate': {
+                    requires: ['node-base']
                 }
             }
         },
@@ -2251,7 +2282,7 @@ var BASE = 'base',
         //     optional: [CSSRESET]
         // },
 
-        'dd':{
+        dd:{
             submodules: {
                 'dd-ddm-base': {
                     requires: ['node', BASE]
@@ -2289,6 +2320,10 @@ var BASE = 'base',
         event: { 
             requires: ['oop']
         },
+
+        get: { 
+            requires: ['yui-base']
+        },
         
         io: { 
             requires: ['node']
@@ -2302,6 +2337,10 @@ var BASE = 'base',
                 'json-stringify': {
                 }
             }
+        },
+
+        loader: { 
+            requires: ['get']
         },
         
         oop: { 
@@ -3210,7 +3249,7 @@ Y.Env.meta = META;
                 }
 
                 // external css files should be sorted below yui css
-                if (mm.ext && mm.type == CSS && (!other.ext)) {
+                if (mm.ext && mm.type == CSS && !other.ext && other.type == CSS) {
                     return true;
                 }
 
@@ -3343,7 +3382,7 @@ Y.Env.meta = META;
                     m = this.getModule(s[i]);
 // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                     // Do not try to combine non-yui JS
-                    if (m.type == JS && !m.ext) {
+                    if (m && m.type == JS && !m.ext) {
                         url += this.root + m.path;
                         if (i < len-1) {
                             url += '&';
@@ -3563,7 +3602,7 @@ Y.Env.meta = META;
  */
 (function() {
 
-    var min = ['yui-base', 'log', 'lang', 'array', 'core', 'ua'], core,
+    var min = ['yui-base', 'log', 'lang', 'array', 'core'], core,
 
     M = function(Y) {
 
@@ -3579,7 +3618,7 @@ Y.Env.meta = META;
 
         } else {
 
-            core = ["object", "later"];
+            core = ["object", "ua", "later"];
 
             core.push(
               "get", 

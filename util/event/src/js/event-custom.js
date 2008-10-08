@@ -75,7 +75,9 @@ YUI.add("event-custom", function(Y) {
          * @method detach
          */
         detach: function() {
-            this.evt._delete(this.sub);
+            if (this.evt) {
+                this.evt._delete(this.sub);
+            }
         }
     };
 
@@ -313,6 +315,8 @@ YUI.add("event-custom", function(Y) {
             if (se) {
                 se.fire.apply(se, args);
             }
+
+            // debugger;
 
             var s = new Y.Subscriber(fn, obj, args, when);
 

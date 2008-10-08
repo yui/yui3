@@ -155,8 +155,7 @@ YUI.prototype = {
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
 
-        // @TODO default throwFail to true in PR2
-        // o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.debug : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -238,7 +237,6 @@ YUI.prototype = {
      * Register a module
      * @method add
      * @param name {string} module name
-     * @param namespace {string} name space for the module
      * @param fn {Function} entry point into the module that
      * is used to bind module to the YUI instance
      * @param version {string} version string
@@ -365,13 +363,14 @@ YUI.prototype = {
         // Y.log('loader before: ' + a.join(','));
        
 
-        // use loader to optimize and sort the requirements if it
-        // is available.
+        // use loader to expand dependencies and sort the 
+        // requirements if it is available.
         if (Y.Loader) {
             dynamic = true;
             loader = new Y.Loader(Y.config);
             loader.require(a);
             loader.ignoreRegistered = true;
+            loader.allowRollup = false;
             loader.calculate();
             a = loader.sorted;
         }
@@ -469,9 +468,9 @@ YUI.prototype = {
      * Returns the namespace specified and creates it if it doesn't exist
      * <pre>
      * YUI.namespace("property.package");
-     * YUI.namespace("YUI.property.package");
+     * YUI.namespace("YAHOO.property.package");
      * </pre>
-     * Either of the above would create YUI.property, then
+     * Either of the above would create YAHOO.property, then
      * YUI.property.package
      *
      * Be careful when naming packages. Reserved words may work in some browsers
@@ -490,7 +489,7 @@ YUI.prototype = {
         for (i=0; i<a.length; i=i+1) {
             d = a[i].split(".");
             o = this;
-            for (j=(d[0] == "YUI") ? 1 : 0; j<d.length; j=j+1) {
+            for (j=(d[0] == "YAHOO") ? 1 : 0; j<d.length; j=j+1) {
                 o[d[j]] = o[d[j]] || {};
                 o = o[d[j]];
             }
@@ -515,11 +514,11 @@ YUI.prototype = {
      * @return {YUI} this YUI instance
      */
     fail: function(msg, e) {
-        var instance = this;
-        instance.log(msg, "error"); // don't scrub this one
-
         if (this.config.throwFail) {
-            throw e || new Error(msg);
+            throw (e || new Error(msg)); 
+        } else {
+            var instance = this;
+            instance.log(msg, "error"); // don't scrub this one
         }
 
         return this;
