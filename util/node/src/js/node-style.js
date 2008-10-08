@@ -1,11 +1,13 @@
 /**
- * Extended Node interface for managing regions.
- * @module node-region
+ * Extended Node interface for managing node styles.
+ * @module node
+ * @submodule node-style
+ * @for Node
  */
 
 Y.Node.addDOMMethods([
     /**
-     * Retrieves a style attribute from the node.
+     * Returns the style's current value.
      * @method getStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The current value of the style property for the element.
@@ -13,7 +15,7 @@ Y.Node.addDOMMethods([
     'getStyle',
 
     /**
-     * Retrieves the computed value for the given style attribute.
+     * Returns the computed value for the given style property.
      * @method getComputedStyle
      * @param {String} attr The style attribute to retrieve. 
      * @return {String} The computed value of the style property for the element.
@@ -21,10 +23,11 @@ Y.Node.addDOMMethods([
     'getComputedStyle',
 
     /**
-     * Applies a CSS style to thes node.
+     * Sets a style property of the node.
      * @method setStyle
      * @param {String} attr The style attribute to set. 
      * @param {String|Number} val The value. 
+     * @chainable
      */
     'setStyle',
 
@@ -32,6 +35,7 @@ Y.Node.addDOMMethods([
      * Sets multiple style properties on the node.
      * @method setStyles
      * @param {Object} hash An object literal of property:value pairs. 
+     * @chainable
      */
     'setStyles'
 ]);

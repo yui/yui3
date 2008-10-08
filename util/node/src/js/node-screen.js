@@ -1,15 +1,52 @@
 /**
- * This module applies adds support for positioning elements and
- * normalizes window size and scroll detection. 
- * @module node-screen
+ * Extended Node interface for managing regions and screen positioning.
+ * Adds support for positioning elements and normalizes window size and scroll detection. 
+ * @module node
+ * @submodule node-screen
+ * @for Node
  */
 
     Y.each([
+        /**
+         * Returns the inner width of the viewport (exludes scrollbar). 
+         * @property winWidth
+         * @type {Int}
+         */
         'winWidth',
+
+        /**
+         * Returns the inner height of the viewport (exludes scrollbar). 
+         * @property winHeight
+         * @type {Int}
+         */
         'winHeight',
+
+        /**
+         * Document width 
+         * @property winHeight
+         * @type {Int}
+         */
         'docWidth',
+
+        /**
+         * Document height 
+         * @property docHeight
+         * @type {Int}
+         */
         'docHeight',
+
+        /**
+         * Amount page has been scroll vertically 
+         * @property docScrollX
+         * @type {Int}
+         */
         'docScrollX',
+
+        /**
+         * Amount page has been scroll horizontally 
+         * @property docScrollY
+         * @type {Int}
+         */
         'docScrollY'
         ],
         function(v, n) {
@@ -28,10 +65,11 @@
         'getXY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setXY
      * @param {Array} xy Contains X & Y values for new position (coordinates are page-based)
+     * @chainable
      */
         'setXY',
 
@@ -45,10 +83,11 @@
         'getX',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setX
      * @param {Int} x X value for new position (coordinates are page-based)
+     * @chainable
      */
         'setX',
 
@@ -62,28 +101,11 @@
         'getY',
 
     /**
-     * Set the position of a node in page coordinates, regardless of how the node is positioned.
+     * Set the position of the node in page coordinates, regardless of how the node is positioned.
      * The node must be part of the DOM tree to have page coordinates (display:none or elements not appended return false).
      * @method setY
      * @param {Int} y Y value for new position (coordinates are page-based)
+     * @chainable
      */
         'setY'
     ]);
-
-    // these need special treatment to extract 2nd node arg
-    Y.Node.methods({
-        intersect: function(node1, node2, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.intersect(getNode(node1), node2, altRegion); 
-        },
-
-        inRegion: function(node1, node2, all, altRegion) {
-            if (node2 instanceof Y.Node) { // might be a region object
-                node2 = getNode(node2);
-            }
-            return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
-        }
-    });
-

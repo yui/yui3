@@ -1,16 +1,19 @@
-/**
- * Provides a wrapper for dom nodes that supports selector queries normalizes x-browser differences.
- * @module node
- */
+    /**
+     * The Node Utility provides a DOM-like interface for interacting with DOM nodes.
+     * @module node
+     * @submodule node-base
+     */    
 
     /**
-     * A wrapper for DOM Nodes.
+     * The Node class provides a wrapper for manipulating DOM Nodes.
      * Node properties can be accessed via the set/get methods.
-     * With the exception of the noted properties,
-     * only strings, numbers, and booleans are passed through. 
-     * Use Y.get() or Y.Node.get() to retrieve Node instances.
+     * Use Y.get() to retrieve Node instances.
+     *
+     * <strong>NOTE:</strong> Node properties are accessed using
+     * the <code>set</code> and <code>get</code> methods.
      *
      * @class Node
+     * @constructor
      */
 
     var BASE_NODE                   = 0, 
@@ -64,12 +67,19 @@
         return ret;
     };
 
-    var wrapFn = function(node, fn) {
+    var wrapFn = function(fn) {
+        var ret = null;
         if (fn) {
-            return function() {
-                return fn(node);
-            }();
+            ret = (typeof fn === 'string') ?
+            function(n) {
+                return Y.Selector.test(n, fn);
+            } : 
+            function(n) {
+                return fn(_instances[n._yuid]);
+            };
         }
+
+        return ret;
     };
 
     var getDoc = function(node) {
@@ -87,7 +97,7 @@
 
     };
 
-    /**
+    /*
      * Wraps the input and outputs of a node instance
      */
     var nodeInOut = function(method, a, b, c, d, e) {
@@ -122,21 +132,21 @@
     var PROPS_WRAP = {
         /**
          * Returns a Node instance. 
-         * @attribute parentNode
+         * @property parentNode
          * @type Node
          */
         'parentNode': BASE_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute childNodes
+         * @property childNodes
          * @type NodeList
          */
         'childNodes': BASE_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute children
+         * @property children
          * @type NodeList
          */
         'children': function(node) {
@@ -158,56 +168,56 @@
 
         /**
          * Returns a Node instance. 
-         * @attribute firstChild
+         * @property firstChild
          * @type Node
          */
         'firstChild': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute lastChild
+         * @property lastChild
          * @type Node
          */
         'lastChild': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute previousSibling
+         * @property previousSibling
          * @type Node
          */
         'previousSibling': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute previousSibling
+         * @property previousSibling
          * @type Node
          */
         'nextSibling': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute ownerDocument
+         * @property ownerDocument
          * @type Doc
          */
         'ownerDocument': BASE_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute offsetParent
+         * @property offsetParent
          * @type Node
          */
         'offsetParent': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute documentElement
+         * @property documentElement
          * @type Node
          */
         'documentElement': DOCUMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute body
+         * @property body
          * @type Node
          */
         'body': DOCUMENT_NODE,
@@ -215,7 +225,7 @@
         // form
         /**
          * Returns a NodeList instance. 
-         * @attribute elements
+         * @property elements
          * @type NodeList
          */
         'elements': ELEMENT_NODE,
@@ -223,35 +233,35 @@
         // table
         /**
          * Returns a NodeList instance. 
-         * @attribute rows
+         * @property rows
          * @type NodeList
          */
         'rows': ELEMENT_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute cells
+         * @property cells
          * @type NodeList
          */
         'cells': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute tHead
+         * @property tHead
          * @type Node
          */
         'tHead': ELEMENT_NODE,
 
         /**
          * Returns a Node instance. 
-         * @attribute tFoot
+         * @property tFoot
          * @type Node
          */
         'tFoot': ELEMENT_NODE,
 
         /**
          * Returns a NodeList instance. 
-         * @attribute tBodies
+         * @property tBodies
          * @type NodeList
          */
         'tBodies': ELEMENT_NODE
@@ -320,6 +330,7 @@
          * @method setAttribute
          * @param {String} attribute The attribute to set 
          * @param {String} The value to apply to the attribute 
+         * @chainable
          */
         setAttribute: noOut,
 
@@ -334,6 +345,7 @@
         /**
          * Passes through to DOM method.
          * @method scrollIntoView
+         * @chainable
          */
         scrollIntoView: noOut,
 
@@ -348,12 +360,14 @@
         /**
          * Passes through to DOM method.
          * @method focus
+         * @chainable
          */
         focus: noOut,
 
         /**
          * Passes through to DOM method.
          * @method blur
+         * @chainable
          */
         blur: noOut,
 
@@ -361,6 +375,7 @@
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method submit
+         * @chainable
          */
         submit: noOut,
 
@@ -368,6 +383,7 @@
          * Passes through to DOM method.
          * Only valid on FORM elements
          * @method reset
+         * @chainable
          */
         reset: noOut
     };
@@ -418,7 +434,7 @@
          * @type String
          */
         'text': function(node) {
-            return node.get('innerText') || node.get('textContent') || '';
+            return Y.DOM.getText(_nodes[node._yuid]);
         },
 
         'options': function(node) {
@@ -508,6 +524,7 @@
          * @method set
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
+         * @chainable
          */
         set: function(prop, val) {
             var node = _nodes[this._yuid];
@@ -609,9 +626,9 @@
 
         /**
          * Compares nodes to determine if they match.
-         * Node instances can be compared to each other and/or HTMLElements/selectors.
+         * Node instances can be compared to each other and/or HTMLElements.
          * @method compareTo
-         * @param {String | HTMLElement | Node} refNode The reference node to compare to the node.
+         * @param {HTMLElement | Node} refNode The reference node to compare to the node.
          * @return {Boolean} True if the nodes match, false if they do not. 
          */
         compareTo: function(refNode) {
@@ -622,19 +639,20 @@
        /*
          * Returns the nearest ancestor that passes the test applied by supplied boolean method.
          * @method ancestor
-         * @param {Function} fn - A boolean method for testing elements which receives the element as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(this, fn)));
+            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(fn)));
         },
 
         /**
-         * Returns the previous sibling that is an HTMLElement. 
-         * Returns the nearest HTMLElement sibling if no method provided.
+         * Returns the previous matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
          * @method previous
-         * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
          * @return {Node} Node instance or null if not found
          */
@@ -643,13 +661,13 @@
         }, 
 
         /**
-         * Returns the next sibling that passes the boolean method. 
-         * Returns the nearest HTMLElement sibling if no method provided.
+         * Returns the next matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
          * @method next
-         * @param {Function} fn A boolean function used to test siblings
-         * that receives the sibling node being tested as its only argument.
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
          * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-         * @return {Object} HTMLElement or null if not found
+         * @return {Node} Node instance or null if not found
          */
         next: function(fn, all) {
             return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'nextSibling', wrapFn(fn)), all);
@@ -713,10 +731,10 @@
         },
 
         /**
-         * Determines whether an HTMLElement is an ancestor of another HTML element in the DOM hierarchy.
+         * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
          * @method contains
-         * @param {String | HTMLElement} needle The possible descendent
-         * @return {Boolean} Whether or not this node is an ancestor of needle
+         * @param {Node | HTMLElement} needle The possible node or descendent
+         * @return {Boolean} Whether or not this node is the needle its ancestor
          */
         contains: function(needle) {
             return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
@@ -732,11 +750,11 @@
         },
 
         /**
-         * Determines whether an HTMLElement is attached to a document.
+         * Determines whether the node is appended to the document.
          * @method inDoc
          * @param {Node|HTMLElement} doc optional An optional document to check against.
          * Defaults to current document. 
-         * @return {Boolean} Whether or not this node is attached to the document. 
+         * @return {Boolean} Whether or not this node is appended to the document. 
          */
         inDoc: function(doc) {
             var node = _nodes[this._yuid];
@@ -754,22 +772,14 @@
     });
 
     /** 
-     *  Creates a Node instance from an HTML string
+     * Creates a Node instance from an HTML string
      * @method create
-     * @param {String | Array} html HTML string
+     * @param {String} html HTML string
      */
     Node.create = function(html) {
         return wrapDOM(Y.DOM.create(html));
     };
 
-    /** 
-     * Returns a node instance wrapping the DOM element with the given ID. 
-     * @method getById
-     * @static
-     * @param {String} id The ID to retrieve 
-     * @param {Node|HTMLElement} doc optional An optional document to search. 
-     * Defaults to current document.
-     */
     Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
         return wrapDOM(doc.getElementById(id));
@@ -821,7 +831,7 @@
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
-     * @return {NodeList} A wrapper instance for the supplied nodes.
+     * @return {NodeList} A NodeList instance for the supplied nodes.
      */
     Node.all = function(nodes, doc) {
         if (nodes instanceof NodeList) {
@@ -845,6 +855,8 @@
     /** 
      * A wrapper for manipulating multiple DOM elements
      * @class NodeList
+     * @extends Node
+     * @constructor
      */
     var NodeList = function(nodes) {
         // TODO: input validation
@@ -933,7 +945,7 @@
          * @param {Object} context optional An optional context to apply the function with
          * Default context is the NodeList instance
          * @return {NodeList} NodeList containing the updated collection 
-         * @see Y.each
+         * @chainable
          */
         each: function(fn, context) {
             context = context || this;
