@@ -318,7 +318,7 @@
                 queuable:false,
                 defaultFn:this._defInitFn
             });
-            this.fire(INIT, config);
+            this.fire(INIT, null, config);
 
             return this;
         },

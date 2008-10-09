@@ -1,24 +1,27 @@
-var L = Y.Lang;
-
-
 // String constants
 var _WIDGET = "widget",
-	_CONTENT = "content",
-	_VISIBLE = "visible",
-	_HIDDEN = "hidden",
-	_ENABLED = "enabled",
-	_DISABLED = "disabled",
-	_FOCUS = "focus",
-	_HAS_FOCUS = "hasFocus",
-	_WIDTH = "width",
-	_HEIGHT = "height",
-	_UI = "ui",
-	_EMPTY = "",
-	_HYPHEN = "-",
+    _CONTENT = "content",
+    _VISIBLE = "visible",
+    _HIDDEN = "hidden",
+    _ENABLED = "enabled",
+    _DISABLED = "disabled",
+    _FOCUS = "focus",
+    _BLUR = "blur",
+    _HAS_FOCUS = "hasFocus",
+    _WIDTH = "width",
+    _HEIGHT = "height",
+    _UI = "ui",
+    _EMPTY = "",
+    _HYPHEN = "-",
     _BOUNDING_BOX = "boundingBox",
     _CONTENT_BOX = "contentBox",
     _PARENT_NODE = "parentNode",
-    _TAB_INDEX = "tabIndex";
+    _TAB_INDEX = "tabIndex",
+
+    _RENDER = "render",
+    _RENDERED = "rendered",
+    _DESTROYED = "destroyed",
+    _VALUE = "value";
 
 // Widget nodeid-to-instance map for now, 1-to-1. 
 // Expand to nodeid-to-arrayofinstances if required.
@@ -43,13 +46,11 @@ var _instances = {};
  * @extends YUI.Base
  */
 function Widget(config) {
-	Y.log('constructor called', 'life', 'Widget');
+    Y.log('constructor called', 'life', 'widget');
 
-	this.id = Y.guid(_WIDGET);
-	this.rendered = false;
-	this._plugins = {};
-    
-	Widget.superclass.constructor.apply(this, arguments);
+    this.id = Y.guid(_WIDGET);
+
+    Widget.superclass.constructor.apply(this, arguments);
 }
 
 /**
@@ -64,45 +65,6 @@ function Widget(config) {
 Widget.NAME = _WIDGET;
 
 /**
- * Static property outlining the markup template for content box.
- *
- * @property YUI.Widget.CONTENT_TEMPLATE
- * @type {String}
- * @static
- */
-Widget.CONTENT_TEMPLATE = "<div></div>";
-/**
- * Static property outlining the markup template for bounding box.
- *
- * @property YUI.Widget.BOUNDING_TEMPLATE
- * @type {String}
- * @static
- */
-Widget.BOUNDING_TEMPLATE = "<div></div>";
-
-/**
- * Static property listing the styles that are mimiced on the bounding box from the content box.
- *
- * @property YUI.Widget.WRAP_STYLES
- * @type {Object}
- * @static
- */
-
-Widget.WRAP_STYLES = {
-    height: '100%',
-    width: '100%',
-    zIndex: false,
-    position: 'static',
-    top: '0',
-    left: '0',
-    bottom: '',
-    right: '',
-    padding: '',
-    margin: ''
-};
-
-
-/**
  * Static property used to define the default attribute 
  * configuration for the Widget.
  * 
@@ -110,117 +72,125 @@ Widget.WRAP_STYLES = {
  * @type {Object}
  */
 Widget.ATTRS = {
-	/**
-	* @attribute boundingBox
-	* @description The outermost DOM node for the Widget, used for sizing and positioning 
-	* of a Widget as well as a containing element for any decorator elements used 
-	* for skinning.
-	* @type YUI.Node
-	*/
-	boundingBox: {
-        value: null,
-		set: function(node) {
-            return this._setBoundingBox(node);
-		},
-		writeOnce: true
-	},
 
-	/**
-	* @attribute contentBox
-	* @description A DOM node that is a direct descendent of a Widget's bounding box that 
-	* houses its content.
-	* @type YUI.Node
-	*/            
-	contentBox: {
-		writeOnce: true,
-        value: null,
-        set: function(node) {
-            return this._setContentBox(node);
-        }
-	},
-
-	/**
-	* @attribute tabIndex
-	* @description The tabIndex that should be given to the bounding box
-	* @type Number
-	*/
-    tabIndex: {
-        value: 0,
-        set: function(index) {
-            this._setTabIndex(index);
-        }
+    /**
+     * Flag indicating whether or not this object
+     * has been through the render lifecycle phase.
+     *
+     * @attribute rendered
+     * @readOnly
+     * @default false
+     * @type boolean
+     */
+    rendered: {
+        value:false,
+        readOnly:true
     },
 
-	/**
-	* @attribute hasFocus
-	* @description Boolean indicating if the Widget has focus.
-	* @default false
-	* @type Boolean
-	*/
-	hasFocus: {
-		value: false
-	},
+    /**
+    * @attribute boundingBox
+    * @description The outermost DOM node for the Widget, used for sizing and positioning 
+    * of a Widget as well as a containing element for any decorator elements used 
+    * for skinning.
+    * @type Node
+    */
+    boundingBox: {
+        value:null,
+        set: function(node) {
+            return this._setBoundingBox(node);
+        },
+        writeOnce: true
+    },
 
+    /**
+    * @attribute contentBox
+    * @description A DOM node that is a direct descendent of a Widget's bounding box that 
+    * houses its content.
+    * @type YUI.Node
+    */            
+    contentBox: {
+        value:null,
+        set: function(node) {
+            return this._setContentBox(node);
+        },
+        writeOnce: true
+    },
 
-	/**
-	* @attribute disabled
-	* @description Boolean indicating if the Widget should be disabled.  
-	* (Disabled widgets will not respond to user input or fire events.)
-	* @default false
-	* @type Boolean
-	*/
-	disabled: {
-		value: false
-	},
+    /**
+    * @attribute tabIndex
+    * @description The tabIndex that should be given to the bounding box
+    * @type Number
+    */
+    tabIndex: {
+        value: 0
+    },
 
+    /**
+    * @attribute hasFocus
+    * @description Boolean indicating if the Widget has focus.
+    * @default false
+    * @type Boolean
+    */
+    hasFocus: {
+        value: false
+    },
 
-	/**
-	* @attribute visible
-	* @description Boolean indicating weather or not the Widget is visible.
-	* @default true
-	* @type Boolean
-	*/
-	visible: {
-		value: true
-	},
+    /**
+    * @attribute disabled
+    * @description Boolean indicating if the Widget should be disabled.  
+    * (Disabled widgets will not respond to user input or fire events.)
+    * @default false
+    * @type Boolean
+    */
+    disabled: {
+        value: false
+    },
 
+    /**
+    * @attribute visible
+    * @description Boolean indicating weather or not the Widget is visible.
+    * @default true
+    * @type Boolean
+    */
+    visible: {
+        value: true
+    },
 
-	/**
-	* @attribute height
-	* @description String or number representing the height of the Widget.
-	* @default ""
-	* @type {String | Number}
-	*/
-	height: {
-		// Default to not set on element style
-		value: _EMPTY
-	},
+    /**
+    * @attribute height
+    * @description String or number representing the height of the Widget.
+    * @default ""
+    * @type {String | Number}
+    */
+    height: {
+        // Default to not set on element style
+        value: _EMPTY
+    },
 
-	/**
-	* @attribute width
-	* @description String or number representing the width of the Widget.
-	* @default ""
-	* @type {String | Number}
-	*/
-	width: {
-		// Default to not set on element style
-		value: _EMPTY
-	},
+    /**
+    * @attribute width
+    * @description String or number representing the width of the Widget.
+    * @default ""
+    * @type {String | Number}
+    */
+    width: {
+        // Default to not set on element style
+        value: _EMPTY
+    },
 
-
-	moveStyles: {
+    moveStyles: {
         //writeOnce: true,
-		value: false
-	},
+        value: false
+    },
 
-	/**
-	* @attribute strings
-	* @description Collection of strings used to label elements of a Widget's UI.
-	* @type Object
-	*/
-	strings: {
-		// Widget UI strings go here
-	}
+    /**
+    * @attribute strings
+    * @description Collection of strings used to label elements of a Widget's UI.
+    * @type Object
+    */
+    strings: {
+        // Widget UI strings go here
+    }
 };
 
 /**
@@ -231,361 +201,228 @@ Widget.ATTRS = {
  * @return {Widget} Widget instance
  */
 Widget.getByNodeId = function(id) {
-	return _instances[id];
+    return _instances[id];
 };
 
 var proto = {
 
-	/**
-	 * Initializer lifecycle implementation for the Widget class.
-	 * 
-	 * Base.init will invoke all prototype.initializer methods, for the
-	 * class hierarchy (starting from Base), after all attributes have 
-	 * been configured.
-	 * 
-	 * @param  config {Object} Configuration obejct literal for the widget
-	 */
-	initializer: function(config) {
-		Y.log('initializer called', 'life', 'Widget');
+    /**
+     * Initializer lifecycle implementation for the Widget class.
+     * 
+     * Base.init will invoke all prototype.initializer methods, for the
+     * class hierarchy (starting from Base), after all attributes have 
+     * been configured.
+     * 
+     * @param  config {Object} Configuration obejct literal for the widget
+     */
+    initializer: function(config) {
+        Y.log('initializer called', 'life', 'widget');
 
-		this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
+        this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
 
-		this._initPlugins(config);
+        if (this.id) {
+            _instances[this.id] = this;
+        }
 
-		if (this.id) {
-			_instances[this.id] = this;
-		}
-	},
+        Y.PluginHost.call(this, config);
+    },
 
-	/**
-	 * Descructor lifecycle implementation for the Widget class.
-	 * 
-	 * Base.destroy will invoke all prototype.destructor methods, for the
-	 * class hierarchy (starting from the lowest sub-class).
-	 *
-	 */
-	destructor: function() {
-		Y.log('destructor called', 'life', 'Widget');
+    /**
+     * Descructor lifecycle implementation for the Widget class.
+     *
+     * Base.destroy will invoke all prototype.destructor methods, for the
+     * class hierarchy (starting from the lowest sub-class).
+     *
+     */
+    destructor: function() {
+        Y.log('destructor called', 'life', 'widget');
 
-		this._destroyPlugins();
+        if (this.id) {
+            delete _instances[this.id];
+        }
+    },
 
-		if (this.id) {
-			delete _instances[this.id];
-		}
-	},
-	/**
-	 * Establishes the initial DOM for the widget. Invoking this
-	 * method will lead to the creating of all DOM elements for
-	 * the widget (or the manipulation of existing DOM elements 
-	 * for the progressive enhancement use case).
-	 * <p>
-	 * This method should only be invoked once for an initialized
-	 * widget.
-	 * </p>
-	 * <p>
-	 * It delegates to the widget specific renderer method to do
-	 * the actual work.
-	 * </p>
-	 * 
-	 * @method render
-	 * @public
-	 * @chain
-	 * @final 
-	 * @param  parentNode {Object | String} Object representing a YUI.Node instance or a string 
-	 * representing a CSS selector used to retrieve a YUI.Node reference.
-	 */
-	render: function(parentNode) {
-		if (this.get("destroyed")) {
-			Y.log("Render failed; widget has been destroyed", "error", "widget");
-		}
+    /**
+     * Establishes the initial DOM for the widget. Invoking this
+     * method will lead to the creating of all DOM elements for
+     * the widget (or the manipulation of existing DOM elements 
+     * for the progressive enhancement use case).
+     * <p>
+     * This method should only be invoked once for an initialized
+     * widget.
+     * </p>
+     * <p>
+     * It delegates to the widget specific renderer method to do
+     * the actual work.
+     * </p>
+     * 
+     * @method render
+     * @public
+     * @chain
+     * @final 
+     * @param  parentNode {Object | String} Object representing a YUI.Node instance or a string 
+     * representing a CSS selector used to retrieve a YUI.Node reference.
+     */
+    render: function(parentNode) {
 
-		if (!this.rendered && this.fire("beforeRender") !== false) {
-			this._uiInitNode();
-            this._renderBox(parentNode);
+        if (this.get(_DESTROYED)) {
+            Y.log("Render failed; widget has been destroyed", "error", "widget");
+            return;
+        }
 
-			this._bindUI();
-			this._syncUI();
+        if (!this.get(_RENDERED)) {
 
-			if (this.renderer) {
-				this.renderer();
-			}
+            this.publish(_RENDER, {
+                queuable:false,
+                defaultFn: this._defRenderFn
+            });
 
-			this.rendered = true;
-			this.fire("render");
-		}
+            this.fire(_RENDER, null, parentNode);
+        }
 
-		return this;
-	},
+        return this;
+    },
 
-	/** 
-	 * Creates DOM (or manipulates DOM for progressive enhancement)
-	 * This method is invoked by render() and is not chained 
-	 * automatically for the class hierarchy (like initializer, destructor) 
-	 * so it should be chained manually for subclasses if required.
-	 * 
-	 * @method renderer
-	 */
-	renderer: function() {},
+    _defRenderFn : function(e, parentNode) {
+            this._uiInitBox(parentNode);
 
-	/**
-	 * Configures/Sets up listeners to bind Widget State to UI/DOM
-	 * 
-	 * This method is not called by framework and is not chained 
-	 * automatically for the class hierarchy.
-	 * 
-	 * @method bindUI
-	 */
-	bindUI: function() {},
+            this._bindUI();
+            this._syncUI();
 
-	/**
-	 * Adds nodes to the DOM 
-	 * 
-	 * This method is not called by framework and is not chained 
-	 * automatically for the class hierarchy.
-	 * 
-	 * @method renderUI
-	 */
-	renderUI: function() {},
+            if (this.renderer) {
+                this.renderer();
+            }
 
-	/**
-	 * Refreshes the rendered UI, based on Widget State
-	 * 
-	 * This method is not called by framework and is not chained
-	 * automatically for the class hierarchy.
-	 * 
-	 * @method syncUI
-	 */
-	syncUI: function(){},
+            // TODO: Attribute read-only support for internal usage
+            this._conf.remove(_RENDERED, _VALUE);
+            this.set(_RENDERED, true);
+    },
 
-	/**
-	* @method hide
-	* @description Shows the Module element by setting the "visible" attribute to "false".
-	*/
-	hide: function() {
-		return this.set(_VISIBLE, false);
-	},
+    /** 
+     * Creates DOM (or manipulates DOM for progressive enhancement)
+     * This method is invoked by render() and is not chained 
+     * automatically for the class hierarchy (like initializer, destructor) 
+     * so it should be chained manually for subclasses if required.
+     * 
+     * @method renderer
+     */
+    renderer: function() {},
 
-	/**
-	* @method show
-	* @description Shows the Module element by setting the "visible" attribute to "true".
-	*/
-	show: function() {
-		return this.set(_VISIBLE, true);
-	},
+    /**
+     * Configures/Sets up listeners to bind Widget State to UI/DOM
+     * 
+     * This method is not called by framework and is not chained 
+     * automatically for the class hierarchy.
+     * 
+     * @method bindUI
+     */
+    bindUI: function() {},
 
-	/**
-	* @method focus
-	* @description Causes the Widget to receive the focus by setting the "hasFocus" 
-	* attribute to "true".
-	*/
-	focus: function () {
-		return this.set(_HAS_FOCUS, true);
-	},
+    /**
+     * Adds nodes to the DOM 
+     * 
+     * This method is not called by framework and is not chained 
+     * automatically for the class hierarchy.
+     * 
+     * @method renderUI
+     */
+    renderUI: function() {},
 
-	/**
-	* @method blur
-	* @description Causes the Widget to lose focus by setting the "hasFocus" attribute 
-	* to "false"
-	*/            
-	blur: function () {
-		return this.set(_HAS_FOCUS, false);
-	},
+    /**
+     * Refreshes the rendered UI, based on Widget State
+     * 
+     * This method is not called by framework and is not chained
+     * automatically for the class hierarchy.
+     * 
+     * @method syncUI
+     */
+    syncUI: function(){},
 
-	/**
-	* @method enable
-	* @description Set the Widget's "disabled" attribute to "false".
-	*/
-	enable: function() {
-		return this.set(_ENABLED, true);
-	},
+    /**
+    * @method hide
+    * @description Shows the Module element by setting the "visible" attribute to "false".
+    */
+    hide: function() {
+        return this.set(_VISIBLE, false);
+    },
 
-	/**
-	* @method disabled
-	* @description Set the Widget's "disabled" attribute to "true".
-	*/
-	disable: function() {
-		return this.set(_DISABLED, false);
-	},
+    /**
+    * @method show
+    * @description Shows the Module element by setting the "visible" attribute to "true".
+    */
+    show: function() {
+        return this.set(_VISIBLE, true);
+    },
 
-	/**
-	 * Sets the state of an attribute. Wrapper for
-	 * AttributeProvider.set, with additional ability 
-	 * to chain.
-	 * 
-	 * @method set
-	 * @chain
-	 */
-	set: function() { 
-		// extend to chain set calls
-		Y.Attribute.prototype.set.apply(this, arguments);
-		return this;
-	},
+    /**
+    * @method focus
+    * @description Causes the Widget to receive the focus by setting the "hasFocus" 
+    * attribute to "true".
+    */
+    focus: function () {
+        return this.set(_HAS_FOCUS, true);
+    },
 
-	/**
-	 * Returns an attribute of the Node instance specified as the Widget's bounding box.
-	 * 
-	 * @method getNodeAttr
-	 */
-	getNodeAttr: function(attr) {
-		if (this.get(_BOUNDING_BOX)) {
-			return this.get(_BOUNDING_BOX).att(attr);
-		}
-		return undefined;
-	},
+    /**
+    * @method blur
+    * @description Causes the Widget to lose focus by setting the "hasFocus" attribute 
+    * to "false"
+    */            
+    blur: function () {
+        return this.set(_HAS_FOCUS, false);
+    },
 
-	/**
-	 * Sets an attribute for the Node instance specified as the Widget's bounding box.
-	 * 
-	 * @method getNodeAttr
-	 * @chain             
-	 */
-	setNodeAttr: function(attr, val) {
-		if (this.get(_BOUNDING_BOX)) {
-			this.get(_BOUNDING_BOX).att(attr, val);
-		}
-		return this;
-	},
+    /**
+    * @method enable
+    * @description Set the Widget's "disabled" attribute to "false".
+    */
+    enable: function() {
+        return this.set(_ENABLED, true);
+    },
 
-	/**
-	 * Register and instantiate a plugin with the Widget.
-	 * 
-	 * @param p {String | Object |Array} Accepts the registered 
-	 * namespace for the Plugin or an object literal with an "fn" property
-	 * specifying the Plugin class and a "cfg" property specifying
-	 * the configuration for the Plugin.
-	 * <p>
-	 * Additionally an Array can also be passed in, with either String or 
-	 * Object literal elements, allowing for multiple plugin registration in 
-	 * a single call
-	 * </p>
-	 * @method plug
-	 * @chain
-	 * @public
-	 */
-	plug: function(p) {
-		if (p) {
-			if (L.isArray(p)) {
-				var ln = p.length;
-				for (var i = 0; i < ln; i++) {
-					this.plug(p[i]);
-				}
-			} else if (L.isFunction(p)) {
-				this._plug(p);
-			} else {
-				this._plug(p.fn, p.cfg);
-			}
-		}
-		return this;
-	},
+    /**
+    * @method disabled
+    * @description Set the Widget's "disabled" attribute to "true".
+    */
+    disable: function() {
+        return this.set(_DISABLED, false);
+    },
 
-	/**
-	 * Unregister and destroy a plugin already instantiated with the Widget.
-	 * 
-	 * @method unplug
-	 * @param {String} ns The namespace key for the Plugin
-	 * @chain
-	 * @public
-	 */
-	unplug: function(ns) {
-		if (ns) {
-			this._unplug(ns);
-		} else {
-			for (ns in this._plugins) {
-				if (Y.Object.owns(this._plugins, ns)) {
-					this._unplug(ns);
-				}
-			}
-		}
-		return this;
-	},
+    /**
+     * Returns an attribute of the Node instance specified as the Widget's bounding box.
+     * 
+     * @method getNodeAttr
+     */
+    getNodeAttr: function(attr) {
+        if (this.get(_BOUNDING_BOX)) {
+            return this.get(_BOUNDING_BOX).att(attr);
+        }
+        return undefined;
+    },
 
-	/**
-	 * Determines if a plugin has been registered and instantiated 
-	 * for this widget.
-	 * 
-	 * @method hasPlugin
-	 * @public
-	 * @return {Boolean} returns true, if the plugin has been applied
-	 * to this widget.
-	 */
-	hasPlugin : function(ns) {
-		return (this._plugins[ns] && this[ns]);
-	},
+    /**
+     * Sets an attribute for the Node instance specified as the Widget's bounding box.
+     * 
+     * @method getNodeAttr
+     * @chain             
+     */
+    setNodeAttr: function(attr, val) {
+        if (this.get(_BOUNDING_BOX)) {
+            this.get(_BOUNDING_BOX).att(attr, val);
+        }
+        return this;
+    },
 
-	/**
-	 * @private
-	 */
-	 
-	_initPlugins: function(config) {
-
-		// Class Configuration
-		var classes = this._getClasses(), constructor;
-		for (var i = 0; i < classes.length; i++) {
-			constructor = classes[i];
-			if (constructor.PLUGINS) {
-				this.plug(constructor.PLUGINS);
-			}
-		}
-
-		// User Configuration
-		if (config && config.plugins) {
-			this.plug(config.plugins);
-		}
-	},
-
-	/**
-	 * @private
-	 */
-	_destroyPlugins: function() {
-		this._unplug();
-	},
-
-	/**
-	 * @private
-	 */
-	_plug: function(PluginClass, config) {
-		if (PluginClass && PluginClass.NS) {
-			var ns = PluginClass.NS;
-
-			config = config || {};
-			config.owner = this;
-
-			if (this.hasPlugin(ns)) {
-				// Update config
-				// this[ns].setAttributeConfigs(config, false);
-				this[ns].setAtts(config);
-			} else {
-				// Create new instance
-				this[ns] = new PluginClass(config);
-				this._plugins[ns] = PluginClass;
-			}
-		}
-	},
-
-
-	/**
-	 * @private
-	 */
-	_unplug : function(ns) {
-		if (ns) {
-			if (this[ns]) {
-				this[ns].destroy();
-				delete this[ns];
-			}
-			if (this._plugins[ns]) {
-				delete this._plugins[ns];
-			}
-		}
-	},
     /**
     * @private
     * @method _moveStyles
     * @description Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
-    * @param {YUI.Node} nodeFrom The node to gather the styles from
-    * @param {YUI.Node} nodeTo The node to apply the styles to
+    * @param {Node} nodeFrom The node to gather the styles from
+    * @param {Node} nodeTo The node to apply the styles to
     */
     _moveStyles: function(nodeFrom, nodeTo) {
-        var styles = (this.constructor.WRAP_STYLES || Widget.WRAP_STYLES),
+
+        var styles = (this.WRAP_STYLES),
             pos = nodeFrom.getStyle('position'),
             xy = [0,0],
             h, w;
@@ -593,6 +430,7 @@ var proto = {
         if (!this.get('height')) {
             h = this.get('contentBox').get('offsetHeight');
         }
+
         if (!this.get('width')) {
             w = this.get('contentBox').get('offsetWidth');
         }
@@ -603,11 +441,13 @@ var proto = {
                 right: 'auto',
                 bottom: 'auto'
             });
+
             nodeFrom.setStyles({
                 right: 'auto',
                 bottom: 'auto'
             });
         }
+
         Y.each(styles, function(v, k) {
             var s = nodeFrom.getStyle(k);
             nodeTo.setStyle(k, s);
@@ -617,6 +457,7 @@ var proto = {
                 nodeFrom.setStyle(k, v);
             }
         });
+
         if (pos === 'absolute') {
             nodeTo.setXY(xy);
         }
@@ -624,11 +465,12 @@ var proto = {
         if (h) {
             this.set('height', h);
         }
+
         if (w) {
             this.set('width', w);
         }
-
     },
+
     /**
     * @private
     * @method _renderBox
@@ -636,29 +478,32 @@ var proto = {
     * @param {YUI.Node} parentNode The parentNode to render the widget to.
     */
     _renderBox: function(parentNode) {
-        var content = this.get(_CONTENT_BOX),
-            bounding = this.get(_BOUNDING_BOX);
 
-		if (L.isString(parentNode)) {
-			parentNode = Y.Node.get(parentNode);
-		}
-		// append to parent if provided, or to body if no parent and not in body
-		parentNode = parentNode || Y.Node.get("body");
-		if (parentNode && !parentNode.contains(this.get(_BOUNDING_BOX))) {
-			parentNode.appendChild(this.get(_BOUNDING_BOX));
-		}
-        
-        if (!bounding.contains(content)) {
-            console.log('moveStyles: ', this.get('moveStyles'));
+        var contentBox = this.get(_CONTENT_BOX),
+            boundingBox = this.get(_BOUNDING_BOX),
+            body = Y.Node.get("body");
+
+        // append to parent if provided, or to body if no parent and not in body
+        parentNode = (parentNode) ? Y.Node.get(parentNode) : body;
+        if (parentNode && !parentNode.contains(boundingBox)) {
+            parentNode.appendChild(boundingBox);
+        }
+
+        if (!boundingBox.contains(contentBox)) {
             if (this.get('moveStyles')) {
-                this._moveStyles(content, bounding);
+                this._moveStyles(contentBox, boundingBox);
             }
-            if (content.get(_PARENT_NODE)) {
-                content.get(_PARENT_NODE).replaceChild(bounding, content);
+
+            // If contentBox box is already in the document, have boundingBox box take it's place
+            // TODO: Replace body test with _PARENT_NODE test, when supported
+            if (body.contains(contentBox) /*contentBox.get(_PARENT_NODE)*/) {
+                contentBox.get(_PARENT_NODE).replaceChild(boundingBox, contentBox);
             }
-            bounding.appendChild(content);
+
+            boundingBox.appendChild(contentBox);
         }
     },
+
     /**
     * @private
     * @method _setBoundingBox
@@ -667,15 +512,7 @@ var proto = {
     * @return YUI.Node
     */
     _setBoundingBox: function(node) {
-        node = Y.Node.get(node);
-        if (!node) {
-            node = Y.Node.create(this.constructor.BOUNDING_TEMPLATE || Widget.BOUNDING_TEMPLATE);
-        }
-        var sid = Y.stamp(node);
-        if (!node.get('id')) {
-            node.set('id', sid);
-        }
-        return node;
+        return this._setBox(node, this.BOUNDING_TEMPLATE);
     },
     /**
     * @private
@@ -685,259 +522,307 @@ var proto = {
     * @return YUI.Node
     */
     _setContentBox: function(node) {
+        return this._setBox(node, this.CONTENT_TEMPLATE);
+    },
+
+    /**
+     * @private
+     * @method _setBox
+     * @param node
+     * @param template
+     */
+    _setBox : function(node, template) {
         node = Y.Node.get(node);
         if (!node) {
-            //TODO Can we make this assumption? Is the firstChild always the content?
-            /*
-            if (this.get(_BOUNDING_BOX).get('firstChild')) {
-                node = this.get(_BOUNDING_BOX).get('firstChild');
-            }
-            */
-            //if (!node) {
-                node = Y.Node.create(this.constructor.CONTENT_TEMPLATE || Widget.CONTENT_TEMPLATE);
-            //}
+            node = Y.Node.create(template);
         }
+
         var sid = Y.stamp(node);
         if (!node.get('id')) {
             node.set('id', sid);
         }
         return node;
     },
+
     /**
     * @private
-    * @method _setTabIndex
+    * @method _uiSetTabIndex
     * @description Setter for tabIndex config
     * @param Number
     */
-    _setTabIndex: function(index) {
-        if (this.get(_BOUNDING_BOX)) {
-            this.get(_BOUNDING_BOX).set(_TAB_INDEX, this.get(_TAB_INDEX));
+    _uiSetTabIndex: function(index) {
+        this.get(_BOUNDING_BOX).set(_TAB_INDEX, index);
+    },
+
+    /**
+     * Sets up listeners to synchronize UI state to attribute
+     * state.
+     *
+     * @method _bindUI
+     * @protected
+     */
+    _bindUI: function() {
+        this.after('visibleChange', this._onVisibleChange);
+        this.after('disabledChange', this._onDisabledChange);
+        this.after('heightChange', this._onHeightChange);
+        this.after('widthChange', this._onWidthChange);
+        this.after('hasFocusChange', this._onHasFocusChange);
+
+        this._bindDOMListeners();
+    },
+
+    _bindDOMListeners : function() {
+        this.get(_BOUNDING_BOX).on(_FOCUS, Y.bind(this._onFocus, this));
+        this.get(_BOUNDING_BOX).on(_BLUR, Y.bind(this._onBlur, this));
+    },
+
+    /**
+     * Updates the widget UI to reflect the attribute state.
+     *
+     * @method _syncUI
+     * @protected
+     */
+    _syncUI: function() {
+        this._uiSetVisible(this.get(_VISIBLE));
+        this._uiSetDisabled(this.get(_DISABLED));
+        this._uiSetHeight(this.get(_HEIGHT));
+        this._uiSetWidth(this.get(_WIDTH));
+        this._uiSetHasFocus(this.get(_HAS_FOCUS));
+    },
+
+    /**
+     * Sets the height on the widget's bounding box element
+     * 
+     * @method _uiSetHeight
+     * @protected
+     * @param {String | Number} val
+     */
+    _uiSetHeight: function(val) {
+        if (L.isNumber(val)) {
+            val = val + this.DEF_UNIT;
+        }
+        this.get(_BOUNDING_BOX).setStyle(_HEIGHT, val);
+    },
+
+    /**
+     * Sets the width on the widget's bounding box element
+     *
+     * @method _uiSetWidth
+     * @protected
+     * @param {String | Number} val
+     */
+    _uiSetWidth: function(val) {
+        if (L.isNumber(val)) {
+            val = val + this.DEF_UNIT;
+        }
+        this.get(_BOUNDING_BOX).setStyle(_WIDTH, val);
+    },
+
+    /**
+     * Sets the visible state for the UI
+     * 
+     * @method _uiSetVisible
+     * @protected
+     * @param {boolean} val
+     */
+    _uiSetVisible: function(val) {
+
+        var box = this.get(_BOUNDING_BOX), 
+            sClassName = this.getClassName(_HIDDEN);
+
+        if (val === true) { 
+            box.removeClass(sClassName); 
+        } else {
+            box.addClass(sClassName); 
         }
     },
 
-	/**
-	 * Sets up listeners to synchronize UI state to attribute
-	 * state.
-	 *
-	 * @method _bindUI
-	 * @protected
-	 */
-	_bindUI: function() {
-		this.on('visibleChange', this._onVisibleChange);
-		this.on('disabledChange', this._onDisabledChange);
-		this.on('heightChange', this._onHeightChange);
-		this.on('widthChange', this._onWidthChange);
-		this.on('hasFocusChange', this._onHasFocusChange);
-		this.get(_BOUNDING_BOX).on(_FOCUS, Y.bind(this._onFocus, this));
-		this.get(_BOUNDING_BOX).on("blur", Y.bind(this._onBlur, this));
-	},
+    /**
+     * Sets the disabled state for the UI
+     * 
+     * @protected
+     * @param {boolean} val
+     */
+    _uiSetDisabled: function(val) {
 
+        var box = this.get(_BOUNDING_BOX), 
+            sClassName = this.getClassName(_DISABLED);
 
-	/**
-	 * Updates the widget UI to reflect the attribute state.
-	 * 
-	 * @method _syncUI
-	 * @protected
-	 */
-	_syncUI: function() {
-		this._uiSetVisible(this.get(_VISIBLE));
-		this._uiSetDisabled(this.get(_DISABLED));
-		this._uiSetHeight(this.get(_HEIGHT));
-		this._uiSetWidth(this.get(_WIDTH));
-		this._uiSetHasFocus(this.get(_HAS_FOCUS));
-	},
+        if (val === true) {
+            box.addClass(sClassName);
+        } else {
+            box.removeClass(sClassName);
+        }
+    },
 
-	/**
-	 * Sets the height on the widget's bounding box element
-	 * 
-	 * @method _uiSetHeight
-	 * @protected
-	 * @param {String | Number} val
-	 */
-	_uiSetHeight: function(val) {
-		if (L.isNumber(val)) {
-			val = val + this.DEF_UNIT;
-		}
-		this.get(_BOUNDING_BOX).setStyle(_HEIGHT, val);
-	},
+    /**
+     * Sets the hasFocus state for the UI
+     * 
+     * @protected
+     * @param {boolean} val
+     * @param {string} src String representing the source that triggered an update to 
+     * the UI.     
+     */
+    _uiSetHasFocus: function(val, src) {
+        
+        var box = this.get(_BOUNDING_BOX),
+            sClassName = this.getClassName(_FOCUS);
 
-	/**
-	 * Sets the width on the widget's bounding box element
-	 *
-	 * @method _uiSetWidth
-	 * @protected
-	 * @param {String | Number} val
-	 */
-	_uiSetWidth: function(val) {
-		if (L.isNumber(val)) {
-			val = val + this.DEF_UNIT;
-		}
-		this.get(_BOUNDING_BOX).setStyle(_WIDTH, val);
-	},
+        if (val === true) {
+            box.addClass(sClassName);
+            if (src !== _UI) {
+                box.focus();
+            }
+        } else {
+            box.removeClass(sClassName);
+            if (src !== _UI) {
+                box.blur();
+            }
+        }
+    },
 
-	/**
-	 * Sets the visible state for the UI
-	 * 
-	 * @method _uiSetVisible
-	 * @protected
-	 * @param {boolean} val
-	 */
-	_uiSetVisible: function(val) {
+    /**
+     * Initializes the UI state for the bounding box. Applies marker
+     * classes to identify the widget.
+     * 
+     * @method _uiInitBox
+     * @protected
+     */
+    _uiInitBox: function(parentNode) {
 
-		var sClassName = this.getClassName(_HIDDEN);
-
-		if (val === true) { 
-			this.get(_BOUNDING_BOX).removeClass(sClassName); 
-		} else {
-			this.get(_BOUNDING_BOX).addClass(sClassName); 
-		}
-	},
-
-	/**
-	 * Sets the disabled state for the UI
-	 * 
-	 * @protected
-	 * @param {boolean} val
-	 */
-	_uiSetDisabled: function(val) {
-
-		var sClassName = this.getClassName(_DISABLED);
-
-		if (val === true) {
-			this.get(_BOUNDING_BOX).addClass(sClassName);
-		} else {
-			this.get(_BOUNDING_BOX).removeClass(sClassName);
-		}
-	},
-
-	/**
-	 * Sets the hasFocus state for the UI
-	 * 
-	 * @protected
-	 * @param {boolean} val
-	 * @param {string} src String representing the source that triggered an update to 
-	 * the UI.     
-	 */
-	_uiSetHasFocus: function(val, src) {
-		
-		var sClassName = this.getClassName(_FOCUS);
-
-		if (val === true) {
-			this.get(_BOUNDING_BOX).addClass(sClassName);
-			if (src !== _UI) {
-				this.get(_BOUNDING_BOX).focus();
-			}
-			
-		} else {
-			this.get(_BOUNDING_BOX).removeClass(sClassName);
-			if (src !== _UI) {
-				this.get(_BOUNDING_BOX).blur();
-			}
-		}
-	
-	},
-
-	/**
-	 * Initializes the UI state for the bounding box. Applies marker
-	 * classes to identify the widget.
-	 * 
-	 * @method _uiInitNode
-	 * @protected
-	 */
-	_uiInitNode: function() {
         this.get(_BOUNDING_BOX).addClass(this._className);
         this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
-        this._setTabIndex(this.get(_TAB_INDEX));
-	},
 
-	/**
-	 * Visible attribute UI handler
-	 * 
-	 * @method _onVisibleChange
-	 * @protected
-	 * @param {Object} evt Event object literal passed by AttributeProvider
-	 */
-	_onVisibleChange: function(evt) {
-		this._uiSetVisible(evt.newVal);
-	},
+        this._renderBox(parentNode);
 
-	/**
-	 * Disabled attribute UI handler
-	 * 
-	 * @method _onDisabledChange
-	 * @protected
-	 * @param {Object} evt Event object literal passed by AttributeProvider
-	 */
-	_onDisabledChange: function(evt) {
-		this._uiSetDisabled(evt.newVal);
-	},
-	
-	/**
-	 * Height attribute UI handler
-	 * 
-	 * @method _onHeightChange
-	 * @protected
-	 * @param {Object} evt Event object literal passed by AttributeProvider
-	 */
-	_onHeightChange: function(evt) {
-		this._uiSetHeight(evt.newVal);
-	},
+        this._uiSetTabIndex(this.get(_TAB_INDEX));
+    },
 
-	/**
-	 * Width attribute UI handler
-	 * 
-	 * @method _onWidthChange
-	 * @protected
-	 * @param {Object} evt Event object literal passed by AttributeProvider
-	 */
-	_onWidthChange: function(evt) {
-		this._uiSetWidth(evt.newVal);
-	},
+    /**
+     * Visible attribute UI handler
+     * 
+     * @method _onVisibleChange
+     * @protected
+     * @param {Object} evt Event object literal passed by AttributeProvider
+     */
+    _onVisibleChange: function(evt) {
+        this._uiSetVisible(evt.newVal);
+    },
 
-	/**
-	 * hasFocus attribute UI handler
-	 * 
-	 * @method _onHasFocusChange
-	 * @protected
-	 * @param {Object} evt Event object literal passed by AttributeProvider
-	 */
-	_onHasFocusChange: function(evt) {
-		this._uiSetHasFocus(evt.newVal, evt.src);
-	},
+    /**
+     * Disabled attribute UI handler
+     * 
+     * @method _onDisabledChange
+     * @protected
+     * @param {Object} evt Event object literal passed by AttributeProvider
+     */
+    _onDisabledChange: function(evt) {
+        this._uiSetDisabled(evt.newVal);
+    },
 
-	/**
-	 * focus event UI handler used to sync the state of the Widget with the DOM
-	 * 
-	 * @method _onFocus
-	 * @protected
-	 */
-	_onFocus: function () {
-		this.set(_HAS_FOCUS, true, { src: _UI });
-	},
+    /**
+     * Height attribute UI handler
+     * 
+     * @method _onHeightChange
+     * @protected
+     * @param {Object} evt Event object literal passed by AttributeProvider
+     */
+    _onHeightChange: function(evt) {
+        this._uiSetHeight(evt.newVal);
+    },
 
-	/**
-	 * blur event UI handler used to sync the state of the Widget with the DOM
-	 * 
-	 * @method _onBlur
-	 * @protected
-	 */			
-	_onBlur: function () {
-		this.set(_HAS_FOCUS, false, { src: _UI });
-	},
+    /**
+     * Width attribute UI handler
+     * 
+     * @method _onWidthChange
+     * @protected
+     * @param {Object} evt Event object literal passed by AttributeProvider
+     */
+    _onWidthChange: function(evt) {
+        this._uiSetWidth(evt.newVal);
+    },
 
-	/**
-	 * Generic toString implementation for all widgets.
-	 * @method toString
-	 */
-	toString: function() {
-		return this.constructor.NAME + "[" + this.id + "]";
-	},
+    /**
+     * hasFocus attribute UI handler
+     * 
+     * @method _onHasFocusChange
+     * @protected
+     * @param {Object} evt Event object literal passed by AttributeProvider
+     */
+    _onHasFocusChange: function(evt) {
+        this._uiSetHasFocus(evt.newVal, evt.src);
+    },
 
-	/**
-	 * Default unit to use for style values
-	 */
-	DEF_UNIT : "px"
+    /**
+     * focus event UI handler used to sync the state of the Widget with the DOM
+     * 
+     * @method _onFocus
+     * @protected
+     */
+    _onFocus: function () {
+        this.set(_HAS_FOCUS, true, { src: _UI });
+    },
 
+    /**
+     * blur event UI handler used to sync the state of the Widget with the DOM
+     * 
+     * @method _onBlur
+     * @protected
+     */			
+    _onBlur: function () {
+        this.set(_HAS_FOCUS, false, { src: _UI });
+    },
+
+    /**
+     * Generic toString implementation for all widgets.
+     * @method toString
+     */
+    toString: function() {
+        return this.constructor.NAME + "[" + this.id + "]";
+    },
+
+    /**
+     * Default unit to use for style values
+     */
+    DEF_UNIT : "px",
+    
+    /**
+     * Static property outlining the markup template for content box.
+     *
+     * @property YUI.Widget.CONTENT_TEMPLATE
+     * @type {String}
+     * @static
+     */
+    CONTENT_TEMPLATE : "<div></div>",
+
+    /**
+     * Static property outlining the markup template for bounding box.
+     *
+     * @property YUI.Widget.BOUNDING_TEMPLATE
+     * @type {String}
+     * @static
+     */
+    BOUNDING_TEMPLATE : "<div></div>",
+
+    /**
+     * Static property listing the styles that are mimiced on the bounding box from the content box.
+     *
+     * @property YUI.Widget.WRAP_STYLES
+     * @type {Object}
+     * @static
+     */
+    WRAP_STYLES : {
+        height: '100%',
+        width: '100%',
+        zIndex: false,
+        position: 'static',
+        top: '0',
+        left: '0',
+        bottom: '',
+        right: '',
+        padding: '',
+        margin: ''
+    }
 };
 
 /**
@@ -946,18 +831,11 @@ var proto = {
  * @property Y.Widget.PLUGINS
  * @static
  */
-Widget.PLUGINS = [
-	// Placeholder for Widget Class Default plugins
-
-	// - OR -
-	// Instantiate a new plugin with or configure an existing plugin
-	// { fn:Y.Plugin.Mouse, cfg:mousecfg }
-];
+Widget.PLUGINS = [];
 
 Y.extend(Widget, Y.Base, proto);
-
+Y.augment(Widget, Y.PluginHost);
 Y.augment(Widget, Y.ClassNameManager);
-
 Y.aggregate(Widget, Y.ClassNameManager);
 
 Y.Widget = Widget;

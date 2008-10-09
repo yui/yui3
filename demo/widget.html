@@ -3,7 +3,7 @@
 <head>
     <title>Widget Class</title>
 
-    <script type="text/javascript" src="../build/yui/yui-debug.js"></script>
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
     <script type="text/javascript" src="../build/widget/widget-debug.js"></script>
 
     <style type="text/css">
@@ -11,6 +11,8 @@
             background:#ccc;
             height:100px;
             overflow:hidden;
+            border:1px solid #000;
+            margin:5px;
         }
 
         .yui-widget-hidden {
@@ -20,24 +22,26 @@
         .yui-widget-focus {
             background-color: yellow;
         }
-
     </style>
 </head>
+
 <body class="yui-skin-sam">
 
-    <button id="control-show" type="button">show</button>
-    <button id="control-hide" type="button">hide</button>
+    <button id="control-show" type="button">show widget 1</button>
+    <button id="control-hide" type="button">hide widget 1</button>
 
-    <div class="foo" id="foobar"><div class="yui-widget-content">Widget.Alpha</div></div>
-
-    <div class="foo" id="bar"><div class="yui-widget-content">Widget.Beta</div></div>
+    <div id="alpha">Widget.Alpha</div>
+    
+    <div id="beta-box">
+        <div id="beta-content">Widget.Beta</div>
+    </div>    
 
 	<div id="widget-3-container"></div>
 
     <script type="text/javascript">
-        YUI({filter:"debug", base:"../build/"}).use("oop", "widget", function(Y) {
+        YUI({filter:"debug", base:"../build/"}).use("node", "widget", function(Y) {
 
-			widget = new Y.Widget({ boundingBox: 'body > div.foo', width: 200 });
+			widget = new Y.Widget({ contentBox: '#alpha', width: 200 });
 			widget.render();
 
 			widget.on('click', function(e) {
@@ -47,15 +51,14 @@
 			Y.on('click', Y.bind(widget.show, widget), '#control-show');
 			Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
 
-
-			widget2 = new Y.Widget({ boundingBox: 'body > #bar' });
+			widget2 = new Y.Widget({ boundingBox: "#beta-box", contentBox: '#beta-content' });
 			widget2.render();
 
-			Y.log(Y.Widget.getByNodeId("foobar"));
+            var container = Y.Node.get("#widget-3-container"); 
 
 			widget3 = new Y.Widget({ width: 200, height:200 });
-			widget3.render(Y.Node.get("#widget-3-container"));
-
+			widget3.render(container);
+            widget3.get("contentBox").set("innerHTML", "Widget Gamma");
         });
     </script>
 </body>
