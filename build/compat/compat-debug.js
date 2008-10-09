@@ -484,8 +484,50 @@ YUI.add('compat', function(Y) {
 
         Y.util.Event = Y.Event;
 
-        Y.register("event", Y, {version: "@VERSION@", build: "@BUILD@"});
+        var CE = function(type, oScope, silent, signature) {
+            //debugger;
+
+            var o = {
+                context: oScope,
+                silent: silent || false,
+                signature: signature || CE.LIST
+            };
+
+            CE.superclass.constructor.call(this, type, o);
+
+            this.signature = signature || CE.LIST;
+        };
+
+        Y.extend(CE, Y.CustomEvent, {
+
+        });
+
+        /**
+         * Subscriber listener sigature constant.  The LIST type returns three
+         * parameters: the event type, the array of args passed to fire, and
+         * the optional custom object
+         * @property YAHOO.util.CustomEvent.LIST
+         * @static
+         * @type int
+         */
+        CE.LIST = 0;
+
+        /**
+         * Subscriber listener sigature constant.  The FLAT type returns two
+         * parameters: the first argument passed to fire and the optional 
+         * custom object
+         * @property YAHOO.util.CustomEvent.FLAT
+         * @static
+         * @type int
+         */
+        CE.FLAT = 1;
+
+        Y.util.CustomEvent = CE;
+
     }
+
+
+    Y.register("event", Y, {version: "@VERSION@", build: "@BUILD@"});
 
 
 (function() {
@@ -819,3 +861,4 @@ YUI.add('compat', function(Y) {
 
 
 }, '@VERSION@' ,{requires:['yui', 'dom']});
+YUI._setup();YUI.use('node', 'compat');
