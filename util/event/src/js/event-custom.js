@@ -45,7 +45,9 @@ YUI.add("event-custom", function(Y) {
 
             'type'
 
-        ];
+        ],
+
+        YUI3_SIGNATURE = 9;
 
     /**
      * Return value from all subscribe operations
@@ -87,11 +89,7 @@ YUI.add("event-custom", function(Y) {
      *
      * @param {String}  type The type of event, which is passed to the callback
      *                  when the event fires
-     * @param {Object}  context The context the event will fire from.  "this" will
-     *                  refer to this object in the callback.  Default value: 
-     *                  the window object.  The listener can override this.
-     * @param {boolean} silent pass true to prevent the event from writing to
-     *                  the debug system
+     * @param o configuration object
      * @class Event.Custom
      * @constructor
      */
@@ -253,6 +251,15 @@ YUI.add("event-custom", function(Y) {
          * @default true
          */
         this.bubbles = true;
+
+        /**
+         * Supports multiple options for listener signatures in order to
+         * port YUI 2 apps.
+         * @property signature
+         * @type int
+         * @default 9
+         */
+        this.signature = YUI3_SIGNATURE;
 
         this.emitFacade = false;
 
@@ -455,7 +462,7 @@ YUI.add("event-custom", function(Y) {
 
             }
              
-            ret = s.notify(this.context, args);
+            ret = s.notify(this.context, args, this);
 
             if (false === ret || this.stopped > 1) {
                 this.log(this.type + " cancelled by subscriber");
@@ -821,12 +828,22 @@ YUI.add("event-custom", function(Y) {
          * @param defaultContext The execution context if not overridden
          * by the subscriber
          * @param args {Array} Arguments array for the subscriber
+         * @param ce {Event.Custom} The custom event that sent the notification
          */
-        notify: function(defaultContext, args) {
+        notify: function(defaultContext, args, ce) {
             var c = this.obj || defaultContext, ret = true;
 
             try {
-                ret = this.wrappedFn.apply(c, args || []);
+                switch (ce.signature) {
+                    case 0:
+                        ret = this.fn.call(c, ce.type, args, this.obj);
+                        break;
+                    case 1:
+                        ret = this.fn.call(c, args[0] || null, this.obj);
+                        break;
+                    default:
+                        ret = this.wrappedFn.apply(c, args || []);
+                }
             } catch(e) {
                 Y.fail(this + ' failed: ' + e.message, e);
             }
