@@ -854,14 +854,22 @@ YUI.add("array", function(Y) {
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
-        switch (t) {
-            case 1:
-                // return (i) ? o.slice(i) : o;
-            case 2:
-                return Native.slice.call(o, i || 0);
-            default:
-                return [o];
+
+        // switch (t) {
+        //     case 1:
+        //         // return (i) ? o.slice(i) : o;
+        //     case 2:
+        //         return Native.slice.call(o, i || 0);
+        //     default:
+        //         return [o];
+        // }
+
+        if (t) {
+            return Native.slice.call(o, i || 0);
+        } else {
+            return [o];
         }
+
     };
 
     var A = Y.Array;
@@ -903,6 +911,9 @@ YUI.add("array", function(Y) {
     /**
      * Executes the supplied function on each item in the array.
      * @method Array.each
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
      * @static
      * @return {YUI} the YUI instance
      */
@@ -917,6 +928,33 @@ YUI.add("array", function(Y) {
                 f.call(o || Y, a[i], i, a);
             }
             return Y;
+        };
+
+    /**
+     * Executes the supplied function on each item in the array.
+     * Returning true from the processing function will stop the 
+     * processing of the remaining
+     * items.
+     * @method Array.some
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
+     * @static
+     * @return {boolean} true if the 
+     */
+     A.some = (Native.forEach) ?
+        function (a, f, o) { 
+            Native.some.call(a, f, o || Y);
+            return Y;
+        } :
+        function (a, f, o) {
+            var l = a.length;
+            for (var i = 0; i < l; i=i+1) {
+                if (f.call(o, a[i], i, a)) {
+                    return true;
+                }
+            }
+            return false;
         };
 
     /**
@@ -1062,36 +1100,39 @@ YUI.add("core", function(Y) {
 
                 for (var i in fs) { 
 
-                    // We never want to overwrite the prototype
-                    // if (PROTO === i) {
-                    if (PROTO === i || '_yuid' === i) {
-                        continue;
-                    }
+                    if (fs.hasOwnProperty(i)) {
 
-                    // Y.log('i: ' + i + ", " + fs[i]);
-                    // @TODO deal with the hasownprop issue
+                        // We never want to overwrite the prototype
+                        // if (PROTO === i) {
+                        if (PROTO === i || '_yuid' === i) {
+                            continue;
+                        }
 
-                    // check white list if it was supplied
-                    if (!w || iwl || (i in w)) {
-                        // if the receiver has this property, it is an object,
-                        // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i], true)) {
-                            // console.log('aggregate RECURSE: ' + i);
-                            // @TODO recursive or no?
-                            // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
-                        // otherwise apply the property only if overwrite
-                        // is specified or the receiver doesn't have one.
-                        // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !(i in fr))) {
-                            // console.log('hash: ' + i);
-                            fr[i] = fs[i];
-                        // if merge is specified and the receiver is an array,
-                        // append the array item
-                        } else if (arr) {
-                            // console.log('array: ' + i);
-                            // @TODO probably will need to remove dups
-                            fr.push(fs[i]);
+                        // Y.log('i: ' + i + ", " + fs[i]);
+                        // @TODO deal with the hasownprop issue
+
+                        // check white list if it was supplied
+                        if (!w || iwl || (i in w)) {
+                            // if the receiver has this property, it is an object,
+                            // and merge is specified, merge the two objects.
+                            if (m && L.isObject(fr[i], true)) {
+                                // console.log('aggregate RECURSE: ' + i);
+                                // @TODO recursive or no?
+                                // Y.mix(fr[i], fs[i]); // not recursive
+                                f(fr[i], fs[i], proto, true); // recursive
+                            // otherwise apply the property only if overwrite
+                            // is specified or the receiver doesn't have one.
+                            // @TODO make sure the 'arr' check isn't desructive
+                            } else if (!arr && (ov || !(i in fr))) {
+                                // console.log('hash: ' + i);
+                                fr[i] = fs[i];
+                            // if merge is specified and the receiver is an array,
+                            // append the array item
+                            } else if (arr) {
+                                // console.log('array: ' + i);
+                                // @TODO probably will need to remove dups
+                                fr.push(fs[i]);
+                            }
                         }
                     }
                 }

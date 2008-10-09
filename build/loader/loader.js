@@ -632,18 +632,28 @@ Y.Env.meta = META;
             // apply config values
             if (o) {
                 for (var i in o) {
-                    var val = o[i];
                     if (o.hasOwnProperty(i)) {
+                        var val = o[i];
                         if (i == 'require') {
                             this.require(val);
                         // support the old callback syntax
                         // } else if (i.indexOf('on') === 0) {
                             // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else if (i == 'modules') {
+
+                            // Y.each(val, function(v, k) {
+                            //     this.addModule(v, k);
+                            // }, this);
+
                             // add a hash of module definitions
                             for (var j in val) {
-                                this.addModule(val[j], j);
+                                if (val.hasOwnProperty(j)) {
+                                    this.addModule(val[j], j);
+                                }
                             }
+                            
+
+
                         } else {
                             this[i] = val;
                         }
@@ -720,11 +730,13 @@ Y.Env.meta = META;
                 var sup = [], l=0;
 
                 for (var i in subs) {
-                    var s = subs[i];
-                    s.path = _path(name, i, o.type);
-                    this.addModule(s, i);
-                    sup.push(i);
-                    l++;
+                    if (subs.hasOwnProperty(i)) {
+                        var s = subs[i];
+                        s.path = _path(name, i, o.type);
+                        this.addModule(s, i);
+                        sup.push(i);
+                        l++;
+                    }
                 }
 
                 o.supersedes = sup;
@@ -997,42 +1009,45 @@ Y.Env.meta = META;
                 // go through the rollup candidates
                 for (i in rollups) { 
 
-                    // there can be only one
-                    if (!r[i] && !this.loaded[i]) {
-                        m =this.getModule(i); s = m.supersedes ||[]; roll=false;
+                    if (rollups.hasOwnProperty(i)) {
 
-                        if (!m.rollup) {
-                            continue;
-                        }
+                        // there can be only one
+                        if (!r[i] && !this.loaded[i]) {
+                            m =this.getModule(i); s = m.supersedes ||[]; roll=false;
 
-                        var c=0;
+                            if (!m.rollup) {
+                                continue;
+                            }
 
-                        // check the threshold
-                        for (j=0;j<s.length;j=j+1) {
+                            var c=0;
 
-                            // if the superseded module is loaded, we can't load the rollup
-                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                            if (this.loaded[s[j]]) {
-                                roll = false;
-                                break;
-                            // increment the counter if this module is required.  if we are
-                            // beyond the rollup threshold, we will use the rollup module
-                            } else if (r[s[j]]) {
-                                c++;
-                                roll = (c >= m.rollup);
-                                if (roll) {
+                            // check the threshold
+                            for (j=0;j<s.length;j=j+1) {
+
+                                // if the superseded module is loaded, we can't load the rollup
+                                // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                                if (this.loaded[s[j]]) {
+                                    roll = false;
                                     break;
+                                // increment the counter if this module is required.  if we are
+                                // beyond the rollup threshold, we will use the rollup module
+                                } else if (r[s[j]]) {
+                                    c++;
+                                    roll = (c >= m.rollup);
+                                    if (roll) {
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        if (roll) {
-                            // add the rollup
-                            r[i] = true;
-                            rolled = true;
+                            if (roll) {
+                                // add the rollup
+                                r[i] = true;
+                                rolled = true;
 
-                            // expand the rollup's dependencies
-                            this.getRequires(m);
+                                // expand the rollup's dependencies
+                                this.getRequires(m);
+                            }
                         }
                     }
                 }
@@ -1055,22 +1070,25 @@ Y.Env.meta = META;
             var i, j, s, m, r=this.required;
             for (i in r) {
 
-                // remove if already loaded
-                if (i in this.loaded) { 
-                    delete r[i];
+                if (r.hasOwnProperty(i)) {
 
-                // remove anything this module supersedes
-                } else {
+                    // remove if already loaded
+                    if (i in this.loaded) { 
+                        delete r[i];
 
-                     m = this.getModule(i);
-                     s = m && m.supersedes;
-                     if (s) {
-                         for (j=0; j<s.length; j=j+1) {
-                             if (s[j] in r) {
-                                 delete r[s[j]];
+                    // remove anything this module supersedes
+                    } else {
+
+                         m = this.getModule(i);
+                         s = m && m.supersedes;
+                         if (s) {
+                             for (j=0; j<s.length; j=j+1) {
+                                 if (s[j] in r) {
+                                     delete r[s[j]];
+                                 }
                              }
                          }
-                     }
+                    }
                 }
             }
         },
@@ -1094,8 +1112,12 @@ Y.Env.meta = META;
 
             this._attach();
 
-            for (var i in this.skipped) {
-                delete this.inserted[i];
+            var skipped = this.skipped;
+
+            for (var i in skipped) {
+                if (skipped.hasOwnProperty(i)) {
+                    delete this.inserted[i];
+                }
             }
 
             this.skipped = {};

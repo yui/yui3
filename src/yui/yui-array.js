@@ -41,14 +41,22 @@ YUI.add("array", function(Y) {
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
-        switch (t) {
-            case 1:
-                // return (i) ? o.slice(i) : o;
-            case 2:
-                return Native.slice.call(o, i || 0);
-            default:
-                return [o];
+
+        // switch (t) {
+        //     case 1:
+        //         // return (i) ? o.slice(i) : o;
+        //     case 2:
+        //         return Native.slice.call(o, i || 0);
+        //     default:
+        //         return [o];
+        // }
+
+        if (t) {
+            return Native.slice.call(o, i || 0);
+        } else {
+            return [o];
         }
+
     };
 
     var A = Y.Array;
@@ -90,6 +98,9 @@ YUI.add("array", function(Y) {
     /**
      * Executes the supplied function on each item in the array.
      * @method Array.each
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
      * @static
      * @return {YUI} the YUI instance
      */
@@ -104,6 +115,33 @@ YUI.add("array", function(Y) {
                 f.call(o || Y, a[i], i, a);
             }
             return Y;
+        };
+
+    /**
+     * Executes the supplied function on each item in the array.
+     * Returning true from the processing function will stop the 
+     * processing of the remaining
+     * items.
+     * @method Array.some
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
+     * @static
+     * @return {boolean} true if the 
+     */
+     A.some = (Native.forEach) ?
+        function (a, f, o) { 
+            Native.some.call(a, f, o || Y);
+            return Y;
+        } :
+        function (a, f, o) {
+            var l = a.length;
+            for (var i = 0; i < l; i=i+1) {
+                if (f.call(o, a[i], i, a)) {
+                    return true;
+                }
+            }
+            return false;
         };
 
     /**

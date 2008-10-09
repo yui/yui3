@@ -99,36 +99,39 @@ YUI.add("core", function(Y) {
 
                 for (var i in fs) { 
 
-                    // We never want to overwrite the prototype
-                    // if (PROTO === i) {
-                    if (PROTO === i || '_yuid' === i) {
-                        continue;
-                    }
+                    if (fs.hasOwnProperty(i)) {
 
-                    // Y.log('i: ' + i + ", " + fs[i]);
-                    // @TODO deal with the hasownprop issue
+                        // We never want to overwrite the prototype
+                        // if (PROTO === i) {
+                        if (PROTO === i || '_yuid' === i) {
+                            continue;
+                        }
 
-                    // check white list if it was supplied
-                    if (!w || iwl || (i in w)) {
-                        // if the receiver has this property, it is an object,
-                        // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i], true)) {
-                            // console.log('aggregate RECURSE: ' + i);
-                            // @TODO recursive or no?
-                            // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
-                        // otherwise apply the property only if overwrite
-                        // is specified or the receiver doesn't have one.
-                        // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !(i in fr))) {
-                            // console.log('hash: ' + i);
-                            fr[i] = fs[i];
-                        // if merge is specified and the receiver is an array,
-                        // append the array item
-                        } else if (arr) {
-                            // console.log('array: ' + i);
-                            // @TODO probably will need to remove dups
-                            fr.push(fs[i]);
+                        // Y.log('i: ' + i + ", " + fs[i]);
+                        // @TODO deal with the hasownprop issue
+
+                        // check white list if it was supplied
+                        if (!w || iwl || (i in w)) {
+                            // if the receiver has this property, it is an object,
+                            // and merge is specified, merge the two objects.
+                            if (m && L.isObject(fr[i], true)) {
+                                // console.log('aggregate RECURSE: ' + i);
+                                // @TODO recursive or no?
+                                // Y.mix(fr[i], fs[i]); // not recursive
+                                f(fr[i], fs[i], proto, true); // recursive
+                            // otherwise apply the property only if overwrite
+                            // is specified or the receiver doesn't have one.
+                            // @TODO make sure the 'arr' check isn't desructive
+                            } else if (!arr && (ov || !(i in fr))) {
+                                // console.log('hash: ' + i);
+                                fr[i] = fs[i];
+                            // if merge is specified and the receiver is an array,
+                            // append the array item
+                            } else if (arr) {
+                                // console.log('array: ' + i);
+                                // @TODO probably will need to remove dups
+                                fr.push(fs[i]);
+                            }
                         }
                     }
                 }

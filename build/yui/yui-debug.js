@@ -854,14 +854,22 @@ YUI.add("array", function(Y) {
      */
     Y.Array = function(o, i, al) {
         var t = (al) ? 2 : Y.Array.test(o);
-        switch (t) {
-            case 1:
-                // return (i) ? o.slice(i) : o;
-            case 2:
-                return Native.slice.call(o, i || 0);
-            default:
-                return [o];
+
+        // switch (t) {
+        //     case 1:
+        //         // return (i) ? o.slice(i) : o;
+        //     case 2:
+        //         return Native.slice.call(o, i || 0);
+        //     default:
+        //         return [o];
+        // }
+
+        if (t) {
+            return Native.slice.call(o, i || 0);
+        } else {
+            return [o];
         }
+
     };
 
     var A = Y.Array;
@@ -903,6 +911,9 @@ YUI.add("array", function(Y) {
     /**
      * Executes the supplied function on each item in the array.
      * @method Array.each
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
      * @static
      * @return {YUI} the YUI instance
      */
@@ -917,6 +928,33 @@ YUI.add("array", function(Y) {
                 f.call(o || Y, a[i], i, a);
             }
             return Y;
+        };
+
+    /**
+     * Executes the supplied function on each item in the array.
+     * Returning true from the processing function will stop the 
+     * processing of the remaining
+     * items.
+     * @method Array.some
+     * @param a {Array} the array to iterate
+     * @param f {Function} the function to execute on each item
+     * @param o Optional context object
+     * @static
+     * @return {boolean} true if the 
+     */
+     A.some = (Native.forEach) ?
+        function (a, f, o) { 
+            Native.some.call(a, f, o || Y);
+            return Y;
+        } :
+        function (a, f, o) {
+            var l = a.length;
+            for (var i = 0; i < l; i=i+1) {
+                if (f.call(o, a[i], i, a)) {
+                    return true;
+                }
+            }
+            return false;
         };
 
     /**
@@ -1062,36 +1100,39 @@ YUI.add("core", function(Y) {
 
                 for (var i in fs) { 
 
-                    // We never want to overwrite the prototype
-                    // if (PROTO === i) {
-                    if (PROTO === i || '_yuid' === i) {
-                        continue;
-                    }
+                    if (fs.hasOwnProperty(i)) {
 
-                    // Y.log('i: ' + i + ", " + fs[i]);
-                    // @TODO deal with the hasownprop issue
+                        // We never want to overwrite the prototype
+                        // if (PROTO === i) {
+                        if (PROTO === i || '_yuid' === i) {
+                            continue;
+                        }
 
-                    // check white list if it was supplied
-                    if (!w || iwl || (i in w)) {
-                        // if the receiver has this property, it is an object,
-                        // and merge is specified, merge the two objects.
-                        if (m && L.isObject(fr[i], true)) {
-                            // console.log('aggregate RECURSE: ' + i);
-                            // @TODO recursive or no?
-                            // Y.mix(fr[i], fs[i]); // not recursive
-                            f(fr[i], fs[i], proto, true); // recursive
-                        // otherwise apply the property only if overwrite
-                        // is specified or the receiver doesn't have one.
-                        // @TODO make sure the 'arr' check isn't desructive
-                        } else if (!arr && (ov || !(i in fr))) {
-                            // console.log('hash: ' + i);
-                            fr[i] = fs[i];
-                        // if merge is specified and the receiver is an array,
-                        // append the array item
-                        } else if (arr) {
-                            // console.log('array: ' + i);
-                            // @TODO probably will need to remove dups
-                            fr.push(fs[i]);
+                        // Y.log('i: ' + i + ", " + fs[i]);
+                        // @TODO deal with the hasownprop issue
+
+                        // check white list if it was supplied
+                        if (!w || iwl || (i in w)) {
+                            // if the receiver has this property, it is an object,
+                            // and merge is specified, merge the two objects.
+                            if (m && L.isObject(fr[i], true)) {
+                                // console.log('aggregate RECURSE: ' + i);
+                                // @TODO recursive or no?
+                                // Y.mix(fr[i], fs[i]); // not recursive
+                                f(fr[i], fs[i], proto, true); // recursive
+                            // otherwise apply the property only if overwrite
+                            // is specified or the receiver doesn't have one.
+                            // @TODO make sure the 'arr' check isn't desructive
+                            } else if (!arr && (ov || !(i in fr))) {
+                                // console.log('hash: ' + i);
+                                fr[i] = fs[i];
+                            // if merge is specified and the receiver is an array,
+                            // append the array item
+                            } else if (arr) {
+                                // console.log('array: ' + i);
+                                // @TODO probably will need to remove dups
+                                fr.push(fs[i]);
+                            }
                         }
                     }
                 }
@@ -2722,18 +2763,28 @@ Y.Env.meta = META;
             // apply config values
             if (o) {
                 for (var i in o) {
-                    var val = o[i];
                     if (o.hasOwnProperty(i)) {
+                        var val = o[i];
                         if (i == 'require') {
                             this.require(val);
                         // support the old callback syntax
                         // } else if (i.indexOf('on') === 0) {
                             // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else if (i == 'modules') {
+
+                            // Y.each(val, function(v, k) {
+                            //     this.addModule(v, k);
+                            // }, this);
+
                             // add a hash of module definitions
                             for (var j in val) {
-                                this.addModule(val[j], j);
+                                if (val.hasOwnProperty(j)) {
+                                    this.addModule(val[j], j);
+                                }
                             }
+                            
+
+
                         } else {
                             this[i] = val;
                         }
@@ -2811,11 +2862,13 @@ Y.Env.meta = META;
                 var sup = [], l=0;
 
                 for (var i in subs) {
-                    var s = subs[i];
-                    s.path = _path(name, i, o.type);
-                    this.addModule(s, i);
-                    sup.push(i);
-                    l++;
+                    if (subs.hasOwnProperty(i)) {
+                        var s = subs[i];
+                        s.path = _path(name, i, o.type);
+                        this.addModule(s, i);
+                        sup.push(i);
+                        l++;
+                    }
                 }
 
                 o.supersedes = sup;
@@ -3105,44 +3158,47 @@ Y.Env.meta = META;
                 // go through the rollup candidates
                 for (i in rollups) { 
 
-                    // there can be only one
-                    if (!r[i] && !this.loaded[i]) {
-                        m =this.getModule(i); s = m.supersedes ||[]; roll=false;
+                    if (rollups.hasOwnProperty(i)) {
 
-                        if (!m.rollup) {
-                            continue;
-                        }
+                        // there can be only one
+                        if (!r[i] && !this.loaded[i]) {
+                            m =this.getModule(i); s = m.supersedes ||[]; roll=false;
 
-                        var c=0;
+                            if (!m.rollup) {
+                                continue;
+                            }
 
-                        // check the threshold
-                        for (j=0;j<s.length;j=j+1) {
+                            var c=0;
 
-                            // if the superseded module is loaded, we can't load the rollup
-                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                            if (this.loaded[s[j]]) {
-                                roll = false;
-                                break;
-                            // increment the counter if this module is required.  if we are
-                            // beyond the rollup threshold, we will use the rollup module
-                            } else if (r[s[j]]) {
-                                c++;
-                                roll = (c >= m.rollup);
-                                if (roll) {
-                                    // Y.log("over thresh " + c + ", " + L.dump(r));
+                            // check the threshold
+                            for (j=0;j<s.length;j=j+1) {
+
+                                // if the superseded module is loaded, we can't load the rollup
+                                // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                                if (this.loaded[s[j]]) {
+                                    roll = false;
                                     break;
+                                // increment the counter if this module is required.  if we are
+                                // beyond the rollup threshold, we will use the rollup module
+                                } else if (r[s[j]]) {
+                                    c++;
+                                    roll = (c >= m.rollup);
+                                    if (roll) {
+                                        // Y.log("over thresh " + c + ", " + L.dump(r));
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        if (roll) {
-                            // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
-                            // add the rollup
-                            r[i] = true;
-                            rolled = true;
+                            if (roll) {
+                                // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
+                                // add the rollup
+                                r[i] = true;
+                                rolled = true;
 
-                            // expand the rollup's dependencies
-                            this.getRequires(m);
+                                // expand the rollup's dependencies
+                                this.getRequires(m);
+                            }
                         }
                     }
                 }
@@ -3165,22 +3221,25 @@ Y.Env.meta = META;
             var i, j, s, m, r=this.required;
             for (i in r) {
 
-                // remove if already loaded
-                if (i in this.loaded) { 
-                    delete r[i];
+                if (r.hasOwnProperty(i)) {
 
-                // remove anything this module supersedes
-                } else {
+                    // remove if already loaded
+                    if (i in this.loaded) { 
+                        delete r[i];
 
-                     m = this.getModule(i);
-                     s = m && m.supersedes;
-                     if (s) {
-                         for (j=0; j<s.length; j=j+1) {
-                             if (s[j] in r) {
-                                 delete r[s[j]];
+                    // remove anything this module supersedes
+                    } else {
+
+                         m = this.getModule(i);
+                         s = m && m.supersedes;
+                         if (s) {
+                             for (j=0; j<s.length; j=j+1) {
+                                 if (s[j] in r) {
+                                     delete r[s[j]];
+                                 }
                              }
                          }
-                     }
+                    }
                 }
             }
         },
@@ -3206,8 +3265,12 @@ Y.Env.meta = META;
 
             this._attach();
 
-            for (var i in this.skipped) {
-                delete this.inserted[i];
+            var skipped = this.skipped;
+
+            for (var i in skipped) {
+                if (skipped.hasOwnProperty(i)) {
+                    delete this.inserted[i];
+                }
             }
 
             this.skipped = {};
