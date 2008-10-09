@@ -211,7 +211,7 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: ['node']
+            requires: ['node', 'dump', 'substitute']
         },
         
         cookie: { },

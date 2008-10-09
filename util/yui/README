@@ -14,6 +14,7 @@ The YUI Global
     - Y.fail with throw/rethrow errors by default (throwFail is now true).
     - Y.namespace reverted to scrub YAHOO out if included as the first
       level of the namespace.
+    - Added Array.some
 
 3.0.0pr1
     Inital release
