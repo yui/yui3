@@ -576,25 +576,25 @@ include "../inc/header.inc";
 				YUI().use("io", function(Y) {
 
 					// Stop the queue so transactions can be stored.
-					Y.queue.stop();
+					Y.io.queue.stop();
 
 					// Send three transactions into the queue for storage.
-					var task0 = Y.queue(uri);
-					var task1 = Y.queue(uri);
-					var task2 = Y.queue(uri);
+					var task0 = Y.io.queue(uri);
+					var task1 = Y.io.queue(uri);
+					var task2 = Y.io.queue(uri);
 
 					// This IO request is processed immediately.
 					var task3 = Y.io(uri);
 
 					// Promote task2 to the top of the queue.
-					Y.queue.promote(task2);
+					Y.io.queue.promote(task2);
 
 					// Purge task1 from the queue.
-					Y.queue.purge(task1);
+					Y.io.queue.purge(task1);
 
 					// Re-start the queue.
 					// Transactions are sent in the following order: task2, task0.
-					Y.queue.start();
+					Y.io.queue.start();
 					};
 				);
 				</textarea>
