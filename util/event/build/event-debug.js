@@ -479,11 +479,7 @@ YUI.add("event-custom", function(Y) {
      *
      * @param {String}  type The type of event, which is passed to the callback
      *                  when the event fires
-     * @param {Object}  context The context the event will fire from.  "this" will
-     *                  refer to this object in the callback.  Default value: 
-     *                  the window object.  The listener can override this.
-     * @param {boolean} silent pass true to prevent the event from writing to
-     *                  the debug system
+     * @param o configuration object
      * @class Event.Custom
      * @constructor
      */
