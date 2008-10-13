@@ -318,7 +318,7 @@ YUI.add('base', function(Y) {
                 queuable:false,
                 defaultFn:this._defInitFn
             });
-            this.fire(INIT, null, config);
+            this.fire(INIT, config);
 
             return this;
         },
