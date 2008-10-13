@@ -318,7 +318,7 @@ YUI.add('base', function(Y) {
                 queuable:false,
                 defaultFn:this._defInitFn
             });
-            this.fire(INIT, config);
+            this.fire(INIT, null, config);
 
             return this;
         },
@@ -368,10 +368,11 @@ YUI.add('base', function(Y) {
          * Default init event handler
          *
          * @method _defInitFn
+         * @param {Event.Facade} e Event object
          * @param {Object} config Object literal of configuration property name/value pairs
          * @protected
          */
-        _defInitFn : function(config) {
+        _defInitFn : function(e, config) {
             _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
 
@@ -383,9 +384,10 @@ YUI.add('base', function(Y) {
          * Default destroy event handler
          *
          * @method _defDestroyFn
+         * @param {Event.Facade} e Event object
          * @protected
          */
-        _defDestroyFn : function() {
+        _defDestroyFn : function(e) {
             this._destroyHierarchy();
             delete _instances[this._yuid];
 
