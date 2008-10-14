@@ -379,8 +379,7 @@ YUI.add('base', function(Y) {
             _instances[Y.stamp(this)] = this;
             this._initHierarchy(config);
 
-            this._conf.remove(INITIALIZED, VALUE);
-            this.set(INITIALIZED, true);
+            this._set(INITIALIZED, true);
         },
 
         /**
@@ -394,8 +393,7 @@ YUI.add('base', function(Y) {
             this._destroyHierarchy();
             delete _instances[this._yuid];
 
-            this._conf.remove(DESTROYED, VALUE);
-            this.set(DESTROYED, true);
+            this._set(DESTROYED, true);
         },
 
         /**
@@ -658,8 +656,8 @@ YUI.add('base', function(Y) {
 
     Y.mix(Base, Y.Attribute, false, null, 1);
 
+    Base.prototype.constructor = Base;
     Y.Base = Base;
-
 
 
 }, '@VERSION@' ,{requires:['attribute']});
