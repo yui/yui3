@@ -590,7 +590,24 @@ YUI.add('node', function(Y) {
         //isSupported: function(feature, version) {},
         toString: function() {
             var node = _nodes[this._yuid] || {};
-            return node.id || node[NODE_NAME] || 'undefined node';
+            var str = [];
+            if (node.nodeName) {
+                str[str.length] = node.nodeName;
+
+                if (node.id) {
+                    str[str.length] = '#' + node.id;
+                }
+
+                if (node.className) {
+                    var className = node.className.replace(' ', '.');
+                    str[str.length] = '.' + className;
+                }
+                str = str.join('');
+            } else {
+                str = 'dom node not found for node ' + this._yuid;
+            }
+
+            return str;
         },
 
         /**
@@ -685,7 +702,6 @@ YUI.add('node', function(Y) {
 
         attach: function(type, fn, arg) {
             var args = slice.call(arguments, 0);
-            //args.unshift(_nodes[this._yuid]);
             args.splice(2, 0, _nodes[this._yuid]);
             return Y.Event.attach.apply(Y.Event, args);
         },
@@ -715,9 +731,8 @@ YUI.add('node', function(Y) {
          */
         detach: function(type, fn) {
             var args = slice.call(arguments, 0);
-            //args.unshift(_nodes[this._yuid]);
             args.splice(2, 0, _nodes[this._yuid]);
-            return Y.Event.removeListener.apply(Y.Event, args);
+            return Y.Event.detach.apply(Y.Event, args);
         },
 
         removeEventListener: function(type, fn) {
