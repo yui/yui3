@@ -2326,6 +2326,8 @@ var BASE = 'base',
         compat: { 
             requires: ['node', 'dump', 'substitute']
         },
+
+        classnamemanager: { },
         
         cookie: { },
 
@@ -2399,6 +2401,10 @@ var BASE = 'base',
         loader: { 
             requires: ['get']
         },
+
+        logreader : {
+            requires : ['widget', 'substitute', 'stylesheet']
+        },
         
         oop: { 
             requires: ['yui-base']
@@ -2406,8 +2412,15 @@ var BASE = 'base',
 
         queue: { },
 
+        stylesheet: { },
+
         substitute: {
             optional: ['dump']
+        },
+
+
+        widget: {
+            requires: ['base', 'node', 'classnamemanager']
         },
 
         // Since YUI is required for everything else, it should not be specified as
