@@ -33,6 +33,10 @@ top: 200px;
 
 <script>
 
+if (typeof loadFirebugConsole == 'function') {
+    loadFirebugConsole();
+}
+
 
 YUI({
     base: '../../build3x/',
@@ -43,9 +47,14 @@ YUI({
     // combine: true,
     filter: 'debug',
     // logInclude: { event: true },
-    timeout: 2000
+    timeout: 20000
 // }).use('compat', 'dd-dragdrop-all', function(Y) {
-}).use('dd', function(Y) {
+}).use('dd', function(Y, result) {
+
+    if (!result.success) {   
+        alert('Load failure: ' + result.msg);
+        return;
+    }
 
     Y.log('custom event success');
 

@@ -169,6 +169,9 @@ var BASE = 'base',
                 },
                 'node-screen': {
                     requires: ['dom-screen', 'node-base']
+                },
+                'node-event-simulate': {
+                    requires: ['node-base']
                 }
             }
         },
@@ -208,8 +211,10 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: ['node']
+            requires: ['node', 'dump', 'substitute']
         },
+
+        classnamemanager: { },
         
         cookie: { },
 
@@ -223,7 +228,7 @@ var BASE = 'base',
         //     optional: [CSSRESET]
         // },
 
-        'dd':{
+        dd:{
             submodules: {
                 'dd-ddm-base': {
                     requires: ['node', BASE]
@@ -261,6 +266,10 @@ var BASE = 'base',
         event: { 
             requires: ['oop']
         },
+
+        get: { 
+            requires: ['yui-base']
+        },
         
         io: { 
             requires: ['node']
@@ -275,6 +284,14 @@ var BASE = 'base',
                 }
             }
         },
+
+        loader: { 
+            requires: ['get']
+        },
+
+        logreader : {
+            requires : ['widget', 'substitute', 'stylesheet']
+        },
         
         oop: { 
             requires: ['yui-base']
@@ -282,8 +299,15 @@ var BASE = 'base',
 
         queue: { },
 
+        stylesheet: { },
+
         substitute: {
             optional: ['dump']
+        },
+
+
+        widget: {
+            requires: ['base', 'node', 'classnamemanager']
         },
 
         // Since YUI is required for everything else, it should not be specified as
@@ -621,18 +645,28 @@ Y.Env.meta = META;
             // apply config values
             if (o) {
                 for (var i in o) {
-                    var val = o[i];
                     if (o.hasOwnProperty(i)) {
+                        var val = o[i];
                         if (i == 'require') {
                             this.require(val);
                         // support the old callback syntax
                         // } else if (i.indexOf('on') === 0) {
                             // this.subscribe(i.substr(2).toLowerCase(), o[i], o.context || this);
                         } else if (i == 'modules') {
+
+                            // Y.each(val, function(v, k) {
+                            //     this.addModule(v, k);
+                            // }, this);
+
                             // add a hash of module definitions
                             for (var j in val) {
-                                this.addModule(val[j], j);
+                                if (val.hasOwnProperty(j)) {
+                                    this.addModule(val[j], j);
+                                }
                             }
+                            
+
+
                         } else {
                             this[i] = val;
                         }
@@ -710,11 +744,13 @@ Y.Env.meta = META;
                 var sup = [], l=0;
 
                 for (var i in subs) {
-                    var s = subs[i];
-                    s.path = _path(name, i, o.type);
-                    this.addModule(s, i);
-                    sup.push(i);
-                    l++;
+                    if (subs.hasOwnProperty(i)) {
+                        var s = subs[i];
+                        s.path = _path(name, i, o.type);
+                        this.addModule(s, i);
+                        sup.push(i);
+                        l++;
+                    }
                 }
 
                 o.supersedes = sup;
@@ -1004,44 +1040,47 @@ Y.Env.meta = META;
                 // go through the rollup candidates
                 for (i in rollups) { 
 
-                    // there can be only one
-                    if (!r[i] && !this.loaded[i]) {
-                        m =this.getModule(i); s = m.supersedes ||[]; roll=false;
+                    if (rollups.hasOwnProperty(i)) {
 
-                        if (!m.rollup) {
-                            continue;
-                        }
+                        // there can be only one
+                        if (!r[i] && !this.loaded[i]) {
+                            m =this.getModule(i); s = m.supersedes ||[]; roll=false;
 
-                        var c=0;
+                            if (!m.rollup) {
+                                continue;
+                            }
 
-                        // check the threshold
-                        for (j=0;j<s.length;j=j+1) {
+                            var c=0;
 
-                            // if the superseded module is loaded, we can't load the rollup
-                            // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
-                            if (this.loaded[s[j]]) {
-                                roll = false;
-                                break;
-                            // increment the counter if this module is required.  if we are
-                            // beyond the rollup threshold, we will use the rollup module
-                            } else if (r[s[j]]) {
-                                c++;
-                                roll = (c >= m.rollup);
-                                if (roll) {
-                                    // Y.log("over thresh " + c + ", " + L.dump(r));
+                            // check the threshold
+                            for (j=0;j<s.length;j=j+1) {
+
+                                // if the superseded module is loaded, we can't load the rollup
+                                // if (this.loaded[s[j]] && (!_Y.dupsAllowed[s[j]])) {
+                                if (this.loaded[s[j]]) {
+                                    roll = false;
                                     break;
+                                // increment the counter if this module is required.  if we are
+                                // beyond the rollup threshold, we will use the rollup module
+                                } else if (r[s[j]]) {
+                                    c++;
+                                    roll = (c >= m.rollup);
+                                    if (roll) {
+                                        // Y.log("over thresh " + c + ", " + L.dump(r));
+                                        break;
+                                    }
                                 }
                             }
-                        }
 
-                        if (roll) {
-                            // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
-                            // add the rollup
-                            r[i] = true;
-                            rolled = true;
+                            if (roll) {
+                                // Y.log("rollup: " +  i + ", " + L.dump(this, 1));
+                                // add the rollup
+                                r[i] = true;
+                                rolled = true;
 
-                            // expand the rollup's dependencies
-                            this.getRequires(m);
+                                // expand the rollup's dependencies
+                                this.getRequires(m);
+                            }
                         }
                     }
                 }
@@ -1064,22 +1103,25 @@ Y.Env.meta = META;
             var i, j, s, m, r=this.required;
             for (i in r) {
 
-                // remove if already loaded
-                if (i in this.loaded) { 
-                    delete r[i];
+                if (r.hasOwnProperty(i)) {
 
-                // remove anything this module supersedes
-                } else {
+                    // remove if already loaded
+                    if (i in this.loaded) { 
+                        delete r[i];
 
-                     m = this.getModule(i);
-                     s = m && m.supersedes;
-                     if (s) {
-                         for (j=0; j<s.length; j=j+1) {
-                             if (s[j] in r) {
-                                 delete r[s[j]];
+                    // remove anything this module supersedes
+                    } else {
+
+                         m = this.getModule(i);
+                         s = m && m.supersedes;
+                         if (s) {
+                             for (j=0; j<s.length; j=j+1) {
+                                 if (s[j] in r) {
+                                     delete r[s[j]];
+                                 }
                              }
                          }
-                     }
+                    }
                 }
             }
         },
@@ -1105,8 +1147,12 @@ Y.Env.meta = META;
 
             this._attach();
 
-            for (var i in this.skipped) {
-                delete this.inserted[i];
+            var skipped = this.skipped;
+
+            for (var i in skipped) {
+                if (skipped.hasOwnProperty(i)) {
+                    delete this.inserted[i];
+                }
             }
 
             this.skipped = {};
@@ -1204,7 +1250,7 @@ Y.Env.meta = META;
                 }
 
                 // external css files should be sorted below yui css
-                if (mm.ext && mm.type == CSS && (!other.ext)) {
+                if (mm.ext && mm.type == CSS && !other.ext && other.type == CSS) {
                     return true;
                 }
 
@@ -1339,7 +1385,7 @@ Y.Env.meta = META;
                     m = this.getModule(s[i]);
 // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                     // Do not try to combine non-yui JS
-                    if (m.type == JS && !m.ext) {
+                    if (m && m.type == JS && !m.ext) {
                         url += this.root + m.path;
                         if (i < len-1) {
                             url += '&';
