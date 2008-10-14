@@ -50,20 +50,30 @@ Y.mix(Y.log.Reader, {
 
     ATTRS : {
 
-        title : {value: "Log Console"},
+        title : {
+            value : "Log Console"
+        },
 
         // accept messages
-        enabled : {value: true},
+        enabled : {
+            value : true
+        },
 
         // display messages received
-        active : {value: true},
+        active : {
+            value : true
+        },
 
-        defaultCategory : {value:'info'},
+        defaultCategory : {
+            value : 'info'
+        },
 
-        defaultSource   : {value:'global'},
+        defaultSource   : {
+            value : 'global'
+        },
 
         entryTypes       : { // display these entry types
-            value:{
+            value : {
                 category : {
                     info : true,
                     warn : true,
@@ -77,28 +87,38 @@ Y.mix(Y.log.Reader, {
         },
 
         templates : {
-            value: {
+            value : {
                 verbose : null,
                 basic   : null
             }
         },
 
-        defaultTemplate : {value:'verbose'},
+        defaultTemplate : {
+            value : 'verbose'
+        },
 
-        entryWriters : { value: {
-            entry : '_entryFromTemplate'
-        }},
+        entryWriters : {
+            value: {
+                entry : '_entryFromTemplate'
+            }
+        },
 
-        defaultWriter : {value:'entry'},
+        defaultWriter : {
+            value : 'entry'
+        },
 
         printTimeout : {
-            value:100,
+            value : 100,
             validator : Y.Lang.isNumber
         },
 
-        consoleLimit : {value:500},
+        consoleLimit : {
+            value : 500
+        },
 
-        footerEnabled : {value: true},
+        footerEnabled : {
+            value : true
+        },
 
         // convenience attrib for managing defaultTemplate
         verbose : {
@@ -111,29 +131,37 @@ Y.mix(Y.log.Reader, {
             }
         },
 
-        newestOnTop : {value: true},
+        newestOnTop : {
+            value : true
+        },
 
-        collapsed : {value:false},
+        collapsed : {
+            value : false
+        },
 
-        startTime : {value:new Date()},
+        startTime : {
+            value : new Date()
+        },
 
-        lastTime : {value:new Date()}
+        lastTime : {
+            value : new Date()
+        }
 
     }
 
 });
 
 Y.extend(Y.log.Reader,Y.Widget,{
-    _head : null,
-    _title : null,
-    _console : null,
-    _foot : null,
+    _head      : null,
+    _title     : null,
+    _console   : null,
+    _foot      : null,
     _catChecks : null,
     _srcChecks : null,
 
-    _timeout : null,
+    _timeout   : null,
 
-    buffer : null,
+    buffer     : null,
 
     initializer : function (cfg) {
         this.buffer    = [];
@@ -202,10 +230,10 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     renderUI : function () {
-        if (!this.rendered) {
-            this._contentBox.innerHTML = '';
+        if (!this.get('rendered')) {
+            this.get('contentBox').set('innerHTML','');
 
-            this._contentBox.addClass(Y.log.Reader.CLASSES.CONTAINER);
+            this.get('contentBox').addClass(Y.log.Reader.CLASSES.CONTAINER);
 
             this._renderHead();
             this._renderConsole();
@@ -230,11 +258,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         this._title = this._head.query('h4');
 
-        this._contentBox.insertBefore(this._head,this._contentBox.get('firstChild')||null);
+        this.get('contentBox').insertBefore(this._head,this.get('contentBox').get('firstChild')||null);
     },
 
     _renderConsole : function () {
-        this._console = this._contentBox.insertBefore(
+        this._console = this.get('contentBox').insertBefore(
             Y.Node.create('<div class="'+Y.log.Reader.CLASSES.CONSOLE+'"></div>'),
             this._foot || null);
     },
@@ -280,7 +308,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
             }
         }
 
-        this._contentBox.appendChild(this._foot);
+        this.get('contentBox').appendChild(this._foot);
     },
 
     syncUI : function () {
@@ -317,7 +345,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // UI control click events
         // (collapse, expand, active, clear, categories, sources)
         // move to queryAll(..).on('click',..)
-        var controls = this._contentBox.queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
+        var controls = this.get('contentBox').queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
             i = controls.size() - 1;
             
         for (;i>=0;--i) {
@@ -383,7 +411,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _setCollapsed : function (b) {
         b = typeof b == 'object' ? b.newVal : b;
 
-        this._contentBox[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
+        this.get('contentBox')[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
     },
 
     _setConsoleLimit : function (v) {
@@ -476,7 +504,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         var debug = Y.debug;
         Y.debug = false;
 
-        if (this.get('active') && this.rendered) {
+        if (this.get('active') && this.get('rendered')) {
             clearTimeout(this._timeout);
             this._timeout = null;
             var messages = this.buffer,
@@ -601,11 +629,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     _filterEntries : function (name,on) {
         // add or remove the filter class from the root node
-        this._contentBox[on?'addClass':'removeClass'](this._filterClass(name,true));
+        this.get('contentBox')[on?'addClass':'removeClass'](this._filterClass(name,true));
     },
 
     _setFooterEnabled : function (show) {
-        this._contentBox[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
+        this.get('contentBox')[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
     },
 
     createCategory : function (name, show) {
@@ -624,7 +652,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
                         name+
                 '</label>');
 
-        Y.CSS.set('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
+        Y.StyleSheet('logreader').setCSS('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
             {display: 'none'});
 
         return label;

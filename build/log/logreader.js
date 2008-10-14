@@ -52,20 +52,30 @@ Y.mix(Y.log.Reader, {
 
     ATTRS : {
 
-        title : {value: "Log Console"},
+        title : {
+            value : "Log Console"
+        },
 
         // accept messages
-        enabled : {value: true},
+        enabled : {
+            value : true
+        },
 
         // display messages received
-        active : {value: true},
+        active : {
+            value : true
+        },
 
-        defaultCategory : {value:'info'},
+        defaultCategory : {
+            value : 'info'
+        },
 
-        defaultSource   : {value:'global'},
+        defaultSource   : {
+            value : 'global'
+        },
 
         entryTypes       : { // display these entry types
-            value:{
+            value : {
                 category : {
                     info : true,
                     warn : true,
@@ -79,28 +89,38 @@ Y.mix(Y.log.Reader, {
         },
 
         templates : {
-            value: {
+            value : {
                 verbose : null,
                 basic   : null
             }
         },
 
-        defaultTemplate : {value:'verbose'},
+        defaultTemplate : {
+            value : 'verbose'
+        },
 
-        entryWriters : { value: {
-            entry : '_entryFromTemplate'
-        }},
+        entryWriters : {
+            value: {
+                entry : '_entryFromTemplate'
+            }
+        },
 
-        defaultWriter : {value:'entry'},
+        defaultWriter : {
+            value : 'entry'
+        },
 
         printTimeout : {
-            value:100,
+            value : 100,
             validator : Y.Lang.isNumber
         },
 
-        consoleLimit : {value:500},
+        consoleLimit : {
+            value : 500
+        },
 
-        footerEnabled : {value: true},
+        footerEnabled : {
+            value : true
+        },
 
         // convenience attrib for managing defaultTemplate
         verbose : {
@@ -113,29 +133,37 @@ Y.mix(Y.log.Reader, {
             }
         },
 
-        newestOnTop : {value: true},
+        newestOnTop : {
+            value : true
+        },
 
-        collapsed : {value:false},
+        collapsed : {
+            value : false
+        },
 
-        startTime : {value:new Date()},
+        startTime : {
+            value : new Date()
+        },
 
-        lastTime : {value:new Date()}
+        lastTime : {
+            value : new Date()
+        }
 
     }
 
 });
 
 Y.extend(Y.log.Reader,Y.Widget,{
-    _head : null,
-    _title : null,
-    _console : null,
-    _foot : null,
+    _head      : null,
+    _title     : null,
+    _console   : null,
+    _foot      : null,
     _catChecks : null,
     _srcChecks : null,
 
-    _timeout : null,
+    _timeout   : null,
 
-    buffer : null,
+    buffer     : null,
 
     initializer : function (cfg) {
         this.buffer    = [];
@@ -707,4 +735,4 @@ Y.extend(Y.log.Reader,Y.Widget,{
 });
 
 
-}, '@VERSION@' ,{requires:['css']});
+}, '@VERSION@' ,{requires:['substitute','stylesheet','widget']});

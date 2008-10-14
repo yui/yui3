@@ -3,7 +3,7 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="/dev/head/yahoo/presentation/3.x/build/log/assets/skins/sam/logreader.css">
+    <link type="text/css" rel="stylesheet" href="../../build/log/assets/skins/sam/logreader.css">
     <style type="text/css">
 .yui-skin-sam .yui-log {
     position: relative;
@@ -24,19 +24,23 @@
     <input type="button" id="error" value="Log error msg">
 </div>
 
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/yui/yui.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/util/yui/src/js/State.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/dom/dom.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/io/io.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/node/node.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/attribute/attribute.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/base/base.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/widget/widget.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/css/css.js"></script>
-<script type="text/javascript" src="/dev/head/yahoo/presentation/3.x/build/log/logreader.js"></script>
+<script type="text/javascript" src="../../build/yui/yui.js"></script>
+<script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script>
 <script type="text/javascript">
-(function () {
-var Y = YUI().use('dom','nodeextras','base','plugin','classnamemanager','widget','css','substitute','logreader');
+// filter: debug kicks off infinite loop
+var Y = new YUI({ base: '../../build/'}/*,filter: 'debug' }*/);
+// Add missing meta to Loader
+Y.mix(Y.Env.meta.modules, {
+    stylesheet : {},
+    widget : {
+        requires : ['base','node','classnamemanager']
+    },
+    logreader : {
+        requires : ['widget','substitute','stylesheet']
+    }
+});
+
+Y.use('logreader',function (Y) {
 
 var x = {
     foo : 0,
@@ -53,8 +57,6 @@ Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#err
 Y.config.debug = true;
 Y.config.useConsole = false;
 
-// workaround for bug 2066397
-Y.Widget.TEMPLATE = "<div><div></div></div>";
 var r = new Y.log.Reader({verbose:true,newestOnTop:false});//,consoleLimit:10});
 
 r.render(Y.Node.get('#c'));
@@ -65,7 +67,7 @@ Y.log('testing new category','foo');
 Y.log('testing known source','info','global');
 Y.log('testing new source','info','bar');
 
-})();
+});
 </script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
 <script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
