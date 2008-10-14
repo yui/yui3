@@ -683,8 +683,9 @@
 
         attach: function(type, fn, arg) {
             var args = slice.call(arguments, 0);
-            args.unshift(_nodes[this._yuid]);
-            return Y.Event.addListener.apply(Y.Event, args);
+            //args.unshift(_nodes[this._yuid]);
+            args.splice(2, 0, _nodes[this._yuid]);
+            return Y.Event.attach.apply(Y.Event, args);
         },
 
        /**
@@ -712,7 +713,8 @@
          */
         detach: function(type, fn) {
             var args = slice.call(arguments, 0);
-            args.unshift(_nodes[this._yuid]);
+            //args.unshift(_nodes[this._yuid]);
+            args.splice(2, 0, _nodes[this._yuid]);
             return Y.Event.removeListener.apply(Y.Event, args);
         },
 
@@ -740,6 +742,13 @@
             return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
         },
 
+        /**
+         * Applies the supplied plugin to the node.
+         * @method plug
+         * @param {Function} The plugin Class to apply
+         * @param {Object} config An optional config to pass to the constructor
+         * @chainable
+         */
         plug: function(PluginClass, config) {
             config = config || {};
             config.owner = this;
@@ -893,6 +902,7 @@
          * @param {String} prop Property to set 
          * @param {any} val Value to apply to the given property
          * @see Node
+         * @chainable
          */
         set: function(name, val) {
             var nodes = _nodelists[this._yuid];
