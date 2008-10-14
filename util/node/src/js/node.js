@@ -683,7 +683,6 @@
 
         attach: function(type, fn, arg) {
             var args = slice.call(arguments, 0);
-            //args.unshift(_nodes[this._yuid]);
             args.splice(2, 0, _nodes[this._yuid]);
             return Y.Event.attach.apply(Y.Event, args);
         },
@@ -713,9 +712,8 @@
          */
         detach: function(type, fn) {
             var args = slice.call(arguments, 0);
-            //args.unshift(_nodes[this._yuid]);
             args.splice(2, 0, _nodes[this._yuid]);
-            return Y.Event.removeListener.apply(Y.Event, args);
+            return Y.Event.detach.apply(Y.Event, args);
         },
 
         removeEventListener: function(type, fn) {
