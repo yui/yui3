@@ -5,7 +5,7 @@
     if (YUI !== window.YAHOO) {
 
         // Bind the core modules to the YUI global
-        YUI._setup();
+        // YUI._setup();
         
         // get any existing YAHOO obj props
         var o = (window.YAHOO) ? YUI.merge(window.YAHOO) : null;
@@ -487,13 +487,13 @@
 
             var o = {
                 context: oScope,
-                silent: silent || false,
-                signature: signature || CE.LIST
+                silent: silent || false
+                // signature: signature || CE.LIST
             };
 
             CE.superclass.constructor.call(this, type, o);
 
-            // this.signature = signature || CE.LIST;
+            this.signature = signature || CE.LIST;
         };
 
         Y.extend(CE, Y.CustomEvent, {
@@ -521,6 +521,47 @@
         CE.FLAT = 1;
 
         Y.util.CustomEvent = CE;
+
+        var EP = function() {
+            //console.log('Compat CustomEvent constructor executed: ' + this._yuid);
+            if (!this._yuievt) {
+                var sub = this.subscribe;
+                Y.Event.Target.apply(this, arguments);
+                this.subscribe = sub;
+                this.__yuiepinit = function() {};
+            }
+        };
+
+        Y.extend(EP, Y.Event.Target, {
+
+            createEvent: function(type, o) {
+                o = o || {};
+                o.signature = o.signature || CE.FLAT;
+                return this.publish(type, o);
+            },
+
+            subscribe: function(type, fn, obj, override) {
+                var ce = this._yuievt.events[type] || this.createEvent(type),
+                    a = Y.Array(arguments);
+
+                if (override && true !== override) {
+                    // a[2] = override;
+                    // a[1] = obj;
+                }
+
+                Y.Event.Target.prototype.subscribe.apply(this, a);
+            },
+
+            fireEvent: function(type) {
+                return this.fire.apply(this, arguments);
+            },
+
+            hasEvent: function(type) {
+                return this.getEvent(type);
+            }
+        });
+
+        Y.util.EventProvider = EP;
 
     }
 

@@ -606,9 +606,10 @@ YUI.add("log", function(instance) {
      *                        categories are "info", "warn", "error", time".
      *                        Custom categories can be used as well. (opt)
      * @param  {String}  src  The source of the the message (opt)
+     * @param  {boolean} silent If true, the log event won't fire
      * @return {YUI}      YUI instance
      */
-    instance.log = function(msg, cat, src) {
+    instance.log = function(msg, cat, src, silent) {
 
         var Y = instance, c = Y.config, es = Y.Env._eventstack,
             // bail = (es && es.logging);
@@ -642,7 +643,7 @@ YUI.add("log", function(instance) {
                         console[f](m);
                 }
 
-                if (Y.fire && !bail) {
+                if (Y.fire && !bail && !silent) {
                     Y.fire('yui:log', msg, cat, src);
                 }
             }

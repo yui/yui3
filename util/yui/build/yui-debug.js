@@ -666,7 +666,15 @@ YUI.add("lang", function(Y) {
      */
     Y.Lang = Y.Lang || {};
 
-    var L = Y.Lang, SPLICE="splice", LENGTH="length";
+    var L = Y.Lang, 
+
+    ARRAY_TOSTRING = '[object Array]',
+    FUNCTION_TOSTRING = '[object Function]',
+    STRING = 'string',
+    OBJECT = 'object',
+    BOOLEAN = 'boolean',
+    UNDEFINED = 'undefined',
+    OP = Object.prototype;
 
     /**
      * Determines whether or not the provided object is an array.
@@ -681,12 +689,8 @@ YUI.add("lang", function(Y) {
      * @param o The object to test
      * @return {boolean} true if o is an array
      */
-     L.isArray = function(o) { 
-        if (o) {
-           //return L.isNumber(o.length) && L.isFunction(o.splice);
-           return (o[SPLICE] && L.isNumber(o[LENGTH]));
-        }
-        return false;
+    L.isArray = function(o) { 
+        return OP.toString.apply(o) === ARRAY_TOSTRING;
     };
 
     /**
@@ -697,18 +701,29 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is a boolean
      */
     L.isBoolean = function(o) {
-        return typeof o === 'boolean';
+        return typeof o === BOOLEAN;
     };
     
     /**
      * Determines whether or not the provided object is a function
+     * Note: Internet Explorer thinks certain functions are objects:
+     *
+     * var obj = document.createElement("object");
+     * Y.Lang.isFunction(obj.getAttribute) // reports false in IE
+     *
+     * var input = document.createElement("input"); // append to body
+     * Y.Lang.isFunction(input.focus) // reports false in IE
+     *
+     * You will have to implement additional tests if these functions
+     * matter to you.
+     *
      * @method isFunction
      * @static
      * @param o The object to test
      * @return {boolean} true if o is a function
      */
     L.isFunction = function(o) {
-        return typeof o === 'function';
+        return OP.toString.apply(o) === FUNCTION_TOSTRING;
     };
         
     /**
@@ -754,7 +769,7 @@ YUI.add("lang", function(Y) {
      * @return {boolean} true if o is an object
      */  
     L.isObject = function(o, failfn) {
-return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
+return (o && (typeof o === OBJECT || (!failfn && L.isFunction(o)))) || false;
     };
         
     /**
@@ -765,7 +780,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * @return {boolean} true if o is a string
      */
     L.isString = function(o) {
-        return typeof o === 'string';
+        return typeof o === STRING;
     };
         
     /**
@@ -776,7 +791,7 @@ return (o && (typeof o === 'object' || (!failfn && L.isFunction(o)))) || false;
      * @return {boolean} true if o is undefined
      */
     L.isUndefined = function(o) {
-        return typeof o === 'undefined';
+        return typeof o === UNDEFINED;
     };
     
     /**
@@ -2342,7 +2357,7 @@ var BASE = 'base',
         },
         
         compat: { 
-            requires: ['node']
+            requires: ['node', 'dump', 'substitute']
         },
         
         cookie: { },
