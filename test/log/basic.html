@@ -25,10 +25,19 @@
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
-<script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script>
+<!--script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
+<script type="text/javascript" src="../../build/event/event-debug.js"></script>
+<script type="text/javascript" src="../../build/attribute/attribute-debug.js"></script>
+<script type="text/javascript" src="../../build/base/base-debug.js"></script>
+<script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
+<script type="text/javascript" src="../../build/node/node-debug.js"></script>
+<script type="text/javascript" src="../../build/widget/widget-debug.js"></script>
+<script type="text/javascript" src="../../build/substitute/substitute-debug.js"></script>
+<script type="text/javascript" src="../../build/stylesheet/stylesheet-debug.js"></script>
+<script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script-->
 <script type="text/javascript">
 // filter: debug kicks off infinite loop
-var Y = new YUI({ base: '../../build/'}/*,filter: 'debug' }*/);
+var Y = new YUI({ base: '../../build/', debug: true, useConsole:false, filter: 'debug' });
 // Add missing meta to Loader
 Y.mix(Y.Env.meta.modules, {
     stylesheet : {},
@@ -57,7 +66,7 @@ Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#err
 Y.config.debug = true;
 Y.config.useConsole = false;
 
-var r = new Y.log.Reader({verbose:true,newestOnTop:false});//,consoleLimit:10});
+var r = new Y.log.Reader({verbose:false,newestOnTop:false});//,consoleLimit:10});
 
 r.render(Y.Node.get('#c'));
 
