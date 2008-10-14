@@ -83,15 +83,15 @@ YUI.add('attribute', function(Y) {
          */
         // get: function(name, key, val) {
         get: function(name, key) {
-            var d = this.data;
+            var d = this.data,
+                o;
 
             if (key) {
                 return (d[key] && name in d[key]) ?  d[key][name] : undefined;
             } else {
-                var o = {};
-
                 Y.each(d, function(v, k) {
                     if (name in d[k]) {
+                        o = o || {};
                         o[k] = v[name];
                     }
                 }, this);
@@ -128,7 +128,6 @@ YUI.add('attribute', function(Y) {
         }
         */
     };
-
     /**
      * Managed Attribute Provider
      * @module attribute
@@ -284,10 +283,28 @@ YUI.add('attribute', function(Y) {
                 delete config.value;
             }
 
+            config.initValue = value;
             this._conf.add(name, config);
 
             if (hasValue) {
                 this.set(name, value);
+            }
+        },
+
+        /**
+         * Resets the given attribute or all attributes to the initial value.
+         *
+         * @method reset
+         * @param {String} name optional An attribute to reset.  If omitted, all attributes are reset
+         */
+        reset: function(name) {
+            if (name) {
+                this.set(name, this._conf.data['initValue'][name]);
+            } else {
+                var initVals = this._conf.data['initValue'];
+                Y.each(initVals, function(v, n) {
+                    this._set(n, v);
+                }, this);
             }
         },
 
@@ -341,6 +358,18 @@ YUI.add('attribute', function(Y) {
         },
 
         /**
+         * Allows setting of readOnly/writeOnce attributes.
+         *
+         * @method _set
+         * @protected
+         * @chainable
+         * @return {Object} Reference to the host object
+         */
+        _set: function(name, val, opts) {
+            return this.set(name, val, opts, true);
+        },
+
+        /**
          * Sets the value of an attribute.
          *
          * @method set
@@ -360,8 +389,7 @@ YUI.add('attribute', function(Y) {
          * 
          * @return {Object} Reference to the host object
          */
-        set: function(name, val, opts) {
-
+        set: function(name, val, opts, privateSet) {
             var conf = this._conf,
                 data = conf.data,
                 strPath,
@@ -379,7 +407,7 @@ YUI.add('attribute', function(Y) {
                 return this;
             }
 
-            if (!initialSet) {
+            if (!initialSet && !privateSet) {
                 if (conf.get(name, WRITE_ONCE)) {
                     return this;
                 }
@@ -389,6 +417,7 @@ YUI.add('attribute', function(Y) {
             }
 
             if (!conf.get(name)) {
+                return this;
             }
 
             currVal = this.get(name);
@@ -583,6 +612,7 @@ YUI.add('attribute', function(Y) {
                         if (value !== undefined) {
                             attCfg.value = value;
                         }
+
                         this.addAtt(att, attCfg);
                     }
                 }
@@ -647,7 +677,7 @@ YUI.add('attribute', function(Y) {
         _initAttVal : function(att, cfg, initValues) {
 
             var hasVal = (VALUE in cfg),
-                val = cfg.value,
+                val = (cfg.valueFn) ? cfg.valueFn.call(this) : cfg.value,
                 simple,
                 complex,
                 i,
@@ -726,7 +756,7 @@ YUI.add('attribute', function(Y) {
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
-            this.publish(type, {queuable:false, defaultFn:this._defAttSet});
+            this.publish(type, {queuable:false, defaultFn:this._defAttSet, silent:true});
 
             var eData = {
                 type: type,
@@ -747,7 +777,6 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, Y.Event.Target, false, null, 1);
 
     Y.Attribute = Attribute;
-
 
 
 }, '@VERSION@' ,{requires:['event']});
