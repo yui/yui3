@@ -54,21 +54,18 @@ _unsetProperty = style.borderLeft ?
         }
     };
     
-factoryNode = d.createElement('p');
-factoryNode.innerHTML = '<style></style>';
-_createSheet = factoryNode.firstChild ?
+factoryNode = d.createElement('style');
+factoryNode.type = 'text/css';
+_createSheet = factoryNode.styleSheet ?
     function (cssText) {
-        factoryNode = d.createElement('p');
-        factoryNode.innerHTML = '<style type="text/css">'+cssText+'</style>';
-        return factoryNode.firstChild;
+        var s = factoryNode.cloneNode(false);
+        s.styleSheet.cssText = cssText;
+        return s;
     } :
     function (cssText) {
-        factoryNode = d.createElement('style');
-        factoryNode.type = 'text/css';
-        if (factoryNode.styleSheet) {
-            factoryNode.styleSheet.cssText = cssText;
-        }
-        return factoryNode;
+        var s = factoryNode.cloneNode(false);
+        s.appendChild(d.createTextNode(cssText));
+        return s;
     };
 
 Y.StyleSheet = function (seed, name) {
