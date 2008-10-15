@@ -127,7 +127,6 @@ YUI.add('dd-ddm-base', function(Y) {
         initializer: function() {
             Y.Node.get('document').on('mousemove', this._move, this, true);
             Y.Node.get('document').on('mouseup', this._end, this, true);
-            //Y.Event.Target.apply(this);
         },
         /**
         * @private
@@ -164,6 +163,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
+            console.info('_end: ', this.activeDrag);
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
@@ -171,6 +171,7 @@ YUI.add('dd-ddm-base', function(Y) {
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
+            console.info('_end2: ', this.activeDrag);
         },
         /**
         * @method stopDrag
@@ -191,6 +192,7 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Event} ev The Dom mousemove Event
         */
         _move: function(ev) {
+            console.log('here: ', this.activeDrag);
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
@@ -388,9 +390,8 @@ YUI.add('dd-ddm', function(Y) {
             this._pg.on('mousemove', this._move, this, true);
             
             
-            //TODO
-            Y.Event.addListener(window, 'resize', this._pg_size, this, true);
-            Y.Event.addListener(window, 'scroll', this._pg_size, this, true);
+            Y.on('resize', this._pg_size, window, this, true);
+            Y.on('scroll', this._pg_size, window, this, true);
         }   
     }, true);
 
@@ -660,23 +661,26 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         _deactivateTargets: function() {
             var other = [],
-                activeDrag = this.activeDrag;
+                activeDrag = this.activeDrag,
+                activeDrop = this.activeDrop;
             
             //TODO why is this check so hard??
-            if (activeDrag && !Y.Lang.isNull(this.activeDrop) && this.otherDrops[this.activeDrop]) {
+            if (activeDrag && activeDrop && this.otherDrops[activeDrop]) {
                 if (!activeDrag.get('dragMode')) {
                     //TODO otherDrops -- private..
                     other = this.otherDrops;
-                    delete other[this.activeDrop];
+                    delete other[activeDrop];
                 } else {
                     var tmp = this.getBestMatch(this.otherDrops, true);
-                    this.activeDrop = tmp[0];
+                    activeDrop = tmp[0];
                     other = tmp[1];
                 }
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
-                this.activeDrop.fire('drop:hit', { drag: activeDrag, drop: this.activeDrop, others: other });
-                activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: this.activeDrop, others: other });
-            } else if (this.activeDrag) {
+                if (activeDrop) {
+                    activeDrop.fire('drop:hit', { drag: activeDrag, drop: activeDrop, others: other });
+                    activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: activeDrop, others: other });
+                }
+            } else if (activeDrag) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over')
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
@@ -927,6 +931,7 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
+                console.log('drag::set:node');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
@@ -941,6 +946,7 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
+                console.log('drag::set:dragNode');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
@@ -980,6 +986,7 @@ YUI.add('dd-drag', function(Y) {
         lock: {
             value: false,
             set: function(lock) {
+                console.log('lock');
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
@@ -1406,7 +1413,7 @@ YUI.add('dd-drag', function(Y) {
                 Y.each(this._handles, function(i, n) {
                     if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
-                        if (tar.test(n + ', ' + n + ' *')) {
+                        if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             hTest = n;
                             r = true;
                         }
@@ -1431,9 +1438,11 @@ YUI.add('dd-drag', function(Y) {
             }
             if (r) {
                 if (hTest) {
-                    var els = ev.currentTarget.queryAll(hTest);
+                    var els = ev.currentTarget.queryAll(hTest),
+                        set = false;
                     els.each(function(n, i) {
-                        if (n.contains(tar) || n.compareTo(tar)) {
+                        if ((n.contains(tar) || n.compareTo(tar)) && !set) {
+                            set = true;
                             this.set('activeHandle', els.item(i));
                         }
                     }, this);
@@ -1540,6 +1549,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
+            console.log('drag::initializer');
             //TODO give the node instance a copy of this object
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
@@ -1801,7 +1811,6 @@ YUI.add('dd-proxy', function(Y) {
         * @type Boolean
         */
         proxy: {
-            writeOnce: true,
             value: false
         },        
         /**
@@ -1894,6 +1903,8 @@ YUI.add('dd-proxy', function(Y) {
                     if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
                         this.set(DRAG_NODE, DDM._proxy);
                     }
+                } else {
+                    this.set(DRAG_NODE, this.get(NODE));
                 }
             }
             Proxy.superclass.start.apply(this);
@@ -2098,7 +2109,7 @@ YUI.add('dd-constrain', function(Y) {
             var r = {};
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
-                    Y.Event.addListener('window', 'resize', this._cacheRegion, this);
+                    Y.on('resize', this._cacheRegion, this, true, window);
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);

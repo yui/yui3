@@ -173,7 +173,7 @@ YUI.add('dd-constrain', function(Y) {
             var r = {};
             if (this.get('constrain2node')) {
                 if (!this._regionCache) {
-                    Y.Event.addListener('window', 'resize', this._cacheRegion, this);
+                    Y.on('resize', this._cacheRegion, this, true, window);
                     this._cacheRegion();
                 }
                 r = Y.clone(this._regionCache);

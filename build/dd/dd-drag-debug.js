@@ -133,6 +133,7 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
+                console.log('drag::set:node');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
@@ -147,6 +148,7 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
+                console.log('drag::set:dragNode');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
@@ -186,6 +188,7 @@ YUI.add('dd-drag', function(Y) {
         lock: {
             value: false,
             set: function(lock) {
+                console.log('lock');
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
@@ -615,7 +618,7 @@ YUI.add('dd-drag', function(Y) {
                 Y.each(this._handles, function(i, n) {
                     if (Y.Lang.isString(n)) {
                         //Am I this or am I inside this
-                        if (tar.test(n + ', ' + n + ' *')) {
+                        if (tar.test(n + ', ' + n + ' *') && !hTest) {
                             Y.log('Valid Selector found: ' + n, 'info', 'dd-drag');
                             hTest = n;
                             r = true;
@@ -644,9 +647,11 @@ YUI.add('dd-drag', function(Y) {
             }
             if (r) {
                 if (hTest) {
-                    var els = ev.currentTarget.queryAll(hTest);
+                    var els = ev.currentTarget.queryAll(hTest),
+                        set = false;
                     els.each(function(n, i) {
-                        if (n.contains(tar) || n.compareTo(tar)) {
+                        if ((n.contains(tar) || n.compareTo(tar)) && !set) {
+                            set = true;
                             this.set('activeHandle', els.item(i));
                         }
                     }, this);
@@ -755,6 +760,7 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
+            console.log('drag::initializer');
             //TODO give the node instance a copy of this object
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
