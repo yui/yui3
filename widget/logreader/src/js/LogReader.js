@@ -7,7 +7,7 @@ Y.mix(Y.log.Reader, {
 
     NAME : 'logreader',
 
-    PLUGINS : [],
+    //PLUGINS : [],
 
     CLASSES : {
         CONTAINER   : 'yui-log',
@@ -25,6 +25,7 @@ Y.mix(Y.log.Reader, {
         CLEAR       : 'yui-log-clear',
         CAT_CHECKS  : 'yui-log-categories',
         SRC_CHECKS  : 'yui-log-sources',
+        FILTER      : 'yui-log-filter',
         CATEGORY    : 'yui-log-category',
         SOURCE      : 'yui-log-source',
         ENTRY       : 'yui-log-entry',
