@@ -101,9 +101,8 @@
             this._pg.on('mousemove', this._move, this, true);
             
             
-            //TODO
-            Y.Event.addListener(window, 'resize', this._pg_size, this, true);
-            Y.Event.addListener(window, 'scroll', this._pg_size, this, true);
+            Y.on('resize', this._pg_size, window, this, true);
+            Y.on('scroll', this._pg_size, window, this, true);
         }   
     }, true);
 

@@ -45,7 +45,6 @@
         * @type Boolean
         */
         proxy: {
-            writeOnce: true,
             value: false
         },        
         /**
@@ -138,6 +137,8 @@
                     if (this.get(DRAG_NODE).compareTo(this.get(NODE))) {
                         this.set(DRAG_NODE, DDM._proxy);
                     }
+                } else {
+                    this.set(DRAG_NODE, this.get(NODE));
                 }
             }
             Proxy.superclass.start.apply(this);
