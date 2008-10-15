@@ -163,7 +163,6 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
-            console.info('_end: ', this.activeDrag);
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
@@ -171,7 +170,6 @@ YUI.add('dd-ddm-base', function(Y) {
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
-            console.info('_end2: ', this.activeDrag);
         },
         /**
         * @method stopDrag
@@ -192,7 +190,6 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Event} ev The Dom mousemove Event
         */
         _move: function(ev) {
-            console.log('here: ', this.activeDrag);
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();

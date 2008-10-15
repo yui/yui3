@@ -163,7 +163,6 @@ YUI.add('dd-ddm-base', function(Y) {
         * @description Internal method used by Drag to signal the end of a drag operation
         */
         _end: function() {
-            console.info('_end: ', this.activeDrag);
             //@TODO - Here we can get a (click - drag - click - release) interaction instead of a (mousedown - drag - mouseup - release) interaction
             //Add as a config option??
             if (this.activeDrag) {
@@ -171,7 +170,6 @@ YUI.add('dd-ddm-base', function(Y) {
                 this.activeDrag.end.call(this.activeDrag);
                 this.activeDrag = null;
             }
-            console.info('_end2: ', this.activeDrag);
         },
         /**
         * @method stopDrag
@@ -192,7 +190,6 @@ YUI.add('dd-ddm-base', function(Y) {
         * @param {Event} ev The Dom mousemove Event
         */
         _move: function(ev) {
-            console.log('here: ', this.activeDrag);
             if (this.activeDrag) {
                 this.activeDrag._move.apply(this.activeDrag, arguments);
                 this._dropMove();
@@ -931,7 +928,6 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                console.log('drag::set:node');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
@@ -946,7 +942,6 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
-                console.log('drag::set:dragNode');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
@@ -986,7 +981,6 @@ YUI.add('dd-drag', function(Y) {
         lock: {
             value: false,
             set: function(lock) {
-                console.log('lock');
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
@@ -1549,7 +1543,6 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
-            console.log('drag::initializer');
             //TODO give the node instance a copy of this object
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;

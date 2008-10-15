@@ -133,7 +133,6 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                console.log('drag::set:node');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
@@ -148,7 +147,6 @@ YUI.add('dd-drag', function(Y) {
         */
         dragNode: {
             set: function(node) {
-                console.log('drag::set:dragNode');
                 var n = Y.Node.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid dragNode Given: ' + node);
@@ -188,7 +186,6 @@ YUI.add('dd-drag', function(Y) {
         lock: {
             value: false,
             set: function(lock) {
-                console.log('lock');
                 if (lock) {
                     this.get(NODE).addClass(DDM.CSS_PREFIX + '-locked');
                 } else {
@@ -751,7 +748,6 @@ YUI.add('dd-drag', function(Y) {
         * @description Internal init handler
         */
         initializer: function() {
-            console.log('drag::initializer');
             //TODO give the node instance a copy of this object
             //Not supported in PR1 due to Y.Node.get calling a new under the hood.
             //this.get(NODE).dd = this;
