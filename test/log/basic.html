@@ -3,7 +3,7 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
-    <link type="text/css" rel="stylesheet" href="../../build/log/assets/skins/sam/logreader.css">
+    <link type="text/css" rel="stylesheet" href="../../build/logreader/assets/skins/sam/logreader.css">
     <style type="text/css">
 .yui-skin-sam .yui-log {
     position: relative;
@@ -36,20 +36,12 @@
 <script type="text/javascript" src="../../build/stylesheet/stylesheet-debug.js"></script>
 <script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script-->
 <script type="text/javascript">
-// filter: debug kicks off infinite loop
-var Y = new YUI({ base: '../../build/', debug: true, useConsole:false, filter: 'debug' });
-// Add missing meta to Loader
-Y.mix(Y.Env.meta.modules, {
-    stylesheet : {},
-    widget : {
-        requires : ['base','node','classnamemanager']
-    },
-    logreader : {
-        requires : ['widget','substitute','stylesheet']
-    }
-});
-
-Y.use('logreader',function (Y) {
+YUI({
+    base: '../../build/',
+    debug: true,
+    useConsole:false,
+    filter: 'debug'
+}).use('logreader',function (Y) {
 
 var x = {
     foo : 0,
@@ -63,12 +55,13 @@ Y.on('click',function (e) { Y.log('INFO message '+(++x.info)); },'#info');
 Y.on('click',function (e) { Y.log('WARN message '+(++x.warn),'warn'); },'#warn');
 Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#error');
 
-Y.config.debug = true;
-Y.config.useConsole = false;
+var r = new Y.log.Reader({
+    verbose : true,
+    //consoleLimit : 10,
+    newestOnTop : false
+});
 
-var r = new Y.log.Reader({verbose:false,newestOnTop:false});//,consoleLimit:10});
-
-r.render(Y.Node.get('#c'));
+r.render('#c');
 
 Y.log('testing');
 Y.log('testing known category','info');
