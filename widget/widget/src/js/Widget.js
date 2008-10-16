@@ -21,9 +21,11 @@ var _WIDGET = "widget",
     _RENDER = "render",
     _RENDERED = "rendered",
     _DESTROYED = "destroyed",
-    _VALUE = "value";
+    _VALUE = "value",
 
-// Widget nodeid-to-instance map for now, 1-to-1. 
+    O = Y.Object;
+
+// Widget nodeid-to-instance map for now, 1-to-1.
 // Expand to nodeid-to-arrayofinstances if required.
 var _instances = {};
 
@@ -47,9 +49,8 @@ var _instances = {};
  */
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
-
+    
     this.id = Y.guid(_WIDGET);
-
     Widget.superclass.constructor.apply(this, arguments);
 }
 
@@ -106,8 +107,8 @@ Widget.ATTRS = {
     * @attribute contentBox
     * @description A DOM node that is a direct descendent of a Widget's bounding box that 
     * houses its content.
-    * @type YUI.Node
-    */            
+    * @type Node
+    */
     contentBox: {
         value:null,
         set: function(node) {
@@ -179,7 +180,6 @@ Widget.ATTRS = {
     },
 
     moveStyles: {
-        //writeOnce: true,
         value: false
     },
 
@@ -204,28 +204,34 @@ Widget.getByNodeId = function(id) {
     return _instances[id];
 };
 
-var proto = {
+Y.extend(Widget, Y.Base, {
 
     /**
      * Initializer lifecycle implementation for the Widget class.
-     * 
+     *
      * Base.init will invoke all prototype.initializer methods, for the
      * class hierarchy (starting from Base), after all attributes have 
      * been configured.
      * 
-     * @param  config {Object} Configuration obejct literal for the widget
+     * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
-
-        this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
 
         if (this.id) {
             _instances[this.id] = this;
         }
 
+        this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
+
+        var htmlConfig = this._parseHTML(this.get(_CONTENT_BOX));
+        if (htmlConfig) {
+            Y.mix(config, htmlConfig, false, null, 0, true);
+        }
+
         Y.PluginHost.call(this, config);
     },
+
 
     /**
      * Descructor lifecycle implementation for the Widget class.
@@ -260,8 +266,8 @@ var proto = {
      * @public
      * @chain
      * @final 
-     * @param  parentNode {Object | String} Object representing a YUI.Node instance or a string 
-     * representing a CSS selector used to retrieve a YUI.Node reference.
+     * @param  parentNode {Object | String} Object representing a Node instance or a string 
+     * representing a CSS selector used to retrieve a Node reference.
      */
     render: function(parentNode) {
 
@@ -283,6 +289,14 @@ var proto = {
         return this;
     },
 
+    /**
+     * Default render handler
+     *
+     * @method _defRenderFn
+     * @protected
+     * @param {Event.Facade} e The Event object
+     * @param {Node} parentNode The parent node to render to, if passed in
+     */
     _defRenderFn : function(e, parentNode) {
             this._uiInitBox(parentNode);
 
@@ -304,7 +318,7 @@ var proto = {
      * automatically for the class hierarchy (like initializer, destructor) 
      * so it should be chained manually for subclasses if required.
      * 
-     * @method renderer
+     * @method renerer
      */
     renderer: function() {},
 
@@ -414,6 +428,46 @@ var proto = {
     },
 
     /**
+     * @method _parseHTML
+     * @private 
+     * @param  node {Node} Root node to use to parse markup for configuration data
+     * @return config {Object} configuration object
+     */
+    _parseHTML : function(node) {
+        
+        var schema = this.HTML_PARSER,
+            data,
+            val;
+
+        if (schema && node && node.hasChildNodes()) {
+
+            O.each(schema, function(v, k, o) {
+                val = null;
+
+                if (L.isFunction(v)) {
+                    val = v.call(this, node);
+                } else {
+                    if (L.isArray(v)) {
+                        var found = node.queryAll(v[0]);
+                        if (found.size() > 0) {
+                            val = found;
+                        }
+                    } else {
+                        val = node.query(v);
+                    }
+                }
+
+                if (val !== null && val !== undefined) {
+                    data = data || {};
+                    data[k] = val;
+                }
+            });
+        }
+
+        return data;
+    },
+    
+    /**
     * @private
     * @method _moveStyles
     * @description Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
@@ -475,7 +529,7 @@ var proto = {
     * @private
     * @method _renderBox
     * @description Helper method to collect the boundingBox and contentBox, set styles and append to parentNode
-    * @param {YUI.Node} parentNode The parentNode to render the widget to.
+    * @param {Node} parentNode The parentNode to render the widget to.
     */
     _renderBox: function(parentNode) {
 
@@ -490,6 +544,7 @@ var proto = {
         }
 
         if (!boundingBox.contains(contentBox)) {
+
             if (this.get('moveStyles')) {
                 this._moveStyles(contentBox, boundingBox);
             }
@@ -509,7 +564,7 @@ var proto = {
     * @method _setBoundingBox
     * @description Setter for boundingBox config
     * @param Node/String
-    * @return YUI.Node
+    * @return Node
     */
     _setBoundingBox: function(node) {
         return this._setBox(node, this.BOUNDING_TEMPLATE);
@@ -518,8 +573,8 @@ var proto = {
     * @private
     * @method _setContentBox
     * @description Setter for contentBox config
-    * @param Node/String
-    * @return YUI.Node
+    * @param {Node|String} node
+    * @return Node
     */
     _setContentBox: function(node) {
         return this._setBox(node, this.CONTENT_TEMPLATE);
@@ -571,6 +626,10 @@ var proto = {
         this._bindDOMListeners();
     },
 
+    /**
+     * @method _bindDOMListeners
+     * @protected
+     */
     _bindDOMListeners : function() {
         this.get(_BOUNDING_BOX).on(_FOCUS, Y.bind(this._onFocus, this));
         this.get(_BOUNDING_BOX).on(_BLUR, Y.bind(this._onBlur, this));
@@ -785,7 +844,7 @@ var proto = {
      * Default unit to use for style values
      */
     DEF_UNIT : "px",
-    
+
     /**
      * Static property outlining the markup template for content box.
      *
@@ -822,8 +881,10 @@ var proto = {
         right: '',
         padding: '',
         margin: ''
-    }
-};
+    },
+
+    HTML_PARSER : null
+});
 
 /**
  * Static registration of default plugins for the class.
@@ -833,7 +894,6 @@ var proto = {
  */
 Widget.PLUGINS = [];
 
-Y.extend(Widget, Y.Base, proto);
 Y.augment(Widget, Y.PluginHost);
 Y.augment(Widget, Y.ClassNameManager);
 Y.aggregate(Widget, Y.ClassNameManager);

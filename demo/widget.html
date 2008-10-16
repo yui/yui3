@@ -7,7 +7,7 @@
     <script type="text/javascript" src="../build/widget/widget-debug.js"></script>
 
     <style type="text/css">
-        .yui-widget {
+        .yui-pewidget, .yui-widget {
             background:#ccc;
             height:100px;
             overflow:hidden;
@@ -15,11 +15,11 @@
             margin:5px;
         }
 
-        .yui-widget-hidden {
+        .yui-pewidget-hidden, .yui-widget-hidden {
             visibility:hidden;
         }
 
-        .yui-widget-focus {
+        .yui-pewidget-focus, .yui-widget-focus {
             background-color: yellow;
         }
     </style>
@@ -31,15 +31,43 @@
     <button id="control-hide" type="button">hide widget 1</button>
 
     <div id="alpha">Widget.Alpha</div>
-    
+
     <div id="beta-box">
-        <div id="beta-content">Widget.Beta</div>
-    </div>    
+        <div id="beta-content"><span class="label">Widget.Beta</span></div>
+    </div>
 
 	<div id="widget-3-container"></div>
 
     <script type="text/javascript">
         YUI({filter:"debug", base:"../build/"}).use("node", "widget", function(Y) {
+
+            function PEWidget(config) {
+                PEWidget.superclass.constructor.apply(this, arguments);
+            }
+
+            PEWidget.NAME = "pewidget";
+
+            PEWidget.ATTRS = {
+                label : {
+                    value: {
+                        contents: null
+                    }
+                }
+            };
+
+            Y.extend(PEWidget, Y.Widget, {
+
+                HTML_PARSER : {
+                    label : function(node) {
+                        var found = node.query("span.label");
+                        if (found) {
+                            return {
+                                contents: found.get("innerHTML")
+                            };
+                        }
+                    }
+                }
+            });
 
 			widget = new Y.Widget({ contentBox: '#alpha', width: 200 });
 			widget.render();
@@ -51,8 +79,9 @@
 			Y.on('click', Y.bind(widget.show, widget), '#control-show');
 			Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
 
-			widget2 = new Y.Widget({ boundingBox: "#beta-box", contentBox: '#beta-content' });
+			widget2 = new PEWidget({ boundingBox: "#beta-box", contentBox: '#beta-content'});
 			widget2.render();
+            Y.log("label value from markup: " + widget2.get("label").contents);
 
             var container = Y.Node.get("#widget-3-container"); 
 
