@@ -39,7 +39,7 @@
 	<div id="widget-3-container"></div>
 
     <script type="text/javascript">
-        YUI({filter:"debug", base:"../build/"}).use("node", "widget", function(Y) {
+        YUI({filter:"raw", base:"../build/"}).use("dump", "widget", function(Y) {
 
             function PEWidget(config) {
                 PEWidget.superclass.constructor.apply(this, arguments);
@@ -51,6 +51,13 @@
                 label : {
                     value: {
                         contents: null
+                    }
+                },
+                
+                strings : {
+                    value : {
+                        LABEL_A: "Foo",
+                        LABEL_B: "Bar"
                     }
                 }
             };
@@ -79,9 +86,21 @@
 			Y.on('click', Y.bind(widget.show, widget), '#control-show');
 			Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
 
-			widget2 = new PEWidget({ boundingBox: "#beta-box", contentBox: '#beta-content'});
+			widget2 = new PEWidget({ boundingBox: "#beta-box", contentBox: '#beta-content', "strings.LABEL_A" : "FooBar"});
 			widget2.render();
-            Y.log("label value from markup: " + widget2.get("label").contents);
+
+            Y.log("label value from markup: " + widget2.get("label").contents, "info");
+            Y.log("getStrings value: " + Y.dump(widget2.getStrings("en-us-1945")), "info");
+            Y.log("getString value: " + widget2.getString("LABEL_A", "fr-ca-tt"), "info");
+
+            widget2.set("locale", "en-uk");
+            widget2.set("strings", {LABEL_B:"FooISay"});
+
+            Y.log("getStrings (en-uk): " + Y.dump(widget2.getStrings()), "info");
+
+            widget2.set("locale", "en");
+
+            Y.log("getStrings (en): " + Y.dump(widget2.getStrings()), "info");
 
             var container = Y.Node.get("#widget-3-container"); 
 

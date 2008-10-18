@@ -10,7 +10,6 @@ function PluginHost(config) {
 }
 
 PluginHost.prototype = {
-
     /**
      * Register and instantiate a plugin with the Widget.
      * 
@@ -163,6 +162,9 @@ var _WIDGET = "widget",
     _CONTENT_BOX = "contentBox",
     _PARENT_NODE = "parentNode",
     _TAB_INDEX = "tabIndex",
+    _LOCALE = "locale",
+    _INIT_VALUE = "initValue",
+    _ID = "id",
 
     _RENDER = "render",
     _RENDERED = "rendered",
@@ -194,8 +196,10 @@ var _instances = {};
  * @extends YUI.Base
  */
 function Widget(config) {
-    
+
     this.id = Y.guid(_WIDGET);
+    this._strings = {};
+
     Widget.superclass.constructor.apply(this, arguments);
 }
 
@@ -328,13 +332,23 @@ Widget.ATTRS = {
         value: false
     },
 
+    locale : {
+        value: "en"
+    },
+
     /**
-    * @attribute strings
-    * @description Collection of strings used to label elements of a Widget's UI.
-    * @type Object
-    */
+     * @attribute strings
+     * @description Collection of strings used to label elements of a Widget's UI.
+     * @type Object
+     */
     strings: {
-        // Widget UI strings go here
+        set: function(val) {
+            return this._setStrings(val, this.get(_LOCALE));
+        },
+
+        get: function() {
+            return this._getStrings(this.get(_LOCALE));
+        }
     }
 };
 
@@ -357,7 +371,7 @@ Y.extend(Widget, Y.Base, {
      * Base.init will invoke all prototype.initializer methods, for the
      * class hierarchy (starting from Base), after all attributes have 
      * been configured.
-     * 
+     *
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
@@ -419,12 +433,7 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!this.get(_RENDERED)) {
-
-            this.publish(_RENDER, {
-                queuable:false,
-                defaultFn: this._defRenderFn
-            });
-
+            this.publish(_RENDER, { queuable:false, defaultFn: this._defRenderFn});
             this.fire(_RENDER, null, parentNode);
         }
 
@@ -735,8 +744,8 @@ Y.extend(Widget, Y.Base, {
         }
 
         var sid = Y.stamp(node);
-        if (!node.get('id')) {
-            node.set('id', sid);
+        if (!node.get(_ID)) {
+            node.set(_ID, sid);
         }
         return node;
     },
@@ -1025,7 +1034,124 @@ Y.extend(Widget, Y.Base, {
         margin: ''
     },
 
-    HTML_PARSER : null
+    HTML_PARSER : null,
+
+    /**
+     * Sets strings for a particular locale, merging with any existing
+     * strings for the locale
+     *
+     * @method setStrings
+     * @protected
+     * @param {Object} strings
+     * @param {Object} locale
+     */
+    _setStrings : function(strings, locale) {
+        var strs = this._strings;
+        if (!strs[locale]) {
+            strs[locale] = {};
+        }
+        Y.mix(strs[locale], strings, true, null, 0);
+        return strs[locale];
+    },
+
+    /**
+     * Returns strings for a paricular locale, without locale lookup applied.
+     * 
+     * @method _getStrings
+     * @protected
+     * @param {Object} locale
+     */
+    _getStrings : function(locale) {
+        return this._strings[locale];
+    },
+
+    /**
+     * Gets the entire string map for a particular locale, performing locale lookups.
+     * 
+     * If no values are defined for a particular key, the string value for the 
+     * default locale (in initial locale set for the class) is returned.
+     * 
+     * @method getStrings
+     * @param {String} locale
+     */
+    // TODO: Optimize/Cache. Clear cache on _setStrings call
+    getStrings : function(locale) {
+
+        locale = locale || this.get(_LOCALE);
+
+
+        var defLocale = this.getDefaultLocale(),
+            defStrs = this._getStrings(defLocale),
+            strs = (defStrs) ? Y.merge(defStrs) : {},
+            localeSegments = locale.split(_HYPHEN);
+
+        // If locale is different than the default, or needs lookup support
+        if (locale !== defLocale || localeSegments.length > 1) {
+            var lookup = "";
+            for (var i = 0, l = localeSegments.length; i < l; ++i) {
+                lookup += localeSegments[i];
+
+
+                var localeStrs = this._getStrings(lookup);
+                if (localeStrs) {
+                    Y.mix(strs, localeStrs, true, null, 0);
+                }
+                lookup += _HYPHEN;
+            }
+        }
+
+        return strs;
+    },
+
+    /**
+     * Gets the string for a particular key, for a particular locale, performing locale lookups.
+     *
+     * If no values are defined for a particular key, the string value for the 
+     * default locale (in initial locale set for the class) is returned.
+     * 
+     * @method getStrings
+     * @param {String} locale
+     */
+    getString : function(key, locale) {
+        locale = locale || this.get(_LOCALE);
+
+
+        var defLocale = this.getDefaultLocale(),
+            strs = this._getStrings(defLocale) || {},
+            str = strs[key],
+            idx = locale.lastIndexOf(_HYPHEN);
+
+        // If locale is different than the default, or needs lookup support
+        if (locale !== defLocale || idx != -1) {
+            do {
+
+                strs = this._getStrings(locale);
+                if (strs && key in strs) {
+                    str = strs[key];
+                    break;
+                }
+                idx = locale.lastIndexOf(_HYPHEN);
+                // Chop of last locale segment
+                if (idx != -1) {
+                    locale = locale.substring(0, idx);
+                }
+
+            } while (idx != -1);
+        }
+
+        return str;
+    },
+
+    /**
+     * Retruns the default locale for the widget
+     * @method getDefaultLocale
+     */
+    getDefaultLocale : function() {
+        return this._conf.get(_LOCALE, _INIT_VALUE);
+    },
+
+    _strings: null
+
 });
 
 /**
