@@ -4,7 +4,6 @@
     <title>Widget Class</title>
 
     <script type="text/javascript" src="../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../build/widget/widget-debug.js"></script>
 
     <style type="text/css">
         .yui-pewidget, .yui-widget {
@@ -94,7 +93,7 @@
             Y.log("getString value: " + widget2.getString("LABEL_A", "fr-ca-tt"), "info");
 
             widget2.set("locale", "en-uk");
-            widget2.set("strings", {LABEL_B:"FooISay"});
+            widget2.set("strings", {LABEL_B:"JollyGoodFooISay"});
 
             Y.log("getStrings (en-uk): " + Y.dump(widget2.getStrings()), "info");
 

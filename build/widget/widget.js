@@ -143,6 +143,11 @@ PluginHost.prototype = {
 
 Y.PluginHost = PluginHost;
 
+/**
+ * Base class for Widget
+ * @module widget
+ */
+
 // String constants
 var _WIDGET = "widget",
     _CONTENT = "content",
@@ -169,7 +174,6 @@ var _WIDGET = "widget",
     _RENDER = "render",
     _RENDERED = "rendered",
     _DESTROYED = "destroyed",
-    _VALUE = "value",
 
     O = Y.Object;
 
@@ -192,8 +196,8 @@ var _instances = {};
  * @param config {Object} Object literal specifying widget configuration 
  * properties (may container both attribute and non attribute configuration).
  * 
- * @class YUI.Widget
- * @extends YUI.Base
+ * @class Widget
+ * @extends Base
  */
 function Widget(config) {
 
@@ -208,7 +212,7 @@ function Widget(config) {
  * Currently used to apply class identifiers to the bounding box 
  * and to classify events fired by the widget.
  *
- * @property YUI.Widget.NAME
+ * @property Widget.NAME
  * @type {String}
  * @static
  */
@@ -218,7 +222,7 @@ Widget.NAME = _WIDGET;
  * Static property used to define the default attribute 
  * configuration for the Widget.
  * 
- * @property YUI.Widget.ATTRS
+ * @property Widget.ATTRS
  * @type {Object}
  */
 Widget.ATTRS = {
@@ -328,18 +332,35 @@ Widget.ATTRS = {
         value: _EMPTY
     },
 
+    /**
+     * @attribute moveStyles
+     * @description Flag defining whether or not style properties from the content box
+     * should be moved to the bounding box when wrapped (as defined by the WRAP_STYLES property)
+     * @default false
+     * @type {boolean}
+     */
     moveStyles: {
         value: false
     },
 
+    /**
+     * 
+     * @attribute locale
+     * @description
+     * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
+     * return/set strings for this locale.
+     * @default "en"
+     * @type {String}
+     */
     locale : {
         value: "en"
     },
 
     /**
      * @attribute strings
-     * @description Collection of strings used to label elements of a Widget's UI.
-     * @type Object
+     * @description Collection of strings used to label elements of the Widget's UI.
+     * @default null
+     * @type {Object}
      */
     strings: {
         set: function(val) {
@@ -355,7 +376,7 @@ Widget.ATTRS = {
 /**
  * Obtain Widget instances by bounding box id.
  *
- * @method YUI.Widget.getByNodeId
+ * @method Widget.getByNodeId
  * @param id {String} Id used to identify the widget uniquely.
  * @return {Widget} Widget instance
  */
@@ -458,9 +479,7 @@ Y.extend(Widget, Y.Base, {
                 this.renderer();
             }
 
-            // TODO: Attribute read-only support for internal usage
-            this._conf.remove(_RENDERED, _VALUE);
-            this.set(_RENDERED, true);
+            this._set(_RENDERED, true);
     },
 
     /** 
@@ -627,17 +646,18 @@ Y.extend(Widget, Y.Base, {
     */
     _moveStyles: function(nodeFrom, nodeTo) {
 
-        var styles = (this.WRAP_STYLES),
+        var styles = this.WRAP_STYLES,
             pos = nodeFrom.getStyle('position'),
+            contentBox = this.get(_CONTENT_BOX),
             xy = [0,0],
             h, w;
 
         if (!this.get('height')) {
-            h = this.get('contentBox').get('offsetHeight');
+            h = contentBox.get('offsetHeight');
         }
 
         if (!this.get('width')) {
-            w = this.get('contentBox').get('offsetWidth');
+            w = contentBox.get('offsetWidth');
         }
 
         if (pos === 'absolute') {
@@ -999,7 +1019,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Static property outlining the markup template for content box.
      *
-     * @property YUI.Widget.CONTENT_TEMPLATE
+     * @property Widget.CONTENT_TEMPLATE
      * @type {String}
      * @static
      */
@@ -1008,7 +1028,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Static property outlining the markup template for bounding box.
      *
-     * @property YUI.Widget.BOUNDING_TEMPLATE
+     * @property Widget.BOUNDING_TEMPLATE
      * @type {String}
      * @static
      */
@@ -1017,7 +1037,7 @@ Y.extend(Widget, Y.Base, {
     /**
      * Static property listing the styles that are mimiced on the bounding box from the content box.
      *
-     * @property YUI.Widget.WRAP_STYLES
+     * @property Widget.WRAP_STYLES
      * @type {Object}
      * @static
      */
@@ -1034,11 +1054,29 @@ Y.extend(Widget, Y.Base, {
         margin: ''
     },
 
+    /**
+     * @property HTML_PARSER
+     * @type {Object}
+     * @static
+     *
+     * Object hash, defining how attribute values are to be parsed from
+     * markup contained in the widget's content box. e.g.:
+     * <pre>
+     *   {
+     *       labelEl: "span.title"             // Set Node references using selector syntax 
+     *       labelEls: ["span.title"]          // Set NodeList references using selector syntax 
+     *       
+     *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
+     *           return contentBox.query("span.title")[0].get("innerHTML");
+     *       }
+     *   }
+     * </pre>
+     */
     HTML_PARSER : null,
 
     /**
      * Sets strings for a particular locale, merging with any existing
-     * strings for the locale
+     * strings which may already be defined for the locale.
      *
      * @method setStrings
      * @protected
@@ -1066,11 +1104,11 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Gets the entire string map for a particular locale, performing locale lookups.
-     * 
-     * If no values are defined for a particular key, the string value for the 
+     * Gets the entire strings hash for a particular locale, performing locale lookups.
+     * <p>
+     * If no values of the key are defined for a particular locale the value for the 
      * default locale (in initial locale set for the class) is returned.
-     * 
+     * </p>
      * @method getStrings
      * @param {String} locale
      */
@@ -1104,11 +1142,11 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Gets the string for a particular key, for a particular locale, performing locale lookups.
-     *
-     * If no values are defined for a particular key, the string value for the 
+     * Gets the string for a particular key, for a particular locale, performing locale lookup.
+     * <p>
+     * If no values if defined for the key, for the given locale, the value for the 
      * default locale (in initial locale set for the class) is returned.
-     * 
+     * </p>
      * @method getStrings
      * @param {String} locale
      */
@@ -1143,7 +1181,9 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Retruns the default locale for the widget
+     * Returns the default locale for the widget (the locale value defined by the
+     * widget class).
+     *
      * @method getDefaultLocale
      */
     getDefaultLocale : function() {
