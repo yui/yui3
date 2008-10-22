@@ -332,13 +332,14 @@
 
 <code><pre>
     MyWidget.prototype.HTML_PARSER = {
-         labelEl: "span.title",             // Set Node references using selector syntax 
-         labelEls: ["span.title"],          // Set NodeList references using selector syntax 
+    
+         titleNode: "span.yui-title",             // Set Node references using selector syntax 
+         itemNodes: ["li.yui-listitem"],          // Set NodeList references using selector syntax 
 
          // Set other attribute types, using a parse function. Context is set to the widget instance
 
          label: function(contentBox) {    
-            return contentBox.query("input.title").get("innerHTML");
+            return contentBox.query("input.yui-title").get("innerHTML");
          },
 
          xValue: function(contentBox) {
@@ -348,7 +349,8 @@
          yValue: function(contentBox) {
              return contentBox.query("input.yui-slider-yvalue").get("value");
          }
-    }
+
+    };
 </pre></code>
 
             <p>The <code>HTML_PARSER</code> property is evaluated during Widget.prototype.initializer execution (so before Widget sub-classes recieve the user configuration),
@@ -356,8 +358,8 @@
 
 <code><pre>
     {
-        labelEl: NodeRef,
-        labelEls: NodeListRef,
+        titleNode: NodeRef,
+        itemNodes: NodeListRef,
         label: "My Widget",
         xValue: "10",
         yValue: "20"
@@ -588,7 +590,7 @@
 
                 // Creates UI
                 renderUI : function() {
-                    var rgbNode = Y.Node.create('<input type="text" />');
+                    var rgbNode = Y.Node.create('&#60;input type="text" /&#62;');
                     this.get("contentBox").appendChild(rgbNode);
                     this._rgbNode = rgbNode;
                 },
