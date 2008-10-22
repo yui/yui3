@@ -11,6 +11,10 @@
         margin: 0;
         padding:0;
     }
+    
+    dt {
+        font-weight:bold;
+    }
 
 </style>
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.0/build/base/base.css">
@@ -250,58 +254,139 @@
 
         <h4 id="widget-classes">Class Structure and responsibilities</h4>
 
-        <p>The <code>Y.Widget</code> class provides the base implementation for all Widgets. It extends <code>Y.Base</code> and therefore is a <code>Y.Attribute.Provider</code> and <code>Y.Event.Target</code> (a.k.a <code>EventProvider</code>). It:</p>
+        <p>The <code>Widget</code> class provides the base implementation for all Widgets. It extends <code>Base</code> and therefore is an attribute provider and an event target (<code>Attribute</code> and <code>Event.Target</code> are augmented to Base.</p>
+        
+        <p>It provides the core functionality listed below.</p>
 
         <ul>
-            <li>Introduces the following base attributes:
+            <li>Introduces the following attributes:
                 <dl>
-                    <dt><code>root</code>:</dt>
-                    <dd>The root <code>Y.Node</code> instance or bounding box for the widget</dd>
+                    <dt><code>boundingBox</code>:</dt>
+                    <dd>The root <code>Node</code> instance or bounding box for the widget</dd>
+                    <dt><code>contentBox</code>:</dt>
+                    <dd>The <code>Node</code> instance wrapping widget content. Widgets have a double box approach to provide a consistent base for generic plugins which can be used for 
+                    UI decoration (shadows, rounded corners, shims).</dd>
                     <dt><code>width, height</code>:</dt>
                     <dd>The dimensions of the bounding box for the widget</dd>
                     <dt><code>visible</code>:</dt>
-                    <dd>Controls the visibility of the bounding box for the widget (through application of a <code>yui-hidden</code> class)</dd>
+                    <dd>Controls the visibility of the bounding box for the widget (through application of a widget specific class)</dd>
                     <dt><code>disabled</code>:</dt>
-                    <dd>Controls the enabled/disabled state of the widget (through application of a <code>yui-disabled</code> class)</dd>
+                    <dd>Controls the enabled/disabled state of the widget (through application of a widget specific class)</dd>
+                    <dt><code>hasFocus</code>:</dt>
+                    <dd>The focus state for the widget</dd>
+                    <dt><code>tabIndex</code>:</dt>
+                    <dd>The tabIndex to use for widget. The default implementation applies it to the bounding box of the widget.</dd>
+                    <dt><code>locale</code>:</dt>
+                    <dd>The current locale used to define strings for the widget</dd>
                     <dt><code>strings</code>:</dt>
-                    <dd>Localizable UI strings for the widget - currently an empty stub</dd>
+                    <dd>
+                        <p>
+                        Localizable UI strings for the widget. NOTE: get/set for this attribute get and set the strings for the current locale ("en", "en-us" etc.). In the case of get,
+                        this is without lookup support. 
+                        </p>
+
+                        <p>To retrieve strings, with lookup locale support (chaining from en-us to en to default) a getStrings(locale) method is provided as is a getString(key, locale).</p>
+
+                        <p><strong>FUTURE DEVELOPMENT:</strong> Post PR2, we'll add a server side support also - the ability to establish a localeurl which can be used to retrieve strings from the server.</p>
+                    </dd>
                 </dl>
             </li>
             <li>
                 Establishes <code>init</code>, <code>destroy</code> and <code>render</code> lifecycle methods which are <code>final</code>
                 <dl>
-                    <dt><code>init</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
-                    <dd>
+                    <dt><code>init</code> <em>(inherited from <code>Base</code>)</em>:</dt>
+                    <dd><p>
+                        Loops through the class hierarchy, top down (Base first, sub-class last) and:
+                        </p>
                         <ul>
-                            <li>Configures attributes for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
-                            <li>Invokes the <code>prototype.initializer</code> for all classes in the widget hierarchy, top down (Base first, sub-class last).</li>
+                            <li>Configures attributes for the class</li>
+                            <li>Then, invokes the <code>prototype.initializer</code> for the class</li>
                         </ul>
                     </dd>
                 </dl>
                 <dl>
                     <dt><code>render</code>:</dt>
-                    <dd>Invokes the <code>renderer</code> method for the Widget instance. Not chained automatically for the widget class hierarchy.</dd>
+                    <dd>
+                        <p>
+                        Invokes the <code>renderer</code> method for the Widget instance. Unlike initializer/destructor, this is not chained automatically for the widget class hierarchy.
+                        </p>
+                        
+                        <p>
+                            The <code>render</code> method accepts a node argument, which can be used to define where in the document the boundingBox for the widget should be appended.
+                            This argument is required if the contentBox or boundingBox don't already exist in the document.
+                        </p>
+                    </dd>
                 </dl>
                 <dl>
-                    <dt><code>destroy</code> <em>(inherited from <code>Y.Base</code>)</em>:</dt>
-                    <dd>Invokes the <code>prototype.destructor</code> for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</dd>
+                    <dt><code>destroy</code> <em>(inherited from <code>Base</code>)</em>:</dt>
+                    <dd><p>Invokes the <code>prototype.destructor</code> for all classes in the widget hierarcy, bottom up (sub-class first, Base last).</p></dd>
                 </dl>
             </li>
             <li>
-                Establishes empty abstract methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to provide consistent entry points for rendering across all widgets.
+                Establishes a common entry point for progressive enhancement during initialization.
+                <dl>
+                    <dt><code>HTML_PARSER</code></dt>
+                    <dd>
+                        <p><code>HTML_PARSER</code> is a prototype property, used to define a hash of selectors or functions which are responsible for looking through the content markup for the widget,
+                        and extracting configuration data.</p>
+
+<code><pre>
+    MyWidget.prototype.HTML_PARSER = {
+         labelEl: "span.title",             // Set Node references using selector syntax 
+         labelEls: ["span.title"],          // Set NodeList references using selector syntax 
+
+         // Set other attribute types, using a parse function. Context is set to the widget instance
+
+         label: function(contentBox) {    
+            return contentBox.query("input.title").get("innerHTML");
+         },
+
+         xValue: function(contentBox) {
+             return contentBox.query("input.yui-slider-xvalue").get("value");
+         },
+
+         yValue: function(contentBox) {
+             return contentBox.query("input.yui-slider-yvalue").get("value");
+         }
+    }
+</pre></code>
+
+            <p>The <code>HTML_PARSER</code> property is evaluated during Widget.prototype.initializer execution (so before Widget sub-classes recieve the user configuration),
+            and the hash is iterated, to create a filled out configuration data hash for the Widget:</p>
+
+<code><pre>
+    {
+        labelEl: NodeRef,
+        labelEls: NodeListRef,
+        label: "My Widget",
+        xValue: "10",
+        yValue: "20"
+    }
+</pre></code>
+
+                        <p>This hash is merged with the user config hash (PE markup is considered to be equivalent to user provided configuration), with user config data taking precedence.</p>
+
+                        <p><strong>FUTURE DEVELOPMENT:</strong> This mechanism can be expanded to handle HTMLParser classes (for re-use/enapsulation) also, post PR2.</p>
+                    </dd>
+                </dl>
+            </li>
+
+            <li>
+                Establishes empty methods <code>renderUI</code>, <code>bindUI</code> and <code>syncUI</code> to provide consistent entry points for rendering across all widgets.
                 <dl>
                     <dt><code>renderUI</code></dt>
                     <dd>Adds elements to the document</dd>
                 </dl>
                 <dl>
                     <dt><code>bindUI</code></dt>
-                    <dd>Sets up listeners for DOM and Custom Events to bind the rendered UI to the widget state, with the help of <code>onUI</code></dd>
+                    <dd>Sets up listeners for DOM and Custom Events to bind the rendered UI to the widget state</dd>
                 </dl>
                 <dl>
                     <dt><code>syncUI</code></dt>
                     <dd>Refreshes the UI state, based on the current state of the widget.</dd>
                 </dl>
             </li>
+
             <li>Introduces methods and properties for Plugin support:
                 <dl>
                     <dt><code>plug(pluginclass, config)</code></dt>
@@ -317,6 +402,70 @@
                 </dl>
             </li>
         </ul>
+        
+        <h4 id="widget-new-in-pr2">New/Changed in PR2</h4>
+        
+            <ul>
+                <li><h5>Attribute Related</h5>
+                    <ul>
+                        <li>
+                            <strong><code>_set</code> method :</strong> Attribute provides a private _set method which can be used by class code, to 
+                            set readOnly, writeOnce properties internally. Events will be fired.
+                        </li>
+                        <li>
+                            <strong><code>valueFn</code> property :</strong> The static <code>ATTRS</code> property can provide a <code>valueFn</code> which
+                            will allow <code>Base</code> based classes to use "this" references in order to set instance based default values. The <code>valueFn</code> has 
+                            precedence over <code>value</code> if both are defined.
+                        </li>
+                        <li>
+                            <strong><code>reset</code> method: </strong> Attribute now maintains the initial/default configuration of an Attribute (available in the <code>initValue</code> property of the 
+                            <code>State</code> object). The reset method can be used to reset to this initial state. Events will be fired.
+                        </li>
+                        <li><strong><code>on == before</code>, <code>after == after</code></strong>, when listening for attribute state changes (this was true in PR1 also, just a note to update any Widget code accordingly).</li>
+                    </ul>
+                </li>
+                <li><h5>Widget Specific</h5>
+                    <ul>
+                        <li><strong><code>node</code> attribute </strong> Changed to <code>bondingBox</code>.</li>
+                        <li><strong><code>contentBox</code> attribute</strong> added</li>
+                        <li><strong><code>moveStyles</code> attribute</strong> added, to move styles from the contentBox to the boundingBox. false by default.</li>
+                        <li><strong><code>ClassNameManager</code> class</strong> support augmented. Helper utility to create and cache "yui-[widgetname]-[state]" format class names.</li>
+                        <li><strong><code>setUI, onUI</code> methods</strong> removed.
+                            <p>
+                            In favor of exposing event details directly through the set method.
+<code><pre>
+
+    /* DOM handler for the focus event */
+    _onFocus: function () {
+        // Instead of setUI, load the attribute change event with source details
+        this.set("hasFocus", true, { src: UI });
+    },
+
+    /* State change handler for hasFocus */
+    _onHasFocusChange: function(evt) {
+        // So that, when the attribute change is picked up we know if it was changed programmatically, or from the DOM/UI
+        this._uiSetHasFocus(evt.newVal, evt.src);
+    },
+
+    /* UI update method */
+    _uiSetHasFocus : function(val, src) {
+        // Avoid looping back to _onFocus, if we came from there
+        if (val) {
+            if (src != UI) {
+                boundingBox.focus();
+            }
+            boundingBox.addClass(this.getClassName("focus"):
+        }
+    }
+</pre></code>
+                            </p>
+                        </li>
+                        <li><strong><code>HTML_PARSER</code> property</strong> support/hook added.</li>
+                        <li><strong><code>strings</code> attribute</strong> support, with locales, implemented.</li>
+                    </ul>
+                </li>
+            </ul>
+        </h4>
 
         <h4 id="widget-extend">Extending Widget</h4>
 
@@ -327,10 +476,9 @@
                 MyWidget.superclass.constructor.apply(this, arguments);
             }
 
-            // NAME: Used to mark the root node, with a "yui-mywidget" class,
+            // NAME: Used to mark the root node, with a "yui-mywidget-xxxx" classes,
             // and namespace custom events generated by the widget instance
-            // Event.Target.publish("mywidget:click"). Potentially also for
-            // Y.create("mywidget") once implemented.
+            // Event.Target.publish("mywidget:click").
 
             MyWidget.NAME = "mywidget";
         </pre></code>
@@ -349,7 +497,17 @@
                 },
 
                 // No special configuration for bar.
-                bar : null
+                bar : null,
+                
+                foobar : {
+                    valueFn : function(val) {
+                        if (this.get("bar")) {
+                            return someModifiedVal;
+                        } else {
+                            return val;
+                        }
+                    }
+                }
             };
         </pre></code>
 
@@ -382,6 +540,10 @@
                     MyWidget.superclass.renderer.apply(this, arguments);
 
                     Y.log(this.constructor.NAME + " renderer called");
+                },
+
+                HTML_PARSER : {
+                    // Setup any PE parsing required for your widget
                 }
             };
         </pre></code>
@@ -393,9 +555,9 @@
             Y.MyWidget = MyWidget;
 
             var w = new Y.MyWidget({
-                root:"body > div.mywidget", 
+                boundingBox:"body > div.mywidget", 
                 visible:false,
-                foo:"bar",
+                foo:"bar"
             });
 
             w.render();
@@ -426,39 +588,41 @@
 
                 // Creates UI
                 renderUI : function() {
-                    var rgbNode = Y.Node.create(['input', { 'type': 'text' }]);
-                    this._root.appendChild(rgbNode);
+                    var rgbNode = Y.Node.create('<input type="text" />');
+                    this.get("contentBox").appendChild(rgbNode);
                     this._rgbNode = rgbNode;
                 },
 
                 // Binds UI
                 bindUI : function() {
                     // Update rgb's UI, when rgb value changes programatically
-                    this.onUI("rgbChanged", Y.bind(this._uiSetRGB, this));
+                    this.after("rgbChanged", this._onRGBChange);
 
-                    // Handle DOM change event on textbox
-                    this._rgbNode.on("change", Y.bind(this._onRGBNodeChange, this));
+                    // Handle DOM change event on text box
+                    this._rgbNode.on("change", Y.bind(this._onRGBDOMChange, this));
                 },
 
                 // Refresh UI
                 syncUI: function() {
-                    this._uiSetRGB();
+                    this._uiSetRGB(this.get("rgb"));
                 },
 
-                // Set RGB UI from state value
-                _uiSetRGB: function() {
-                    this._rgbNode.att("value", this.get("rgb"));
+                // Update RGB UI
+                _uiSetRGB: function(val) {
+                    this._rgbNode.set("value", val);
                 },
 
-                // Set state from RGB UI update
-                _onRGBNodeChange: function(e) {
+                // Attribute change listener
+                _onRGBChange: function(e) {
+                    if (e.src != UI) {
+                        this._uiSetRGB(e.newVal);
+                    }
+                },
 
-                    // e is the Y.Event facade, not a real DOM Event
-                    // t is the Y.Node facade, not a real HTML Element
-                    var t = e.target;
-
-                    // Use setUI, as opposed to set, to stop looping back to update UI.
-                    this.setUI("rgb", t.att("value"));
+                // DOM change listener
+                _onRGBDOMChange: function(e) {
+                    // Let attribute change know you're coming from UI
+                    this.set("rgb", this.get("value"), {src: UI});
                 }
         </pre></code>
     </li>
