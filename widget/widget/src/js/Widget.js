@@ -925,7 +925,7 @@ Y.extend(Widget, Y.Base, {
      *       labelEls: ["span.title"]          // Set NodeList references using selector syntax 
      *       
      *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
-     *           return contentBox.query("span.title")[0].get("innerHTML");
+     *           return contentBox.query("span.title").get("innerHTML");
      *       }
      *   }
      * </pre>
