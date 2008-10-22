@@ -213,7 +213,7 @@ function Widget(config) {
  * and to classify events fired by the widget.
  *
  * @property Widget.NAME
- * @type {String}
+ * @type String
  * @static
  */
 Widget.NAME = _WIDGET;
@@ -223,7 +223,8 @@ Widget.NAME = _WIDGET;
  * configuration for the Widget.
  * 
  * @property Widget.ATTRS
- * @type {Object}
+ * @type Object
+ * @static
  */
 Widget.ATTRS = {
 
@@ -283,7 +284,7 @@ Widget.ATTRS = {
     * @attribute hasFocus
     * @description Boolean indicating if the Widget has focus.
     * @default false
-    * @type Boolean
+    * @type boolean
     */
     hasFocus: {
         value: false
@@ -294,7 +295,7 @@ Widget.ATTRS = {
     * @description Boolean indicating if the Widget should be disabled.  
     * (Disabled widgets will not respond to user input or fire events.)
     * @default false
-    * @type Boolean
+    * @type boolean
     */
     disabled: {
         value: false
@@ -304,7 +305,7 @@ Widget.ATTRS = {
     * @attribute visible
     * @description Boolean indicating weather or not the Widget is visible.
     * @default true
-    * @type Boolean
+    * @type boolean
     */
     visible: {
         value: true
@@ -337,7 +338,7 @@ Widget.ATTRS = {
      * @description Flag defining whether or not style properties from the content box
      * should be moved to the bounding box when wrapped (as defined by the WRAP_STYLES property)
      * @default false
-     * @type {boolean}
+     * @type boolean
      */
     moveStyles: {
         value: false
@@ -350,7 +351,7 @@ Widget.ATTRS = {
      * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
      * return/set strings for this locale.
      * @default "en"
-     * @type {String}
+     * @type String
      */
     locale : {
         value: "en"
@@ -360,7 +361,7 @@ Widget.ATTRS = {
      * @attribute strings
      * @description Collection of strings used to label elements of the Widget's UI.
      * @default null
-     * @type {Object}
+     * @type Object
      */
     strings: {
         set: function(val) {
@@ -377,6 +378,7 @@ Widget.ATTRS = {
  * Obtain Widget instances by bounding box id.
  *
  * @method Widget.getByNodeId
+ * @static
  * @param id {String} Id used to identify the widget uniquely.
  * @return {Widget} Widget instance
  */
@@ -1012,34 +1014,32 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * @property DEF_UNIT
      * Default unit to use for style values
      */
     DEF_UNIT : "px",
 
     /**
-     * Static property outlining the markup template for content box.
+     * Static property defining the markup template for content box.
      *
-     * @property Widget.CONTENT_TEMPLATE
-     * @type {String}
-     * @static
+     * @property CONTENT_TEMPLATE
+     * @type String
      */
     CONTENT_TEMPLATE : "<div></div>",
 
     /**
-     * Static property outlining the markup template for bounding box.
+     * Static property defining the markup template for bounding box.
      *
-     * @property Widget.BOUNDING_TEMPLATE
-     * @type {String}
-     * @static
+     * @property BOUNDING_TEMPLATE
+     * @type String
      */
     BOUNDING_TEMPLATE : "<div></div>",
 
     /**
      * Static property listing the styles that are mimiced on the bounding box from the content box.
      *
-     * @property Widget.WRAP_STYLES
-     * @type {Object}
-     * @static
+     * @property WRAP_STYLES
+     * @type Object
      */
     WRAP_STYLES : {
         height: '100%',
@@ -1056,8 +1056,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * @property HTML_PARSER
-     * @type {Object}
-     * @static
+     * @type Object
      *
      * Object hash, defining how attribute values are to be parsed from
      * markup contained in the widget's content box. e.g.:
@@ -1190,14 +1189,19 @@ Y.extend(Widget, Y.Base, {
         return this._conf.get(_LOCALE, _INIT_VALUE);
     },
 
+    /**
+     * Private stings hash, used to store strings in locale specific buckets.
+     *
+     * @property _strings
+     * @private
+     */
     _strings: null
-
 });
 
 /**
  * Static registration of default plugins for the class.
  * 
- * @property Y.Widget.PLUGINS
+ * @property Widget.PLUGINS
  * @static
  */
 Widget.PLUGINS = [];
