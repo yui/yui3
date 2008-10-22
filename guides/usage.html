@@ -299,8 +299,8 @@
                         Loops through the class hierarchy, top down (Base first, sub-class last) and:
                         </p>
                         <ul>
-                            <li>Configures attributes for the class</li>
-                            <li>Then, invokes the <code>prototype.initializer</code> for the class</li>
+                            <li>Configures attributes for the class, based on the ATTRS static property.</li>
+                            <li>Then, invokes the <code>prototype.initializer</code> for the class.</li>
                         </ul>
                     </dd>
                 </dl>
@@ -310,10 +310,9 @@
                         <p>
                         Invokes the <code>renderer</code> method for the Widget instance. Unlike initializer/destructor, this is not chained automatically for the widget class hierarchy.
                         </p>
-                        
                         <p>
-                            The <code>render</code> method accepts a node argument, which can be used to define where in the document the boundingBox for the widget should be appended.
-                            This argument is required if the contentBox or boundingBox don't already exist in the document.
+                        The <code>render</code> method accepts a node argument, which can be used to define where in the document the boundingBox for the widget should be appended.
+                        This argument is required if the contentBox or boundingBox don't already exist in the document.
                         </p>
                     </dd>
                 </dl>
