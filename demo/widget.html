@@ -89,13 +89,13 @@
 			widget2.render();
 
             Y.log("label value from markup: " + widget2.get("label").contents, "info");
-            Y.log("getStrings value: " + Y.dump(widget2.getStrings("en-us-1945")), "info");
-            Y.log("getString value: " + widget2.getString("LABEL_A", "fr-ca-tt"), "info");
+            Y.log("getStrings('en-US-1945') value: " + Y.dump(widget2.getStrings("en-US-1945")), "info");
+            Y.log("getString('LABEL_A', 'fr-CA-tt') value: " + widget2.getString("LABEL_A", "fr-CA-tt"), "info");
 
-            widget2.set("locale", "en-uk");
+            widget2.set("locale", "en-UK");
             widget2.set("strings", {LABEL_B:"JollyGoodFooISay"});
 
-            Y.log("getStrings (en-uk): " + Y.dump(widget2.getStrings()), "info");
+            Y.log("getStrings (en-UK): " + Y.dump(widget2.getStrings("en-uk")), "info");
 
             widget2.set("locale", "en");
 

@@ -170,7 +170,6 @@ var _WIDGET = "widget",
     _LOCALE = "locale",
     _INIT_VALUE = "initValue",
     _ID = "id",
-
     _RENDER = "render",
     _RENDERED = "rendered",
     _DESTROYED = "destroyed",
@@ -318,7 +317,6 @@ Widget.ATTRS = {
     * @type {String | Number}
     */
     height: {
-        // Default to not set on element style
         value: _EMPTY
     },
 
@@ -329,7 +327,6 @@ Widget.ATTRS = {
     * @type {String | Number}
     */
     width: {
-        // Default to not set on element style
         value: _EMPTY
     },
 
@@ -369,7 +366,7 @@ Widget.ATTRS = {
         },
 
         get: function() {
-            return this._getStrings(this.get(_LOCALE));
+            return this.getStrings(this.get(_LOCALE));
         }
     }
 };
@@ -407,12 +404,11 @@ Y.extend(Widget, Y.Base, {
 
         var htmlConfig = this._parseHTML(this.get(_CONTENT_BOX));
         if (htmlConfig) {
-            Y.mix(config, htmlConfig, false, null, 0, true);
+            Y.aggregate(config, htmlConfig, false);
         }
 
         Y.PluginHost.call(this, config);
     },
-
 
     /**
      * Descructor lifecycle implementation for the Widget class.
@@ -472,14 +468,12 @@ Y.extend(Widget, Y.Base, {
      * @param {Node} parentNode The parent node to render to, if passed in
      */
     _defRenderFn : function(e, parentNode) {
-            this._uiInitBox(parentNode);
 
-            this._bindUI();
+            this._renderUI(parentNode);
             this._syncUI();
+            this._bindUI();
 
-            if (this.renderer) {
-                this.renderer();
-            }
+            this.renderer();
 
             this._set(_RENDERED, true);
     },
@@ -490,9 +484,13 @@ Y.extend(Widget, Y.Base, {
      * automatically for the class hierarchy (like initializer, destructor) 
      * so it should be chained manually for subclasses if required.
      * 
-     * @method renerer
+     * @method renderer
      */
-    renderer: function() {},
+    renderer: function() {
+        this.renderUI();
+        this.syncUI();
+        this.bindUI();
+    },
 
     /**
      * Configures/Sets up listeners to bind Widget State to UI/DOM
@@ -519,7 +517,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * This method is not called by framework and is not chained
      * automatically for the class hierarchy.
-     * 
+     *
      * @method syncUI
      */
     syncUI: function(){},
@@ -575,38 +573,13 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Returns an attribute of the Node instance specified as the Widget's bounding box.
-     * 
-     * @method getNodeAttr
-     */
-    getNodeAttr: function(attr) {
-        if (this.get(_BOUNDING_BOX)) {
-            return this.get(_BOUNDING_BOX).att(attr);
-        }
-        return undefined;
-    },
-
-    /**
-     * Sets an attribute for the Node instance specified as the Widget's bounding box.
-     * 
-     * @method getNodeAttr
-     * @chain             
-     */
-    setNodeAttr: function(attr, val) {
-        if (this.get(_BOUNDING_BOX)) {
-            this.get(_BOUNDING_BOX).att(attr, val);
-        }
-        return this;
-    },
-
-    /**
      * @method _parseHTML
      * @private 
      * @param  node {Node} Root node to use to parse markup for configuration data
      * @return config {Object} configuration object
      */
     _parseHTML : function(node) {
-        
+ 
         var schema = this.HTML_PARSER,
             data,
             val;
@@ -711,9 +684,15 @@ Y.extend(Widget, Y.Base, {
             body = Y.Node.get("body");
 
         // append to parent if provided, or to body if no parent and not in body
-        parentNode = (parentNode) ? Y.Node.get(parentNode) : body;
-        if (parentNode && !parentNode.contains(boundingBox)) {
-            parentNode.appendChild(boundingBox);
+        var appendTo = (parentNode) ? Y.Node.get(parentNode) : body;
+
+        if (appendTo && !appendTo.contains(boundingBox)) {
+            if (appendTo === body && !parentNode && appendTo.get("firstChild")) {
+                // Special case when handling body as default (no parentNode), always insert.
+                appendTo.insertBefore(boundingBox, appendTo.get("firstChild"));
+            } else {
+                appendTo.appendChild(boundingBox);
+            }
         }
 
         if (!boundingBox.contains(contentBox)) {
@@ -724,7 +703,7 @@ Y.extend(Widget, Y.Base, {
 
             // If contentBox box is already in the document, have boundingBox box take it's place
             // TODO: Replace body test with _PARENT_NODE test, when supported
-            if (body.contains(contentBox) /*contentBox.get(_PARENT_NODE)*/) {
+            if (body.contains(contentBox)) {
                 contentBox.get(_PARENT_NODE).replaceChild(boundingBox, contentBox);
             }
 
@@ -735,17 +714,18 @@ Y.extend(Widget, Y.Base, {
     /**
     * @private
     * @method _setBoundingBox
-    * @description Setter for boundingBox config
+    * Setter for the boundingBox attribute
     * @param Node/String
     * @return Node
     */
     _setBoundingBox: function(node) {
         return this._setBox(node, this.BOUNDING_TEMPLATE);
     },
+
     /**
     * @private
     * @method _setContentBox
-    * @description Setter for contentBox config
+    * Setter for the contentBox attribute
     * @param {Node|String} node
     * @return Node
     */
@@ -773,9 +753,10 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * @private
+    * Tabindex UI application
+    *
     * @method _uiSetTabIndex
-    * @description Setter for tabIndex config
+    * @protected
     * @param Number
     */
     _uiSetTabIndex: function(index) {
@@ -820,6 +801,7 @@ Y.extend(Widget, Y.Base, {
         this._uiSetHeight(this.get(_HEIGHT));
         this._uiSetWidth(this.get(_WIDTH));
         this._uiSetHasFocus(this.get(_HAS_FOCUS));
+        this._uiSetTabIndex(this.get(_TAB_INDEX));
     },
 
     /**
@@ -896,7 +878,7 @@ Y.extend(Widget, Y.Base, {
      * the UI.     
      */
     _uiSetHasFocus: function(val, src) {
-        
+    
         var box = this.get(_BOUNDING_BOX),
             sClassName = this.getClassName(_FOCUS);
 
@@ -917,17 +899,16 @@ Y.extend(Widget, Y.Base, {
      * Initializes the UI state for the bounding box. Applies marker
      * classes to identify the widget.
      * 
-     * @method _uiInitBox
+     * @method __renderUI
      * @protected
      */
-    _uiInitBox: function(parentNode) {
+    _renderUI: function(parentNode) {
 
+        // TODO: Classname chaining?
         this.get(_BOUNDING_BOX).addClass(this._className);
         this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
 
         this._renderBox(parentNode);
-
-        this._uiSetTabIndex(this.get(_TAB_INDEX));
     },
 
     /**
@@ -1062,9 +1043,9 @@ Y.extend(Widget, Y.Base, {
      * markup contained in the widget's content box. e.g.:
      * <pre>
      *   {
-     *       labelEl: "span.title"             // Set Node references using selector syntax 
-     *       labelEls: ["span.title"]          // Set NodeList references using selector syntax 
-     *       
+     *       titleNode: "span.yui-title"             // Set Node references using selector syntax 
+     *       listNodes: ["li.yui-listitem"]          // Set NodeList references using selector syntax 
+     *
      *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
      *           return contentBox.query("span.title").get("innerHTML");
      *       }
@@ -1084,10 +1065,13 @@ Y.extend(Widget, Y.Base, {
      */
     _setStrings : function(strings, locale) {
         var strs = this._strings;
+        locale = locale.toLowerCase();
+
         if (!strs[locale]) {
             strs[locale] = {};
         }
-        Y.mix(strs[locale], strings, true, null, 0);
+
+        Y.aggregate(strs[locale], strings, true);
         return strs[locale];
     },
 
@@ -1099,7 +1083,7 @@ Y.extend(Widget, Y.Base, {
      * @param {Object} locale
      */
     _getStrings : function(locale) {
-        return this._strings[locale];
+        return this._strings[locale.toLowerCase()];
     },
 
     /**
@@ -1111,13 +1095,13 @@ Y.extend(Widget, Y.Base, {
      * @method getStrings
      * @param {String} locale
      */
-    // TODO: Optimize/Cache. Clear cache on _setStrings call
+    // TODO: Optimize/Cache. Clear cache on _setStrings call.
     getStrings : function(locale) {
 
-        locale = locale || this.get(_LOCALE);
+        locale = (locale || this.get(_LOCALE)).toLowerCase();
 
 
-        var defLocale = this.getDefaultLocale(),
+        var defLocale = this.getDefaultLocale().toLowerCase(),
             defStrs = this._getStrings(defLocale),
             strs = (defStrs) ? Y.merge(defStrs) : {},
             localeSegments = locale.split(_HYPHEN);
@@ -1131,7 +1115,7 @@ Y.extend(Widget, Y.Base, {
 
                 var localeStrs = this._getStrings(lookup);
                 if (localeStrs) {
-                    Y.mix(strs, localeStrs, true, null, 0);
+                    Y.aggregate(strs, localeStrs, true);
                 }
                 lookup += _HYPHEN;
             }
@@ -1150,10 +1134,11 @@ Y.extend(Widget, Y.Base, {
      * @param {String} locale
      */
     getString : function(key, locale) {
-        locale = locale || this.get(_LOCALE);
+
+        locale = (locale || this.get(_LOCALE)).toLowerCase();
 
 
-        var defLocale = this.getDefaultLocale(),
+        var defLocale = (this.getDefaultLocale()).toLowerCase(),
             strs = this._getStrings(defLocale) || {},
             str = strs[key],
             idx = locale.lastIndexOf(_HYPHEN);
@@ -1206,7 +1191,8 @@ Y.extend(Widget, Y.Base, {
  */
 Widget.PLUGINS = [];
 
-Y.augment(Widget, Y.PluginHost);
+Y.mix(Widget, Y.PluginHost, false, null, 1); // straightup augment, no wrapper functions
+
 Y.augment(Widget, Y.ClassNameManager);
 Y.aggregate(Widget, Y.ClassNameManager);
 
