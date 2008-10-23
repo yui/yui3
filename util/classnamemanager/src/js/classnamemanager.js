@@ -1,19 +1,52 @@
-if (!Y.CLASS_NAME_PREFIX) {
+// String constants
+var CLASS_NAME_PREFIX = 'classNamePrefix',
+    HYPHEN = '-';
 
-	/**
-	 * String indicating the prefix for all CSS class names.
-	 *
-	 * @property YUI.CLASS_NAME_PREFIX
-	 * @type {String}
-	 * @static
-	 */
-	Y.CLASS_NAME_PREFIX = "yui-";
+/**
+ * Run-time getClassName method (post infra initialization)
+ */
+function _getClassName(c,x) {
+    // Test for multiple classname bits
+    if (x) {
+        c = Y.Array(arguments,0,true).join(HYPHEN);
+    }
+
+    // memoize in _classNames map
+    return this._classNames[c] ||
+            (this._classNames[c] = this._className + HYPHEN + c);
+}
+	
+/**
+ * First use initializer to set up infrastructure for getClassName
+ */
+function _initGetClassName() {
+    this._className = this.get(CLASS_NAME_PREFIX) +
+                      this.constructor.NAME.toLowerCase();
+
+    this._classNames = {};
+
+    // replace the instance method with run-time version and pass through
+    this.getClassName = _getClassName;
+
+    return _getClassName.apply(this,arguments);
 }
 
 
-// String constants
-var _HYPHEN = "-";
+// Global config
 
+/**
+ * Configuration property indicating the prefix for all CSS class names in
+ * this YUI instance.  Set during new YUI({classNamePrefix:'foo-'}) or during
+ * run-time Y.config.classNamePrefix = 'foo-';
+ *
+ * @property Y.config.classNamePrefix
+ * @type {String}
+ * @static
+ */
+Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui-';
+
+
+// Class definition
 
 /**
  * A class for Widgets or classes that extend Base, providing: 
@@ -23,38 +56,28 @@ var _HYPHEN = "-";
  *    <li>Caching of previously created class names for improved performance.</li>
  * </ul>
  * 
- * @class YUI.ClassNameManager
+ * @class ClassNameManager
  */
-Y.ClassNameManager = function() {
+function ClassNameManager() {}
 
+ClassNameManager.ATTRS = {};
+
+/**
+* @attribute classNamePrefix
+* @description String indicating the prefix for all class names.
+* @default YUI.CLASS_NAME_PREFIX ("yui-")
+* @type String
+*/
+ClassNameManager.ATTRS[CLASS_NAME_PREFIX] = {
+    value: Y.config[CLASS_NAME_PREFIX],
+    writeOnce: true
 };
-
-var ClassNameManager = Y.ClassNameManager;
-
-
-ClassNameManager.ATTRS = {
-
-	/**
-	* @attribute classNamePrefix
-	* @description String indicating the prefix for all class names.
-	* @default YUI.CLASS_NAME_PREFIX ("yui-")
-	* @type String
-	*/
-	classNamePrefix: {
-	
-		value: Y.CLASS_NAME_PREFIX,
-		writeOnce: true
-	
-	}
-
-};
-
 
 ClassNameManager.prototype = {
 
 	/**
 	 * The class name for the instance, by default set to the value of the 
-	 * <code>classNamePrefix</code> attribute and the <code>NAME</code> property.
+	 * <code>classNamePrefix</code> attribute + the <code>NAME</code> property.
 	 *
 	 * @property _className
 	 * @protected
@@ -72,35 +95,16 @@ ClassNameManager.prototype = {
 	_classNames: null,
 
 	/**
-	 * Returns a class name prefixed with the both the value of the 
-	 * <code>classNamePrefix</code> attribute and the <code>NAME</code> property.
+	 * Returns a class name prefixed with the the value of the 
+	 * <code>classNamePrefix</code> attribute + the <code>NAME</code> property.
+     * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
 	 * 
 	 * @method getClassName
-	 * @param {String} classname
+	 * @param {String}+ one or more classname bits to be joined and prefixed
+     *                  by this class's className base (see private _className)
 	 */
-	getClassName: function (classname) {
-
-		if (!this._className) {
-			this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
-		}
-
-
-		if (!this._classNames) {
-			this._classNames = {};
-		}
-	
-
-		var oClassNames = this._classNames,
-			sClassName  = oClassNames[classname];
-
-
-		if (!sClassName) {
-			sClassName =  this._className + _HYPHEN + classname;
-			oClassNames[classname] = sClassName;
-		}
-		
-		return sClassName;				
-	
-	}
+	getClassName: _initGetClassName
 
 };
+
+Y.ClassNameManager = ClassNameManager;
