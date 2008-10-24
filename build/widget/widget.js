@@ -174,10 +174,10 @@ var _WIDGET = "widget",
     _RENDERED = "rendered",
     _DESTROYED = "destroyed",
 
-    O = Y.Object;
+    O = Y.Object,
+    Node = Y.Node;
 
 // Widget nodeid-to-instance map for now, 1-to-1.
-// Expand to nodeid-to-arrayofinstances if required.
 var _instances = {};
 
 /**
@@ -200,7 +200,7 @@ var _instances = {};
  */
 function Widget(config) {
 
-    this.id = Y.guid(_WIDGET);
+    this._yuid = Y.guid(_WIDGET);
     this._strings = {};
 
     Widget.superclass.constructor.apply(this, arguments);
@@ -372,15 +372,40 @@ Widget.ATTRS = {
 };
 
 /**
- * Obtain Widget instances by bounding box id.
- *
- * @method Widget.getByNodeId
+ * @private
  * @static
- * @param id {String} Id used to identify the widget uniquely.
- * @return {Widget} Widget instance
+ * @property _CLASSNAME
+ * 
+ * Used to mark the bounding box of any widget, regardless of 
+ * instance specific variations (e.g. instance based classNamePrefix settings)
+ *
  */
-Widget.getByNodeId = function(id) {
-    return _instances[id];
+Widget._CLASSNAME = Y.config.classNamePrefix + Widget.NAME;
+
+/**
+ * Returns the widget instance whose bounding box contains, or is, the given node. 
+ *
+ * In the case of nested widgets, the nearest bounding box ancestor is used to
+ * return the widget instance.
+ *
+ * @method Widget.getByNode
+ * @static
+ * @param node {Node | String} The node for which a Widget instance is required.
+ * @return {Widget} Widget instance, or null if not found.
+ */
+Widget.getByNode = function(node) {
+    var widget,
+        bbMarker = Widget._CLASSNAME;
+        
+    node = Node.get(node);
+    if (node) {
+        node = (node.hasClass(bbMarker)) ? node : node.ancestor("." + bbMarker);
+        if (node) {
+            widget = _instances[node.get(_ID)];
+        }
+    }
+
+    return widget || null;
 };
 
 Y.extend(Widget, Y.Base, {
@@ -396,11 +421,12 @@ Y.extend(Widget, Y.Base, {
      */
     initializer: function(config) {
 
-        if (this.id) {
-            _instances[this.id] = this;
-        }
-
         this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
+
+        var nodeId = this.get(_BOUNDING_BOX).get(_ID);
+        if (nodeId) {
+            _instances[nodeId] = this;
+        }
 
         var htmlConfig = this._parseHTML(this.get(_CONTENT_BOX));
         if (htmlConfig) {
@@ -419,8 +445,13 @@ Y.extend(Widget, Y.Base, {
      */
     destructor: function() {
 
-        if (this.id) {
-            delete _instances[this.id];
+        var boundingBox = this.get(_BOUNDING_BOX);
+        
+        Y.Event.purgeElement(boundingBox, true);
+
+        var nodeId = boundingBox.get(_ID);
+        if (nodeId && nodeId in _instances) {
+            delete _instances[nodeId];
         }
     },
 
@@ -440,7 +471,7 @@ Y.extend(Widget, Y.Base, {
      * 
      * @method render
      * @public
-     * @chain
+     * @chainable
      * @final 
      * @param  parentNode {Object | String} Object representing a Node instance or a string 
      * representing a CSS selector used to retrieve a Node reference.
@@ -681,10 +712,10 @@ Y.extend(Widget, Y.Base, {
 
         var contentBox = this.get(_CONTENT_BOX),
             boundingBox = this.get(_BOUNDING_BOX),
-            body = Y.Node.get("body");
+            body = Node.get("body");
 
         // append to parent if provided, or to body if no parent and not in body
-        var appendTo = (parentNode) ? Y.Node.get(parentNode) : body;
+        var appendTo = (parentNode) ? Node.get(parentNode) : body;
 
         if (appendTo && !appendTo.contains(boundingBox)) {
             if (appendTo === body && !parentNode && appendTo.get("firstChild")) {
@@ -740,9 +771,9 @@ Y.extend(Widget, Y.Base, {
      * @param template
      */
     _setBox : function(node, template) {
-        node = Y.Node.get(node);
+        node = Node.get(node);
         if (!node) {
-            node = Y.Node.create(template);
+            node = Node.create(template);
         }
 
         var sid = Y.stamp(node);
@@ -753,14 +784,20 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * Tabindex UI application
-    *
-    * @method _uiSetTabIndex
-    * @protected
-    * @param Number
-    */
-    _uiSetTabIndex: function(index) {
-        this.get(_BOUNDING_BOX).set(_TAB_INDEX, index);
+     * Initializes the UI state for the bounding box. Applies marker
+     * classes to identify the widget.
+     * 
+     * @method __renderUI
+     * @protected
+     */
+    _renderUI: function(parentNode) {
+
+        // TODO: Classname chaining?
+        this.get(_BOUNDING_BOX).addClass(Widget._CLASSNAME);
+        this.get(_BOUNDING_BOX).addClass(this._className);
+        this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
+
+        this._renderBox(parentNode);
     },
 
     /**
@@ -896,19 +933,14 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Initializes the UI state for the bounding box. Applies marker
-     * classes to identify the widget.
-     * 
-     * @method __renderUI
-     * @protected
-     */
-    _renderUI: function(parentNode) {
-
-        // TODO: Classname chaining?
-        this.get(_BOUNDING_BOX).addClass(this._className);
-        this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
-
-        this._renderBox(parentNode);
+    * Tabindex UI application
+    *
+    * @method _uiSetTabIndex
+    * @protected
+    * @param Number
+    */
+    _uiSetTabIndex: function(index) {
+        this.get(_BOUNDING_BOX).set(_TAB_INDEX, index);
     },
 
     /**
@@ -991,7 +1023,7 @@ Y.extend(Widget, Y.Base, {
      * @method toString
      */
     toString: function() {
-        return this.constructor.NAME + "[" + this.id + "]";
+        return this.constructor.NAME + "[" + this._yuid + "]";
     },
 
     /**
@@ -1058,7 +1090,7 @@ Y.extend(Widget, Y.Base, {
      * Sets strings for a particular locale, merging with any existing
      * strings which may already be defined for the locale.
      *
-     * @method setStrings
+     * @method _setStrings
      * @protected
      * @param {Object} strings
      * @param {Object} locale
@@ -1087,13 +1119,13 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Gets the entire strings hash for a particular locale, performing locale lookups.
+     * Gets the entire strings hash for a particular locale, performing locale lookup.
      * <p>
      * If no values of the key are defined for a particular locale the value for the 
      * default locale (in initial locale set for the class) is returned.
      * </p>
      * @method getStrings
-     * @param {String} locale
+     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
      */
     // TODO: Optimize/Cache. Clear cache on _setStrings call.
     getStrings : function(locale) {
@@ -1130,8 +1162,9 @@ Y.extend(Widget, Y.Base, {
      * If no values if defined for the key, for the given locale, the value for the 
      * default locale (in initial locale set for the class) is returned.
      * </p>
-     * @method getStrings
-     * @param {String} locale
+     * @method getString
+     * @param {String} key The key.
+     * @param {String} locale (optional) The locale for which the string value is required. Defaults to the current locale, if not provided.
      */
     getString : function(key, locale) {
 
@@ -1166,7 +1199,7 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Returns the default locale for the widget (the locale value defined by the
-     * widget class).
+     * widget class, or provided by the user during construction).
      *
      * @method getDefaultLocale
      */
@@ -1201,114 +1234,3 @@ Y.Widget = Widget;
 
 
 }, '@VERSION@' ,{requires:['base', 'node', 'classnamemanager']});
-YUI.add('classnamemanager', function(Y) {
-
-if (!Y.CLASS_NAME_PREFIX) {
-
-	/**
-	 * String indicating the prefix for all CSS class names.
-	 *
-	 * @property YUI.CLASS_NAME_PREFIX
-	 * @type {String}
-	 * @static
-	 */
-	Y.CLASS_NAME_PREFIX = "yui-";
-}
-
-
-// String constants
-var _HYPHEN = "-";
-
-
-/**
- * A class for Widgets or classes that extend Base, providing: 
- * 
- * <ul>
- *    <li>Easy creation of prefixed class names</li>
- *    <li>Caching of previously created class names for improved performance.</li>
- * </ul>
- * 
- * @class YUI.ClassNameManager
- */
-Y.ClassNameManager = function() {
-
-};
-
-var ClassNameManager = Y.ClassNameManager;
-
-
-ClassNameManager.ATTRS = {
-
-	/**
-	* @attribute classNamePrefix
-	* @description String indicating the prefix for all class names.
-	* @default YUI.CLASS_NAME_PREFIX ("yui-")
-	* @type String
-	*/
-	classNamePrefix: {
-	
-		value: Y.CLASS_NAME_PREFIX,
-		writeOnce: true
-	
-	}
-
-};
-
-
-ClassNameManager.prototype = {
-
-	/**
-	 * The class name for the instance, by default set to the value of the 
-	 * <code>classNamePrefix</code> attribute and the <code>NAME</code> property.
-	 *
-	 * @property _className
-	 * @protected
-	 * @type {String}		 
-	 */            
-	_className: null,
-
-	/**
-	 * Collection of all of the class names used by the instance.
-	 *
-	 * @property _classNames
-	 * @protected
-	 * @type {Object}
-	 */            
-	_classNames: null,
-
-	/**
-	 * Returns a class name prefixed with the both the value of the 
-	 * <code>classNamePrefix</code> attribute and the <code>NAME</code> property.
-	 * 
-	 * @method getClassName
-	 * @param {String} classname
-	 */
-	getClassName: function (classname) {
-
-		if (!this._className) {
-			this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
-		}
-
-
-		if (!this._classNames) {
-			this._classNames = {};
-		}
-	
-
-		var oClassNames = this._classNames,
-			sClassName  = oClassNames[classname];
-
-
-		if (!sClassName) {
-			sClassName =  this._className + _HYPHEN + classname;
-			oClassNames[classname] = sClassName;
-		}
-		
-		return sClassName;				
-	
-	}
-
-};
-
-
-}, '@VERSION@' );
