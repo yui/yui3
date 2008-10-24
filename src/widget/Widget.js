@@ -4,30 +4,30 @@
  */
 
 // String constants
-var _WIDGET = "widget",
-    _CONTENT = "content",
-    _VISIBLE = "visible",
-    _HIDDEN = "hidden",
-    _ENABLED = "enabled",
-    _DISABLED = "disabled",
-    _FOCUS = "focus",
-    _BLUR = "blur",
-    _HAS_FOCUS = "hasFocus",
-    _WIDTH = "width",
-    _HEIGHT = "height",
-    _UI = "ui",
-    _EMPTY = "",
-    _HYPHEN = "-",
-    _BOUNDING_BOX = "boundingBox",
-    _CONTENT_BOX = "contentBox",
-    _PARENT_NODE = "parentNode",
-    _TAB_INDEX = "tabIndex",
-    _LOCALE = "locale",
-    _INIT_VALUE = "initValue",
-    _ID = "id",
-    _RENDER = "render",
-    _RENDERED = "rendered",
-    _DESTROYED = "destroyed",
+var WIDGET = "widget",
+    CONTENT = "content",
+    VISIBLE = "visible",
+    HIDDEN = "hidden",
+    ENABLED = "enabled",
+    DISABLED = "disabled",
+    FOCUS = "focus",
+    BLUR = "blur",
+    HAS_FOCUS = "hasFocus",
+    WIDTH = "width",
+    HEIGHT = "height",
+    UI = "ui",
+    EMPTY = "",
+    HYPHEN = "-",
+    BOUNDING_BOX = "boundingBox",
+    CONTENT_BOX = "contentBox",
+    PARENT_NODE = "parentNode",
+    TAB_INDEX = "tabIndex",
+    LOCALE = "locale",
+    INIT_VALUE = "initValue",
+    ID = "id",
+    RENDER = "render",
+    RENDERED = "rendered",
+    DESTROYED = "destroyed",
 
     O = Y.Object,
     Node = Y.Node;
@@ -56,7 +56,7 @@ var _instances = {};
 function Widget(config) {
     Y.log('constructor called', 'life', 'widget');
 
-    this._yuid = Y.guid(_WIDGET);
+    this._yuid = Y.guid(WIDGET);
     this._strings = {};
 
     Widget.superclass.constructor.apply(this, arguments);
@@ -71,7 +71,7 @@ function Widget(config) {
  * @type String
  * @static
  */
-Widget.NAME = _WIDGET;
+Widget.NAME = WIDGET;
 
 /**
  * Static property used to define the default attribute 
@@ -173,7 +173,7 @@ Widget.ATTRS = {
     * @type {String | Number}
     */
     height: {
-        value: _EMPTY
+        value: EMPTY
     },
 
     /**
@@ -183,7 +183,7 @@ Widget.ATTRS = {
     * @type {String | Number}
     */
     width: {
-        value: _EMPTY
+        value: EMPTY
     },
 
     /**
@@ -218,11 +218,11 @@ Widget.ATTRS = {
      */
     strings: {
         set: function(val) {
-            return this._setStrings(val, this.get(_LOCALE));
+            return this._setStrings(val, this.get(LOCALE));
         },
 
         get: function() {
-            return this.getStrings(this.get(_LOCALE));
+            return this.getStrings(this.get(LOCALE));
         }
     }
 };
@@ -257,7 +257,7 @@ Widget.getByNode = function(node) {
     if (node) {
         node = (node.hasClass(bbMarker)) ? node : node.ancestor("." + bbMarker);
         if (node) {
-            widget = _instances[node.get(_ID)];
+            widget = _instances[node.get(ID)];
         }
     }
 
@@ -280,12 +280,12 @@ Y.extend(Widget, Y.Base, {
 
         this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
 
-        var nodeId = this.get(_BOUNDING_BOX).get(_ID);
+        var nodeId = this.get(BOUNDING_BOX).get(ID);
         if (nodeId) {
             _instances[nodeId] = this;
         }
 
-        var htmlConfig = this._parseHTML(this.get(_CONTENT_BOX));
+        var htmlConfig = this._parseHTML(this.get(CONTENT_BOX));
         if (htmlConfig) {
             Y.aggregate(config, htmlConfig, false);
         }
@@ -303,11 +303,11 @@ Y.extend(Widget, Y.Base, {
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
 
-        var boundingBox = this.get(_BOUNDING_BOX);
+        var boundingBox = this.get(BOUNDING_BOX);
         
         Y.Event.purgeElement(boundingBox, true);
 
-        var nodeId = boundingBox.get(_ID);
+        var nodeId = boundingBox.get(ID);
         if (nodeId && nodeId in _instances) {
             delete _instances[nodeId];
         }
@@ -336,14 +336,14 @@ Y.extend(Widget, Y.Base, {
      */
     render: function(parentNode) {
 
-        if (this.get(_DESTROYED)) {
+        if (this.get(DESTROYED)) {
             Y.log("Render failed; widget has been destroyed", "error", "widget");
             return;
         }
 
-        if (!this.get(_RENDERED)) {
-            this.publish(_RENDER, { queuable:false, defaultFn: this._defRenderFn});
-            this.fire(_RENDER, null, parentNode);
+        if (!this.get(RENDERED)) {
+            this.publish(RENDER, { queuable:false, defaultFn: this._defRenderFn});
+            this.fire(RENDER, null, parentNode);
         }
 
         return this;
@@ -365,7 +365,7 @@ Y.extend(Widget, Y.Base, {
 
             this.renderer();
 
-            this._set(_RENDERED, true);
+            this._set(RENDERED, true);
     },
 
     /** 
@@ -417,7 +417,7 @@ Y.extend(Widget, Y.Base, {
     * @description Shows the Module element by setting the "visible" attribute to "false".
     */
     hide: function() {
-        return this.set(_VISIBLE, false);
+        return this.set(VISIBLE, false);
     },
 
     /**
@@ -425,7 +425,7 @@ Y.extend(Widget, Y.Base, {
     * @description Shows the Module element by setting the "visible" attribute to "true".
     */
     show: function() {
-        return this.set(_VISIBLE, true);
+        return this.set(VISIBLE, true);
     },
 
     /**
@@ -434,7 +434,7 @@ Y.extend(Widget, Y.Base, {
     * attribute to "true".
     */
     focus: function () {
-        return this.set(_HAS_FOCUS, true);
+        return this.set(HAS_FOCUS, true);
     },
 
     /**
@@ -443,7 +443,7 @@ Y.extend(Widget, Y.Base, {
     * to "false"
     */            
     blur: function () {
-        return this.set(_HAS_FOCUS, false);
+        return this.set(HAS_FOCUS, false);
     },
 
     /**
@@ -451,7 +451,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "false".
     */
     enable: function() {
-        return this.set(_ENABLED, true);
+        return this.set(ENABLED, true);
     },
 
     /**
@@ -459,7 +459,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "true".
     */
     disable: function() {
-        return this.set(_DISABLED, false);
+        return this.set(DISABLED, false);
     },
 
     /**
@@ -513,7 +513,7 @@ Y.extend(Widget, Y.Base, {
 
         var styles = this.WRAP_STYLES,
             pos = nodeFrom.getStyle('position'),
-            contentBox = this.get(_CONTENT_BOX),
+            contentBox = this.get(CONTENT_BOX),
             xy = [0,0],
             h, w;
 
@@ -569,8 +569,8 @@ Y.extend(Widget, Y.Base, {
     */
     _renderBox: function(parentNode) {
 
-        var contentBox = this.get(_CONTENT_BOX),
-            boundingBox = this.get(_BOUNDING_BOX),
+        var contentBox = this.get(CONTENT_BOX),
+            boundingBox = this.get(BOUNDING_BOX),
             body = Node.get("body");
 
         // append to parent if provided, or to body if no parent and not in body
@@ -592,9 +592,9 @@ Y.extend(Widget, Y.Base, {
             }
 
             // If contentBox box is already in the document, have boundingBox box take it's place
-            // TODO: Replace body test with _PARENT_NODE test, when supported
+            // TODO: Replace body test with PARENT_NODE test, when supported
             if (body.contains(contentBox)) {
-                contentBox.get(_PARENT_NODE).replaceChild(boundingBox, contentBox);
+                contentBox.get(PARENT_NODE).replaceChild(boundingBox, contentBox);
             }
 
             boundingBox.appendChild(contentBox);
@@ -636,8 +636,8 @@ Y.extend(Widget, Y.Base, {
         }
 
         var sid = Y.stamp(node);
-        if (!node.get(_ID)) {
-            node.set(_ID, sid);
+        if (!node.get(ID)) {
+            node.set(ID, sid);
         }
         return node;
     },
@@ -652,9 +652,9 @@ Y.extend(Widget, Y.Base, {
     _renderUI: function(parentNode) {
 
         // TODO: Classname chaining?
-        this.get(_BOUNDING_BOX).addClass(Widget._CLASSNAME);
-        this.get(_BOUNDING_BOX).addClass(this._className);
-        this.get(_CONTENT_BOX).addClass(this._className + _HYPHEN + _CONTENT);
+        this.get(BOUNDING_BOX).addClass(Widget._CLASSNAME);
+        this.get(BOUNDING_BOX).addClass(this._className);
+        this.get(CONTENT_BOX).addClass(this._className + HYPHEN + CONTENT);
 
         this._renderBox(parentNode);
     },
@@ -681,8 +681,8 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindDOMListeners : function() {
-        this.get(_BOUNDING_BOX).on(_FOCUS, Y.bind(this._onFocus, this));
-        this.get(_BOUNDING_BOX).on(_BLUR, Y.bind(this._onBlur, this));
+        this.get(BOUNDING_BOX).on(FOCUS, Y.bind(this._onFocus, this));
+        this.get(BOUNDING_BOX).on(BLUR, Y.bind(this._onBlur, this));
     },
 
     /**
@@ -692,12 +692,12 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _syncUI: function() {
-        this._uiSetVisible(this.get(_VISIBLE));
-        this._uiSetDisabled(this.get(_DISABLED));
-        this._uiSetHeight(this.get(_HEIGHT));
-        this._uiSetWidth(this.get(_WIDTH));
-        this._uiSetHasFocus(this.get(_HAS_FOCUS));
-        this._uiSetTabIndex(this.get(_TAB_INDEX));
+        this._uiSetVisible(this.get(VISIBLE));
+        this._uiSetDisabled(this.get(DISABLED));
+        this._uiSetHeight(this.get(HEIGHT));
+        this._uiSetWidth(this.get(WIDTH));
+        this._uiSetHasFocus(this.get(HAS_FOCUS));
+        this._uiSetTabIndex(this.get(TAB_INDEX));
     },
 
     /**
@@ -711,7 +711,7 @@ Y.extend(Widget, Y.Base, {
         if (L.isNumber(val)) {
             val = val + this.DEF_UNIT;
         }
-        this.get(_BOUNDING_BOX).setStyle(_HEIGHT, val);
+        this.get(BOUNDING_BOX).setStyle(HEIGHT, val);
     },
 
     /**
@@ -725,7 +725,7 @@ Y.extend(Widget, Y.Base, {
         if (L.isNumber(val)) {
             val = val + this.DEF_UNIT;
         }
-        this.get(_BOUNDING_BOX).setStyle(_WIDTH, val);
+        this.get(BOUNDING_BOX).setStyle(WIDTH, val);
     },
 
     /**
@@ -737,8 +737,8 @@ Y.extend(Widget, Y.Base, {
      */
     _uiSetVisible: function(val) {
 
-        var box = this.get(_BOUNDING_BOX), 
-            sClassName = this.getClassName(_HIDDEN);
+        var box = this.get(BOUNDING_BOX), 
+            sClassName = this.getClassName(HIDDEN);
 
         if (val === true) { 
             box.removeClass(sClassName); 
@@ -755,8 +755,8 @@ Y.extend(Widget, Y.Base, {
      */
     _uiSetDisabled: function(val) {
 
-        var box = this.get(_BOUNDING_BOX), 
-            sClassName = this.getClassName(_DISABLED);
+        var box = this.get(BOUNDING_BOX), 
+            sClassName = this.getClassName(DISABLED);
 
         if (val === true) {
             box.addClass(sClassName);
@@ -775,17 +775,17 @@ Y.extend(Widget, Y.Base, {
      */
     _uiSetHasFocus: function(val, src) {
     
-        var box = this.get(_BOUNDING_BOX),
-            sClassName = this.getClassName(_FOCUS);
+        var box = this.get(BOUNDING_BOX),
+            sClassName = this.getClassName(FOCUS);
 
         if (val === true) {
             box.addClass(sClassName);
-            if (src !== _UI) {
+            if (src !== UI) {
                 box.focus();
             }
         } else {
             box.removeClass(sClassName);
-            if (src !== _UI) {
+            if (src !== UI) {
                 box.blur();
             }
         }
@@ -799,7 +799,7 @@ Y.extend(Widget, Y.Base, {
     * @param Number
     */
     _uiSetTabIndex: function(index) {
-        this.get(_BOUNDING_BOX).set(_TAB_INDEX, index);
+        this.get(BOUNDING_BOX).set(TAB_INDEX, index);
     },
 
     /**
@@ -864,7 +864,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _onFocus: function () {
-        this.set(_HAS_FOCUS, true, { src: _UI });
+        this.set(HAS_FOCUS, true, { src: UI });
     },
 
     /**
@@ -874,7 +874,7 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */			
     _onBlur: function () {
-        this.set(_HAS_FOCUS, false, { src: _UI });
+        this.set(HAS_FOCUS, false, { src: UI });
     },
 
     /**
@@ -989,14 +989,14 @@ Y.extend(Widget, Y.Base, {
     // TODO: Optimize/Cache. Clear cache on _setStrings call.
     getStrings : function(locale) {
 
-        locale = (locale || this.get(_LOCALE)).toLowerCase();
+        locale = (locale || this.get(LOCALE)).toLowerCase();
 
         Y.log("getStrings: For " + locale, "info", "widget"); 
 
         var defLocale = this.getDefaultLocale().toLowerCase(),
             defStrs = this._getStrings(defLocale),
             strs = (defStrs) ? Y.merge(defStrs) : {},
-            localeSegments = locale.split(_HYPHEN);
+            localeSegments = locale.split(HYPHEN);
 
         // If locale is different than the default, or needs lookup support
         if (locale !== defLocale || localeSegments.length > 1) {
@@ -1010,7 +1010,7 @@ Y.extend(Widget, Y.Base, {
                 if (localeStrs) {
                     Y.aggregate(strs, localeStrs, true);
                 }
-                lookup += _HYPHEN;
+                lookup += HYPHEN;
             }
         }
 
@@ -1029,14 +1029,14 @@ Y.extend(Widget, Y.Base, {
      */
     getString : function(key, locale) {
 
-        locale = (locale || this.get(_LOCALE)).toLowerCase();
+        locale = (locale || this.get(LOCALE)).toLowerCase();
 
         Y.log("getString: For " + locale, "info", "widget"); 
 
         var defLocale = (this.getDefaultLocale()).toLowerCase(),
             strs = this._getStrings(defLocale) || {},
             str = strs[key],
-            idx = locale.lastIndexOf(_HYPHEN);
+            idx = locale.lastIndexOf(HYPHEN);
 
         // If locale is different than the default, or needs lookup support
         if (locale !== defLocale || idx != -1) {
@@ -1048,7 +1048,7 @@ Y.extend(Widget, Y.Base, {
                     str = strs[key];
                     break;
                 }
-                idx = locale.lastIndexOf(_HYPHEN);
+                idx = locale.lastIndexOf(HYPHEN);
                 // Chop of last locale segment
                 if (idx != -1) {
                     locale = locale.substring(0, idx);
@@ -1067,7 +1067,7 @@ Y.extend(Widget, Y.Base, {
      * @method getDefaultLocale
      */
     getDefaultLocale : function() {
-        return this._conf.get(_LOCALE, _INIT_VALUE);
+        return this._conf.get(LOCALE, INIT_VALUE);
     },
 
     /**
