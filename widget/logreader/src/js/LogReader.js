@@ -33,7 +33,6 @@ var CLASS_CONTAINER   = 'container',
 
 /**
  * Creates a log output console
- * @class LogReader
  */
 function LogReader() {
     this.constructor.superclass.constructor.apply(this,arguments);
