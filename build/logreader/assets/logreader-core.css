@@ -1,12 +1,12 @@
 /* Collapse/Expand */
-.yui-skin-sam .yui-log-expand,
-.yui-skin-sam .yui-log-collapse .yui-log-collapse {
+.yui-skin-sam .yui-logreader-expand,
+.yui-skin-sam .yui-logreader-collapse .yui-logreader-collapse {
     display: none;
 }
-.yui-skin-sam .yui-log-collapse .yui-log-expand {
+.yui-skin-sam .yui-logreader-collapse .yui-logreader-expand {
     display: inline;
 }
-.yui-log-collapse .yui-log-console,
-.yui-log-collapse .yui-log-ft {
+.yui-logreader-collapse .yui-logreader-console,
+.yui-logreader-collapse .yui-logreader-ft {
     display: none;
 }
