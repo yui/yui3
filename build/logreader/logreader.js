@@ -1,57 +1,63 @@
 YUI.add('logreader', function(Y) {
 
-// Formerly LogReader
-Y.log.Reader = function () {
-    this.constructor.superclass.constructor.apply(this,arguments);
-};
+var CLASS_CONTAINER   = 'container',
+    CLASS_HD          = 'hd',
+    CLASS_CONSOLE     = 'console',
+    CLASS_FT          = 'ft',
+    CLASS_HIDE_FT     = 'hide-ft',
+    CLASS_CONTROLS    = 'controls',
+    CLASS_BUTTON      = 'button',
+    CLASS_LABEL       = 'label',
+    CLASS_CHECKBOX    = 'checkbox',
+    CLASS_COLLAPSE    = 'collapse', // for .foo .foo { ... }
+    CLASS_EXPAND      = 'expand',
+    CLASS_ACTIVE      = 'active',
+    CLASS_CLEAR       = 'clear',
+    CLASS_CAT_CHECKS  = 'categories',
+    CLASS_SRC_CHECKS  = 'sources',
+    CLASS_FILTER      = 'filter',
+    CLASS_CATEGORY    = 'category',
+    CLASS_SOURCE      = 'source',
+    CLASS_ENTRY       = 'entry',
+    CLASS_VERBOSE     = 'verbose',
+    CLASS_ENTRY_META  = 'entry-meta',
+    CLASS_ENTRY_CAT   = 'entry-cat',
+    CLASS_ENTRY_SRC   = 'entry-src',
+    CLASS_ENTRY_TIME  = 'entry-time',
+    CLASS_ENTRY_TYPE  = 'entry-type',
+    CLASS_HIDE_BASE   = 'hide',
+    CLASS_ENTRY_TYPE_BASE = 'entry-type',
 
-Y.mix(Y.log.Reader, {
+    HAS_CLASS         = 'hasClass',
+    ADD_CLASS         = 'addClass',
+    REMOVE_CLASS      = 'removeClass',
+    GET_CLASS_NAME    = 'getClassName';
+
+/**
+ * Creates a log output console
+ * @class LogReader
+ */
+function LogReader() {
+    this.constructor.superclass.constructor.apply(this,arguments);
+}
+
+Y.mix(LogReader, {
 
     NAME : 'logreader',
-
-    PLUGINS : [],
-
-    CLASSES : {
-        CONTAINER   : 'yui-log',
-        HD          : 'yui-log-hd',
-        CONSOLE     : 'yui-log-console',
-        FT          : 'yui-log-ft',
-        HIDE_FT     : 'yui-log-hide-ft',
-        CONTROLS    : 'yui-log-controls',
-        BUTTON      : 'yui-log-button',
-        LABEL       : 'yui-log-label',
-        CHECKBOX    : 'yui-log-checkbox',
-        COLLAPSE    : 'yui-log-collapse', // .yui-log-collapse .yui-log-collapse
-        EXPAND      : 'yui-log-expand',
-        ACTIVE      : 'yui-log-active',
-        CLEAR       : 'yui-log-clear',
-        CAT_CHECKS  : 'yui-log-categories',
-        SRC_CHECKS  : 'yui-log-sources',
-        FILTER      : 'yui-log-filter',
-        CATEGORY    : 'yui-log-category',
-        SOURCE      : 'yui-log-source',
-        ENTRY       : 'yui-log-entry',
-        VERBOSE     : 'yui-log-verbose',
-        ENTRY_META  : 'yui-log-entry-meta',
-        ENTRY_CAT   : 'yui-log-entry-cat',
-        ENTRY_SRC   : 'yui-log-entry-src',
-        ENTRY_TIME  : 'yui-log-entry-time',
-        ENTRY_TYPE  : 'yui-log-entry-type',
-        HIDE_BASE   : 'yui-log-hide-',
-        ENTRY_TYPE_BASE : 'yui-log-entry-type-'
-    },
-
-    STRINGS : {
-        COLLAPSE    : "Collapse",
-        EXPAND      : "Expand",
-        ACTIVE      : "Active",
-        CLEAR       : "Clear"
-    },
 
     VERBOSE : 'verbose',
     BASIC   : 'basic',
 
     ATTRS : {
+
+        strings : {
+            value : {
+                COLLAPSE    : "Collapse",
+                EXPAND      : "Expand",
+                ACTIVE      : "Active",
+                CLEAR       : "Clear"
+            }
+        },
 
         title : {
             value : "Log Console"
@@ -75,7 +81,7 @@ Y.mix(Y.log.Reader, {
             value : 'global'
         },
 
-        entryTypes       : { // display these entry types
+        entryTypes       : {
             value : {
                 category : {
                     info : true,
@@ -154,7 +160,7 @@ Y.mix(Y.log.Reader, {
 
 });
 
-Y.extend(Y.log.Reader,Y.Widget,{
+Y.extend(LogReader,Y.Widget,{
     _head      : null,
     _title     : null,
     _console   : null,
@@ -175,7 +181,10 @@ Y.extend(Y.log.Reader,Y.Widget,{
         this._initTemplates();
 
         Y.on('yui:log',Y.bind(this._handleLogEntry,this));
-        //this.unplug('mouse');
+
+        // bind to self a few instance methods for ease of use later
+        this.printBuffer = Y.bind(this.printBuffer,this);
+        this._handleControlClick = Y.bind(this._handleControlClick,this);
     },
 
     // HACK: AttributeProvider should clone object attribute values
@@ -189,33 +198,41 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     _initTemplates : function () {
-        var C = Y.log.Reader.CLASSES;
-
         // For verbose log entries
         this.set('templates.verbose',
-            '<pre class="'+C.ENTRY+' '+C.VERBOSE+'">'+
-                '<div class="'+C.ENTRY_META+'">'+
+            '<pre class="'+this[GET_CLASS_NAME](CLASS_ENTRY)+
+                       ' '+this[GET_CLASS_NAME](CLASS_VERBOSE)+'">'+
+                '<div class="'+this[GET_CLASS_NAME](CLASS_ENTRY_META)+'">'+
                     '<p>'+
-                        '<span class="'+C.ENTRY_CAT+'">{label}</span>'+
-                        '<span class="'+C.ENTRY_TIME+'">'+
+                        '<span class="'+
+                            this[GET_CLASS_NAME](CLASS_ENTRY_CAT)+'">'+
+                            '{label}</span>'+
+                        '<span class="'+
+                            this[GET_CLASS_NAME](CLASS_ENTRY_TIME)+'">'+
                             ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
                         '</span>'+
                     '</p>'+
-                    '<p class="'+C.ENTRY_SRC+'">{sourceAndDetail}</p>'+
+                    '<p class="'+this[GET_CLASS_NAME](CLASS_ENTRY_SRC)+'">'+
+                        '{sourceAndDetail}'+
+                    '</p>'+
                 '</div>'+
                 '<p>{message}</p>'+
             '</pre>');
 
         // For basic log entries
         this.set('templates.basic',
-            '<pre class="'+C.ENTRY+'">'+
+            '<pre class="'+this[GET_CLASS_NAME](CLASS_ENTRY)+'">'+
                 '<p>'+
-                    '<span class="'+C.ENTRY_META+'">'+
-                        '<span class="'+C.ENTRY_CAT+'">{label}</span>'+
-                        '<span class="'+C.ENTRY_TIME+'">'+
+                    '<span class="'+this[GET_CLASS_NAME](CLASS_ENTRY_META)+'">'+
+                        '<span class="'+
+                            this[GET_CLASS_NAME](CLASS_ENTRY_CAT)+'">'+
+                            '{label}</span>'+
+                        '<span class="'+
+                            this[GET_CLASS_NAME](CLASS_ENTRY_TIME)+'">'+
                             ' {totalTime}ms (+{elapsedTime}) {localTime}:'+
                         '</span>'+
-                        '<span class="'+C.ENTRY_SRC+'">'+
+                        '<span class="'+
+                            this[GET_CLASS_NAME](CLASS_ENTRY_SRC)+'">'+
                             ' {sourceAndDetail}'+
                         '</span>:'+
                     '</span>'+
@@ -224,19 +241,11 @@ Y.extend(Y.log.Reader,Y.Widget,{
             '</pre>');
     },
 
-    renderer : function () {
-        Y.log.Reader.superclass.renderer.apply(this,arguments);
-
-        this.renderUI();
-        this.syncUI();
-        this.bindUI();
-    },
-
     renderUI : function () {
         if (!this.get('rendered')) {
             this.get('contentBox').set('innerHTML','');
 
-            this.get('contentBox').addClass(Y.log.Reader.CLASSES.CONTAINER);
+            this.get('contentBox')[ADD_CLASS](this[GET_CLASS_NAME](CLASS_CONTAINER));
 
             this._renderHead();
             this._renderConsole();
@@ -245,15 +254,19 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     _renderHead : function () {
-        var C = Y.log.Reader.CLASSES,
-            S = Y.log.Reader.STRINGS;
+        var S = this.getStrings(),
+            n = this.get('contentBox');
 
         this._head = Y.Node.create(
-            '<div class="'+C.HD+'">'+
-                '<div class="'+C.CONTROLS+'">'+
-                    '<input type="button" class="'+C.BUTTON+' '+C.COLLAPSE+'"'+
+            '<div class="'+this[GET_CLASS_NAME](CLASS_HD)+'">'+
+                '<div class="'+this[GET_CLASS_NAME](CLASS_CONTROLS)+'">'+
+                    '<input type="button" class="'+
+                        this[GET_CLASS_NAME](CLASS_BUTTON)+' '+
+                        this[GET_CLASS_NAME](CLASS_COLLAPSE)+'"'+
                         ' value="'+S.COLLAPSE+'">'+
-                    '<input type="button" class="'+C.BUTTON+' '+C.EXPAND+'"' +
+                    '<input type="button" class="'+
+                        this[GET_CLASS_NAME](CLASS_BUTTON)+' '+
+                        this[GET_CLASS_NAME](CLASS_EXPAND)+'"' +
                         ' value="'+S.EXPAND+'">'+
                 '</div>'+
                 '<h4>'+this.get('title')+'</h4>'+
@@ -261,44 +274,51 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         this._title = this._head.query('h4');
 
-        this.get('contentBox').insertBefore(this._head,this.get('contentBox').get('firstChild')||null);
+        n.insertBefore(this._head, n.get('firstChild') || null);
     },
 
     _renderConsole : function () {
         this._console = this.get('contentBox').insertBefore(
-            Y.Node.create('<div class="'+Y.log.Reader.CLASSES.CONSOLE+'"></div>'),
+            Y.Node.create(
+                '<div class="'+this[GET_CLASS_NAME](CLASS_CONSOLE)+'"></div>'),
             this._foot || null);
     },
 
     _renderFoot : function () {
-        var C = Y.log.Reader.CLASSES,
-            S = Y.log.Reader.STRINGS,
+        var S = this.getStrings(),
             entryTypes,t;
 
         this._foot = Y.Node.create(
-            '<div class="'+C.FT+'">'+
-                '<div class="'+C.CONTROLS+'">'+
-                    '<label class="'+C.LABEL+'">'+
+            '<div class="'+this[GET_CLASS_NAME](CLASS_FT)+'">'+
+                '<div class="'+this[GET_CLASS_NAME](CLASS_CONTROLS)+'">'+
+                    '<label class="'+this[GET_CLASS_NAME](CLASS_LABEL)+'">'+
                         '<input type="checkbox" class="'+
-                            C.CHECKBOX+' '+C.ACTIVE+'" value="1"> '+
+                            this[GET_CLASS_NAME](CLASS_CHECKBOX)+' '+
+                            this[GET_CLASS_NAME](CLASS_ACTIVE)+'" value="1"> '+
                             S.ACTIVE+
                     '</label>'+
-                    '<input type="button" class="'+C.BUTTON+' '+C.CLEAR+'"'+
+                    '<input type="button" class="'+
+                        this[GET_CLASS_NAME](CLASS_BUTTON)+' '+
+                        this[GET_CLASS_NAME](CLASS_CLEAR)+'"'+
                         ' value="'+S.CLEAR+'">'+
                 '</div>');
 
         this._catChecks = this._foot.appendChild(Y.Node.create(
-            '<div class="'+C.CONTROLS + ' ' + C.CAT_CHECKS + '"></div>'));
+            '<div class="'+
+                this[GET_CLASS_NAME](CLASS_CONTROLS)+' '+
+                this[GET_CLASS_NAME](CLASS_CAT_CHECKS)+'"></div>'));
             
         this._srcChecks = this._foot.appendChild(Y.Node.create(
-            '<div class="'+C.CONTROLS + ' ' + C.SRC_CHECKS + '"></div>'));
+            '<div class="'+
+                this[GET_CLASS_NAME](CLASS_CONTROLS)+' '+
+                this[GET_CLASS_NAME](CLASS_SRC_CHECKS) + '"></div>'));
 
         // Add the category entryType checks
         entryTypes = this.get('entryTypes.category');
         for (t in entryTypes) {
             if (entryTypes.hasOwnProperty(t)) {
                 this._catChecks.appendChild(
-                    this._createEntryType(C.CATEGORY,t));
+                    this._createEntryType(this[GET_CLASS_NAME](CLASS_CATEGORY),t));
             }
         }
 
@@ -307,7 +327,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         for (t in entryTypes) {
             if (entryTypes.hasOwnProperty(t)) {
                 this._srcChecks.appendChild(
-                    this._createEntryType(C.SOURCE,t));
+                    this._createEntryType(this[GET_CLASS_NAME](CLASS_SOURCE),t));
             }
         }
 
@@ -315,8 +335,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     syncUI : function () {
-        var C = Y.log.Reader.CLASSES,
-            entryTypes;
+        var entryTypes;
 
         // Set active check
         this._setActive(this.get('active'));
@@ -329,7 +348,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         // Category entryType checks
         entryTypes = this.get('entryTypes.category');
-        this._foot.queryAll('input[type=checkbox].'+C.CATEGORY).each(
+        this._foot.queryAll('input[type=checkbox].'+
+            this[GET_CLASS_NAME](CLASS_CATEGORY)).each(
             function (check) {
                 check.set('checked', (check.get('value') in entryTypes) ?
                     entryTypes[check.get('value')] : true);
@@ -337,7 +357,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
             
         // Source entryType checks
         entryTypes = this.get('entryTypes.source');
-        this._foot.queryAll('input[type=checkbox].'+C.SOURCE).each(
+        this._foot.queryAll('input[type=checkbox].'+
+            this[GET_CLASS_NAME](CLASS_SOURCE)).each(
             function (check) {
                 check.set('checked', (check.get('value') in entryTypes) ?
                     entryTypes[check.get('value')] : true);
@@ -348,38 +369,38 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // UI control click events
         // (collapse, expand, active, clear, categories, sources)
         // move to queryAll(..).on('click',..)
-        var controls = this.get('contentBox').queryAll('.'+Y.log.Reader.CLASSES.CONTROLS),
+        var controls = this.get('contentBox').
+                        queryAll('.'+this[GET_CLASS_NAME](CLASS_CONTROLS)),
             i = controls.size() - 1;
             
         for (;i>=0;--i) {
-            controls.item(i).on('click',Y.bind(this._handleControlClick,this));
+            controls.item(i).on('click',this._handleControlClick);
         }
         
         // Attribute changes
-        this.after('titleChange',         Y.bind(this._setTitle,this));
-        this.after('activeChange',        Y.bind(this._setActive,this));
-        this.after('collapsedChange',     Y.bind(this._setCollapsed,this));
-        this.after('consoleLimitChange',  Y.bind(this._setConsoleLimit,this));
-        this.after('footerEnabledChange', Y.bind(this._setFooterEnabled,this));
+        this.after('titleChange',         this._setTitle);
+        this.after('activeChange',        this._setActive);
+        this.after('collapsedChange',     this._setCollapsed);
+        this.after('consoleLimitChange',  this._setConsoleLimit);
+        this.after('footerEnabledChange', this._setFooterEnabled);
         // HACK: will point to this._setEntryType or something like that
-        this.after('entryTypesChange',    Y.bind(this._handleEntryTypesChange,this));
+        this.after('entryTypesChange',    this._handleEntryTypesChange);
     },
 
     _handleControlClick : function (e) {
-        var C = Y.log.Reader.CLASSES,
-            t = e.target;
+        var t = e.target;
 
-        if (t.hasClass(C.COLLAPSE)) {
+        if (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_COLLAPSE))) {
             this.set('collapsed', true);
-        } else if (t.hasClass(C.EXPAND)) {
+        } else if (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_EXPAND))) {
             this.set('collapsed', false);
-        } else if (t.hasClass(C.ACTIVE)) {
+        } else if (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_ACTIVE))) {
             this.set('active', t.get('checked'));
-        } else if (t.hasClass(C.CLEAR)) {
+        } else if (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_CLEAR))) {
             this.clearConsole();
-        } else if (t.hasClass(C.FILTER)) {
+        } else if (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_FILTER))) {
             this.set('entryTypes.' +
-                (t.hasClass(C.CATEGORY) ? 'category.' : 'source.') +
+                (t[HAS_CLASS](this[GET_CLASS_NAME](CLASS_CATEGORY)) ? 'category.' : 'source.') +
                 t.get('value'),
                 t.get('checked'));
         }
@@ -396,7 +417,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
         // TODO: this should be this._head.queryAll(..).set('checked',!!b)
         var checks = this._foot.queryAll(
-                        'input[type=checkbox].'+Y.log.Reader.CLASSES.ACTIVE),
+                        'input[type=checkbox].'+
+                        this[GET_CLASS_NAME](CLASS_ACTIVE)),
             i = checks.size() - 1;
 
         for (;i>=0;--i) {
@@ -414,7 +436,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _setCollapsed : function (b) {
         b = typeof b == 'object' ? b.newVal : b;
 
-        this.get('contentBox')[b?'addClass':'removeClass'](Y.log.Reader.CLASSES.COLLAPSE);
+        this.get('contentBox')[b?ADD_CLASS:REMOVE_CLASS](
+            this[GET_CLASS_NAME](CLASS_COLLAPSE));
     },
 
     _setConsoleLimit : function (v) {
@@ -496,8 +519,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _schedulePrint : function () {
         if (this.get('active') && !this._timeout) {
             this._timeout = setTimeout(
-                Y.bind(this.printBuffer,this),
-                this.get('printTimeout'));
+                                this.printBuffer,
+                                this.get('printTimeout'));
         }
     },
 
@@ -552,8 +575,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
             t = templates[m.category] || templates[this.get('defaultTemplate')],
             n = Y.Node.create(Y.Lang.substitute(t,m));
 
-        n.addClass(this._filterClass(m.category));
-        n.addClass(this._filterClass(m.source));
+        n[ADD_CLASS](this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,m.category));
+        n[ADD_CLASS](this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,m.source));
 
         return n;
     },
@@ -599,6 +622,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
     // Log entry display filtering methods
     hideEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
+
         for (t in entryTypes) {
             if (entryTypes.hasOwnProperty(t) &&
                 entryTypes[t].hasOwnProperty(name)) {
@@ -609,6 +633,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     showEntries : function (name) {
         var entryTypes = this.get('entryTypes'),t;
+
         for (t in entryTypes) {
             if (entryTypes.hasOwnProperty(t) &&
                 entryTypes[t].hasOwnProperty(name)) {
@@ -620,7 +645,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
     _setEntryType : function (name,checked) {
         // TODO: should be this._foot.queryAll(..).set('checked',checked)
         var checks = this._foot.queryAll('input[type=checkbox].'+
-                        this._filterClass(name)),
+                        this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,name)),
             i = checks.size() - 1;
 
         for (;i>=0;--i) {
@@ -632,11 +657,13 @@ Y.extend(Y.log.Reader,Y.Widget,{
 
     _filterEntries : function (name,on) {
         // add or remove the filter class from the root node
-        this.get('contentBox')[on?'addClass':'removeClass'](this._filterClass(name,true));
+        this.get('contentBox')[on?ADD_CLASS:REMOVE_CLASS](
+            this[GET_CLASS_NAME](CLASS_HIDE_BASE,name));
     },
 
     _setFooterEnabled : function (show) {
-        this.get('contentBox')[show?'removeClass':'addClass'](Y.log.Reader.CLASSES.HIDE_FT);
+        this.get('contentBox')[show?REMOVE_CLASS:ADD_CLASS](
+            this[GET_CLASS_NAME](CLASS_HIDE_FT));
     },
 
     createCategory : function (name, show) {
@@ -647,22 +674,20 @@ Y.extend(Y.log.Reader,Y.Widget,{
     },
 
     _createEntryType : function (type,name) {
-        var C     = Y.log.Reader.CLASSES,
-            label = Y.Node.create(
-                '<label class="'+C.LABEL+'">'+
+        var label = Y.Node.create(
+                '<label class="'+this[GET_CLASS_NAME](CLASS_LABEL)+'">'+
                     '<input type="checkbox" value="'+name+'" class="'+
-                        C.FILTER+' '+type+' '+this._filterClass(name)+'"> '+
+                        this[GET_CLASS_NAME](CLASS_FILTER)+' '+type+' '+
+                        this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,name)+'"> '+
                         name+
-                '</label>');
+                '</label>'),
+            selector = '.'  + this[GET_CLASS_NAME](CLASS_HIDE_BASE,name) +
+                       ' .' + this[GET_CLASS_NAME](CLASS_CONSOLE) +
+                       ' .' + this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,name);
 
-        Y.StyleSheet('logreader').setCSS('.'+this._filterClass(name,true)+' .'+Y.log.Reader.CLASSES.CONSOLE+' .'+this._filterClass(name),
-            {display: 'none'});
+        Y.StyleSheet('logreader').setCSS(selector, {display: 'none'});
 
         return label;
-    },
-
-    _filterClass : function (name,hide) {
-        return Y.log.Reader.CLASSES[(hide ? 'HIDE_BASE' : 'ENTRY_TYPE_BASE')]+name;
     },
 
     _handleEntryTypesChange : function (e) {
@@ -670,8 +695,7 @@ Y.extend(Y.log.Reader,Y.Widget,{
         // a branch node in the obj structure was changed.
 
         // Build a list of paths to compare against the previous value
-        var C = Y.log.Reader.CLASSES,
-            buildPaths = function (o) {
+        var buildPaths = function (o) {
                 var paths = [];
 
                 function drill(o,p) {
@@ -722,10 +746,12 @@ Y.extend(Y.log.Reader,Y.Widget,{
                 name = aPaths[i][1];
                 if (aPaths[i][0] == 'category') {
                     this._catChecks.appendChild(
-                        this._createEntryType(C.CATEGORY,name));
+                        this._createEntryType(
+                            this[GET_CLASS_NAME](CLASS_CATEGORY),name));
                 } else {
                     this._srcChecks.appendChild(
-                        this._createEntryType(C.SOURCE,name));
+                        this._createEntryType(
+                            this[GET_CLASS_NAME](CLASS_SOURCE),name));
                 }
 
                 this._setEntryType(name,val(e.newVal,aPaths[i]));
@@ -734,6 +760,8 @@ Y.extend(Y.log.Reader,Y.Widget,{
     }
 
 });
+
+Y.log.Reader = LogReader;
 
 
 }, '@VERSION@' ,{requires:['substitute','stylesheet','widget']});

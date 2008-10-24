@@ -1,16 +1,16 @@
 /* Collapse/Expand */
-.yui-skin-sam .yui-log-expand,
-.yui-skin-sam .yui-log-collapse .yui-log-collapse {
+.yui-skin-sam .yui-logreader-expand,
+.yui-skin-sam .yui-logreader-collapse .yui-logreader-collapse {
     display: none;
 }
-.yui-skin-sam .yui-log-collapse .yui-log-expand {
+.yui-skin-sam .yui-logreader-collapse .yui-logreader-expand {
     display: inline;
 }
-.yui-log-collapse .yui-log-console,
-.yui-log-collapse .yui-log-ft {
+.yui-logreader-collapse .yui-logreader-console,
+.yui-logreader-collapse .yui-logreader-ft {
     display: none;
 }
-.yui-skin-sam .yui-log {
+.yui-skin-sam .yui-logreader-container {
     border: 1px solid #777;
     color:#000;
     font: normal 77%/1.3 Arial, sans-serif;
@@ -22,18 +22,18 @@
     z-index:9000;
 }
 
-.yui-skin-sam .yui-log-hd,
-.yui-skin-sam .yui-log-controls {
+.yui-skin-sam .yui-logreader-hd,
+.yui-skin-sam .yui-logreader-controls {
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     height: 2em;
     padding: 0 1ex;
 }
-.yui-skin-sam .yui-log-hd h4 {
+.yui-skin-sam .yui-logreader-hd h4 {
     font-size: 100%;
     line-height: 2em;
     margin: 0;
 }
-.yui-skin-sam .yui-log-button {
+.yui-skin-sam .yui-logreader-button {
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     border: none;
     border-left: 2px groove #ccc;
@@ -42,7 +42,7 @@
     position: absolute;
     right: 0;
 }
-.yui-skin-sam .yui-log-console {
+.yui-skin-sam .yui-logreader-console {
     background: #fff;
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;
@@ -50,55 +50,55 @@
     overflow: auto;
     width: 100%;
 }
-.yui-skin-sam .yui-log-hd .yui-log-controls {
+.yui-skin-sam .yui-logreader-hd .yui-logreader-controls {
     position: absolute;
     right: 0;
 }
 
-.yui-skin-sam .yui-log-ft .yui-log-categories,
-.yui-skin-sam .yui-log-ft .yui-log-sources {
+.yui-skin-sam .yui-logreader-ft .yui-logreader-categories,
+.yui-skin-sam .yui-logreader-ft .yui-logreader-sources {
     background: #eef;
     border-top: 1px solid #777;
     height: auto;
     padding: .3em 1ex;
 }
-.yui-skin-sam .yui-log-ft .yui-log-sources {
+.yui-skin-sam .yui-logreader-ft .yui-logreader-sources {
     background: #fee;
 }
 
 /* Log entries */
-.yui-skin-sam .yui-log-entry {
+.yui-skin-sam .yui-logreader-entry {
     border-bottom: 1px dotted #aaa;
     margin: 0;
     padding: 0 0 .5ex;
 }
-.yui-skin-sam .yui-log-entry p,
-.yui-skin-sam .yui-log-verbose .yui-log-entry-meta p {
+.yui-skin-sam .yui-logreader-entry p,
+.yui-skin-sam .yui-logreader-verbose .yui-logreader-entry-meta p {
     margin: 0;
 }
-.yui-skin-sam .yui-log-verbose p,
-.yui-skin-sam .yui-log-verbose .yui-log-entry-meta p.yui-log-entry-src {
+.yui-skin-sam .yui-logreader-verbose p,
+.yui-skin-sam .yui-logreader-verbose .yui-logreader-entry-meta p.yui-logreader-entry-src {
     margin-left: 1ex;
 }
 
-.yui-skin-sam .yui-log-entry-meta {
+.yui-skin-sam .yui-logreader-entry-meta {
     font-family: Arial, sans-serif;
 }
-.yui-skin-sam .yui-log-entry-cat {
+.yui-skin-sam .yui-logreader-entry-cat {
     text-transform: uppercase;
     padding: 1px 4px;
     background-color: #ccc;
 }
-.yui-skin-sam .yui-log-entry-src {
+.yui-skin-sam .yui-logreader-entry-src {
     font-style: italic;
 }
-.yui-skin-sam .yui-log-entry-type-info .yui-log-entry-cat {
+.yui-skin-sam .yui-logreader-entry-type-info .yui-logreader-entry-cat {
     background-color: #ac2;
 }
-.yui-skin-sam .yui-log-entry-type-warn .yui-log-entry-cat {
+.yui-skin-sam .yui-logreader-entry-type-warn .yui-logreader-entry-cat {
     background-color: #e81;
 }
-.yui-skin-sam .yui-log-entry-type-error .yui-log-entry-cat {
+.yui-skin-sam .yui-logreader-entry-type-error .yui-logreader-entry-cat {
     background-color: #b00;
     color: #fff;
 }
