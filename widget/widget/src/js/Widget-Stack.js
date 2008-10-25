@@ -14,7 +14,9 @@ YUI.add("widget-stack", function(Y) {
         ZINDEX = "zindex",
         SHIM = "shim",
         VISIBLE = "visible",
-        ROOT = "root",
+
+        BOUNDING_BOX = "boundingBox",
+
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
         SYNCUI = "syncUI",
@@ -56,12 +58,12 @@ YUI.add("widget-stack", function(Y) {
 
     var CLASSNAMES = Stack.CLASSNAMES;
 
-    Stack.SHIM_TEMPLATE = ["iframe", { "class":CLASSNAMES.shim, title: "Widget Stacking Shim", src:"javascript:false" }];
+    // Stack.SHIM_TEMPLATE = "<iframe class":CLASSNAMES.shim, title: "Widget Stacking Shim", src:"javascript:false" }>;
 
     Stack.prototype = {
         
         initStack : function() {
-            this._stackEl = this.get(ROOT);
+            this._stackEl = this.get(BOUNDING_BOX);
     
             // WIDGET METHOD OVERLAP
             Y.after(this._stackRenderUI, this, RENDERUI);
