@@ -1,10 +1,3 @@
-/**
- * @extension Y.widget.Position
- *
- * @requires-events
- * @requires-attrs widget, root
- * @requires-methods syncUI, bindUI
- */
 
 YUI.add("widget-position", function(Y) {
 
@@ -15,13 +8,14 @@ YUI.add("widget-position", function(Y) {
             Y_COORD = "y",
             XY_COORD = "xy",
 
-            ROOT = "root",
+            POSITIONED = "positioned",
+            BOUNDING_BOX = "boundingBox",
             RENDERUI = "renderUI",
             BINDUI = "bindUI",
             SYNCUI = "syncUI",
 
             PositionEvent = "positionChange",
-            XY = "xyChange";
+            XYEvent = "xyChange";
 
         function Position(config) {
             /* TODO: If Plugin */
@@ -59,16 +53,11 @@ YUI.add("widget-position", function(Y) {
             }
         };
 
-        Position.CLASSNAMES = {
-            positioned: "yui-positioned"
-        };
-
-        var CLASSNAMES = Position.CLASSNAMES;
-
         Position.prototype = {
 
-            initPosition: function(config) {
-                this._posEl = this.get(ROOT);
+            _initPosition: function(config) {
+
+                this._posEl = this.get(BOUNDING_BOX);
 
                 // WIDGET METHOD OVERLAP
                 Y.after(this._positionRenderUI, this, RENDERUI);
@@ -77,17 +66,17 @@ YUI.add("widget-position", function(Y) {
             },
 
             _positionRenderUI : function() {
-                this._posEl.addClass(CLASSNAMES.positioned);
+                this._posEl.addClass(this.getClassName(POSITIONED));
             },
 
             _positionSyncUI : function() {
-                this._uiSetPosition();
-                this._uiSetXY();
+                this._uiSetPosition(this.get(POSITION));
+                this._uiSetXY(this.get(XY_COORD));
             },
 
             _positionBindUI :function() {
-                this.onUI(PositionEvent, Y.bind(this._uiSetPosition, this));
-                this.onUI(XY, Y.bind(this._uiSetXY, this));
+                this.after("positionChange", this._uiSetPosition);
+                this.after("xyChange", this._uiSetXY);
             },
 
             /**
@@ -102,19 +91,19 @@ YUI.add("widget-position", function(Y) {
              * simple pass through of Y.Node.getXY_COORD results
              */
             move: function () {
-                var rArgs = arguments,
-                    nArgs = (Lang.isArray(rArgs[0])) ? rArgs[0] : [rArgs[0], rArgs[1]];
-                    this.set(XY_COORD, nArgs);
+                var args = arguments,
+                    coord = (Lang.isArray(args[0])) ? args[0] : [args[0], args[1]];
+                    this.set(XY_COORD, coord);
             },
 
             /**
              * Synchronizes the Panel's "xy", "x", and "y" properties with the 
              * Widget's position in the DOM.
-             * 
+             *
              * @method syncXY
              */
             syncXY : function () {
-                this.setUI(XY_COORD, this._posEl.getXY());
+                this.set(XY_COORD, this._posEl.getXY(), {src: UI});
             },
 
             _validateXY : function(val) {
@@ -133,24 +122,19 @@ YUI.add("widget-position", function(Y) {
                 return this.get(XY_COORD)[0];
             },
 
-            _getY : function(val) {
+            _getY : function() {
                 return this.get(XY_COORD)[1];
             },
 
-            _uiSetPosition : function() {
-                this._posEl.setStyle(POSITION, this.get(POSITION));
+            _uiSetPosition : function(val) {
+                this._posEl.setStyle(POSITION, val);
             },
 
-            _uiSetXY : function() {
-                this._posEl.setXY(this.get(XY_COORD));
+            _uiSetXY : function(val) {
+                this._posEl.setXY(val);
             }
         };
 
         Y.WidgetPosition = Position;
-
-        /* TODO: If Plugin */
-        /*
-          Y.extend(Position, Y.Base, proto);
-        */
 
 }, "3.0.0");
