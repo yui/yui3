@@ -5,30 +5,32 @@
  */
 (function() {
 
-var add = function(el, type, fn, capture) {
-    if (el.addEventListener) {
-            el.addEventListener(type, fn, !!capture);
-    } else if (el.attachEvent) {
-            el.attachEvent("on" + type, fn);
-    } 
-},
+    var add = function(el, type, fn, capture) {
+        if (el.addEventListener) {
+                el.addEventListener(type, fn, !!capture);
+        } else if (el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+        } 
+    },
 
-remove = function(el, type, fn, capture) {
-    if (el.removeEventListener) {
-            el.removeEventListener(type, fn, !!capture);
-    } else if (el.detachEvent) {
-            el.detachEvent("on" + type, fn);
-    }
-},
+    remove = function(el, type, fn, capture) {
+        if (el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+        } else if (el.detachEvent) {
+                el.detachEvent("on" + type, fn);
+        }
+    },
 
-onLoad = function() {
-    YUI.Env.windowLoaded = true;
-    remove(window, "load", onLoad);
-},
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        remove(window, "load", onLoad);
+    },
 
-EVENT_READY = 'event:ready',
+    EVENT_READY = 'event:ready',
 
-COMPAT_ARG = '~yui|2|compat~';
+    COMPAT_ARG = '~yui|2|compat~',
+
+    CAPTURE = "capture_";
 
 add(window, "load", onLoad);
 
@@ -270,9 +272,16 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
 
+
                 var args=Y.Array(arguments, 0, true), 
                     trimmedArgs=args.slice(1),
-                    compat, E=Y.Event;
+                    compat, E=Y.Event, capture = false;
+
+                if (type.indexOf(CAPTURE) > -1) {
+                    type = type.substr(CAPTURE.length);
+                    capture = true;
+                    Y.log('Using capture phase for: ' + type, 'info', 'Event');
+                }
 
                 if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                     compat = true;
@@ -297,7 +306,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                         args[2] = v;
                         handles.push(E.attach.apply(E, args));
                     });
-
 
                     return handles;
 
@@ -384,7 +392,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     // var capture = (Y.lang.isObject(obj) && obj.capture);
                     // attach a listener that fires the custom event
-                    add(el, type, cewrapper.fn, false);
+                    add(el, type, cewrapper.fn, capture);
                 }
 
                 // switched from obj to trimmedArgs[2] to deal with appened compat param

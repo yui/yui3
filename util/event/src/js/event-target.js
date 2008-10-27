@@ -179,7 +179,7 @@ YUI.add("event-target", function(Y) {
 
             //if (ce && !ce.configured) {
             if (ce) {
-// Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
+// ce.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
 
                 // This event could have been published
                 ce.applyConfig(opts, true);

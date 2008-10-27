@@ -4,6 +4,56 @@
  */
 YUI.add("event", function(Y) {
 
+    var FOCUS = Y.UA.ie ? "focusin" : "focus",
+        BLUR = Y.UA.ie ? "focusout" : "blur",
+        CAPTURE = "capture_";
+
+    Y.Env.eventAdaptors = {
+
+        focus: {
+
+            on: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + FOCUS;
+
+                return Y.Event.attach.apply(Y.Event, a);
+
+            },
+
+            detach: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + FOCUS;
+
+                return Y.Event.detach.apply(Y.Event, a);
+
+            }
+        },
+
+        blur: {
+
+            on: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.attach.apply(Y.Event, a);
+
+            },
+
+            detach: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.detach.apply(Y.Event, a);
+
+            }
+        }
+
+    };
+
     /*
      * Subscribes to the yui:load event, which fires when a Y.use operation
      * is complete.
@@ -35,15 +85,24 @@ YUI.add("event", function(Y) {
      * unsubscribing to this event.
      */
     Y.on = function(type, f, o) {
+        
+        var adapt = Y.Env.eventAdaptors[type];
 
-        if (type.indexOf(':') > -1) {
-            var cat = type.split(':');
-            switch (cat[0]) {
-                default:
-                    return Y.subscribe.apply(Y, arguments);
-            }
+        if (adapt) {
+
+            return adapt.on.apply(Y, arguments);
+
         } else {
-            return Y.Event.attach.apply(Y.Event, arguments);
+
+            if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.subscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.attach.apply(Y.Event, arguments);
+            }
         }
 
     };
@@ -62,16 +121,23 @@ YUI.add("event", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.detach = function(type, f, o) {
+
+        var adapt = Y.Env.eventAdaptors[type];
+
         if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
-        } else if (type.indexOf(':') > -1) {
-            var cat = type.split(':');
-            switch (cat[0]) {
-                default:
-                    return Y.unsubscribe.apply(Y, arguments);
-            }
         } else {
-            return Y.Event.detach.apply(Y.Event, arguments);
+            if (adapt) {
+                adapt.detach.apply(Y, arguments);
+            } else if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.unsubscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.detach.apply(Y.Event, arguments);
+            }
         }
     };
 
@@ -122,6 +188,8 @@ YUI.add("event", function(Y) {
 
         return Y;
     };
+
+
 
 }, "3.0.0", {
     use: [

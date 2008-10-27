@@ -9,6 +9,9 @@ YUI Event Utility
     - addListerer triggers 2.x event behavior.
     - Removed extra undefined parameter passed to DOM event listeners.
     - Compat layer contains Event.on.
+    - Event adapter support added to Y.on
+    - Added Y.on('focus', 'blur' event adaptors (support for propagation
+      of these events.)
 
 3.0.0pr1
     - Initial Release

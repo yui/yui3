@@ -4,6 +4,56 @@
  */
 YUI.add("event", function(Y) {
 
+    var FOCUS = Y.UA.ie ? "focusin" : "focus",
+        BLUR = Y.UA.ie ? "focusout" : "blur",
+        CAPTURE = "capture_";
+
+    Y.Env.eventAdaptors = {
+
+        focus: {
+
+            on: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + FOCUS;
+
+                return Y.Event.attach.apply(Y.Event, a);
+
+            },
+
+            detach: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + FOCUS;
+
+                return Y.Event.detach.apply(Y.Event, a);
+
+            }
+        },
+
+        blur: {
+
+            on: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.attach.apply(Y.Event, a);
+
+            },
+
+            detach: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.detach.apply(Y.Event, a);
+
+            }
+        }
+
+    };
+
     /*
      * Subscribes to the yui:load event, which fires when a Y.use operation
      * is complete.
@@ -35,15 +85,24 @@ YUI.add("event", function(Y) {
      * unsubscribing to this event.
      */
     Y.on = function(type, f, o) {
+        
+        var adapt = Y.Env.eventAdaptors[type];
 
-        if (type.indexOf(':') > -1) {
-            var cat = type.split(':');
-            switch (cat[0]) {
-                default:
-                    return Y.subscribe.apply(Y, arguments);
-            }
+        if (adapt) {
+
+            return adapt.on.apply(Y, arguments);
+
         } else {
-            return Y.Event.attach.apply(Y.Event, arguments);
+
+            if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.subscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.attach.apply(Y.Event, arguments);
+            }
         }
 
     };
@@ -62,16 +121,23 @@ YUI.add("event", function(Y) {
      * @return {YUI} the YUI instance
      */
     Y.detach = function(type, f, o) {
+
+        var adapt = Y.Env.eventAdaptors[type];
+
         if (Y.Lang.isObject(type) && type.detach) {
             return type.detach();
-        } else if (type.indexOf(':') > -1) {
-            var cat = type.split(':');
-            switch (cat[0]) {
-                default:
-                    return Y.unsubscribe.apply(Y, arguments);
-            }
         } else {
-            return Y.Event.detach.apply(Y.Event, arguments);
+            if (adapt) {
+                adapt.detach.apply(Y, arguments);
+            } else if (type.indexOf(':') > -1) {
+                var cat = type.split(':');
+                switch (cat[0]) {
+                    default:
+                        return Y.unsubscribe.apply(Y, arguments);
+                }
+            } else {
+                return Y.Event.detach.apply(Y.Event, arguments);
+            }
         }
     };
 
@@ -122,6 +188,8 @@ YUI.add("event", function(Y) {
 
         return Y;
     };
+
+
 
 }, "3.0.0", {
     use: [
@@ -394,47 +462,26 @@ YUI.add("aop", function(Y) {
  * @module event
  */
 YUI.add("event-custom", function(Y) {
-
     var onsubscribeType = "_event:onsub",
-
         AFTER = 'after', 
-
         CONFIGS = [
-
             'broadcast',
-
             'bubbles',
-
             'context',
-
             'configured',
-
             'currentTarget',
-
             'defaultFn',
-
             'details',
-
             'emitFacade',
-
             'fireOnce',
-
             'host',
-
             'preventable',
-
             'preventedFn',
-
             'queuable',
-
             'silent',
-
             'stoppedFn',
-
             'target',
-
             'type'
-
         ],
 
         YUI3_SIGNATURE = 9;
@@ -1449,7 +1496,7 @@ YUI.add("event-target", function(Y) {
 
             //if (ce && !ce.configured) {
             if (ce) {
-// Y.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
+// ce.log("publish applying config to published event: '"+type+"' exists", 'info', 'event');
 
                 // This event could have been published
                 ce.applyConfig(opts, true);
@@ -1784,30 +1831,32 @@ var Env = YUI.Env,
  */
 (function() {
 
-var add = function(el, type, fn, capture) {
-    if (el.addEventListener) {
-            el.addEventListener(type, fn, !!capture);
-    } else if (el.attachEvent) {
-            el.attachEvent("on" + type, fn);
-    } 
-},
+    var add = function(el, type, fn, capture) {
+        if (el.addEventListener) {
+                el.addEventListener(type, fn, !!capture);
+        } else if (el.attachEvent) {
+                el.attachEvent("on" + type, fn);
+        } 
+    },
 
-remove = function(el, type, fn, capture) {
-    if (el.removeEventListener) {
-            el.removeEventListener(type, fn, !!capture);
-    } else if (el.detachEvent) {
-            el.detachEvent("on" + type, fn);
-    }
-},
+    remove = function(el, type, fn, capture) {
+        if (el.removeEventListener) {
+                el.removeEventListener(type, fn, !!capture);
+        } else if (el.detachEvent) {
+                el.detachEvent("on" + type, fn);
+        }
+    },
 
-onLoad = function() {
-    YUI.Env.windowLoaded = true;
-    remove(window, "load", onLoad);
-},
+    onLoad = function() {
+        YUI.Env.windowLoaded = true;
+        remove(window, "load", onLoad);
+    },
 
-EVENT_READY = 'event:ready',
+    EVENT_READY = 'event:ready',
 
-COMPAT_ARG = '~yui|2|compat~';
+    COMPAT_ARG = '~yui|2|compat~',
+
+    CAPTURE = "capture_";
 
 add(window, "load", onLoad);
 
@@ -2049,9 +2098,16 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
 
+
                 var args=Y.Array(arguments, 0, true), 
                     trimmedArgs=args.slice(1),
-                    compat, E=Y.Event;
+                    compat, E=Y.Event, capture = false;
+
+                if (type.indexOf(CAPTURE) > -1) {
+                    type = type.substr(CAPTURE.length);
+                    capture = true;
+                    Y.log('Using capture phase for: ' + type, 'info', 'Event');
+                }
 
                 if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
                     compat = true;
@@ -2076,7 +2132,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                         args[2] = v;
                         handles.push(E.attach.apply(E, args));
                     });
-
 
                     return handles;
 
@@ -2163,7 +2218,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     // var capture = (Y.lang.isObject(obj) && obj.capture);
                     // attach a listener that fires the custom event
-                    add(el, type, cewrapper.fn, false);
+                    add(el, type, cewrapper.fn, capture);
                 }
 
                 // switched from obj to trimmedArgs[2] to deal with appened compat param

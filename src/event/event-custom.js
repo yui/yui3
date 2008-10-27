@@ -4,47 +4,26 @@
  * @module event
  */
 YUI.add("event-custom", function(Y) {
-
     var onsubscribeType = "_event:onsub",
-
         AFTER = 'after', 
-
         CONFIGS = [
-
             'broadcast',
-
             'bubbles',
-
             'context',
-
             'configured',
-
             'currentTarget',
-
             'defaultFn',
-
             'details',
-
             'emitFacade',
-
             'fireOnce',
-
             'host',
-
             'preventable',
-
             'preventedFn',
-
             'queuable',
-
             'silent',
-
             'stoppedFn',
-
             'target',
-
             'type'
-
         ],
 
         YUI3_SIGNATURE = 9;
