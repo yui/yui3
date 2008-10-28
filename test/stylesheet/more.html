@@ -49,13 +49,8 @@
 <script type="text/javascript" src="/2.x/build/logger/logger-min.js"></script>
 <script type="text/javascript" src="/2.x/build/yuitest/yuitest-min.js"></script>
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
-<!--script type="text/javascript" src="../../build/oop/oop.js"></script>
-<script type="text/javascript" src="../../build/dom/dom.js"></script>
-<script type="text/javascript" src="../../build/event/event.js"></script>
-<script type="text/javascript" src="../../build/node/node.js"></script-->
-<script type="text/javascript" src="../../build/stylesheet/stylesheet.js"></script>
 <script type="text/javascript">
-YUI().use('stylesheet',function (Y) {
+YUI({base:'../../build/',filter:'debug'}).use('stylesheet',function (Y) {
 
 var d = document,
     t = YAHOO.tool,
@@ -169,7 +164,7 @@ suite.add(new TestCase({
 }));
 
 suite.add(new TestCase({
-    name : "Test setCSS",
+    name : "Test set",
 
     setUp : function () {
         this.stylesheet = new StyleSheet('test');
@@ -181,12 +176,14 @@ suite.add(new TestCase({
     },
     tearDown : function () {
         testbed.innerHTML = '';
-        this.stylesheet.unsetCSS('#target');
-        this.stylesheet.unsetCSS('#target p');
+        this.stylesheet.unset('#target');
+        this.stylesheet.unset('#target p');
+        this.stylesheet.unset('garbage in');
+        this.stylesheet.unset('#target p, #target pre');
     },
 
     test_addSimpleSelector : function () {
-        this.stylesheet.setCSS('#target',{
+        this.stylesheet.set('#target',{
             color           : '#123456',
             backgroundColor : '#eef',
             border          : '1px solid #ccc'
@@ -207,7 +204,7 @@ suite.add(new TestCase({
         var before = Dom.getStyle(
                         testbed.getElementsByTagName('pre')[0],'textAlign');
 
-        this.stylesheet.setCSS('#target p', { textAlign: 'right' });
+        this.stylesheet.set('#target p', { textAlign: 'right' });
 
         StyleAssert.areEqual('right',
                         Dom.getStyle(
@@ -218,6 +215,42 @@ suite.add(new TestCase({
                         Dom.getStyle(
                             testbed.getElementsByTagName('pre')[0],'textAlign'),
                         "#target pre should not be set (maybe auto/inherit?)");
+    },
+
+    test_garbageIn : function () {
+        var x = d.getElementsByTagName('style'),i,
+            id = this.stylesheet.getId(),
+            before = 0;
+
+        for (i = x.length - 1; i >= 0; --i) {
+            if (Y.stamp(x[i]) === id) {
+                x = x[i].sheet || x[i].styleSheet;
+                before = (x.cssRules || x.rules).length;
+                break;
+            }
+        }
+
+        this.stylesheet.set('garbage in', { foo : 'bar' });
+
+        Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "garbage rule not added");
+
+        this.stylesheet.set('^*Q$(FUY(Q[{}_-',{ 'f*^$%{]@! \n\t' : 'boom' });
+
+        Assert.areEqual(before + 1, (x.cssRules||x.rules).length, "syntax error rule added");
+    },
+
+    test_commaSelector : function () {
+        this.stylesheet.set('#target p, #target pre', { textAlign: 'right' });
+
+        StyleAssert.areEqual('right',
+                        Dom.getStyle(
+                            testbed.getElementsByTagName('p')[0],'textAlign'),
+                        "#target p, #target pre { text-align: right }");
+
+        StyleAssert.areEqual('right',
+                        Dom.getStyle(
+                            testbed.getElementsByTagName('pre')[0],'textAlign'),
+                        "#target p, #target pre { text-align: right }");
     }
 }));
 
@@ -242,12 +275,12 @@ suite.add(new TestCase({
     tearDown : function () {
         testbed.innerHTML = '';
         this.stylesheet.enable();
-        this.stylesheet.unsetCSS('#target');
-        this.stylesheet.unsetCSS('#target p');
+        this.stylesheet.unset('#target');
+        this.stylesheet.unset('#target p');
     },
 
     test_disableSheet : function () {
-        this.stylesheet.setCSS('#target',{
+        this.stylesheet.set('#target',{
             color           : '#123456',
             backgroundColor : '#eef',
             border          : '1px solid #ccc'
@@ -279,7 +312,7 @@ suite.add(new TestCase({
     test_enableSheet : function () {
         this.stylesheet.disable();
 
-        this.stylesheet.setCSS('#target',{
+        this.stylesheet.set('#target',{
             color           : '#123456',
             backgroundColor : '#eef',
             border          : '1px solid #ccc'
@@ -310,7 +343,7 @@ suite.add(new TestCase({
 }));
 
 suite.add(new TestCase({
-    name : "Test unsetCSS",
+    name : "Test unset",
 
     setUp : function () {
         this.stylesheet = new StyleSheet('test');
@@ -330,12 +363,12 @@ suite.add(new TestCase({
     },
     tearDown : function () {
         testbed.innerHTML = '';
-        this.stylesheet.unsetCSS('#target');
-        this.stylesheet.unsetCSS('#target p');
+        this.stylesheet.unset('#target');
+        this.stylesheet.unset('#target p');
     },
 
-    test_unsetCSS : function () {
-        this.stylesheet.setCSS('#target',{
+    test_unset : function () {
+        this.stylesheet.set('#target',{
             color           : '#f00',
             backgroundColor : '#eef',
             border          : '1px solid #ccc'
@@ -351,13 +384,13 @@ suite.add(new TestCase({
                         Dom.getStyle(this.testNode,'borderLeftWidth'),
                         "border (before unset)");
 
-        this.stylesheet.unsetCSS('#target', 'color');
+        this.stylesheet.unset('#target', 'color');
 
         StyleAssert.areEqual(this.before.color,
                         Dom.getStyle(this.testNode,'color'),
                         "color (after unset)");
 
-        this.stylesheet.unsetCSS('#target', ['backgroundColor','border']);
+        this.stylesheet.unset('#target', ['backgroundColor','border']);
 
         StyleAssert.areEqual(this.before.backgroundColor,
                         Dom.getStyle(this.testNode,'backgroundColor'),
@@ -368,13 +401,13 @@ suite.add(new TestCase({
     },
 
     test_removeRule : function () {
-        this.stylesheet.setCSS('#target', { textAlign: 'right' });
+        this.stylesheet.set('#target', { textAlign: 'right' });
 
         StyleAssert.areEqual('right',
                         Dom.getStyle(this.testNode,'textAlign'),
                         "#target { text-align: right; }");
 
-        this.stylesheet.unsetCSS('#target');
+        this.stylesheet.unset('#target');
         StyleAssert.areEqual(this.before.textAlign,
                         Dom.getStyle(this.testNode,'textAlign'),
                         "#target text-align still in place");
@@ -396,21 +429,21 @@ suite.add(new TestCase({
     },
 
     test_float : function () {
-        this.stylesheet.setCSS('#target',{
+        this.stylesheet.set('#target',{
                             overflow: 'hidden',
                             background: '#000',
                             zoom: 1
                         }).
-                        setCSS('#target p',{
+                        set('#target p',{
                             height:'100px',
                             width:'100px',
                             border: '5px solid #ccc',
                             background: '#fff',
                             margin: '1em'
                         }).
-                        setCSS('#p1',{ float: 'left' }).
-                        setCSS('#p2',{ cssFloat: 'left' }).
-                        setCSS('#p3',{ styleFloat: 'left' });
+                        set('#p1',{ float: 'left' }).
+                        set('#p2',{ cssFloat: 'left' }).
+                        set('#p3',{ styleFloat: 'left' });
 
         Assert.areEqual('left', Dom.getStyle('p1','float'));
         Assert.areEqual('left', Dom.getStyle('p2','float'));
@@ -418,9 +451,9 @@ suite.add(new TestCase({
     },
 
     test_opacity : function () {
-        this.stylesheet.setCSS('#p1',{ opacity: .5 }).
-                        setCSS('#p2',{ opacity: .2 }).
-                        setCSS('#p3',{ opacity: 1 });
+        this.stylesheet.set('#p1',{ opacity: .5 }).
+                        set('#p2',{ opacity: .2 }).
+                        set('#p3',{ opacity: 1 });
 
         Assert.areEqual(0.5,Dom.getStyle('p1','opacity'));
         Assert.areEqual(0.2,Dom.getStyle('p2','opacity'));

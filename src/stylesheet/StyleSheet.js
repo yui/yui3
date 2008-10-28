@@ -1,14 +1,11 @@
-var d = document,
+var d = Y.config.doc,
     p = d.createElement('p'), // Have to hold on to the node (see notes)
     style  = p.style, // worker style collection
     sheets = {},
-    ssId   = 0,
     floatAttr = ('cssFloat' in style) ? 'cssFloat' : 'styleFloat',
     _toCssText,
     _unsetOpacity,
-    _unsetProperty,
-    _createSheet,
-    factoryNode;
+    _unsetProperty;
 
 
 _unsetOpacity = ('opacity' in style) ?
@@ -45,7 +42,7 @@ _unsetProperty = style.borderLeft ?
         if (prop !== floatAttr && prop.toLowerCase().indexOf('float') != -1) {
             prop = floatAttr;
         }
-        if (typeof style[prop] === 'string') {
+        if (Y.Lang.isString(style[prop])) {
             if (prop === 'opacity') {
                 _unsetOpacity(style);
             } else {
@@ -54,21 +51,7 @@ _unsetProperty = style.borderLeft ?
         }
     };
     
-factoryNode = d.createElement('style');
-factoryNode.type = 'text/css';
-_createSheet = factoryNode.styleSheet ?
-    function (cssText) {
-        var s = factoryNode.cloneNode(false);
-        s.styleSheet.cssText = cssText;
-        return s;
-    } :
-    function (cssText) {
-        var s = factoryNode.cloneNode(false);
-        s.appendChild(d.createTextNode(cssText));
-        return s;
-    };
-
-Y.StyleSheet = function (seed, name) {
+function StyleSheet(seed, name) {
     var head,
         node,
         sheet,
@@ -78,36 +61,42 @@ Y.StyleSheet = function (seed, name) {
         _deleteRule;
 
     // Factory or constructor
-    if (!(this instanceof Y.StyleSheet)) {
-        return new Y.StyleSheet(seed,name);
+    if (!(this instanceof arguments.callee)) {
+        return new arguments.callee(seed,name);
     }
 
     head = d.getElementsByTagName('head')[0];
     if (!head) {
-        // TODO: do something. Preferably something smart
-        Y.log('HEAD element not found to append STYLE node','error','Y.StyleSheet');
-        throw new Error('HEAD element not found to append STYLE node');
+        Y.fail('HEAD element not found to append STYLE node');
     }
 
+    // TODO: use DOM?
     node = seed && (seed.nodeName ? seed :
             d.getElementById(seed.replace(/^#/,'')));
     if (seed && sheets[seed]) {
         return sheets[seed];
-    } else if (node && node.yuiSSID && sheets[node.yuiSSID]) {
-        return sheets[node.yuiSSID];
-    }
-
-    if (typeof seed === 'string') {
-        if (seed.indexOf('{') != -1) { // create entire sheet from seed cssText
-            node = _createSheet(seed);
-        } else if (!name) {
-            name = seed;
-        }
+    } else if (node && sheets[Y.stamp(node)]) {
+        return sheets[Y.stamp(node)];
     }
 
     if (!node || !/^(?:style|link)$/i.test(node.nodeName)) {
         node = d.createElement('style');
         node.type = 'text/css';
+    }
+
+    if (typeof seed === 'string') {
+        // Create entire sheet from seed cssText
+        if (seed.indexOf('{') != -1) {
+            // Not a load-time fork because low run-time impact and IE fails
+            // test for s.styleSheet at page load time (oddly)
+            if (node.styleSheet) {
+                node.styleSheet.cssText = seed;
+            } else {
+                node.appendChild(d.createTextNode(seed));
+            }
+        } else if (!name) {
+            name = seed;
+        }
     }
 
     if (node.parentNode !== head) {
@@ -136,6 +125,8 @@ Y.StyleSheet = function (seed, name) {
     // Initialize the cssRules map from the node
     // TODO if xdomain link node, copy to a local style block and replace the
     // link node with the style node.  CAVEAT: alternate stylesheet, @media
+    // TODO: test existing node with funky selectors
+    // TODO: Split comma delimited rules
     var i,r,sel;
     for (i = sheet[_rules].length - 1; i >= 0; --i) {
         r   = sheet[_rules][i];
@@ -150,15 +141,14 @@ Y.StyleSheet = function (seed, name) {
     }
 
     // Cache the sheet by the generated Id
-    node.yuiSSID = 'yui-stylesheet-' + (ssId++);
-    Y.StyleSheet.register(node.yuiSSID,this);
+    StyleSheet.register(Y.stamp(node),this);
     if (name) {
-        Y.StyleSheet.register(name,this);
+        StyleSheet.register(name,this);
     }
 
     // Public API
     Y.mix(this,{
-        getId : function () { return node.yuiSSID; },
+        getId : function () { return Y.stamp(node); },
 
         // Enabling/disabling the stylesheet.  Changes may be made to rules
         // while disabled.
@@ -168,20 +158,37 @@ Y.StyleSheet = function (seed, name) {
 
         isEnabled : function () { return !sheet.disabled; },
 
-        // Update cssText for a rule.  Add the rule if it's not present already
-        // TODO: test for breakage in funny selectors ##i:go-..\\bo\om or valid
-        // (i think) #i\:go\-\.\.\\\\bo\\om
-        setCSS : function (sel,css) {
-            var rule    = cssRules[sel],
+        /**
+         * Update style for a rule.  Add the rule if it's not present already.
+         *
+         */
+        set : function (sel,css) {
+            var rule = cssRules[sel],
+                multi = sel.split(/\s*,\s*/),i,
                 idx;
 
-            // Opera throws an error if there's a syntax error in the cssText.
-            // Should I do something about it, or let the error happen?
+            // IE's addRule doesn't support multiple comma delimited selectors
+            if (multi.length > 1) {
+                for (i = multi.length - 1; i >= 0; --i) {
+                    this.set(multi[i], css);
+                }
+                return this;
+            }
+
+            // Some selector values can cause IE to hang
+            if (!StyleSheet.isValidSelector(sel)) {
+                Y.log("Invalid selector '"+sel+"' passed to set.  Ignoring.",'warn','StyleSheet');
+                return this;
+            }
+
+            // Opera throws an error if there's a syntax error in assigned
+            // cssText. Avoid this using a worker styls collection, then
+            // assigning the resulting cssText.
             if (rule) {
-                rule.style.cssText = Y.StyleSheet.toCssText(css,rule.style.cssText);
+                rule.style.cssText = StyleSheet.toCssText(css,rule.style.cssText);
             } else {
                 idx = sheet[_rules].length;
-                _insertRule(sel,'{'+Y.StyleSheet.toCssText(css)+'}',idx);
+                _insertRule(sel, '{'+StyleSheet.toCssText(css)+'}', idx);
 
                 // Safari replaces the rules collection, but maintains the rule
                 // instances in the new collection when rules are added/removed
@@ -191,16 +198,14 @@ Y.StyleSheet = function (seed, name) {
         },
 
         // remove rule properties or an entire rule
-        unsetCSS : function (sel,css) {
+        unset : function (sel,css) {
             var rule = cssRules[sel],
                 remove = !css,
                 rules, i;
 
             if (rule) {
                 if (!remove) {
-                    if (!Y.Lang.isArray(css)) {
-                        css = [css];
-                    }
+                    css = Y.Array(css);
 
                     style.cssText = rule.style.cssText;
                     for (i = css.length - 1; i >= 0; --i) {
@@ -229,44 +234,68 @@ Y.StyleSheet = function (seed, name) {
         }
     },true);
 
-};
+}
 
 _toCssText = function (css,base) {
-    var f = css.styleFloat || css.cssFloat || css['float'],prop;
+    var f = css.styleFloat || css.cssFloat || css['float'], prop;
+
     style.cssText = base || '';
+
     if (f && !css[floatAttr]) {
         css = Y.merge(css);
         delete css.styleFloat; delete css.cssFloat; delete css['float'];
         css[floatAttr] = f;
     }
+
     for (prop in css) {
         if (css.hasOwnProperty(prop)) {
-            style[prop] = css[prop];
+            // IE throws Invalid Value errors
+            try {
+                // IE doesn't like values with whitespace ala ' red' or 'red '
+                style[prop] = Y.Lang.trim(css[prop]);
+            }
+            catch (e) {
+                Y.log("Error assigning property '"+prop+"' to '"+css[prop]+
+                          "' (ignored):\n"+e.message,'warn','StyleSheet');
+            }
         }
     }
     return style.cssText;
 };
 
+Y.mix(StyleSheet, {
 // Wrap IE's toCssText to catch opacity.  The copy/merge is to preserve the
 // input object's integrity, but if float and opacity are set, the input will
 // be copied twice in IE.  Is there a way to avoid this without increasing the
 // byte count?
-Y.StyleSheet.toCssText = ('opacity' in style) ? _toCssText :
-    function (css, cssText) {
-        if ('opacity' in css) {
-            css = Y.merge(css,{
-                    filter: 'alpha(opacity='+(css.opacity*100)+')'
-                  });
-            delete css.opacity;
-        }
-        return _toCssText(css,cssText);
-    };
+    toCssText : ('opacity' in style) ? _toCssText :
+        function (css, cssText) {
+            if ('opacity' in css) {
+                css = Y.merge(css,{
+                        filter: 'alpha(opacity='+(css.opacity*100)+')'
+                      });
+                delete css.opacity;
+            }
+            return _toCssText(css,cssText);
+        },
 
+    register : function (name,sheet) {
+        return !!(name && sheet instanceof StyleSheet &&
+                  !sheets[name] && (sheets[name] = sheet));
+    },
 
-Y.StyleSheet.register = function (name,sheet) {
-    return !!(name && sheet instanceof Y.StyleSheet &&
-              !sheets[name] && (sheets[name] = sheet));
-};
+    // TODO: Selector should provide
+    isValidSelector : function (sel) {
+        // IE locks up on addRule(BAD_SELECTOR, '{..}');
+        // BAD_SELECTOR : unescaped `~!@$%^&()+=|{}[];'"?< or space, ., or #
+        //                followed by anything other than an alphanumeric
+        //                -abc or .-abc or #_abc or '# ' all fail (prob more)
+        // TODO: this will fail tag[prop=val] tests
+        return !/[^\\][`~!@$%\^&()+=|{}\[\];'"?<]|^\s*[^a-z0-9*#.]|[\s.#][^a-z0-9]/i.test(sel);
+    }
+});
+
+Y.StyleSheet = StyleSheet;
 
 /*
 
@@ -305,6 +334,12 @@ NOTES
    will fail after a time in FF (~5secs of inactivity).  Property assignments
    will not alter the property or cssText.  It may be the generated node is
    garbage collected and the style collection becomes inert (speculation).
+ * IE locks up when attempting to add a rule with a selector including at least
+   characters {[]}~`!@%^&*()+=|? (unescaped) and leading _ or -
+   such as addRule('-foo','{ color: red }') or addRule('._abc','{...}')
+ * IE's addRule doesn't support comma separated selectors such as
+   addRule('.foo, .bar','{..}')
+ * IE throws an error on valid values with leading/trailing white space.
  * When creating an entire sheet at once, only FF2/3 & Opera allow creating a
    style node, setting its innerHTML and appending to head.
  * When creating an entire sheet at once, Safari requires the style node to be
@@ -313,6 +348,9 @@ NOTES
    be set via node.styleSheet.cssText
  * When creating an entire sheet at once in IE, styleSheet.cssText can't be
    written until node.type = 'text/css'; is performed.
+ * When creating an entire sheet at once in IE, load-time fork on
+   var styleNode = d.createElement('style'); _method = styleNode.styleSheet ?..
+   fails (falsey).  During run-time, the test for .styleSheet works fine
  * Setting complex properties in cssText will SOMETIMES allow child properties
    to be unset
    set         unset              FF2  FF3  S3.1  IE6  IE7  Op9.27  Op9.5

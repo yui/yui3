@@ -54,7 +54,7 @@
     <script type="text/javascript">
     YUI().use('node','stylesheet',function (Y) {
         Y.on('click',function (e) {
-            Y.StyleSheet('test').setCSS('.foo', {
+            Y.StyleSheet('test').set('.foo', {
                 width: '4em',
                 background: '#000',
                 cssFloat: 'right',
@@ -63,7 +63,7 @@
         },'#set');
 
         Y.on('click',function (e) {
-            Y.StyleSheet('test').unsetCSS('.foo', ['width','background','cssFloat','opacity']);
+            Y.StyleSheet('test').unset('.foo', ['width','background','cssFloat','opacity']);
         },'#unset');
     });
     </script>
