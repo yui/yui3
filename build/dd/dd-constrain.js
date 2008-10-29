@@ -212,22 +212,22 @@ YUI.add('dd-constrain', function(Y) {
                 r = this.getRegion(),
                 oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
+            
+                if (r.top > oxy[1]) {
+                    _xy[1] = r.top;
 
-            if (r.top > oxy[1]) {
-                oxy[1] = r.top;
+                }
+                if (oxy[1] > (r.bottom - oh)) {
+                    _xy[1] = (r.bottom - oh);
+                }
+                if (r.left > oxy[0]) {
+                    _xy[0] = r.left;
+                }
+                if (oxy[0] > (r.right - ow)) {
+                    _xy[0] = (r.right - ow);
+                }
 
-            }
-            if (oxy[1] > (r.bottom - oh)) {
-                oxy[1] = (r.bottom - oh);
-            }
-            if (r.left > oxy[0]) {
-                oxy[0] = r.left;
-            }
-            if (oxy[0] > (r.right - ow)) {
-                oxy[0] = (r.right - ow);
-            }
-
-            return oxy;
+            return _xy;
         },
         /**
         * @method inRegion
@@ -255,6 +255,7 @@ YUI.add('dd-constrain', function(Y) {
         _align: function(xy) {
             var _xy = C.superclass._align.apply(this, arguments),
                 r = this.getRegion(true);
+
             if (this.get('stickX')) {
                 _xy[1] = (this.startXY[1] - this.deltaXY[1]);
             }
