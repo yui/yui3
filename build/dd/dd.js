@@ -2346,7 +2346,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], skinnable:false, optional:['dd-constrain', 'dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2813,5 +2813,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
 
