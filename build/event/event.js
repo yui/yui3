@@ -31,6 +31,27 @@ YUI.add("event", function(Y) {
             }
         },
 
+        blur: {
+
+            on: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.attach.apply(Y.Event, a);
+
+            },
+
+            detach: function() {
+
+                var a = Y.Array(arguments, 0, true);
+                a[0] = CAPTURE + BLUR;
+
+                return Y.Event.detach.apply(Y.Event, a);
+
+            }
+        },
+
         available: {
 
             on: function(type, fn, id, o) {
