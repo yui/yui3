@@ -31,23 +31,47 @@ YUI.add("event", function(Y) {
             }
         },
 
-        blur: {
+        available: {
 
-            on: function() {
+            on: function(type, fn, id, o) {
 
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
+                var a = Y.Array(arguments, 0, true), m = fn;
 
-                return Y.Event.attach.apply(Y.Event, a);
+                a.splice(2, 1);
+                a.unshift(id);
+
+                if (o) {
+                    var a2 = a.slice(1);
+                    m = Y.bind.apply(Y, a2);
+                }
+
+                return Y.Event.onAvailable.apply(Y.Event, a);
 
             },
 
             detach: function() {
 
-                var a = Y.Array(arguments, 0, true);
-                a[0] = CAPTURE + BLUR;
+            }
+        },
 
-                return Y.Event.detach.apply(Y.Event, a);
+        contentready: {
+
+            on: function(type, fn, id, o) {
+
+                var a = Y.Array(arguments, 0, true), m = fn;
+
+                a.splice(2, 1);
+                a.unshift(id);
+
+                if (o) {
+                    var a2 = a.slice(1);
+                    m = Y.bind.apply(Y, a2);
+                }
+
+                return Y.Event.onContentReady.apply(Y.Event, a);
+            },
+
+            detach: function() {
 
             }
         }
