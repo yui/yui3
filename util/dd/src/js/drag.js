@@ -82,6 +82,7 @@
         * @bubbles DDM
         * @type Event.Custom
         */
+        EV_BEFORE_DRAG = 'drag:beforeDrag',
         EV_DRAG = 'drag:drag';
 
 
@@ -239,6 +240,9 @@
         dragging: {
             value: false
         },
+        parent: {
+            value: false
+        },
         /**
         * @attribute target
         * @description This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
@@ -392,6 +396,7 @@
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
+                EV_BEFORE_DRAG,
                 EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
@@ -500,6 +505,7 @@
         * @type {Array}
         */
         lastXY: null,
+        realXY: null,
         /**
         * @property mouseXY
         * @description The XY coords of the mousemove
@@ -667,6 +673,7 @@
             
             this.nodeXY = this.get(NODE).getXY();
             this.lastXY = this.nodeXY;
+            this.realXY = this.nodeXY;
 
             if (this.get('offsetNode')) {
                 this.deltaXY = [(this.startXY[0] - this.nodeXY[0]), (this.startXY[1] - this.nodeXY[1])];
@@ -728,7 +735,8 @@
         */
         removeInvalid: function(str) {
             if (this._invalids[str]) {
-                delete this._handles[str];
+                this._invalids[str] = null;
+                delete this._invalids[str];
                 this.fire(EV_REMOVE_INVALID, { handle: str });
             }
             return this;
@@ -765,7 +773,7 @@
             }
             
 
-            this._invalids = this._invalidsDefault;
+            this._invalids = Y.clone(this._invalidsDefault, true);
 
             this._createEvents();
             
@@ -869,6 +877,7 @@
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(eXY, noFire) {
+            this.fire(EV_BEFORE_DRAG);
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
@@ -877,12 +886,15 @@
             diffXY2[0] = (xy[0] - this.nodeXY[0]);
             diffXY2[1] = (xy[1] - this.nodeXY[1]);
 
+            //console.log(this.lastXY, ' :: ', this.nodeXY, ' :: ', this.realXY);
+
             if (this.get('move')) {
                 if (Y.UA.opera) {
                     this.get(DRAG_NODE).setXY(xy);
                 } else {
                     DDM.setXY(this.get(DRAG_NODE), diffXY);
                 }
+                this.realXY = xy;
             }
 
             this.region = {
@@ -890,8 +902,8 @@
                 '1': xy[1],
                 area: 0,
                 top: xy[1],
-                right: xy[0] + this.get(NODE).get(OFFSET_WIDTH),
-                bottom: xy[1] + this.get(NODE).get(OFFSET_HEIGHT),
+                right: xy[0] + this.get(DRAG_NODE).get(OFFSET_WIDTH),
+                bottom: xy[1] + this.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 left: xy[0]
             };
 
