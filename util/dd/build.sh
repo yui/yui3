@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export YUI_BUILD_DIR=/Users/davglass/build/builder/componentbuild
+
 ln -sf build.dd.xml build.xml
 wait
 ln -sf build.dd.properties build.properties
