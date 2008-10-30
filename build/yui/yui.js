@@ -3500,7 +3500,7 @@ Y.Env.meta = META;
                     };
 
                     // @TODO get rid of the redundant Get code
-                    Y.Get.script(url, {
+                    Y.Get.script(this._filter(url), {
                         data: this._loading,
                         onSuccess: callback,
                         onFailure: this._onFailure,
@@ -3592,8 +3592,9 @@ Y.Env.meta = META;
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path, s[i]);
-                    self=this; 
+                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+
+                    self = this; 
 
                     fn(url, {
                         data: s[i],
@@ -3646,6 +3647,29 @@ Y.Env.meta = META;
         },
 
         /**
+         * Apply filter defined for this instance to a url/path
+         * method _filter
+         * @param u {string} the string to filter
+         * @return {string} the filtered string
+         * @private
+         */
+        _filter: function(u) {
+
+            var f = this.filter;
+
+            if (f) {
+                var useFilter = true;
+
+                if (this.filterName == "DEBUG") {
+                
+                }
+            }
+
+            return u;
+
+        },
+
+        /**
          * Generates the full url for a module
          * method _url
          * @param path {string} the path fragment
@@ -3653,33 +3677,7 @@ Y.Env.meta = META;
          * @private
          */
         _url: function(path, name) {
-            
-            var u = (this.base || "") + path, 
-                f = this.filter;
-
-            if (f) {
-                var useFilter = true;
-
-                if (this.filterName == "DEBUG") {
-                
-                    var self = this, 
-                        exc = self.logExclude,
-                        inc = self.logInclude;
-                    if (inc && !(name in inc)) {
-                        useFilter = false;
-                    } else if (exc && (name in exc)) {
-                        useFilter = false;
-                    }
-
-                }
-                
-                if (useFilter) {
-                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
-                }
-            }
-
-
-            return u;
+            return this._filter((this.base || "") + path);
         }
 
     };

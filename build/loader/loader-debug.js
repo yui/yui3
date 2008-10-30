@@ -1413,7 +1413,7 @@ Y.log('Attempting to combine: ' + this._combining, "info", "loader");
                     };
 
                     // @TODO get rid of the redundant Get code
-                    Y.Get.script(url, {
+                    Y.Get.script(this._filter(url), {
                         data: this._loading,
                         onSuccess: callback,
                         onFailure: this._onFailure,
@@ -1511,8 +1511,9 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                             self.loadNext(o.data);
                         };
                         
-                    url=m.fullpath || this._url(m.path, s[i]);
-                    self=this; 
+                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+
+                    self = this; 
 
                     fn(url, {
                         data: s[i],
@@ -1567,25 +1568,23 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
         },
 
         /**
-         * Generates the full url for a module
-         * method _url
-         * @param path {string} the path fragment
-         * @return {string} the full url
+         * Apply filter defined for this instance to a url/path
+         * method _filter
+         * @param u {string} the string to filter
+         * @return {string} the filtered string
          * @private
          */
-        _url: function(path, name) {
-            
-            var u = (this.base || "") + path, 
-                f = this.filter;
+        _filter: function(u) {
+
+            var f = this.filter;
 
             if (f) {
                 var useFilter = true;
 
                 if (this.filterName == "DEBUG") {
                 
-                    var self = this, 
-                        exc = self.logExclude,
-                        inc = self.logInclude;
+                    var exc = this.logExclude,
+                        inc = this.logInclude;
                     if (inc && !(name in inc)) {
                         useFilter = false;
                     } else if (exc && (name in exc)) {
@@ -1594,16 +1593,24 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
 
                 }
                 
-                // Y.log("filter: " + f + ", " + f.searchExp + 
-                // ", " + f.replaceStr);
                 if (useFilter) {
-                    u = u.replace(new RegExp(f.searchExp), f.replaceStr);
+                    u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
                 }
             }
 
-            // Y.log(u);
-
             return u;
+
+        },
+
+        /**
+         * Generates the full url for a module
+         * method _url
+         * @param path {string} the path fragment
+         * @return {string} the full url
+         * @private
+         */
+        _url: function(path, name) {
+            return this._filter((this.base || "") + path);
         }
 
     };

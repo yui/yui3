@@ -8,7 +8,7 @@
     <!--
     <property name="srcdir" value="${env.YUI_SRC_DIR}" />
     -->
-    <property name="srcdir" value="/Users/adamoore/dev/yahoo/presentation/3.x" />
+    <property name="srcdir" value="/Users/adamoore/src/yui3" />
     <property name="builddir" value="${env.YUI_BUILD_DIR}" />
     <property file="${buildfile.dir}/build.properties" />
 
