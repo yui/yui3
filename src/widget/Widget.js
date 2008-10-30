@@ -646,13 +646,12 @@ Y.extend(Widget, Y.Base, {
      * Initializes the UI state for the bounding box. Applies marker
      * classes to identify the widget.
      * 
-     * @method __renderUI
+     * @method _renderUI
      * @protected
      */
     _renderUI: function(parentNode) {
 
         // TODO: Classname chaining?
-        this.get(BOUNDING_BOX).addClass(Widget._CLASSNAME);
         this.get(BOUNDING_BOX).addClass(this._className);
         this.get(CONTENT_BOX).addClass(this._className + HYPHEN + CONTENT);
 
