@@ -10,6 +10,13 @@ YUI.add("event", function(Y) {
 
     Y.Env.eventAdaptors = {
 
+        /**
+         * Adds a DOM focus listener.  Uses the focusin event in IE,
+         * and the capture phase otherwise so that
+         * the event propagates properly.
+         * @for YUI
+         * @event focus
+         */
         focus: {
 
             on: function() {
@@ -31,6 +38,13 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Adds a DOM focus listener.  Uses the focusout event in IE,
+         * and the capture phase otherwise so that
+         * the event propagates properly.
+         * @for YUI
+         * @event blur
+         */
         blur: {
 
             on: function() {
@@ -52,19 +66,27 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Executes the callback as soon as the specified element 
+         * is detected in the DOM.
+         * @for YUI
+         * @event available
+         */
         available: {
 
             on: function(type, fn, id, o) {
 
-                var a = Y.Array(arguments, 0, true), m = fn;
+                var a = Y.Array(arguments, 1, true), m = fn;
 
-                a.splice(2, 1);
+                a.splice(1, 1);
                 a.unshift(id);
+
 
                 if (o) {
                     var a2 = a.slice(1);
                     m = Y.bind.apply(Y, a2);
                 }
+
 
                 return Y.Event.onAvailable.apply(Y.Event, a);
 
@@ -75,13 +97,20 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Executes the callback as soon as the specified element 
+         * is detected in the DOM with a nextSibling property
+         * (indicating that the element's children are available)
+         * @for YUI
+         * @event contentready
+         */
         contentready: {
 
             on: function(type, fn, id, o) {
 
-                var a = Y.Array(arguments, 0, true), m = fn;
+                var a = Y.Array(arguments, 1, true), m = fn;
 
-                a.splice(2, 1);
+                a.splice(1, 1);
                 a.unshift(id);
 
                 if (o) {
@@ -134,6 +163,7 @@ YUI.add("event", function(Y) {
         var adapt = Y.Env.eventAdaptors[type];
 
         if (adapt) {
+
 
             return adapt.on.apply(Y, arguments);
 
