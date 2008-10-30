@@ -10,12 +10,15 @@ YUI.add("widget-position", function(Y) {
 
             POSITIONED = "positioned",
             BOUNDING_BOX = "boundingBox",
+
             RENDERUI = "renderUI",
             BINDUI = "bindUI",
             SYNCUI = "syncUI",
 
-            PositionEvent = "positionChange",
-            XYEvent = "xyChange";
+            UI = Y.Widget.UI_SRC,
+
+            PositionChange = "positionChange",
+            XYChange = "xyChange";
 
         function Position(config) {
             /* TODO: If Plugin */
@@ -60,23 +63,23 @@ YUI.add("widget-position", function(Y) {
                 this._posEl = this.get(BOUNDING_BOX);
 
                 // WIDGET METHOD OVERLAP
-                Y.after(this._positionRenderUI, this, RENDERUI);
-                Y.after(this._positionSyncUI, this, SYNCUI);
-                Y.after(this._positionBindUI, this, BINDUI);
+                Y.after(this._renderUIPosition, this, RENDERUI);
+                Y.after(this._syncUIPosition, this, SYNCUI);
+                Y.after(this._bindUIPosition, this, BINDUI);
             },
 
-            _positionRenderUI : function() {
+            _renderUIPosition : function() {
                 this._posEl.addClass(this.getClassName(POSITIONED));
             },
 
-            _positionSyncUI : function() {
+            _syncUIPosition : function() {
                 this._uiSetPosition(this.get(POSITION));
                 this._uiSetXY(this.get(XY_COORD));
             },
 
-            _positionBindUI :function() {
-                this.after("positionChange", this._uiSetPosition);
-                this.after("xyChange", this._uiSetXY);
+            _bindUIPosition :function() {
+                this.after(PositionChange, this._uiSetPosition);
+                this.after(XYChange, this._uiSetXY);
             },
 
             /**
@@ -124,6 +127,16 @@ YUI.add("widget-position", function(Y) {
 
             _getY : function() {
                 return this.get(XY_COORD)[1];
+            },
+
+            _onPositionChange : function(e) {
+                this._uiSetPosition(e.newVal);
+            },
+
+            _onXYChange : function(e) {
+                if (e.src != UI) {
+                    this._uiSetXY(e.newVal);
+                }
             },
 
             _uiSetPosition : function(val) {

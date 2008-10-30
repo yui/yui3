@@ -148,7 +148,7 @@ Y.PluginHost = PluginHost;
  * @module widget
  */
 
-// String constants
+// Local Constants
 var WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
@@ -160,7 +160,6 @@ var WIDGET = "widget",
     HAS_FOCUS = "hasFocus",
     WIDTH = "width",
     HEIGHT = "height",
-    UI = "ui",
     EMPTY = "",
     HYPHEN = "-",
     BOUNDING_BOX = "boundingBox",
@@ -216,6 +215,8 @@ function Widget(config) {
  * @static
  */
 Widget.NAME = WIDGET;
+
+Widget.UI_SRC = "ui";
 
 /**
  * Static property used to define the default attribute 
@@ -407,6 +408,8 @@ Widget.getByNode = function(node) {
 
     return widget || null;
 };
+
+var UI = Widget.UI_SRC;
 
 Y.extend(Widget, Y.Base, {
 
