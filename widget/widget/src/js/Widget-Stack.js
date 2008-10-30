@@ -1,9 +1,5 @@
 /**
- * @extension Y.widget.Stack
- *
- * @requires-events show, hide, widthChange, heightChange
- * @requires-attrs root
- * @requires-methods none
+ * @module widget-stack
  */
 YUI.add("widget-stack", function(Y) {
 
@@ -11,32 +7,44 @@ YUI.add("widget-stack", function(Y) {
         UA = Y.UA,
         Node = Y.Node,
 
-        ZINDEX = "zindex",
+        ZINDEX = "zIndex",
         SHIM = "shim",
         VISIBLE = "visible",
 
         BOUNDING_BOX = "boundingBox",
 
-        RENDERUI = "renderUI",
-        BINDUI = "bindUI",
-        SYNCUI = "syncUI",
+        RENDER_UI = "renderUI",
+        BIND_UI = "bindUI",
+        SYNC_UI = "syncUI",
 
         OFFSET_WIDTH = "offsetWidth",
         OFFSET_HEIGHT = "offsetHeight",
+
         WIDTH = "width",
         HEIGHT = "height",
         PX = "px",
 
-        TextResize = "window:textresize",
-        Visible = "visibleChange",
-        Width = "widthChange",
-        Height = "heightChange",
-        Shim = "shimChange",
-        ZIndex = "zindexChange";
+        // HANDLE KEYS
+        SHIM_DEFERRED = "shimdeferred",
+        SHIM_RESIZE = "shimresize",
 
+        // Events
+        VisibleChange = "visibleChange",
+        WidthChange = "widthChange",
+        HeightChange = "heightChange",
+        ShimChange = "shimChange",
+        ZIndexChange = "zindexChange",
+
+        // CSS
+        STACKED = "stacked",
+        SHOW_SCROLLBARS = "show-scrollbars",
+        HIDE_SCROLLBARS = "hide-scrollbars";
+
+    /**
+     * @class WidgetStack
+     */
     function Stack(config) {
-        /* TODO: If PLUGIN */
-        // Stack.constructor.superclass.apply(this, arguments);
+        this._initStack();
     }
 
     // Static Properties
@@ -44,54 +52,174 @@ YUI.add("widget-stack", function(Y) {
         shim: {
             value: (UA.ie == 6)
         },
-        zindex: {
-            value:2
+
+        zIndex: {
+            value:0,
+            set: function(val) {
+                return this._setZIndex(val);
+            }
         }
     };
 
-    Stack.CLASSNAMES = {
-        stacked: "yui-stacked",
-        shim: "yui-shim",
-        hideScrollbars: "yui-hidescrollbars",
-        showScrollbars: "yui-showscrollbars"
+    Stack.SHIM_TEMPLATE = '<iframe class="yui-widget-shim" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
+
+    Stack._getShimTemplate = function() {
+        if (!Stack._SHIM_TEMPLATE) {
+            Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
+        }
+        return Stack._SHIM_TEMPLATE;
     };
 
-    var CLASSNAMES = Stack.CLASSNAMES;
-
-    // Stack.SHIM_TEMPLATE = "<iframe class":CLASSNAMES.shim, title: "Widget Stacking Shim", src:"javascript:false" }>;
-
     Stack.prototype = {
-        
-        initStack : function() {
+
+        _initStack : function() {
             this._stackEl = this.get(BOUNDING_BOX);
-    
+
             // WIDGET METHOD OVERLAP
-            Y.after(this._stackRenderUI, this, RENDERUI);
-            Y.after(this._stackSyncUI, this, SYNCUI);
-            Y.after(this._stackBindUI, this, BINDUI);
+            Y.after(this._renderUIStack, this, RENDER_UI);
+            Y.after(this._syncUIStack, this, SYNC_UI);
+            Y.after(this._bindUIStack, this, BIND_UI);
         },
 
-        _stackSyncUI: function() {
-            this._uiSetShim();
-            this._uiSetZIndex();
+        _syncUIStack: function() {
+            this._uiSetShim(this.get(SHIM));
+            this._uiSetZIndex(this.get(ZINDEX));
         },
 
-        _stackBindUI: function() {
-            this.onUI(Shim, Y.bind(this._uiSetShim, this));
-            this.onUI(ZIndex, Y.bind(this._uiSetZIndex, this));
+        _bindUIStack: function() {
+            this.after(ShimChange, this._onShimChange);
+            this.after(ZIndexChange, this._onZIndexChange);
         },
 
-        _stackRenderUI: function() {
-            this._stackEl.addClass(CLASSNAMES.stacked);
+        _renderUIStack: function() {
+            this._stackEl.addClass(this.getClassName(STACKED));
 
             // TODO:DEPENDENCY Env.os
-            if (UA.os && UA.os.mac && UA.gecko && UA.gecko <= 1.9) {
-                this._applyMacGeckoFix();
+            var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
+            if (isMac && UA.gecko && UA.gecko <= 1.9) {
+                this._fixMacGeckoScrollbars();
             }
         },
 
+        _setZIndex: function(zIndex) {
+            if (L.isString(zIndex)) {
+                zIndex = parseInt(zIndex, 10);
+            }
+            if (!L.isNumber(zIndex)) {
+                zIndex = 0;
+            }
+            return zIndex;
+        },
+
+        _onShimChange : function(e) {
+            this._uiSetShim(e.newVal);
+        },
+
+        _onZIndexChange : function(e) {
+            this._uiSetZIndex(e.newVal);
+        },
+
+        _uiSetZIndex: function (zIndex) {
+            this._stackEl.setStyle(ZINDEX, zIndex);
+        },
+
+        _uiSetShim: function (enable) {
+
+            var handles;
+
+            if (enable) {
+                // Lazy creation
+                if (this.get(VISIBLE)) {
+                    this._createShim();
+                } else {
+                    this._createShimDeferred();
+                }
+            } else {
+                this._destroyShim();
+            }
+        },
+
+        // TODO: Move to generic widget/base support
+        _createShimDeferred : function() {
+
+            var createBeforeVisible = function(e) {
+                if (e.newVal == true) {
+                    this._createShim();
+                }
+            };
+
+            var handles = this._stackHandles[SHIM_DEFERRED] = this._stackHandles[SHIM_DEFERRED] || [];
+            handles.push(this.on(VisibleChange, createBeforeVisible));
+        },
+
+        _addShimResizeHandlers : function() {
+
+            var sizeShim = this.sizeShim,
+                handles = this._stackHandles[SHIM_RESIZE] = this._stackHandles[SHIM_RESIZE] || [];
+
+            handles.push(this.after(VisibleChange, sizeShim));
+            handles.push(this.after(WidthChange, sizeShim));
+            handles.push(this.after(HeightChange, sizeShim));
+        },
+
+        _detachHandles : function(handleKey) {
+            var handles = this._stackHandles[handleKey];
+            if (handles) {
+                for (var i = handles.length; i <= 0; --i) {
+                    handles[i].detach();
+                    delete handles[i];
+                }
+            }
+        },
+
+        _createShim : function() {
+            var shimEl = this._shimEl,
+                stackEl = this._stackEl;
+
+            if (!shimEl) {
+                shimEl = this._shimEl = Stack._getShimTemplate().cloneNode(false);
+                stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
+
+                if (UA.ie == 6) {
+                    this._addShimResizeHandlers();
+                }
+                this._detachHandles(SHIM_DEFERRED);
+            }
+        },
+
+        _destroyShim : function() {
+            if (this._shimEl) {
+                this._shimEl.get("parentNode").removeChild(this._shimEl);
+                this._shimEl == null;
+
+                this._detachHandles(SHIM_DEFERRED);
+                this._detachHandles(SHIM_RESIZE);
+            }
+        },
+
+        _fixMacGeckoScrollbars: function() {
+            this._toggleMacGeckoScroll();
+            this.after(VisibleChange, this._toggleMacGeckoScroll);
+        },
+
+        _toggleMacGeckoScroll : function() {
+            if (this.get(VISIBLE)) {
+                this._showMacGeckoScroll();
+            } else {
+                this._hideMacGeckoScroll();
+            }
+        },
+
+        _hideMacGeckoScrollbars: function () {
+            this._stackEl.replaceClass(this.getClassName(SHOW_SCROLLBARS), this.getClassName(HIDE_SCROLLBARS));
+        },
+
+        _showMacGeckoScrollbars: function () {
+            this._stackEl.replaceClass(this.getClassName(HIDE_SCROLLBARS), this.getClassName(SHOW_SCROLLBARS));
+        },
+
         /**
-         * For IE6, syncronizes the size and position of iframe shim to that of 
+         * For IE6, synchronizes the size and position of iframe shim to that of 
          * Widget bounding box which it is protecting. For all other browsers,
          * this method does not do anything.
          *
@@ -107,133 +235,15 @@ YUI.add("widget-stack", function(Y) {
             }
         },
 
-        _uiSetZIndex: function () {
-            var z = this.get(ZINDEX);
-            if (!Lang.isNumber(z) && z != "auto") {
-                z = this._stackEl.getStyle(ZINDEX);
-                if (isNaN(z)) {
-                    z = 0;
-                }
-                // TODO: Dependancy - to avoid recursive loop
-                // this.setUI(ZINDEX, z, true);
+        HTML_PARSER : {
+            zIndex: function() {
+                return this.get(BOUNDING_BOX).getStyle(ZINDEX);
             }
-            this._stackEl.setStyle("zIndex", this.get(ZINDEX));
-        },
-
-        /**
-         * The default set method for the "shim" property.
-         */
-        _uiSetShim: function () {
-
-            function onBeforeVisible(e) {
-                if (e.newVal == true) {
-                    this._createShim();
-                    this.detachListeners("shimdeferred");
-                }
-            }
-
-            if (this.get(SHIM)) {
-                if (this.get(VISIBLE)) {
-                    this._createShim();
-                } else {
-                    var ol = {};
-                    ol[Visible] = {fn:Y.bind(onBeforeVisible, this), when:"before"};
-                    this.attachListeners("shimdeferred", ol);
-                }
-            } else {
-                this._destroyShim();
-                this.detachListeners("shimdeferred");
-            }
-        },
-
-        _createShim : function() {
-            var shimEl = this._shimEl,
-                stackEl = this._stackEl;
-
-            if (!shimEl) {
-                shimEl = this._getShimTemplate().cloneNode(false);
-                stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
-
-                this._shimEl = shimEl;
-
-                if (UA.ie == 6) {
-                    var ol = {};
-                    ol[Visible] = ol[TextResize] = ol[Width] = ol[Height] = Y.bind(this.sizeShim, this);
-                    this.attachListeners("iesyncshim", ol);
-                    this.sizeShim();
-                }
-            }
-        },
-
-        _destroyShim : function() {
-            if (this._shimEl) {
-                this._shimEl.get("parentNode").removeChild(this._shimEl);
-            }
-        },
-
-        _getShimTemplate : function() {
-            if (!Stack._shimTmpl) {
-                var template = Node.create(Stack.SHIM_TEMPLATE);
-                if (UA.ie) {
-                    /*
-                         Need to set the "frameBorder" property to 0 
-                         supress the default <iframe> border in IE.
-                         Setting the CSS "border" property alone 
-                         doesn't supress it.
-                    */
-                    template.setAttribute("frameBorder", 0);
-                }
-                Stack._shimTmpl = template;
-            }
-            return Stack._shimTmpl;
-        },
-
-        _applyMacGeckoFix: function() {
-            this._toggleMacGeckoScroll();
-            this.on(Visible, Y.bind(this._toggleMacGeckoScroll, this));
-        },
-
-        _toggleMacGeckoScroll : function() {
-            if (this.get(VISIBLE)) {
-                this._showMacGeckoScroll();
-            } else {
-                this._hideMacGeckoScroll();
-            }
-        },
-
-        /**
-        * Adds a CSS class ("hide-scrollbars") and removes a CSS class
-        * ("show-scrollbars") to the Overlay to fix a bug in Gecko on Mac OS X
-        * (https://bugzilla.mozilla.org/show_bug.cgi?id=187435)
-        * 
-        * Only applied by default for FF less than 1.9
-        * 
-        * @method _hideMacGeckoScrollbars
-        */
-        _hideMacGeckoScroll: function () {
-            this._stackEl.replaceClass(CLASSNAMES.showScrollbars, CLASSNAMES.hideScrollbars);
-        },
-
-        /**
-        * Adds a CSS class ("show-scrollbars") and removes a CSS class 
-        * ("hide-scrollbars") to the Overlay to fix a bug in Gecko on Mac OS X 
-        * (https://bugzilla.mozilla.org/show_bug.cgi?id=187435)
-        * 
-        * Only applied by default for FF less than 1.9
-        * 
-        * @method _showMacGeckoScrollbars
-        */
-        _showMacGeckoScroll: function () {
-            this._stackEl.replaceClass(CLASSNAMES.hideScrollbars, CLASSNAMES.showScrollbars);
         }
+        // TODO: HTML_PARSER for initial zIndex population
     };
 
     Y.WidgetStack = Stack;
-
-    /* TODO: If Plugin */
-    /*
-    Y.extend(Stack, Y.Base, proto);
-    */
 
 }, "3.0.0");
 
