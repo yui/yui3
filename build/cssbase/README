@@ -10,3 +10,6 @@ that is consistent for A-grade browsers.
 
 CSS Base may also be useful as a template for your own 
 base file, or a snippets library for styling HTML elements.
+
+Many individual values within Base can be overwritten 
+locally by setting them to auto or inherit.
