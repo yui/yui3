@@ -363,8 +363,8 @@ Y.extend(Widget, Y.Base, {
     _defRenderFn : function(e, parentNode) {
 
             this._renderUI(parentNode);
-            this._syncUI();
             this._bindUI();
+            this._syncUI();
 
             this.renderer();
 
@@ -381,8 +381,8 @@ Y.extend(Widget, Y.Base, {
      */
     renderer: function() {
         this.renderUI();
-        this.syncUI();
         this.bindUI();
+        this.syncUI();
     },
 
     /**

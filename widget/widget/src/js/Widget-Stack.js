@@ -3,7 +3,7 @@
  */
 YUI.add("widget-stack", function(Y) {
 
-    var Lang = Y.Lang,
+    var L = Y.Lang,
         UA = Y.UA,
         Node = Y.Node,
 
@@ -44,7 +44,7 @@ YUI.add("widget-stack", function(Y) {
      * @class WidgetStack
      */
     function Stack(config) {
-        this._initStack();
+        // this._initStack();
     }
 
     // Static Properties
@@ -74,6 +74,7 @@ YUI.add("widget-stack", function(Y) {
 
         _initStack : function() {
             this._stackEl = this.get(BOUNDING_BOX);
+            this._stackHandles = {};
 
             // WIDGET METHOD OVERLAP
             Y.after(this._renderUIStack, this, RENDER_UI);

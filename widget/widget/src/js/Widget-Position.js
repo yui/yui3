@@ -23,6 +23,7 @@ YUI.add("widget-position", function(Y) {
         function Position(config) {
             /* TODO: If Plugin */
             // Position.constructor.superclass.apply(this, arguments);
+            // this._initPosition();
         }
 
         Position.ATTRS = {
@@ -58,7 +59,7 @@ YUI.add("widget-position", function(Y) {
 
         Position.prototype = {
 
-            _initPosition: function(config) {
+            _initPosition: function() {
 
                 this._posEl = this.get(BOUNDING_BOX);
 
@@ -78,8 +79,8 @@ YUI.add("widget-position", function(Y) {
             },
 
             _bindUIPosition :function() {
-                this.after(PositionChange, this._uiSetPosition);
-                this.after(XYChange, this._uiSetXY);
+                this.after(PositionChange, this._onPositionChange);
+                this.after(XYChange, this._onXYChange);
             },
 
             /**

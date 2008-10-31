@@ -3,7 +3,7 @@
  * @module widget
  */
 
-// String constants
+// Local Constants
 var WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
@@ -15,7 +15,6 @@ var WIDGET = "widget",
     HAS_FOCUS = "hasFocus",
     WIDTH = "width",
     HEIGHT = "height",
-    UI = "ui",
     EMPTY = "",
     HYPHEN = "-",
     BOUNDING_BOX = "boundingBox",
@@ -72,6 +71,8 @@ function Widget(config) {
  * @static
  */
 Widget.NAME = WIDGET;
+
+Widget.UI_SRC = "ui";
 
 /**
  * Static property used to define the default attribute 
@@ -264,6 +265,8 @@ Widget.getByNode = function(node) {
     return widget || null;
 };
 
+var UI = Widget.UI_SRC;
+
 Y.extend(Widget, Y.Base, {
 
     /**
@@ -360,8 +363,8 @@ Y.extend(Widget, Y.Base, {
     _defRenderFn : function(e, parentNode) {
 
             this._renderUI(parentNode);
-            this._syncUI();
             this._bindUI();
+            this._syncUI();
 
             this.renderer();
 
@@ -378,8 +381,8 @@ Y.extend(Widget, Y.Base, {
      */
     renderer: function() {
         this.renderUI();
-        this.syncUI();
         this.bindUI();
+        this.syncUI();
     },
 
     /**
@@ -646,12 +649,13 @@ Y.extend(Widget, Y.Base, {
      * Initializes the UI state for the bounding box. Applies marker
      * classes to identify the widget.
      * 
-     * @method _renderUI
+     * @method __renderUI
      * @protected
      */
     _renderUI: function(parentNode) {
 
         // TODO: Classname chaining?
+        this.get(BOUNDING_BOX).addClass(Widget._CLASSNAME);
         this.get(BOUNDING_BOX).addClass(this._className);
         this.get(CONTENT_BOX).addClass(this._className + HYPHEN + CONTENT);
 
