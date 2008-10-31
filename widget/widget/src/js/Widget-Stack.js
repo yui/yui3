@@ -33,7 +33,7 @@ YUI.add("widget-stack", function(Y) {
         WidthChange = "widthChange",
         HeightChange = "heightChange",
         ShimChange = "shimChange",
-        ZIndexChange = "zindexChange",
+        ZIndexChange = "zIndexChange",
 
         // CSS
         STACKED = "stacked",
@@ -61,7 +61,11 @@ YUI.add("widget-stack", function(Y) {
         }
     };
 
-    Stack.SHIM_TEMPLATE = '<iframe class="yui-widget-shim" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
+    // TODO: Until Static ClassNameManager support is available
+    Stack.SHIM_CLASS = Y.config.classNamePrefix + Y.Widget.NAME + "-shim";
+    Stack.STACKED_CLASS = Y.config.classNamePrefix + Y.Widget.NAME + "-stacked";
+
+    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
     Stack._getShimTemplate = function() {
         if (!Stack._SHIM_TEMPLATE) {
@@ -93,7 +97,7 @@ YUI.add("widget-stack", function(Y) {
         },
 
         _renderUIStack: function() {
-            this._stackEl.addClass(this.getClassName(STACKED));
+            this._stackEl.addClass(Stack.STACKED_CLASS);
 
             // TODO:DEPENDENCY Env.os
             var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
@@ -157,6 +161,8 @@ YUI.add("widget-stack", function(Y) {
 
             var sizeShim = this.sizeShim,
                 handles = this._stackHandles[SHIM_RESIZE] = this._stackHandles[SHIM_RESIZE] || [];
+
+            this.sizeShim();
 
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
@@ -241,7 +247,6 @@ YUI.add("widget-stack", function(Y) {
                 return this.get(BOUNDING_BOX).getStyle(ZINDEX);
             }
         }
-        // TODO: HTML_PARSER for initial zIndex population
     };
 
     Y.WidgetStack = Stack;

@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Widget Class</title>
+
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-Position.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-Stack.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-PositionExt.js"></script>
+
+    <style>
+        .hideme {
+            width:20em;
+            display:block;
+        }
+    
+        .yui-overlay-hidden {
+            visibility:hidden;
+        }
+
+        .yui-overlay {
+            border:1px solid #cc0000;
+            background-color:#eee;
+        }
+
+        .yui-widget-stacked .yui-widget-shim {
+            opacity:0;
+            filter:alpha(opacity=0);
+            position:absolute;
+            border:none;
+            margin:0;
+            padding:0;
+            top:0;
+            left:0;
+            bottom:0;
+            right:0;
+            z-index:-1;
+            _width:0;
+            _height:0;
+        }
+
+        #align {
+            opacity:.5;
+            filter:alpha(opacity=50);
+            position:relative;
+            z-index:6;
+            top:200px;
+            left:200px;
+            width:300px;
+            height:300px;
+            border:1px solid black;
+            background-color:#cc0000;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+    <select class="hideme">
+        <option>Foo</option>
+    </select>
+    <select class="hideme">
+        <option>Foo</option>
+    </select>
+    <select class="hideme">
+        <option>Foo</option>
+    </select>
+    <select class="hideme">
+        <option>Foo</option>
+    </select>
+
+    <button id="control-show" type="button">show</button>
+    <button id="control-hide" type="button">hide</button>
+
+    <div class="foo" id="foobar">Overlay</div>
+
+    <div id="align">
+        Align Here
+    </div>
+
+    <script type="text/javascript">
+        var widget;
+
+        YUI({base:"../build/", filter:"raw"}).use("widget", "queue", "widget-position", "widget-stack", "widget-position-extras", function(Y) {
+
+                function Overlay(config) {
+                    Overlay.superclass.constructor.apply(this, arguments);
+                }
+
+                Overlay.NAME = "overlay";
+                Overlay.ATTRS = {};
+
+                Y.extend(Overlay, Y.Widget, {
+
+                    initializer: function(config) {
+                        this._initPosition(config);
+                        this._initStack(config);
+                        this._initPositionExtras(config);
+                    }
+                });
+
+                Y.augment(Overlay, Y.WidgetPosition);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetPosition.ATTRS);
+
+                Y.augment(Overlay, Y.WidgetStack);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetStack.ATTRS);
+
+                Y.augment(Overlay, Y.WidgetPositionExtras);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetPositionExtras.ATTRS);
+
+                widget = new Overlay({ contentBox: 'div.foo', width:200, height:200, align:{node:'#align', points:["tl", "tr"]}, zIndex:5});
+                widget.render();
+
+                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
+                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+
+                var stepDelay = 2000;
+                Y.Queue(
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.move(0,0);
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("align", {node:"#align", points:["cl", "cr"]});
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("center", true);
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("center", "#align");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("zIndex", 7);
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("align", {points:["cr", "cr"]});
+                        }
+                    }
+                ).run();
+            });
+    </script>
+</body>
+</html>

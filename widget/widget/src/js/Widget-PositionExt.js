@@ -15,6 +15,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             OFFSET_WIDTH = "offsetWidth",
             OFFSET_HEIGHT = "offsetHeight",
+            VIEWPORT_REGION = "viewportRegion",
 
             VisibleChange = "visibleChange",
             XYChange = "xyChange",
@@ -40,7 +41,7 @@ YUI.add("widget-position-extras", function(Y) {
                     if (val) {
                         this.set(ALIGN, { 
                             node: val === true ? null : val,
-                            align: [PositionExtras.CC, PositionExtras.CC]
+                            points: [PositionExtras.CC, PositionExtras.CC]
                         });
                     }
                     return val;
@@ -68,13 +69,11 @@ YUI.add("widget-position-extras", function(Y) {
 
             _syncUIPosExtras : function() {
                 // this._uiSetConstrained(this.get(CONSTRAINED));
-                // this._uiSetCentered(this.get(CENTERED));
                 this._uiSetAlign(this.get(ALIGN));
             },
 
             _bindUIPosExtras : function() {
                 // this.after(Constrain, this._onConstrainChange);
-                // this.after(Center, this._onCenterChange);
                 this.after(AlignChange, this._onAlignChange);
             },
 
@@ -84,7 +83,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             _uiSetAlign: function (val) {
                 if (val) {
-                    this.align(val.node, val.align, val.triggers);
+                    this.align(val.node, val.points, val.triggers);
                 }
             },
 
@@ -99,6 +98,7 @@ YUI.add("widget-position-extras", function(Y) {
 
                 if (!node) {
                     nodeRegion = this._posEl.get("viewportRegion");
+                    // TODO: Setup resize/scroll listeners if Viewport
                 } else {
                     node = Y.Node.get(node);
                     if (node) {
@@ -106,6 +106,7 @@ YUI.add("widget-position-extras", function(Y) {
                     }
                 }
 
+                // TODO: Until normalized in Node/Dom
                 nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
                 nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
 
@@ -114,7 +115,7 @@ YUI.add("widget-position-extras", function(Y) {
                         nodePoint = points[1],
                         xy;
 
-                    // TODO: Change to Lookup?
+                    // TODO: Optimize KWeight - Would lookup table help?
                     switch (nodePoint) {
                         case PositionExtras.TL:
                             xy = [nodeRegion.left, nodeRegion.top];
@@ -158,7 +159,6 @@ YUI.add("widget-position-extras", function(Y) {
                 var widgetNode = this._posEl,
                     xy;
 
-                // TODO: Change to Lookup?
                 switch (widgetPoint) {
                     case PositionExtras.TL:
                         xy = [x, y];
@@ -205,7 +205,7 @@ YUI.add("widget-position-extras", function(Y) {
              */
             center: function (element) {
                 this.align(element, [PositionExtras.CC, PositionExtras.CC]);
-            },
+            }
 
             /*
             getConstrainedXY: function(x, y, element) {
