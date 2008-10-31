@@ -38,15 +38,9 @@ YUI.add("widget-position-extras", function(Y) {
 
             center: {
                 set: function(val) {
-                    if (val) {
-                        this.set(ALIGN, { 
-                            node: val === true ? null : val,
-                            points: [PositionExtras.CC, PositionExtras.CC]
-                        });
-                    }
-                    return val;
+                    return this._setAlignCenter(val);
                 },
-                value:null
+                value:false
             }
         };
 
@@ -75,6 +69,16 @@ YUI.add("widget-position-extras", function(Y) {
             _bindUIPosExtras : function() {
                 // this.after(Constrain, this._onConstrainChange);
                 this.after(AlignChange, this._onAlignChange);
+            },
+
+            _setAlignCenter : function(val) {
+                if (val) {
+                    this.set(ALIGN, {
+                        node: val === true ? null : val,
+                        points: [PositionExtras.CC, PositionExtras.CC]
+                    });
+                }
+                return val;
             },
 
             _onAlignChange : function(e) {

@@ -19,7 +19,8 @@
         }
 
         .yui-overlay {
-            border:1px solid #cc0000;
+            zIndex:3;
+            border:1px solid #00aa00;
             background-color:#eee;
         }
 
@@ -113,6 +114,10 @@
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
 
+                widget.after("xyChange", function(e) {
+                    Y.log(e.newVal);
+                });
+
                 var stepDelay = 2000;
                 Y.Queue(
                     {
@@ -151,7 +156,7 @@
                             widget.set("align", {points:["cr", "cr"]});
                         }
                     }
-                ).run();
+                );//.run();
             });
     </script>
 </body>

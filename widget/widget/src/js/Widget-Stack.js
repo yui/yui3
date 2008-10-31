@@ -243,8 +243,8 @@ YUI.add("widget-stack", function(Y) {
         },
 
         HTML_PARSER : {
-            zIndex: function() {
-                return this.get(BOUNDING_BOX).getStyle(ZINDEX);
+            zIndex: function(contentBox) {
+                return contentBox.getStyle(ZINDEX);
             }
         }
     };
