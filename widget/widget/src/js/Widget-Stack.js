@@ -67,13 +67,6 @@ YUI.add("widget-stack", function(Y) {
 
     Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
-    Stack._getShimTemplate = function() {
-        if (!Stack._SHIM_TEMPLATE) {
-            Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
-        }
-        return Stack._SHIM_TEMPLATE;
-    };
-
     Stack.prototype = {
 
         _initStack : function() {
@@ -135,21 +128,20 @@ YUI.add("widget-stack", function(Y) {
             if (enable) {
                 // Lazy creation
                 if (this.get(VISIBLE)) {
-                    this._createShim();
+                    this._renderShim();
                 } else {
-                    this._createShimDeferred();
+                    this._renderShimDeferred();
                 }
             } else {
                 this._destroyShim();
             }
         },
 
-        // TODO: Move to generic widget/base support
-        _createShimDeferred : function() {
+        _renderShimDeferred : function() {
 
             var createBeforeVisible = function(e) {
                 if (e.newVal == true) {
-                    this._createShim();
+                    this._renderShim();
                 }
             };
 
@@ -179,12 +171,12 @@ YUI.add("widget-stack", function(Y) {
             }
         },
 
-        _createShim : function() {
+        _renderShim : function() {
             var shimEl = this._shimEl,
                 stackEl = this._stackEl;
 
             if (!shimEl) {
-                shimEl = this._shimEl = Stack._getShimTemplate().cloneNode(false);
+                shimEl = this._shimEl = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
 
                 if (UA.ie == 6) {
@@ -240,6 +232,13 @@ YUI.add("widget-stack", function(Y) {
                 shim.setStyle(WIDTH, el.get(OFFSET_WIDTH) + PX);
                 shim.setStyle(HEIGHT, el.get(OFFSET_HEIGHT) + PX);
             }
+        },
+
+        _getShimTemplate : function() {
+            if (!Stack._SHIM_TEMPLATE) {
+                Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
+            }
+            return Stack._SHIM_TEMPLATE.cloneNode(true);
         },
 
         HTML_PARSER : {
