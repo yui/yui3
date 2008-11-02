@@ -135,11 +135,10 @@
 
                 widget = new Overlay({ 
                     width:"12em", 
-                    height:"12em", 
                     align:{node:'#align', points:["tr", "tl"]}, 
                     zIndex:5,
                     header:"Overlay Header",
-                    body:"width:12em, height:12em, #align, tr, tl, zIndex:5",
+                    body:"width:12em, #align, tr, tl, zIndex:5",
                     footer:"Overlay Footer"
                 });
                 widget.render("#foobar");
@@ -161,6 +160,13 @@
                             widget.set("body", "move(0,0)");
                         }
                     },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("height", "12em");
+                            widget.set("body", "height, 12em");
+                        }
+                    },                    
                     {
                         timeout:stepDelay,
                         fn:function() {

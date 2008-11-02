@@ -17,9 +17,11 @@ YUI.add("widget-stdmod", function(Y) {
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CONTENT_BOX = "contentBox",
+
         HEIGHT = "height",
         OFFSET_HEIGHT = "offsetHeight",
-        
+        AUTO = "auto",
+
         HeaderChange = "headerChange",
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
@@ -115,7 +117,10 @@ YUI.add("widget-stdmod", function(Y) {
 
         _uiStdModFillHeight : function() {
             // TODO: Expose config for which node gets to fill out
-            this.fillHeight(this.bodyNode);    
+            var height = this.get(HEIGHT);
+            if (height != EMPTY && height != AUTO) {
+                this.fillHeight(this.bodyNode);    
+            }
         },
 
         _uiSetSection : function(section, val, where) {
