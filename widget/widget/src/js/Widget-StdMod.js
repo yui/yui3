@@ -23,6 +23,7 @@ YUI.add("widget-stdmod", function(Y) {
         HeaderChange = "headerChange",
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
+        HeightChange = "heightChange",
 
         STD_TEMPLATE = "<div></div>",
 
@@ -55,16 +56,16 @@ YUI.add("widget-stdmod", function(Y) {
 
     var tmpl = StdMod.TEMPLATES;
     tmpl[HEADER_SECT] = {
-        'html' : STD_TEMPLATE,
-        'className' : HD
+        html : STD_TEMPLATE,
+        className : HD
     };
     tmpl[BODY_SECT] = {
-        'html' : STD_TEMPLATE,
-        'className' : BD
+        html : STD_TEMPLATE,
+        className : BD
     };
     tmpl[FOOTER_SECT] = {
-        'html' : STD_TEMPLATE,
-        'className' : FT
+        html : STD_TEMPLATE,
+        className : FT
     };
 
     StdMod.prototype = {
@@ -83,12 +84,16 @@ YUI.add("widget-stdmod", function(Y) {
             this._uiSetSection(HEADER_SECT, this.get(HEADER));
             this._uiSetSection(BODY_SECT, this.get(BODY));
             this._uiSetSection(FOOTER_SECT, this.get(FOOTER));
+
+            this._uiStdModFillHeight();
         },
 
         _bindUIStdMod : function() {
             this.after(HeaderChange, this._onHeaderChange);
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
+
+            this.after(HeightChange, this._uiStdModFillHeight);
         },
 
         _renderSection : function(section) {
@@ -106,6 +111,11 @@ YUI.add("widget-stdmod", function(Y) {
 
         _onFooterChange : function(e) {
             this._uiSetSection(FOOTER_SECT, e.newVal);
+        },
+
+        _uiStdModFillHeight : function() {
+            // TODO: Expose config for which node gets to fill out
+            this.fillHeight(this.bodyNode);    
         },
 
         _uiSetSection : function(section, val, where) {
@@ -242,7 +252,7 @@ YUI.add("widget-stdmod", function(Y) {
                         }
     
                         // Re-adjust height if required, to account for el padding and border
-                        var offsetHeight = node.getStyle(OFFSET_HEIGHT); 
+                        var offsetHeight = node.get(OFFSET_HEIGHT); 
                         if (offsetHeight != remaining) {
                             remaining = remaining - (offsetHeight - remaining);
                         }
