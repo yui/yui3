@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export YUI_BUILD_DIR=/Users/davglass/build/builder/componentbuild
+export YUI_BUILD_DIR=/Users/davglass/src/build/builder/componentbuild
 
 ln -sf build.dd.xml build.xml
 wait
@@ -11,7 +11,7 @@ echo "Building dd"
 echo "****************************************"
 ant -q all
 wait
-clear
+#clear
 wait
 echo "****************************************"
 echo "Cleaning Up"
