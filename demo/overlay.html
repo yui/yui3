@@ -28,12 +28,14 @@
         }
 
         .yui-overlay .yui-overlay-content {
-            height:100%;
-            overflow:hidden;
+            border:2px solid #000000;
+            padding:2px;
         }
 
         .yui-overlay .yui-widget-hd {
             border:2px solid red;
+            background-color:#cc0000;
+            color:#fff;
             padding:2px;
         }
 
@@ -45,6 +47,8 @@
 
         .yui-overlay .yui-widget-ft {
             border:2px solid green;
+            background-color:#00cc00;
+            color:#fff;
             padding:2px;
         }
 
@@ -55,13 +59,17 @@
             border:none;
             margin:0;
             padding:0;
-            top:0;
-            left:0;
+            top:-1px;
+            left:-1px;
             bottom:0;
             right:0;
             z-index:-1;
             _width:0;
             _height:0;
+        }
+        
+        .sels {
+            position:absolute;
         }
 
         #align {
@@ -69,8 +77,8 @@
             filter:alpha(opacity=50);
             position:relative;
             z-index:6;
-            top:-200px;
-            left:500px;
+            top:20px;
+            left:400px;
             width:300px;
             height:250px;
             border:1px solid black;
@@ -80,27 +88,35 @@
 </head>
 <body class="yui-skin-sam">
 
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-    <select class="hideme"><option>Foo</option></select>
-
-    <button id="control-show" type="button">show</button>
-    <button id="control-hide" type="button">hide</button>
-
-    <div class="foo" id="foobar"></div>
+    <div class="sels">
+       <button id="control-show" type="button">show</button>
+       <button id="control-hide" type="button">hide</button>
+    
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+    </div>
 
     <div id="align">
         Align Here
     </div>
+
+    <div class="foo" id="foobar"></div>
 
     <script type="text/javascript">
         var widget;

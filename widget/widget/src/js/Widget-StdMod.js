@@ -21,6 +21,7 @@ YUI.add("widget-stdmod", function(Y) {
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
         CONTENT_BOX = "contentBox",
+        BOUNDING_BOX = "boundingBox",
 
         HEIGHT = "height",
         OFFSET_HEIGHT = "offsetHeight",
@@ -157,7 +158,7 @@ YUI.add("widget-stdmod", function(Y) {
 
         _fillHeight : function() {
             if (this.get(FILL_HEIGHT)) {
-                var height = this.get(CONTENT_BOX).getStyle(HEIGHT);
+                var height = this.get(HEIGHT);
                 if (height != EMPTY && height != AUTO) {
                     this.fillHeight(this._currFillNode);    
                 }
@@ -263,7 +264,7 @@ YUI.add("widget-stdmod", function(Y) {
          */
         fillHeight : function(node) {
             if (node) {
-                var contentBox = this.get(CONTENT_BOX),
+                var boundingBox = this.get(BOUNDING_BOX),
                     stdModNodes = [this.headerNode, this.bodyNode, this.footerNode],
                     stdModNode,
                     total = 0,
@@ -284,12 +285,12 @@ YUI.add("widget-stdmod", function(Y) {
                 }
 
                 if (validNode) {
-                    if (UA.ie || UA.opera) {
+                    //if (UA.ie || UA.opera) {
                         // Need to set height to 0, to allow height to be reduced
                         node.setStyle(HEIGHT, 0 + PX);
-                    }
+                    //}
 
-                    total = parseFloat(contentBox.getComputedStyle(HEIGHT));
+                    total = parseInt(boundingBox.getComputedStyle(HEIGHT));
                     if (L.isNumber(total)) {
                         remaining = total - filled;
 
@@ -298,16 +299,15 @@ YUI.add("widget-stdmod", function(Y) {
                         }
     
                         // Re-adjust height if required, to account for el padding and border
-                        var offsetHeight = node.get(OFFSET_HEIGHT); 
-                        if (offsetHeight != remaining) {
-                            remaining = remaining - (offsetHeight - remaining);
+                        var offsetHeight = this.get(CONTENT_BOX).get(OFFSET_HEIGHT); 
+                        if (offsetHeight != total) {
+                            remaining = remaining - (offsetHeight - total);
+                            node.setStyle(HEIGHT, remaining + PX);
                         }
-                        node.setStyle(HEIGHT, remaining + PX);
                     }
                 }
             }
         }
-
     };
 
     Y.WidgetStdMod = StdMod;
