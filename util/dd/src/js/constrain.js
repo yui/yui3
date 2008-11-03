@@ -6,7 +6,7 @@
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
-     * @class DragConstained
+     * @class DragConstrained
      * @extends Drag
      * @constructor
      */
