@@ -271,8 +271,21 @@ var BASE = 'base',
             requires: ['yui-base']
         },
         
-        io: { 
-            requires: ['node']
+        io:{
+            submodules: {
+                'io-base': {
+                    requires: ['node']
+                }, 
+                'io-xdr': {
+                    requires: ['io-base']
+                }, 
+                'io-form': {
+                    requires: ['io-base']
+                }, 
+                'io-upload-iframe': {
+                    requires: ['io-base']
+                }
+            }
         },
 
         json: {
@@ -297,6 +310,8 @@ var BASE = 'base',
             requires: ['yui-base']
         },
 
+        profiler: { },
+
         queue: { },
 
         stylesheet: { },
@@ -304,7 +319,6 @@ var BASE = 'base',
         substitute: {
             optional: ['dump']
         },
-
 
         widget: {
             requires: ['base', 'node', 'classnamemanager']
@@ -316,7 +330,12 @@ var BASE = 'base',
             supersedes: ['yui-base', 'get', 'loader']
         },
 
-        'yui-base': { }
+        'yui-base': { },
+
+        yuitest: {                                                                                                                                                        
+            requires: ['substitute', 'node', 'json']                                                                                                                     
+        }  
+
     }
 };
 

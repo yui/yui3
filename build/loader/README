@@ -10,6 +10,8 @@ YUI Loader
     - compat requires node, dump, substitute
     - Added combo handler support for CSS
     - Filters are correctly applied to combo and fullpath urls
+    - Added profiler, yuitest, widget, logreader, stylesheet, classnamemanager
+    - Added io submodules
 
 3.0.0pr1
     Initial Release
