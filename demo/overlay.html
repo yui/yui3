@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Widget Class</title>
+
+    <link rel="stylesheet" type="text/css" href="../build/cssreset/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../build/cssfonts/fonts.css" />
+    <script type="text/javascript" src="../build/yui/yui.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-Position.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-Stack.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-PositionExt.js"></script>
+    <script type="text/javascript" src="../widget/widget/src/js/Widget-StdMod.js"></script>
+
+    <style>
+        .hideme {
+            width:20em;
+            display:block;
+        }
+
+        .yui-overlay-hidden {
+            visibility:hidden;
+        }
+
+        .yui-overlay {
+            border:1px solid #000;
+            background-color:#eee;
+            padding:5px;
+        }
+
+        .yui-overlay .yui-overlay-content {
+            border:2px solid #000000;
+            padding:2px;
+        }
+
+        .yui-overlay .yui-widget-hd {
+            border:2px solid red;
+            background-color:#cc0000;
+            color:#fff;
+            padding:2px;
+        }
+
+        .yui-overlay .yui-widget-bd {
+            font-family:monospace;
+            border:2px solid blue;
+            padding:2px;
+        }
+
+        .yui-overlay .yui-widget-ft {
+            border:2px solid green;
+            background-color:#00cc00;
+            color:#fff;
+            padding:2px;
+        }
+
+        .yui-widget-stacked .yui-widget-shim {
+            opacity:0;
+            filter:alpha(opacity=0);
+            position:absolute;
+            border:none;
+            margin:0;
+            padding:0;
+            top:-1px;
+            left:-1px;
+            bottom:0;
+            right:0;
+            z-index:-1;
+            _width:0;
+            _height:0;
+        }
+        
+        .sels {
+            position:absolute;
+        }
+
+        #align {
+            opacity:.5;
+            filter:alpha(opacity=50);
+            position:relative;
+            z-index:6;
+            top:20px;
+            left:400px;
+            width:300px;
+            height:250px;
+            border:1px solid black;
+            background-color:#cc0000;
+        }
+    </style>
+</head>
+<body class="yui-skin-sam">
+
+    <div class="sels">
+       <button id="control-show" type="button">show</button>
+       <button id="control-hide" type="button">hide</button>
+    
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+        <select class="hideme"><option>Foo</option></select>
+    </div>
+
+    <div id="align">
+        Align Here
+    </div>
+
+    <div class="foo" id="foobar"></div>
+
+    <script type="text/javascript">
+        var widget;
+
+        YUI({base:"../build/", filter:"raw"}).use("widget", "queue", "widget-position", "widget-stack", "widget-position-ext", "widget-stdmod", function(Y) {
+
+                function Overlay(config) {
+                    Overlay.superclass.constructor.apply(this, arguments);
+                }
+
+                Overlay.NAME = "overlay";
+                Overlay.ATTRS = {};
+
+                Y.extend(Overlay, Y.Widget, {
+
+                    initializer: function(config) {
+                        this._initPosition(config);
+                        this._initStack(config);
+                        this._initPositionExtras(config);
+                        this._initStdMod(config);
+                    }
+                });
+
+                Y.augment(Overlay, Y.WidgetPosition);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetPosition.ATTRS);
+
+                Y.augment(Overlay, Y.WidgetStack);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetStack.ATTRS);
+
+                Y.augment(Overlay, Y.WidgetPositionExt);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetPositionExt.ATTRS);
+
+                Y.augment(Overlay, Y.WidgetStdMod);
+                Y.aggregate(Overlay.ATTRS, Y.WidgetStdMod.ATTRS);
+
+                widget = new Overlay({ 
+                    width:"12em", 
+                    align:{node:'#align', points:["tr", "tl"]}, 
+                    zIndex:5,
+                    header:"Overlay Header",
+                    body:"width:12em, #align, tr, tl, zIndex:5",
+                    footer:"Overlay Footer"
+                });
+                widget.render("#foobar");
+
+                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
+                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+
+                widget.after("xyChange", function(e) {
+                    Y.log(e.newVal);
+                });
+
+                var stepDelay = 2000;
+
+                Y.Queue(
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.move(0,0);
+                            widget.set("body", "move(0,0)");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("height", "12em");
+                            widget.set("body", "height, 12em");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("align", {node:"#align", points:["cl", "cr"]});
+                            widget.set("body", "#align, cl, cr");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("center", "#align");
+                            widget.set("body", "#align, center");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("zIndex", 7);
+                            widget.set("body", "zIndex, 7");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("align", {points:["cr", "cr"]});
+                            widget.set("body", "viewport, cr, cl");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("center", true);
+                            widget.set("body", "viewport, center");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.move(0, 0);
+                            widget.set("body", "move(0,0)");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("width", "20em");
+                            widget.set("body", "width, 20em");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("height", "20em");
+                            widget.set("body", "height, 20em");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.set("fillHeight", "header");
+                            widget.set("body", "fillHeight, header");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
+                            widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
+                            widget.setBody("Replace Body - DONE!", Y.WidgetStdMod.REPLACE);
+                        }
+                    }
+                ).run();
+            });
+    </script>
+</body>
+</html>

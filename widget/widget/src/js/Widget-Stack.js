@@ -33,10 +33,12 @@ YUI.add("widget-stack", function(Y) {
         WidthChange = "widthChange",
         HeightChange = "heightChange",
         ShimChange = "shimChange",
-        ZIndexChange = "zindexChange",
+        ZIndexChange = "zIndexChange",
+        ContentChange = "contentChange",
 
         // CSS
         STACKED = "stacked",
+        SHIM = "shim",
         SHOW_SCROLLBARS = "show-scrollbars",
         HIDE_SCROLLBARS = "hide-scrollbars";
 
@@ -61,14 +63,9 @@ YUI.add("widget-stack", function(Y) {
         }
     };
 
-    Stack.SHIM_TEMPLATE = '<iframe class="yui-widget-shim" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
-
-    Stack._getShimTemplate = function() {
-        if (!Stack._SHIM_TEMPLATE) {
-            Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
-        }
-        return Stack._SHIM_TEMPLATE;
-    };
+    Stack.SHIM_CLASS = Y.Widget.getClassName(SHIM);
+    Stack.STACKED_CLASS = Y.Widget.getClassName(STACKED);
+    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
     Stack.prototype = {
 
@@ -93,7 +90,7 @@ YUI.add("widget-stack", function(Y) {
         },
 
         _renderUIStack: function() {
-            this._stackEl.addClass(this.getClassName(STACKED));
+            this._stackEl.addClass(Stack.STACKED_CLASS);
 
             // TODO:DEPENDENCY Env.os
             var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
@@ -131,21 +128,20 @@ YUI.add("widget-stack", function(Y) {
             if (enable) {
                 // Lazy creation
                 if (this.get(VISIBLE)) {
-                    this._createShim();
+                    this._renderShim();
                 } else {
-                    this._createShimDeferred();
+                    this._renderShimDeferred();
                 }
             } else {
                 this._destroyShim();
             }
         },
 
-        // TODO: Move to generic widget/base support
-        _createShimDeferred : function() {
+        _renderShimDeferred : function() {
 
             var createBeforeVisible = function(e) {
                 if (e.newVal == true) {
-                    this._createShim();
+                    this._renderShim();
                 }
             };
 
@@ -158,9 +154,12 @@ YUI.add("widget-stack", function(Y) {
             var sizeShim = this.sizeShim,
                 handles = this._stackHandles[SHIM_RESIZE] = this._stackHandles[SHIM_RESIZE] || [];
 
+            this.sizeShim();
+
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
+            handles.push(this.after(ContentChange, sizeShim));
         },
 
         _detachHandles : function(handleKey) {
@@ -173,12 +172,12 @@ YUI.add("widget-stack", function(Y) {
             }
         },
 
-        _createShim : function() {
+        _renderShim : function() {
             var shimEl = this._shimEl,
                 stackEl = this._stackEl;
 
             if (!shimEl) {
-                shimEl = this._shimEl = Stack._getShimTemplate().cloneNode(false);
+                shimEl = this._shimEl = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
 
                 if (UA.ie == 6) {
@@ -236,12 +235,18 @@ YUI.add("widget-stack", function(Y) {
             }
         },
 
+        _getShimTemplate : function() {
+            if (!Stack._SHIM_TEMPLATE) {
+                Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
+            }
+            return Stack._SHIM_TEMPLATE.cloneNode(true);
+        },
+
         HTML_PARSER : {
-            zIndex: function() {
-                return this.get(BOUNDING_BOX).getStyle(ZINDEX);
+            zIndex: function(contentBox) {
+                return contentBox.getStyle(ZINDEX);
             }
         }
-        // TODO: HTML_PARSER for initial zIndex population
     };
 
     Y.WidgetStack = Stack;

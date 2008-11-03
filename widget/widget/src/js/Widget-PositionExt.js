@@ -1,4 +1,4 @@
-YUI.add("widget-position-extras", function(Y) {
+YUI.add("widget-position-ext", function(Y) {
 
         var L = Y.Lang,
             Node = Y.Node,
@@ -15,6 +15,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             OFFSET_WIDTH = "offsetWidth",
             OFFSET_HEIGHT = "offsetHeight",
+            VIEWPORT_REGION = "viewportRegion",
 
             VisibleChange = "visibleChange",
             XYChange = "xyChange",
@@ -23,13 +24,13 @@ YUI.add("widget-position-extras", function(Y) {
             CenterChange = "centerChange",
             AlignChange = "alignChange";
 
-        function PositionExtras(config) {
+        function PositionExt(config) {
             // TODO: If Plugin
-            // PositionExtras.constructor.superclass.apply(this, arguments);
+            // PositionExt.constructor.superclass.apply(this, arguments);
             // this._initPositionExtras();
         }
 
-        PositionExtras.ATTRS = {
+        PositionExt.ATTRS = {
 
             align: {
                 value:null
@@ -37,29 +38,23 @@ YUI.add("widget-position-extras", function(Y) {
 
             center: {
                 set: function(val) {
-                    if (val) {
-                        this.set(ALIGN, { 
-                            node: val === true ? null : val,
-                            align: [PositionExtras.CC, PositionExtras.CC]
-                        });
-                    }
-                    return val;
+                    return this._setAlignCenter(val);
                 },
-                value:null
+                value:false
             }
         };
 
-        PositionExtras.TL = "tl";
-        PositionExtras.TR = "tr";
-        PositionExtras.BL = "bl";
-        PositionExtras.BR = "br";
-        PositionExtras.CT = "ct";
-        PositionExtras.CR = "cr";
-        PositionExtras.CB = "cb";
-        PositionExtras.CL = "cl";
-        PositionExtras.CC = "cc";
+        PositionExt.TL = "tl";
+        PositionExt.TR = "tr";
+        PositionExt.BL = "bl";
+        PositionExt.BR = "br";
+        PositionExt.CT = "ct";
+        PositionExt.CR = "cr";
+        PositionExt.CB = "cb";
+        PositionExt.CL = "cl";
+        PositionExt.CC = "cc";
 
-        PositionExtras.prototype = {
+        PositionExt.prototype = {
 
             _initPositionExtras : function() {
                 Y.after(this._syncUIPosExtras, this, SYNCUI);
@@ -68,14 +63,22 @@ YUI.add("widget-position-extras", function(Y) {
 
             _syncUIPosExtras : function() {
                 // this._uiSetConstrained(this.get(CONSTRAINED));
-                // this._uiSetCentered(this.get(CENTERED));
                 this._uiSetAlign(this.get(ALIGN));
             },
 
             _bindUIPosExtras : function() {
                 // this.after(Constrain, this._onConstrainChange);
-                // this.after(Center, this._onCenterChange);
                 this.after(AlignChange, this._onAlignChange);
+            },
+
+            _setAlignCenter : function(val) {
+                if (val) {
+                    this.set(ALIGN, {
+                        node: val === true ? null : val,
+                        points: [PositionExt.CC, PositionExt.CC]
+                    });
+                }
+                return val;
             },
 
             _onAlignChange : function(e) {
@@ -84,7 +87,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             _uiSetAlign: function (val) {
                 if (val) {
-                    this.align(val.node, val.align, val.triggers);
+                    this.align(val.node, val.points, val.triggers);
                 }
             },
 
@@ -99,6 +102,7 @@ YUI.add("widget-position-extras", function(Y) {
 
                 if (!node) {
                     nodeRegion = this._posEl.get("viewportRegion");
+                    // TODO: Setup resize/scroll listeners if Viewport
                 } else {
                     node = Y.Node.get(node);
                     if (node) {
@@ -106,6 +110,7 @@ YUI.add("widget-position-extras", function(Y) {
                     }
                 }
 
+                // TODO: Until normalized in Node/Dom
                 nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
                 nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
 
@@ -114,33 +119,33 @@ YUI.add("widget-position-extras", function(Y) {
                         nodePoint = points[1],
                         xy;
 
-                    // TODO: Change to Lookup?
+                    // TODO: Optimize KWeight - Would lookup table help?
                     switch (nodePoint) {
-                        case PositionExtras.TL:
+                        case PositionExt.TL:
                             xy = [nodeRegion.left, nodeRegion.top];
                             break;
-                        case PositionExtras.TR:
+                        case PositionExt.TR:
                             xy = [nodeRegion.right, nodeRegion.top];
                             break;
-                        case PositionExtras.BL:
+                        case PositionExt.BL:
                             xy = [nodeRegion.left, nodeRegion.bottom];
                             break;
-                        case PositionExtras.BR:
+                        case PositionExt.BR:
                             xy = [nodeRegion.right, nodeRegion.bottom];
                             break;
-                        case PositionExtras.CT:
+                        case PositionExt.CT:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top];
                             break;
-                        case PositionExtras.CB:
+                        case PositionExt.CB:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.bottom];
                             break;
-                        case PositionExtras.CL:
+                        case PositionExt.CL:
                             xy = [nodeRegion.left, nodeRegion.top + Math.floor(nodeRegion.height/2)];
                             break;
-                        case PositionExtras.CR:
+                        case PositionExt.CR:
                             xy = [nodeRegion.right, nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
-                        case PositionExtras.CC:
+                        case PositionExt.CC:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
                         default:
@@ -158,33 +163,32 @@ YUI.add("widget-position-extras", function(Y) {
                 var widgetNode = this._posEl,
                     xy;
 
-                // TODO: Change to Lookup?
                 switch (widgetPoint) {
-                    case PositionExtras.TL:
+                    case PositionExt.TL:
                         xy = [x, y];
                         break;
-                    case PositionExtras.TR:
+                    case PositionExt.TR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y];
                         break;
-                    case PositionExtras.BL:
+                    case PositionExt.BL:
                         xy = [x, y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.BR:
+                    case PositionExt.BR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.CT:
+                    case PositionExt.CT:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y];
                         break;
-                    case PositionExtras.CB:
+                    case PositionExt.CB:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.CL:
+                    case PositionExt.CL:
                         xy = [x, y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExtras.CR:
+                    case PositionExt.CR:
                         xy = [(x - widgetNode.get(OFFSET_WIDTH)), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExtras.CC:
+                    case PositionExt.CC:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
                     default:
@@ -204,8 +208,8 @@ YUI.add("widget-position-extras", function(Y) {
              * @method center
              */
             center: function (element) {
-                this.align(element, [PositionExtras.CC, PositionExtras.CC]);
-            },
+                this.align(element, [PositionExt.CC, PositionExt.CC]);
+            }
 
             /*
             getConstrainedXY: function(x, y, element) {
@@ -226,7 +230,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             _constrain : function(pos, elSize, cPosition, cSize, cScroll) {
 
-                var buffer = PositionExtras.BUFFER;
+                var buffer = PositionExt.BUFFER;
 
                 if (elSize + buffer < cSize) {
 
@@ -245,7 +249,6 @@ YUI.add("widget-position-extras", function(Y) {
                 return pos;
             },
 
-            /*
             _onConstrainChange : function(e) {
                 this._uiSetConstrained(e.newVal);
             },
@@ -290,9 +293,9 @@ YUI.add("widget-position-extras", function(Y) {
             */
         };
 
-        Y.WidgetPositionExtras = PositionExtras;
+        Y.WidgetPositionExt = PositionExt;
 
         // TODO: If plugin
-        // Y.extend(PositionExtras, Y.Base, proto);
+        // Y.extend(PositionExt, Y.Base, proto);
 
     }, "3.0.0");
