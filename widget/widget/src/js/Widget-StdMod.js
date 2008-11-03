@@ -102,6 +102,7 @@ YUI.add("widget-stdmod", function(Y) {
             this.after(HeaderChange, this._onHeaderChange);
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
+
             this.after(FillHeightChange, this._onFillHeightChange);
 
             this.after(ContentChange, this._fillHeight);
