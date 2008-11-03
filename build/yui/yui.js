@@ -2384,8 +2384,21 @@ var BASE = 'base',
             requires: ['yui-base']
         },
         
-        io: { 
-            requires: ['node']
+        io:{
+            submodules: {
+                'io-base': {
+                    requires: ['node']
+                }, 
+                'io-xdr': {
+                    requires: ['io-base']
+                }, 
+                'io-form': {
+                    requires: ['io-base']
+                }, 
+                'io-upload-iframe': {
+                    requires: ['io-base']
+                }
+            }
         },
 
         json: {
@@ -2410,6 +2423,8 @@ var BASE = 'base',
             requires: ['yui-base']
         },
 
+        profiler: { },
+
         queue: { },
 
         stylesheet: { },
@@ -2417,7 +2432,6 @@ var BASE = 'base',
         substitute: {
             optional: ['dump']
         },
-
 
         widget: {
             requires: ['base', 'node', 'classnamemanager']
@@ -2429,7 +2443,12 @@ var BASE = 'base',
             supersedes: ['yui-base', 'get', 'loader']
         },
 
-        'yui-base': { }
+        'yui-base': { },
+
+        yuitest: {                                                                                                                                                        
+            requires: ['substitute', 'node', 'json']                                                                                                                     
+        }  
+
     }
 };
 
@@ -3595,7 +3614,7 @@ Y.Env.meta = META;
                             self.loadNext(o.data);
                         };
                         
-                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+                    url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
 
                     self = this; 
 
@@ -3655,13 +3674,26 @@ Y.Env.meta = META;
          */
         _filter: function(u) {
 
+
             var f = this.filter;
 
-            if (f) {
+            if (u && f) {
                 var useFilter = true;
 
                 if (this.filterName == "DEBUG") {
                 
+                    var exc = this.logExclude,
+                        inc = this.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
                 }
             }
 
