@@ -35,7 +35,6 @@ include("../inc/header.inc");
                                     <li><a href="#start">Getting Started</a></li>
                                     <li><a href="#testcases">Using Test Cases</a></li>
                                     <li><a href="#assertions">Assertions</a></li>
-                                    <li><a href="#useractions">Simulating User Actions</a></li>
                                     <li><a href="#asynctests">Asynchronous Tests</a></li>
                                     <li><a href="#testsuites">Test Suites</a></li>
                                     <li><a href="#running-tests">Running Tests</a></li>
@@ -1223,7 +1222,10 @@ include("../inc/header.inc");
                 <textarea name="code" class="JScript" cols="60" rows="1">
                 <script type="text/javascript">
                 
-                    var logger = new Y.log.Reader();
+                    var logger = new Y.log.Reader({
+                        newestOnTop: false                   
+                    });
+                    logger.render('#log');
                     Y.Test.Runner.run();
                 
                 </script> 
