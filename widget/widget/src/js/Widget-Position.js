@@ -57,7 +57,7 @@ YUI.add("widget-position", function(Y) {
             }
         };
 
-        Position.POSITIONED_CLASS = Y.config.classNamePrefix + Y.Widget.NAME + "-positioned";
+        Position.POSITIONED_CLASS = Y.Widget.getClassName("positioned");
 
         Position.prototype = {
 

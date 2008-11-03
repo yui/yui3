@@ -38,6 +38,7 @@ YUI.add("widget-stack", function(Y) {
 
         // CSS
         STACKED = "stacked",
+        SHIM = "shim",
         SHOW_SCROLLBARS = "show-scrollbars",
         HIDE_SCROLLBARS = "hide-scrollbars";
 
@@ -62,10 +63,8 @@ YUI.add("widget-stack", function(Y) {
         }
     };
 
-    // TODO: Until Static ClassNameManager support is available
-    Stack.SHIM_CLASS = Y.config.classNamePrefix + Y.Widget.NAME + "-shim";
-    Stack.STACKED_CLASS = Y.config.classNamePrefix + Y.Widget.NAME + "-stacked";
-
+    Stack.SHIM_CLASS = Y.Widget.getClassName(SHIM);
+    Stack.STACKED_CLASS = Y.Widget.getClassName(STACKED);
     Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
     Stack.prototype = {

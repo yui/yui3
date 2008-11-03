@@ -3,6 +3,7 @@ YUI.add("widget-stdmod", function(Y) {
     var L = Y.Lang,
         Node = Y.Node,
         UA = Y.UA,
+        CNM = Y.ClassNameManager,
         
         UI = Y.Widget.UI_SRC,
         UI_SRC = {src:UI},
@@ -189,7 +190,7 @@ YUI.add("widget-stdmod", function(Y) {
                 cfg = StdMod.TEMPLATES[section];
                 StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
                 // TODO: Replace with ClassNameManager static version
-                template.addClass(Y.config.classNamePrefix + Y.Widget.NAME + "-" + cfg.className); 
+                template.addClass(Y.ClassNameManager.getClassName(Y.Widget.NAME, cfg.className));
             }
             return template.cloneNode(true);
         },
