@@ -227,34 +227,20 @@ YUI.add('dd-ddm-base', function(Y) {
         * @return {Object} The gutter Object Literal.
         */
         cssSizestoObject: function(gutter) {
-            var p = gutter.split(' '),
-            g = {
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0
-            };
-            if (p.length) {
-                g.top = parseInt(p[0], 10);
-                if (p[1]) {
-                    g.right = parseInt(p[1], 10);
-                } else {
-                    g.right = g.top;
-                }
-                if (p[2]) {
-                    g.bottom = parseInt(p[2], 10);
-                } else {
-                    g.bottom = g.top;
-                }
-                if (p[3]) {
-                    g.left = parseInt(p[3], 10);
-                } else if (p[1]) {
-                    g.left = g.right;
-                } else {
-                    g.left = g.top;
-                }
+            var x = gutter.split(' ');
+                
+            switch (x.length) {
+                case 1: x[1] = x[2] = x[3] = x[0]; break;
+                case 2: x[2] = x[0]; x[3] = x[1]; break;
+                case 3: x[3] = x[1]; break;
             }
-            return g;
+
+            return {
+                top   : parseInt(x[0],10),
+                right : parseInt(x[1],10),
+                bottom: parseInt(x[2],10),
+                left  : parseInt(x[3],10)
+            };
         },
         /**
         * @method getDrag
@@ -1106,6 +1092,15 @@ YUI.add('dd-drag', function(Y) {
                 }
                 return g;
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
     };
 
@@ -1213,7 +1208,10 @@ YUI.add('dd-drag', function(Y) {
                     queuable: true
                 });
             }, this);
-            this.addTarget(DDM);
+
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
            
         },
@@ -1966,7 +1964,7 @@ YUI.add('dd-constrain', function(Y) {
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
-     * @class DragConstained
+     * @class DragConstrained
      * @extends Drag
      * @constructor
      */
@@ -2379,7 +2377,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag']});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2498,7 +2496,17 @@ YUI.add('dd-drop', function(Y) {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
+
     };
 
     Y.extend(Drop, Y.Base, {
@@ -2526,7 +2534,9 @@ YUI.add('dd-drop', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
         },
         /**
@@ -2846,5 +2856,5 @@ YUI.add('dd-drop-plugin', function(Y) {
 }, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
 
