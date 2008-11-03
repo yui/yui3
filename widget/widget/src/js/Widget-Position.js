@@ -57,6 +57,8 @@ YUI.add("widget-position", function(Y) {
             }
         };
 
+        Position.POSITIONED_CLASS = Y.Widget.getClassName("positioned");
+
         Position.prototype = {
 
             _initPosition: function() {
@@ -70,7 +72,7 @@ YUI.add("widget-position", function(Y) {
             },
 
             _renderUIPosition : function() {
-                this._posEl.addClass(this.getClassName(POSITIONED));
+                this._posEl.addClass(Position.POSITIONED_CLASS);
             },
 
             _syncUIPosition : function() {

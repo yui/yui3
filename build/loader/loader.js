@@ -271,8 +271,21 @@ var BASE = 'base',
             requires: ['yui-base']
         },
         
-        io: { 
-            requires: ['node']
+        io:{
+            submodules: {
+                'io-base': {
+                    requires: ['node']
+                }, 
+                'io-xdr': {
+                    requires: ['io-base']
+                }, 
+                'io-form': {
+                    requires: ['io-base']
+                }, 
+                'io-upload-iframe': {
+                    requires: ['io-base']
+                }
+            }
         },
 
         json: {
@@ -297,6 +310,8 @@ var BASE = 'base',
             requires: ['yui-base']
         },
 
+        profiler: { },
+
         queue: { },
 
         stylesheet: { },
@@ -304,7 +319,6 @@ var BASE = 'base',
         substitute: {
             optional: ['dump']
         },
-
 
         widget: {
             requires: ['base', 'node', 'classnamemanager']
@@ -316,7 +330,12 @@ var BASE = 'base',
             supersedes: ['yui-base', 'get', 'loader']
         },
 
-        'yui-base': { }
+        'yui-base': { },
+
+        yuitest: {                                                                                                                                                        
+            requires: ['substitute', 'node', 'json']                                                                                                                     
+        }  
+
     }
 };
 
@@ -1317,7 +1336,7 @@ Y.Env.meta = META;
             // flag to indicate we are done with the combo service
             // and any additional files will need to be loaded
             // individually
-            this._combineComplete = false;
+            this._combineComplete = {};
 
             // keep the loadType (js, css or undefined) cached
             this.loadType = type;
@@ -1346,11 +1365,11 @@ Y.Env.meta = META;
                 return;
             }
 
-            var s, len, i, m, url, self=this;
+            var s, len, i, m, url, self=this, type=this.loadType, fn;
 
             // @TODO this will need to handle the two phase insert when
             // CSS support is added
-            if (this.loadType !== CSS && this.combine && (!this._combineComplete)) {
+            if (this.combine && (!this._combineComplete[type])) {
 
                 this._combining = []; 
                 s=this.sorted;
@@ -1361,7 +1380,7 @@ Y.Env.meta = META;
                     m = this.getModule(s[i]);
 // @TODO we can't combine CSS yet until we deliver files with absolute paths to the assets
                     // Do not try to combine non-yui JS
-                    if (m && m.type == JS && !m.ext) {
+                    if (m && m.type === this.loadType && !m.ext) {
                         url += this.root + m.path;
                         if (i < len-1) {
                             url += '&';
@@ -1375,7 +1394,7 @@ Y.Env.meta = META;
 
 
                     var callback=function(o) {
-                        this._combineComplete = true;
+                        this._combineComplete[type] = true;
 
 
                         var c=this._combining, len=c.length, i, m;
@@ -1386,8 +1405,10 @@ Y.Env.meta = META;
                         this.loadNext(o.data);
                     };
 
+                    fn =(type === CSS) ? Y.Get.css : Y.Get.script;
+
                     // @TODO get rid of the redundant Get code
-                    Y.Get.script(this._filter(url), {
+                    fn(this._filter(url), {
                         data: this._loading,
                         onSuccess: callback,
                         onFailure: this._onFailure,
@@ -1401,7 +1422,7 @@ Y.Env.meta = META;
                     return;
 
                 } else {
-                    this._combineComplete = true;
+                    this._combineComplete[type] = true;
                 }
             }
 
@@ -1471,15 +1492,16 @@ Y.Env.meta = META;
 
                 // The load type is stored to offer the possibility to load
                 // the css separately from the script.
-                if (!this.loadType || this.loadType === m.type) {
+                if (!type || type === m.type) {
                     this._loading = s[i];
 
-                    var fn=(m.type === CSS) ? Y.Get.css : Y.Get.script,
-                        onsuccess=function(o) {
+                    fn = (m.type === CSS) ? Y.Get.css : Y.Get.script;
+
+                    var onsuccess=function(o) {
                             self.loadNext(o.data);
                         };
                         
-                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+                    url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
 
                     self = this; 
 
@@ -1501,21 +1523,18 @@ Y.Env.meta = META;
             // we are finished
             this._loading = null;
 
-            // internal callback for loading css first
-            if (this._internalCallback) {
+            fn = this._internalCallback;
 
-                var f = this._internalCallback;
+            // internal callback for loading css first
+            if (fn) {
                 this._internalCallback = null;
-                f.call(this);
+                fn.call(this);
 
             // } else if (this.onSuccess) {
             } else {
-
                 // call Y.use passing this instance. Y will use the sorted
                 // dependency list.
-
                 this._onSuccess();
-
             }
 
         },

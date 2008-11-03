@@ -2095,7 +2095,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              *                   will execute in the context of that object
              * @param checkContent {boolean} check child node readiness (onContentReady)
              * @static
-             * @deprecated This will be replaced with a special Y.on custom event
+             * @deprecated Use Y.on("available")
              */
             // @TODO fix arguments
             onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
@@ -2141,7 +2141,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              *                   exectute in the context of that object
              *
              * @static
-             * @deprecated This will be replaced with a special Y.on custom event
+             * @deprecated Use Y.on("contentready")
              */
             // @TODO fix arguments
             onContentReady: function(id, fn, p_obj, p_override, compat) {
