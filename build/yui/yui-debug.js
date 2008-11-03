@@ -3680,7 +3680,7 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
                             self.loadNext(o.data);
                         };
                         
-                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+                    url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
 
                     self = this; 
 
