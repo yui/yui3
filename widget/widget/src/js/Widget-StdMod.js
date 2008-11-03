@@ -3,6 +3,9 @@ YUI.add("widget-stdmod", function(Y) {
     var L = Y.Lang,
         Node = Y.Node,
         UA = Y.UA,
+        
+        UI = Y.Widget.UI_SRC,
+        UI_SRC = {src:UI},
 
         EMPTY = "",
         HD = "hd",
@@ -11,6 +14,7 @@ YUI.add("widget-stdmod", function(Y) {
         HEADER = "header",
         BODY = "body",
         FOOTER = "footer",
+        FILL_HEIGHT = "fillHeight",
 
         PX = "px",
         NODE_SUFFIX = "Node",
@@ -26,12 +30,22 @@ YUI.add("widget-stdmod", function(Y) {
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
         HeightChange = "heightChange",
+        FillHeightChange = "fillHeightChange",
+        ContentChange = "contentChange",
 
         STD_TEMPLATE = "<div></div>",
 
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
         SYNCUI = "syncUI";
+        
+    var STD_HEADER = StdMod.HEADER = HEADER;
+    var STD_BODY = StdMod.BODY = BODY;
+    var STD_FOOTER = StdMod.FOOTER = FOOTER;
+    
+    var AFTER = StdMod.AFTER = "after";
+    var BEFORE = StdMod.BEFORE = "before";
+    var REPLACE = StdMod.REPLACE = "replace";
 
     function StdMod(config) {
         // TODO: If Plugin
@@ -42,30 +56,28 @@ YUI.add("widget-stdmod", function(Y) {
     StdMod.ATTRS = {
         header: {},
         footer: {},
-        body: {}
+        body: {},
+        fillHeight: {
+            value: StdMod.BODY,
+            validator: function(val) {
+                 return this._validateFillHeight(val);               
+            }
+        }
     };
-
-    var HEADER_SECT = StdMod.HEADER = HEADER;
-    var BODY_SECT = StdMod.BODY = BODY;
-    var FOOTER_SECT = StdMod.FOOTER = FOOTER;
-    
-    var AFTER = StdMod.AFTER = "after";
-    var BEFORE = StdMod.BEFORE = "before";
-    var REPLACE = StdMod.REPLACE = "replace";
 
     StdMod.TEMPLATES = {};
     StdMod._TEMPLATES = {};
 
     var tmpl = StdMod.TEMPLATES;
-    tmpl[HEADER_SECT] = {
+    tmpl[STD_HEADER] = {
         html : STD_TEMPLATE,
         className : HD
     };
-    tmpl[BODY_SECT] = {
+    tmpl[STD_BODY] = {
         html : STD_TEMPLATE,
         className : BD
     };
-    tmpl[FOOTER_SECT] = {
+    tmpl[STD_FOOTER] = {
         html : STD_TEMPLATE,
         className : FT
     };
@@ -73,29 +85,93 @@ YUI.add("widget-stdmod", function(Y) {
     StdMod.prototype = {
 
         _initStdMod : function() {
-            Y.after(this._renderUIStdMod, this, RENDERUI);
+            // Not doing anything in renderUI. Lazily create sections
             Y.after(this._bindUIStdMod, this, BINDUI);
             Y.after(this._syncUIStdMod, this, SYNCUI);
         },
 
-        _renderUIStdMod : function() {
-            // Lazily render module sections
-        },
-
         _syncUIStdMod : function() {
-            this._uiSetSection(HEADER_SECT, this.get(HEADER));
-            this._uiSetSection(BODY_SECT, this.get(BODY));
-            this._uiSetSection(FOOTER_SECT, this.get(FOOTER));
-
-            this._uiStdModFillHeight();
+            this._uiSetSection(STD_HEADER, this.get(HEADER));
+            this._uiSetSection(STD_BODY, this.get(BODY));
+            this._uiSetSection(STD_FOOTER, this.get(FOOTER));
+            this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
 
         _bindUIStdMod : function() {
             this.after(HeaderChange, this._onHeaderChange);
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
+            this.after(FillHeightChange, this._onFillHeightChange);
 
-            this.after(HeightChange, this._uiStdModFillHeight);
+            this.after(ContentChange, this._fillHeight);
+            // this.after(HeaderChange, this._fillHeight);
+            // this.after(BodyChange, this._fillHeight);
+            //this.after(FooterChange, this._fillHeight);
+        },
+
+        _onHeaderChange : function(e) {
+            if (e.src != UI) {
+                this._uiSetSection(STD_HEADER, e.newVal);
+            }
+        },
+
+        _onBodyChange : function(e) {
+            if (e.src != UI) {
+                this._uiSetSection(STD_BODY, e.newVal);
+            }
+        },
+
+        _onFooterChange : function(e) {
+            if (e.src != UI) {
+                this._uiSetSection(STD_FOOTER, e.newVal);
+            }
+        },
+
+        _setStdModSection : function(section, val, where) {
+            this._uiSetSection(section, val, where);
+            this.set(section, this.getStdModNode(section).get(INNER_HTML), UI_SRC);
+        },
+
+        _onFillHeightChange: function (e) {
+            this._uiSetFillHeight(e.newVal);
+        },
+
+        _validateFillHeight : function(val) {
+            return val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
+        },
+
+        _uiSetFillHeight : function(fillSection) {
+            var fillNode = this.getStdModNode(fillSection);
+            var currNode = this._currFillNode;
+
+            if (currNode && fillNode !== currNode){
+                currNode.setStyle(HEIGHT, EMPTY);
+            }
+
+            if (fillNode) {
+                this._currFillNode = fillNode;
+            }
+
+            this._fillHeight();
+        },
+
+        _fillHeight : function() {
+            if (this.get(FILL_HEIGHT)) {
+                var height = this.get(CONTENT_BOX).getStyle(HEIGHT);
+                if (height != EMPTY && height != AUTO) {
+                    this.fillHeight(this._currFillNode);    
+                }
+            }
+        },
+
+        _uiSetSection : function(section, val, where) {
+            var node = this.getStdModNode(section) || this._renderSection(section);
+            if (val instanceof Node) {
+                this._addNodeRef(node, val, where);
+            } else {
+                this._addNodeHTML(node, val, where);
+            }
+            this.fire(ContentChange);
         },
 
         _renderSection : function(section) {
@@ -103,33 +179,17 @@ YUI.add("widget-stdmod", function(Y) {
             return this[section + NODE_SUFFIX] = contentBox.appendChild(this._getStdModTemplate(section));
         },
 
-        _onHeaderChange : function(e) {
-            this._uiSetSection(HEADER_SECT, e.newVal);
-        },
+        _getStdModTemplate : function(section) {
+            var template = StdMod._TEMPLATES[section], 
+                cfg;
 
-        _onBodyChange : function(e) {
-            this._uiSetSection(BODY_SECT, e.newVal);
-        },
-
-        _onFooterChange : function(e) {
-            this._uiSetSection(FOOTER_SECT, e.newVal);
-        },
-
-        _uiStdModFillHeight : function() {
-            // TODO: Expose config for which node gets to fill out
-            var height = this.get(HEIGHT);
-            if (height != EMPTY && height != AUTO) {
-                this.fillHeight(this.bodyNode);    
+            if (!template) {
+                cfg = StdMod.TEMPLATES[section];
+                StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
+                // TODO: Replace with ClassNameManager static version
+                template.addClass(Y.config.classNamePrefix + Y.Widget.NAME + "-" + cfg.className); 
             }
-        },
-
-        _uiSetSection : function(section, val, where) {
-            var node = this[section + NODE_SUFFIX] || this._renderSection(section);
-            if (val instanceof Node) {
-                this._addNodeRef(node, val, where);
-            } else {
-                this._addNodeHTML(node, val, where);
-            }
+            return template.cloneNode(true);
         },
 
         _addNodeHTML : function(node, html, where) {
@@ -157,40 +217,6 @@ YUI.add("widget-stdmod", function(Y) {
             }
         },
 
-        setBody : function(val) {
-            this.set(BODY, val);
-        },
-
-        setHeader : function(val) {
-            this.set(HEADER, val);
-        },
-
-        setFooter : function(val) {
-            this.set(FOOTER, val);
-        },
-
-        appendToBody : function(val) {
-        },
-
-        appendToHeader : function(val) {
-        },
-
-        appendToFooter : function(val) {
-        },
-
-        _getStdModTemplate : function(section) {
-            var template = StdMod._TEMPLATES[section], 
-                cfg;
-
-            if (!template) {
-                cfg = StdMod.TEMPLATES[section];
-                StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
-                // TODO: Replace with ClassNameManager static version
-                template.addClass(Y.config.classNamePrefix + Y.Widget.NAME + "-" + cfg.className); 
-            }
-            return template.cloneNode(true);
-        },
-
         _getPreciseHeight : function(node) {
             var height = node.get(OFFSET_HEIGHT);
 
@@ -200,6 +226,22 @@ YUI.add("widget-stdmod", function(Y) {
             }
 
             return height;
+        },
+
+        setBody : function(val, where) {
+            this._setStdModSection(STD_BODY, val, where);
+        },
+
+        setHeader : function(val, where) {
+            this._setStdModSection(STD_HEADER, val, where);
+        },
+
+        setFooter : function(val, where) {
+            this._setStdModSection(STD_FOOTER, val, where);
+        },
+
+        getStdModNode : function(section) {
+            return this[section + NODE_SUFFIX];
         },
 
         /**
@@ -220,7 +262,6 @@ YUI.add("widget-stdmod", function(Y) {
          * of the container element.
          */
         fillHeight : function(node) {
-            node = node || this.bodyNode;
             if (node) {
                 var contentBox = this.get(CONTENT_BOX),
                     stdModNodes = [this.headerNode, this.bodyNode, this.footerNode],
@@ -230,6 +271,7 @@ YUI.add("widget-stdmod", function(Y) {
                     remaining = 0,
                     validNode = false;
 
+                // TODO: Fix margin bug, non-IE
                 for (var i = 0, l = stdModNodes.length; i < l; i++) {
                     stdModNode = stdModNodes[i];
                     if (stdModNode) {
@@ -242,7 +284,6 @@ YUI.add("widget-stdmod", function(Y) {
                 }
 
                 if (validNode) {
-
                     if (UA.ie || UA.opera) {
                         // Need to set height to 0, to allow height to be reduced
                         node.setStyle(HEIGHT, 0 + PX);
@@ -266,6 +307,7 @@ YUI.add("widget-stdmod", function(Y) {
                 }
             }
         }
+
     };
 
     Y.WidgetStdMod = StdMod;

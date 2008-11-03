@@ -3,6 +3,8 @@
 <head>
     <title>Widget Class</title>
 
+    <link rel="stylesheet" type="text/css" href="../build/cssreset/reset.css" />
+    <link rel="stylesheet" type="text/css" href="../build/cssfonts/fonts.css" />
     <script type="text/javascript" src="../build/yui/yui.js"></script>
     <script type="text/javascript" src="../widget/widget/src/js/Widget-Position.js"></script>
     <script type="text/javascript" src="../widget/widget/src/js/Widget-Stack.js"></script>
@@ -27,6 +29,7 @@
 
         .yui-overlay .yui-overlay-content {
             height:100%;
+            overflow:hidden;
         }
 
         .yui-overlay .yui-widget-hd {
@@ -166,7 +169,7 @@
                             widget.set("height", "12em");
                             widget.set("body", "height, 12em");
                         }
-                    },                    
+                    },
                     {
                         timeout:stepDelay,
                         fn:function() {
@@ -226,7 +229,16 @@
                     {
                         timeout:stepDelay,
                         fn:function() {
-                            widget.set("body", "Done!");
+                            widget.set("fillHeight", "header");
+                            widget.set("body", "fillHeight, header");
+                        }
+                    },
+                    {
+                        timeout:stepDelay,
+                        fn:function() {
+                            widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
+                            widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
+                            widget.setBody("Replace Body - DONE!", Y.WidgetStdMod.REPLACE);
                         }
                     }
                 ).run();
