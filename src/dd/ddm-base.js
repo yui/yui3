@@ -225,34 +225,20 @@
         * @return {Object} The gutter Object Literal.
         */
         cssSizestoObject: function(gutter) {
-            var p = gutter.split(' '),
-            g = {
-                top: 0,
-                bottom: 0,
-                right: 0,
-                left: 0
-            };
-            if (p.length) {
-                g.top = parseInt(p[0], 10);
-                if (p[1]) {
-                    g.right = parseInt(p[1], 10);
-                } else {
-                    g.right = g.top;
-                }
-                if (p[2]) {
-                    g.bottom = parseInt(p[2], 10);
-                } else {
-                    g.bottom = g.top;
-                }
-                if (p[3]) {
-                    g.left = parseInt(p[3], 10);
-                } else if (p[1]) {
-                    g.left = g.right;
-                } else {
-                    g.left = g.top;
-                }
+            var x = gutter.split(' ');
+                
+            switch (x.length) {
+                case 1: x[1] = x[2] = x[3] = x[0]; break;
+                case 2: x[2] = x[0]; x[3] = x[1]; break;
+                case 3: x[3] = x[1]; break;
             }
-            return g;
+
+            return {
+                top   : parseInt(x[0],10),
+                right : parseInt(x[1],10),
+                bottom: parseInt(x[2],10),
+                left  : parseInt(x[3],10)
+            };
         },
         /**
         * @method getDrag

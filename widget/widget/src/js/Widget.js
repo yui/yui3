@@ -29,7 +29,8 @@ var WIDGET = "widget",
     DESTROYED = "destroyed",
 
     O = Y.Object,
-    Node = Y.Node;
+    Node = Y.Node,
+    ClassNameManager = Y.ClassNameManager;
 
 // Widget nodeid-to-instance map for now, 1-to-1.
 var _instances = {};
@@ -237,7 +238,9 @@ Widget.ATTRS = {
  * instance specific variations (e.g. instance based classNamePrefix settings)
  *
  */
-Widget._CLASSNAME = Y.config.classNamePrefix + Widget.NAME;
+Widget._CLASSNAME = ClassNameManager.getClassName(Widget.NAME.toLowerCase());
+
+
 
 /**
  * Returns the widget instance whose bounding box contains, or is, the given node. 
@@ -269,6 +272,25 @@ var UI = Widget.UI_SRC;
 
 Y.extend(Widget, Y.Base, {
 
+	/**
+	 * Returns a class name prefixed with the the value of the 
+	 * <code>Y.config.classNamePrefix</code> attribute + the <code>NAME</code> property.
+	 * Uses <code>Y.config.classNameDelimiter</code> attribute to delimit the provided strings.
+	 * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
+	 * 
+	 * @method getClassName
+	 * @param {String}+ one or more classname bits to be joined and prefixed
+	 */
+	getClassName: function () {
+
+		var args = Y.Array(arguments, 0, true);
+
+		args.splice(0, 0, this._name);
+
+		return ClassNameManager.getClassName.apply(ClassNameManager, args);
+		
+	},
+
     /**
      * Initializer lifecycle implementation for the Widget class.
      *
@@ -281,7 +303,7 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
 
-        this._className = this.get("classNamePrefix") + this.constructor.NAME.toLowerCase();
+		this._name = this.constructor.NAME.toLowerCase();
 
         var nodeId = this.get(BOUNDING_BOX).get(ID);
         if (nodeId) {
@@ -656,8 +678,8 @@ Y.extend(Widget, Y.Base, {
 
         // TODO: Classname chaining?
         this.get(BOUNDING_BOX).addClass(Widget._CLASSNAME);
-        this.get(BOUNDING_BOX).addClass(this._className);
-        this.get(CONTENT_BOX).addClass(this._className + HYPHEN + CONTENT);
+        this.get(BOUNDING_BOX).addClass(this.getClassName());
+        this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
 
         this._renderBox(parentNode);
     },
@@ -1091,8 +1113,5 @@ Y.extend(Widget, Y.Base, {
 Widget.PLUGINS = [];
 
 Y.mix(Widget, Y.PluginHost, false, null, 1); // straightup augment, no wrapper functions
-
-Y.augment(Widget, Y.ClassNameManager);
-Y.aggregate(Widget, Y.ClassNameManager);
 
 Y.Widget = Widget;
