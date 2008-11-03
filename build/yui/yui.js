@@ -3614,7 +3614,7 @@ Y.Env.meta = META;
                             self.loadNext(o.data);
                         };
                         
-                    url = this._filter(m.fullpath) || this._url(m.path, s[i]);
+                    url = (m.fullpath) ? this._filter(m.fullpath) : this._url(m.path, s[i]);
 
                     self = this; 
 
