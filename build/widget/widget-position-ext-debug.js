@@ -1,3 +1,5 @@
+YUI.add('widget-position-ext', function(Y) {
+
         var L = Y.Lang,
             ALIGN = "align",
 
@@ -190,3 +192,7 @@
         };
 
         Y.WidgetPositionExt = PositionExt;
+
+
+
+}, '@VERSION@' ,{requires:['widget', 'widget-position']});

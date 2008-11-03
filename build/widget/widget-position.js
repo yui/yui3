@@ -1,3 +1,5 @@
+YUI.add('widget-position', function(Y) {
+
         var Lang = Y.Lang,
             Widget = Y.Widget,
 
@@ -141,3 +143,7 @@
         };
 
         Y.WidgetPosition = Position;
+
+
+
+}, '@VERSION@' ,{requires:['widget']});
