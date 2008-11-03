@@ -309,6 +309,15 @@ YUI.add('dd-drag', function(Y) {
                 }
                 return g;
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
     };
 
@@ -416,7 +425,10 @@ YUI.add('dd-drag', function(Y) {
                     queuable: true
                 });
             }, this);
-            this.addTarget(DDM);
+
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
            
         },

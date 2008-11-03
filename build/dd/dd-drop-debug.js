@@ -116,7 +116,17 @@ YUI.add('dd-drop', function(Y) {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
+
     };
 
     Y.extend(Drop, Y.Base, {
@@ -144,7 +154,9 @@ YUI.add('dd-drop', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
         },
         /**

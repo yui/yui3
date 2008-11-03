@@ -1090,6 +1090,15 @@ YUI.add('dd-drag', function(Y) {
                 }
                 return g;
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
     };
 
@@ -1197,7 +1206,10 @@ YUI.add('dd-drag', function(Y) {
                     queuable: true
                 });
             }, this);
-            this.addTarget(DDM);
+
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
            
         },
@@ -1935,7 +1947,7 @@ YUI.add('dd-constrain', function(Y) {
     /**
      * This class extends the dd-drag module to add the constraining methods to it. It supports constraining to a region, node or viewport. It also
      * supports tick based moves and XY axis constraints.
-     * @class DragConstained
+     * @class DragConstrained
      * @extends Drag
      * @constructor
      */
@@ -2464,7 +2476,17 @@ YUI.add('dd-drop', function(Y) {
                     this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-locked');
                 }
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
+
     };
 
     Y.extend(Drop, Y.Base, {
@@ -2492,7 +2514,9 @@ YUI.add('dd-drop', function(Y) {
                 });
             }, this);
 
-            this.addTarget(DDM);
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
         },
         /**
