@@ -305,6 +305,12 @@
 */
 
 #bd:after,
+.yui-t1:after,
+.yui-t2:after,
+.yui-t3:after,
+.yui-t4:after,
+.yui-t5:after,
+.yui-t6:after,
 .yui-g:after, 
 .yui-gb:after, 
 .yui-gc:after, 
@@ -312,6 +318,12 @@
 .yui-ge:after, 
 .yui-gf:after{content:".";display:block;height:0;clear:both;visibility:hidden;}
 #bd,
+.yui-t1,
+.yui-t2,
+.yui-t3,
+.yui-t4,
+.yui-t5,
+.yui-t6,
 .yui-g, 
 .yui-gb, 
 .yui-gc, 
