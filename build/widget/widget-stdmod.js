@@ -1,3 +1,5 @@
+YUI.add('widget-stdmod', function(Y) {
+
     var L = Y.Lang,
         Node = Y.Node,
         UA = Y.UA,
@@ -311,3 +313,7 @@
     };
 
     Y.WidgetStdMod = StdMod;
+
+
+
+}, '@VERSION@' ,{requires:['widget']});
