@@ -1,16 +1,17 @@
 (function(){
 
     var M = function(Y){
-       
+        
         Y.namespace("Test");
-       
+        
         //prevent duplicates
         if (Y.Test.Runner) return;
- 
+        
         /**
          * Runs test suites and test cases, providing events to allowing for the
          * interpretation of test results.
-         * @class Test.Runner
+         * @namespace Y.Test
+         * @class Runner
          * @static
          */
         Y.Test.Runner = (function(){
