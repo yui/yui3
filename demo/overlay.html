@@ -5,23 +5,23 @@
 
     <link rel="stylesheet" type="text/css" href="../build/cssreset/reset.css" />
     <link rel="stylesheet" type="text/css" href="../build/cssfonts/fonts.css" />
+
     <script type="text/javascript" src="../build/yui/yui.js"></script>
 
     <link rel="stylesheet" type="text/css" href="../build/widget/assets/widget-stack-core.css" />
+    <link rel="stylesheet" type="text/css" href="../build/overlay/assets/overlay-core.css" />
 
+    <script type="text/javascript" src="../build/widget/widget.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stack.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position-ext.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stdmod.js"></script>
+    <script type="text/javascript" src="../build/overlay/overlay.js"></script>
 
     <style>
         .hideme {
             width:20em;
             display:block;
-        }
-
-        .yui-overlay-hidden {
-            visibility:hidden;
         }
 
         .yui-overlay {
@@ -108,10 +108,8 @@
     <script type="text/javascript">
         var widget;
 
-        YUI({base:"../build/", filter:"raw"}).use("widget", "queue", "widget-position", "widget-stack", "widget-position-ext", "widget-stdmod", function(Y) {
-
-                Y.Overlay = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod], {dynamic:true});
-                Y.Overlay.NAME = "overlay";
+        // Queue is missing a "requires" event
+        YUI({base:"../build/", filter:"raw"}).use("event", "queue", "overlay", function(Y) {
 
                 widget = new Y.Overlay({ 
                     width:"12em",
