@@ -1,35 +1,21 @@
-YUI.add("widget-position-extras", function(Y) {
-
         var L = Y.Lang,
-            Node = Y.Node,
-
-            VISIBLE = "visible",
-            CONSTRAIN = "constrain",
-            CENTER = "center",
             ALIGN = "align",
-            XY_COORD = "xy",
 
-            RENDERUI = "renderUI",
             BINDUI = "bindUI",
             SYNCUI = "syncUI",
 
             OFFSET_WIDTH = "offsetWidth",
             OFFSET_HEIGHT = "offsetHeight",
+            VIEWPORT_REGION = "viewportRegion",
 
-            VisibleChange = "visibleChange",
-            XYChange = "xyChange",
-
-            ConstrainChange = "constrainChange",
-            CenterChange = "centerChange",
             AlignChange = "alignChange";
 
-        function PositionExtras(config) {
-            // TODO: If Plugin
-            // PositionExtras.constructor.superclass.apply(this, arguments);
-            // this._initPositionExtras();
+        function PositionExt(config) {
+            Y.after(this._syncUIPosExtras, this, SYNCUI);
+            Y.after(this._bindUIPosExtras, this, BINDUI);
         }
 
-        PositionExtras.ATTRS = {
+        PositionExt.ATTRS = {
 
             align: {
                 value:null
@@ -37,45 +23,40 @@ YUI.add("widget-position-extras", function(Y) {
 
             center: {
                 set: function(val) {
-                    if (val) {
-                        this.set(ALIGN, { 
-                            node: val === true ? null : val,
-                            align: [PositionExtras.CC, PositionExtras.CC]
-                        });
-                    }
-                    return val;
+                    return this._setAlignCenter(val);
                 },
-                value:null
+                value:false
             }
         };
 
-        PositionExtras.TL = "tl";
-        PositionExtras.TR = "tr";
-        PositionExtras.BL = "bl";
-        PositionExtras.BR = "br";
-        PositionExtras.CT = "ct";
-        PositionExtras.CR = "cr";
-        PositionExtras.CB = "cb";
-        PositionExtras.CL = "cl";
-        PositionExtras.CC = "cc";
+        PositionExt.TL = "tl";
+        PositionExt.TR = "tr";
+        PositionExt.BL = "bl";
+        PositionExt.BR = "br";
+        PositionExt.CT = "ct";
+        PositionExt.CR = "cr";
+        PositionExt.CB = "cb";
+        PositionExt.CL = "cl";
+        PositionExt.CC = "cc";
 
-        PositionExtras.prototype = {
-
-            _initPositionExtras : function() {
-                Y.after(this._syncUIPosExtras, this, SYNCUI);
-                Y.after(this._bindUIPosExtras, this, BINDUI);
-            },
+        PositionExt.prototype = {
 
             _syncUIPosExtras : function() {
-                // this._uiSetConstrained(this.get(CONSTRAINED));
-                // this._uiSetCentered(this.get(CENTERED));
                 this._uiSetAlign(this.get(ALIGN));
             },
 
             _bindUIPosExtras : function() {
-                // this.after(Constrain, this._onConstrainChange);
-                // this.after(Center, this._onCenterChange);
                 this.after(AlignChange, this._onAlignChange);
+            },
+
+            _setAlignCenter : function(val) {
+                if (val) {
+                    this.set(ALIGN, {
+                        node: val === true ? null : val,
+                        points: [PositionExt.CC, PositionExt.CC]
+                    });
+                }
+                return val;
             },
 
             _onAlignChange : function(e) {
@@ -84,7 +65,7 @@ YUI.add("widget-position-extras", function(Y) {
 
             _uiSetAlign: function (val) {
                 if (val) {
-                    this.align(val.node, val.align, val.triggers);
+                    this.align(val.node, val.points, val.triggers);
                 }
             },
 
@@ -95,10 +76,11 @@ YUI.add("widget-position-extras", function(Y) {
                     return;
                 }
 
-                var nodeRegion;
+                var nodeRegion, widgetPoint, nodePoint, xy;
 
                 if (!node) {
-                    nodeRegion = this._posEl.get("viewportRegion");
+                    nodeRegion = this._posNode.get(VIEWPORT_REGION);
+                    // TODO: Setup resize/scroll listeners if Viewport
                 } else {
                     node = Y.Node.get(node);
                     if (node) {
@@ -106,41 +88,41 @@ YUI.add("widget-position-extras", function(Y) {
                     }
                 }
 
+                // TODO: Until normalized in Node/Dom
                 nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
                 nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
 
                 if (nodeRegion) {
-                    var widgetPoint = points[0],
-                        nodePoint = points[1],
-                        xy;
+                    widgetPoint = points[0];
+                    nodePoint = points[1];
 
-                    // TODO: Change to Lookup?
+                    // TODO: Optimize KWeight - Would lookup table help?
                     switch (nodePoint) {
-                        case PositionExtras.TL:
+                        case PositionExt.TL:
                             xy = [nodeRegion.left, nodeRegion.top];
                             break;
-                        case PositionExtras.TR:
+                        case PositionExt.TR:
                             xy = [nodeRegion.right, nodeRegion.top];
                             break;
-                        case PositionExtras.BL:
+                        case PositionExt.BL:
                             xy = [nodeRegion.left, nodeRegion.bottom];
                             break;
-                        case PositionExtras.BR:
+                        case PositionExt.BR:
                             xy = [nodeRegion.right, nodeRegion.bottom];
                             break;
-                        case PositionExtras.CT:
+                        case PositionExt.CT:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top];
                             break;
-                        case PositionExtras.CB:
+                        case PositionExt.CB:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.bottom];
                             break;
-                        case PositionExtras.CL:
+                        case PositionExt.CL:
                             xy = [nodeRegion.left, nodeRegion.top + Math.floor(nodeRegion.height/2)];
                             break;
-                        case PositionExtras.CR:
+                        case PositionExt.CR:
                             xy = [nodeRegion.right, nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
-                        case PositionExtras.CC:
+                        case PositionExt.CC:
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
                         default:
@@ -155,36 +137,35 @@ YUI.add("widget-position-extras", function(Y) {
             },
 
             _align : function(widgetPoint, x, y) {
-                var widgetNode = this._posEl,
+                var widgetNode = this._posNode,
                     xy;
 
-                // TODO: Change to Lookup?
                 switch (widgetPoint) {
-                    case PositionExtras.TL:
+                    case PositionExt.TL:
                         xy = [x, y];
                         break;
-                    case PositionExtras.TR:
+                    case PositionExt.TR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y];
                         break;
-                    case PositionExtras.BL:
+                    case PositionExt.BL:
                         xy = [x, y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.BR:
+                    case PositionExt.BR:
                         xy = [x - widgetNode.get(OFFSET_WIDTH), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.CT:
+                    case PositionExt.CT:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y];
                         break;
-                    case PositionExtras.CB:
+                    case PositionExt.CB:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - widgetNode.get(OFFSET_HEIGHT)];
                         break;
-                    case PositionExtras.CL:
+                    case PositionExt.CL:
                         xy = [x, y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExtras.CR:
+                    case PositionExt.CR:
                         xy = [(x - widgetNode.get(OFFSET_WIDTH)), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
-                    case PositionExtras.CC:
+                    case PositionExt.CC:
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
                     default:
@@ -204,95 +185,8 @@ YUI.add("widget-position-extras", function(Y) {
              * @method center
              */
             center: function (element) {
-                this.align(element, [PositionExtras.CC, PositionExtras.CC]);
-            },
-
-            /*
-            getConstrainedXY: function(x, y, element) {
-                // TODO: Element support
-                var container = this._getRegion(element, true),
-                    offsetHeight = this._posEl.get(OFFSET_HEIGHT),
-                    offsetWidth = this._posEl.get(OFFSET_WIDTH);
-
-                return [this._constrain(x, offsetWidth, container.width, container.scrollLeft), 
-                        this._constrain(y, offsetHeight, container.height, container.scrollTop)];
-            },
-
-            _constrainOnMove: function (type, e) {
-                // TODO: How to modify?
-                var pos = e.newVal;
-                return this.getConstrainedXY(pos[0], pos[1]);
-            },
-
-            _constrain : function(pos, elSize, cPosition, cSize, cScroll) {
-
-                var buffer = PositionExtras.BUFFER;
-
-                if (elSize + buffer < cSize) {
-
-                    var lowerConstraint = cPosition + cScroll + buffer;
-                    var upperConstraint = cPosition + cScroll + cSize - elSize - buffer;
-
-                    if (pos < lowerConstraint) {
-                        pos = lowerConstraint;
-                    } else if (pos > upperConstraint) {
-                        pos = upperConstraint;
-                    }
-                } else {
-                    pos = cPosition + cScroll + buffer;
-                }
-
-                return pos;
-            },
-
-            /*
-            _onConstrainChange : function(e) {
-                this._uiSetConstrained(e.newVal);
-            },
-
-            _onCenteredChange : function(e) {
-                this._uiSetCentered(e.newVal);
-            },
-            */
-
-            /*
-            _uiSetConstrained: function (val) {
-                if (val) {
-                    var listeners = {};
-
-                    listeners[XY] = {fn:Y.bind(this._constrainOnMove, this), when:"before"};
-                    listeners[Visible] = {fn:Y.bind(this._primeFromDOM, this), when:"before"};
-
-                    this.attachListeners(CONSTRAIN, listeners);
-                } else {
-                    this.detachListeners(CONSTRAIN);
-                }
-            },
-            */
-
-            /*
-            _uiSetCentered: function (val) {
-
-                if (val) {
-                    var node = (val === true) ? null : Y.Node.get(val);
-                    this.center(node);
-
-                    var listeners = {},
-                        center = Y.bind(this.center, this, val);
-
-                    // listeners[WindowResize] = listeners[WindowScroll] = listeners[Visible] = center;
-                    // listeners[Visible] = {fn:center, when:"before"};
-                    this.attachListeners(CENTER, listeners);
-                } else {
-                    this.detachListeners(CENTER);
-                }
-            },
-            */
+                this.align(element, [PositionExt.CC, PositionExt.CC]);
+            }
         };
 
-        Y.WidgetPositionExtras = PositionExtras;
-
-        // TODO: If plugin
-        // Y.extend(PositionExtras, Y.Base, proto);
-
-    }, "3.0.0");
+        Y.WidgetPositionExt = PositionExt;

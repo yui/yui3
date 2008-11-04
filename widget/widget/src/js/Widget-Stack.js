@@ -1,11 +1,7 @@
-/**
- * @module widget-stack
- */
-YUI.add("widget-stack", function(Y) {
-
     var L = Y.Lang,
         UA = Y.UA,
         Node = Y.Node,
+        Widget = Y.Widget,
 
         ZINDEX = "zIndex",
         SHIM = "shim",
@@ -33,7 +29,8 @@ YUI.add("widget-stack", function(Y) {
         WidthChange = "widthChange",
         HeightChange = "heightChange",
         ShimChange = "shimChange",
-        ZIndexChange = "zindexChange",
+        ZIndexChange = "zIndexChange",
+        ContentChange = "contentChange",
 
         // CSS
         STACKED = "stacked",
@@ -44,7 +41,13 @@ YUI.add("widget-stack", function(Y) {
      * @class WidgetStack
      */
     function Stack(config) {
-        // this._initStack();
+        this._stackNode = this.get(BOUNDING_BOX);
+        this._stackHandles = {};
+
+        // WIDGET METHOD OVERLAP
+        Y.after(this._renderUIStack, this, RENDER_UI);
+        Y.after(this._syncUIStack, this, SYNC_UI);
+        Y.after(this._bindUIStack, this, BIND_UI);
     }
 
     // Static Properties
@@ -61,26 +64,11 @@ YUI.add("widget-stack", function(Y) {
         }
     };
 
-    Stack.SHIM_TEMPLATE = '<iframe class="yui-widget-shim" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
-
-    Stack._getShimTemplate = function() {
-        if (!Stack._SHIM_TEMPLATE) {
-            Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
-        }
-        return Stack._SHIM_TEMPLATE;
-    };
+    Stack.SHIM_CLASS = Widget.getClassName(SHIM);
+    Stack.STACKED_CLASS = Widget.getClassName(STACKED);
+    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
     Stack.prototype = {
-
-        _initStack : function() {
-            this._stackEl = this.get(BOUNDING_BOX);
-            this._stackHandles = {};
-
-            // WIDGET METHOD OVERLAP
-            Y.after(this._renderUIStack, this, RENDER_UI);
-            Y.after(this._syncUIStack, this, SYNC_UI);
-            Y.after(this._bindUIStack, this, BIND_UI);
-        },
 
         _syncUIStack: function() {
             this._uiSetShim(this.get(SHIM));
@@ -93,7 +81,7 @@ YUI.add("widget-stack", function(Y) {
         },
 
         _renderUIStack: function() {
-            this._stackEl.addClass(this.getClassName(STACKED));
+            this._stackNode.addClass(Stack.STACKED_CLASS);
 
             // TODO:DEPENDENCY Env.os
             var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
@@ -121,49 +109,52 @@ YUI.add("widget-stack", function(Y) {
         },
 
         _uiSetZIndex: function (zIndex) {
-            this._stackEl.setStyle(ZINDEX, zIndex);
+            this._stackNode.setStyle(ZINDEX, zIndex);
         },
 
         _uiSetShim: function (enable) {
-
-            var handles;
-
             if (enable) {
                 // Lazy creation
                 if (this.get(VISIBLE)) {
-                    this._createShim();
+                    this._renderShim();
                 } else {
-                    this._createShimDeferred();
+                    this._renderShimDeferred();
                 }
             } else {
                 this._destroyShim();
             }
         },
 
-        // TODO: Move to generic widget/base support
-        _createShimDeferred : function() {
+        _renderShimDeferred : function() {
 
-            var createBeforeVisible = function(e) {
-                if (e.newVal == true) {
-                    this._createShim();
-                }
-            };
+            this._stackHandles[SHIM_DEFERRED] = this._stackHandles[SHIM_DEFERRED] || [];
 
-            var handles = this._stackHandles[SHIM_DEFERRED] = this._stackHandles[SHIM_DEFERRED] || [];
+            var handles = this._stackHandles[SHIM_DEFERRED],
+                createBeforeVisible = function(e) {
+                    if (e.newVal) {
+                        this._renderShim();
+                    }
+                };
+
             handles.push(this.on(VisibleChange, createBeforeVisible));
         },
 
         _addShimResizeHandlers : function() {
 
+            this._stackHandles[SHIM_RESIZE] = this._stackHandles[SHIM_RESIZE] || [];
+
             var sizeShim = this.sizeShim,
-                handles = this._stackHandles[SHIM_RESIZE] = this._stackHandles[SHIM_RESIZE] || [];
+                handles = this._stackHandles[SHIM_RESIZE];
+
+            this.sizeShim();
 
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
+            handles.push(this.after(ContentChange, sizeShim));
         },
 
-        _detachHandles : function(handleKey) {
+        _detachStackHandles : function(handleKey) {
             var handles = this._stackHandles[handleKey];
             if (handles) {
                 for (var i = handles.length; i <= 0; --i) {
@@ -173,50 +164,50 @@ YUI.add("widget-stack", function(Y) {
             }
         },
 
-        _createShim : function() {
-            var shimEl = this._shimEl,
-                stackEl = this._stackEl;
+        _renderShim : function() {
+            var shimEl = this._shimNode,
+                stackEl = this._stackNode;
 
             if (!shimEl) {
-                shimEl = this._shimEl = Stack._getShimTemplate().cloneNode(false);
+                shimEl = this._shimNode = this._getShimTemplate();
                 stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
 
                 if (UA.ie == 6) {
                     this._addShimResizeHandlers();
                 }
-                this._detachHandles(SHIM_DEFERRED);
+                this._detachStackHandles(SHIM_DEFERRED);
             }
         },
 
         _destroyShim : function() {
-            if (this._shimEl) {
-                this._shimEl.get("parentNode").removeChild(this._shimEl);
-                this._shimEl == null;
+            if (this._shimNode) {
+                this._shimNode.get("parentNode").removeChild(this._shimNode);
+                this._shimNode = null;
 
-                this._detachHandles(SHIM_DEFERRED);
-                this._detachHandles(SHIM_RESIZE);
+                this._detachStackHandles(SHIM_DEFERRED);
+                this._detachStackHandles(SHIM_RESIZE);
             }
         },
 
         _fixMacGeckoScrollbars: function() {
-            this._toggleMacGeckoScroll();
-            this.after(VisibleChange, this._toggleMacGeckoScroll);
+            this._toggleMacGeckoScrollbars();
+            this.after(VisibleChange, this._toggleMacGeckoScrollbars);
         },
 
-        _toggleMacGeckoScroll : function() {
+        _toggleMacGeckoScrollbars : function() {
             if (this.get(VISIBLE)) {
-                this._showMacGeckoScroll();
+                this._showMacGeckoScrollbars();
             } else {
-                this._hideMacGeckoScroll();
+                this._hideMacGeckoScrollbars();
             }
         },
 
         _hideMacGeckoScrollbars: function () {
-            this._stackEl.replaceClass(this.getClassName(SHOW_SCROLLBARS), this.getClassName(HIDE_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(SHOW_SCROLLBARS), Widget.getClassName(HIDE_SCROLLBARS));
         },
 
         _showMacGeckoScrollbars: function () {
-            this._stackEl.replaceClass(this.getClassName(HIDE_SCROLLBARS), this.getClassName(SHOW_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(HIDE_SCROLLBARS), Widget.getClassName(SHOW_SCROLLBARS));
         },
 
         /**
@@ -227,24 +218,27 @@ YUI.add("widget-stack", function(Y) {
          * @method sizeIframe
          */
         sizeShim: function () {
-            var shim = this._shimEl,
-                el = this._stackEl;
+            var shim = this._shimNode,
+                node = this._stackNode;
 
             if (shim && UA.ie === 6 && this.get(VISIBLE)) {
-                shim.setStyle(WIDTH, el.get(OFFSET_WIDTH) + PX);
-                shim.setStyle(HEIGHT, el.get(OFFSET_HEIGHT) + PX);
+                shim.setStyle(WIDTH, node.get(OFFSET_WIDTH) + PX);
+                shim.setStyle(HEIGHT, node.get(OFFSET_HEIGHT) + PX);
             }
         },
 
+        _getShimTemplate : function() {
+            if (!Stack._SHIM_TEMPLATE) {
+                Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
+            }
+            return Stack._SHIM_TEMPLATE.cloneNode(true);
+        },
+
         HTML_PARSER : {
-            zIndex: function() {
-                return this.get(BOUNDING_BOX).getStyle(ZINDEX);
+            zIndex: function(contentBox) {
+                return contentBox.getStyle(ZINDEX);
             }
         }
-        // TODO: HTML_PARSER for initial zIndex population
     };
 
     Y.WidgetStack = Stack;
-
-}, "3.0.0");
-

@@ -232,15 +232,19 @@ Widget.ATTRS = {
 /**
  * @private
  * @static
- * @property _CLASSNAME
- * 
- * Used to mark the bounding box of any widget, regardless of 
- * instance specific variations (e.g. instance based classNamePrefix settings)
- *
+ * @property _NAME_LOWERCASE
  */
-Widget._CLASSNAME = ClassNameManager.getClassName(Widget.NAME.toLowerCase());
+Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
 
-
+/**
+ * Get the statically generated classname for Widget (by default yui-widget-XXXXX)
+ * @method getClassName
+ */
+Widget.getClassName = function() {
+	var args = Y.Array(arguments, 0, true);
+	args.splice(0, 0, this._NAME_LOWERCASE);
+	return ClassNameManager.getClassName.apply(ClassNameManager, args);
+};
 
 /**
  * Returns the widget instance whose bounding box contains, or is, the given node. 
@@ -255,8 +259,8 @@ Widget._CLASSNAME = ClassNameManager.getClassName(Widget.NAME.toLowerCase());
  */
 Widget.getByNode = function(node) {
     var widget,
-        bbMarker = Widget._CLASSNAME;
-        
+        bbMarker = Widget.getClassName();
+
     node = Node.get(node);
     if (node) {
         node = (node.hasClass(bbMarker)) ? node : node.ancestor("." + bbMarker);
@@ -282,13 +286,9 @@ Y.extend(Widget, Y.Base, {
 	 * @param {String}+ one or more classname bits to be joined and prefixed
 	 */
 	getClassName: function () {
-
 		var args = Y.Array(arguments, 0, true);
-
 		args.splice(0, 0, this._name);
-
 		return ClassNameManager.getClassName.apply(ClassNameManager, args);
-		
 	},
 
     /**
@@ -677,7 +677,7 @@ Y.extend(Widget, Y.Base, {
     _renderUI: function(parentNode) {
 
         // TODO: Classname chaining?
-        this.get(BOUNDING_BOX).addClass(Widget._CLASSNAME);
+        this.get(BOUNDING_BOX).addClass(Widget.getClassName()); // Static ClassName for getByNode lookup
         this.get(BOUNDING_BOX).addClass(this.getClassName());
         this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
 
