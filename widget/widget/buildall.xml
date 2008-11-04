@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="YuiBuildAll">
+    <description>Component Build All File</description>
+    <ant antfile="build.xml" />
+    <ant antfile="build-pos.xml" />
+    <ant antfile="build-posext.xml" />
+    <ant antfile="build-stack.xml" />
+    <ant antfile="build-stdmod.xml" />
+</project>
