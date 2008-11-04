@@ -1,3 +1,5 @@
+YUI.add('widget-stack', function(Y) {
+
     var L = Y.Lang,
         UA = Y.UA,
         Node = Y.Node,
@@ -242,3 +244,7 @@
     };
 
     Y.WidgetStack = Stack;
+
+
+
+}, '@VERSION@' ,{requires:['widget']});

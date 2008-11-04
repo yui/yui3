@@ -376,12 +376,13 @@ Widget.ATTRS = {
 /**
  * @private
  * @static
- * @property _NAME_LOWER
+ * @property _NAME_LOWERCASE
  */
 Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
 
 /**
  * Get the statically generated classname for Widget (by default yui-widget-XXXXX)
+ * @method getClassName
  */
 Widget.getClassName = function() {
 	var args = Y.Array(arguments, 0, true);

@@ -1,3 +1,5 @@
+YUI.add('widget-position-ext', function(Y) {
+
         var L = Y.Lang,
             ALIGN = "align",
 
@@ -126,7 +128,6 @@
                             xy = [nodeRegion.left + Math.floor(nodeRegion.width/2), nodeRegion.top + Math.floor(nodeRegion.height/2), widgetPoint];
                             break;
                         default:
-                            Y.log("align: Invalid Points Arguments", "info", "widget-position-extras");
                             break;
                     }
 
@@ -169,7 +170,6 @@
                         xy = [x - (widgetNode.get(OFFSET_WIDTH)/2), y - (widgetNode.get(OFFSET_HEIGHT)/2)];
                         break;
                     default:
-                        Y.log("align: Invalid Points Argument", "info", "widget-position-extras");
                         break;
                 }
 
@@ -190,3 +190,7 @@
         };
 
         Y.WidgetPositionExt = PositionExt;
+
+
+
+}, '@VERSION@' ,{requires:['widget', 'widget-position']});

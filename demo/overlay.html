@@ -6,10 +6,11 @@
     <link rel="stylesheet" type="text/css" href="../build/cssreset/reset.css" />
     <link rel="stylesheet" type="text/css" href="../build/cssfonts/fonts.css" />
     <script type="text/javascript" src="../build/yui/yui.js"></script>
-    <script type="text/javascript" src="../widget/widget/src/js/Widget-Position.js"></script>
-    <script type="text/javascript" src="../widget/widget/src/js/Widget-Stack.js"></script>
-    <script type="text/javascript" src="../widget/widget/src/js/Widget-PositionExt.js"></script>
-    <script type="text/javascript" src="../widget/widget/src/js/Widget-StdMod.js"></script>
+
+    <script type="text/javascript" src="../build/widget/widget-position.js"></script>
+    <script type="text/javascript" src="../build/widget/widget-stack.js"></script>
+    <script type="text/javascript" src="../build/widget/widget-position-ext.js"></script>
+    <script type="text/javascript" src="../build/widget/widget-stdmod.js"></script>
 
     <style>
         .hideme {
@@ -32,20 +33,20 @@
             padding:2px;
         }
 
-        .yui-overlay .yui-widget-hd {
+        .yui-widget-stdmod .yui-widget-hd {
             border:2px solid red;
             background-color:#cc0000;
             color:#fff;
             padding:2px;
         }
 
-        .yui-overlay .yui-widget-bd {
+        .yui-widget-stdmod .yui-widget-bd {
             font-family:monospace;
             border:2px solid blue;
             padding:2px;
         }
 
-        .yui-overlay .yui-widget-ft {
+        .yui-widget-stdmod .yui-widget-ft {
             border:2px solid green;
             background-color:#00cc00;
             color:#fff;
@@ -57,17 +58,18 @@
             filter:alpha(opacity=0);
             position:absolute;
             border:none;
-            margin:0;
-            padding:0;
             top:-1px;
             left:-1px;
+            margin:0;
+            padding:0;
             bottom:0;
             right:0;
             z-index:-1;
+            /* We'll be setting these programmatically for IE6 */
             _width:0;
             _height:0;
         }
-        
+
         .sels {
             position:absolute;
         }
@@ -123,37 +125,11 @@
 
         YUI({base:"../build/", filter:"raw"}).use("widget", "queue", "widget-position", "widget-stack", "widget-position-ext", "widget-stdmod", function(Y) {
 
-                function Overlay(config) {
-                    Overlay.superclass.constructor.apply(this, arguments);
-                }
+                Y.Overlay = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod], {dynamic:true});
+                Y.Overlay.NAME = "overlay";
 
-                Overlay.NAME = "overlay";
-                Overlay.ATTRS = {};
-
-                Y.extend(Overlay, Y.Widget, {
-
-                    initializer: function(config) {
-                        this._initPosition(config);
-                        this._initStack(config);
-                        this._initPositionExtras(config);
-                        this._initStdMod(config);
-                    }
-                });
-
-                Y.augment(Overlay, Y.WidgetPosition);
-                Y.aggregate(Overlay.ATTRS, Y.WidgetPosition.ATTRS);
-
-                Y.augment(Overlay, Y.WidgetStack);
-                Y.aggregate(Overlay.ATTRS, Y.WidgetStack.ATTRS);
-
-                Y.augment(Overlay, Y.WidgetPositionExt);
-                Y.aggregate(Overlay.ATTRS, Y.WidgetPositionExt.ATTRS);
-
-                Y.augment(Overlay, Y.WidgetStdMod);
-                Y.aggregate(Overlay.ATTRS, Y.WidgetStdMod.ATTRS);
-
-                widget = new Overlay({ 
-                    width:"12em", 
+                widget = new Y.Overlay({ 
+                    width:"12em",
                     align:{node:'#align', points:["tr", "tl"]}, 
                     zIndex:5,
                     header:"Overlay Header",

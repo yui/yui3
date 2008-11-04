@@ -116,12 +116,14 @@ YUI.add("cookie", function(Y){
                 hashPart /*:Array*/ = NULL,
                 hash /*:Object*/ = {};
             
-            for (var i=0, len=hashParts.length; i < len; i++){
-                hashPart = hashParts[i].split("=");
-                hash[decode(hashPart[0])] = decode(hashPart[1]);
+            if (text.length){
+                for (var i=0, len=hashParts.length; i < len; i++){
+                    hashPart = hashParts[i].split("=");
+                    hash[decode(hashPart[0])] = decode(hashPart[1]);
+                }
             }
             
-            return hash;
+            return hash;          
         },    
         
         /**
