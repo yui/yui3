@@ -1,5 +1,8 @@
 YUI.add('widget-stack', function(Y) {
 
+/**
+ * @module widget-stack
+ */
     var L = Y.Lang,
         UA = Y.UA,
         Node = Y.Node,
@@ -32,7 +35,7 @@ YUI.add('widget-stack', function(Y) {
         HeightChange = "heightChange",
         ShimChange = "shimChange",
         ZIndexChange = "zIndexChange",
-        ContentChange = "contentChange",
+        ContentUpdated = "contentUpdated",
 
         // CSS
         STACKED = "stacked",
@@ -45,6 +48,8 @@ YUI.add('widget-stack', function(Y) {
     function Stack(config) {
         this._stackNode = this.get(BOUNDING_BOX);
         this._stackHandles = {};
+
+        this.HTML_PARSER = Y.merge(this.HTML_PARSER, Stack.prototype.HTML_PARSER);
 
         // WIDGET METHOD OVERLAP
         Y.after(this._renderUIStack, this, RENDER_UI);
@@ -153,7 +158,7 @@ YUI.add('widget-stack', function(Y) {
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
-            handles.push(this.after(ContentChange, sizeShim));
+            handles.push(this.after(ContentUpdated, sizeShim));
         },
 
         _detachStackHandles : function(handleKey) {

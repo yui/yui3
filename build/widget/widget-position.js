@@ -1,5 +1,8 @@
 YUI.add('widget-position', function(Y) {
 
+/**
+ * @module widget-position
+ */
         var Lang = Y.Lang,
             Widget = Y.Widget,
 
@@ -18,6 +21,9 @@ YUI.add('widget-position', function(Y) {
             PositionChange = "positionChange",
             XYChange = "xyChange";
 
+        /**
+         * @class WidgetPosition
+         */
         function Position(config) {
             this._posNode = this.get(BOUNDING_BOX);
 
