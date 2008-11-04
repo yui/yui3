@@ -2425,7 +2425,9 @@ var BASE = 'base',
 
         profiler: { },
 
-        queue: { },
+        queue: {
+            requires: ['node']
+        },
 
         stylesheet: { },
 
