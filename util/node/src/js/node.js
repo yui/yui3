@@ -426,6 +426,24 @@
 
     };
 
+    Node.scrubVal = function(val, node) {
+        if (val !== undefined) {
+            if (typeof val === 'object' && val !== null) {
+                if (NODE_TYPE in val || (val.item && val.length) || val.push || val.document) {
+                    if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
+                        val = null; // not allowed to go outside of root node
+                    } else {
+                        val = wrapDOM(val);
+                    }
+                }
+            }
+        } else {
+            val = node; // for chaining
+        }
+
+        return val;
+    };
+
     var SETTERS = {};
     var GETTERS = {
         /**
@@ -434,14 +452,33 @@
          * @type String
          */
         'text': function(node) {
-            return Y.DOM.getText(_nodes[node._yuid]);
+            return Y.DOM.getText(node);
         },
 
         'options': function(node) {
             return (node) ? node.getElementsByTagName('option') : [];
+        },
+
+        /**
+         * Returns a NodeList instance. 
+         * @property children
+         * @type NodeList
+         */
+        'children': function(node) {
+            var children = node.children;
+
+            if (children === undefined) {
+                var childNodes = node.childNodes;
+                children = [];
+
+                for (var i = 0, len = childNodes.length; i < len; ++i) {
+                    if (childNodes[i][TAG_NAME]) {
+                        children[children.length] = childNodes[i];
+                    }
+                }
+            }
+            return children;
         }
-
-
     };
 
     Node.setters = function(prop, fn) {
@@ -547,23 +584,11 @@
             var val;
             var node = _nodes[this._yuid];
             if (prop in GETTERS) { // use custom getter
-                val = GETTERS[prop](this, prop);
-            } else if (prop in PROPS_WRAP) { // wrap DOM object (HTMLElement, HTMLCollection, Document)
-                if (typeof PROPS_WRAP[prop] === 'function') {
-                    val = PROPS_WRAP[prop](this);
-                } else {
-                    val = node[prop];
-                }
-
-                if (_restrict && _restrict[this._yuid] && !Y.DOM.contains(node, val)) {
-                    val = null; // not allowed to go outside of root node
-                } else {
-                    val = wrapDOM(val);
-                }
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to read
+                val = GETTERS[prop](node, prop);
+            } else {
                 val = node[prop];
             }
-            return val;
+            return Node.scrubVal(val, this);
         },
 
         invoke: function(method, a, b, c, d, e) {
