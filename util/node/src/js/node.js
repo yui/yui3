@@ -97,159 +97,6 @@
 
     };
 
-    /*
-     * Wraps the input and outputs of a node instance
-     */
-    var nodeInOut = function(method, a, b, c, d, e) {
-        if (a) { // first 2 may be Node instances or nodes (TODO: or strings?)
-            a = getDOMNode(a);
-            if (b) {
-                b = getDOMNode(b);
-            }
-        }
-        return wrapDOM(_nodes[this._yuid][method](a, b, c, d, e));
-    };
-
-    /*
-     * Wraps the return value in a node instance
-     */
-    var nodeOut = function(method, a, b, c, d, e) {
-        return wrapDOM(_nodes[this._yuid][method](a, b, c, d, e));
-    };
-
-    /* 
-     * Returns directy from node method call 
-     */
-    var rawOut = function(method, a, b, c, d, e) {
-        return _nodes[this._yuid][method](a, b, c, d, e);
-    };
-
-    var noOut = function(method, a, b, c, d, e) {
-        _nodes[this._yuid][method](a, b, c, d, e);
-        return this;
-    };
-
-    var METHODS = {
-        /**
-         * Passes through to DOM method.
-         * @method replaceChild
-         * @param {HTMLElement | Node} node Node to be inserted 
-         * @param {HTMLElement | Node} refNode Node to be replaced 
-         * @return {Node} The replaced node 
-         */
-        replaceChild: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method appendChild
-         * @param {HTMLElement | Node} node Node to be appended 
-         * @return {Node} The appended node 
-         */
-        appendChild: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method insertBefore
-         * @param {HTMLElement | Node} newNode Node to be appended 
-         * @param {HTMLElement | Node} refNode Node to be inserted before 
-         * @return {Node} The inserted node 
-         */
-        insertBefore: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method removeChild
-         * @param {HTMLElement | Node} node Node to be removed 
-         * @return {Node} The removed node 
-         */
-        removeChild: nodeInOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method hasChildNodes
-         * @return {Boolean} Whether or not the node has any childNodes 
-         */
-        hasChildNodes: rawOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method cloneNode
-         * @param {HTMLElement | Node} node Node to be cloned 
-         * @return {Node} The clone 
-         */
-        cloneNode: nodeOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method getAttribute
-         * @param {String} attribute The attribute to retrieve 
-         * @return {String} The current value of the attribute 
-         */
-        getAttribute: rawOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method setAttribute
-         * @param {String} attribute The attribute to set 
-         * @param {String} The value to apply to the attribute 
-         * @chainable
-         */
-        setAttribute: noOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method hasAttribute
-         * @param {String} attribute The attribute to test for 
-         * @return {Boolean} Whether or not the attribute is present 
-         */
-        hasAttribute: rawOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method scrollIntoView
-         * @chainable
-         */
-        scrollIntoView: noOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method getElementsByTagName
-         * @param {String} tagName The tagName to collect 
-         * @return {NodeList} A NodeList representing the HTMLCollection
-         */
-        getElementsByTagName: nodeOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method focus
-         * @chainable
-         */
-        focus: noOut,
-
-        /**
-         * Passes through to DOM method.
-         * @method blur
-         * @chainable
-         */
-        blur: noOut,
-
-        /**
-         * Passes through to DOM method.
-         * Only valid on FORM elements
-         * @method submit
-         * @chainable
-         */
-        submit: noOut,
-
-        /**
-         * Passes through to DOM method.
-         * Only valid on FORM elements
-         * @method reset
-         * @chainable
-         */
-        reset: noOut
-    };
-
     var addNodeListMethod = function(name) {
         NodeList.prototype[name] = function() {
             var a = [],
@@ -266,10 +113,6 @@
 
             return a.length ? a : this;
         };
-    };
-
-    var METHODS_INVOKE = {
-        'getBoundingClientRect': true
     };
 
     var Node = function(node) {
@@ -372,7 +215,7 @@
                 if (ret === undefined) {
                     ret = this;
                 }
-                return ret;
+                return Node.scrubVal(ret);
             };
 
             addNodeListMethod(name);
@@ -461,14 +304,14 @@
                 }
             }
             var node = _nodes[this._yuid];
-            if (node && METHODS_INVOKE[method] && node[method]) {
-                return node[method](a, b, c, d, e);
+            if (node && node[method]) {
+                return Node.scrubVal(node[method](a, b, c, d, e));
             }
             return null;
         },
 
         hasMethod: function(method) {
-            return !!(METHODS_INVOKE[method] && _nodes[this._yuid][method]);
+            return !! _nodes[this._yuid][method];
         },
 
         //normalize: function() {},
@@ -659,12 +502,6 @@
         }
     };
 
-    Y.each(METHODS, function(fn, method) {
-        Node.prototype[method] = function() {
-            return fn.apply(this, [method].concat(slice.call(arguments)));
-        };
-    });
-
     /** 
      * Creates a Node instance from an HTML string
      * @method create
@@ -746,6 +583,130 @@
 
     };
 
+    Y.each([
+        /**
+         * Passes through to DOM method.
+         * @method replaceChild
+         * @param {HTMLElement | Node} node Node to be inserted 
+         * @param {HTMLElement | Node} refNode Node to be replaced 
+         * @return {Node} The replaced node 
+         */
+        'replaceChild',
+
+        /**
+         * Passes through to DOM method.
+         * @method appendChild
+         * @param {HTMLElement | Node} node Node to be appended 
+         * @return {Node} The appended node 
+         */
+        'appendChild',
+
+        /**
+         * Passes through to DOM method.
+         * @method insertBefore
+         * @param {HTMLElement | Node} newNode Node to be appended 
+         * @param {HTMLElement | Node} refNode Node to be inserted before 
+         * @return {Node} The inserted node 
+         */
+        'insertBefore',
+
+        /**
+         * Passes through to DOM method.
+         * @method removeChild
+         * @param {HTMLElement | Node} node Node to be removed 
+         * @return {Node} The removed node 
+         */
+        'removeChild',
+
+        /**
+         * Passes through to DOM method.
+         * @method hasChildNodes
+         * @return {Boolean} Whether or not the node has any childNodes 
+         */
+        'hasChildNodes',
+
+        /**
+         * Passes through to DOM method.
+         * @method cloneNode
+         * @param {HTMLElement | Node} node Node to be cloned 
+         * @return {Node} The clone 
+         */
+        'cloneNode',
+
+        /**
+         * Passes through to DOM method.
+         * @method getAttribute
+         * @param {String} attribute The attribute to retrieve 
+         * @return {String} The current value of the attribute 
+         */
+        'getAttribute',
+
+        /**
+         * Passes through to DOM method.
+         * @method setAttribute
+         * @param {String} attribute The attribute to set 
+         * @param {String} The value to apply to the attribute 
+         * @chainable
+         */
+        'setAttribute',
+
+        /**
+         * Passes through to DOM method.
+         * @method hasAttribute
+         * @param {String} attribute The attribute to test for 
+         * @return {Boolean} Whether or not the attribute is present 
+         */
+        'hasAttribute',
+
+        /**
+         * Passes through to DOM method.
+         * @method scrollIntoView
+         * @chainable
+         */
+        'scrollIntoView',
+
+        /**
+         * Passes through to DOM method.
+         * @method getElementsByTagName
+         * @param {String} tagName The tagName to collect 
+         * @return {NodeList} A NodeList representing the HTMLCollection
+         */
+        'getElementsByTagName',
+
+        /**
+         * Passes through to DOM method.
+         * @method focus
+         * @chainable
+         */
+        'focus',
+
+        /**
+         * Passes through to DOM method.
+         * @method blur
+         * @chainable
+         */
+        'blur:',
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method submit
+         * @chainable
+         */
+        'submit',
+
+        /**
+         * Passes through to DOM method.
+         * Only valid on FORM elements
+         * @method reset
+         * @chainable
+         */
+        'reset'
+    ], function(method) {
+        Node.prototype[method] = function(arg1, arg2, arg3) {
+            return this.invoke(method, arg1, arg2, arg3);
+        };
+    });
     /** 
      * A wrapper for manipulating multiple DOM elements
      * @class NodeList
