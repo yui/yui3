@@ -682,7 +682,7 @@ Y.extend(LogReader,Y.Widget,{
                        ' .' + this[GET_CLASS_NAME](CLASS_CONSOLE) +
                        ' .' + this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,name);
 
-        Y.StyleSheet('logreader').setCSS(selector, {display: 'none'});
+        Y.StyleSheet('logreader').set(selector, {display: 'none'});
 
         return label;
     },
