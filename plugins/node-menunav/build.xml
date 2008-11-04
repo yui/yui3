@@ -6,4 +6,40 @@
 
     <property file="build.properties" />
     <import file="${builddir}/3.x/bootstrap.xml" description="Default Build Properties and Targets" />
+
+
+    <target name="init" description="Setup temp area for MenuNav CSS" depends="YuiCommonTargets.init">
+
+        <copy file="${component.srcdir}/css/skins/sam/node-menunav-skin.css" tofile="${component.builddir}/skins/sam/node-menunav-skin.css" />
+		<replaceregexp 
+			file="${component.builddir}/skins/sam/node-menunav-skin.css"
+			byline="true"
+			match="(\.\./\.\./\.\./img/skins/sam/)"
+			replace=""
+			flags="g">
+		</replaceregexp>
+
+		<replaceregexp 
+			file="${component.builddir}/skins/sam/node-menunav-skin.css"
+			byline="true"
+			match="(\.\./\.\./\.\./img/)"
+			replace=""
+			flags="g">
+		</replaceregexp>
+
+		<replaceregexp 
+			file="${component.builddir}/skins/sam/node-menunav-skin.css"
+			byline="true"
+			match="sprite.png"
+			replace="../../../../assets/skins/sam/sprite.png"
+			flags="g">
+		</replaceregexp>
+
+        <copy file="${component.srcdir}/css/node-menunav-core.css" tofile="${component.builddir}/node-menunav-core.css" />
+		<copy file="${component.srcdir}/img/skins/sam/horizontal-menu-submenu-indicator.png" tofile="${component.builddir}/skins/sam/horizontal-menu-submenu-indicator.png" />
+		<copy file="${component.srcdir}/img/skins/sam/horizontal-menu-submenu-toggle.png" tofile="${component.builddir}/skins/sam/horizontal-menu-submenu-toggle.png" />
+		<copy file="${component.srcdir}/img/skins/sam/vertical-menu-submenu-indicator.png" tofile="${component.builddir}/skins/sam/vertical-menu-submenu-indicator.png" />		
+	
+	</target>
+
 </project>

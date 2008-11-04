@@ -1,0 +1,87 @@
+.yui-menu .yui-menu {
+
+	position: absolute;
+
+}
+
+.yui-menu .yui-shim {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+	opacity: 0;
+	*filter: alpha(opacity=0);  /* For IE */
+	border: none;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+
+}
+
+.yui-menu-hidden {
+
+	left: -10000px;	/* Prevents scrollbars from appearing when a Menu is hidden. */
+	visibility: hidden;
+
+}
+
+.yui-menu li {
+
+    list-style-type: none;    
+
+}
+
+.yui-menu ul, 
+.yui-menu li { 
+
+    margin: 0;
+    padding: 0;
+
+}
+
+.yui-menu-label,
+.yui-menuitem-content {
+
+    text-align: left;
+    white-space: nowrap;
+    display: block;
+
+}
+
+.yui-menu-horizontal ul {
+
+	*zoom: 1;
+
+}
+
+.yui-menu-horizontal ul ul {
+
+	*zoom: normal;
+
+}			
+
+.yui-menu-horizontal>.yui-menu-content>ul:after {
+
+	content: "";
+	display: block;
+	clear: both;
+	line-height: 0;
+	font-size: 0;
+	visibility: hidden;
+
+}
+
+.yui-menu-horizontal li {
+
+	float: left;
+	width: auto;
+
+}
+
+.yui-menu-horizontal li li {
+
+	float: none;
+
+}
