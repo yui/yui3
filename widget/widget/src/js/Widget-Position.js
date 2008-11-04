@@ -1,3 +1,6 @@
+/**
+ * @module widget-position
+ */
         var Lang = Y.Lang,
             Widget = Y.Widget,
 
@@ -16,6 +19,9 @@
             PositionChange = "positionChange",
             XYChange = "xyChange";
 
+        /**
+         * @class WidgetPosition
+         */
         function Position(config) {
             this._posNode = this.get(BOUNDING_BOX);
 

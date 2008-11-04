@@ -1,5 +1,8 @@
 YUI.add('widget-stack', function(Y) {
 
+/**
+ * @module widget-stack
+ */
     var L = Y.Lang,
         UA = Y.UA,
         Node = Y.Node,
@@ -32,7 +35,7 @@ YUI.add('widget-stack', function(Y) {
         HeightChange = "heightChange",
         ShimChange = "shimChange",
         ZIndexChange = "zIndexChange",
-        ContentChange = "contentChange",
+        ContentUpdated = "contentUpdated",
 
         // CSS
         STACKED = "stacked",
@@ -45,6 +48,8 @@ YUI.add('widget-stack', function(Y) {
     function Stack(config) {
         this._stackNode = this.get(BOUNDING_BOX);
         this._stackHandles = {};
+
+        this.HTML_PARSER = Y.merge(this.HTML_PARSER, Stack.prototype.HTML_PARSER);
 
         // WIDGET METHOD OVERLAP
         Y.after(this._renderUIStack, this, RENDER_UI);
@@ -153,7 +158,7 @@ YUI.add('widget-stack', function(Y) {
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
-            handles.push(this.after(ContentChange, sizeShim));
+            handles.push(this.after(ContentUpdated, sizeShim));
         },
 
         _detachStackHandles : function(handleKey) {
@@ -192,24 +197,24 @@ YUI.add('widget-stack', function(Y) {
         },
 
         _fixMacGeckoScrollbars: function() {
-            this._toggleMacGeckoScroll();
-            this.after(VisibleChange, this._toggleMacGeckoScroll);
+            this._toggleMacGeckoScrollbars();
+            this.after(VisibleChange, this._toggleMacGeckoScrollbars);
         },
 
-        _toggleMacGeckoScroll : function() {
+        _toggleMacGeckoScrollbars : function() {
             if (this.get(VISIBLE)) {
-                this._showMacGeckoScroll();
+                this._showMacGeckoScrollbars();
             } else {
-                this._hideMacGeckoScroll();
+                this._hideMacGeckoScrollbars();
             }
         },
 
         _hideMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(this.getClassName(SHOW_SCROLLBARS), this.getClassName(HIDE_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(SHOW_SCROLLBARS), Widget.getClassName(HIDE_SCROLLBARS));
         },
 
         _showMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(this.getClassName(HIDE_SCROLLBARS), this.getClassName(SHOW_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(HIDE_SCROLLBARS), Widget.getClassName(SHOW_SCROLLBARS));
         },
 
         /**

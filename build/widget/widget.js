@@ -1,5 +1,9 @@
 YUI.add('widget', function(Y) {
 
+/**
+ * @class PluginHost
+ */
+
 var L = Y.Lang;
 
 function PluginHost(config) {
@@ -23,7 +27,7 @@ PluginHost.prototype = {
      * a single call
      * </p>
      * @method plug
-     * @chain
+     * @chainable
      * @public
      */
     plug: function(p) {
@@ -144,7 +148,7 @@ PluginHost.prototype = {
 Y.PluginHost = PluginHost;
 
 /**
- * Base class for Widget
+ * Base Widget class with PluginHost
  * @module widget
  */
 
@@ -173,6 +177,7 @@ var WIDGET = "widget",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
 
+    Base = Y.Base,
     O = Y.Object,
     Node = Y.Node,
     ClassNameManager = Y.ClassNameManager;
@@ -205,6 +210,17 @@ function Widget(config) {
 
     Widget.superclass.constructor.apply(this, arguments);
 }
+
+Widget.build = function(main, exts, cfg) {
+    cfg = cfg || {};
+    cfg.aggregates = cfg.aggregates || [];
+
+    cfg.aggregates.concat(Widget.build.AGGREGATES);
+
+    return Base.build.call(Base, main, exts, cfg);
+};
+
+Widget.build.AGGREGATES = ["PLUGINS"];
 
 /**
  * Static property provides a string to identify the class.
@@ -662,7 +678,7 @@ Y.extend(Widget, Y.Base, {
                     data = data || {};
                     data[k] = val;
                 }
-            });
+            }, this);
         }
 
         return data;

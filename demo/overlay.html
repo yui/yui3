@@ -5,21 +5,23 @@
 
     <link rel="stylesheet" type="text/css" href="../build/cssreset/reset.css" />
     <link rel="stylesheet" type="text/css" href="../build/cssfonts/fonts.css" />
+
     <script type="text/javascript" src="../build/yui/yui.js"></script>
 
+    <link rel="stylesheet" type="text/css" href="../build/widget/assets/widget-stack-core.css" />
+    <link rel="stylesheet" type="text/css" href="../build/overlay/assets/overlay-core.css" />
+
+    <script type="text/javascript" src="../build/widget/widget.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stack.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position-ext.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stdmod.js"></script>
+    <script type="text/javascript" src="../build/overlay/overlay.js"></script>
 
     <style>
         .hideme {
             width:20em;
             display:block;
-        }
-
-        .yui-overlay-hidden {
-            visibility:hidden;
         }
 
         .yui-overlay {
@@ -31,6 +33,11 @@
         .yui-overlay .yui-overlay-content {
             border:2px solid #000000;
             padding:2px;
+        }
+        
+        .yui-widget-stdmod span {
+            background-color:#000;
+            color:#fff;
         }
 
         .yui-widget-stdmod .yui-widget-hd {
@@ -51,23 +58,6 @@
             background-color:#00cc00;
             color:#fff;
             padding:2px;
-        }
-
-        .yui-widget-stacked .yui-widget-shim {
-            opacity:0;
-            filter:alpha(opacity=0);
-            position:absolute;
-            border:none;
-            top:-1px;
-            left:-1px;
-            margin:0;
-            padding:0;
-            bottom:0;
-            right:0;
-            z-index:-1;
-            /* We'll be setting these programmatically for IE6 */
-            _width:0;
-            _height:0;
         }
 
         .sels {
@@ -93,7 +83,10 @@
     <div class="sels">
        <button id="control-show" type="button">show</button>
        <button id="control-hide" type="button">hide</button>
-    
+
+        <div style="overflow:auto;width:20em;height:5em">
+            <div style="height:200em"></div>
+        </div>
         <select class="hideme"><option>Foo</option></select>
         <select class="hideme"><option>Foo</option></select>
         <select class="hideme"><option>Foo</option></select>
@@ -120,13 +113,23 @@
 
     <div class="foo" id="foobar"></div>
 
+    <div id="fromMarkup">
+        <div class="yui-widget-hd">
+            <span>Header From Markup</span>
+        </div>
+        <div class="yui-widget-bd">
+            <span>Body From Markup</span>
+        </div>
+        <div class="yui-widget-ft">
+            <span>Footer From Markup</span>
+        </div>
+    </div>
+
     <script type="text/javascript">
-        var widget;
+        var widget, widget2;
 
-        YUI({base:"../build/", filter:"raw"}).use("widget", "queue", "widget-position", "widget-stack", "widget-position-ext", "widget-stdmod", function(Y) {
-
-                Y.Overlay = Y.Base.build(Y.Widget, [Y.WidgetPosition, Y.WidgetStack, Y.WidgetPositionExt, Y.WidgetStdMod], {dynamic:true});
-                Y.Overlay.NAME = "overlay";
+        // Queue is missing a "requires" event
+        YUI({base:"../build/", filter:"raw"}).use("event", "queue", "overlay", function(Y) {
 
                 widget = new Y.Overlay({ 
                     width:"12em",
@@ -140,6 +143,15 @@
 
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+
+                widget2 = new Y.Overlay({
+                    contentBox: "#fromMarkup",
+                    width:200,
+                    height:200,
+                    zIndex:3,
+                    xy: [800,200]
+                });
+                widget2.render();
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);

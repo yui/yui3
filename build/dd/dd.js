@@ -865,7 +865,6 @@ YUI.add('dd-drag', function(Y) {
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_BEFORE_DRAG = 'drag:beforeDrag',
         EV_DRAG = 'drag:drag';
 
 
@@ -1188,7 +1187,6 @@ YUI.add('dd-drag', function(Y) {
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
-                EV_BEFORE_DRAG,
                 EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
@@ -1661,7 +1659,6 @@ YUI.add('dd-drag', function(Y) {
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(eXY, noFire) {
-            this.fire(EV_BEFORE_DRAG);
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
 
             diffXY[0] = (xy[0] - this.lastXY[0]);
@@ -2357,7 +2354,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag']});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
     /**
