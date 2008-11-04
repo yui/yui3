@@ -190,24 +190,24 @@
         },
 
         _fixMacGeckoScrollbars: function() {
-            this._toggleMacGeckoScroll();
-            this.after(VisibleChange, this._toggleMacGeckoScroll);
+            this._toggleMacGeckoScrollbars();
+            this.after(VisibleChange, this._toggleMacGeckoScrollbars);
         },
 
-        _toggleMacGeckoScroll : function() {
+        _toggleMacGeckoScrollbars : function() {
             if (this.get(VISIBLE)) {
-                this._showMacGeckoScroll();
+                this._showMacGeckoScrollbars();
             } else {
-                this._hideMacGeckoScroll();
+                this._hideMacGeckoScrollbars();
             }
         },
 
         _hideMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(this.getClassName(SHOW_SCROLLBARS), this.getClassName(HIDE_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(SHOW_SCROLLBARS), Widget.getClassName(HIDE_SCROLLBARS));
         },
 
         _showMacGeckoScrollbars: function () {
-            this._stackNode.replaceClass(this.getClassName(HIDE_SCROLLBARS), this.getClassName(SHOW_SCROLLBARS));
+            this._stackNode.replaceClass(Widget.getClassName(HIDE_SCROLLBARS), Widget.getClassName(SHOW_SCROLLBARS));
         },
 
         /**
