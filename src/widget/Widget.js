@@ -1,5 +1,5 @@
 /**
- * Base class for Widget
+ * Base Widget class with PluginHost
  * @module widget
  */
 
