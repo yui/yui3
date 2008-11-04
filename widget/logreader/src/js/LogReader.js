@@ -543,7 +543,7 @@ Y.extend(LogReader,Y.Widget,{
 
     printLogEntry : function (m) {
         var writers = this.get('entryWriters'),
-            wr = writers[m.cat] || writers[this.get('defaultWriter')],
+            wr = writers[m.category] || writers[this.get('defaultWriter')],
             output;
 
         output = typeof wr === 'function' ?  wr.call(this,m) : this[wr](m);

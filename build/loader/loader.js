@@ -1561,13 +1561,26 @@ Y.Env.meta = META;
          */
         _filter: function(u) {
 
+
             var f = this.filter;
 
-            if (f) {
+            if (u && f) {
                 var useFilter = true;
 
                 if (this.filterName == "DEBUG") {
                 
+                    var exc = this.logExclude,
+                        inc = this.logInclude;
+                    if (inc && !(name in inc)) {
+                        useFilter = false;
+                    } else if (exc && (name in exc)) {
+                        useFilter = false;
+                    }
+
+                }
+                
+                if (useFilter) {
+                    u = u.replace(new RegExp(f.searchExp, 'g'), f.replaceStr);
                 }
             }
 

@@ -1,11 +1,9 @@
-YUI.add("widget-stdmod", function(Y) {
-
     var L = Y.Lang,
         Node = Y.Node,
         UA = Y.UA,
-        CNM = Y.ClassNameManager,
-        
-        UI = Y.Widget.UI_SRC,
+        Widget = Y.Widget,
+
+        UI = Widget.UI_SRC,
         UI_SRC = {src:UI},
 
         EMPTY = "",
@@ -16,11 +14,13 @@ YUI.add("widget-stdmod", function(Y) {
         BODY = "body",
         FOOTER = "footer",
         FILL_HEIGHT = "fillHeight",
+        STDMOD = "stdmod",
 
         PX = "px",
         NODE_SUFFIX = "Node",
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
+
         CONTENT_BOX = "contentBox",
         BOUNDING_BOX = "boundingBox",
 
@@ -31,7 +31,6 @@ YUI.add("widget-stdmod", function(Y) {
         HeaderChange = "headerChange",
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
-        HeightChange = "heightChange",
         FillHeightChange = "fillHeightChange",
         ContentChange = "contentChange",
 
@@ -40,20 +39,28 @@ YUI.add("widget-stdmod", function(Y) {
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
         SYNCUI = "syncUI";
-        
-    var STD_HEADER = StdMod.HEADER = HEADER;
-    var STD_BODY = StdMod.BODY = BODY;
-    var STD_FOOTER = StdMod.FOOTER = FOOTER;
-    
-    var AFTER = StdMod.AFTER = "after";
-    var BEFORE = StdMod.BEFORE = "before";
-    var REPLACE = StdMod.REPLACE = "replace";
 
     function StdMod(config) {
-        // TODO: If Plugin
-        // PositionExtras.constructor.superclass.apply(this, arguments);
-        // this._initPositionExtras();
+        this._stdModNode = this.get(CONTENT_BOX);
+
+        Y.after(this._renderUIStdMod, this, RENDERUI);
+        Y.after(this._bindUIStdMod, this, BINDUI);
+        Y.after(this._syncUIStdMod, this, SYNCUI);
     }
+    
+    StdMod.HEADER = HEADER;
+    StdMod.BODY = BODY;
+    StdMod.FOOTER = FOOTER;
+    StdMod.AFTER = "after";
+    StdMod.BEFORE = "before";
+    StdMod.REPLACE = "replace";
+    
+    var STD_HEADER = StdMod.HEADER,
+        STD_BODY = StdMod.BODY,
+        STD_FOOTER = StdMod.FOOTER,
+        AFTER = StdMod.AFTER,
+        BEFORE = StdMod.BEFORE,
+        REPLACE = StdMod.REPLACE;
 
     StdMod.ATTRS = {
         header: {},
@@ -86,12 +93,6 @@ YUI.add("widget-stdmod", function(Y) {
 
     StdMod.prototype = {
 
-        _initStdMod : function() {
-            // Not doing anything in renderUI. Lazily create sections
-            Y.after(this._bindUIStdMod, this, BINDUI);
-            Y.after(this._syncUIStdMod, this, SYNCUI);
-        },
-
         _syncUIStdMod : function() {
             this._uiSetSection(STD_HEADER, this.get(HEADER));
             this._uiSetSection(STD_BODY, this.get(BODY));
@@ -99,17 +100,16 @@ YUI.add("widget-stdmod", function(Y) {
             this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
 
+        _renderUIStdMod : function() {
+            this._stdModNode.addClass(Widget.getClassName(STDMOD));
+        },
+
         _bindUIStdMod : function() {
             this.after(HeaderChange, this._onHeaderChange);
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
-
             this.after(FillHeightChange, this._onFillHeightChange);
-
             this.after(ContentChange, this._fillHeight);
-            // this.after(HeaderChange, this._fillHeight);
-            // this.after(BodyChange, this._fillHeight);
-            //this.after(FooterChange, this._fillHeight);
         },
 
         _onHeaderChange : function(e) {
@@ -178,8 +178,8 @@ YUI.add("widget-stdmod", function(Y) {
         },
 
         _renderSection : function(section) {
-            var contentBox = this.get(CONTENT_BOX);
-            return this[section + NODE_SUFFIX] = contentBox.appendChild(this._getStdModTemplate(section));
+            this[section + NODE_SUFFIX] = this.get(CONTENT_BOX).appendChild(this._getStdModTemplate(section));
+            return this[section + NODE_SUFFIX];
         },
 
         _getStdModTemplate : function(section) {
@@ -189,8 +189,7 @@ YUI.add("widget-stdmod", function(Y) {
             if (!template) {
                 cfg = StdMod.TEMPLATES[section];
                 StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
-                // TODO: Replace with ClassNameManager static version
-                template.addClass(Y.ClassNameManager.getClassName(Y.Widget.NAME, cfg.className));
+                template.addClass(Widget.getClassName(cfg.className));
             }
             return template.cloneNode(true);
         },
@@ -274,7 +273,6 @@ YUI.add("widget-stdmod", function(Y) {
                     remaining = 0,
                     validNode = false;
 
-                // TODO: Fix margin bug, non-IE
                 for (var i = 0, l = stdModNodes.length; i < l; i++) {
                     stdModNode = stdModNodes[i];
                     if (stdModNode) {
@@ -287,19 +285,19 @@ YUI.add("widget-stdmod", function(Y) {
                 }
 
                 if (validNode) {
-                    //if (UA.ie || UA.opera) {
+                    if (UA.ie || UA.opera) {
                         // Need to set height to 0, to allow height to be reduced
                         node.setStyle(HEIGHT, 0 + PX);
-                    //}
+                    }
 
-                    total = parseInt(boundingBox.getComputedStyle(HEIGHT));
+                    total = parseInt(boundingBox.getComputedStyle(HEIGHT), 10);
                     if (L.isNumber(total)) {
                         remaining = total - filled;
 
                         if (remaining >= 0) {
                             node.setStyle(HEIGHT, remaining + PX);
                         }
-    
+
                         // Re-adjust height if required, to account for el padding and border
                         var offsetHeight = this.get(CONTENT_BOX).get(OFFSET_HEIGHT); 
                         if (offsetHeight != total) {
@@ -313,5 +311,3 @@ YUI.add("widget-stdmod", function(Y) {
     };
 
     Y.WidgetStdMod = StdMod;
-
-}, "3.0.0");

@@ -1,11 +1,7 @@
-
-YUI.add("widget-position", function(Y) {
-
         var Lang = Y.Lang,
+            Widget = Y.Widget,
 
             POSITION = "position",
-            X_COORD = "x",
-            Y_COORD = "y",
             XY_COORD = "xy",
 
             POSITIONED = "positioned",
@@ -15,15 +11,18 @@ YUI.add("widget-position", function(Y) {
             BINDUI = "bindUI",
             SYNCUI = "syncUI",
 
-            UI = Y.Widget.UI_SRC,
+            UI = Widget.UI_SRC,
 
             PositionChange = "positionChange",
             XYChange = "xyChange";
 
         function Position(config) {
-            /* TODO: If Plugin */
-            // Position.constructor.superclass.apply(this, arguments);
-            // this._initPosition();
+            this._posNode = this.get(BOUNDING_BOX);
+
+            // WIDGET METHOD OVERLAP
+            Y.after(this._renderUIPosition, this, RENDERUI);
+            Y.after(this._syncUIPosition, this, SYNCUI);
+            Y.after(this._bindUIPosition, this, BINDUI);
         }
 
         Position.ATTRS = {
@@ -57,22 +56,12 @@ YUI.add("widget-position", function(Y) {
             }
         };
 
-        Position.POSITIONED_CLASS = Y.Widget.getClassName("positioned");
+        Position.POSITIONED_CLASS = Widget.getClassName(POSITIONED);
 
         Position.prototype = {
 
-            _initPosition: function() {
-
-                this._posEl = this.get(BOUNDING_BOX);
-
-                // WIDGET METHOD OVERLAP
-                Y.after(this._renderUIPosition, this, RENDERUI);
-                Y.after(this._syncUIPosition, this, SYNCUI);
-                Y.after(this._bindUIPosition, this, BINDUI);
-            },
-
             _renderUIPosition : function() {
-                this._posEl.addClass(Position.POSITIONED_CLASS);
+                this._posNode.addClass(Position.POSITIONED_CLASS);
             },
 
             _syncUIPosition : function() {
@@ -109,7 +98,7 @@ YUI.add("widget-position", function(Y) {
              * @method syncXY
              */
             syncXY : function () {
-                this.set(XY_COORD, this._posEl.getXY(), {src: UI});
+                this.set(XY_COORD, this._posNode.getXY(), {src: UI});
             },
 
             _validateXY : function(val) {
@@ -143,14 +132,12 @@ YUI.add("widget-position", function(Y) {
             },
 
             _uiSetPosition : function(val) {
-                this._posEl.setStyle(POSITION, val);
+                this._posNode.setStyle(POSITION, val);
             },
 
             _uiSetXY : function(val) {
-                this._posEl.setXY(val);
+                this._posNode.setXY(val);
             }
         };
 
         Y.WidgetPosition = Position;
-
-}, "3.0.0");

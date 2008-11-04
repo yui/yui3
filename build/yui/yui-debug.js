@@ -3742,9 +3742,11 @@ Y.log("loadNext executing, just loaded " + mname || "", "info", "loader");
          */
         _filter: function(u) {
 
+            Y.log('filter ' + u);
+
             var f = this.filter;
 
-            if (f) {
+            if (u && f) {
                 var useFilter = true;
 
                 if (this.filterName == "DEBUG") {
