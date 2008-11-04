@@ -227,4 +227,4 @@ Y.Queue.prototype = {
 Y.augment(Y.Queue,Y.Event.Target);
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{requires:['event']});

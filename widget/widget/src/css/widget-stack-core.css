@@ -17,3 +17,16 @@
     _width:0;
     _height:0;
 }
+
+.yui-widget-hide-scrollbars,
+.yui-widget-hide-scrollbars * {
+    overflow: hidden;
+}
+
+.yui-widget-hide-scrollbars select {
+    display: none;
+}
+
+.yui-widget-show-scrollbars {
+    overflow: auto;
+}
