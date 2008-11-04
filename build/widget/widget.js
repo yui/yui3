@@ -1,11 +1,11 @@
 YUI.add('widget', function(Y) {
 
-var L = Y.Lang;
-
 /**
  * @class PluginHost
- * @param {Object} config
  */
+
+var L = Y.Lang;
+
 function PluginHost(config) {
     this._plugins = {};
 
@@ -27,7 +27,7 @@ PluginHost.prototype = {
      * a single call
      * </p>
      * @method plug
-     * @chain
+     * @chainable
      * @public
      */
     plug: function(p) {
@@ -148,7 +148,7 @@ PluginHost.prototype = {
 Y.PluginHost = PluginHost;
 
 /**
- * Base class for Widget
+ * Base Widget class with PluginHost
  * @module widget
  */
 

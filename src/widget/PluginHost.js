@@ -1,9 +1,9 @@
-var L = Y.Lang;
-
 /**
  * @class PluginHost
- * @param {Object} config
  */
+
+var L = Y.Lang;
+
 function PluginHost(config) {
     this._plugins = {};
 
@@ -25,7 +25,7 @@ PluginHost.prototype = {
      * a single call
      * </p>
      * @method plug
-     * @chain
+     * @chainable
      * @public
      */
     plug: function(p) {
