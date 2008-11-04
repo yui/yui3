@@ -2,6 +2,10 @@ YUI.add('widget', function(Y) {
 
 var L = Y.Lang;
 
+/**
+ * @class PluginHost
+ * @param {Object} config
+ */
 function PluginHost(config) {
     this._plugins = {};
 
@@ -173,6 +177,7 @@ var WIDGET = "widget",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
 
+    Base = Y.Base,
     O = Y.Object,
     Node = Y.Node,
     ClassNameManager = Y.ClassNameManager;
@@ -206,6 +211,17 @@ function Widget(config) {
 
     Widget.superclass.constructor.apply(this, arguments);
 }
+
+Widget.build = function(main, exts, cfg) {
+    cfg = cfg || {};
+    cfg.aggregates = cfg.aggregates || [];
+
+    cfg.aggregates.concat(Widget.build.AGGREGATES);
+
+    return Base.build.call(Base, main, exts, cfg);
+};
+
+Widget.build.AGGREGATES = ["PLUGINS"];
 
 /**
  * Static property provides a string to identify the class.
@@ -666,7 +682,7 @@ Y.extend(Widget, Y.Base, {
                     data = data || {};
                     data[k] = val;
                 }
-            });
+            }, this);
         }
 
         return data;

@@ -1,5 +1,9 @@
 var L = Y.Lang;
 
+/**
+ * @class PluginHost
+ * @param {Object} config
+ */
 function PluginHost(config) {
     this._plugins = {};
 
