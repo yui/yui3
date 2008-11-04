@@ -1,3 +1,6 @@
+/**
+ * @module widget-position-ext
+ */
         var L = Y.Lang,
             ALIGN = "align",
 
@@ -10,6 +13,9 @@
 
             AlignChange = "alignChange";
 
+        /**
+         * @class WidgetPositionExt
+         */
         function PositionExt(config) {
             Y.after(this._syncUIPosExtras, this, SYNCUI);
             Y.after(this._bindUIPosExtras, this, BINDUI);

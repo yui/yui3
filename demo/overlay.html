@@ -34,6 +34,11 @@
             border:2px solid #000000;
             padding:2px;
         }
+        
+        .yui-widget-stdmod span {
+            background-color:#000;
+            color:#fff;
+        }
 
         .yui-widget-stdmod .yui-widget-hd {
             border:2px solid red;
@@ -108,8 +113,20 @@
 
     <div class="foo" id="foobar"></div>
 
+    <div id="fromMarkup">
+        <div class="yui-widget-hd">
+            <span>Header From Markup</span>
+        </div>
+        <div class="yui-widget-bd">
+            <span>Body From Markup</span>
+        </div>
+        <div class="yui-widget-ft">
+            <span>Footer From Markup</span>
+        </div>
+    </div>
+
     <script type="text/javascript">
-        var widget;
+        var widget, widget2;
 
         // Queue is missing a "requires" event
         YUI({base:"../build/", filter:"raw"}).use("event", "queue", "overlay", function(Y) {
@@ -126,6 +143,15 @@
 
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+
+                widget2 = new Y.Overlay({
+                    contentBox: "#fromMarkup",
+                    width:200,
+                    height:200,
+                    zIndex:3,
+                    xy: [800,200]
+                });
+                widget2.render();
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);

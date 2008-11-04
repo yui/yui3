@@ -1,5 +1,8 @@
 YUI.add('widget-stdmod', function(Y) {
 
+/**
+ * @module widget-stdmod
+ */
     var L = Y.Lang,
         Node = Y.Node,
         UA = Y.UA,
@@ -34,7 +37,7 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
         FillHeightChange = "fillHeightChange",
-        ContentChange = "contentChange",
+        ContentUpdated = "contentUpdated",
 
         STD_TEMPLATE = "<div></div>",
 
@@ -42,21 +45,27 @@ YUI.add('widget-stdmod', function(Y) {
         BINDUI = "bindUI",
         SYNCUI = "syncUI";
 
+    /**
+     * @class WidgetStdMod
+     */
     function StdMod(config) {
+        
         this._stdModNode = this.get(CONTENT_BOX);
+
+        this.HTML_PARSER = Y.merge(this.HTML_PARSER, StdMod.prototype.HTML_PARSER);
 
         Y.after(this._renderUIStdMod, this, RENDERUI);
         Y.after(this._bindUIStdMod, this, BINDUI);
         Y.after(this._syncUIStdMod, this, SYNCUI);
     }
-    
+
     StdMod.HEADER = HEADER;
     StdMod.BODY = BODY;
     StdMod.FOOTER = FOOTER;
     StdMod.AFTER = "after";
     StdMod.BEFORE = "before";
     StdMod.REPLACE = "replace";
-    
+
     var STD_HEADER = StdMod.HEADER,
         STD_BODY = StdMod.BODY,
         STD_FOOTER = StdMod.FOOTER,
@@ -111,7 +120,7 @@ YUI.add('widget-stdmod', function(Y) {
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
             this.after(FillHeightChange, this._onFillHeightChange);
-            this.after(ContentChange, this._fillHeight);
+            this.after(ContentUpdated, this._fillHeight);
         },
 
         _onHeaderChange : function(e) {
@@ -176,24 +185,59 @@ YUI.add('widget-stdmod', function(Y) {
             } else {
                 this._addNodeHTML(node, val, where);
             }
-            this.fire(ContentChange);
+            this.fire(ContentUpdated);
         },
 
         _renderSection : function(section) {
-            this[section + NODE_SUFFIX] = this.get(CONTENT_BOX).appendChild(this._getStdModTemplate(section));
+
+            var contentBox = this.get(CONTENT_BOX),
+                sectionNode = this._findStdModSection(section);
+
+            // TODO: Preparing for the Node/NodeList change
+            if (!sectionNode) {
+                sectionNode = this._getStdModTemplate(section);
+            }
+
+            this._insertStdModSection(contentBox, section, sectionNode);
+
+            this[section + NODE_SUFFIX] = sectionNode;
             return this[section + NODE_SUFFIX];
         },
 
+        _insertStdModSection : function(contentBox, section, sectionNode) {
+            var fc = contentBox.get(FIRST_CHILD);
+
+            if (section === STD_FOOTER || !fc) {
+                contentBox.appendChild(sectionNode);
+            } else {
+                if (section === STD_HEADER) {
+                    contentBox.insertBefore(sectionNode, fc);
+                } else {
+                    // BODY
+                    var footer = this[STD_FOOTER + NODE_SUFFIX];
+                    if (footer) {
+                        contentBox.insertBefore(sectionNode, footer);
+                    } else {
+                        contentBox.appendChild(sectionNode);
+                    }
+                }
+            }
+        },
+
         _getStdModTemplate : function(section) {
-            var template = StdMod._TEMPLATES[section], 
+            var template = StdMod._TEMPLATES[section],
                 cfg;
 
             if (!template) {
                 cfg = StdMod.TEMPLATES[section];
                 StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
-                template.addClass(Widget.getClassName(cfg.className));
+                template.addClass(this._getStdModClassName(section));
             }
             return template.cloneNode(true);
+        },
+
+        _getStdModClassName : function(section) {
+            return Widget.getClassName(StdMod.TEMPLATES[section].className);
         },
 
         _addNodeHTML : function(node, html, where) {
@@ -232,6 +276,32 @@ YUI.add('widget-stdmod', function(Y) {
             return height;
         },
 
+        _findStdModSection: function(STD_HEADER) {
+            var sectionNode = this.get(CONTENT_BOX).query("." + this._getStdModClassName(STD_HEADER));
+            if (!sectionNode || (sectionNode.size && sectionNode.size() > 0)) {
+                return null;                
+            } else {
+                return sectionNode;
+            }
+        },
+
+        HTML_PARSER : {
+            header: function(contentBox) {
+                var node = this._findStdModSection(STD_HEADER);
+                return (node) ? node.get(INNER_HTML) : "";
+            },
+
+            body : function(contentBox) {
+                var node = this._findStdModSection(STD_BODY);
+                return (node) ? node.get(INNER_HTML) : "";
+            },
+
+            footer : function(contentBox) {
+                var node = this._findStdModSection(STD_FOOTER);
+                return (node) ? node.get(INNER_HTML) : "";
+            }
+        },
+
         setBody : function(val, where) {
             this._setStdModSection(STD_BODY, val, where);
         },
@@ -248,23 +318,6 @@ YUI.add('widget-stdmod', function(Y) {
             return this[section + NODE_SUFFIX];
         },
 
-        /**
-         * <p>
-         * Sets the height on the provided header, body or footer element to 
-         * fill out the height of the container. It determines the height of the 
-         * containers content box, based on it's configured height value, and 
-         * sets the height of the autofillheight element to fill out any 
-         * space remaining after the other standard module element heights 
-         * have been accounted for.
-         * </p>
-         * <p><strong>NOTE:</strong> This method is not designed to work if an explicit 
-         * height has not been set on the container, since for an "auto" height container, 
-         * the heights of the header/body/footer will drive the height of the container.</p>
-         *
-         * @method fillHeight
-         * @param {Node} node The node which should be resized to fill out the height
-         * of the container element.
-         */
         fillHeight : function(node) {
             if (node) {
                 var boundingBox = this.get(BOUNDING_BOX),
