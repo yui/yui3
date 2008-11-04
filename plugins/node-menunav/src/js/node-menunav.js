@@ -1,7 +1,4 @@
-YUI.add('node-menunav', function(Y) {
-
-
-	// Util shortcuts
+// Util shortcuts
 
 var UA = Y.UA,
 	Lang = Y.Lang,
@@ -1409,5 +1406,3 @@ Y.Plugin.NodeMenuNav.NS = "nodeMenuNav";
 //	border in IE.  Setting the CSS "border" property alone doesn't supress it.
 
 Y.Plugin.NodeMenuNav.SHIM_TEMPLATE = '<iframe role="presentation" class="' + CSS_SHIM + '" title="Menu Stacking Shim" src="javascript:FALSE;"></iframe>';
-
-}, '@VERSION@' ,{requires:['node', 'classnamemanager']});
