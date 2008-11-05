@@ -550,7 +550,7 @@ Y.extend(LogReader,Y.Widget,{
 
     printLogEntry : function (m) {
         var writers = this.get('entryWriters'),
-            wr = writers[m.cat] || writers[this.get('defaultWriter')],
+            wr = writers[m.category] || writers[this.get('defaultWriter')],
             output;
 
         output = typeof wr === 'function' ?  wr.call(this,m) : this[wr](m);
@@ -684,7 +684,7 @@ Y.extend(LogReader,Y.Widget,{
                        ' .' + this[GET_CLASS_NAME](CLASS_CONSOLE) +
                        ' .' + this[GET_CLASS_NAME](CLASS_ENTRY_TYPE_BASE,name);
 
-        Y.StyleSheet('logreader').setCSS(selector, {display: 'none'});
+        Y.StyleSheet('logreader').set(selector, {display: 'none'});
 
         return label;
     },

@@ -122,7 +122,7 @@ YUI.add('base', function(Y) {
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class in addition to the default properties build 
-     *    will always aggregate - "ATTRS" and "PLUGINS", as defined by 
+     *    will always aggregate - "ATTRS", as defined by 
      *    Base.build.AGGREGATES</dd>
      * </dl>
      *
@@ -202,11 +202,12 @@ YUI.add('base', function(Y) {
 
     Y.mix(Base.build, {
 
-        AGGREGATES : ["ATTRS", "PLUGINS"],
+        AGGREGATES : ["ATTRS"],
 
         _template: function(main) {
 
             function BuiltClass() {
+
                 BuiltClass.superclass.constructor.apply(this, arguments);
 
                 var f = BuiltClass._yuibuild.exts, 
@@ -215,9 +216,9 @@ YUI.add('base', function(Y) {
                 for (var i = 0; i < l; i++) {
                     f[i].apply(this, arguments);
                 }
+
                 return this;
             }
-
             Y.extend(BuiltClass, main);
 
             return BuiltClass;
@@ -655,6 +656,7 @@ YUI.add('base', function(Y) {
 
     Base.prototype.constructor = Base;
     Y.Base = Base;
+
 
 
 }, '@VERSION@' ,{requires:['attribute']});

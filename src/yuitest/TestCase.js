@@ -1,6 +1,3 @@
-/**
- * @module yuitest
- */
 (function() {
 
     // object utils
@@ -13,7 +10,8 @@
          * Test case containing various tests to run.
          * @param template An object containing any number of test methods, other methods,
          *                 an optional name, and anything else the test case needs.
-         * @class Test.Case
+         * @class Case
+         * @namespace Y.Test
          * @constructor
          */
         Y.Test.Case = function (template /*:Object*/) {
@@ -100,7 +98,8 @@
          * continuing.
          * @param {Function} segment A function to run when the wait is over.
          * @param {int} delay The number of milliseconds to wait before running the code.
-         * @class Test.Wait
+         * @class Wait
+         * @namespace Y.Test
          * @constructor
          *
          */

@@ -82,7 +82,6 @@
         * @bubbles DDM
         * @type Event.Custom
         */
-        EV_BEFORE_DRAG = 'drag:beforeDrag',
         EV_DRAG = 'drag:drag';
 
 
@@ -307,6 +306,15 @@
                 }
                 return g;
             }
+        },
+        /**
+        * @attribute bubbles
+        * @description Controls the default bubble parent for this Drag instance. Default: Y.DD.DDM. Set to false to disable bubbling.
+        * @type Object
+        */
+        bubbles: {
+            writeOnce: true,
+            value: Y.DD.DDM
         }
     };
 
@@ -396,7 +404,6 @@
                 EV_ADD_INVALID,
                 EV_START,
                 EV_END,
-                EV_BEFORE_DRAG,
                 EV_DRAG,
                 'drag:drophit',
                 'drag:dropmiss',
@@ -414,7 +421,10 @@
                     queuable: true
                 });
             }, this);
-            this.addTarget(DDM);
+
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
             
            
         },
@@ -877,7 +887,6 @@
         * @param {Boolean} noFire If true, the drag:drag event will not fire.
         */
         _moveNode: function(eXY, noFire) {
-            this.fire(EV_BEFORE_DRAG);
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
 
             diffXY[0] = (xy[0] - this.lastXY[0]);

@@ -1,55 +1,38 @@
 // String constants
 var CLASS_NAME_PREFIX = 'classNamePrefix',
-    HYPHEN = '-';
-
-/**
- * Run-time getClassName method (post infra initialization)
- */
-function _getClassName(c,x) {
-    // Test for multiple classname bits
-    if (x) {
-        c = Y.Array(arguments,0,true).join(HYPHEN);
-    }
-
-    // memoize in _classNames map
-    return this._classNames[c] ||
-            (this._classNames[c] = this._className + HYPHEN + c);
-}
-	
-/**
- * First use initializer to set up infrastructure for getClassName
- */
-function _initGetClassName() {
-    this._className = this.get(CLASS_NAME_PREFIX) +
-                      this.constructor.NAME.toLowerCase();
-
-    this._classNames = {};
-
-    // replace the instance method with run-time version and pass through
-    this.getClassName = _getClassName;
-
-    return _getClassName.apply(this,arguments);
-}
+	CLASS_NAME_DELIMITER = 'classNameDelimiter';
 
 
 // Global config
 
 /**
- * Configuration property indicating the prefix for all CSS class names in
- * this YUI instance.  Set during new YUI({classNamePrefix:'foo-'}) or during
- * run-time Y.config.classNamePrefix = 'foo-';
+ * Configuration property indicating the prefix for all CSS class names in this YUI instance.
  *
  * @property Y.config.classNamePrefix
  * @type {String}
+ * @default "yui"
  * @static
  */
-Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui-';
+Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui';
+
+
+/**
+ * Configuration property indicating the delimiter used to compose all CSS class names in
+ * this YUI instance.
+ *
+ * @property Y.config.classNameDelimiter
+ * @type {String}
+ * @default "-"
+ * @static
+ */
+Y.config[CLASS_NAME_DELIMITER] = Y.config[CLASS_NAME_DELIMITER] || '-';
+
 
 
 // Class definition
 
 /**
- * A class for Widgets or classes that extend Base, providing: 
+ * A singleton class providing: 
  * 
  * <ul>
  *    <li>Easy creation of prefixed class names</li>
@@ -57,54 +40,38 @@ Y.config[CLASS_NAME_PREFIX] = Y.config[CLASS_NAME_PREFIX] || 'yui-';
  * </ul>
  * 
  * @class ClassNameManager
+ * @static 
  */
-function ClassNameManager() {}
+Y.ClassNameManager = function () {
 
-ClassNameManager.ATTRS = {};
+	var sPrefix = Y.config[CLASS_NAME_PREFIX],
+		sDelimiter = Y.config[CLASS_NAME_DELIMITER],
+		classNames = {};
 
-/**
-* @attribute classNamePrefix
-* @description String indicating the prefix for all class names.
-* @default YUI.CLASS_NAME_PREFIX ("yui-")
-* @type String
-*/
-ClassNameManager.ATTRS[CLASS_NAME_PREFIX] = {
-    value: Y.config[CLASS_NAME_PREFIX],
-    writeOnce: true
-};
+	return {
 
-ClassNameManager.prototype = {
+		/**
+		 * Returns a class name prefixed with the the value of the 
+		 * <code>Y.config.classNamePrefix</code> attribute + the provided strings.
+		 * Uses the <code>Y.config.classNameDelimiter</code> attribute to delimit the 
+		 * provided strings. E.g. Y.ClassNameManager.getClassName('foo','bar'); // yui-foo-bar
+		 * 
+		 * 
+		 * @method getClassName
+		 * @param {String}+ one or more classname bits to be joined and prefixed
+		 */
+		getClassName: function (c,x) {
+	
+			// Test for multiple classname bits
+			if (x) {
+				c = Y.Array(arguments,0,true).join(sDelimiter);
+			}
+		
+			// memoize in classNames map
+			return classNames[c] || (classNames[c] = sPrefix + sDelimiter + c);
+	
+		}
+	
+	};
 
-	/**
-	 * The class name for the instance, by default set to the value of the 
-	 * <code>classNamePrefix</code> attribute + the <code>NAME</code> property.
-	 *
-	 * @property _className
-	 * @protected
-	 * @type {String}		 
-	 */            
-	_className: null,
-
-	/**
-	 * Collection of all of the class names used by the instance.
-	 *
-	 * @property _classNames
-	 * @protected
-	 * @type {Object}
-	 */            
-	_classNames: null,
-
-	/**
-	 * Returns a class name prefixed with the the value of the 
-	 * <code>classNamePrefix</code> attribute + the <code>NAME</code> property.
-     * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
-	 * 
-	 * @method getClassName
-	 * @param {String}+ one or more classname bits to be joined and prefixed
-     *                  by this class's className base (see private _className)
-	 */
-	getClassName: _initGetClassName
-
-};
-
-Y.ClassNameManager = ClassNameManager;
+}();
