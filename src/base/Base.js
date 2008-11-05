@@ -121,7 +121,7 @@
      *    <dt>aggregates &#60;String[]&#62;</dt>
      *    <dd>An array of static property names, which will get aggregated
      *    on to the built class in addition to the default properties build 
-     *    will always aggregate - "ATTRS" and "PLUGINS", as defined by 
+     *    will always aggregate - "ATTRS", as defined by 
      *    Base.build.AGGREGATES</dd>
      * </dl>
      *

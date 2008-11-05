@@ -221,7 +221,7 @@ YUI.add("profiler", function(Y){
                 };
                 
                 //copy the function properties over
-                L.mix(owner[funcName], method);
+                Y.mix(owner[funcName], method);
                 owner[funcName].__yuiProfiled = true;
                 owner[funcName].prototype = prototype;
                 this._container[name].__yuiOwner = owner;
