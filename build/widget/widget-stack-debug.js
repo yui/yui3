@@ -64,6 +64,7 @@ YUI.add('widget-stack', function(Y) {
      * configuration introduced by WidgetStack.
      * 
      * @property WidgetStack.ATTRS
+     * @static
      */
     Stack.ATTRS = {
         /**
