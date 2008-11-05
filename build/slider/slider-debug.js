@@ -46,16 +46,6 @@ Y.mix(Slider, {
         }
     },
 
-    /**
-     * Alternate value for attribute preserveField to convert the element to an
-     * &lt;input type="hidden" ..&gt;
-     */
-    FIELD_HANDLER : {
-        'replace' : function () { this._replaceField(); },
-        'preserve': function () { this._preserveField(); },
-        'hide'    : function () { this._hideField(); }
-    },
-
     ATTRS : {
         axis : {
             value : 'x',
@@ -67,6 +57,16 @@ Y.mix(Slider, {
             set : function (v) {
                 return v.toLowerCase();
             }
+        },
+
+        min : {
+            value : 0,
+            validator : isNumber
+        },
+
+        max : {
+            value : 100,
+            validator : isNumber
         },
 
         value : {
@@ -85,11 +85,14 @@ Y.mix(Slider, {
                         if (values[i] > v) {
                             x = values[i];
                         } else {
-                            return Math.abs(x - v) < Math.abs(values[i] - v) ?
+                            v = Math.abs(x - v) < Math.abs(values[i] - v) ?
                                     x : values[i];
+                            break;
                         }
                     }
                 }
+
+                return v;
             }
         },
 
@@ -103,12 +106,12 @@ Y.mix(Slider, {
                 if (isNumber(v)) {
                     var min = this.get('min'),
                         max = this.get('max'),
-                        inc = Math.round((max - min)/v),
+                        inc = (max - min)/(v - 1),
                         vals = [min],
                         i,len;
 
                     for (i = 1, len = v - 1; i < len; ++i) {
-                        vals[i] = min + (i * inc);
+                        vals[i] = Math.round(min + (i * inc));
                     }
 
                     vals[i] = max;
@@ -116,37 +119,11 @@ Y.mix(Slider, {
                     v = vals;
                 }
 
-                if (v) {
-                    v.sort();
+                if (L.isArray(v)) {
+                    v.sort(this._valueSorter);
                 }
 
                 return v;
-            }
-        },
-
-        min : {
-            value : 0,
-            validator : isNumber
-        },
-
-        max : {
-            value : 100,
-            validator : isNumber
-        },
-
-        field : {
-            value : null,
-            validator : function (v) {
-                if (this.get('rendered')) {
-                    Y.log("Can't set Slider field after render","warn","Slider");
-                    return false;
-                }
-                return true;
-            },
-            set : function (v) {
-                // queryAll to support radio groups 'input[name=fooRadio]'
-                var nodes = v ? Y.queryAll(v) : null;
-                return nodes && nodes.length === 1 ? nodes.item(0) : nodes;
             }
         },
 
@@ -192,23 +169,6 @@ Y.mix(Slider, {
             validator : L.isBoolean
         },
 
-        preserveField : {
-            value : function () { this._replaceField(); },
-            writeOnce: true,
-            validator : function (v) {
-                return L.isFunction(v) || isString(v);
-            },
-            set : function (v) {
-                v = L.isFunction(v) ? v : Slider.FIELD_HANDLER[v];
-                return Y.bind(v,this);
-            }
-        },
-
-        keyIncrement : {
-            value : 5,
-            validator : isNumber
-        },
-
         edgeOffset : {
             value : 0,
             validator : isString
@@ -227,15 +187,10 @@ Y.extend(Slider, Y.Widget, {
         thumb : function (cb) {
             return cb.quer('.'+this.getClassName(CLASS_THUMB));
         },
-        field : function (cb) {
-            return cb.query('.'+this.getClassName(CLASS_INPUT));
-        },
         thumbImage : function (cb) {
             return cb.query('.'+this.getClassName(CLASS_THUMB)+' img');
         }
     },
-
-    _hasFieldValues : false,
 
     _factor : 0.5,
 
@@ -243,9 +198,12 @@ Y.extend(Slider, Y.Widget, {
 
     _thumbCenterOffset : null,
 
+    _valueSorter : function (a,b) {
+        return (+a < +b) ? -1 : (+a < +b) ? 1 : 0;
+    },
+
     initializer : function () {
         // In initializer because render needs values, and these might update it
-        this.on('fieldChange',this._onFieldChange);
         this.on('minChange',this._onMinChange);
         this.on('maxChange',this._onMaxChange);
 
@@ -256,8 +214,6 @@ Y.extend(Slider, Y.Widget, {
 
     renderUI : function () {
 
-        this.initField();
-
         this.initRail();
 
         this.initThumb();
@@ -265,12 +221,9 @@ Y.extend(Slider, Y.Widget, {
         this.initRailDims();
     },
 
-    initField : function () {
-        this.get('preserveField')(this.get('field'));
-    },
-
     initRail : function () {
-        var cb   = this.get('contentBox'),
+        var AP   = Slider.AXIS_PROPS[this.get('axis')],
+            cb   = this.get('contentBox'),
             rail = this.get('rail');
 
         // Create rail if necessary. Make sure it's in the contentBox
@@ -287,6 +240,8 @@ Y.extend(Slider, Y.Widget, {
         if ('absolute|relative'.indexOf(rail.getStyle('position')) === -1) {
             rail.setStyle('position','relative');
         }
+
+        this._offsetXY = this.get('rail').getXY()[AP.xyIndex];
     },
 
     initRailDims : function () {
@@ -319,7 +274,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     initThumb : function () {
-        var rail    = this.get('rail'),
+        var AP      = Slider.AXIS_PROPS[this.get('axis')],
+            rail    = this.get('rail'),
             thumb   = this.get('thumb'),
             img     = this.get('thumbImage'),
             dim;
@@ -336,6 +292,7 @@ Y.extend(Slider, Y.Widget, {
         }
 
         thumb.setStyle('position','absolute');
+        thumb.setStyle(AP.offsetEdge,'0');
 
         if (img) {
             this.initThumbImage();
@@ -380,14 +337,10 @@ Y.extend(Slider, Y.Widget, {
 
         this._setConvFactor();
 
-        this.on('valueChange', this._onValueChange);
-        this.on('valuesChange', this._onValuesChange);
-        this.on('backgroundEnabledChange', this._onBGEnabledChange);
+        this.after('valueChange', this._onValueChange);
+        this.after('valuesChange', this._onValuesChange);
 
         this.get('rail').on('mousedown',this.focus);
-
-        // Hook the keyup listener to the document for xbrowser support
-        Y.on('keyup', this._onKeyup, Y.config.doc);
     },
 
     initThumbDD : function () {
@@ -410,34 +363,36 @@ Y.extend(Slider, Y.Widget, {
         var AP      = Slider.AXIS_PROPS[this.get('axis')],
             pageXY  = AP.eventPageAxis,
             xyIndex = AP.xyIndex,
-            offset  = this._thumbCenterOffset;
+            self    = this;
 
         // Temporary hack while dd doesn't support outer handles
         // TODO: coerce DD to fire drag:start
         Y.on('mousedown',Y.bind(function (ev) {
-            var xy;
+            if (self.get('backgroundEnabled')) {
+                var xy;
 
-            if (this.get('primaryButtonOnly') && ev.button > 1) {
-                Y.log('Mousedown was not produced by the primary button',
-                      'warn', 'dd-drag');
-                return false;
+                if (this.get('primaryButtonOnly') && ev.button > 1) {
+                    Y.log('Mousedown was not produced by the primary button',
+                          'warn', 'dd-drag');
+                    return false;
+                }
+
+                this._dragThreshMet = true;
+
+                this._fixIEMouseDown();
+                ev.halt();
+
+                Y.DD.DDM.activeDrag = this;
+
+                // Adjust registered starting position by half the thumb's x/y
+                xy = this.get('dragNode').getXY();
+                xy[xyIndex] += self._thumbCenterOffset;
+
+                this._setStartPosition(xy);
+
+                this.start();
+                this._moveNode([ev.pageX,ev.pageY]);
             }
-
-            this._dragThreshMet = true;
-
-            this._fixIEMouseDown();
-            ev.halt();
-
-            Y.DD.DDM.activeDrag = this;
-
-            // Adjust registered starting position by half the thumb's x/y
-            xy = this.get('dragNode').getXY();
-            xy[xyIndex] += offset;
-
-            this._setStartPosition(xy);
-
-            this.start();
-            this._moveNode([ev.pageX,ev.pageY]);
         },this._dd),this.get('rail'));
     },
 
@@ -450,9 +405,9 @@ Y.extend(Slider, Y.Widget, {
         if (values) {
             // TODO: Should the stops be positioned relative to their value
             // within the min - max range, or evenly spaced?
-            dim      = parseInt(this.get(AP.axisDim),10) -
-                        (this._thumbCenterOffset * 2);
-            tickSize = Math.round(dim / (values.length - 1));
+            dim = parseInt(this.get(AP.axisDim),10) -
+                    this.get('thumb').get(AP.offsetDim);
+            tickSize = Math.floor(dim / (values.length - 1));
         }
 
         this._tickSize = tickSize;
@@ -472,9 +427,6 @@ Y.extend(Slider, Y.Widget, {
         this.set('value',val,{omitChangeEvent:silent});
     },
 
-    initKeyListeners : function () {
-    },
-
     _onValueChange : function (e) {
         // relies on e.src set by DD handler
         if (!e.src) {
@@ -483,13 +435,6 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _onValuesChange : function (e) {
-    },
-
-    _onBGEnabledChange : function (e) {
-    },
-
-    _onKeyup : function (e) {
-
     },
 
     _onDDStartDrag : function (e) {
@@ -503,6 +448,7 @@ Y.extend(Slider, Y.Widget, {
         var AP     = Slider.AXIS_PROPS[this.get('axis')],
             values = this.get('values'),
             val    = e[AP.eventPageAxis] - this._offsetXY,
+            before = this.get('value'),
             i,len;
             
         if (values) {
@@ -518,9 +464,12 @@ Y.extend(Slider, Y.Widget, {
             val *= this._factor;
         }
 
-        this.set('value', Math.round(val),{src:'dd'});
+        this.set('value', val,{src:'dd'});
+        val = this.get('value');
 
-        this.fire('change', {value:this.get('value'),ddEvent:e});
+        if (before !== val) {
+            this.fire('change', {value:val, ddEvent:e});
+        }
     },
 
     _onDDEndDrag : function (e) {
@@ -547,26 +496,15 @@ Y.extend(Slider, Y.Widget, {
         this.get('thumb').setStyle(AP.offsetEdge, v+'px');
     },
 
-    _onFieldChange: function (e) {
-        this._updateValues(this.get('min'), this.get('max'), e.newVal);
-    },
     _onMinChange: function (e) {
-        this._updateValues(e.newVal, this.get('max'), this.get('field'));
+        this._updateValues(e.newVal, this.get('max'));
     },
     _onMaxChange: function (e) {
-        this._updateValues(this.get('min'), e.newVal, this.get('field'));
+        this._updateValues(this.get('min'), e.newVal);
     },
 
     _updateValues : function(min,max,field) {
     },
-
-    _replaceField : function () {
-    },
-
-    _hideField : function () {
-    },
-
-    _preserveField : function () {},
 
     _setConvFactor : function () {
         var AP    = Slider.AXIS_PROPS[this.get('axis')],
