@@ -212,12 +212,44 @@ function Widget(config) {
     Widget.superclass.constructor.apply(this, arguments);
 }
 
+/**
+ * <p>
+ * Builds a constructor function (class) from the
+ * main function, and array of extension functions (classes)
+ * provided.
+ * </p>
+ * <p>
+ * The cfg object literal supports the following properties
+ * </p>
+ * <dl>
+ *    <dt>dynamic &#60;boolean&#62;</dt>
+ *    <dd>
+ *    <p>If true, a completely new class
+ *    is created which extends the main class, and acts as the 
+ *    host on which the extension classes are augmented.</p>
+ *    <p>If false, the extensions classes are augmented directly to
+ *    the main class, modifying the main classes prototype.</p>
+ *    </dd>
+ *    <dt>aggregates &#60;String[]&#62;</dt>
+ *    <dd>An array of static property names, which will get aggregated
+ *    on to the built class in addition to the default properties build 
+ *    will always aggregate.  Along with "ATTRS", which is aggregated by
+ *    Base, "PLUGINS and HTML_PARSER" will be aggregated by default, as 
+ *    defined by Widget.build.AGGREGATES</dd>
+ * </dl>
+ *
+ * @method build
+ * @static
+ * @param {Function} main The main class on which to base the built class
+ * @param {Function[]} extensions The set of extension classes which will be
+ * augmented/aggregated to the built class.
+ * @param {Object} cfg
+ * @return {Function} A custom class, created from the provided main and extension classes
+ */
 Widget.build = function(main, exts, cfg) {
     cfg = cfg || {};
     cfg.aggregates = cfg.aggregates || [];
-
     cfg.aggregates = cfg.aggregates.concat(Widget.build.AGGREGATES);
-
     return Base.build.call(Base, main, exts, cfg);
 };
 
@@ -225,6 +257,7 @@ Widget.build.AGGREGATES = ["PLUGINS", "HTML_PARSER"];
 
 /**
  * Static property provides a string to identify the class.
+ * 
  * Currently used to apply class identifiers to the bounding box 
  * and to classify events fired by the widget.
  *
@@ -234,6 +267,15 @@ Widget.build.AGGREGATES = ["PLUGINS", "HTML_PARSER"];
  */
 Widget.NAME = WIDGET;
 
+/**
+ * Constant used to identify state changes originating from
+ * the DOM (as opposed to the JavaScript model).
+ *
+ * @property Widget.UI_SRC
+ * @type String
+ * @static
+ * @final
+ */
 Widget.UI_SRC = "ui";
 
 /**
@@ -310,8 +352,8 @@ Widget.ATTRS = {
 
     /**
     * @attribute disabled
-    * @description Boolean indicating if the Widget should be disabled.  
-    * (Disabled widgets will not respond to user input or fire events.)
+    * @description Boolean indicating if the Widget should be disabled. The disabled implementation
+    * is left to the specific classes extending widget.
     * @default false
     * @type boolean
     */
@@ -331,7 +373,8 @@ Widget.ATTRS = {
 
     /**
     * @attribute height
-    * @description String or number representing the height of the Widget.
+    * @description String or number representing the height of the Widget. If a number is provided,
+    * the default unit, defined by the Widgets DEF_UNIT, property is used.
     * @default ""
     * @type {String | Number}
     */
@@ -341,7 +384,8 @@ Widget.ATTRS = {
 
     /**
     * @attribute width
-    * @description String or number representing the width of the Widget.
+    * @description String or number representing the width of the Widget. If a number is provided,
+    * the default unit, defined by the Widgets DEF_UNIT, property is used.
     * @default ""
     * @type {String | Number}
     */
@@ -391,15 +435,26 @@ Widget.ATTRS = {
 };
 
 /**
+ * Cached lowercase version of Widget.NAME
+ *
+ * @property Widget._NAME_LOWERCASE
  * @private
  * @static
- * @property _NAME_LOWERCASE
  */
 Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
 
 /**
- * Get the statically generated classname for Widget (by default yui-widget-XXXXX)
+ * Generate a standard prefixed classname for the Widget, prefixed by the default prefix defined
+ * by the <code>Y.config.classNamePrefix</code> attribute used by <code>ClassNameManager</code> and 
+ * <code>Widget.NAME.toLowerCase()</code> (e.g. "yui-widget-xxxxx-yyyyy", based on default values for 
+ * the prefix and widget class name).
+ * 
+ * The instance based version of this method can be used to generate standard prefixed classnames,
+ * based on the instances NAME, as opposed to Widget.NAME. This method should be used when you
+ * need to use a constant class name across different types instances.
+ *
  * @method getClassName
+ * @param {String*} args* 0..n strings which should be concatenated, using the default separator defined by ClassNameManager, to create the class name
  */
 Widget.getClassName = function() {
 	var args = Y.Array(arguments, 0, true);
@@ -434,7 +489,7 @@ Widget.getByNode = function(node) {
 };
 
 /**
- * @property HTML_PARSER
+ * @property Widget.HTML_PARSER
  * @type Object
  * @static
  *
@@ -457,7 +512,7 @@ Y.extend(Widget, Y.Base, {
 
 	/**
 	 * Returns a class name prefixed with the the value of the 
-	 * <code>Y.config.classNamePrefix</code> attribute + the <code>NAME</code> property.
+	 * <code>Y.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
 	 * Uses <code>Y.config.classNameDelimiter</code> attribute to delimit the provided strings.
 	 * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
 	 * 
@@ -559,7 +614,7 @@ Y.extend(Widget, Y.Base, {
      * @method _defRenderFn
      * @protected
      * @param {Event.Facade} e The Event object
-     * @param {Node} parentNode The parent node to render to, if passed in
+     * @param {Node} parentNode The parent node to render to, if passed in to the <code>render</code> method
      */
     _defRenderFn : function(e, parentNode) {
 
@@ -667,10 +722,13 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Utilitity method used to apply the <code>HTML_PARSER</code> configuration for the 
+     * instance, to retrieve config data values.
+     * 
      * @method _parseHTML
      * @private 
      * @param  node {Node} Root node to use to parse markup for configuration data
-     * @return config {Object} configuration object
+     * @return config {Object} configuration object, with values found in the HTML, populated
      */
     _parseHTML : function(node) {
  
@@ -857,6 +915,11 @@ Y.extend(Widget, Y.Base, {
         this._renderBox(parentNode);
     },
 
+     /**
+      * Applies standard class names to the boundingBox and contentBox
+      * @method _renderBoxClassNames
+      * @protected
+      */
     _renderBoxClassNames : function() {
         var classes = this._getClasses(),
             boundingBox = this.get(BOUNDING_BOX),
