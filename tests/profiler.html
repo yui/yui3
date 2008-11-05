@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>profiler tests</title>
-<link type="text/css" rel="stylesheet" href="../build/log/assets/skins/sam/logreader.css" />
+<link type="text/css" rel="stylesheet" href="../build/logreader/assets/skins/sam/logreader.css" />
 <script type="text/javascript" src="../build/yui/yui.js"></script>
 </head>
 <body class="yui-skin-sam">
@@ -23,9 +23,8 @@ var myObject = {
     
     
 YUI({
-    base: '../build/',
-    useConsole: true
-}).use('yuitest', 'profiler',  function (Y) {
+    base: '../build/'
+}).use('yuitest', 'profiler', 'logreader', function (Y) {
 
     Y.namespace("Tests");
 
@@ -399,7 +398,7 @@ YUI({
     
     })();
 
-    /*
+    
     var r = new Y.log.Reader({
         verbose : true,
         //consoleLimit : 10,
@@ -407,7 +406,7 @@ YUI({
     });
     
     r.render('#c');
-    */
+    
     
     //add to the testrunner and run
     Y.Test.Runner.add(Y.Tests.Profiler);
