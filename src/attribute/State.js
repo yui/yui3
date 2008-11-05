@@ -81,15 +81,15 @@
          */
         // get: function(name, key, val) {
         get: function(name, key) {
-            var d = this.data;
+            var d = this.data,
+                o;
 
             if (key) {
                 return (d[key] && name in d[key]) ?  d[key][name] : undefined;
             } else {
-                var o = {};
-
                 Y.each(d, function(v, k) {
                     if (name in d[k]) {
+                        o = o || {};
                         o[k] = v[name];
                     }
                 }, this);
