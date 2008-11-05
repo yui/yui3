@@ -1,6 +1,6 @@
 /* Menus and submenus */
 
-.yui-skin-sam .yui-menu-content,
+.yui-skin-sam .yui-menu-content, 
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-content {
 
     font-size: 93%;  /* 12px */
@@ -164,7 +164,7 @@
 .yui-skin-sam .yui-menu-label,
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-label {
 
-	background: url(../../../img/skins/sam/menuitem_submenuindicator.png) right center no-repeat;
+	background: url(../../../img/skins/sam/vertical-menu-submenu-indicator.png) right center no-repeat;
 
 }
 
@@ -192,7 +192,7 @@
 	padding-right: 20px;
     display: block;
     *display: inline-block;	/* fixes IE mouseover issue */
-    background: url(../../../img/skins/sam/menubaritem_submenuindicator.png) right center no-repeat;
+    background: url(../../../img/skins/sam/horizontal-menu-submenu-indicator.png) right center no-repeat;
 
 }
 
@@ -221,24 +221,24 @@
 	width: 5px;
 	overflow: hidden;
 	text-indent: -1000px;
-    background: url(../../../img/skins/sam/menubaritem_submenuindicator.png) 3px center no-repeat;	
+    background: url(../../../img/skins/sam/horizontal-menu-submenu-indicator.png) 3px center no-repeat;	
 	
 }
 
 
 /* Selected MenuItem */
 
-.yui-skin-sam .yui-menu-label-hover,
+.yui-skin-sam .yui-menu-label-active,
 .yui-skin-sam .yui-menu-label-menuvisible,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-hover,
+.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-active,
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-label-menuvisible {
 
 	background-color: #B3D4FF;
 
 }
 
-.yui-skin-sam .yui-menuitem-hover .yui-menuitem-content,
-.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-hover .yui-menuitem-content {
+.yui-skin-sam .yui-menuitem-active .yui-menuitem-content,
+.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-active .yui-menuitem-content {
 
 	background-image: none;
     background-color: #B3D4FF;
@@ -250,8 +250,8 @@
 }
 
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label-hover,
-.yui-skin-sam .yui-menu-horizontal .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-menu-horizontal .yui-menu-label-active,
+.yui-skin-sam .yui-menu-horizontal .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-menu-horizontal .yui-menu-label-menuvisible {
 
     border-color: #7D98B8;
@@ -259,12 +259,12 @@
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label-hover,
-.yui-skin-sam .yui-menubuttonnav .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-menubuttonnav .yui-menu-label-active,
+.yui-skin-sam .yui-menubuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-menubuttonnav .yui-menu-label-menuvisible,
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-hover,
-.yui-skin-sam .yui-splitbuttonnav .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-active,
+.yui-skin-sam .yui-splitbuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible {
 
     border-left-width: 1px;
@@ -282,6 +282,6 @@
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible .yui-menu-toggle {
 
     border-color: #7D98B8;
-    background: url(../../../img/skins/sam/split-button-arrow-active.png) left center no-repeat;
+    background: url(../../../img/skins/sam/horizontal-menu-submenu-toggle.png) left center no-repeat;
 
 }

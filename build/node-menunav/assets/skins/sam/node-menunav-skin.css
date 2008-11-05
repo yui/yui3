@@ -228,17 +228,17 @@
 
 /* Selected MenuItem */
 
-.yui-skin-sam .yui-menu-label-hover,
+.yui-skin-sam .yui-menu-label-active,
 .yui-skin-sam .yui-menu-label-menuvisible,
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-hover,
+.yui-skin-sam .yui-menu .yui-menu .yui-menu-label-active,
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-label-menuvisible {
 
 	background-color: #B3D4FF;
 
 }
 
-.yui-skin-sam .yui-menuitem-hover .yui-menuitem-content,
-.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-hover .yui-menuitem-content {
+.yui-skin-sam .yui-menuitem-active .yui-menuitem-content,
+.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-active .yui-menuitem-content {
 
 	background-image: none;
     background-color: #B3D4FF;
@@ -250,8 +250,8 @@
 }
 
 
-.yui-skin-sam .yui-menu-horizontal .yui-menu-label-hover,
-.yui-skin-sam .yui-menu-horizontal .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-menu-horizontal .yui-menu-label-active,
+.yui-skin-sam .yui-menu-horizontal .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-menu-horizontal .yui-menu-label-menuvisible {
 
     border-color: #7D98B8;
@@ -259,12 +259,12 @@
 
 }
 
-.yui-skin-sam .yui-menubuttonnav .yui-menu-label-hover,
-.yui-skin-sam .yui-menubuttonnav .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-menubuttonnav .yui-menu-label-active,
+.yui-skin-sam .yui-menubuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-menubuttonnav .yui-menu-label-menuvisible,
 
-.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-hover,
-.yui-skin-sam .yui-splitbuttonnav .yui-menuitem-hover .yui-menuitem-content,
+.yui-skin-sam .yui-splitbuttonnav .yui-menu-label-active,
+.yui-skin-sam .yui-splitbuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible {
 
     border-left-width: 1px;

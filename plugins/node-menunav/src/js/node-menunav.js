@@ -31,7 +31,7 @@ var UA = Y.UA,
 	PERIOD = ".",
 	HANDLED_MOUSEOUT = "handledMouseOut",
 	HANDLED_MOUSEOVER = "handledMouseOver",
-	HOVER = "hover",
+	ACTIVE = "active",
 	LABEL = "label",
 	LOWERCASE_A = "a",
 	MOUSEDOWN = "mousedown",
@@ -46,10 +46,10 @@ var UA = Y.UA,
 	CSS_MENU_HIDDEN = getClassName(MENU, HIDDEN),
 	CSS_MENU_HORIZONTAL = getClassName(MENU, "horizontal"),
 	CSS_MENU_LABEL = getClassName(MENU, LABEL),
-	CSS_MENU_LABEL_HOVER = getClassName(MENU, LABEL, HOVER),
+	CSS_MENU_LABEL_ACTIVE = getClassName(MENU, LABEL, ACTIVE),
 	CSS_MENU_LABEL_MENUVISIBLE = getClassName(MENU, LABEL, (MENU + "visible")),
 	CSS_MENUITEM = getClassName(MENUITEM),
-	CSS_MENUITEM_HOVER = getClassName(MENUITEM, HOVER),
+	CSS_MENUITEM_ACTIVE = getClassName(MENUITEM, ACTIVE),
 	CSS_SHIM = getClassName("shim"),
 
 
@@ -215,6 +215,13 @@ var handleMouseOutForNode = function (node, relatedTarget) {
 };
 
 
+var getActiveClass = function (node) {
+
+	return node.hasClass(CSS_MENUITEM) ? CSS_MENUITEM_ACTIVE : CSS_MENU_LABEL_ACTIVE;
+
+};
+
+
 var MenuNav = function (config) {
 
 	var menuNav = this,
@@ -357,6 +364,17 @@ var MenuNav = function (config) {
 
 };
 
+
+MenuNav.NAME = "nodeMenuNav";
+MenuNav.NS = "nodeMenuNav";
+
+
+//	Need to set the "frameBorder" property to 0 to supress the default <iframe>
+//	border in IE.  Setting the CSS "border" property alone doesn't supress it.
+
+MenuNav.SHIM_TEMPLATE = '<iframe role="presentation" class="' + CSS_SHIM + '" title="Menu Stacking Shim" src="javascript:false;"></iframe>';
+
+
 MenuNav.prototype = {
 
 	// Private properties
@@ -493,7 +511,7 @@ MenuNav.prototype = {
 		if (UA.ie === 6) {
 
 			if (!IFrameTemplate) {
-				IFrameTemplate = Y.Node.create(Y.Plugin.NodeMenuNav.SHIM_TEMPLATE);
+				IFrameTemplate = Y.Node.create(MenuNav.SHIM_TEMPLATE);
 			}
 
 			oIFrame = menu.query(PERIOD + CSS_SHIM);
@@ -532,7 +550,7 @@ MenuNav.prototype = {
 		}
 
 
-		menu.queryAll((PERIOD + CSS_MENUITEM_HOVER)).removeClass(CSS_MENUITEM_HOVER);
+		menu.queryAll((PERIOD + CSS_MENUITEM_ACTIVE)).removeClass(CSS_MENUITEM_ACTIVE);
 
 		// Clear the values for top and left that were set by the call to "setXY"
 		// so that any hidden position values are applied from class names
@@ -747,7 +765,7 @@ MenuNav.prototype = {
 
 
 		menuNav._focusItem(menuLabel);
-		menuLabel.addClass(CSS_MENU_LABEL_HOVER);
+		menuLabel.addClass(CSS_MENU_LABEL_ACTIVE);
 
 
 		if (bUseAutoSubmenuDisplay && !menuNav._movingToSubmenu) {
@@ -793,7 +811,7 @@ MenuNav.prototype = {
 			oSubmenu = menuLabel.next();
 
 
-		menuLabel.removeClass(CSS_MENU_LABEL_HOVER);
+		menuLabel.removeClass(CSS_MENU_LABEL_ACTIVE);
 
 
 		if (bUseAutoSubmenuDisplay) {
@@ -834,7 +852,7 @@ MenuNav.prototype = {
 			bUseAutoSubmenuDisplay = (menuNav._autoSubmenuDisplay && bIsRoot || !bIsRoot);
 		
 
-		menuItem.addClass(CSS_MENUITEM_HOVER);
+		menuItem.addClass(CSS_MENUITEM_ACTIVE);
 		menuNav._focusItem(menuItem);
 
 
@@ -849,7 +867,7 @@ MenuNav.prototype = {
 
 	_onMenuItemMouseOut: function (menuItem, event) {
 
-		menuItem.removeClass(CSS_MENUITEM_HOVER);
+		menuItem.removeClass(CSS_MENUITEM_ACTIVE);
 
 	},
 
@@ -1218,10 +1236,10 @@ MenuNav.prototype = {
 
 							//	The call to "preventDefault" below results in the element 
 							//	serving as the Menu's label to not receive focus in Webkit, therefore
-							//	the "_hasFocus" flag never gets set to TRUE, meaning the first
+							//	the "_hasFocus" flag never gets set to true, meaning the first
 							//	item in the submenu isn't focused when the submenu is displayed.
 							//	To fix this issue, it is necessary to set the "_hasFocus"
-							//	flag to TRUE.
+							//	flag to true.
 	
 							if (UA.webkit && !menuNav._hasFocus) {
 								menuNav._hasFocus = TRUE;
@@ -1339,7 +1357,6 @@ MenuNav.prototype = {
 	
 	},
 
-
 	_onDocFocus: function (event) {
 	
 		var menuNav = this,
@@ -1364,6 +1381,8 @@ MenuNav.prototype = {
 							oActiveItem : oActiveItem.query(LOWERCASE_A);
 		
 					removeFromTabIndex(oActiveItemAnchor);
+					
+					oActiveItem.removeClass(getActiveClass(oActiveItem));
 		
 				}
 
@@ -1371,7 +1390,11 @@ MenuNav.prototype = {
 			
 			}
 
-			menuNav._activeItem = getMenuItem(oTarget) || getMenuLabel(oTarget);
+			oActiveItem = getMenuItem(oTarget) || getMenuLabel(oTarget);
+
+			oActiveItem.addClass(getActiveClass(oActiveItem));
+			
+			menuNav._activeItem = oActiveItem;
 
 		}
 		else {
@@ -1382,6 +1405,8 @@ MenuNav.prototype = {
 							oFirstItem : oFirstItem.query(LOWERCASE_A);
 			
 				placeInDefaultTabIndex(oFirstItemAnchor);
+				
+				oActiveItem.removeClass(getActiveClass(oFirstItem));
 
 			}
 
@@ -1397,12 +1422,3 @@ MenuNav.prototype = {
 Y.namespace('Plugin');
 
 Y.Plugin.NodeMenuNav = MenuNav;
-
-Y.Plugin.NodeMenuNav.NAME = "nodeMenuNav";
-Y.Plugin.NodeMenuNav.NS = "nodeMenuNav";
-
-
-//	Need to set the "frameBorder" property to 0 to supress the default <iframe>
-//	border in IE.  Setting the CSS "border" property alone doesn't supress it.
-
-Y.Plugin.NodeMenuNav.SHIM_TEMPLATE = '<iframe role="presentation" class="' + CSS_SHIM + '" title="Menu Stacking Shim" src="javascript:FALSE;"></iframe>';
