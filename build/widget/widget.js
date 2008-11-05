@@ -215,12 +215,12 @@ Widget.build = function(main, exts, cfg) {
     cfg = cfg || {};
     cfg.aggregates = cfg.aggregates || [];
 
-    cfg.aggregates.concat(Widget.build.AGGREGATES);
+    cfg.aggregates = cfg.aggregates.concat(Widget.build.AGGREGATES);
 
     return Base.build.call(Base, main, exts, cfg);
 };
 
-Widget.build.AGGREGATES = ["PLUGINS"];
+Widget.build.AGGREGATES = ["PLUGINS", "HTML_PARSER"];
 
 /**
  * Static property provides a string to identify the class.
@@ -431,6 +431,24 @@ Widget.getByNode = function(node) {
 
     return widget || null;
 };
+
+/**
+ * @property HTML_PARSER
+ * @type Object
+ * @static
+ *
+ * Object hash, defining how attribute values are to be parsed from
+ * markup contained in the widget's content box. e.g.:
+ * <pre>
+ *   {
+ *       titleNode: "span.yui-title"             // Set Node/NodeList references using selector syntax 
+ *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
+ *           return contentBox.query("span.title").get("innerHTML");
+ *       }
+ *   }
+ * </pre>
+ */
+Widget.HTML_PARSER = {};
 
 var UI = Widget.UI_SRC;
 
@@ -652,7 +670,7 @@ Y.extend(Widget, Y.Base, {
      */
     _parseHTML : function(node) {
  
-        var schema = this.HTML_PARSER,
+        var schema = this._getHtmlParser(),
             data,
             val;
 
@@ -664,13 +682,10 @@ Y.extend(Widget, Y.Base, {
                 if (L.isFunction(v)) {
                     val = v.call(this, node);
                 } else {
-                    if (L.isArray(v)) {
-                        var found = node.queryAll(v[0]);
-                        if (found.size() > 0) {
-                            val = found;
-                        }
-                    } else {
-                        val = node.query(v);
+                    // TODO: Forward change for Node/NodeList
+                    var found = node.query(v);
+                    if (found || found.size && found.size() > 0) {
+                        val = found;
                     }
                 }
 
@@ -678,6 +693,7 @@ Y.extend(Widget, Y.Base, {
                     data = data || {};
                     data[k] = val;
                 }
+
             }, this);
         }
 
@@ -833,12 +849,28 @@ Y.extend(Widget, Y.Base, {
      */
     _renderUI: function(parentNode) {
 
-        // TODO: Classname chaining?
-        this.get(BOUNDING_BOX).addClass(Widget.getClassName()); // Static ClassName for getByNode lookup
-        this.get(BOUNDING_BOX).addClass(this.getClassName());
-        this.get(CONTENT_BOX).addClass(this.getClassName(CONTENT));
-
+        this._renderBoxClassNames();
         this._renderBox(parentNode);
+    },
+
+    _renderBoxClassNames : function() {
+        var classes = this._getClasses(),
+            boundingBox = this.get(BOUNDING_BOX),
+            contentBox = this.get(CONTENT_BOX),
+            name;
+
+        boundingBox.addClass(Widget.getClassName());
+
+        // Start from Widget Sub Class
+        for (var i = 2, l = classes.length; i < l; ++i) {
+            name = classes[i].NAME;
+            if (name) {
+                boundingBox.addClass(ClassNameManager.getClassName(name.toLowerCase()));
+            }
+        }
+
+        // Use instance based name for content box
+        contentBox.addClass(this.getClassName(CONTENT));
     },
 
     /**
@@ -949,14 +981,14 @@ Y.extend(Widget, Y.Base, {
 
     /**
      * Sets the hasFocus state for the UI
-     * 
+     *
      * @protected
      * @param {boolean} val
      * @param {string} src String representing the source that triggered an update to 
      * the UI.     
      */
     _uiSetHasFocus: function(val, src) {
-    
+
         var box = this.get(BOUNDING_BOX),
             sClassName = this.getClassName(FOCUS);
 
@@ -1109,25 +1141,6 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * @property HTML_PARSER
-     * @type Object
-     *
-     * Object hash, defining how attribute values are to be parsed from
-     * markup contained in the widget's content box. e.g.:
-     * <pre>
-     *   {
-     *       titleNode: "span.yui-title"             // Set Node references using selector syntax 
-     *       listNodes: ["li.yui-listitem"]          // Set NodeList references using selector syntax 
-     *
-     *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
-     *           return contentBox.query("span.title").get("innerHTML");
-     *       }
-     *   }
-     * </pre>
-     */
-    HTML_PARSER : null,
-
-    /**
      * Sets strings for a particular locale, merging with any existing
      * strings which may already be defined for the locale.
      *
@@ -1254,7 +1267,32 @@ Y.extend(Widget, Y.Base, {
      * @property _strings
      * @private
      */
-    _strings: null
+    _strings: null,
+
+    /**
+     * Gets the HTML_PARSER definition for this instance, by merging HTML_PARSER
+     * definitions across the class hierarchy.
+     *
+     * @method _getHtmlParser
+     * @return {Object} HTML_PARSER definition for this instance
+     */
+    _getHtmlParser : function() {
+        if (!this._HTML_PARSER) {
+            var classes = this._getClasses(),
+                parser = {};
+
+            for (var i = 0, l = classes.length; i < l; i++) {
+                var p = classes[i].HTML_PARSER;
+                if (p) {
+                    Y.mix(parser, p, true);
+                }
+            }
+
+            this._HTML_PARSER = parser;
+        }
+
+        return this._HTML_PARSER;
+    }
 });
 
 /**
