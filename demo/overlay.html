@@ -34,7 +34,7 @@
             border:2px solid #000000;
             padding:2px;
         }
-        
+
         .yui-widget-stdmod span {
             background-color:#000;
             color:#fff;
@@ -128,8 +128,7 @@
     <script type="text/javascript">
         var widget, widget2;
 
-        // Queue is missing a "requires" event
-        YUI({base:"../build/", filter:"raw"}).use("event", "queue", "overlay", function(Y) {
+        YUI({base:"../build/", filter:"raw"}).use("queue", "overlay", function(Y) {
 
                 widget = new Y.Overlay({ 
                     width:"12em",

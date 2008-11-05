@@ -52,8 +52,6 @@ YUI.add('widget-stdmod', function(Y) {
         
         this._stdModNode = this.get(CONTENT_BOX);
 
-        this.HTML_PARSER = Y.merge(this.HTML_PARSER, StdMod.prototype.HTML_PARSER);
-
         Y.after(this._renderUIStdMod, this, RENDERUI);
         Y.after(this._bindUIStdMod, this, BINDUI);
         Y.after(this._syncUIStdMod, this, SYNCUI);
@@ -82,6 +80,23 @@ YUI.add('widget-stdmod', function(Y) {
             validator: function(val) {
                  return this._validateFillHeight(val);               
             }
+        }
+    };
+
+    StdMod.HTML_PARSER = {
+        header: function(contentBox) {
+            var node = this._findStdModSection(STD_HEADER);
+            return (node) ? node.get(INNER_HTML) : "";
+        },
+
+        body : function(contentBox) {
+            var node = this._findStdModSection(STD_BODY);
+            return (node) ? node.get(INNER_HTML) : "";
+        },
+
+        footer : function(contentBox) {
+            var node = this._findStdModSection(STD_FOOTER);
+            return (node) ? node.get(INNER_HTML) : "";
         }
     };
 
@@ -193,7 +208,6 @@ YUI.add('widget-stdmod', function(Y) {
             var contentBox = this.get(CONTENT_BOX),
                 sectionNode = this._findStdModSection(section);
 
-            // TODO: Preparing for the Node/NodeList change
             if (!sectionNode) {
                 sectionNode = this._getStdModTemplate(section);
             }
@@ -282,23 +296,6 @@ YUI.add('widget-stdmod', function(Y) {
                 return null;                
             } else {
                 return sectionNode;
-            }
-        },
-
-        HTML_PARSER : {
-            header: function(contentBox) {
-                var node = this._findStdModSection(STD_HEADER);
-                return (node) ? node.get(INNER_HTML) : "";
-            },
-
-            body : function(contentBox) {
-                var node = this._findStdModSection(STD_BODY);
-                return (node) ? node.get(INNER_HTML) : "";
-            },
-
-            footer : function(contentBox) {
-                var node = this._findStdModSection(STD_FOOTER);
-                return (node) ? node.get(INNER_HTML) : "";
             }
         },
 

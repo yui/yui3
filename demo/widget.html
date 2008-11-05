@@ -62,20 +62,18 @@
                 }
             };
 
-            Y.extend(PEWidget, Y.Widget, {
-
-                HTML_PARSER : {
-                    label : function(node) {
-                        var found = node.query("span.label");
-                        if (found) {
-                            return {
-                                contents: found.get("innerHTML")
-                            };
-                        }
+            PEWidget.HTML_PARSER = {
+                label : function(node) {
+                    var found = node.query("span.label");
+                    if (found) {
+                        return {
+                            contents: found.get("innerHTML")
+                        };
                     }
                 }
-            });
+            };
 
+            Y.extend(PEWidget, Y.Widget);
 			widget = new Y.Widget({ contentBox: '#alpha', width: 200 });
 			widget.render();
 

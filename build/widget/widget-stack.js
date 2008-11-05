@@ -49,8 +49,6 @@ YUI.add('widget-stack', function(Y) {
         this._stackNode = this.get(BOUNDING_BOX);
         this._stackHandles = {};
 
-        this.HTML_PARSER = Y.merge(this.HTML_PARSER, Stack.prototype.HTML_PARSER);
-
         // WIDGET METHOD OVERLAP
         Y.after(this._renderUIStack, this, RENDER_UI);
         Y.after(this._syncUIStack, this, SYNC_UI);
@@ -68,6 +66,12 @@ YUI.add('widget-stack', function(Y) {
             set: function(val) {
                 return this._setZIndex(val);
             }
+        }
+    };
+    
+    Stack.HTML_PARSER = {
+        zIndex: function(contentBox) {
+            return contentBox.getStyle(ZINDEX);
         }
     };
 
@@ -239,12 +243,6 @@ YUI.add('widget-stack', function(Y) {
                 Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
             }
             return Stack._SHIM_TEMPLATE.cloneNode(true);
-        },
-
-        HTML_PARSER : {
-            zIndex: function(contentBox) {
-                return contentBox.getStyle(ZINDEX);
-            }
         }
     };
 
