@@ -59,7 +59,7 @@
     // Static Properties
     /**
      * Static property used to define the default attribute 
-     * configuration for the Widget.
+     * configuration introduced by WidgetStack.
      * 
      * @property WidgetStack.ATTRS
      */
@@ -106,18 +106,23 @@
     /**
      * Default class used to mark the shim element
      * @property WidgetStack.SHIM_CLASS
+     * @type String
+     * @default "yui-widget-shim"
      */
     Stack.SHIM_CLASS = Widget.getClassName(SHIM);
 
     /**
      * Default class used to mark the boundingBox of a stacked widget.
      * @property WidgetStack.STACKED_CLASS
+     * @type String
+     * @default "yui-widget-stacked"
      */
     Stack.STACKED_CLASS = Widget.getClassName(STACKED);
 
     /**
      * Default markup template used to generate the shim element.
      * @property WidgetStack.SHIM_TEMPLATE
+     * @type String
      */
     Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
@@ -175,6 +180,7 @@
          * numbers, converting non-numerical values to 0.
          *
          * @method _setZIndex
+         * @protected
          * @param {Any} zIndex
          * @return {Number} Normalized zIndex
          */
@@ -193,6 +199,7 @@
          * for updating the UI, in response to attribute changes.
          * 
          * @method _onShimChange
+         * @protected
          * @param {Event.Facade} e The Event Facade
          */
         _onShimChange : function(e) {
@@ -204,6 +211,7 @@
          * for updating the UI, in response to attribute changes.
          * 
          * @method _onZIndexChange
+         * @protected
          * @param {Event.Facade} e The Event Facade
          */
         _onZIndexChange : function(e) {
