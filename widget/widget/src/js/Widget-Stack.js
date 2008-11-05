@@ -41,6 +41,8 @@
         HIDE_SCROLLBARS = "hide-scrollbars";
 
     /**
+     * Widget extension,  which can be used to add Stackable support to the base Widget class.
+     *
      * @class WidgetStack
      * @param {Object} User configuration object
      */
