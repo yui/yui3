@@ -37,7 +37,7 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
         FillHeightChange = "fillHeightChange",
-        ContentUpdated = "contentUpdated",
+        ContentUpdate = "contentUpdate",
 
         STD_TEMPLATE = "<div></div>",
 
@@ -288,7 +288,7 @@ YUI.add('widget-stdmod', function(Y) {
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
             this.after(FillHeightChange, this._onFillHeightChange);
-            this.after(ContentUpdated, this._fillHeight);
+            this.after(ContentUpdate, this._fillHeight);
         },
 
         /**
@@ -418,7 +418,7 @@ YUI.add('widget-stdmod', function(Y) {
             } else {
                 this._addNodeHTML(node, content, where);
             }
-            this.fire(ContentUpdated);
+            this.fire(ContentUpdate);
         },
 
         /**

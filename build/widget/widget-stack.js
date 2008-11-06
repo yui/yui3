@@ -35,7 +35,7 @@ YUI.add('widget-stack', function(Y) {
         HeightChange = "heightChange",
         ShimChange = "shimChange",
         ZIndexChange = "zIndexChange",
-        ContentUpdated = "contentUpdated",
+        ContentUpdate = "contentUpdate",
 
         // CSS
         STACKED = "stacked",
@@ -295,7 +295,7 @@ YUI.add('widget-stack', function(Y) {
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
-            handles.push(this.after(ContentUpdated, sizeShim));
+            handles.push(this.after(ContentUpdate, sizeShim));
         },
 
         /**

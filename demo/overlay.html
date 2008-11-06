@@ -19,6 +19,11 @@
     <script type="text/javascript" src="../build/overlay/overlay.js"></script>
 
     <style>
+        body {
+            .padding:0;
+            .margin:0;
+        }
+    
         .hideme {
             width:20em;
             display:block;
@@ -155,96 +160,73 @@
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
                 });
+                
+                widget.after("contentUpdate", function() {
+                    Y.log("Content Updated");
+                });
 
                 var stepDelay = 2000;
-
-                Y.Queue(
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.move(0,0);
-                            widget.set("body", "move(0,0)");
-                        }
+                
+                var fns = [
+                    function() {
+                        widget.move(0,0);
+                        widget.set("body", "move(0,0)");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("height", "12em");
-                            widget.set("body", "height, 12em");
-                        }
+                    function() {
+                        widget.set("height", "12em");
+                        widget.set("body", "height, 12em");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("align", {node:"#align", points:["lc", "rc"]});
-                            widget.set("body", "#align, lc, rc");
-                        }
+                    function() {
+                        widget.set("align", {node:"#align", points:["lc", "rc"]});
+                        widget.set("body", "#align, lc, rc");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("center", "#align");
-                            widget.set("body", "#align, center");
-                        }
+                    function() {
+                        widget.set("center", "#align");
+                        widget.set("body", "#align, center");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("zIndex", 7);
-                            widget.set("body", "zIndex, 7");
-                        }
+                    function() {
+                        widget.set("zIndex", 7);
+                        widget.set("body", "zIndex, 7");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("align", {points:["rc", "rc"]});
-                            widget.set("body", "viewport, rc, rc");
-                        }
+                    function() {
+                        widget.set("align", {points:["rc", "rc"]});
+                        widget.set("body", "viewport, rc, rc");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("center", true);
-                            widget.set("body", "viewport, center");
-                        }
+                    function() {
+                        widget.set("center", true);
+                        widget.set("body", "viewport, center");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.move(0, 0);
-                            widget.set("body", "move(0,0)");
-                        }
+                    function() {
+                        widget.move(0, 0);
+                        widget.set("body", "move(0,0)");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("width", "20em");
-                            widget.set("body", "width, 20em");
-                        }
+                    function() {
+                        widget.set("width", "20em");
+                        widget.set("body", "width, 20em");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("height", "20em");
-                            widget.set("body", "height, 20em");
-                        }
+                    function() {
+                        widget.set("height", "20em");
+                        widget.set("body", "height, 20em");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.set("fillHeight", "header");
-                            widget.set("body", "fillHeight, header");
-                        }
+                    function() {
+                        widget.set("fillHeight", "header");
+                        widget.set("body", "fillHeight, header");
                     },
-                    {
-                        timeout:stepDelay,
-                        fn:function() {
-                            widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
-                            widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
-                            widget.setBody("Replace Body - DONE!", Y.WidgetStdMod.REPLACE);
-                        }
+                    function() {
+                        widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
+                        widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
+                        widget.setBody("Replace Body - DONE!", Y.WidgetStdMod.REPLACE);
                     }
-                ).run();
+                ];
+
+                var q = new Y.Queue();
+                for (var i = 0; i < fns.length; i++){
+                    q.add({
+                        timeout:stepDelay,
+                        fn:fns[i]
+                    });
+                }
+                q.run();
             });
     </script>
 </body>
