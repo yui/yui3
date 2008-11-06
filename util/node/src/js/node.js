@@ -16,21 +16,6 @@
      * @constructor
      */
 
-    var BASE_NODE                   = 0, 
-        ELEMENT_NODE                = 1,
-        //ATTRIBUTE_NODE              = 2,
-        //TEXT_NODE                   = 3,
-        //CDATA_SECTION_NODE          = 4,
-        //ENTITY_REFERENCE_NODE       = 5,
-        //ENTITY_NODE                 = 6,
-        //PROCESSING_INSTRUCTION_NODE = 7,
-        //COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9; //,
-        //DOCUMENT_TYPE_NODE          = 10,
-        //DOCUMENT_FRAGMENT_NODE      = 11,
-        //NOTATION_NODE               = 12;
-
-
     var OWNER_DOCUMENT = 'ownerDocument',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
@@ -38,15 +23,14 @@
 
     var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
 
-    var Selector = Y.Selector;
-    var _instances = {};
-    var _nodes = {};
-    var _nodelists = {};
-    var _restrict = {};
+    var Selector = Y.Selector,
+        _instances = {},
+        _nodes = {},
+        _nodelists = {},
+        _restrict = {},
+        _slice = [].slice;
 
-    var _slice = [].slice;
-
-    var wrapFn = function(node, fn) {
+    var _wrapFn = function(node, fn) {
         var ret = null;
         if (fn) {
             ret = (typeof fn === 'string') ?
@@ -71,7 +55,7 @@
                 } else {
                     doc = node[OWNER_DOCUMENT];
                 }
-            } else if (Node[node._yuid]) {
+            } else if (Node[node._yuid]) { // Node instance document
                 doc = Node[node._yuid]()[0];
             }
         }
@@ -94,15 +78,19 @@
         this.refresh();
     };
 
-    Node.scrubVal = function(val, node) {
+    Node.scrubVal = function(val, node, depth) {
         if (val !== undefined) {
             if (typeof val === 'object' && val !== null) {
-                if (NODE_TYPE in val || (val.item && val.length) || val.push || val.document) {
+                if (NODE_TYPE in val || // dom node
+                    (val.item) || // dom collection or Node instance
+                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
+                    val.document) { // window TODO: restrict?
                     if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
                         val = null; // not allowed to go outside of root node
                     } else {
                         val = Node.get(val);
                     }
+                } else {
                 }
             }
         } else {
@@ -112,8 +100,8 @@
         return val;
     };
 
-    var SETTERS = {};
-    var GETTERS = {
+    Node.setters = {};
+    Node.getters = {
         /**
          * Normalizes nodeInnerText and textContent. 
          * @property text
@@ -149,26 +137,6 @@
         }
     };
 
-    Node.setters = function(prop, fn) {
-        if (typeof prop == 'string') {
-            SETTERS[prop] = fn;
-        } else { // assume object
-            Y.each(prop, function(fn, prop) {
-                Node.setters(prop, fn);
-            });
-        } 
-    };
-
-    Node.getters = function(prop, fn) {
-        if (typeof prop == 'string') {
-            GETTERS[prop] = fn;
-        } else { // assume object
-            Y.each(prop, function(fn, prop) {
-                Node.getters(prop, fn);
-            });
-        } 
-    };
-
     Node.methods = function(name, fn) {
         if (typeof name == 'string') {
             Node.prototype[name] = function() {
@@ -201,7 +169,7 @@
     Node.getDOMNode = function(node) {
         var ret;
 
-        if (node.nodeType) {
+        if (node[NODE_TYPE]) {
             ret = node;
         } else if (typeof node === 'string') {
             ret = Selector.query(node, null, true);
@@ -239,8 +207,8 @@
             };
 
             var _all = function(fn, i) {
-                i = i || 0;
                 if (fn) {
+                    i = i || 0;
                     for (var node; node = nodes[i++];) {
                         fn(node);
                     }
@@ -264,7 +232,7 @@
                     }
                 }
 
-                if (nodes[NODE_TYPE]) {
+                if (nodes[NODE_TYPE] || nodes.document) { // node or window
                     nodes = [nodes];
                     Node[uid] = _first; 
                 } else {
@@ -426,10 +394,12 @@
          */
         // TODO: document.location.href
         set: function(node, prop, val) {
-            if (prop in SETTERS) { // use custom setter
-                SETTERS[prop](this, prop, val);  // passing Node instance
+            if (prop in Node.setters) { // use custom setter
+                Node.setters[prop](this, prop, val);  // passing Node instance
             } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to write
                 node[prop] = val;
+            } else {
+                Y.log(prop + ' not in ' + node, 'warn', 'Node');
             }
         },
 
@@ -442,8 +412,8 @@
          */
         get: function(node, prop) {
             var val;
-            if (prop in GETTERS) { // use custom getter
-                val = GETTERS[prop].call(this, node, prop);
+            if (prop in Node.getters) { // use custom getter
+                val = Node.getters[prop].call(this, node, prop);
             } else {
                 val = node[prop];
             }
@@ -459,7 +429,7 @@
         invoke: function(node, method, a, b, c, d, e) {
             var ret;
 
-            if (a) { // first 2 may be Node instances or strings
+            if (a) { // first 2 may be Node instances
                 a = (a[NODE_TYPE]) ? a : _getDOMNode(a);
                 if (b) {
                     b = (b[NODE_TYPE]) ? b : _getDOMNode(b);
@@ -527,7 +497,7 @@
          * @return {Node} The matching Node instance or null if not found
          */
         ancestor: function(node, fn) {
-            return Y.DOM.elementByAxis(node, 'parentNode', wrapFn(fn));
+            return Y.DOM.elementByAxis(node, 'parentNode', _wrapFn(fn));
         },
 
         /**
@@ -540,7 +510,7 @@
          * @return {Node} Node instance or null if not found
          */
         previous: function(node, fn, all) {
-            return Y.DOM.elementByAxis(node, 'previousSibling', wrapFn(fn), all);
+            return Y.DOM.elementByAxis(node, 'previousSibling', _wrapFn(fn), all);
         }, 
 
         /**
@@ -553,7 +523,7 @@
          * @return {Node} Node instance or null if not found
          */
         next: function(node, fn, all) {
-            return Y.DOM.elementByAxis(node, 'nextSibling', wrapFn(fn), all);
+            return Y.DOM.elementByAxis(node, 'nextSibling', _wrapFn(fn), all);
         },
         
         /**
