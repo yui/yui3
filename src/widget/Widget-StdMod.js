@@ -35,7 +35,7 @@
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
         FillHeightChange = "fillHeightChange",
-        ContentUpdated = "contentUpdated",
+        ContentUpdate = "contentUpdate",
 
         STD_TEMPLATE = "<div></div>",
 
@@ -286,7 +286,7 @@
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
             this.after(FillHeightChange, this._onFillHeightChange);
-            this.after(ContentUpdated, this._fillHeight);
+            this.after(ContentUpdate, this._fillHeight);
         },
 
         /**
@@ -416,7 +416,7 @@
             } else {
                 this._addNodeHTML(node, content, where);
             }
-            this.fire(ContentUpdated);
+            this.fire(ContentUpdate);
         },
 
         /**

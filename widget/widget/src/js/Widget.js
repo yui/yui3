@@ -27,6 +27,8 @@ var WIDGET = "widget",
     RENDER = "render",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
+    
+    ContentUpdate = "contentUpdate",
 
     Base = Y.Base,
     O = Y.Object,
@@ -388,6 +390,19 @@ Y.extend(Widget, Y.Base, {
     initializer: function(config) {
         Y.log('initializer called', 'life', 'widget');
 
+        /**
+         * Notification event, which widget implementations can fire, when
+         * they change the content of the widget. This event has no default
+         * behavior and cannot be prevented, so the "on" or "after"
+         * moments are effectively equivalent (with on listeners being invoked before 
+         * after listeners).
+         *
+         * @event widget:contentUpdate
+         * @preventable false
+         * @param {Event.Facade} e The Event Facade
+         */
+        this.publish(ContentUpdate, { preventable:false });
+
 		this._name = this.constructor.NAME.toLowerCase();
 
         var nodeId = this.get(BOUNDING_BOX).get(ID);
@@ -436,7 +451,7 @@ Y.extend(Widget, Y.Base, {
      * It delegates to the widget specific renderer method to do
      * the actual work.
      * </p>
-     * 
+     *
      * @method render
      * @public
      * @chainable
@@ -452,6 +467,24 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!this.get(RENDERED)) {
+             /**
+             * <p>
+             * Lifcyle event for the render phase, fired prior to rendering the UI 
+             * for the widget (prior to invoking the widgets renderer method).
+             * </p>
+             * <p>
+             * Subscribers to the "on" moment of this event, will be notified 
+             * before the widget is rendered.
+             * </p>
+             * <p>
+             * Subscribers to the "after" momemt of this event, will be notified
+             * after rendering is complete.
+             * </p>
+             *
+             * @event widget:render
+             * @preventable _defRenderFn
+             * @param {Event.Facade} e The Event Facade
+             */
             this.publish(RENDER, { queuable:false, defaultFn: this._defRenderFn});
             this.fire(RENDER, null, parentNode);
         }
