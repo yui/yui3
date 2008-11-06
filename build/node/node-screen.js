@@ -52,7 +52,7 @@ YUI.add('node-screen', function(Y) {
         'docScrollY'
         ],
         function(v, n) {
-            Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
+            Y.Node.getters[v] = Y.Node.wrapDOMMethod(v);
         }
     );
 
@@ -118,8 +118,7 @@ YUI.add('node-screen', function(Y) {
  * @submodule node-screen
  * @for Node
  */
-
-var ATTR = [
+Y.each([
         /**
          * Returns a region object for the node 
          * @property region
@@ -134,11 +133,10 @@ var ATTR = [
         'viewportRegion'
     ],
 
-    getNode = Y.Node.getDOMNode;
-
-Y.each(ATTR, function(v, n) {
-    Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
-});
+    function(v, n) {
+        Y.Node.getters[v] = Y.Node.wrapDOMMethod(v);
+    }
+);
 
 Y.Node.addDOMMethods([
     /**
@@ -161,9 +159,9 @@ Y.Node.methods({
      */
     intersect: function(node1, node2, altRegion) {
         if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
+            node2 = Y.Node.getDOMNode(node2);
         }
-        return Y.DOM.intersect(getNode(node1), node2, altRegion); 
+        return Y.DOM.intersect(node1, node2, altRegion); 
     },
 
     /**
@@ -176,9 +174,9 @@ Y.Node.methods({
      */
     inRegion: function(node1, node2, all, altRegion) {
         if (node2 instanceof Y.Node) { // might be a region object
-            node2 = getNode(node2);
+            node2 = Y.Node.getDOMNode(node2);
         }
-        return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
+        return Y.DOM.inRegion(node1, node2, all, altRegion); 
     }
 });
 
