@@ -300,8 +300,8 @@
 
             /**
              * <p>
-             * Init event, fired prior to initialization. Invoking
-             * the preventDefault method on the event object provided 
+             * Lifecycle event for the init phase, fired prior to initialization. 
+             * Invoking the preventDefault method on the event object provided 
              * to subscribers will prevent initialization from occuring.
              * </p>
              * <p>
@@ -345,9 +345,10 @@
 
             /**
              * <p>
-             * Destroy event, fired prior to destruction. Invoking
-             * the preventDefault method on the event object provided 
-             * to subscribers will prevent destruction from proceeding.
+             * Lifecycle event for the destroy phase, 
+             * fired prior to destruction. Invoking the preventDefault 
+             * method on the event object provided to subscribers will 
+             * prevent destruction from proceeding.
              * </p>
              * <p>
              * Subscribers to the "after" moment of this event, will be notified
