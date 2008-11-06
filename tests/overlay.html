@@ -8,22 +8,24 @@
 
     <script type="text/javascript" src="../build/yui/yui.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="../build/widget/assets/widget-stack-core.css" />
-    <link rel="stylesheet" type="text/css" href="../build/overlay/assets/overlay-core.css" />
+    <link rel="stylesheet" type="text/css" href="../build/widget/assets/skins/sam/widget-stack.css" />
+    <link rel="stylesheet" type="text/css" href="../build/overlay/assets/skins/sam/overlay.css" />
 
+    <!--
     <script type="text/javascript" src="../build/widget/widget.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stack.js"></script>
     <script type="text/javascript" src="../build/widget/widget-position-ext.js"></script>
     <script type="text/javascript" src="../build/widget/widget-stdmod.js"></script>
     <script type="text/javascript" src="../build/overlay/overlay.js"></script>
+    -->
 
     <style>
         body {
-            .padding:0;
-            .margin:0;
+            padding:0;
+            margin:0;
         }
-    
+
         .hideme {
             width:20em;
             display:block;
@@ -160,7 +162,7 @@
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
                 });
-                
+
                 widget.after("contentUpdate", function() {
                     Y.log("Content Updated");
                 });
@@ -213,9 +215,29 @@
                         widget.set("body", "fillHeight, header");
                     },
                     function() {
+                        widget.set("fillHeight", "footer");
+                        widget.set("body", "fillHeight, footer");
+                    },
+                    function() {
+                        widget.set("fillHeight", null);
+                        widget.set("body", "fillHeight, false");
+                    },
+                    function() {
+                        widget.set("fillHeight", "body");
+                        widget.set("body", "fillHeight, body");
+                    },
+                    function() {
+                        widget.set("shim", false);
+                        widget.set("body", "shim, false");
+                    },
+                    function() {
+                        widget.set("shim", true);
+                        widget.set("body", "shim, true");
+                    },
+                    function() {
                         widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
-                        widget.setBody("Replace Body - DONE!", Y.WidgetStdMod.REPLACE);
+                        widget.setBody("Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);
                     }
                 ];
 
