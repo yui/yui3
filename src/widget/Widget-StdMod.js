@@ -162,7 +162,7 @@
         fillHeight: {
             value: StdMod.BODY,
             validator: function(val) {
-                 return this._validateFillHeight(val);               
+                 return this._validateFillHeight(val);
             }
         }
     };
@@ -346,13 +346,13 @@
         /**
          * Default validator for the fillHeight attribute. Verifies that the 
          * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER
-         * 
+         *
          * @method _validateFillHeight
          * @protected
-         * @param {String} val The section which should be setup to fill height
+         * @param {String} val The section which should be setup to fill height, or false/null to disable fillHeight
          */
         _validateFillHeight : function(val) {
-            return val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
+            return !val || val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
         },
 
         /**
