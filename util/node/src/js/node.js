@@ -42,32 +42,25 @@
     var _instances = {};
     var _nodes = {};
     var _nodelists = {};
-    var _restrict = null;
+    var _restrict = {};
 
-    var slice = [].slice;
+    var _slice = [].slice;
 
     // private factory
     var wrapDOM = function(node) {
         var ret = null,
             yuid = (node) ? node._yuid : null,
-            instance = _instances[yuid],
-            existingNode = _nodes[yuid];
+            instance = _instances[yuid];
 
         if (node) {
-            if (NODE_TYPE in node) {
-                if (instance && existingNode && node === existingNode) {
-                    ret = instance; // reuse existing Nodes if nodes match
-                } else {
-                    ret = new Node(node);
-                }
-            } else if ('item' in node || 'push' in node) {
-                ret = new Y.NodeList(node);
+            if (NODE_TYPE in node || (node.length && node.item) || node.push) {
+                ret = instance || new Node(node);
             }
         }
         return ret;
     };
 
-    var wrapFn = function(fn) {
+    var wrapFn = function(node, fn) {
         var ret = null;
         if (fn) {
             ret = (typeof fn === 'string') ?
@@ -75,7 +68,7 @@
                 return Y.Selector.test(n, fn);
             } : 
             function(n) {
-                return fn(_instances[n._yuid]);
+                return fn(Node[node._yuid]()[0]);
             };
         }
 
@@ -88,47 +81,18 @@
     };
 
     // returns HTMLElement
-    var getDOMNode = function(node) {
-        if (node && !node.nodeType && node._yuid) {
-            node = _nodes[node._yuid];
+    var _getDOMNode = function(node) {
+        if (node && !node[NODE_TYPE] && node._yuid) {
+            node = Node[node._yuid]()[0];
         }
 
         return  node || null;
 
     };
 
-    var addNodeListMethod = function(name) {
-        NodeList.prototype[name] = function() {
-            var a = [],
-                nodes = _nodelists[this._yuid],
-                ret;
-
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[_tmpNode._yuid] = nodes[i];
-                ret = _tmpNode[name].apply(_tmpNode, arguments);
-                if (ret !== _tmpNode) {
-                    a[i] = ret;
-                }
-            }
-
-            return a.length ? a : this;
-        };
-    };
-
-    var Node = function(node) {
-        if (!node || !node[NODE_TYPE]) {
-            Y.log('invalid node:' + node, 'error', 'Node');
-            return null;
-        }
-        
-        var yuid = Y.guid();
-        try { // IE errors on non-element expandos (cant be reused)
-            node._yuid = yuid;
-        } catch(e) {}
-        this._yuid = yuid;
-        _nodes[yuid] = node;
-        _instances[yuid] = this;
-
+    var Node = function(nodes) {
+        this.init(nodes);
+        this.refresh();
     };
 
     Node.scrubVal = function(val, node) {
@@ -209,17 +173,24 @@
     Node.methods = function(name, fn) {
         if (typeof name == 'string') {
             Node.prototype[name] = function() {
-                var args = slice.call(arguments);
-                args.unshift(this);
-                var ret = fn.apply(null, args);
-                if (ret === undefined) {
-                    ret = this;
-                }
-                return Node.scrubVal(ret);
+                var first = true,
+                    args = _slice.call(arguments, 0),
+                    instance = this,
+                    ret;
+
+                args.unshift('');
+                Node[this._yuid](function(node) {
+                    args[0] = node;
+                    var val = fn.apply(instance, args);
+                    if (first) {
+                        ret = val;
+                        first = false;
+                    }
+                });
+
+                ret = Node.scrubVal(ret, this);
+                return ret;
             };
-
-            addNodeListMethod(name);
-
 
         } else { // assume object
             Y.each(name, function(fn, name) {
@@ -236,16 +207,14 @@
         } else if (typeof node === 'string') {
             ret = Selector.query(node, null, true);
         } else {
-            ret = _nodes[node._yuid];
+            ret = Node[node._yuid]()[0];
         }
         return ret || null;
     };
 
     Node.wrapDOMMethod = function(name) {
         return function() {
-            var args = slice.call(arguments);
-            args.unshift(Y.Node.getDOMNode(args.shift()));
-            return Y.DOM[name].apply(Y.DOM, args);
+            return Y.DOM[name].apply(Y.DOM, arguments);
         };
 
     };
@@ -260,149 +229,105 @@
     };
 
     Node.prototype = {
+        init: function(nodes) {
+            var selector = typeof nodes === 'string' ? nodes : null,
+                uid = Y.stamp(this);
+
+            this.getId = function() {
+                return uid;
+            };
+
+            var _all = function(fn, i) {
+                i = i || 0;
+                if (fn) {
+                    if (fn[NODE_TYPE]) { // setter
+                        nodes = [fn];
+                    } else if (fn.item || fn.push) {
+                        nodes = fn;
+                    } else {
+                        for (var node; node = nodes[i++];) {
+                            fn(node);
+                        }
+                    }
+                }
+                return nodes;
+            };
+
+            var _first = function(fn) {
+                if (fn) {
+                    if (fn[NODE_TYPE]) { // setter
+                        nodes = [fn];
+                    } else if ((fn.item && ! fn instanceof Y.NodeList) || fn.push) {
+                        nodes = fn;
+                    } else {
+                        fn(nodes[0]);
+                    }
+                }
+                return nodes;
+            };
+
+            this.refresh = function() {
+                if (selector) {
+                    nodes = Selector.query(selector, doc, ! all);
+                }
+
+                if (nodes[NODE_TYPE]) {
+                    nodes = [nodes];
+                    Node[uid] = _first; 
+                } else {
+                    Node[uid] = _all;
+                }
+            };
+        },
+
         /**
-         * Set the value of the property/attribute on the HTMLElement bound to this Node.
-         * Only strings/numbers/booleans are passed through unless a SETTER exists.
-         * @method set
-         * @param {String} prop Property to set 
-         * @param {any} val Value to apply to the given property
+         * Filters the NodeList instance down to only nodes matching the given selector.
+         * @method filter
+         * @param {String} selector The selector to filter against
+         * @return {NodeList} NodeList containing the updated collection 
+         * @see Selector
+         */
+        filter: function(selector) {
+            return Node.scrubVal(Selector.filter(Node[this._yuid](), selector), this);
+        },
+
+        /**
+         * Applies the given function to each Node in the NodeList.
+         * @method each
+         * @param {Function} fn The function to apply 
+         * @param {Object} context optional An optional context to apply the function with
+         * Default context is the NodeList instance
+         * @return {NodeList} NodeList containing the updated collection 
          * @chainable
          */
-        set: function(prop, val) {
-            var node = _nodes[this._yuid];
-            if (prop in SETTERS) { // use custom setter
-                SETTERS[prop](this, prop, val);  // passing Node instance
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to write
-                node[prop] = val;
-            }
-            return this;
+        each: function(fn, context) {
+            context = context || this;
+            Node[this._yuid](function(node) {
+                fn.call(context, Y.get(node));
+            });
         },
 
         /**
-         * Get the value of the property/attribute on the HTMLElement bound to this Node.
-         * Only strings/numbers/booleans are passed through unless a GETTER exists.
-         * @method get
-         * @param {String} prop Property to get 
-         * @return {any} Current value of the property
+         * Returns the current number of items in the NodeList.
+         * @method size
+         * @return {Int} The number of items in the NodeList. 
          */
-        get: function(prop) {
-            var val;
-            var node = _nodes[this._yuid];
-            if (prop in GETTERS) { // use custom getter
-                val = GETTERS[prop](node, prop);
-            } else {
-                val = node[prop];
-            }
-            return Node.scrubVal(val, this);
-        },
-
-        invoke: function(method, a, b, c, d, e) {
-            if (a) { // first 2 may be Node instances or strings
-                a = (a[NODE_TYPE]) ? a : getDOMNode(a);
-                if (b) {
-                    b = (b[NODE_TYPE]) ? b : getDOMNode(b);
-                }
-            }
-            var node = _nodes[this._yuid];
-            if (node && node[method]) {
-                return Node.scrubVal(node[method](a, b, c, d, e));
-            }
-            return null;
-        },
-
-        hasMethod: function(method) {
-            return !! _nodes[this._yuid][method];
-        },
-
-        //normalize: function() {},
-        //isSupported: function(feature, version) {},
-        toString: function() {
-            var node = _nodes[this._yuid] || {};
-            return node.id || node[NODE_NAME] || 'undefined node';
+        size: function() {
+            return Node[this._yuid]().length;
         },
 
         /**
-         * Retrieves a single node based on the given CSS selector. 
-         * @method query
+         * Retrieves the Node instance at the given index. 
+         * @method item
          *
-         * @param {string} selector The CSS selector to test against.
-         * @return {Node} A Node instance for the matching HTMLElement.
+         * @param {Number} index The index of the target Node.
+         * @return {Node} The Node instance at the given index.
          */
-        query: function(selector) {
-            return wrapDOM(Selector.query(selector, _nodes[this._yuid], true));
+        item: function(index) {
+            var node = Node[this._yuid]()[index];
+            return wrapDOM(node);
         },
 
-        /**
-         * Retrieves a nodeList based on the given CSS selector. 
-         * @method queryAll
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
-         */
-        queryAll: function(selector) {
-            return wrapDOM(Selector.query(selector, _nodes[this._yuid]));
-        },
-
-        /**
-         * Test if the supplied node matches the supplied selector.
-         * @method test
-         *
-         * @param {string} selector The CSS selector to test against.
-         * @return {boolean} Whether or not the node matches the selector.
-         */
-        test: function(selector) {
-            return Selector.test(_nodes[this._yuid], selector);
-        },
-
-        /**
-         * Compares nodes to determine if they match.
-         * Node instances can be compared to each other and/or HTMLElements.
-         * @method compareTo
-         * @param {HTMLElement | Node} refNode The reference node to compare to the node.
-         * @return {Boolean} True if the nodes match, false if they do not. 
-         */
-        compareTo: function(refNode) {
-            refNode = refNode[NODE_TYPE] ? refNode : _nodes[refNode._yuid];
-            return _nodes[this._yuid] === refNode;
-        },
-
-       /*
-         * Returns the nearest ancestor that passes the test applied by supplied boolean method.
-         * @method ancestor
-         * @param {String | Function} fn A selector or boolean method for testing elements.
-         * If a function is used, it receives the current node being tested as the only argument.
-         * @return {Node} The matching Node instance or null if not found
-         */
-        ancestor: function(fn) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'parentNode', wrapFn(fn)));
-        },
-
-        /**
-         * Returns the previous matching sibling. 
-         * Returns the nearest element node sibling if no method provided.
-         * @method previous
-         * @param {String | Function} fn A selector or boolean method for testing elements.
-         * If a function is used, it receives the current node being tested as the only argument.
-         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-         * @return {Node} Node instance or null if not found
-         */
-        previous: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'previousSibling', wrapFn(fn)), all);
-        }, 
-
-        /**
-         * Returns the next matching sibling. 
-         * Returns the nearest element node sibling if no method provided.
-         * @method next
-         * @param {String | Function} fn A selector or boolean method for testing elements.
-         * If a function is used, it receives the current node being tested as the only argument.
-         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-         * @return {Node} Node instance or null if not found
-         */
-        next: function(fn, all) {
-            return wrapDOM(Y.DOM.elementByAxis(_nodes[this._yuid], 'nextSibling', wrapFn(fn)), all);
-        },
-        
        /**
          * Attaches a DOM event handler.
          * @method attach
@@ -412,8 +337,8 @@
          */
 
         attach: function(type, fn, arg) {
-            var args = slice.call(arguments, 0);
-            args.splice(2, 0, _nodes[this._yuid]);
+            var args = _slice.call(arguments, 0);
+            args.splice(2, 0, Node[this._yuid]());
             return Y.Event.attach.apply(Y.Event, args);
         },
 
@@ -425,13 +350,12 @@
          * @param {Object} arg An argument object to pass to the handler 
          * @see attach
          */
-
         on: function(type, fn, arg) {
             return this.attach.apply(this, arguments);
         },
 
         addEventListener: function(type, fn, arg) {
-            return Y.Event.nativeAdd(_nodes[this._yuid], type, fn, arg);
+            return Y.Event.nativeAdd(Node[this._yuid](), type, fn, arg);
         },
         
        /**
@@ -441,13 +365,13 @@
          * @param {Function} fn The handler to call when the event fires 
          */
         detach: function(type, fn) {
-            var args = slice.call(arguments, 0);
-            args.splice(2, 0, _nodes[this._yuid]);
+            var args = _slice.call(arguments, 0);
+            args.splice(2, 0, Node[this._yuid]());
             return Y.Event.detach.apply(Y.Event, args);
         },
 
         removeEventListener: function(type, fn) {
-            return Y.Event.nativeRemove(_nodes[this._yuid], type, fn);
+            return Y.Event.nativeRemove(Node[this._yuid](), type, fn);
         },
 
        /**
@@ -458,16 +382,6 @@
          */
         create: function(html) {
             return Y.Node.create(html);
-        },
-
-        /**
-         * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
-         * @method contains
-         * @param {Node | HTMLElement} needle The possible node or descendent
-         * @return {Boolean} Whether or not this node is the needle its ancestor
-         */
-        contains: function(needle) {
-            return Y.DOM.contains(_nodes[this._yuid], getDOMNode(needle));
         },
 
         /**
@@ -486,6 +400,174 @@
             return this;
         },
 
+        //normalize: function() {},
+        //isSupported: function(feature, version) {},
+        toString: function() {
+            var str = '', 
+            node = Node[this._yuid]()[0] || {};
+
+            if (node) {
+                str += node[NODE_NAME];
+                if (node.id) {
+                    str += '#' + node.id; 
+                }
+
+                if (node.className) {
+                    str += '.' + node.className.replace(' ', '.'); 
+                }
+            } else {
+                'no nodes for ' + this._yuid;
+            }
+            return str;
+        }
+    };
+
+    Node.methods({
+        /**
+         * Set the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a SETTER exists.
+         * @method set
+         * @param {String} prop Property to set 
+         * @param {any} val Value to apply to the given property
+         * @chainable
+         */
+        // TODO: document.location.href
+        set: function(node, prop, val) {
+            if (prop in SETTERS) { // use custom setter
+                SETTERS[prop](this, prop, val);  // passing Node instance
+            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to write
+                node[prop] = val;
+            }
+        },
+
+        /**
+         * Get the value of the property/attribute on the HTMLElement bound to this Node.
+         * Only strings/numbers/booleans are passed through unless a GETTER exists.
+         * @method get
+         * @param {String} prop Property to get 
+         * @return {any} Current value of the property
+         */
+        get: function(node, prop) {
+            var val;
+            if (prop in GETTERS) { // use custom getter
+                val = GETTERS[prop].call(this, node, prop);
+            } else {
+                val = node[prop];
+            }
+
+            return val;
+        },
+
+        invoke: function(node, method, a, b, c, d, e) {
+            var ret;
+
+            if (a) { // first 2 may be Node instances or strings
+                a = (a[NODE_TYPE]) ? a : _getDOMNode(a);
+                if (b) {
+                    b = (b[NODE_TYPE]) ? b : _getDOMNode(b);
+                }
+            }
+
+            ret = node[method](a, b, c, d, e);    
+            return ret;
+        },
+
+        hasMethod: function(node, method) {
+            return !! node[method];
+        },
+
+        /**
+         * Retrieves a single node based on the given CSS selector. 
+         * @method query
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {Node} A Node instance for the matching HTMLElement.
+         */
+        query: function(node, selector) {
+            return Selector.query(selector, node, true);
+        },
+
+        /**
+         * Retrieves a nodeList based on the given CSS selector. 
+         * @method queryAll
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
+         */
+        queryAll: function(node, selector) {
+            return Selector.query(selector, node);
+        },
+
+        /**
+         * Test if the supplied node matches the supplied selector.
+         * @method test
+         *
+         * @param {string} selector The CSS selector to test against.
+         * @return {boolean} Whether or not the node matches the selector.
+         */
+        test: function(node, selector) {
+            return Selector.test(node, selector);
+        },
+
+        /**
+         * Compares nodes to determine if they match.
+         * Node instances can be compared to each other and/or HTMLElements.
+         * @method compareTo
+         * @param {HTMLElement | Node} refNode The reference node to compare to the node.
+         * @return {Boolean} True if the nodes match, false if they do not. 
+         */
+        compareTo: function(node, refNode) {
+            refNode = _getDOMNode(refNode) || node;
+            return node === refNode;
+        },
+
+       /*
+         * Returns the nearest ancestor that passes the test applied by supplied boolean method.
+         * @method ancestor
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
+         * @return {Node} The matching Node instance or null if not found
+         */
+        ancestor: function(node, fn) {
+            return Y.DOM.elementByAxis(node, 'parentNode', wrapFn(fn));
+        },
+
+        /**
+         * Returns the previous matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
+         * @method previous
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
+         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
+         * @return {Node} Node instance or null if not found
+         */
+        previous: function(node, fn, all) {
+            return Y.DOM.elementByAxis(node, 'previousSibling', wrapFn(fn), all);
+        }, 
+
+        /**
+         * Returns the next matching sibling. 
+         * Returns the nearest element node sibling if no method provided.
+         * @method next
+         * @param {String | Function} fn A selector or boolean method for testing elements.
+         * If a function is used, it receives the current node being tested as the only argument.
+         * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
+         * @return {Node} Node instance or null if not found
+         */
+        next: function(node, fn, all) {
+            return Y.DOM.elementByAxis(node, 'nextSibling', wrapFn(fn), all);
+        },
+        
+        /**
+         * Determines whether the ndoe is an ancestor of another HTML element in the DOM hierarchy.
+         * @method contains
+         * @param {Node | HTMLElement} needle The possible node or descendent
+         * @return {Boolean} Whether or not this node is the needle its ancestor
+         */
+        contains: function(node, needle) {
+            return Y.DOM.contains(node, _getDOMNode(needle));
+        },
+
         /**
          * Determines whether the node is appended to the document.
          * @method inDoc
@@ -493,14 +575,14 @@
          * Defaults to current document. 
          * @return {Boolean} Whether or not this node is appended to the document. 
          */
-        inDoc: function(doc) {
-            var node = _nodes[this._yuid];
+        inDoc: function(node, doc) {
             doc = (doc) ? getDoc(doc) : node.ownerDocument;
             if (doc.documentElement) {
                 return Y.DOM.contains(doc.documentElement, node);
             }
-        }
-    };
+        },
+
+    });
 
     /** 
      * Creates a Node instance from an HTML string
@@ -534,8 +616,8 @@
 
         if (!doc) {
             doc = Y.config.doc;
-        } else if (doc._yuid && _nodes[doc._yuid]) {
-            doc = _nodes[doc._yuid]; 
+        } else if (doc._yuid) {
+            doc = Node[doc._yuid]()[0]; 
         }
     
         if (node && typeof node === 'string') {
@@ -549,7 +631,6 @@
         node = wrapDOM(node);
 
         if (isRoot) {
-            _restrict = _restrict || {};
             _restrict[node._yuid] = node;
         }
 
@@ -565,14 +646,14 @@
      * @return {NodeList} A NodeList instance for the supplied nodes.
      */
     Node.all = function(nodes, doc) {
-        if (nodes instanceof NodeList) {
+        if (nodes instanceof Node) {
             return nodes;
         }
 
         if (!doc) {
             doc = Y.config.doc;
-        } else if (doc._yuid && _nodes[doc._yuid]) {
-            doc = _nodes[doc._yuid]; 
+        } else if (doc._yuid) {
+            doc = Node[doc._yuid]()[0]; 
         }
     
         if (nodes && typeof nodes == 'string') {
@@ -583,7 +664,7 @@
 
     };
 
-    Y.each([
+    Y.Array.each([
         /**
          * Passes through to DOM method.
          * @method replaceChild
@@ -704,131 +785,13 @@
         'reset'
     ], function(method) {
         Node.prototype[method] = function(arg1, arg2, arg3) {
-            return this.invoke(method, arg1, arg2, arg3);
+            var ret = this.invoke(method, arg1, arg2, arg3);
+            return ret;
         };
     });
-    /** 
-     * A wrapper for manipulating multiple DOM elements
-     * @class NodeList
-     * @extends Node
-     * @constructor
-     */
-    var NodeList = function(nodes) {
-        // TODO: input validation
-        _nodelists[Y.stamp(this)] = nodes;
-    };
 
     // used to call Node methods against NodeList nodes
     var _tmpNode = Node.create('<div></div>');
-    NodeList.prototype = {};
-
-    Y.each(Node.prototype, function(fn, name) {
-        if (typeof Node.prototype[name] == 'function') {
-            addNodeListMethod(name);
-        }
-    });
-
-    Y.mix(NodeList.prototype, {
-        /**
-         * Retrieves the Node instance at the given index. 
-         * @method item
-         *
-         * @param {Number} index The index of the target Node.
-         * @return {Node} The Node instance at the given index.
-         */
-        item: function(index) {
-            var node = _nodelists[this._yuid][index];
-            return (node && node[TAG_NAME]) ? wrapDOM(node) : (node && node.get) ? node : null;
-        },
-
-        /**
-         * Set the value of the property/attribute on all HTMLElements bound to this NodeList.
-         * Only strings/numbers/booleans are passed through unless a SETTER exists.
-         * @method set
-         * @param {String} prop Property to set 
-         * @param {any} val Value to apply to the given property
-         * @see Node
-         * @chainable
-         */
-        set: function(name, val) {
-            var nodes = _nodelists[this._yuid];
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[_tmpNode._yuid] = nodes[i];
-                _tmpNode.set(name, val);
-            }
-
-            return this;
-        },
-
-        /**
-         * Get the value of the property/attribute for each of the HTMLElements bound to this NodeList.
-         * Only strings/numbers/booleans are passed through unless a GETTER exists.
-         * @method get
-         * @param {String} prop Property to get 
-         * @return {Array} Array containing the current values mapped to the Node indexes 
-         * @see Node
-         */
-        get: function(name) {
-            if (name == 'length') { // TODO: remove
-                Y.log('the length property is deprecated; use size()', 'warn', 'NodeList');
-                return _nodelists[this._yuid].length;
-            }
-            var nodes = _nodelists[this._yuid];
-            var ret = [];
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                _nodes[_tmpNode._yuid] = nodes[i];
-                ret[i] = _tmpNode.get(name);
-            }
-
-            return ret;
-        },
-
-        /**
-         * Filters the NodeList instance down to only nodes matching the given selector.
-         * @method filter
-         * @param {String} selector The selector to filter against
-         * @return {NodeList} NodeList containing the updated collection 
-         * @see Selector
-         */
-        filter: function(selector) {
-            return wrapDOM(Selector.filter(_nodelists[this._yuid], selector));
-        },
-
-        /**
-         * Applies the given function to each Node in the NodeList.
-         * @method each
-         * @param {Function} fn The function to apply 
-         * @param {Object} context optional An optional context to apply the function with
-         * Default context is the NodeList instance
-         * @return {NodeList} NodeList containing the updated collection 
-         * @chainable
-         */
-        each: function(fn, context) {
-            context = context || this;
-            var nodes = _nodelists[this._yuid];
-            for (var i = 0, len = nodes.length; i < len; ++i) {
-                fn.call(context, Y.Node.get(nodes[i]), i, this);
-            }
-            return this;
-        },
-
-        /**
-         * Returns the current number of items in the NodeList.
-         * @method size
-         * @return {Int} The number of items in the NodeList. 
-         */
-        size: function() {
-            return _nodelists[this._yuid].length;
-        },
-
-        toString: function() {
-            var nodes = _nodelists[this._yuid] || [];
-            return 'NodeList (' + nodes.length + ' items)';
-        }
-
-    }, true);
-
     Y.Node = Node;
-    Y.NodeList = NodeList;
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
