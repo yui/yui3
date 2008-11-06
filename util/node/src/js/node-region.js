@@ -50,7 +50,7 @@ Y.Node.methods({
         if (node2 instanceof Y.Node) { // might be a region object
             node2 = getNode(node2);
         }
-        return Y.DOM.intersect(getNode(node1), node2, altRegion); 
+        return Y.DOM.intersect(node1, node2, altRegion); 
     },
 
     /**
@@ -65,7 +65,7 @@ Y.Node.methods({
         if (node2 instanceof Y.Node) { // might be a region object
             node2 = getNode(node2);
         }
-        return Y.DOM.inRegion(getNode(node1), node2, all, altRegion); 
+        return Y.DOM.inRegion(node1, node2, all, altRegion); 
     }
 });
 
