@@ -1,3 +1,21 @@
 **** version 3.0.0 PR1 ***
 
+* Deprecated NodeList
+
+* Deprecated Y.all
+
+* Y.get now matches all 
+
+* Deprecated Y.Node.prototype.queryAll
+
+* Y.Node.prototype.query now matches all
+
+* Y.get now returns null for non-matching queries or zero length collections
+
+* deep setters/getters now supported (Y.get('#foo').get('firstSibling.innerHTML'))
+
+* window can now be a Node instance 
+
+**** version 3.0.0 PR1 ***
+
 * initial 3.0 revision
