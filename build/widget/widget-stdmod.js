@@ -553,10 +553,10 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to obtain the precise (sub-pixel where available) height of the node provided,
-         * including padding and border.
+         * Helper method to obtain the precise (which could be sub-pixel for certain browsers, such as FF3) 
+         * height of the node provided, including padding and border.
          *
-         * @method _getPreciseHeight\
+         * @method _getPreciseHeight
          * @private
          * @param {Node} node The node for which the precise height is required.
          * @return {Number} The height of the Node including borders and padding, possibly a float.
@@ -564,9 +564,9 @@ YUI.add('widget-stdmod', function(Y) {
         _getPreciseHeight : function(node) {
             var height = node.get(OFFSET_HEIGHT);
 
-            if (node.getBoundingClientRect) {
-                var rect = node.getBoundingClientRect();
-                height = rect.bottom - rect.top;
+            var preciseRegion = node.invoke("getBoundingClientRect");
+            if (preciseRegion) {
+                height = preciseRegion.bottom - preciseRegion.top;
             }
 
             return height;

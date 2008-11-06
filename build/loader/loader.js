@@ -310,6 +310,11 @@ var BASE = 'base',
             requires: ['yui-base']
         },
 
+        overlay: {
+            requires: ['widget', 'widget-position', 'widget-position-ext', 'widget-stack', 'widget-stdmod'],
+            skinnable: true
+        },
+
         profiler: { },
 
         queue: {
@@ -323,7 +328,17 @@ var BASE = 'base',
         },
 
         widget: {
-            requires: ['base', 'node', 'classnamemanager']
+            requires: ['base', 'node', 'classnamemanager'],
+            plugins: {
+                'widget-position': { },
+                'widget-position-ext': {
+                    requires: ['widget-position']
+                },
+                'widget-stack': {
+                    skinnable: true
+                },
+                'widget-stdmod': { }
+            }
         },
 
         // Since YUI is required for everything else, it should not be specified as
@@ -759,11 +774,11 @@ Y.Env.meta = META;
 
 
             // Handle submodule logic
-            var subs = o.submodules;
+            var subs = o.submodules, i;
             if (subs) {
                 var sup = [], l=0;
 
-                for (var i in subs) {
+                for (i in subs) {
                     if (subs.hasOwnProperty(i)) {
                         var s = subs[i];
                         s.path = _path(name, i, o.type);
@@ -775,6 +790,19 @@ Y.Env.meta = META;
 
                 o.supersedes = sup;
                 o.rollup = Math.min(l-1, 4);
+            }
+
+            var plugins = o.plugins;
+            if (plugins) {
+                for (i in plugins) {
+                    if (plugins.hasOwnProperty(i)) {
+                        var plug = plugins[i];
+                        plug.path = _path(name, i, o.type);
+                        plug.requires = plug.requires || [];
+                        plug.requires.push(name);
+                        this.addModule(plug, i);
+                    }
+                }
             }
 
             this.moduleInfo[name] = o;

@@ -128,6 +128,7 @@ YUI.add('attribute', function(Y) {
         }
         */
     };
+
     /**
      * Managed Attribute Provider
      * @module attribute
@@ -759,10 +760,9 @@ YUI.add('attribute', function(Y) {
          * @param {String} attrName The name of the attribute
          * @param {String} strFullPath The full path of the property being changed, 
          * if this is a sub-attribute value being change
-         * @param {Function} defaultFn The default handler for the change event
          * @param {Object} opts Any additional event data to mix into the attribute change event's event facade.
          */
-        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, defaultFn, opts) {
+        _fireAttChange: function(type, currVal, newVal, attrName, strFullPath, opts) {
             type = type + CHANGE;
 
             // TODO: Publishing temporarily, while we address event bubbling/queuing
@@ -787,6 +787,7 @@ YUI.add('attribute', function(Y) {
     Y.mix(Attribute, Y.Event.Target, false, null, 1);
 
     Y.Attribute = Attribute;
+
 
 
 }, '@VERSION@' ,{requires:['event']});
