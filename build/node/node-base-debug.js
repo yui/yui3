@@ -114,10 +114,10 @@ YUI.add('node-base', function(Y) {
 
     Node.scrubVal = function(val, node, depth) {
         if (val !== undefined) {
-            if (typeof val === 'object') {
+            if (typeof val === 'object' || typeof val === 'function') { // safari nodeList === function
                 if (val !== null && (
                         NODE_TYPE in val || // dom node
-                        (val.item) || // dom collection or Node instance
+                        val.item || // dom collection or Node instance
                         (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
                         val.document) // window TODO: restrict?
                     ) { 
