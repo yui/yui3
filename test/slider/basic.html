@@ -6,37 +6,53 @@
     <style type="text/css">
         .yui-slider-rail {
             background: #ccc;
+            position: relative;
         }
         .yui-slider-thumb {
-            background: #070;
+            Xbackground: #070;
+            position: absolute;
+            Xleft: 74px;
+        }
+        #t {
+            height: 21px;
+            width: 17px;
+            background: blue;
         }
     </style>
 </head>
 <body>
 <div class="markup">
-    <div id="report"></div>
-    <div id="slider"></div>
+    <div id="slider">
+        <!--img id="t" src='http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'-->
+        <div id="t"></div>
+    </div>
+    <div id="report">0</div>
 </div>
 
 <script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
 <script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
 <script type="text/javascript" src="/3.x/build/slider/slider.js"></script>
 <script type="text/javascript">
-YUI({base:'/3.x/build/'/*,filter: 'debug'*/}).use('widget','slider',function (Y) {
+YUI({base:'/3.x/build/',filter: 'debug',logExclude:{base:true,event:true,attribute:true}}).use('widget','slider',function (Y) {
 
 var report = Y.get('#report');
 
 var s = new Y.Slider({
     railHeight: '20px',
     railWidth: '200px',
-    values : [0,10,50,100]
-    //thumbImage: 'http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'
+    min : 100,
+    max : -100,
+    values : [100,75,33,14,0,-26,-47,-69,-91,-100],
+    value : 25,
+    thumb: '#t'
 });
-s.on('change',function (e) {
-    report.set('innerHTML',e.value);
+s.on('valueChange',function (e) {
+    report.set('innerHTML',e.newVal);
 });
 
 s.render('#slider');
+
+report.set('innerHTML',s.getValue());
 
 });
 </script>
