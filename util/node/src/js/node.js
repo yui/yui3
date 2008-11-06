@@ -509,7 +509,12 @@
          * @return {Node} A Node instance for the matching HTMLElement.
          */
         query: function(node, selector) {
-            return Selector.query(selector, node);
+            var ret = Selector.query(selector, node);
+            if (!ret.length) {
+                ret = null;
+            }
+
+            return ret;
         },
 
         /**
@@ -522,7 +527,12 @@
          */
         queryAll: function(node, selector) {
             Y.log('node.queryAll is deprecated; use node.query', 'warn', 'Node'); 
-            return Selector.query(selector, node);
+            var ret = Selector.query(selector, node);
+            if (!ret.length) {
+                ret = null;
+            }
+
+            return ret;
         },
 
         /**
@@ -665,6 +675,7 @@
     /**
      * Retrieves a NodeList instance for the given object/string. 
      * @method all
+     * @deprecated Use Y.get
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
@@ -673,6 +684,7 @@
     Node.all = function() {
         Y.log('Y.all / Node.all is deprecated; use Y.get', 'warn', 'Node'); 
         Node.get.apply(Node, arguments);
+    };
 
     Y.Array.each([
         /**
