@@ -503,25 +503,36 @@ YUI.add('node-base', function(Y) {
         },
 
         /**
-         * Retrieves a single node based on the given CSS selector. 
+         * Retrieves a Node instance of nodes based on the given CSS selector. 
          * @method query
          *
          * @param {string} selector The CSS selector to test against.
          * @return {Node} A Node instance for the matching HTMLElement.
          */
         query: function(node, selector) {
-            return Selector.query(selector, node, true);
+            var ret = Selector.query(selector, node);
+            if (!ret.length) {
+                ret = null;
+            }
+
+            return ret;
         },
 
         /**
          * Retrieves a nodeList based on the given CSS selector. 
          * @method queryAll
+         * @deprecated Use query() which returns all matches
          *
          * @param {string} selector The CSS selector to test against.
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
          */
         queryAll: function(node, selector) {
-            return Selector.query(selector, node);
+            var ret = Selector.query(selector, node);
+            if (!ret.length) {
+                ret = null;
+            }
+
+            return ret;
         },
 
         /**
@@ -664,12 +675,15 @@ YUI.add('node-base', function(Y) {
     /**
      * Retrieves a NodeList instance for the given object/string. 
      * @method all
+     * @deprecated Use Y.get
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
      * @return {NodeList} A NodeList instance for the supplied nodes.
      */
-    Node.all = Node.get;
+    Node.all = function() {
+        Node.get.apply(Node, arguments);
+    };
 
     Y.Array.each([
         /**
