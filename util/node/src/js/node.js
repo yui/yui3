@@ -46,20 +46,6 @@
 
     var _slice = [].slice;
 
-    // private factory
-    var wrapDOM = function(node) {
-        var ret = null,
-            yuid = (node) ? node._yuid : null,
-            instance = _instances[yuid];
-
-        if (node) {
-            if (NODE_TYPE in node || (node.length && node.item) || node.push) {
-                ret = instance || new Node(node);
-            }
-        }
-        return ret;
-    };
-
     var wrapFn = function(node, fn) {
         var ret = null;
         if (fn) {
@@ -75,9 +61,22 @@
         return ret;
     };
 
-    var getDoc = function(node) {
-        node = _nodes[node._yuid];
-        return (node[NODE_TYPE] === 9) ? node : node[OWNER_DOCUMENT];
+    var _getDoc = function(node) {
+        var doc = Y.config.doc;
+
+        if (node) {
+            if (node[NODE_TYPE]) {
+                if (node[NODE_TYPE] === 9) { // already a document node
+                    doc = node;
+                } else {
+                    doc = node[OWNER_DOCUMENT];
+                }
+            } else if (Node[node._yuid]) {
+                doc = Node[node._yuid]()[0];
+            }
+        }
+
+        return doc;
     };
 
     // returns HTMLElement
@@ -90,8 +89,8 @@
 
     };
 
-    var Node = function(nodes) {
-        this.init(nodes);
+    var Node = function(nodes, doc) {
+        this.init(nodes, doc);
         this.refresh();
     };
 
@@ -102,7 +101,7 @@
                     if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
                         val = null; // not allowed to go outside of root node
                     } else {
-                        val = wrapDOM(val);
+                        val = Node.get(val);
                     }
                 }
             }
@@ -229,9 +228,11 @@
     };
 
     Node.prototype = {
-        init: function(nodes) {
+        init: function(nodes, doc) {
             var selector = typeof nodes === 'string' ? nodes : null,
                 uid = Y.stamp(this);
+
+            doc = _getDoc(doc);
 
             this.getId = function() {
                 return uid;
@@ -240,14 +241,8 @@
             var _all = function(fn, i) {
                 i = i || 0;
                 if (fn) {
-                    if (fn[NODE_TYPE]) { // setter
-                        nodes = [fn];
-                    } else if (fn.item || fn.push) {
-                        nodes = fn;
-                    } else {
-                        for (var node; node = nodes[i++];) {
-                            fn(node);
-                        }
+                    for (var node; node = nodes[i++];) {
+                        fn(node);
                     }
                 }
                 return nodes;
@@ -255,20 +250,18 @@
 
             var _first = function(fn) {
                 if (fn) {
-                    if (fn[NODE_TYPE]) { // setter
-                        nodes = [fn];
-                    } else if ((fn.item && ! fn instanceof Y.NodeList) || fn.push) {
-                        nodes = fn;
-                    } else {
-                        fn(nodes[0]);
-                    }
+                    fn(nodes[0]);
                 }
                 return nodes;
             };
 
             this.refresh = function() {
                 if (selector) {
-                    nodes = Selector.query(selector, doc, ! all);
+                    if (selector === 'document') {
+                        nodes = [Y.config.doc];
+                    } else {
+                        nodes = Selector.query(selector, doc);
+                    }
                 }
 
                 if (nodes[NODE_TYPE]) {
@@ -303,7 +296,7 @@
         each: function(fn, context) {
             context = context || this;
             Node[this._yuid](function(node) {
-                fn.call(context, Y.get(node));
+                fn.call(context, Node.get(node));
             });
         },
 
@@ -325,7 +318,7 @@
          */
         item: function(index) {
             var node = Node[this._yuid]()[index];
-            return wrapDOM(node);
+            return Node.get(node);
         },
 
        /**
@@ -455,6 +448,11 @@
                 val = node[prop];
             }
 
+            // wrapper uses undefined in chaining test
+            if (val === undefined) {
+                val = null;
+            }
+
             return val;
         },
 
@@ -576,7 +574,7 @@
          * @return {Boolean} Whether or not this node is appended to the document. 
          */
         inDoc: function(node, doc) {
-            doc = (doc) ? getDoc(doc) : node.ownerDocument;
+            doc = (doc) ? _getDoc(doc) : node.ownerDocument;
             if (doc.documentElement) {
                 return Y.DOM.contains(doc.documentElement, node);
             }
@@ -590,16 +588,16 @@
      * @param {String} html HTML string
      */
     Node.create = function(html) {
-        return wrapDOM(Y.DOM.create(html));
+        return Node.get(Y.DOM.create(html));
     };
 
     Node.getById = function(id, doc) {
         doc = (doc && doc[NODE_TYPE]) ? doc : Y.config.doc;
-        return wrapDOM(doc.getElementById(id));
+        return Node.get(doc.getElementById(id));
     };
 
     /**
-     * Retrieves a Node instance for the given object/string. 
+     * Retrieves a Node instance for the given query or nodes. 
      * Note: Use 'document' string to retrieve document Node instance from string
      * @method get
      * @static
@@ -610,31 +608,21 @@
      * @return {Node} A wrapper instance for the supplied object.
      */
     Node.get = function(node, doc, isRoot) {
-        if (node instanceof Node) {
-            return node;
-        }
-
-        if (!doc) {
-            doc = Y.config.doc;
-        } else if (doc._yuid) {
-            doc = Node[doc._yuid]()[0]; 
-        }
-    
-        if (node && typeof node === 'string') {
-            if (node === 'document') {
-                node = Y.config.doc;
+        var instance;
+        if (node) {
+            if (node instanceof Node) {
+                instance = node;
             } else {
-                node = Y.Selector.query(node, doc, true);
+                instance = new Node(node, doc);
+            }
+            // TODO: move to Node
+            if (isRoot) {
+                _restrict[instance._yuid] = instance;
             }
         }
 
-        node = wrapDOM(node);
-
-        if (isRoot) {
-            _restrict[node._yuid] = node;
-        }
-
-        return node;
+        // zero length collection returns null
+        return (instance && instance.size()) ? instance : null;
     };
 
     /**
@@ -645,24 +633,7 @@
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
      * @return {NodeList} A NodeList instance for the supplied nodes.
      */
-    Node.all = function(nodes, doc) {
-        if (nodes instanceof Node) {
-            return nodes;
-        }
-
-        if (!doc) {
-            doc = Y.config.doc;
-        } else if (doc._yuid) {
-            doc = Node[doc._yuid]()[0]; 
-        }
-    
-        if (nodes && typeof nodes == 'string') {
-            nodes = Selector.query(nodes, doc);
-        }
-
-        return wrapDOM(nodes);
-
-    };
+    Node.all = Node.get;
 
     Y.Array.each([
         /**
