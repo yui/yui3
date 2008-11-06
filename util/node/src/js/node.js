@@ -21,8 +21,6 @@
         NODE_NAME = 'nodeName',
         NODE_TYPE = 'nodeType';
 
-    var RE_VALID_PROP_TYPES = /(?:string|boolean|number)/;
-
     var Selector = Y.Selector,
         _instances = {},
         _nodes = {},
@@ -30,7 +28,7 @@
         _restrict = {},
         _slice = [].slice;
 
-    var _wrapFn = function(node, fn) {
+    var _wrapFn = function(fn) {
         var ret = null;
         if (fn) {
             ret = (typeof fn === 'string') ?
@@ -38,7 +36,7 @@
                 return Y.Selector.test(n, fn);
             } : 
             function(n) {
-                return fn(Node[node._yuid]()[0]);
+                return fn(Y.get(n));
             };
         }
 
@@ -75,22 +73,67 @@
 
     var Node = function(nodes, doc) {
         this.init(nodes, doc);
+        this.initPlugins();
         this.refresh();
+    };
+
+    Node.plugins = {};
+
+    Node._deepGet = function (path, val) {
+        var pl = path.length,
+            i;
+
+        if (pl > 0) {
+            for (i = 0; val !== undefined && i < pl; ++i) {
+                val = val[path[i]];
+            }
+        }
+
+        return val;
+    };
+
+    Node._deepSet = function(path, val, subval) {
+        var leafIdx = path.length-1,
+            i,
+            o;
+
+        if (leafIdx >= 0) {
+            o = val;
+
+            for (i = 0; o !== undefined && i < leafIdx; ++i) {
+                o = o[path[i]];
+            }
+
+            if (o !== undefined && o[path[i]] !== undefined) {
+                o[path[i]] = subval;
+            }
+        }
     };
 
     Node.scrubVal = function(val, node, depth) {
         if (val !== undefined) {
-            if (typeof val === 'object' && val !== null) {
-                if (NODE_TYPE in val || // dom node
-                    (val.item) || // dom collection or Node instance
-                    (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
-                    val.document) { // window TODO: restrict?
+            if (typeof val === 'object') {
+                if (val !== null && (
+                        NODE_TYPE in val || // dom node
+                        (val.item) || // dom collection or Node instance
+                        (val[0] && val[0][NODE_TYPE]) || // assume array of nodes
+                        val.document) // window TODO: restrict?
+                    ) { 
                     if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
                         val = null; // not allowed to go outside of root node
                     } else {
                         val = Node.get(val);
                     }
                 } else {
+                    depth = depth === undefined ? 4 : depth;
+                    if (depth > 0) {
+                        for (var i in val) {
+                            if (val.hasOwnProperty(i)) {
+                                val[i] = Node.scrubVal(val[i], node, --depth);
+                            }
+                        }
+                    }
+                    
                 }
             }
         } else {
@@ -146,7 +189,7 @@
                     ret;
 
                 args.unshift('');
-                Node[this._yuid](function(node) {
+                Node[instance._yuid](function(node) {
                     args[0] = node;
                     var val = fn.apply(instance, args);
                     if (first) {
@@ -239,6 +282,12 @@
                     Node[uid] = _all;
                 }
             };
+        },
+
+        initPlugins: function() {
+            Y.each(Node.plugins, function(config, fn) {
+                this.plug(fn, config);
+            });
         },
 
         /**
@@ -394,12 +443,16 @@
          */
         // TODO: document.location.href
         set: function(node, prop, val) {
-            if (prop in Node.setters) { // use custom setter
-                Node.setters[prop](this, prop, val);  // passing Node instance
-            } else if (RE_VALID_PROP_TYPES.test(typeof node[prop])) { // safe to write
-                node[prop] = val;
+            if (prop.indexOf('.') < 0) {
+                if (prop in Node.setters) { // use custom setter
+                    Node.setters[prop](this, prop, val);  // passing Node instance
+                } else if (node[prop] !== undefined) { // no expandos 
+                    node[prop] = val;
+                } else {
+                    Y.log(prop + ' not in ' + node, 'warn', 'Node');
+                }
             } else {
-                Y.log(prop + ' not in ' + node, 'warn', 'Node');
+                Node._deepSet(prop.split('.'), node, val);
             }
         },
 
@@ -412,15 +465,19 @@
          */
         get: function(node, prop) {
             var val;
-            if (prop in Node.getters) { // use custom getter
-                val = Node.getters[prop].call(this, node, prop);
-            } else {
-                val = node[prop];
-            }
+            if (prop.indexOf('.') < 0) {
+                if (prop in Node.getters) { // use custom getter
+                    val = Node.getters[prop].call(this, node, prop);
+                } else {
+                    val = node[prop];
+                }
 
-            // wrapper uses undefined in chaining test
-            if (val === undefined) {
-                val = null;
+                // method wrapper uses undefined in chaining test
+                if (val === undefined) {
+                    val = null;
+                }
+            } else {
+                val = Node._deepGet(prop.split('.'), node);
             }
 
             return val;
@@ -549,6 +606,14 @@
                 return Y.DOM.contains(doc.documentElement, node);
             }
         },
+
+        byId: function(node, id) {
+            var ret = node[OWNER_DOCUMENT].getElementById(id);
+            if (!ret || !Y.DOM.contains(node, ret)) {
+                ret = null;
+            }
+            return ret;
+        }
 
     });
 
@@ -682,6 +747,14 @@
 
         /**
          * Passes through to DOM method.
+         * @method removeAttribute
+         * @param {String} attribute The attribute to be removed 
+         * @chainable
+         */
+        'removeAttribute',
+
+        /**
+         * Passes through to DOM method.
          * @method scrollIntoView
          * @chainable
          */
@@ -723,13 +796,28 @@
          * @method reset
          * @chainable
          */
-        'reset'
+        'reset',
+
+        /**
+         * Passes through to DOM method.
+         * @method select
+         * @chainable
+         */
+         'select'
     ], function(method) {
         Node.prototype[method] = function(arg1, arg2, arg3) {
             var ret = this.invoke(method, arg1, arg2, arg3);
             return ret;
         };
     });
+
+    if (!document.documentElement.hasAttribute) {
+        Node.methods({
+            'hasAttribute': function(node, att) {
+                return !! node.getAttribute(att);
+            }
+        });
+    }
 
     // used to call Node methods against NodeList nodes
     var _tmpNode = Node.create('<div></div>');
