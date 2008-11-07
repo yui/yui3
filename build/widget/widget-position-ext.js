@@ -16,7 +16,7 @@ YUI.add('widget-position-ext', function(Y) {
             AlignChange = "alignChange";
 
         /**
-         * Widget extension,  which can be used to add extended XY positioning support to the base Widget class.
+         * Widget extension, which can be used to add extended XY positioning support to the base Widget class.
          *
          * @class WidgetPositionExt
          * @param {Object} User configuration object
@@ -257,11 +257,12 @@ YUI.add('widget-position-ext', function(Y) {
                     }
                 }
 
-                // TODO: Until normalized in Node/Dom
-                nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
-                nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
-
                 if (nodeRegion) {
+
+                    // TODO: ViewportRegion doesn't have width/height - Workaround until normalized in Node/Dom
+                    nodeRegion.width = nodeRegion.width || nodeRegion.right - nodeRegion.left;
+                    nodeRegion.height = nodeRegion.height || nodeRegion.bottom - nodeRegion.top;
+
                     widgetPoint = points[0];
                     nodePoint = points[1];
 

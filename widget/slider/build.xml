@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="YuiBuild" default="local">
-
-    <description>Component Build File</description>
-
-    <dirname property="buildfile.dir" file="${ant.file}" />
+<project name="YUI" default="local">
     <property environment="env" />
-    <property name="srcdir" value="./../.." />
-    <property name="builddir" value="${env.YUI_BUILD_DIR}" />
-    
-    <property file="${buildfile.dir}/build.properties" />
 
-    <import file="${builddir}/buildproperties.xml" description="Shared Build Properties - tools, build paths etc." />
-    <import file="${builddir}/targetlib.xml" description="Component Build Targets" />
+    <property file="build.properties" />
 
-    <target name="examples" description="Component Specific Over-ride">
-        <echo>DOES NOT DO ANYTHING CURRENTLY</echo>
-    </target>
-
+    <import file="${builddir}/3.x/bootstrap.xml" 
+            description="Default Build Properties and Targets" />
 </project>
-

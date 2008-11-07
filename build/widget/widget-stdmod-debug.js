@@ -582,12 +582,8 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            var sectionNode = this.get(CONTENT_BOX).query("." + this._getStdModClassName(section));
-            if (!sectionNode || (sectionNode.size && sectionNode.size() > 0)) {
-                return null;                
-            } else {
-                return sectionNode;
-            }
+            var sectionNode = this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
+            return (sectionNode && sectionNode.size() > 1) ? sectionNode.item(0) : sectionNode;
         },
 
         /**
