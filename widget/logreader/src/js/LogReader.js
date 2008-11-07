@@ -60,11 +60,6 @@ Y.mix(LogReader, {
             value : "Log Console"
         },
 
-        // accept messages
-        enabled : {
-            value : true
-        },
-
         // display messages received
         active : {
             value : true

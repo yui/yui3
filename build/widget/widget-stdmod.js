@@ -37,7 +37,7 @@ YUI.add('widget-stdmod', function(Y) {
         BodyChange = "bodyChange",
         FooterChange = "footerChange",
         FillHeightChange = "fillHeightChange",
-        ContentUpdated = "contentUpdated",
+        ContentUpdate = "contentUpdate",
 
         STD_TEMPLATE = "<div></div>",
 
@@ -164,7 +164,7 @@ YUI.add('widget-stdmod', function(Y) {
         fillHeight: {
             value: StdMod.BODY,
             validator: function(val) {
-                 return this._validateFillHeight(val);               
+                 return this._validateFillHeight(val);
             }
         }
     };
@@ -288,7 +288,7 @@ YUI.add('widget-stdmod', function(Y) {
             this.after(BodyChange, this._onBodyChange);
             this.after(FooterChange, this._onFooterChange);
             this.after(FillHeightChange, this._onFillHeightChange);
-            this.after(ContentUpdated, this._fillHeight);
+            this.after(ContentUpdate, this._fillHeight);
         },
 
         /**
@@ -348,13 +348,13 @@ YUI.add('widget-stdmod', function(Y) {
         /**
          * Default validator for the fillHeight attribute. Verifies that the 
          * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER
-         * 
+         *
          * @method _validateFillHeight
          * @protected
-         * @param {String} val The section which should be setup to fill height
+         * @param {String} val The section which should be setup to fill height, or false/null to disable fillHeight
          */
         _validateFillHeight : function(val) {
-            return val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
+            return !val || val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
         },
 
         /**
@@ -418,7 +418,7 @@ YUI.add('widget-stdmod', function(Y) {
             } else {
                 this._addNodeHTML(node, content, where);
             }
-            this.fire(ContentUpdated);
+            this.fire(ContentUpdate);
         },
 
         /**
@@ -553,21 +553,27 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to obtain the precise (sub-pixel where available) height of the node provided,
-         * including padding and border.
+         * Helper method to obtain the precise (which could be sub-pixel for certain browsers, such as FF3) 
+         * height of the node provided, including padding and border.
          *
-         * @method _getPreciseHeight\
+         * @method _getPreciseHeight
          * @private
          * @param {Node} node The node for which the precise height is required.
          * @return {Number} The height of the Node including borders and padding, possibly a float.
          */
         _getPreciseHeight : function(node) {
-            var height = node.get(OFFSET_HEIGHT);
+            var height = (node) ? node.get(OFFSET_HEIGHT) : 0;
+            
+            /* Until Node getBoundingClientRect is fixed
+                getBCR = "getBoundingClientRect";
 
-            if (node.getBoundingClientRect) {
-                var rect = node.getBoundingClientRect();
-                height = rect.bottom - rect.top;
+            if (node && node.hasMethod(getBCR)) {
+                var preciseRegion = node.invoke(getBCR);
+                if (preciseRegion) {
+                    height = preciseRegion.bottom - preciseRegion.top;
+                }
             }
+            */
 
             return height;
         },
@@ -582,12 +588,8 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            var sectionNode = this.get(CONTENT_BOX).query("." + this._getStdModClassName(section));
-            if (!sectionNode || (sectionNode.size && sectionNode.size() > 0)) {
-                return null;                
-            } else {
-                return sectionNode;
-            }
+            var sectionNode = this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
+            return (sectionNode && sectionNode.size() > 1) ? sectionNode.item(0) : sectionNode;
         },
 
         /**

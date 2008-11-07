@@ -1,850 +1,673 @@
-(function() {
+YUI.add('slider', function(Y) {
+
+var RAIL  = 'rail',
+    THUMB = 'thumb',
+    VALUE = 'value',
+    MIN   = 'min',
+    MAX   = 'max',
+    THUMB_IMAGE = 'thumbImage',
+    RAIL_WIDTH  = 'railWidth',
+    RAIL_HEIGHT = 'railHeight',
+    SLIDE_START = 'slideStart',
+    SLIDE_END   = 'slideEnd',
+    RENDERED    = 'rendered',
+
+    DOT    = '.',
+    PX     = 'px',
+    WIDTH  = 'width',
+    HEIGHT = 'height',
+    OFFSET_WIDTH  = 'offsetWidth',
+    OFFSET_HEIGHT = 'offsetHeight',
+    POSITION      = 'position',
 
-    var Y = YAHOO,
-        U = Y.util,
-        D = U.Dom,
-        L = Y.lang,
-        W = Y.widget;
-
-    // Widget API
-    function SliderThumb(attributes) {
-        this.constructor.superclass.constructor.apply(this, arguments);
-    }
-
-    // Widget API
-    SliderThumb.NAME = "SliderThumb";
-
-    // Widget API
-    SliderThumb.CONFIG = {
-        'group' : {},
-
-        'minX' : {
-            value : 0
-        },
-
-        'maxX' : {
-            value : 0
-        },
-
-        'minY' : {
-            value : 0
-        },
-
-        'maxY' : {
-            value : 0
-        },
-
-        'tickSize' : {
-            validator : function(val) {
-                return (L.isNumber(val) && val >= 0);
-            },
-            value : 0
-        },
-
-        'x' : {
-            set : function(val) {
-                return this._constrain(val, SliderThumb.X);
-            },
-            value : 0
-        },
-
-        'y' : {
-            set : function(val) {
-                return this._constrain(val, SliderThumb.Y);
-            },
-            value : 0
-        },
-
-        'locked' : {
-            value : false
-        }
-    };
-
-    // Widget Static Constants
-    SliderThumb.X = "X";
-    SliderThumb.Y = "Y";
-
-    L.extend(SliderThumb, W.Widget, {
-
-        // Widget API
-        initializer: function (attributes) {
-            // Can Remove. Left in for Ref Impl. readability
-        },
-
-        // Widget API
-        renderer : function() {
-            this._centerPoint = this.findCenter();
-
-            this.initDD();
-            this.initUI();
-        },
-
-        lock : function() {
-            this.set("locked", true);
-        },
-
-        unlock : function() {
-            this.set("locked", false);
-        },
-
-        isLocked : function() {
-            return this.get("locked");
-        },
-
-        getValue: function () {
-            var p = this.parent, v;
-            if (p._isRegion) {
-                v = [this.getXValue(), this.getYValue()];
-            } else if (p._isVert){
-                v = this.getYValue();
-            } else {
-                v = this.getXValue();
-            }
-            return v;
-        },
-
-        getXValue: function () {
-            return this.get("x");
-        },
-
-        getYValue: function () {
-            return this.get("y");
-        },
-
-        getXRange :  function() {
-            return this.get("maxX") - this.get("minX");
-        },
-
-        getYRange : function() {
-            return this.get("maxY") - this.get("minY");
-        },
-
-        // UI Methods
-
-        initDD : function() {
-
-            var w = this,
-                xs = this.getXScale(),
-                ys = this.getYScale();
-
-            var dd = new U.DD( this.getThumbEl().id, w.get("group"));
-
-            dd.isTarget = false;
-            dd.maintainOffset = true;
-            dd.scroll = false;
-
-            dd.setInitPosition();
-
-            dd.setXConstraint( w.get("minX") * xs, w.get("maxX") * xs, w.get("tickSize") * xs);
-            dd.setYConstraint( w.get("minY") * ys, w.get("maxY") * ys, w.get("tickSize") * ys);
-
-            this._dd = dd;
-        },
-
-        getOffsetFromParent: function(parentPos) {
-
-            var thumbEl = this.getThumbEl();
-            var offset;
-
-            if (!this.deltaOffset) {
-                var thumbPos = D.getXY(thumbEl);
-                parentPos = parentPos || D.getXY(this.getParentEl());
-
-                offset = [ (thumbPos[0] - parentPos[0]), (thumbPos[1] - parentPos[1]) ];
-
-                var l = parseInt( D.getStyle(thumbEl, "left"), 10 );
-                var t = parseInt( D.getStyle(thumbEl, "top" ), 10 );
-                var deltaX = l - offset[0];
-                var deltaY = t - offset[1];
-
-                if (!isNaN(deltaX) && !isNaN(deltaY)) {
-                    this.deltaOffset = [deltaX, deltaY];
-                }
-            } else {
-                var left = parseInt( D.getStyle(thumbEl, "left"), 10 );
-                var top  = parseInt( D.getStyle(thumbEl, "top" ), 10 );
-                offset  = [left + this.deltaOffset[0], top + this.deltaOffset[1]];
-            }
-            return offset;
-        },
-
-        getUIValue : function() {
-            var p = this.parent, v;
-            if (p._isHoriz) {
-                v = this.getUIXValue();
-            } else if (p._isVert) {
-                v = this.getUIYValue();
-            } else {
-                v = [this.getUIXValue(), this.getUIYValue()];
-            }
-            return v;
-        },
-
-        getUIXValue : function() {
-            return Math.round(this.getOffsetFromParent()[0]/this.getXScale());
-        },
-
-        getUIYValue : function() {
-            return Math.round(this.getOffsetFromParent()[1]/this.getYScale());
-        },
-
-        setXOffset : function() {
-            this.moveThumb(this.getOffsetForX(), null);
-        },
-
-        setYOffset : function() {
-            this.moveThumb(null, this.getOffsetForY());
-        },
-
-        getXScale : function() {
-            var range = this.getXRange();
-            if (range > 0) {
-                var uirange = this.getParentEl().offsetWidth - this.getThumbEl().offsetWidth;
-                return Math.round(uirange/range);
-            } else {
-                return 0;
-            }
-        },
-
-        getYScale : function() {
-            var range = this.getYRange();
-            if (range > 0) {
-                var uirange = this.getParentEl().offsetHeight - this.getThumbEl().offsetHeight;
-                return Math.round(uirange/range);
-            } else {
-                return 0;
-            }
-        },
-
-        getOffsetForX : function(x) {
-            var diff = this.getXValue() - this.get("minX");
-            var offset = diff * this.getXScale() + this._centerPoint.x;
-
-            var parentOffsetX = D.getXY(this.getParentEl())[0];
-            return parentOffsetX + offset;
-        },
-
-        getOffsetForY : function(y) {
-            var diff = this.getYValue() - this.get("minY");
-            var offset = diff * this.getYScale() + this._centerPoint.y;
-            var parentOffsetY = D.getXY(this.getParentEl())[1];
-            return parentOffsetY + offset;
-        },
-        
-        getThumbEl : function() {
-            return this._node;
-        },
-
-        getParentEl : function() {
-            return this.parent._node;
-        },
-
-        initUI : function() {
-            this.addUIListeners();
-        },
-
-        addUIListeners : function() {
-            this.on("xChange", this.setXOffset, this, true);
-            this.on("yChange", this.setYOffset, this, true);
-            this.on("tickSize", this._uiSetTickSize, this, true);
-            this.on("lockedChange", this._uiSetLock, this, true);
-
-            this.on("render", this.syncUI, this, true);
-        },
-
-        syncUI : function() {
-            this._uiSetTickSize();
-            this._uiSetLock();
-            this.setYOffset();
-            this.setXOffset();
-        },
-
-        findCenter : function() {
-            var t = this.getThumbEl();
-            return {
-                x: parseInt(t.offsetWidth/2, 10),
-                y: parseInt(t.offsetHeight/2, 10) 
-            };
-        },
-
-        moveThumb : function(x, y) {
-            var curCoord = D.getXY(this.getThumbEl());
-            var cp = this._centerPoint;
-
-            if (!x && x !== 0) {
-                x = curCoord[0] + cp.x;
-            }
-            if (!y && y !== 0) {
-                y = curCoord[1] + cp.y;
-            }
-            this._dd.setDelta(cp.x, cp.y);
-
-            if (this.fireEvent("beforeMove", [x, y, curCoord]) !== false) {
-                this.move(x, y);
-                this.fireEvent("move");
-            }
-        },
-
-        move : function(x, y) {
-            this._dd.setDragElPos(x, y);
-            this._endMove();
-        },
-
-        // TODO: Setup as move listener
-        _endMove : function() {
-            this.parent._endMove();
-        },
-
-        _constrain : function(val, axis) {
-
-            var min = this.get("min" + axis);
-            var max = this.get("max" + axis);
-
-            var tSize = this.get("tickSize");
-
-            if(val < min) {
-                val = min;
-            } else if (val > max){
-                val = max;
-            } else {
-                if (tSize > 0) {
-                    var diff = val % tSize;
-                    if (diff > 0) {
-                        if (diff < Math.round(tSize/2)) {
-                            val = val - diff;
-                        } else {
-                            val = val + (tSize - diff);
-                        }
-                    }
-                }
-            }
-            return val;
-        },
-
-        _uiSetTickSize : function() {
-            if (this.get("tickSize") === 0) {
-                this._dd.clearTicks();
-            }
-        },
-
-        _uiSetLock : function() {
-            var dd = this._dd;
-            if (this.get("locked")) {
-                dd.lock();
-            } else {
-                dd.unlock();
-            }
-        },
-
-        _centerPoint : null,
-        _dd : null
-    });
-
-    W.SliderThumb = SliderThumb;
-
-})();
-
-(function() {
-
-    // var SliderModule = function(YAHOO) {
-
-    var Y = YAHOO,
-        U = Y.util,
-        E = U.Event,
-        D = U.Dom,
-        L = Y.lang,
-        W = Y.widget;
-
-    function Slider(attributes) {
-        this.constructor.superclass.constructor.apply(this, arguments);
-    }
-
-    // Widget API - Used for class name, event prefix, toString etc.
-    Slider.NAME = "Slider";
-
-    // Slider Specific Constants
-    Slider.INC = 1;
-    Slider.DEC = -1;
-    Slider.REGION = "region";
-    Slider.HORIZ = "horiz";
-    Slider.VERT = "vert";
-
-    // Widget API
-    Slider.CONFIG = {
-        group : {},
-        thumb : {},
-        type : {
-            set : function(val) {
-                if (val == Slider.REGION) {
-                    this._isRegion = true;
-                } else if (val == Slider.HORIZ) {
-                    this._isHoriz = true;
-                } else {
-                    this._isVert = true;
-                }
-            },
-            value : Slider.HORIZ,
-            validator : function(val) {
-                return (val == Slider.HORIZ || val == Slider.VERT || val == Slider.REGION);
-            }
-        },
-        bgEnabled : {
-            value:true
-        },
-        keysEnabled : {
-            value:true 
-        },
-        keyIncrement : {
-            value:20
-        },
-        locked : {
-            value: false
-        }
-    };
-
-    L.extend(Slider, W.Widget, {
-
-        // Widget API
-        initializer : function(attributes) {
-            this.initThumb();
-        },
-
-        // Widget API
-        renderer : function() {
-            this._baselinePos = D.getXY(this.getBackgroundEl());
-
-            this.getThumb().render();
-
-            this.initDD();
-            this.initUI();
-        },
-
-        initThumb: function() {
-            var t =  this.getThumb();
-            t.parent = this;
-        },
-
-        getThumb: function() {
-            return this.get("thumb");
-        },
-
-        lock: function() {
-            this.set("locked", true);
-        },
-
-        unlock: function() {
-            this.set("locked", false);
-        },
-
-        isLocked : function() {
-            return this.get("locked");
-        },
-
-        getValue: function () { 
-            return this.getThumb().getValue();
-        },
-
-        setValueToMin : function() {
-            this._setValToLimit(false);
-        },
-
-        setValueToMax : function() {
-            this._setValToLimit(true);
-        },
-
-        setValue: function(val, force, silent) {
-            if ( this.isLocked() && !force ) {
-                return false;
-            }
-            if ( isNaN(val) ) {
-                return false;
-            }
-
-            var t = this.getThumb();
-            if (this._isRegion) {
-                return false;
-            } else if (this._isHoriz) {
-                t.set("x", val, silent);
-            } else if (this._isVert) {
-                t.set("y", val, silent);
-            }
-        },
-
-        setRegionValue: function(valX, valY, force, silent) {
-            if (this.isLocked() && !force) {
-                return false;
-            }
-            if ( isNaN(valX) && isNaN(valY)) {
-                return false;
-            }
-
-            var t = this.getThumb();
-            if (valX || valX === 0) {
-                t.set("x", valX, silent);
-            }
-            if (valY || valY === 0) {
-                t.set("y", valY, silent);
-            }
-        },
-
-        stepYValue : function(dir) {
-            var i = this.get("keyIncrement") * dir;
-
-            var newY = this.getThumb().getYValue() + i; 
-            if (this._isVert) {
-                this.setValue(newY);
-            } else if (this._isRegion) {
-                this.setRegionValue(null, newY);
-            }
-        },
-
-        stepXValue : function(dir) {
-            var i = this.get("keyIncrement") * dir;
-
-            var newX = this.getThumb().getXValue() + i;
-            if (this._isHoriz) {
-                this.setValue(newX);
-            } else if (this._isRegion) {
-                this.setRegionValue(newX, null);
-            }
-        },
-
-        getBackgroundEl : function() {
-            return this._node;
-        },
-
-        focus: function() {
-            this._focusEl();
-            if (this.isLocked()) {
-                return false;
-            } else {
-                this._slideStart();
-                return true;
-            }
-        },
-
-        initDD : function() {
-            this._dd = new U.DragDrop(
-                this.getBackgroundEl().id, 
-                this.get("group"), 
-                true);
-
-            this._dd.setInitPosition();
-            this._dd.isTarget = false;
-        },
-
-        initUI : function() {
-            // Events Fired in the UI, Update Model
-            this.addKeyListeners();
-            this.addDDListeners();
-            this.addThumbDDListeners();
-
-            // Events Fired in the Model, Update/Refresh View
-            this.addUIListeners();
-        },
-
-        addKeyListeners: function() {
-            var bg = this.getBackgroundEl();
-            E.on(bg, "keydown",  this._onKeyDown,  this, true);
-            E.on(bg, "keypress", this._onKeyPress, this, true);
-        },
-
-        addDDListeners : function() {
-            var self = this,
-                sDD = this._dd;
-
-            sDD.b4MouseDown = function(e) {self._beforeBGMouseDown(e);};
-            sDD.onDrag = function(e) {self._onBGDrag(e);};
-            sDD.onMouseDown = function(e) {self._onBGMouseDown(e);};
-
-            this.on(Slider.E.EndMove, this.syncValue, this, true);
-        },
-
-        addThumbDDListeners : function() {
-            var self = this,
-                tDD = this.getThumb()._dd;
-
-            tDD.onMouseDown = function(e) {self._onThumbMouseDown(e);};
-            tDD.startDrag = function(e) {self._onThumbStartDrag(e);};
-            tDD.onDrag = function(e) {self._onThumbDrag(e);};
-            tDD.onMouseUp = function(e) {self._onThumbMouseUp(e);};
-        },
-
-        addUIListeners : function() {
-            this.on("lockedChange", this._uiSetLock, this, true);
-        },
-
-        syncUI : function() {
-            this._uiSetLock();
-        },
-
-        syncValue : function() {
-            var val = this.getThumb().getUIValue();
-            if (this._isRegion) {
-                this.setRegionValue(val[0], val[1], false, true);
-            } else {
-                this.setValue(val, false, true);
-            }
-        },
-
-        _uiSetLock : function() {
-            var dd = this._dd;
-            var t = this.getThumb();
-            if (this.get("locked")) {
-                dd.lock();
-                t.lock();
-            } else {
-                dd.unlock();
-                t.unlock();
-            }
-        },
-
-        _beforeBGMouseDown: function(e) {
-            var dd = this.getThumb()._dd;
-            dd.autoOffset();
-            dd.resetConstraints();
-        },
-
-        _onBGMouseDown: function(e) {
-            if (!this.isLocked() && this.get("bgEnabled")) {
-                this.focus();
-                this._moveThumb(e);
-            }
-        },
-
-        _onBGDrag: function(e) {
-            if (!this.isLocked()) {
-                this._moveThumb(e);
-            }
-        },
-
-        _onThumbMouseDown : function (e) { 
-            return this.focus(); 
-        },
-
-        _onThumbStartDrag : function(e) { 
-            this._slideStart(); 
-        },
-
-        _onThumbDrag : function(e) {
-            this.syncValue();
-            this._fireEvents(true);
-        },
-
-        _onThumbMouseUp: function(e) {
-            if (!this.isLocked() && !this.moveComplete) {
-                this._endMove();
-            }
-        },
-
-        _onKeyPress: function(e) {
-            if (this.get("keysEnabled")) {
-                switch (E.getCharCode(e)) {
-                    case 0x25: // left
-                    case 0x26: // up
-                    case 0x27: // right
-                    case 0x28: // down
-                    case 0x24: // home
-                    case 0x23: // end
-                        E.preventDefault(e);
-                        break;
-                    default:
-                }
-            }
     
+    DIM_RE = /^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/,
+
+    L = Y.Lang,
+    isArray  = L.isArray,
+    isString = L.isString,
+    isNumber = L.isNumber;
+
+function Slider() {
+    this.constructor.superclass.constructor.apply(this,arguments);
+}
+
+Y.mix(Slider, {
+
+    NAME : 'slider',
+
+    AXIS_KEYS : {
+        x : {
+            offsetEdge    : 'left',
+            dim           : WIDTH,
+            offAxisDim    : HEIGHT,
+            axisDim       : RAIL_WIDTH,
+            offsetDim     : OFFSET_WIDTH,
+            posMethod     : 'getX',
+            eventPageAxis : 'pageX',
+            ddStick       : 'stickX',
+            ticks         : 'tickX',
+            xyIndex       : 0
         },
+        y : {
+            offsetEdge    : 'top',
+            dim           : HEIGHT,
+            offAxisDim    : WIDTH,
+            axisDim       : RAIL_HEIGHT,
+            offsetDim     : OFFSET_HEIGHT,
+            posMethod     : 'getY',
+            eventPageAxis : 'pageY',
+            ddStick       : 'stickY',
+            ticks         : 'tickY',
+            xyIndex       : 1
+        }
+    },
 
-        _onKeyDown: function(e) {
-            var s = Slider;
+    HTML_PARSER : {
+        // implemented as functions due to a timing issue with instance-based
+        // ClassNameManager
+        rail : function (cb) {
+            return cb.query(DOT+this.getClassName(RAIL));
+        },
+        thumb : function (cb) {
+            return cb.quer(DOT+this.getClassName(THUMB));
+        },
+        thumbImage : function (cb) {
+            return cb.query(DOT+this.getClassName(THUMB)+' img');
+        }
+    },
 
-            if (this.get("keysEnabled")) {
-                var changed = true;
-                switch (E.getCharCode(e)) {
-                    case 0x25:  // left 
-                        this.stepXValue(s.DEC);
-                        break;
-                    case 0x26:  // up
-                        this.stepYValue(s.DEC);
-                        break;
-                    case 0x27:  // right
-                        this.stepXValue(s.INC);
-                        break;
-                    case 0x28:  // down
-                        this.stepYValue(s.INC);
-                        break;
-                    case 0x24:  // home
-                        this.setValueToMin();
-                        break;
-                    case 0x23:  // end
-                        this.setValueToMax();
-                        break;
-                    default:
-                        changed = false;
-                }
-                if (changed) {
-                    E.stopEvent(e);
-                }
+    ATTRS : {
+        axis : {
+            value : 'x',
+            writeOnce : true,
+            validator : function (v) {
+                return this._validateNewAxis(v);
+            },
+            set : function (v) {
+                return this._setAxisFn(v);
             }
         },
 
-        _setValToLimit : function(minOrMax) {
-            var str = (minOrMax) ? "max" : "min",
-                t = this.getThumb(),
-                s = W.SliderThumb,
-                x = s.X,
-                y = s.Y;
-
-            if (this._isRegion) {
-                this.setRegionValue(t.get(str + x), t.get(str + y));
-            } else if (this._isVert) {
-                this.setValue(t.get(str + y));
-            } else {
-                this.setValue(t.get(str + x));
+        min : {
+            value : 0,
+            validator : function (v) {
+                return this._validateNewMin(v);
             }
         },
 
-        _slideStart: function() {
-            if (!this._sliding) {
-                this.fireEvent(Slider.E.SlideStart);
-                this._sliding = true;
+        max : {
+            value : 100,
+            validator : function (v) {
+                return this._validateNewMax(v);
             }
         },
 
-        _slideEnd: function() {
-            if (this._sliding && this.moveComplete) {
-                this.fireEvent(Slider.E.SlideEnd);
-                this._sliding = false;
-                this.moveComplete = false;
+        value : {
+            value : 0,
+            validator : function (v) {
+                return this._validateNewValue(v);
+            },
+            set : function (v) {
+                return this._setValueFn(v);
             }
         },
 
-        _focusEl : function() {
-            var el = this.getBackgroundEl();
-            if (el.focus) {
-                try {
-                    el.focus();
-                } catch(e) {
-                }
+        values : {
+            value : null,
+            validator : function (v) {
+                return this._validateNewValues(v);
             }
-            this._verifyOffset();
         },
 
-        _endMove: function () {
-            this.unlock();
-            this.moveComplete = true;
-
-            this.fireEvent(Slider.E.EndMove);
-            this._fireEvents();
+        rail : {
+            value : null,
+            set : function (v) {
+                return this._setRailFn(v);
+            }
         },
-        
-        _verifyOffset: function(checkPos) {
-            var newPos = D.getXY(this.getBackgroundEl());
-            if (newPos) {
-                if (newPos[0] != this._baselinePos[0] || newPos[1] != this._baselinePos[1]) {
-                    this.getThumb()._dd.resetConstraints();
-                    this._baselinePos = newPos;
+
+        thumb : {
+            value : null,
+            set : function (v) {
+                return this._setThumbFn(v);
+            }
+        },
+
+        thumbImage : {
+            value : null,
+            set : function (v) {
+                return this._setThumbImageFn(v);
+            }
+        },
+
+        railHeight : {
+            value : '0',
+            validator : function (v) {
+                return this._validateNewRailHeight(v);
+            }
+        },
+
+        railWidth : {
+            value : '0',
+            validator : function (v) {
+                return this._validateNewRailWidth(v);
+            }
+        },
+
+        backgroundEnabled : {
+            value : true,
+            validator : L.isBoolean
+        }
+    }
+});
+
+Y.extend(Slider, Y.Widget, {
+
+    _key : null,
+
+    _factor : 0.5,
+
+    _tickSize : false,
+
+    _values : null,
+
+    _railDims : null,
+
+    _thumbDims : null,
+
+    _thumbCenterOffset : 10,
+
+    initializer : function () {
+        this._key = Slider.AXIS_KEYS[this.get('axis')];
+
+        this.after('minChange',    this._afterMinChange);
+        this.after('maxChange',    this._afterMaxChange);
+        this.after('valuesChange', this._afterValuesChange);
+
+        this.after(this._key.axisDim+'Change', this._afterRailDimChange);
+
+        this.publish(SLIDE_START);
+        this.publish(SLIDE_END);
+    },
+
+    renderUI : function () {
+        var img;
+
+        this.initRail();
+
+        this.initThumb();
+    },
+
+    initRail : function () {
+        var cb   = this.get('contentBox'),
+            rail = this.get(RAIL);
+
+        // Create rail if necessary. Make sure it's in the contentBox
+        if (!rail) {
+            rail = cb.appendChild(
+                Y.Node.create('<div class="'+
+                    this.getClassName(RAIL)+'"></div>'));
+
+            this.set(RAIL,rail);
+        } else if (!cb.contains(rail)) {
+            cb.appendChild(rail);
+        }
+
+        if ('absolute|relative'.indexOf(rail.getStyle(POSITION)) === -1) {
+            rail.setStyle(POSITION,'relative');
+        }
+    },
+
+    initThumb : function () {
+        var rail    = this.get(RAIL),
+            thumb   = this.get(THUMB);
+
+        if (!thumb) {
+            thumb = Y.Node.create(
+                '<div class="'+this.getClassName(THUMB)+'"></div>');
+
+            this.set(THUMB,thumb);
+        }
+
+        if (!rail.contains(thumb)) {
+            rail.appendChild(thumb);
+        }
+
+        thumb.setStyle(POSITION,'absolute');
+
+        if (this.get(THUMB_IMAGE)) {
+            this.initThumbImage();
+        }
+    },
+
+    initThumbImage : function () {
+        var thumb = this.get(THUMB),
+            img   = this.get(THUMB_IMAGE);
+
+        if (img) {
+            if (!thumb.contains(img)) {
+                thumb.appendChild(img);
+            }
+        }
+    },
+
+    bindUI : function () {
+        this.initThumbDD();
+
+        this.after('valueChange', this._afterValueChange);
+    },
+
+    initThumbDD : function () {
+        this._dd = new Y.DD.Drag({
+            node : this.get(THUMB),
+            constrain2node : this.get(RAIL)
+        });
+
+        this._dd.on('drag:start',Y.bind(this._onDDStartDrag, this));
+        this._dd.on('drag:drag', Y.bind(this._onDDDrag,      this));
+        this._dd.on('drag:end',  Y.bind(this._onDDEndDrag,   this));
+
+        this._dd.set(this._key.ddStick, true);
+
+        this._initBackgroundDD();
+    },
+
+    _initBackgroundDD : function () {
+        var pageXY  = this._key.eventPageAxis,
+            xyIndex = this._key.xyIndex,
+            self    = this;
+
+        // Temporary hack while dd doesn't support outer handles
+        Y.on('mousedown',Y.bind(function (ev) {
+            if (self.get('backgroundEnabled')) {
+                var xy;
+
+                if (this.get('primaryButtonOnly') && ev.button > 1) {
+                    Y.log('Mousedown was not produced by the primary button',
+                          'warn', 'dd-drag');
                     return false;
                 }
+
+                this._dragThreshMet = true;
+
+                this._fixIEMouseDown();
+                ev.halt();
+
+                Y.DD.DDM.activeDrag = this;
+
+                // Adjust registered starting position by half the thumb's x/y
+                xy = this.get('dragNode').getXY();
+                xy[xyIndex] += self._thumbCenterOffset;
+
+                this._setStartPosition(xy);
+
+                this.start();
+                this._moveNode([ev.pageX,ev.pageY]);
             }
-            return true;
-        },
+        },this._dd),this.get(RAIL));
+    },
 
-        _cachePosition : function() {
-            this.getThumb()._dd.cachePosition();        
-        },
+    syncUI : function () {
+        this._scheduleSync();
+    },
 
-        _moveThumb : function(e) {
-            var x = E.getPageX(e);
-            var y = E.getPageY(e);
-            this.getThumb().moveThumb(x, y);
-        },
+    _scheduleSync : function () {
+        var img = this.get(THUMB_IMAGE), handler;
 
-        _fireEvents: function (thumbEvent) {
-            var t = this.getThumb();
+        if (!img || img.get('complete')) {
+            this._doSyncUI();
+        } else {
+            // Schedule the sync for when the image loads/errors
+            handler = Y.bind(this._doSyncUI,this);
+            img.on('load',handler);
+            img.on('error',handler);
+        }
+    },
 
-            if (!thumbEvent) {
-                this._cachePosition();
-            }
+    _doSyncUI : function () {
+        this._setRailDims();
 
-            if (!this.isLocked()) {
-                if (this._isRegion) {
-                    var newX = t.getXValue();
-                    var newY = t.getYValue();
+        this._setThumbDims();
 
-                    if (newX != this.previousX || newY != this.previousY) {
-                      this.fireEvent(Slider.E.Change, { x: newX, y: newY });
-                    }
+        this._setRailOffsetXY();
 
-                    this.previousX = newX;
-                    this.previousY = newY;
-                } else {
-                    var newVal = t.getValue();
-                      if (newVal != this.previousVal) {
-                        this.fireEvent(Slider.E.Change, newVal);
-                      }
-                      this.previousVal = newVal;
+        this._calcThumbCenterOffset();
+
+        this._updateValues();
+
+        this._setValueStops();
+
+        this._setConvFactor();
+
+        this.set(VALUE,this.get(VALUE));
+    },
+
+    _setRailDims : function () {
+        var rail  = this.get(RAIL),
+            thumb = this.get(THUMB),
+            img   = this.get(THUMB_IMAGE),
+            w     = this.get(RAIL_WIDTH),
+            h     = this.get(RAIL_HEIGHT);
+
+        if (parseInt(h,10)) {
+            // Convert to pixels
+            rail.setStyle(HEIGHT,h);
+            h = rail.getComputedStyle(HEIGHT);
+        } else {
+            // offsetWidth fails in hidden containers
+            h = (parseInt(rail.getComputedStyle(HEIGHT),10) ||
+                 (this._isImageLoaded(img) && img.get(WIDTH)) ||
+                 parseInt(thumb.getComputedStyle(HEIGHT),10) ||
+                 thumb.get(OFFSET_WIDTH)) + PX;
+        }
+
+        rail.setStyle(HEIGHT, h);
+
+        if (parseInt(w,10)) {
+            // Convert to pixels
+            rail.setStyle(WIDTH,w);
+            w = rail.getComputedStyle(WIDTH);
+        } else {
+            // offsetWidth fails in hidden containers
+            w = (parseInt(rail.getComputedStyle(WIDTH),10) ||
+                 (this._isImageLoaded(img) && img.get(HEIGHT)) ||
+                 parseInt(thumb.getComputedStyle(WIDTH),10) ||
+                 thumb.get(OFFSET_HEIGHT)) + PX;
+        }
+
+        rail.setStyle(WIDTH,w);
+
+        this._railDims = [parseInt(w,10),parseInt(h,10)];
+    },
+
+    _setRailOffsetXY : function () {
+        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex];
+    },
+
+    _setThumbDims : function () {
+        var rail  = this.get(RAIL),
+            thumb = this.get(THUMB),
+            img   = this.get(THUMB_IMAGE),
+            xy    = parseInt(rail.getComputedStyle(this._key.offAxisDim),10),
+            w,h;
+
+        // offsetWidth fails in hidden containers
+        if (this._isImageLoaded(img)) {
+            h = img.get(HEIGHT);
+            w = img.get(WIDTH);
+        } else {
+            h = parseInt(thumb.getComputedStyle(HEIGHT),10) ||
+                thumb.get(OFFSET_HEIGHT) || 
+                xy;
+
+            w = parseInt(thumb.getComputedStyle(WIDTH),10) ||
+                thumb.get(OFFSET_WIDTH) || 
+                xy;
+        }
+
+        thumb.setStyle(HEIGHT,h + PX);
+        thumb.setStyle(WIDTH, w + PX);
+        
+        this._thumbDims = [w,h];
+    },
+
+    _calcThumbCenterOffset : function () {
+        this._thumbCenterOffset = Math.round(
+            this._thumbDims[this._key.xyIndex] / 2);
+    },
+
+    _setValueStops : function () {
+        var tickSize = false, dim;
+
+        if (this._values) {
+            dim = this._railDims[this._key.xyIndex] -
+                  this._thumbDims[this._key.xyIndex];
+            tickSize = Math.floor(dim / (this._values.length - 1));
+        }
+
+        this._tickSize = tickSize;
+
+        this._dd.set(this._key.ticks, tickSize);
+    },
+
+    _updateValues : function() {
+        var min  = this.get(MIN),
+            max  = this.get(MAX),
+            v    = this.get('values'),
+            inc  = (max - min)/(v - 1),
+            vals = null,
+            i,len;
+
+        if (v) {
+            if (isArray(v)) {
+                vals = v;
+            } else {
+                vals = [min];
+
+                for (i = 1, len = v - 1; i < len; ++i) {
+                    vals[i] = Math.round(min + (i * inc));
                 }
-                this._slideEnd();
+
+                vals[i] = max;
             }
-        },
+        }
 
-        _dd : null
-    });
+        this._values = vals;
+    },
 
-    // Widget Specific Static Methods    
-    Slider.getHorizSlider = function (sliderId, thumbId, minX, maxX, iTickSize) {
-        var thumb = new W.SliderThumb({
-                id: thumbId,  
-                group: sliderId,
-                minX: minX,
-                maxX: maxX,
-                minY: 0,
-                maxY: 0,
-                tickSize: iTickSize
-        });
-        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.HORIZ });
-    };
+    _setConvFactor : function () {
+        var range = this.get(MAX) - this.get(MIN),
+            size  = this._railDims[this._key.xyIndex] -
+                    this._thumbDims[this._key.xyIndex];
 
-    Slider.getVertSlider = function (sliderId, thumbId, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb({ 
-                id: thumbId,  
-                group: sliderId,
-                minY: minY,
-                maxY: maxY,
-                minX: 0,
-                maxX: 0,
-                tickSize: iTickSize
-        });
-        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.VERT });
-    };
+        this._factor = size ? range / size : 1;
+    },
 
-    Slider.getRegionSlider = function (sliderId, thumbId, minX, maxX, minY, maxY, iTickSize) {
-        var thumb = new W.SliderThumb({  
-                id : thumbId,
-                group: sliderId, 
-                minX: minX,
-                maxX: maxX,
-                minY: minY,
-                maxY: maxY,
-                tickSize: iTickSize
-        });
-        return new Slider({ id: sliderId, group: sliderId, thumb : thumb, type: Slider.REGION });
-    };
+    getValue : function () {
+        return this.get(VALUE);
+    },
 
-    // Widget API - Event Strings : TODO
-    Slider.E = {
-        SlideStart : "slideStart",
-        SlideEnd : "slideEnd",
-        EndMove: "endMove",
-        Change: "change"
-    };
+    // silent to omit firing slideStart and slideEnd
+    setValue : function (val,silent) {
+        this.set(VALUE,val,{omitEvents:silent});
+    },
 
-    W.Slider = Slider;
+    _validateNewAxis : function (v) {
+        return isString(v) &&
+               v.length === 1 && 'xy'.indexOf(v.toLowerCase()) > -1;
+    },
 
-//    };
-//
-//    YUI.add("slider", "widget", SliderModule , "3.0.0");
+    _validateNewMin : function (v) {
+        return isNumber(v);
+    },
 
-})();
+    _validateNewMax : function (v) {
+        return isNumber(v);
+    },
 
-YAHOO.register("slider", YAHOO.widget.Slider, {version: "@VERSION@", build: "@BUILD@"});
+    _validateNewValue : function (v) {
+        var min = this.get(MIN),
+            max = this.get(MAX),
+            tmp;
+
+        if (min > max) {
+            tmp = min;
+            min = max;
+            max = tmp;
+        }
+
+        return isNumber(v) && v >= min && v <= max;
+    },
+
+    _validateNewValues : function (v) {
+        return v === null || isArray(v) ||
+            (
+                isNumber(v) && v > 1 &&
+                v <= Math.abs(this.get(MAX) - this.get(MIN))
+            );
+    },
+
+    _validateNewRailHeight : function (v) {
+        return isString(v) && (v === '0' || DIM_RE.test(v));
+    },
+
+    _validateNewRailWidth : function (v) {
+        return isString(v) && (v === '0' || DIM_RE.test(v));
+    },
+
+    _setAxisFn : function (v) {
+        return v.toLowerCase();
+    },
+
+    _setValueFn : function (v) {
+        var values = this._values,x,i;
+
+        if (values) {
+            if (this.get(MIN) > this.get(MAX)) {
+                values = Y.Array(values);
+                values.reverse();
+            }
+            x = values[values.length - 1];
+
+            for (i = values.length - 1; i >= 0; --i) {
+                if (values[i] > v) {
+                    x = values[i];
+                } else {
+                    v = Math.abs(x - v) < Math.abs(values[i] - v) ?
+                            x : values[i];
+                    break;
+                }
+            }
+        }
+
+        return Math.round(v);
+    },
+
+    _setRailFn : function (v) {
+        return v ? Y.get(v) : null;
+    },
+
+    _setThumbFn : function (v) {
+        return v ? Y.get(v) : null;
+    },
+
+    _setThumbImageFn : function (v) {
+        return v ? Y.get(v) ||
+                Y.Node.create('<img src="'+v+'" alt="Slider thumb">') :
+                null;
+    },
+
+    _onDDStartDrag : function (e) {
+        this.fire(SLIDE_START,{ddEvent:e});
+        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex];
+    },
+
+    _onDDDrag : function (e) {
+        var val    = e[this._key.eventPageAxis] - this._offsetXY,
+            before = this.get(VALUE),
+            i,len;
+            
+        if (this._values) {
+            // cache last value or binary search if loop speed becomes an issue?
+            for (i = 0,len = this._values.length - 1; i < len; ++i) {
+                if (val - (i * this._tickSize) <= 0) {
+                    break;
+                }
+            }
+
+            val = this._values[i];
+        } else {
+            val = Math.round(this.get(MIN) + (val * this._factor));
+        }
+
+        if (before !== val) {
+            this.set(VALUE, val,{ddEvent:e});
+        }
+    },
+
+    _onDDEndDrag : function (e) {
+        this.fire(SLIDE_END,{ddEvent:e});
+    },
+
+    _uiSetThumbPosition : function (v) {
+        var min,max,i,x;
+
+        if (this._values) {
+            for (i = this._values.length - 1; i >= 0; --i) {
+                if (this._values[i] === v) {
+                    break;
+                }
+            }
+
+            v = this._tickSize * i;
+        } else {
+            min = this.get(MIN);
+            max = this.get(MAX);
+
+            v = Math.round(
+                    ((v - min) / (max - min)) *
+                    (this._railDims[this._key.xyIndex] -
+                     this._thumbDims[this._key.xyIndex]));
+        }
+
+        this.get(THUMB).setStyle(this._key.offsetEdge, v + PX);
+    },
+
+    _afterValueChange : function (e) {
+        if (!e.ddEvent) {
+            this._uiSetThumbPosition(e.newVal);
+        }
+    },
+
+    _afterMinChange : function (e) {
+        this._refreshValues(e);
+    },
+
+    _afterMaxChange : function (e) {
+        this._refreshValues(e);
+    },
+
+    _afterValuesChange : function (e) {
+        this._refreshValues(e);
+    },
+
+    _afterRailDimChange : function (e) {
+        if (e.newVal !== e.prevVal) {
+            this._setRailDims();
+            
+            if (this.get(RENDERED)) {
+                this._setValueStops();
+            }
+        }
+    },
+
+    _refreshValues : function (e) {
+        if (e.newVal !== e.prevVal) {
+            if (this.get(RENDERED)) {
+                this.syncUI();
+            }
+        }
+    },
+
+    // img load error detectable by:
+    // !img.complete in IE
+    // img.complete && img.naturalWidth == 0 in FF, Saf
+    // img.complete && img.width == 0 in Opera
+    _isImageLoaded : function (img) {
+        var no = (!img || !img.get('complete')),w;
+
+        if (!no) {
+            w  = img.get('naturalWidth');
+            no = w === undefined ? !img.get(WIDTH) : !w;
+        }
+
+        return !no;
+    }
+
+});
+
+Y.Slider = Slider;
+
+
+}, '@VERSION@' ,{requires:['widget','dd']});

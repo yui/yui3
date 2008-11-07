@@ -169,6 +169,8 @@ var WIDGET = "widget",
     BOUNDING_BOX = "boundingBox",
     CONTENT_BOX = "contentBox",
     PARENT_NODE = "parentNode",
+    FIRST_CHILD = "firstChild",
+    BODY = "body",
     TAB_INDEX = "tabIndex",
     LOCALE = "locale",
     INIT_VALUE = "initValue",
@@ -176,6 +178,8 @@ var WIDGET = "widget",
     RENDER = "render",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
+    
+    ContentUpdate = "contentUpdate",
 
     Base = Y.Base,
     O = Y.Object,
@@ -469,7 +473,8 @@ Widget.getClassName = function() {
  *
  * @method Widget.getByNode
  * @static
- * @param node {Node | String} The node for which a Widget instance is required.
+ * @param node {Node | String} The node for which a Widget instance is required. If a selector
+ * string is passed in, which selects more than one node, the first node found is used.
  * @return {Widget} Widget instance, or null if not found.
  */
 Widget.getByNode = function(node) {
@@ -535,6 +540,19 @@ Y.extend(Widget, Y.Base, {
      */
     initializer: function(config) {
 
+        /**
+         * Notification event, which widget implementations can fire, when
+         * they change the content of the widget. This event has no default
+         * behavior and cannot be prevented, so the "on" or "after"
+         * moments are effectively equivalent (with on listeners being invoked before 
+         * after listeners).
+         *
+         * @event widget:contentUpdate
+         * @preventable false
+         * @param {Event.Facade} e The Event Facade
+         */
+        this.publish(ContentUpdate, { preventable:false });
+
 		this._name = this.constructor.NAME.toLowerCase();
 
         var nodeId = this.get(BOUNDING_BOX).get(ID);
@@ -582,13 +600,17 @@ Y.extend(Widget, Y.Base, {
      * It delegates to the widget specific renderer method to do
      * the actual work.
      * </p>
-     * 
+     *
      * @method render
      * @public
      * @chainable
      * @final 
-     * @param  parentNode {Object | String} Object representing a Node instance or a string 
-     * representing a CSS selector used to retrieve a Node reference.
+     * @param  parentNode {Object | String} Optional. The Node under which the 
+     * Widget is to be rendered. This can be a Node instance or a CSS selector string. 
+     * If the selector string returns more than one Node, the first node will be used 
+     * as the parentNode. NOTE: This argument is required if the boundingBox or contentBox
+     * is not currently in the document. If it's not provided, the Widget will be rendered
+     * to the body of the current document.
      */
     render: function(parentNode) {
 
@@ -597,7 +619,34 @@ Y.extend(Widget, Y.Base, {
         }
 
         if (!this.get(RENDERED)) {
-            this.publish(RENDER, { queuable:false, defaultFn: this._defRenderFn});
+             /**
+             * <p>
+             * Lifcyle event for the render phase, fired prior to rendering the UI 
+             * for the widget (prior to invoking the widgets renderer method).
+             * </p>
+             * <p>
+             * Subscribers to the "on" moment of this event, will be notified 
+             * before the widget is rendered.
+             * </p>
+             * <p>
+             * Subscribers to the "after" momemt of this event, will be notified
+             * after rendering is complete.
+             * </p>
+             *
+             * @event widget:render
+             * @preventable _defRenderFn
+             * @param {Event.Facade} e The Event Facade
+             */
+            this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
+
+            parentNode = (parentNode) ? Node.get(parentNode) : null;
+            if (parentNode && parentNode.size() > 1) {
+                parentNode = parentNode.item(0);
+            }
+            if (parentNode && !parentNode.inDoc()) {
+                parentNode = null;
+            }
+
             this.fire(RENDER, null, parentNode);
         }
 
@@ -740,9 +789,8 @@ Y.extend(Widget, Y.Base, {
                 if (L.isFunction(v)) {
                     val = v.call(this, node);
                 } else {
-                    // TODO: Forward change for Node/NodeList
                     var found = node.query(v);
-                    if (found || found.size && found.size() > 0) {
+                    if (found) {
                         val = found;
                     }
                 }
@@ -821,21 +869,20 @@ Y.extend(Widget, Y.Base, {
     * @private
     * @method _renderBox
     * @description Helper method to collect the boundingBox and contentBox, set styles and append to parentNode
-    * @param {Node} parentNode The parentNode to render the widget to.
+    * @param {Node} parentNode The parentNode to render the widget to. If not provided, and the boundingBox or 
+    * contentBox are not currently in the document, the widget will be rendered to the current documents body.
     */
     _renderBox: function(parentNode) {
 
         var contentBox = this.get(CONTENT_BOX),
             boundingBox = this.get(BOUNDING_BOX),
-            body = Node.get("body");
-
-        // append to parent if provided, or to body if no parent and not in body
-        var appendTo = (parentNode) ? Node.get(parentNode) : body;
+            body = Node.get(BODY),
+            appendTo = parentNode || body;
 
         if (appendTo && !appendTo.contains(boundingBox)) {
-            if (appendTo === body && !parentNode && appendTo.get("firstChild")) {
+            if (appendTo === body && !parentNode && appendTo.get(FIRST_CHILD)) {
                 // Special case when handling body as default (no parentNode), always insert.
-                appendTo.insertBefore(boundingBox, appendTo.get("firstChild"));
+                appendTo.insertBefore(boundingBox, appendTo.get(FIRST_CHILD));
             } else {
                 appendTo.appendChild(boundingBox);
             }
@@ -889,6 +936,10 @@ Y.extend(Widget, Y.Base, {
         node = Node.get(node);
         if (!node) {
             node = Node.create(template);
+        } else {
+            if (node.size() > 1) {
+                node = node.item(0);
+            }
         }
 
         var sid = Y.stamp(node);

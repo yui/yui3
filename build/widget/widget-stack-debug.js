@@ -20,6 +20,8 @@ YUI.add('widget-stack', function(Y) {
 
         OFFSET_WIDTH = "offsetWidth",
         OFFSET_HEIGHT = "offsetHeight",
+        PARENT_NODE = "parentNode",
+        FIRST_CHILD = "firstChild",
 
         WIDTH = "width",
         HEIGHT = "height",
@@ -35,7 +37,7 @@ YUI.add('widget-stack', function(Y) {
         HeightChange = "heightChange",
         ShimChange = "shimChange",
         ZIndexChange = "zIndexChange",
-        ContentUpdated = "contentUpdated",
+        ContentUpdate = "contentUpdate",
 
         // CSS
         STACKED = "stacked",
@@ -295,7 +297,7 @@ YUI.add('widget-stack', function(Y) {
             handles.push(this.after(VisibleChange, sizeShim));
             handles.push(this.after(WidthChange, sizeShim));
             handles.push(this.after(HeightChange, sizeShim));
-            handles.push(this.after(ContentUpdated, sizeShim));
+            handles.push(this.after(ContentUpdate, sizeShim));
         },
 
         /**
@@ -327,7 +329,7 @@ YUI.add('widget-stack', function(Y) {
 
             if (!shimEl) {
                 shimEl = this._shimNode = this._getShimTemplate();
-                stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
+                stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
                 if (UA.ie == 6) {
                     this._addShimResizeHandlers();
@@ -344,7 +346,7 @@ YUI.add('widget-stack', function(Y) {
          */
         _destroyShim : function() {
             if (this._shimNode) {
-                this._shimNode.get("parentNode").removeChild(this._shimNode);
+                this._shimNode.get(PARENT_NODE).removeChild(this._shimNode);
                 this._shimNode = null;
 
                 this._detachStackHandles(SHIM_DEFERRED);

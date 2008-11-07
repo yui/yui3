@@ -50,7 +50,7 @@
         'docScrollY'
         ],
         function(v, n) {
-            Y.Node.getters(v, Y.Node.wrapDOMMethod(v));
+            Y.Node.getters[v] = Y.Node.wrapDOMMethod(v);
         }
     );
 

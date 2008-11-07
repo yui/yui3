@@ -5,7 +5,7 @@ echo "Copying files"
 echo "****************************************"
 cd ./src/js
 wait
-cp ~/Sites/yui/dragdrop3/*.js ./
+cp /home/davglass/src/local/dragdrop3/*.js ./
 wait
 rm scroll.js
 wait
