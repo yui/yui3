@@ -914,8 +914,11 @@ YUI.add("array", function(Y) {
             } else {
                 try {
                     // indexed, but no tagName (element) or alert (window)
-                    if ("length" in o && !("tagName" in o)  && !("alert" in o)) {
-                        r = 2;
+                    if ("length" in o && 
+                        !("tagName" in o) && 
+                        !("alert" in o) && 
+                        (!Y.Lang.isFunction(o.size) || o.size() > 1)) {
+                            r = 2;
                     }
                         
                 } catch(ex) {}
