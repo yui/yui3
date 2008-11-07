@@ -42,25 +42,25 @@
             padding:2px;
         }
 
-        .yui-widget-stdmod span {
+        .yui-overlay .yui-widget-stdmod span {
             background-color:#000;
             color:#fff;
         }
 
-        .yui-widget-stdmod .yui-widget-hd {
+        .yui-overlay .yui-widget-stdmod .yui-widget-hd {
             border:2px solid red;
             background-color:#cc0000;
             color:#fff;
             padding:2px;
         }
 
-        .yui-widget-stdmod .yui-widget-bd {
+        .yui-overlay .yui-widget-stdmod .yui-widget-bd {
             font-family:monospace;
             border:2px solid blue;
             padding:2px;
         }
 
-        .yui-widget-stdmod .yui-widget-ft {
+        .yui-overlay .yui-widget-stdmod .yui-widget-ft {
             border:2px solid green;
             background-color:#00cc00;
             color:#fff;
@@ -69,6 +69,10 @@
 
         .sels {
             position:absolute;
+        }
+
+        #fromMarkup {
+            z-index:10;
         }
 
         #align {
@@ -127,7 +131,7 @@
         <div class="yui-widget-bd">
             <span>Body From Markup</span>
         </div>
-        <div class="yui-widget-ft">
+        <div id="fourth" class="yui-widget-ft">
             <span>Footer From Markup</span>
         </div>
     </div>
@@ -147,17 +151,10 @@
                 });
                 widget.render("#foobar");
 
+                /*
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
-
-                widget2 = new Y.Overlay({
-                    contentBox: "#fromMarkup",
-                    width:200,
-                    height:200,
-                    zIndex:3,
-                    xy: [800,200]
-                });
-                widget2.render();
+                */
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
@@ -167,8 +164,16 @@
                     Y.log("Content Updated");
                 });
 
+                widget2 = new Y.Overlay({
+                    contentBox: "#fromMarkup",
+                    width:200,
+                    height:200,
+                    xy: [800,200]
+                });
+                widget2.render();
+
                 var stepDelay = 2000;
-                
+
                 var fns = [
                     function() {
                         widget.move(0,0);
@@ -233,6 +238,23 @@
                     function() {
                         widget.set("shim", true);
                         widget.set("body", "shim, true");
+                    },
+                    function() {
+                        widget.hide();
+                    },
+                    function() {
+                        widget.show();
+                        widget.set("body", "hide, followed by show");
+                    },
+                    function() {
+                        widget.set("position", "relative");
+                        widget.move(100,100);
+                        widget.set("body", "position:relative, move 100,100");
+                    },
+                    function() {
+                        widget.move("position", "absolute");
+                        widget.set("xy", [0,0]);
+                        widget.set("body", "move back to 0,0 position:absolute");
                     },
                     function() {
                         widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
