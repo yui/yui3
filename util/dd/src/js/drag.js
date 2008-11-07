@@ -239,9 +239,6 @@
         dragging: {
             value: false
         },
-        parent: {
-            value: false
-        },
         /**
         * @attribute target
         * @description This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
