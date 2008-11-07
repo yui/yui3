@@ -795,7 +795,7 @@ YUI.add('node-base', function(Y) {
          * @method blur
          * @chainable
          */
-        'blur:',
+        'blur',
 
         /**
          * Passes through to DOM method.
