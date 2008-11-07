@@ -27,7 +27,7 @@
         }
 
         .hideme {
-            width:20em;
+            width:30em;
             display:block;
         }
 
@@ -168,7 +168,8 @@
                     contentBox: "#fromMarkup",
                     width:200,
                     height:200,
-                    xy: [800,200]
+                    xy: [800,200],
+                    footer: "Footer Content - was in markup, but got over-ridden in constructor"
                 });
                 widget2.render();
 
@@ -246,6 +247,7 @@
                         widget.show();
                         widget.set("body", "hide, followed by show");
                     },
+                    /*
                     function() {
                         widget.set("position", "relative");
                         widget.move(100,100);
@@ -256,6 +258,7 @@
                         widget.set("xy", [0,0]);
                         widget.set("body", "move back to 0,0 position:absolute");
                     },
+                    */
                     function() {
                         widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
