@@ -796,7 +796,7 @@
          * @method blur
          * @chainable
          */
-        'blur:',
+        'blur',
 
         /**
          * Passes through to DOM method.
