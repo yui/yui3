@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Test Page</title>
+    <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <style type="text/css">
+        .yui-slider-rail {
+            background: #ccc;
+            position: relative;
+        }
+        .yui-slider-thumb {
+            Xbackground: #070;
+            position: absolute;
+            Xleft: 74px;
+        }
+        #t {
+            height: 21px;
+            width: 17px;
+            background: blue;
+        }
+    </style>
+</head>
+<body>
+<div class="markup">
+    <div id="slider">
+        <!--img id="t" src='http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'-->
+        <div id="t"></div>
+    </div>
+    <div id="report">0</div>
+</div>
+
+<script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
+<script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
+<script type="text/javascript" src="/3.x/build/slider/slider.js"></script>
+<script type="text/javascript">
+YUI({base:'/3.x/build/',filter: 'debug',logExclude:{base:true,event:true,attribute:true}}).use('widget','slider',function (Y) {
+
+var report = Y.get('#report');
+
+var s = new Y.Slider({
+    railHeight: '20px',
+    railWidth: '200px',
+    min : 100,
+    max : -100,
+    values : [100,75,33,14,0,-26,-47,-69,-91,-100],
+    value : 25,
+    thumb: '#t'
+});
+s.on('valueChange',function (e) {
+    report.set('innerHTML',e.newVal);
+});
+
+s.render('#slider');
+
+report.set('innerHTML',s.getValue());
+
+});
+</script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlighter.js"></script>
+<script type="text/javascript" src="/assets/dpSyntaxHighlightExample.js"></script>
+</body>
+</html>

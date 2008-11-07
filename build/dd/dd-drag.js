@@ -241,9 +241,6 @@ YUI.add('dd-drag', function(Y) {
         dragging: {
             value: false
         },
-        parent: {
-            value: false
-        },
         /**
         * @attribute target
         * @description This attribute only works if the dd-drop module has been loaded. It will make this node a drop target as well as draggable.
@@ -980,4 +977,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
