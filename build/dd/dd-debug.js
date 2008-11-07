@@ -267,7 +267,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node', 'base']});
 YUI.add('dd-ddm', function(Y) {
 
     /**
@@ -382,7 +382,7 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
 YUI.add('dd-ddm-drop', function(Y) {
 
     /**
@@ -780,7 +780,7 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
 YUI.add('dd-drag', function(Y) {
 
     /**
@@ -1022,9 +1022,6 @@ YUI.add('dd-drag', function(Y) {
         * @type Boolean
         */
         dragging: {
-            value: false
-        },
-        parent: {
             value: false
         },
         /**
@@ -1778,7 +1775,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
 YUI.add('dd-proxy', function(Y) {
 
     /**
@@ -1950,7 +1947,7 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm', 'dd-drag']});
 YUI.add('dd-constrain', function(Y) {
 
     /**
@@ -2169,17 +2166,17 @@ YUI.add('dd-constrain', function(Y) {
                 oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
             
-                if (r.top > oxy[1]) {
+                if (r.top >= oxy[1]) {
                     _xy[1] = r.top;
 
                 }
-                if (oxy[1] > (r.bottom - oh)) {
+                if (oxy[1] >= (r.bottom - oh)) {
                     _xy[1] = (r.bottom - oh);
                 }
-                if (r.left > oxy[0]) {
+                if (r.left >= oxy[0]) {
                     _xy[0] = r.left;
                 }
-                if (oxy[0] > (r.right - ow)) {
+                if (oxy[0] >= (r.right - ow)) {
                     _xy[0] = (r.right - ow);
                 }
 
@@ -2333,7 +2330,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'dd-proxy']});
 YUI.add('dd-plugin', function(Y) {
 
        /**
@@ -2374,7 +2371,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], requires:['dd-drag'], skinnable:false});
+}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2809,7 +2806,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
 YUI.add('dd-drop-plugin', function(Y) {
 
        /**
@@ -2850,7 +2847,7 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
 
 
 YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});

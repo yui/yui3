@@ -267,4 +267,4 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
+}, '@VERSION@' ,{skinnable:false, requires:['node', 'base']});
