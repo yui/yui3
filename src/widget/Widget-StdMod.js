@@ -560,12 +560,18 @@
          * @return {Number} The height of the Node including borders and padding, possibly a float.
          */
         _getPreciseHeight : function(node) {
-            var height = node.get(OFFSET_HEIGHT);
+            var height = (node) ? node.get(OFFSET_HEIGHT) : 0;
+            
+            /* Until Node getBoundingClientRect is fixed
+                getBCR = "getBoundingClientRect";
 
-            var preciseRegion = node.invoke("getBoundingClientRect");
-            if (preciseRegion) {
-                height = preciseRegion.bottom - preciseRegion.top;
+            if (node && node.hasMethod(getBCR)) {
+                var preciseRegion = node.invoke(getBCR);
+                if (preciseRegion) {
+                    height = preciseRegion.bottom - preciseRegion.top;
+                }
             }
+            */
 
             return height;
         },
@@ -580,12 +586,8 @@
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            var sectionNode = this.get(CONTENT_BOX).query("." + this._getStdModClassName(section));
-            if (!sectionNode || (sectionNode.size && sectionNode.size() > 0)) {
-                return null;                
-            } else {
-                return sectionNode;
-            }
+            var sectionNode = this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
+            return (sectionNode && sectionNode.size() > 1) ? sectionNode.item(0) : sectionNode;
         },
 
         /**
