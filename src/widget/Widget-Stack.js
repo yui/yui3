@@ -18,6 +18,8 @@
 
         OFFSET_WIDTH = "offsetWidth",
         OFFSET_HEIGHT = "offsetHeight",
+        PARENT_NODE = "parentNode",
+        FIRST_CHILD = "firstChild",
 
         WIDTH = "width",
         HEIGHT = "height",
@@ -325,7 +327,7 @@
 
             if (!shimEl) {
                 shimEl = this._shimNode = this._getShimTemplate();
-                stackEl.insertBefore(shimEl, stackEl.get("firstChild"));
+                stackEl.insertBefore(shimEl, stackEl.get(FIRST_CHILD));
 
                 if (UA.ie == 6) {
                     this._addShimResizeHandlers();
@@ -342,7 +344,7 @@
          */
         _destroyShim : function() {
             if (this._shimNode) {
-                this._shimNode.get("parentNode").removeChild(this._shimNode);
+                this._shimNode.get(PARENT_NODE).removeChild(this._shimNode);
                 this._shimNode = null;
 
                 this._detachStackHandles(SHIM_DEFERRED);
