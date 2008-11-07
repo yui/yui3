@@ -310,7 +310,7 @@ YUI.add('widget-stack', function(Y) {
         _detachStackHandles : function(handleKey) {
             var handles = this._stackHandles[handleKey];
             if (handles) {
-                for (var i = handles.length; i <= 0; --i) {
+                for (var i = handles.length - 1; i >= 0; --i) {
                     handles[i].detach();
                     delete handles[i];
                 }

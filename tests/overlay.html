@@ -92,12 +92,14 @@
 <body class="yui-skin-sam">
 
     <div class="sels">
+       <button id="control-run" type="button">run</button>    
        <button id="control-show" type="button">show</button>
        <button id="control-hide" type="button">hide</button>
 
         <div style="overflow:auto;width:20em;height:5em">
             <div style="height:200em"></div>
         </div>
+
         <select class="hideme"><option>Foo</option></select>
         <select class="hideme"><option>Foo</option></select>
         <select class="hideme"><option>Foo</option></select>
@@ -150,9 +152,6 @@
                     footer:"Overlay Footer"
                 });
                 widget.render("#foobar");
-
-                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
-                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
@@ -259,7 +258,11 @@
                         fn:fns[i]
                     });
                 }
-                q.run();
+                // q.run();
+                
+                Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
+                Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
+                Y.on('click', Y.bind(q.run, q), Y.Node.get('#control-run'));                
             });
     </script>
 </body>
