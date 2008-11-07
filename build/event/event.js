@@ -128,22 +128,6 @@ YUI.add("event", function(Y) {
 
     };
 
-    /*
-     * Subscribes to the yui:load event, which fires when a Y.use operation
-     * is complete.
-     * @method ready
-     * @param f {Function} the function to execute
-     * @param c Optional execution context
-     * @param args* 0..n Additional arguments to append 
-     * to the signature provided when the event fires.
-     * @return {YUI} the YUI instance
-     */
-    // Y.ready = function(f, c) {
-    //     var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
-    //     Y.on("yui:load", m);
-    //     return this;
-    // };
-
     /**
      * Attach an event listener, either to a DOM object
      * or to an Event.Target.
@@ -163,18 +147,10 @@ YUI.add("event", function(Y) {
         var adapt = Y.Env.eventAdaptors[type];
 
         if (adapt) {
-
-
             return adapt.on.apply(Y, arguments);
-
         } else {
-
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.subscribe.apply(Y, arguments);
-                }
+                return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
             }
@@ -205,11 +181,7 @@ YUI.add("event", function(Y) {
             if (adapt) {
                 adapt.detach.apply(Y, arguments);
             } else if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.unsubscribe.apply(Y, arguments);
-                }
+                return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
             }
@@ -231,14 +203,14 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        // method override
-        // callback, object, sMethod
         if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
+        } else {
+            return Y.on.apply(Y, arguments);
         }
-
-        return Y;
     };
+
+    var after = Y.after;
 
     /**
      * Executes the callback after a DOM event, custom event
@@ -259,11 +231,10 @@ YUI.add("event", function(Y) {
     Y.after = function(type, f, o) {
         if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
+        } else {
+            return after.apply(Y, arguments);
         }
-
-        return Y;
     };
-
 
 
 }, "3.0.0", {
@@ -2180,7 +2151,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 } else if (Y.Lang.isString(el)) {
 
-                    var oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                    var oEl = (compat) ? Y.DOM.byId(el) : Y.get(el);
 
                     // If the el argument is a string, we assume it is 
                     // actually the id of the element.  If the page is loaded
@@ -2191,21 +2162,34 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     // until after the page loads.
 
                     // Node collection
-                    if (oEl && oEl.size && oEl.size() > 0) {
-                        if (oEl.size() > 1) {
-                            args[0] = oEl;
+                    // if (oEl && oEl.size && oEl.size() > 0) {
+                    //
+
+                    /*
+
+                    if (oEl) {
+                        el = oEl;
+                        */
+
+                    if (oEl && (oEl instanceof Y.Node)) {
+                        var size = oEl.size();
+                        if (size > 1) {
+                            // args[0] = oEl;
+                            args[2] = oEl;
                             return E.attach.apply(E, args);
                         } else {
                             el = oEl.item(0);
+                            // el = oEl;
                         }
 
                     // HTMLElement
-                    } else if (compat && oEl) {
-
+                    // } else if (compat && oEl) {
+                    } else if (oEl) {
                         el = oEl;
 
                     // Not found = defer adding the event until the element is available
                     } else {
+
 
                         return this.onAvailable(el, function() {
                             E.attach.apply(E, args);
@@ -2259,6 +2243,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                     // var capture = (Y.lang.isObject(obj) && obj.capture);
                     // attach a listener that fires the custom event
+
                     add(el, type, cewrapper.fn, capture);
                 }
 
@@ -2311,7 +2296,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 if (typeof el == "string") {
 
                     // el = Y.get(el);
-                    el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                    el = (compat) ? Y.DOM.byId(el) : Y.get(el);
 
                 // The el argument can be an array of elements or element ids.
                 } else if ( this._isValidCollection(el)) {
@@ -2397,10 +2382,18 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              */
             _isValidCollection: function(o) {
                 try {
+
+                    // if (o instanceof Y.Node) {
+                        // o.tagName ="adsf";
+                    // }
+
                     return ( o                     && // o is something
                              typeof o !== "string" && // o is not a string
-                             (o.each || o.length)  && // o is indexed
+                             // o.length  && // o is indexed
+                             (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
                              !o.tagName            && // o is not an HTML element
+                             // !(o instanceof Y.Node) &&
+                             // (!o.size || o.size() > 1) &&
                              !o.alert              && // o is not a window
                              (o.item || typeof o[0] !== "undefined") );
                 } catch(ex) {
