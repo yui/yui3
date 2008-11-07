@@ -562,9 +562,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Number} The height of the Node including borders and padding, possibly a float.
          */
         _getPreciseHeight : function(node) {
-            var height = (node) ? node.get(OFFSET_HEIGHT) : 0;
-            
-            /* Until Node getBoundingClientRect is fixed
+            var height = (node) ? node.get(OFFSET_HEIGHT) : 0,
                 getBCR = "getBoundingClientRect";
 
             if (node && node.hasMethod(getBCR)) {
@@ -573,7 +571,6 @@ YUI.add('widget-stdmod', function(Y) {
                     height = preciseRegion.bottom - preciseRegion.top;
                 }
             }
-            */
 
             return height;
         },

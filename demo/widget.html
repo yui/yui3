@@ -26,7 +26,6 @@
 
 <body class="yui-skin-sam">
 
-    Button listeners temporarily Disabled, until event is updated to work with Node/Nodelist merge
     <button id="control-show" type="button">show widget 1</button>
     <button id="control-hide" type="button">hide widget 1</button>
     <button id="control-destroy" type="button">destroy widget 1</button>    
@@ -81,14 +80,12 @@
 			widget = new Y.Widget({ contentBox: '#alpha', width: 200 });
 			widget.render();
 
-            /*
 			widget.on('click', function(e) {
 				Y.log('"widget:focus" Custom Event');
 			});
 
 			Y.on('click', Y.bind(widget.show, widget), '#control-show');
 			Y.on('click', Y.bind(widget.hide, widget), '#control-hide');
-			*/
 
 			widget2 = new PEWidget({ boundingBox: "#beta-box", contentBox: '#beta-content', "strings.LABEL_A" : "FooBar"});
 			widget2.render();
@@ -112,7 +109,6 @@
 			widget3.render(container);
             widget3.get("contentBox").set("innerHTML", "Widget Gamma");
 
-            /*
             Y.on("click", function() {
                 var widget1Ref = Y.Widget.getByNode('#alpha');
 
@@ -124,7 +120,6 @@
                     widget1Ref.destroy();
                 }
             }, '#control-destroy');
-            */
         });
     </script>
 </body>
