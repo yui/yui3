@@ -683,7 +683,7 @@
      */
     Node.all = function() {
         Y.log('Y.all / Node.all is deprecated; use Y.get', 'warn', 'Node'); 
-        Node.get.apply(Node, arguments);
+        return Node.get.apply(Node, arguments);
     };
 
     Y.Array.each([
@@ -796,7 +796,7 @@
          * @method blur
          * @chainable
          */
-        'blur:',
+        'blur',
 
         /**
          * Passes through to DOM method.

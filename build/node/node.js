@@ -682,7 +682,7 @@ YUI.add('node', function(Y) {
      * @return {NodeList} A NodeList instance for the supplied nodes.
      */
     Node.all = function() {
-        Node.get.apply(Node, arguments);
+        return Node.get.apply(Node, arguments);
     };
 
     Y.Array.each([
@@ -795,7 +795,7 @@ YUI.add('node', function(Y) {
          * @method blur
          * @chainable
          */
-        'blur:',
+        'blur',
 
         /**
          * Passes through to DOM method.
