@@ -128,7 +128,7 @@
                     depth = depth === undefined ? 4 : depth;
                     if (depth > 0) {
                         for (var i in val) {
-                            if (val.hasOwnProperty(i)) {
+                            if (val.hasOwnProperty && val.hasOwnProperty(i)) {
                                 val[i] = Node.scrubVal(val[i], node, --depth);
                             }
                         }
@@ -364,10 +364,6 @@
             return this.attach.apply(this, arguments);
         },
 
-        addEventListener: function(type, fn, arg) {
-            return Y.Event.nativeAdd(Node[this._yuid](), type, fn, arg);
-        },
-        
        /**
          * Detaches a DOM event handler. 
          * @method detach
@@ -378,10 +374,6 @@
             var args = _slice.call(arguments, 0);
             args.splice(2, 0, Node[this._yuid]());
             return Y.Event.detach.apply(Y.Event, args);
-        },
-
-        removeEventListener: function(type, fn) {
-            return Y.Event.nativeRemove(Node[this._yuid](), type, fn);
         },
 
        /**
@@ -433,6 +425,14 @@
     };
 
     Node.methods({
+        addEventListener: function() {
+            return Y.Event.nativeAdd.apply(Y.Event, arguments);
+        },
+        
+        removeEventListener: function() {
+            return Y.Event.nativeRemove.apply(Y.Event, arguments);
+        },
+
         /**
          * Set the value of the property/attribute on the HTMLElement bound to this Node.
          * Only strings/numbers/booleans are passed through unless a SETTER exists.
