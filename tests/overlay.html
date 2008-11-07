@@ -151,10 +151,8 @@
                 });
                 widget.render("#foobar");
 
-                /*
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
-                */
 
                 widget.after("xyChange", function(e) {
                     Y.log(e.newVal);
@@ -247,18 +245,6 @@
                         widget.show();
                         widget.set("body", "hide, followed by show");
                     },
-                    /*
-                    function() {
-                        widget.set("position", "relative");
-                        widget.move(100,100);
-                        widget.set("body", "position:relative, move 100,100");
-                    },
-                    function() {
-                        widget.move("position", "absolute");
-                        widget.set("xy", [0,0]);
-                        widget.set("body", "move back to 0,0 position:absolute");
-                    },
-                    */
                     function() {
                         widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
                         widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
