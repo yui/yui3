@@ -198,7 +198,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 var a = Y.Array(id);
 
-                Y.log('onAvailable registered for: ' + id);
+                // Y.log('onAvailable registered for: ' + id);
 
                 for (var i=0; i<a.length; i=i+1) {
                     _avail.push({ 
@@ -280,7 +280,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 if (type.indexOf(CAPTURE) > -1) {
                     type = type.substr(CAPTURE.length);
                     capture = true;
-                    Y.log('Using capture phase for: ' + type, 'info', 'Event');
+                    Y.log('Using capture phase for: ' + type, 'info', 'event');
                 }
 
                 if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
@@ -312,7 +312,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 } else if (Y.Lang.isString(el)) {
 
-                    var oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                    var oEl = (compat) ? Y.DOM.byId(el) : Y.get(el);
 
                     // If the el argument is a string, we assume it is 
                     // actually the id of the element.  If the page is loaded
@@ -323,23 +323,42 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     // until after the page loads.
 
                     // Node collection
-                    if (oEl && oEl.size && oEl.size() > 0) {
-                        if (oEl.size() > 1) {
-                            args[0] = oEl;
+                    // if (oEl && oEl.size && oEl.size() > 0) {
+                    //
+                    // Y.log('node?: ' + (oEl instanceof Y.Node));
+
+                    /*
+
+                    if (oEl) {
+                        el = oEl;
+                        */
+
+                    if (oEl && (oEl instanceof Y.Node)) {
+                        var size = oEl.size();
+                        if (size > 1) {
+                            // Y.log('more than one: ' + size + ', ' + type);
+                            // args[0] = oEl;
+                            args[2] = oEl;
                             return E.attach.apply(E, args);
                         } else {
+                            // Y.log('just one: ' + size + ', ' + type);
                             el = oEl.item(0);
+                            // el = oEl;
                         }
 
                     // HTMLElement
-                    } else if (compat && oEl) {
-
+                    // } else if (compat && oEl) {
+                    } else if (oEl) {
+                        // Y.log('no size: ' + oEl + ', ' + type);
                         el = oEl;
 
                     // Not found = defer adding the event until the element is available
                     } else {
 
+                        // Y.log(el + ' not found');
+
                         return this.onAvailable(el, function() {
+                            // Y.log('lazy attach: ' + args);
                             E.attach.apply(E, args);
                         }, E, true, false, compat);
                     }
@@ -347,7 +366,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 // Element should be an html element or an array if we get here.
                 if (!el) {
-                    Y.log("unable to attach event " + type);
+                    Y.log("unable to attach event " + type, "warn", "event");
                     return false;
                 }
 
@@ -392,6 +411,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     // var capture = (Y.lang.isObject(obj) && obj.capture);
                     // attach a listener that fires the custom event
+
+                    // Y.log("Attaching listener: " + [el, type, cewrapper.fn, capture]);
                     add(el, type, cewrapper.fn, capture);
                 }
 
@@ -444,7 +465,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 if (typeof el == "string") {
 
                     // el = Y.get(el);
-                    el = (compat) ? Y.DOM.byId(el) : Y.all(el);
+                    el = (compat) ? Y.DOM.byId(el) : Y.get(el);
 
                 // The el argument can be an array of elements or element ids.
                 } else if ( this._isValidCollection(el)) {
@@ -530,10 +551,19 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
              */
             _isValidCollection: function(o) {
                 try {
+                    // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
+
+                    // if (o instanceof Y.Node) {
+                        // o.tagName ="adsf";
+                    // }
+
                     return ( o                     && // o is something
                              typeof o !== "string" && // o is not a string
-                             (o.each || o.length)  && // o is indexed
+                             // o.length  && // o is indexed
+                             (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
                              !o.tagName            && // o is not an HTML element
+                             // !(o instanceof Y.Node) &&
+                             // (!o.size || o.size() > 1) &&
                              !o.alert              && // o is not a window
                              (o.item || typeof o[0] !== "undefined") );
                 } catch(ex) {
