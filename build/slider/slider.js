@@ -89,6 +89,13 @@ Y.mix(Slider, {
             }
         },
 
+        values : {
+            value : null,
+            validator : function (v) {
+                return this._validateNewValues(v);
+            }
+        },
+
         min : {
             value : 0,
             validator : function (v) {
@@ -110,13 +117,6 @@ Y.mix(Slider, {
             },
             set : function (v) {
                 return this._setValueFn(v);
-            }
-        },
-
-        values : {
-            value : null,
-            validator : function (v) {
-                return this._validateNewValues(v);
             }
         },
 
@@ -354,10 +354,9 @@ Y.extend(Slider, Y.Widget, {
             h = rail.getComputedStyle(HEIGHT);
         } else {
             // offsetWidth fails in hidden containers
-            h = (parseInt(rail.getComputedStyle(HEIGHT),10) ||
-                 (this._isImageLoaded(img) && img.get(WIDTH)) ||
+            h = ((this._isImageLoaded(img) && img.get(HEIGHT)) ||
                  parseInt(thumb.getComputedStyle(HEIGHT),10) ||
-                 thumb.get(OFFSET_WIDTH)) + PX;
+                 thumb.get(OFFSET_HEIGHT)) + PX;
         }
 
         rail.setStyle(HEIGHT, h);
@@ -367,11 +366,10 @@ Y.extend(Slider, Y.Widget, {
             rail.setStyle(WIDTH,w);
             w = rail.getComputedStyle(WIDTH);
         } else {
-            // offsetWidth fails in hidden containers
-            w = (parseInt(rail.getComputedStyle(WIDTH),10) ||
-                 (this._isImageLoaded(img) && img.get(HEIGHT)) ||
+            // offsetHeight fails in hidden containers
+            w = ((this._isImageLoaded(img) && img.get(WIDTH)) ||
                  parseInt(thumb.getComputedStyle(WIDTH),10) ||
-                 thumb.get(OFFSET_HEIGHT)) + PX;
+                 thumb.get(OFFSET_WIDTH)) + PX;
         }
 
         rail.setStyle(WIDTH,w);
@@ -449,6 +447,18 @@ Y.extend(Slider, Y.Widget, {
 
                 vals[i] = max;
             }
+
+            // transform into a map struct for fast lookup
+            vals = {
+                arr    : vals,
+                min    : vals[0],
+                max    : vals[vals.length - 1],
+                length : vals.length
+            };
+
+            for (i = vals.length - 1; i >= 0; --i) {
+                vals[vals.arr[i]] = i;
+            }
         }
 
         this._values = vals;
@@ -485,25 +495,37 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _validateNewValue : function (v) {
-        var min = this.get(MIN),
-            max = this.get(MAX),
-            tmp;
+        var pass   = isNumber(v),
+            min    = this.get(MIN),
+            max    = this.get(MAX);
 
-        if (min > max) {
-            tmp = min;
-            min = max;
-            max = tmp;
+        if (pass) {
+            if (this._values) {
+                pass = isNumber(this._values[v]);
+            } else {
+                pass = min < max ?
+                    (v >= min && v <= max) :
+                    (v >= max && v <= min);
+            }
         }
-
-        return isNumber(v) && v >= min && v <= max;
+            
+        return pass;
     },
 
     _validateNewValues : function (v) {
-        return v === null || isArray(v) ||
-            (
-                isNumber(v) && v > 1 &&
-                v <= Math.abs(this.get(MAX) - this.get(MIN))
-            );
+        var max = this.get(MAX);
+
+        // MAX is set after values to preserve array values
+        if (v === null || isArray(v) ||
+            (isNumber(v) && v > 1 && max === undefined)) {
+            return true;
+        }
+
+        if (isNumber(v)) {
+            return v > 1 && v <= Math.abs(max - this.get(MIN));
+        }
+
+        return false;
     },
 
     _validateNewRailHeight : function (v) {
@@ -519,24 +541,38 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _setValueFn : function (v) {
-        var values = this._values,x,i;
+        var values = this.get('values'),x,i;
 
         if (values) {
-            if (this.get(MIN) > this.get(MAX)) {
-                values = Y.Array(values);
-                values.reverse();
+            if (!this._values) {
+                // For support of value validation during initialization
+                this._updateValues();
             }
-            x = values[values.length - 1];
+            values = this._values;
 
-            for (i = values.length - 1; i >= 0; --i) {
-                if (values[i] > v) {
-                    x = values[i];
-                } else {
-                    v = Math.abs(x - v) < Math.abs(values[i] - v) ?
-                            x : values[i];
-                    break;
+            if (!isNumber(+v)) {
+                v = values.min;
+            } else if (!values[v]) {
+                values = values.arr;
+
+                if (values[0] > values[values.length - 1]) {
+                    values = Y.Array(values);
+                    values.reverse();
+                }
+                x = values[values.length - 1];
+
+                for (i = values.length - 1; i >= 0; --i) {
+                    if (values[i] > v) {
+                        x = values[i];
+                    } else {
+                        v = Math.abs(x - v) < Math.abs(values[i] - v) ?
+                                x : values[i];
+                        break;
+                    }
                 }
             }
+        } else if (!isNumber(+v)) { 
+            v = this.get('min');
         }
 
         return Math.round(v);
@@ -567,14 +603,17 @@ Y.extend(Slider, Y.Widget, {
             i,len;
             
         if (this._values) {
+            /*
             // cache last value or binary search if loop speed becomes an issue?
-            for (i = 0,len = this._values.length - 1; i < len; ++i) {
+            for (i = 0,len = this._values.arr.length - 1; i < len; ++i) {
                 if (val - (i * this._tickSize) <= 0) {
                     break;
                 }
             }
 
-            val = this._values[i];
+            val = this._values.arr[i];
+            */
+            val = this._values.arr[Math.round(val/this._tickSize)];
         } else {
             val = Math.round(this.get(MIN) + (val * this._factor));
         }
@@ -592,6 +631,7 @@ Y.extend(Slider, Y.Widget, {
         var min,max,i,x;
 
         if (this._values) {
+            /*
             for (i = this._values.length - 1; i >= 0; --i) {
                 if (this._values[i] === v) {
                     break;
@@ -599,6 +639,8 @@ Y.extend(Slider, Y.Widget, {
             }
 
             v = this._tickSize * i;
+            */
+            v = Math.round(this._values[v] * this._tickSize);
         } else {
             min = this.get(MIN);
             max = this.get(MAX);
@@ -628,6 +670,10 @@ Y.extend(Slider, Y.Widget, {
 
     _afterValuesChange : function (e) {
         this._refreshValues(e);
+        if (this._values) {
+            this.set('min',this._values[0]);
+            this.set('max',this._values[this._values.length - 1]);
+        }
     },
 
     _afterRailDimChange : function (e) {
