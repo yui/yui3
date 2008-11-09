@@ -8,6 +8,7 @@ var RAIL  = 'rail',
     RAIL_HEIGHT = 'railHeight',
     SLIDE_START = 'slideStart',
     SLIDE_END   = 'slideEnd',
+    SYNC        = 'sync',
     RENDERED    = 'rendered',
 
     DOT    = '.',
@@ -18,16 +19,21 @@ var RAIL  = 'rail',
     OFFSET_HEIGHT = 'offsetHeight',
     POSITION      = 'position',
 
-    
     DIM_RE = /^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/,
 
     L = Y.Lang,
     isArray  = L.isArray,
     isString = L.isString,
-    isNumber = L.isNumber;
+    isNumber = L.isNumber,
+    
+    M        = Math,
+    round    = M.round,
+    floor    = M.floor,
+    ceil     = M.ceil,
+    abs      = M.abs;
 
 function Slider() {
-    this.constructor.superclass.constructor.apply(this,arguments);
+    Slider.superclass.constructor.apply(this,arguments);
 }
 
 Y.mix(Slider, {
@@ -44,7 +50,6 @@ Y.mix(Slider, {
             posMethod     : 'getX',
             eventPageAxis : 'pageX',
             ddStick       : 'stickX',
-            ticks         : 'tickX',
             xyIndex       : 0
         },
         y : {
@@ -56,7 +61,6 @@ Y.mix(Slider, {
             posMethod     : 'getY',
             eventPageAxis : 'pageY',
             ddStick       : 'stickY',
-            ticks         : 'tickY',
             xyIndex       : 1
         }
     },
@@ -102,19 +106,12 @@ Y.mix(Slider, {
         },
 
         value : {
-            value : 0,
+            value : null,
             validator : function (v) {
                 return this._validateNewValue(v);
             },
             set : function (v) {
                 return this._setValueFn(v);
-            }
-        },
-
-        values : {
-            value : null,
-            validator : function (v) {
-                return this._validateNewValues(v);
             }
         },
 
@@ -168,25 +165,21 @@ Y.extend(Slider, Y.Widget, {
 
     _tickSize : false,
 
-    _values : null,
-
     _railDims : null,
 
     _thumbDims : null,
-
-    _thumbCenterOffset : 10,
 
     initializer : function () {
         this._key = Slider.AXIS_KEYS[this.get('axis')];
 
         this.after('minChange',    this._afterMinChange);
         this.after('maxChange',    this._afterMaxChange);
-        this.after('valuesChange', this._afterValuesChange);
 
         this.after(this._key.axisDim+'Change', this._afterRailDimChange);
 
         this.publish(SLIDE_START);
         this.publish(SLIDE_END);
+        this.publish(SYNC, {defaultFn: this._doSyncUI});
     },
 
     renderUI : function () {
@@ -251,6 +244,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     bindUI : function () {
+        this.publish('thumbDrag', {defaultFn: this._updateValueFromDD});
+
         this.initThumbDD();
 
         this.after('valueChange', this._afterValueChange);
@@ -262,9 +257,9 @@ Y.extend(Slider, Y.Widget, {
             constrain2node : this.get(RAIL)
         });
 
-        this._dd.on('drag:start',Y.bind(this._onDDStartDrag, this));
-        this._dd.on('drag:drag', Y.bind(this._onDDDrag,      this));
-        this._dd.on('drag:end',  Y.bind(this._onDDEndDrag,   this));
+        this._dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
+        this._dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
+        this._dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
 
         this._dd.set(this._key.ddStick, true);
 
@@ -296,7 +291,7 @@ Y.extend(Slider, Y.Widget, {
 
                 // Adjust registered starting position by half the thumb's x/y
                 xy = this.get('dragNode').getXY();
-                xy[xyIndex] += self._thumbCenterOffset;
+                xy[xyIndex] += floor(self._thumbDims[self._key.xyIndex] / 2);
 
                 this._setStartPosition(xy);
 
@@ -307,38 +302,30 @@ Y.extend(Slider, Y.Widget, {
     },
 
     syncUI : function () {
-        this._scheduleSync();
-    },
-
-    _scheduleSync : function () {
         var img = this.get(THUMB_IMAGE), handler;
 
         if (!img || img.get('complete')) {
-            this._doSyncUI();
+            this.fire(SYNC);
         } else {
             // Schedule the sync for when the image loads/errors
-            handler = Y.bind(this._doSyncUI,this);
+            handler = Y.bind(function () { this.fire(SYNC); }, this);
             img.on('load',handler);
             img.on('error',handler);
         }
     },
 
-    _doSyncUI : function () {
+    _doSyncUI : function (e) {
         this._setRailDims();
 
         this._setThumbDims();
 
         this._setRailOffsetXY();
 
-        this._calcThumbCenterOffset();
-
-        this._updateValues();
-
-        this._setValueStops();
+        this._setDDGutter();
 
         this._setConvFactor();
 
-        this.set(VALUE,this.get(VALUE));
+        this.set(VALUE,this.get(VALUE),{ddEvent:null});
     },
 
     _setRailDims : function () {
@@ -354,10 +341,9 @@ Y.extend(Slider, Y.Widget, {
             h = rail.getComputedStyle(HEIGHT);
         } else {
             // offsetWidth fails in hidden containers
-            h = (parseInt(rail.getComputedStyle(HEIGHT),10) ||
-                 (this._isImageLoaded(img) && img.get(WIDTH)) ||
+            h = ((this._isImageLoaded(img) && img.get(HEIGHT)) ||
                  parseInt(thumb.getComputedStyle(HEIGHT),10) ||
-                 thumb.get(OFFSET_WIDTH)) + PX;
+                 thumb.get(OFFSET_HEIGHT)) + PX;
         }
 
         rail.setStyle(HEIGHT, h);
@@ -367,11 +353,10 @@ Y.extend(Slider, Y.Widget, {
             rail.setStyle(WIDTH,w);
             w = rail.getComputedStyle(WIDTH);
         } else {
-            // offsetWidth fails in hidden containers
-            w = (parseInt(rail.getComputedStyle(WIDTH),10) ||
-                 (this._isImageLoaded(img) && img.get(HEIGHT)) ||
+            // offsetHeight fails in hidden containers
+            w = ((this._isImageLoaded(img) && img.get(WIDTH)) ||
                  parseInt(thumb.getComputedStyle(WIDTH),10) ||
-                 thumb.get(OFFSET_HEIGHT)) + PX;
+                 thumb.get(OFFSET_WIDTH)) + PX;
         }
 
         rail.setStyle(WIDTH,w);
@@ -380,7 +365,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _setRailOffsetXY : function () {
-        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex];
+        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
+                         floor(this._thumbDims[this._key.xyIndex] / 2);
     },
 
     _setThumbDims : function () {
@@ -410,54 +396,28 @@ Y.extend(Slider, Y.Widget, {
         this._thumbDims = [w,h];
     },
 
-    _calcThumbCenterOffset : function () {
-        this._thumbCenterOffset = Math.round(
-            this._thumbDims[this._key.xyIndex] / 2);
-    },
+    _setDDGutter : function () {
+        var gutter = [0,0,0,0],
+            i      = this._key.xyIndex,
+            dim    = this._thumbDims[i] / 2,
+            start  = -1 * floor(dim),
+            end    = -1 * ceil(dim);
 
-    _setValueStops : function () {
-        var tickSize = false, dim;
-
-        if (this._values) {
-            dim = this._railDims[this._key.xyIndex] -
-                  this._thumbDims[this._key.xyIndex];
-            tickSize = Math.floor(dim / (this._values.length - 1));
+        if (i) { // y axis
+            gutter[0] = start;
+            gutter[2] = end;
+        } else {
+            gutter[3] = start;
+            gutter[1] = end;
         }
-
-        this._tickSize = tickSize;
-
-        this._dd.set(this._key.ticks, tickSize);
-    },
-
-    _updateValues : function() {
-        var min  = this.get(MIN),
-            max  = this.get(MAX),
-            v    = this.get('values'),
-            inc  = (max - min)/(v - 1),
-            vals = null,
-            i,len;
-
-        if (v) {
-            if (isArray(v)) {
-                vals = v;
-            } else {
-                vals = [min];
-
-                for (i = 1, len = v - 1; i < len; ++i) {
-                    vals[i] = Math.round(min + (i * inc));
-                }
-
-                vals[i] = max;
-            }
-        }
-
-        this._values = vals;
+            
+        this._dd.set('gutter', gutter.join(' '));
     },
 
     _setConvFactor : function () {
         var range = this.get(MAX) - this.get(MIN),
-            size  = this._railDims[this._key.xyIndex] -
-                    this._thumbDims[this._key.xyIndex];
+            size  = this._railDims[this._key.xyIndex];// -
+                    //this._thumbDims[this._key.xyIndex];
 
         this._factor = size ? range / size : 1;
     },
@@ -485,25 +445,11 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _validateNewValue : function (v) {
-        var min = this.get(MIN),
-            max = this.get(MAX),
-            tmp;
+        var min    = this.get(MIN),
+            max    = this.get(MAX);
 
-        if (min > max) {
-            tmp = min;
-            min = max;
-            max = tmp;
-        }
-
-        return isNumber(v) && v >= min && v <= max;
-    },
-
-    _validateNewValues : function (v) {
-        return v === null || isArray(v) ||
-            (
-                isNumber(v) && v > 1 &&
-                v <= Math.abs(this.get(MAX) - this.get(MIN))
-            );
+        return isNumber(v) &&
+                (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
     _validateNewRailHeight : function (v) {
@@ -519,27 +465,11 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _setValueFn : function (v) {
-        var values = this._values,x,i;
-
-        if (values) {
-            if (this.get(MIN) > this.get(MAX)) {
-                values = Y.Array(values);
-                values.reverse();
-            }
-            x = values[values.length - 1];
-
-            for (i = values.length - 1; i >= 0; --i) {
-                if (values[i] > v) {
-                    x = values[i];
-                } else {
-                    v = Math.abs(x - v) < Math.abs(values[i] - v) ?
-                            x : values[i];
-                    break;
-                }
-            }
+        if (!isNumber(v)) { 
+            v = this.get(MIN);
         }
 
-        return Math.round(v);
+        return round(v);
     },
 
     _setRailFn : function (v) {
@@ -557,30 +487,25 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _onDDStartDrag : function (e) {
+        this._setRailOffsetXY();
         this.fire(SLIDE_START,{ddEvent:e});
-        this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex];
     },
 
     _onDDDrag : function (e) {
-        var val    = e[this._key.eventPageAxis] - this._offsetXY,
-            before = this.get(VALUE),
-            i,len;
-            
-        if (this._values) {
-            // cache last value or binary search if loop speed becomes an issue?
-            for (i = 0,len = this._values.length - 1; i < len; ++i) {
-                if (val - (i * this._tickSize) <= 0) {
-                    break;
-                }
-            }
+        this.fire('thumbDrag', { ddEvent: e });
+    },
 
-            val = this._values[i];
-        } else {
-            val = Math.round(this.get(MIN) + (val * this._factor));
-        }
+    _updateValueFromDD : function (e) {
+        var before = this.get(VALUE),
+            val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
+
+        Y.log("Raw value: "+val+" Current value: "+before+
+              "Factored value: "+round(this.get(MIN) + (val * this._factor)));
+
+        val = round(this.get(MIN) + (val * this._factor));
 
         if (before !== val) {
-            this.set(VALUE, val,{ddEvent:e});
+            this.set(VALUE, val, {ddEvent:e.ddEvent});
         }
     },
 
@@ -589,25 +514,19 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _uiSetThumbPosition : function (v) {
-        var min,max,i,x;
+        var i = this._key.xyIndex,
+            min,max,x;
 
         if (this._values) {
-            for (i = this._values.length - 1; i >= 0; --i) {
-                if (this._values[i] === v) {
-                    break;
-                }
-            }
-
-            v = this._tickSize * i;
+            v = round(this._values[v] * this._tickSize);
         } else {
             min = this.get(MIN);
             max = this.get(MAX);
 
-            v = Math.round(
-                    ((v - min) / (max - min)) *
-                    (this._railDims[this._key.xyIndex] -
-                     this._thumbDims[this._key.xyIndex]));
+            v = round(((v - min) / (max - min)) * this._railDims[i]);
         }
+
+        v -= floor(this._thumbDims[i] / 2);
 
         this.get(THUMB).setStyle(this._key.offsetEdge, v + PX);
     },
@@ -616,35 +535,24 @@ Y.extend(Slider, Y.Widget, {
         if (!e.ddEvent) {
             this._uiSetThumbPosition(e.newVal);
         }
+        e.ddEvent = e.omitEvents = null;
     },
 
     _afterMinChange : function (e) {
-        this._refreshValues(e);
+        this._refresh(e);
     },
 
     _afterMaxChange : function (e) {
-        this._refreshValues(e);
-    },
-
-    _afterValuesChange : function (e) {
-        this._refreshValues(e);
+        this._refresh(e);
     },
 
     _afterRailDimChange : function (e) {
-        if (e.newVal !== e.prevVal) {
-            this._setRailDims();
-            
-            if (this.get(RENDERED)) {
-                this._setValueStops();
-            }
-        }
+        this._refresh(e);
     },
 
-    _refreshValues : function (e) {
-        if (e.newVal !== e.prevVal) {
-            if (this.get(RENDERED)) {
-                this.syncUI();
-            }
+    _refresh : function (e) {
+        if (e.newVal !== e.prevVal && this.get(RENDERED)) {
+            this.syncUI();
         }
     },
 
