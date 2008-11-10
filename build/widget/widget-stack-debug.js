@@ -157,8 +157,8 @@ YUI.add('widget-stack', function(Y) {
          * @protected
          */
         _bindUIStack: function() {
-            this.after(ShimChange, this._onShimChange);
-            this.after(ZIndexChange, this._onZIndexChange);
+            this.after(ShimChange, this._afterShimChange);
+            this.after(ZIndexChange, this._afterZIndexChange);
         },
 
         /**
@@ -203,11 +203,11 @@ YUI.add('widget-stack', function(Y) {
          * Default attribute change listener for the shim attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onShimChange
+         * @method _afterShimChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onShimChange : function(e) {
+        _afterShimChange : function(e) {
             this._uiSetShim(e.newVal);
         },
 
@@ -215,11 +215,11 @@ YUI.add('widget-stack', function(Y) {
          * Default attribute change listener for the zIndex attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onZIndexChange
+         * @method _afterZIndexChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onZIndexChange : function(e) {
+        _afterZIndexChange : function(e) {
             this._uiSetZIndex(e.newVal);
         },
 

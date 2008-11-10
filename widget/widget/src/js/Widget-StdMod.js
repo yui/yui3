@@ -21,6 +21,7 @@
 
         PX = "px",
         NODE_SUFFIX = "Node",
+        CONTENT_SUFFIX = "Content",
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
 
@@ -31,10 +32,11 @@
         OFFSET_HEIGHT = "offsetHeight",
         AUTO = "auto",
 
-        HeaderChange = "headerChange",
-        BodyChange = "bodyChange",
-        FooterChange = "footerChange",
+        HeaderChange = "headerContentChange",
+        BodyChange = "bodyContentChange",
+        FooterChange = "footerContentChange",
         FillHeightChange = "fillHeightChange",
+        HeightChange = "HeightChange",        
         ContentUpdate = "contentUpdate",
 
         STD_TEMPLATE = "<div></div>",
@@ -115,8 +117,7 @@
         STD_BODY = StdMod.BODY,
         STD_FOOTER = StdMod.FOOTER,
         AFTER = StdMod.AFTER,
-        BEFORE = StdMod.BEFORE,
-        REPLACE = StdMod.REPLACE;
+        BEFORE = StdMod.BEFORE;
 
     /**
      * Static property used to define the default attribute 
@@ -128,29 +129,29 @@
     StdMod.ATTRS = {
 
         /**
-         * @attribute header
+         * @attribute headerContent
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the header section. This will replace any existing content
          * in the header. If you want to append, or insert new content, use the setHeader method.
          */
-        header: {},
+        headerContent: {},
         /**
-         * @attribute footer
+         * @attribute footerContent
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the footer section. This will replace any existing content
          * in the footer. If you want to append, or insert new content, use the setFooter method.
          */
-        footer: {},
+        footerContent: {},
         /**
-         * @attribute body
+         * @attribute bodyContent
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the body section. This will replace any existing content
          * in the body. If you want to append, or insert new content, use the setBody method.
          */
-        body: {},
+        bodyContent: {},
         /**
          * @attribute fillHeight
          * @type {String}
@@ -174,17 +175,17 @@
      * @type Object
      */
     StdMod.HTML_PARSER = {
-        header: function(contentBox) {
+        headerContent: function(contentBox) {
             var node = this._findStdModSection(STD_HEADER);
             return (node) ? node.get(INNER_HTML) : "";
         },
 
-        body : function(contentBox) {
+        bodyContent: function(contentBox) {
             var node = this._findStdModSection(STD_BODY);
             return (node) ? node.get(INNER_HTML) : "";
         },
 
-        footer : function(contentBox) {
+        footerContent : function(contentBox) {
             var node = this._findStdModSection(STD_FOOTER);
             return (node) ? node.get(INNER_HTML) : "";
         }
@@ -252,9 +253,9 @@
          * @protected
          */
         _syncUIStdMod : function() {
-            this._uiSetSection(STD_HEADER, this.get(HEADER));
-            this._uiSetSection(STD_BODY, this.get(BODY));
-            this._uiSetSection(STD_FOOTER, this.get(FOOTER));
+            this._uiSetSection(STD_HEADER, this.get(STD_HEADER + CONTENT_SUFFIX));
+            this._uiSetSection(STD_BODY, this.get(STD_BODY + CONTENT_SUFFIX));
+            this._uiSetSection(STD_FOOTER, this.get(STD_FOOTER + CONTENT_SUFFIX));
             this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
 
@@ -282,10 +283,12 @@
          * @protected
          */
         _bindUIStdMod : function() {
-            this.after(HeaderChange, this._onHeaderChange);
-            this.after(BodyChange, this._onBodyChange);
-            this.after(FooterChange, this._onFooterChange);
-            this.after(FillHeightChange, this._onFillHeightChange);
+            this.after(HeaderChange, this._afterHeaderChange);
+            this.after(BodyChange, this._afterBodyChange);
+            this.after(FooterChange, this._afterFooterChange);
+
+            this.after(FillHeightChange, this._afterFillHeightChange);
+            this.after(HeightChange, this._fillHeight);            
             this.after(ContentUpdate, this._fillHeight);
         },
 
@@ -293,11 +296,11 @@
          * Default attribute change listener for the header content attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onHeaderChange
+         * @method _afterHeaderChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onHeaderChange : function(e) {
+        _afterHeaderChange : function(e) {
             if (e.src != UI) {
                 this._uiSetSection(STD_HEADER, e.newVal);
             }
@@ -307,11 +310,11 @@
          * Default attribute change listener for the body content attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onBodyChange
+         * @method _afterBodyChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onBodyChange : function(e) {
+        _afterBodyChange : function(e) {
             if (e.src != UI) {
                 this._uiSetSection(STD_BODY, e.newVal);
             }
@@ -321,11 +324,11 @@
          * Default attribute change listener for the footer content attribute, responsible
          * for updating the UI, in response to attribute changes.
          *
-         * @method _onFooterChange
+         * @method _afterFooterChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onFooterChange : function(e) {
+        _afterFooterChange : function(e) {
             if (e.src != UI) {
                 this._uiSetSection(STD_FOOTER, e.newVal);
             }
@@ -335,11 +338,11 @@
          * Default attribute change listener for the fillHeight attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onFillHeightChange
+         * @method _afterFillHeightChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
-        _onFillHeightChange: function (e) {
+        _afterFillHeightChange: function (e) {
             this._uiSetFillHeight(e.newVal);
         },
 
@@ -583,8 +586,7 @@
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            var sectionNode = this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
-            return (sectionNode && sectionNode.size() > 1) ? sectionNode.item(0) : sectionNode;
+            return this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
         },
 
         /**
@@ -603,7 +605,7 @@
          */
         _setStdModSection : function(section, content, where) {
             this._uiSetSection(section, content, where);
-            this.set(section, this.getStdModNode(section).get(INNER_HTML), UI_SRC);
+            this.set(section + CONTENT_SUFFIX, this.getStdModNode(section).get(INNER_HTML), UI_SRC);
         },
 
         /**
@@ -612,43 +614,14 @@
          * This method can be used instead of the body attribute if you'd like to retain the current content of the body,
          * and insert content before or after it, by specifying the where argument.
          *
-         * @method setBody
+         * @method setStdModContent
+         * @param {String} section The standard module section whose content is to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          * @param {String | Node} content The content to be added, either an HTML string or a Node reference.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the body.
          */
-        setBody : function(content, where) {
-            this._setStdModSection(STD_BODY, content, where);
-        },
-        
-        /**
-         * Updates the header section of the standard module with the content provided (either an HTML string, or node reference).
-         * 
-         * This method can be used instead of the header attribute if you'd like to retain the current content of the header,
-         * and insert content before or after it, by specifying the where argument.
-         *
-         * @method setHeader
-         * @param {String | Node} content The content to be added, either an HTML string or a Node reference.
-         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace existing content in the header.
-         */
-        setHeader : function(content, where) {
-            this._setStdModSection(STD_HEADER, content, where);
-        },
-
-        /**
-         * Updates the footer section of the standard module with the content provided (either an HTML string, or node reference).
-         * 
-         * This method can be used instead of the footer attribute if you'd like to retain the current content of the footer,
-         * and insert content before or after it, by specifying the where argument.
-         *
-         * @method setFooter
-         * @param {String | Node} content The content to be added, either an HTML string or a Node reference.
-         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace existing content in the footer.
-         */
-        setFooter : function(content, where) {
-            this._setStdModSection(STD_FOOTER, content, where);
+        setStdModContent : function(section, content, where) {
+            this._setStdModSection(section, content, where);
         },
 
         /**
