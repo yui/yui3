@@ -147,9 +147,9 @@
                     width:"12em",
                     align:{node:'#align', points:["tr", "tl"]}, 
                     zIndex:5,
-                    header:"Overlay Header",
-                    body:"width:12em, #align, tr, tl, zIndex:5",
-                    footer:"Overlay Footer"
+                    headerContent:"Overlay Header",
+                    bodyContent:"width:12em, #align, tr, tl, zIndex:5",
+                    footerContent:"Overlay Footer"
                 });
                 widget.render("#foobar");
 
@@ -166,7 +166,7 @@
                     width:200,
                     height:200,
                     xy: [800,200],
-                    footer: "Footer Content - was in markup, but got over-ridden in constructor"
+                    footerContent: "Footer Content - was in markup, but got over-ridden in constructor"
                 });
                 widget2.render();
 
@@ -175,79 +175,79 @@
                 var fns = [
                     function() {
                         widget.move(0,0);
-                        widget.set("body", "move(0,0)");
+                        widget.set("bodyContent", "move(0,0)");
                     },
                     function() {
                         widget.set("height", "12em");
-                        widget.set("body", "height, 12em");
+                        widget.set("bodyContent", "height, 12em");
                     },
                     function() {
                         widget.set("align", {node:"#align", points:["lc", "rc"]});
-                        widget.set("body", "#align, lc, rc");
+                        widget.set("bodyContent", "#align, lc, rc");
                     },
                     function() {
-                        widget.set("center", "#align");
-                        widget.set("body", "#align, center");
+                        widget.set("centered", "#align");
+                        widget.set("bodyContent", "#align, centered");
                     },
                     function() {
                         widget.set("zIndex", 7);
-                        widget.set("body", "zIndex, 7");
+                        widget.set("bodyContent", "zIndex, 7");
                     },
                     function() {
                         widget.set("align", {points:["rc", "rc"]});
-                        widget.set("body", "viewport, rc, rc");
+                        widget.set("bodyContent", "viewport, rc, rc");
                     },
                     function() {
-                        widget.set("center", true);
-                        widget.set("body", "viewport, center");
+                        widget.set("centered", true);
+                        widget.set("bodyContent", "viewport, centered");
                     },
                     function() {
                         widget.move(0, 0);
-                        widget.set("body", "move(0,0)");
+                        widget.set("bodyContent", "move(0,0)");
                     },
                     function() {
                         widget.set("width", "20em");
-                        widget.set("body", "width, 20em");
+                        widget.set("bodyContent", "width, 20em");
                     },
                     function() {
                         widget.set("height", "20em");
-                        widget.set("body", "height, 20em");
+                        widget.set("bodyContent", "height, 20em");
                     },
                     function() {
                         widget.set("fillHeight", "header");
-                        widget.set("body", "fillHeight, header");
+                        widget.set("bodyContent", "fillHeight, header");
                     },
                     function() {
                         widget.set("fillHeight", "footer");
-                        widget.set("body", "fillHeight, footer");
+                        widget.set("bodyContent", "fillHeight, footer");
                     },
                     function() {
                         widget.set("fillHeight", null);
-                        widget.set("body", "fillHeight, false");
+                        widget.set("bodyContent", "fillHeight, false");
                     },
                     function() {
                         widget.set("fillHeight", "body");
-                        widget.set("body", "fillHeight, body");
+                        widget.set("bodyContent", "fillHeight, body");
                     },
                     function() {
                         widget.set("shim", false);
-                        widget.set("body", "shim, false");
+                        widget.set("bodyContent", "shim, false");
                     },
                     function() {
                         widget.set("shim", true);
-                        widget.set("body", "shim, true");
+                        widget.set("bodyContent", "shim, true");
                     },
                     function() {
                         widget.hide();
                     },
                     function() {
                         widget.show();
-                        widget.set("body", "hide, followed by show");
+                        widget.set("bodyContent", "hide, followed by show");
                     },
                     function() {
-                        widget.setHeader(Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
-                        widget.setFooter(Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
-                        widget.setBody("Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);
+                        widget.setStdModContent(Y.WidgetStdMod.HEADER, Y.Node.create("<p>Insert Before Header Content</p>"), Y.WidgetStdMod.BEFORE);
+                        widget.setStdModContent(Y.WidgetStdMod.FOOTER, Y.Node.create("<p>Append After Footer Content</p>"), Y.WidgetStdMod.AFTER);
+                        widget.setStdModContent(Y.WidgetStdMod.BODY, "Replaced Body - DONE!", Y.WidgetStdMod.REPLACE);
                     }
                 ];
 
@@ -259,10 +259,11 @@
                     });
                 }
                 // q.run();
-                
+
                 Y.on('click', Y.bind(widget.show, widget), Y.Node.get('#control-show'));
                 Y.on('click', Y.bind(widget.hide, widget), Y.Node.get('#control-hide'));
-                Y.on('click', Y.bind(q.run, q), Y.Node.get('#control-run'));                
+                Y.on('click', Y.bind(q.run, q), Y.Node.get('#control-run'));
+
             });
     </script>
 </body>

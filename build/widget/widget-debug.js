@@ -644,9 +644,6 @@ Y.extend(Widget, Y.Base, {
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
             parentNode = (parentNode) ? Node.get(parentNode) : null;
-            if (parentNode && parentNode.size() > 1) {
-                parentNode = parentNode.item(0);
-            }
             if (parentNode && !parentNode.inDoc()) {
                 parentNode = null;
             }
@@ -793,7 +790,7 @@ Y.extend(Widget, Y.Base, {
                 if (L.isFunction(v)) {
                     val = v.call(this, node);
                 } else {
-                    var found = node.query(v);
+                    var found = node.queryAll(v);
                     if (found) {
                         val = found;
                     }
@@ -937,14 +934,7 @@ Y.extend(Widget, Y.Base, {
      * @param template
      */
     _setBox : function(node, template) {
-        node = Node.get(node);
-        if (!node) {
-            node = Node.create(template);
-        } else {
-            if (node.size() > 1) {
-                node = node.item(0);
-            }
-        }
+        node = Node.get(node) || Node.create(template);
 
         var sid = Y.stamp(node);
         if (!node.get(ID)) {

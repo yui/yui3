@@ -10,6 +10,7 @@
             OFFSET_WIDTH = "offsetWidth",
             OFFSET_HEIGHT = "offsetHeight",
             VIEWPORT_REGION = "viewportRegion",
+            REGION = "region",
 
             AlignChange = "alignChange";
 
@@ -55,14 +56,14 @@
             },
 
             /**
-             * @attribute center
+             * @attribute centered
              * @type {boolean | node} 
              * @default false
              * @description A convenience attribute, which can be used as a shortcut for the align attribute.
              * If set to true, the Widget is centered in the viewport. If set to a node reference or valid selector string,
              * the Widget will be centered within the node. If set the false, no center positioning is applied.
              */
-            center: {
+            centered: {
                 set: function(val) {
                     return this._setAlignCenter(val);
                 },
@@ -163,7 +164,10 @@
              * @protected
              */
             _syncUIPosExtras : function() {
-                this._uiSetAlign(this.get(ALIGN));
+                var align = this.get(ALIGN);
+                if (align) {
+                    this._uiSetAlign(align.node, align.points);
+                }
             },
 
             /**
@@ -177,7 +181,7 @@
              * @protected
              */
             _bindUIPosExtras : function() {
-                this.after(AlignChange, this._onAlignChange);
+                this.after(AlignChange, this._afterAlignChange);
             },
 
             /**
@@ -203,40 +207,23 @@
              * Default attribute change listener for the align attribute, responsible
              * for updating the UI, in response to attribute changes.
              * 
-             * @method _onAlignChange
+             * @method _afterAlignChange
              * @protected
              * @param {Event.Facade} e The Event Facade
              */
-            _onAlignChange : function(e) {
-                this._uiSetAlign(e.newVal);
+            _afterAlignChange : function(e) {
+                if (e.newVal) {
+                    this._uiSetAlign(e.newVal.node, e.newVal.points);
+                }
             },
 
             /**
              * Updates the UI to reflect the align value passed in (see the align attribute documentation, for the object stucture expected)
              * @method _uiSetAlign
              * @protected
-             * @param {Object} val The alignment configuration object literal
+             * @param {Node | null} The node to align to, or null to indicate the viewport
              */
-            _uiSetAlign: function (val) {
-                if (val) {
-                    this.align(val.node, val.points);
-                }
-            },
-
-            /**
-             * Aligns the Widget to the provided node (or viewport) using the provided
-             * points. The method can be invoked directly, however it will result in 
-             * the align attribute being out of sync with current position of the of Widget.
-             * 
-             * @param {Node | String | null} node A reference (or selector string) for the Node which with the Widget is to be aligned.
-             * If null is passed in, the Widget will be aligned with the viewport.
-             * @param {Array[2]} points A two element array, specifying the points on the Widget and node/viewport which need to be aligned. 
-             * The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.
-             * Valid point references are defined as static constants on the WidgetPositionExt class. 
-             * 
-             * e.g. [WidgetPositionExt.TL, WidgetPositionExt.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.
-             */
-            align: function (node, points) {
+            _uiSetAlign: function (node, points) {
 
                 if (!L.isArray(points) || points.length != 2) {
                     Y.fail("align: Invalid Points Arguments");
@@ -247,11 +234,10 @@
 
                 if (!node) {
                     nodeRegion = this._posNode.get(VIEWPORT_REGION);
-                    // TODO: Setup resize/scroll listeners if Viewport
                 } else {
                     node = Y.Node.get(node);
                     if (node) {
-                        nodeRegion = node.get("region");
+                        nodeRegion = node.get(REGION);
                     }
                 }
 
@@ -299,7 +285,7 @@
                     }
 
                     if (xy) {
-                        this._align(widgetPoint, xy[0], xy[1]);
+                        this._doAlign(widgetPoint, xy[0], xy[1]);
                     }
                 }
             },
@@ -307,13 +293,13 @@
             /**
              * Helper method, used to align the given point on the widget, with the XY page co-ordinates provided.
              *
-             * @method _align
+             * @method _doAlign
              * @private
              * @param {String} widgetPoint Supported point constant (e.g. WidgetPositionExt.TL)
              * @param {Number} x X page co-ordinate to align to
              * @param {Number} y Y page co-ordinate to align to
              */
-            _align : function(widgetPoint, x, y) {
+            _doAlign : function(widgetPoint, x, y) {
                 var widgetNode = this._posNode,
                     xy;
 
@@ -356,15 +342,33 @@
             },
 
             /**
+             * Aligns the Widget to the provided node (or viewport) using the provided
+             * points. The method can be invoked directly, however it will result in 
+             * the align attribute being out of sync with current position of the of Widget.
+             * 
+             * @method align
+             * @param {Node | String | null} node A reference (or selector string) for the Node which with the Widget is to be aligned.
+             * If null is passed in, the Widget will be aligned with the viewport.
+             * @param {Array[2]} points A two element array, specifying the points on the Widget and node/viewport which need to be aligned. 
+             * The first entry is the point on the Widget, and the second entry is the point on the node/viewport which need to align.
+             * Valid point references are defined as static constants on the WidgetPositionExt class. 
+             * 
+             * e.g. [WidgetPositionExt.TL, WidgetPositionExt.TR] will align the top-left corner of the Widget with the top-right corner of the node/viewport.
+             */
+            align: function (node, points) {
+                this.set(ALIGN, {node: node, points:points});
+            },
+
+            /**
              * Centers the container in the viewport, or if a node is passed in,
              * the node.
              *
-             * @method center
+             * @method centered
              * @param {Node | String} node Optional. A node reference or selector string defining the node 
              * inside which the Widget is to be centered. If not passed in, the Widget will be centered in the 
              * viewport.
              */
-            center: function (node) {
+            centered: function (node) {
                 this.align(node, [PositionExt.CC, PositionExt.CC]);
             }
         };
