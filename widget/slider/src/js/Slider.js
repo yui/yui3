@@ -9,6 +9,8 @@ var RAIL  = 'rail',
     SLIDE_START = 'slideStart',
     SLIDE_END   = 'slideEnd',
     SYNC        = 'sync',
+    THUMB_DRAG  = 'thumbDrag',
+    VALUE_SET   = 'valueSet',
     RENDERED    = 'rendered',
 
     DOT    = '.',
@@ -179,7 +181,8 @@ Y.extend(Slider, Y.Widget, {
 
         this.publish(SLIDE_START);
         this.publish(SLIDE_END);
-        this.publish(SYNC, {defaultFn: this._doSyncUI});
+        this.publish(SYNC,      {defaultFn: this._doSyncUI});
+        this.publish(VALUE_SET, {defaultFn: this._uiSetThumbPosition});
     },
 
     renderUI : function () {
@@ -244,7 +247,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     bindUI : function () {
-        this.publish('thumbDrag', {defaultFn: this._updateValueFromDD});
+        this.publish(THUMB_DRAG, {defaultFn: this._updateValueFromDD});
 
         this.initThumbDD();
 
@@ -492,7 +495,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _onDDDrag : function (e) {
-        this.fire('thumbDrag', { ddEvent: e });
+        this.fire(THUMB_DRAG, { ddEvent: e });
     },
 
     _updateValueFromDD : function (e) {
@@ -513,27 +516,21 @@ Y.extend(Slider, Y.Widget, {
         this.fire(SLIDE_END,{ddEvent:e});
     },
 
-    _uiSetThumbPosition : function (v) {
-        var i = this._key.xyIndex,
-            min,max,x;
+    _uiSetThumbPosition : function (e) {
+        var min = this.get(MIN),
+            max = this.get(MAX),
+            i   = this._key.xyIndex,
+            v;
 
-        if (this._values) {
-            v = round(this._values[v] * this._tickSize);
-        } else {
-            min = this.get(MIN);
-            max = this.get(MAX);
-
-            v = round(((v - min) / (max - min)) * this._railDims[i]);
-        }
-
-        v -= floor(this._thumbDims[i] / 2);
+        v = round(((e.changeEv.newVal - min) / (max - min)) *
+                this._railDims[i]) - floor(this._thumbDims[i] / 2);
 
         this.get(THUMB).setStyle(this._key.offsetEdge, v + PX);
     },
 
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
-            this._uiSetThumbPosition(e.newVal);
+            this.fire(VALUE_SET,{changeEv: e});
         }
         e.ddEvent = e.omitEvents = null;
     },
