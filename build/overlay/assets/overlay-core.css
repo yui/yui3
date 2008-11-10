@@ -1,3 +1,7 @@
+.yui-overlay {
+    position:absolute;
+}
+
 .yui-overlay-hidden {
     visibility:hidden
 }
