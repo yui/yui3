@@ -4,7 +4,6 @@
     var Lang = Y.Lang,
         Widget = Y.Widget,
 
-        POSITION = "position",
         XY_COORD = "xy",
 
         POSITIONED = "positioned",
@@ -16,7 +15,6 @@
 
         UI = Widget.UI_SRC,
 
-        PositionChange = "positionChange",
         XYChange = "xyChange";
 
     /**
@@ -88,17 +86,6 @@
             validator: function(val) {
                 return this._validateXY(val);
             }
-        },
-
-        /**
-         * @attribute position
-         * @type string
-         * @default "absolute.
-         *
-         * @description The position value for the Widget.
-         */
-        position: {
-            value:"absolute"
         }
     };
 
@@ -136,7 +123,6 @@
          * @protected
          */
         _syncUIPosition : function() {
-            this._uiSetPosition(this.get(POSITION));
             this._uiSetXY(this.get(XY_COORD));
         },
 
@@ -151,8 +137,7 @@
          * @protected
          */
         _bindUIPosition :function() {
-            this.after(PositionChange, this._onPositionChange);
-            this.after(XYChange, this._onXYChange);
+            this.after(XYChange, this._afterXYChange);
         },
 
         /**
@@ -237,39 +222,17 @@
         },
 
         /**
-         * Default attribute change listener for the position attribute, responsible
-         * for updating the UI, in response to attribute changes.
-         * 
-         * @method _onPositionChange
-         * @protected
-         * @param {Event.Facade} e The Event Facade object.
-         */
-        _onPositionChange : function(e) {
-            this._uiSetPosition(e.newVal);
-        },
-
-        /**
          * Default attribute change listener for the xy attribute, responsible
          * for updating the UI, in response to attribute changes.
          * 
-         * @method _onXYChange
+         * @method _afterXYChange
          * @protected
          * @param {Event.Facade} e The Event Facade object.
          */
-        _onXYChange : function(e) {
+        _afterXYChange : function(e) {
             if (e.src != UI) {
                 this._uiSetXY(e.newVal);
             }
-        },
-
-        /**
-         * Updates the UI to reflect the position value passed in.
-         * @method _uiSetPosition
-         * @protected
-         * @param {String} val The position value to be reflected in the UI
-         */
-        _uiSetPosition : function(val) {
-            this._posNode.setStyle(POSITION, val);
         },
 
         /**
