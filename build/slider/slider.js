@@ -592,4 +592,4 @@ Y.extend(Slider, Y.Widget, {
 Y.Slider = Slider;
 
 
-}, '@VERSION@' ,{requires:['widget','dd']});
+}, '@VERSION@' ,{requires:['widget','dd-constrain']});
