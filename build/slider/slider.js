@@ -182,9 +182,8 @@ Y.extend(Slider, Y.Widget, {
         this.publish(SLIDE_START);
         this.publish(SLIDE_END);
 
-        //TODO: rename defaultFn _def*
-        this.publish(SYNC,       {defaultFn: this._doSyncUI});
-        this.publish(VALUE_SET,  {defaultFn: this._uiSetThumbPosition});
+        this.publish(SYNC,       {defaultFn: this._defSyncUI});
+        this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
 
         this.publish(READY);
     },
@@ -263,7 +262,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     bindUI : function () {
-        this.publish(THUMB_DRAG, {defaultFn: this._updateValueFromDD});
+        this.publish(THUMB_DRAG, {defaultFn: this._defUpdateValueFromDD});
 
         this._bindThumbDD();
 
@@ -354,7 +353,7 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
-    _doSyncUI : function (e) {
+    _defSyncUI : function (e) {
         this._setRailSize();
 
         this._setThumbSize();
@@ -515,7 +514,7 @@ Y.extend(Slider, Y.Widget, {
         this.fire(THUMB_DRAG, { ddEvent: e });
     },
 
-    _updateValueFromDD : function (e) {
+    _defUpdateValueFromDD : function (e) {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
@@ -534,7 +533,7 @@ Y.extend(Slider, Y.Widget, {
 
 
 
-    _uiSetThumbPosition : function (e) {
+    _defSetThumbPosition : function (e) {
         var min = this.get(MIN),
             max = this.get(MAX),
             v;
