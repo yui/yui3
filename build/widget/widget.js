@@ -178,10 +178,9 @@ var WIDGET = "widget",
     RENDER = "render",
     RENDERED = "rendered",
     DESTROYED = "destroyed",
-    
+
     ContentUpdate = "contentUpdate",
 
-    Base = Y.Base,
     O = Y.Object,
     Node = Y.Node,
     ClassNameManager = Y.ClassNameManager;
@@ -216,47 +215,21 @@ function Widget(config) {
 }
 
 /**
- * <p>
- * Builds a constructor function (class) from the
- * main function, and array of extension functions (classes)
- * provided.
- * </p>
- * <p>
- * The cfg object literal supports the following properties
- * </p>
- * <dl>
- *    <dt>dynamic &#60;boolean&#62;</dt>
- *    <dd>
- *    <p>If true, a completely new class
- *    is created which extends the main class, and acts as the 
- *    host on which the extension classes are augmented.</p>
- *    <p>If false, the extensions classes are augmented directly to
- *    the main class, modifying the main classes prototype.</p>
- *    </dd>
- *    <dt>aggregates &#60;String[]&#62;</dt>
- *    <dd>An array of static property names, which will get aggregated
- *    on to the built class in addition to the default properties build 
- *    will always aggregate.  Along with "ATTRS", which is aggregated by
- *    Base, "PLUGINS and HTML_PARSER" will be aggregated by default, as 
- *    defined by Widget.build.AGGREGATES</dd>
- * </dl>
+ * The build configuration for the Widget class.
  *
- * @method build
+ * Defines the static fields which need to be aggregated,
+ * when this class is used as the main class passed to 
+ * the <a href="#method_build">Base.build</a> method.
+ *
+ * @property _buildCfg
+ * @type Object
  * @static
- * @param {Function} main The main class on which to base the built class
- * @param {Function[]} extensions The set of extension classes which will be
- * augmented/aggregated to the built class.
- * @param {Object} cfg
- * @return {Function} A custom class, created from the provided main and extension classes
+ * @final
+ * @private
  */
-Widget.build = function(main, exts, cfg) {
-    cfg = cfg || {};
-    cfg.aggregates = cfg.aggregates || [];
-    cfg.aggregates = cfg.aggregates.concat(Widget.build.AGGREGATES);
-    return Base.build.call(Base, main, exts, cfg);
+Widget._buildCfg = {
+    aggregates : ["PLUGINS", "HTML_PARSER"]
 };
-
-Widget.build.AGGREGATES = ["PLUGINS", "HTML_PARSER"];
 
 /**
  * Static property provides a string to identify the class.
