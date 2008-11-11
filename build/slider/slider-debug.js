@@ -1,19 +1,26 @@
 YUI.add('slider', function(Y) {
 
-var RAIL  = 'rail',
-    THUMB = 'thumb',
-    VALUE = 'value',
-    MIN   = 'min',
-    MAX   = 'max',
+/**
+ * @class Slider
+ */
+
+var SLIDER = 'slider',
+    RAIL   = 'rail',
+    THUMB  = 'thumb',
+    VALUE  = 'value',
+    MIN    = 'min',
+    MAX    = 'max',
     THUMB_IMAGE = 'thumbImage',
-    RAIL_WIDTH  = 'railWidth',
-    RAIL_HEIGHT = 'railHeight',
+    RAIL_SIZE   = 'railSize',
+
     SLIDE_START = 'slideStart',
     SLIDE_END   = 'slideEnd',
-    SYNC        = 'sync',
+
     THUMB_DRAG  = 'thumbDrag',
+    SYNC        = 'sync',
     VALUE_SET   = 'valueSet',
     RENDERED    = 'rendered',
+    READY       = 'ready',
 
     DOT    = '.',
     PX     = 'px',
@@ -23,14 +30,16 @@ var RAIL  = 'rail',
     OFFSET_HEIGHT = 'offsetHeight',
     POSITION      = 'position',
 
-    DIM_RE = /^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/,
-
     L = Y.Lang,
     isArray  = L.isArray,
+    isBoolean= L.isBoolean,
     isString = L.isString,
     isNumber = L.isNumber,
     
+    CNM      = Y.ClassNameManager,
+
     M        = Math,
+    max      = M.max,
     round    = M.round,
     floor    = M.floor,
     ceil     = M.ceil,
@@ -42,14 +51,13 @@ function Slider() {
 
 Y.mix(Slider, {
 
-    NAME : 'slider',
+    NAME : SLIDER,
 
     AXIS_KEYS : {
         x : {
             offsetEdge    : 'left',
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
-            axisDim       : RAIL_WIDTH,
             offsetDim     : OFFSET_WIDTH,
             posMethod     : 'getX',
             eventPageAxis : 'pageX',
@@ -60,7 +68,6 @@ Y.mix(Slider, {
             offsetEdge    : 'top',
             dim           : HEIGHT,
             offAxisDim    : WIDTH,
-            axisDim       : RAIL_HEIGHT,
             offsetDim     : OFFSET_HEIGHT,
             posMethod     : 'getY',
             eventPageAxis : 'pageY',
@@ -70,17 +77,9 @@ Y.mix(Slider, {
     },
 
     HTML_PARSER : {
-        // implemented as functions due to a timing issue with instance-based
-        // ClassNameManager
-        rail : function (cb) {
-            return cb.query(DOT+this.getClassName(RAIL));
-        },
-        thumb : function (cb) {
-            return cb.quer(DOT+this.getClassName(THUMB));
-        },
-        thumbImage : function (cb) {
-            return cb.query(DOT+this.getClassName(THUMB)+' img');
-        }
+        rail       : CNM.getClassName(SLIDER,RAIL),
+        thumb      : CNM.getClassName(SLIDER,THUMB),
+        thumbImage : CNM.getClassName(SLIDER,THUMB_IMAGE)
     },
 
     ATTRS : {
@@ -140,23 +139,22 @@ Y.mix(Slider, {
             }
         },
 
-        railHeight : {
+        railSize : {
             value : '0',
             validator : function (v) {
-                return this._validateNewRailHeight(v);
+                return this._validateNewRailSize(v);
             }
         },
 
-        railWidth : {
-            value : '0',
-            validator : function (v) {
-                return this._validateNewRailWidth(v);
-            }
-        },
-
-        backgroundEnabled : {
+        railEnabled : {
             value : true,
-            validator : L.isBoolean
+            validator : isBoolean
+        },
+
+        ready : {
+            value : false,
+            readOnly : true,
+            validator : isBoolean
         }
     }
 });
@@ -165,13 +163,13 @@ Y.extend(Slider, Y.Widget, {
 
     _key : null,
 
-    _factor : 0.5,
+    _factor : 1,
 
-    _tickSize : false,
+    _railSize : null,
 
-    _railDims : null,
+    _thumbSize : null,
 
-    _thumbDims : null,
+    _loading : false,
 
     initializer : function () {
         this._key = Slider.AXIS_KEYS[this.get('axis')];
@@ -179,23 +177,23 @@ Y.extend(Slider, Y.Widget, {
         this.after('minChange',    this._afterMinChange);
         this.after('maxChange',    this._afterMaxChange);
 
-        this.after(this._key.axisDim+'Change', this._afterRailDimChange);
+        this.after('railSizeChange', this._afterRailSizeChange);
 
         this.publish(SLIDE_START);
         this.publish(SLIDE_END);
-        this.publish(SYNC,      {defaultFn: this._doSyncUI});
-        this.publish(VALUE_SET, {defaultFn: this._uiSetThumbPosition});
+
+        this.publish(SYNC,       {defaultFn: this._defSyncUI});
+        this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
+
+        this.publish(READY);
     },
 
     renderUI : function () {
-        var img;
-
-        this.initRail();
-
-        this.initThumb();
+        this._initRail();
+        this._initThumb();
     },
 
-    initRail : function () {
+    _initRail : function () {
         var cb   = this.get('contentBox'),
             rail = this.get(RAIL);
 
@@ -210,14 +208,26 @@ Y.extend(Slider, Y.Widget, {
             cb.appendChild(rail);
         }
 
+        rail.addClass(this.getClassName(RAIL));
+        rail.addClass(this.getClassName(RAIL,this.get('axis')));
+
+        // TODO: revisit, move to CSS
         if ('absolute|relative'.indexOf(rail.getStyle(POSITION)) === -1) {
             rail.setStyle(POSITION,'relative');
         }
     },
 
-    initThumb : function () {
+    _initThumb : function () {
         var rail    = this.get(RAIL),
             thumb   = this.get(THUMB);
+
+        // Passed an img element as the thumb
+        if (thumb && !this.get(THUMB_IMAGE) &&
+            thumb.get('nodeName').toLowerCase() === 'img') {
+            this.set(THUMB_IMAGE, thumb);
+            this.set(THUMB,null);
+            thumb = null;
+        }
 
         if (!thumb) {
             thumb = Y.Node.create(
@@ -226,18 +236,21 @@ Y.extend(Slider, Y.Widget, {
             this.set(THUMB,thumb);
         }
 
+        thumb.addClass(this.getClassName(THUMB));
+
         if (!rail.contains(thumb)) {
             rail.appendChild(thumb);
         }
 
+        // TODO: revisit, move to css
         thumb.setStyle(POSITION,'absolute');
 
         if (this.get(THUMB_IMAGE)) {
-            this.initThumbImage();
+            this._initThumbImage();
         }
     },
 
-    initThumbImage : function () {
+    _initThumbImage : function () {
         var thumb = this.get(THUMB),
             img   = this.get(THUMB_IMAGE);
 
@@ -249,162 +262,167 @@ Y.extend(Slider, Y.Widget, {
     },
 
     bindUI : function () {
-        this.publish(THUMB_DRAG, {defaultFn: this._updateValueFromDD});
+        this.publish(THUMB_DRAG, {defaultFn: this._defUpdateValueFromDD});
 
-        this.initThumbDD();
+        this._bindThumbDD();
 
         this.after('valueChange', this._afterValueChange);
     },
 
-    initThumbDD : function () {
-        this._dd = new Y.DD.Drag({
-            node : this.get(THUMB),
-            constrain2node : this.get(RAIL)
-        });
+    _bindThumbDD : function () {
+        var ddConf = {
+                node           : this.get(THUMB),
+                constrain2node : this.get(RAIL)
+            },
+            dd;
 
-        this._dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
-        this._dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
-        this._dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
+        ddConf[this._key.ddStick] = true;
 
-        this._dd.set(this._key.ddStick, true);
+        this._dd = dd = new Y.DD.Drag(ddConf);
+        dd.on('drag:start', Y.bind(this._onDDStartDrag, this));
+        dd.on('drag:drag',  Y.bind(this._onDDDrag,      this));
+        dd.on('drag:end',   Y.bind(this._onDDEndDrag,   this));
 
-        this._initBackgroundDD();
+        this._initRailDD();
     },
 
-    _initBackgroundDD : function () {
-        var pageXY  = this._key.eventPageAxis,
-            xyIndex = this._key.xyIndex,
-            self    = this;
+    _initRailDD : function () {
+        this.get(RAIL).on('mousedown',Y.bind(this._handleRailMouseDown,this));
+    },
 
-        // Temporary hack while dd doesn't support outer handles
-        Y.on('mousedown',Y.bind(function (ev) {
-            if (self.get('backgroundEnabled')) {
-                var xy;
+    // Parrot most of dd's onMouseDown behavior and manually move the
+    // thumb node to the click location.  DD will take over from there.
+    _handleRailMouseDown : function (e) {
+        if (this.get('railEnabled')) {
+            var dd      = this._dd,
+                xyIndex = this._key.xyIndex,
+                xy;
 
-                if (this.get('primaryButtonOnly') && ev.button > 1) {
-                    Y.log('Mousedown was not produced by the primary button',
-                          'warn', 'dd-drag');
-                    return false;
-                }
-
-                this._dragThreshMet = true;
-
-                this._fixIEMouseDown();
-                ev.halt();
-
-                Y.DD.DDM.activeDrag = this;
-
-                // Adjust registered starting position by half the thumb's x/y
-                xy = this.get('dragNode').getXY();
-                xy[xyIndex] += floor(self._thumbDims[self._key.xyIndex] / 2);
-
-                this._setStartPosition(xy);
-
-                this.start();
-                this._moveNode([ev.pageX,ev.pageY]);
+            if (dd.get('primaryButtonOnly') && e.button > 1) {
+                Y.log('Mousedown was not produced by the primary button',
+                      'warn', 'dd-drag');
+                return false;
             }
-        },this._dd),this.get(RAIL));
+
+            dd._dragThreshMet = true;
+
+            dd._fixIEMouseDown();
+            e.halt();
+
+            Y.DD.DDM.activeDrag = dd;
+
+            // Adjust registered starting position by half the thumb's x/y
+            xy = dd.get('dragNode').getXY();
+            xy[xyIndex] += floor(this._thumbSize / 2);
+
+            dd._setStartPosition(xy);
+
+            dd.start();
+            dd._moveNode([e.pageX,e.pageY]);
+        }
     },
 
     syncUI : function () {
-        var img = this.get(THUMB_IMAGE), handler;
+        var img = this.get(THUMB_IMAGE);
 
         if (!img || img.get('complete')) {
-            this.fire(SYNC);
+            this._ready();
         } else {
             // Schedule the sync for when the image loads/errors
-            handler = Y.bind(function () { this.fire(SYNC); }, this);
+            this._scheduleSync();
+        }
+    },
+
+    _scheduleSync : function () {
+        var img = this.get(THUMB_IMAGE), handler;
+
+        if (!this._loading) {
+            this._loading = true;
+
+            handler = Y.bind(this._ready,this);
             img.on('load',handler);
             img.on('error',handler);
         }
     },
 
-    _doSyncUI : function (e) {
-        this._setRailDims();
+    _ready : function () {
+        this.fire(SYNC);
+        this._loading = false;
 
-        this._setThumbDims();
+        if (!this.get(READY)) {
+            this.fire(READY);
+            this._set(READY,true);
+        }
+    },
+
+    _defSyncUI : function (e) {
+        this._setRailSize();
+
+        this._setThumbSize();
 
         this._setRailOffsetXY();
 
         this._setDDGutter();
 
-        this._setConvFactor();
+        this._setFactor();
 
         this.set(VALUE,this.get(VALUE),{ddEvent:null});
     },
 
-    _setRailDims : function () {
+    _setRailSize : function () {
         var rail  = this.get(RAIL),
             thumb = this.get(THUMB),
             img   = this.get(THUMB_IMAGE),
-            w     = this.get(RAIL_WIDTH),
-            h     = this.get(RAIL_HEIGHT);
+            dim   = this._key.dim,
+            size  = this.get(RAIL_SIZE);
 
-        if (parseInt(h,10)) {
+        if (parseInt(size,10)) {
             // Convert to pixels
-            rail.setStyle(HEIGHT,h);
-            h = rail.getComputedStyle(HEIGHT);
+            rail.setStyle(dim,size);
+            size = parseInt(rail.getComputedStyle(dim),10);
         } else {
-            // offsetWidth fails in hidden containers
-            h = ((this._isImageLoaded(img) && img.get(HEIGHT)) ||
-                 parseInt(thumb.getComputedStyle(HEIGHT),10) ||
-                 thumb.get(OFFSET_HEIGHT)) + PX;
+            size = max(
+                    parseInt(thumb.getComputedStyle(dim),10),
+                    parseInt(rail.getComputedStyle(dim),10));
+
+            if (this._isImageLoaded(img)) {
+                size = max(img.get(dim),size);
+            }
         }
 
-        rail.setStyle(HEIGHT, h);
+        rail.setStyle(dim, size + PX);
 
-        if (parseInt(w,10)) {
-            // Convert to pixels
-            rail.setStyle(WIDTH,w);
-            w = rail.getComputedStyle(WIDTH);
-        } else {
-            // offsetHeight fails in hidden containers
-            w = ((this._isImageLoaded(img) && img.get(WIDTH)) ||
-                 parseInt(thumb.getComputedStyle(WIDTH),10) ||
-                 thumb.get(OFFSET_WIDTH)) + PX;
-        }
-
-        rail.setStyle(WIDTH,w);
-
-        this._railDims = [parseInt(w,10),parseInt(h,10)];
+        this._railSize = size;
     },
 
     _setRailOffsetXY : function () {
         this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
-                         floor(this._thumbDims[this._key.xyIndex] / 2);
+                         floor(this._thumbSize / 2);
     },
 
-    _setThumbDims : function () {
+    _setThumbSize : function () {
         var rail  = this.get(RAIL),
             thumb = this.get(THUMB),
+            dim   = this._key.dim,
             img   = this.get(THUMB_IMAGE),
-            xy    = parseInt(rail.getComputedStyle(this._key.offAxisDim),10),
-            w,h;
+            size;
 
         // offsetWidth fails in hidden containers
-        if (this._isImageLoaded(img)) {
-            h = img.get(HEIGHT);
-            w = img.get(WIDTH);
-        } else {
-            h = parseInt(thumb.getComputedStyle(HEIGHT),10) ||
-                thumb.get(OFFSET_HEIGHT) || 
-                xy;
+        size = parseInt(thumb.getComputedStyle(dim),10);
 
-            w = parseInt(thumb.getComputedStyle(WIDTH),10) ||
-                thumb.get(OFFSET_WIDTH) || 
-                xy;
+        // TODO: Offer default dim in the case of x axis slider w/ no image or
+        // specified thumb dims in css?  getCS would return the full rail width.
+        if (this._isImageLoaded(img)) {
+            size = max(img.get(dim), size);
         }
 
-        thumb.setStyle(HEIGHT,h + PX);
-        thumb.setStyle(WIDTH, w + PX);
-        
-        this._thumbDims = [w,h];
+        this._thumbSize = size;
     },
 
     _setDDGutter : function () {
         var gutter = [0,0,0,0],
             i      = this._key.xyIndex,
-            dim    = this._thumbDims[i] / 2,
+            dim    = this._thumbSize / 2,
             start  = -1 * floor(dim),
             end    = -1 * ceil(dim);
 
@@ -419,12 +437,10 @@ Y.extend(Slider, Y.Widget, {
         this._dd.set('gutter', gutter.join(' '));
     },
 
-    _setConvFactor : function () {
-        var range = this.get(MAX) - this.get(MIN),
-            size  = this._railDims[this._key.xyIndex];// -
-                    //this._thumbDims[this._key.xyIndex];
-
-        this._factor = size ? range / size : 1;
+    _setFactor : function () {
+        this._factor = this._railSize ?
+            (this.get(MAX) - this.get(MIN)) / this._railSize :
+            1;
     },
 
     getValue : function () {
@@ -457,12 +473,9 @@ Y.extend(Slider, Y.Widget, {
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
     },
 
-    _validateNewRailHeight : function (v) {
-        return isString(v) && (v === '0' || DIM_RE.test(v));
-    },
-
-    _validateNewRailWidth : function (v) {
-        return isString(v) && (v === '0' || DIM_RE.test(v));
+    _validateNewRailSize : function (v) {
+        return isString(v) &&
+            (v === '0' || /^\d+(?:p[xtc]|%|e[mx]|in|[mc]m)$/.test(v));
     },
 
     _setAxisFn : function (v) {
@@ -491,6 +504,9 @@ Y.extend(Slider, Y.Widget, {
                 null;
     },
 
+
+
+
     _onDDStartDrag : function (e) {
         this._setRailOffsetXY();
         this.fire(SLIDE_START,{ddEvent:e});
@@ -500,7 +516,7 @@ Y.extend(Slider, Y.Widget, {
         this.fire(THUMB_DRAG, { ddEvent: e });
     },
 
-    _updateValueFromDD : function (e) {
+    _defUpdateValueFromDD : function (e) {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
@@ -518,17 +534,22 @@ Y.extend(Slider, Y.Widget, {
         this.fire(SLIDE_END,{ddEvent:e});
     },
 
-    _uiSetThumbPosition : function (e) {
+
+
+
+    _defSetThumbPosition : function (e) {
         var min = this.get(MIN),
             max = this.get(MAX),
-            i   = this._key.xyIndex,
             v;
 
         v = round(((e.changeEv.newVal - min) / (max - min)) *
-                this._railDims[i]) - floor(this._thumbDims[i] / 2);
+                this._railSize) - floor(this._thumbSize / 2);
 
         this.get(THUMB).setStyle(this._key.offsetEdge, v + PX);
     },
+
+
+
 
     _afterValueChange : function (e) {
         if (!e.ddEvent) {
@@ -545,7 +566,7 @@ Y.extend(Slider, Y.Widget, {
         this._refresh(e);
     },
 
-    _afterRailDimChange : function (e) {
+    _afterRailSizeChange : function (e) {
         this._refresh(e);
     },
 
@@ -575,4 +596,4 @@ Y.extend(Slider, Y.Widget, {
 Y.Slider = Slider;
 
 
-}, '@VERSION@' ,{requires:['widget','dd']});
+}, '@VERSION@' ,{requires:['widget','dd-constrain']});

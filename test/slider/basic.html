@@ -4,32 +4,39 @@
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <style type="text/css">
-        .yui-slider-rail {
-            background: #ccc;
-            position: relative;
+        .yui-slider {
+            display: inline-block;
+            border: 1px solid red;
+            margin-bottom: 10px;
         }
-        .yui-slider-thumb {
-            Xbackground: #070;
-            position: absolute;
-            Xleft: 74px;
+        .yui-slider .yui-slider-rail {
+            display: inline-block;
         }
-        #t {
-            Xheight: 21px;
-            Xwidth: 17px;
-            Xbackground: blue;
+
+        .yui-slider .yui-slider-rail-x {
+            background: url("../../widget/slider/src/css/rail-classic-x.png") repeat-x 0 0;
+            min-height: 10px;
+        }
+
+        .yui-slider .yui-slider-rail-y {
+            background: url("../../widget/slider/src/css/rail-classic-y.png") repeat-y 0 0;
+            min-width: 10px;
+        }
+
+        .markup { 
+            margin-left: 300px;
         }
     </style>
 </head>
 <body>
 <div class="markup">
-    <div id="slider">
-        <img id="t" src='http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'>
-    </div>
+    <div id="slider" class="yui-slider-theme-classic-x"></div>
 
     <input type="button" id="size" value="Change size">
     <input type="button" id="val" value="Set Value">
     <div id="report">0</div>
 </div>
+<img id="t" src="../../widget/slider/src/css/thumb-classic-x.png">
 
 <script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
 <script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
@@ -50,19 +57,16 @@ var report = Y.get('#report');
 
 var s = new Y.Slider({
     //axis : 'y',
-    //railHeight: '200px',
-    railWidth: '260px',
-    min : 100,
-    max : -100,
-    //values : 17,//[100,75,33,14,0,-26,-47,-69,-91,-92],
+    railSize: '318px',
+    min : 37,
+    max : -218,
     value : -25,
+    //thumbImage : '../../widget/slider/src/css/thumb-classic-x.png'
     thumb: '#t'
 });
-s.on('valueChange',function (e) {
+
+s.after('valueChange',function (e) {
     report.set('innerHTML',e.newVal);
-});
-s.on('slideStart',function (e) {
-    //report.set('innerHTML','rail.getXY()this._offsetXY);
 });
 
 s.render('#slider');
@@ -70,8 +74,8 @@ s.render('#slider');
 report.set('innerHTML',s.getValue());
 
 Y.get('#size').on('click',function () {
-    //s.set('railHeight','155px');
-    s.set('railWidth','160px');
+    s.set('railSize','155px');
+    //s.set('railWidth','160px');
 });
 Y.get('#val').on('click',function () {
     s.set('value',s.getValue() === -92 ? 100 : -92);

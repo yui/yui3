@@ -1,5 +1,3 @@
-YUI.add('slider', function(Y) {
-
 /**
  * @class Slider
  */
@@ -299,6 +297,8 @@ Y.extend(Slider, Y.Widget, {
                 xy;
 
             if (dd.get('primaryButtonOnly') && e.button > 1) {
+                Y.log('Mousedown was not produced by the primary button',
+                      'warn', 'dd-drag');
                 return false;
             }
 
@@ -518,6 +518,8 @@ Y.extend(Slider, Y.Widget, {
         var before = this.get(VALUE),
             val    = e.ddEvent[this._key.eventPageAxis] - this._offsetXY;
 
+        Y.log("Raw value: "+val+" Current value: "+before+
+              "Factored value: "+round(this.get(MIN) + (val * this._factor)));
 
         val = round(this.get(MIN) + (val * this._factor));
 
@@ -590,6 +592,3 @@ Y.extend(Slider, Y.Widget, {
 });
 
 Y.Slider = Slider;
-
-
-}, '@VERSION@' ,{requires:['widget','dd-constrain']});
