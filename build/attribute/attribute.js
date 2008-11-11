@@ -573,17 +573,20 @@ YUI.add('attribute', function(Y) {
          * Gets multiple attribute values.
          *
          * @method getAtts
+         * @param {Array} Optional. An array of attribute names, whose values are required. If omitted, all attribute values are
+         * returned.
          * @return {Object} A hash of attributes: name/value pairs
          */
         getAtts: function(atts) {
-            var o = {};
-            if (atts) {
-                o = Y.clone(atts);
-            } else {
-                Y.each(this._conf.get(VALUE), function(val, att) {
-                    o[att] = val; 
-                });
+            var o = {}, i, l, att;
+            atts = atts || O.keys(this._conf.data[VALUE]);
+
+            for (i = 0, l = atts.length; i < l; i++) {
+                // Go through get, to retrieve massaged values and honor cloning
+                att = atts[i];
+                o[att] = this.get(att); 
             }
+
             return o;
         },
 
