@@ -502,7 +502,8 @@ Widget.getByNode = function(node) {
  * markup contained in the widget's content box. e.g.:
  * <pre>
  *   {
- *       titleNode: "span.yui-title"             // Set Node/NodeList references using selector syntax 
+ *       titleNode: "span.yui-title"      // Set single Node references using selector syntax (selector is run through node.query)
+ *       listNodes: ["li.yui-item"]       // Set NodeList references using selector syntax (array indicates selector is to be run through node.queryAll)
  *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
  *           return contentBox.query("span.title").get("innerHTML");
  *       }
@@ -520,7 +521,7 @@ Y.extend(Widget, Y.Base, {
 	 * <code>Y.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
 	 * Uses <code>Y.config.classNameDelimiter</code> attribute to delimit the provided strings.
 	 * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
-	 * 
+	 *
 	 * @method getClassName
 	 * @param {String}+ one or more classname bits to be joined and prefixed
 	 */
@@ -790,9 +791,10 @@ Y.extend(Widget, Y.Base, {
                 if (L.isFunction(v)) {
                     val = v.call(this, node);
                 } else {
-                    var found = node.queryAll(v);
-                    if (found) {
-                        val = found;
+                    if (L.isArray(v)) {
+                        val = node.queryAll(v[0]);
+                    } else {
+                        val = node.query(v);
                     }
                 }
 
