@@ -14,18 +14,20 @@
             Xleft: 74px;
         }
         #t {
-            height: 21px;
-            width: 17px;
-            background: blue;
+            Xheight: 21px;
+            Xwidth: 17px;
+            Xbackground: blue;
         }
     </style>
 </head>
 <body>
 <div class="markup">
     <div id="slider">
-        <!--img id="t" src='http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'-->
-        <div id="t"></div>
+        <img id="t" src='http://yui.yahooapis.com/2.6.0/build/slider/assets/thumb-n.gif'>
     </div>
+
+    <input type="button" id="size" value="Change size">
+    <input type="button" id="val" value="Set Value">
     <div id="report">0</div>
 </div>
 
@@ -33,26 +35,48 @@
 <script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
 <script type="text/javascript" src="/3.x/build/slider/slider.js"></script>
 <script type="text/javascript">
-YUI({base:'/3.x/build/',filter: 'debug',logExclude:{base:true,event:true,attribute:true}}).use('widget','slider',function (Y) {
+YUI({
+    base:'/3.x/build/'/*,
+    filter: 'debug',
+    logExclude:{
+        base:true,
+        event:true,
+        attribute:true
+    }
+    */
+}).use('widget','slider',function (Y) {
 
 var report = Y.get('#report');
 
 var s = new Y.Slider({
-    railHeight: '20px',
-    railWidth: '200px',
+    //axis : 'y',
+    //railHeight: '200px',
+    railWidth: '260px',
     min : 100,
     max : -100,
-    values : [100,75,33,14,0,-26,-47,-69,-91,-100],
-    value : 25,
+    //values : 17,//[100,75,33,14,0,-26,-47,-69,-91,-92],
+    value : -25,
     thumb: '#t'
 });
 s.on('valueChange',function (e) {
     report.set('innerHTML',e.newVal);
 });
+s.on('slideStart',function (e) {
+    //report.set('innerHTML','rail.getXY()this._offsetXY);
+});
 
 s.render('#slider');
 
 report.set('innerHTML',s.getValue());
+
+Y.get('#size').on('click',function () {
+    //s.set('railHeight','155px');
+    s.set('railWidth','160px');
+});
+Y.get('#val').on('click',function () {
+    s.set('value',s.getValue() === -92 ? 100 : -92);
+    //s.set('railWidth','160px');
+});
 
 });
 </script>

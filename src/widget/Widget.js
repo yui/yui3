@@ -353,7 +353,8 @@ Widget.getByNode = function(node) {
  * markup contained in the widget's content box. e.g.:
  * <pre>
  *   {
- *       titleNode: "span.yui-title"             // Set Node/NodeList references using selector syntax 
+ *       titleNode: "span.yui-title"      // Set single Node references using selector syntax (selector is run through node.query)
+ *       listNodes: ["li.yui-item"]       // Set NodeList references using selector syntax (array indicates selector is to be run through node.queryAll)
  *       label: function(contentBox) {    // Set other attribute types, using a parse function. Context is set to the widget instance
  *           return contentBox.query("span.title").get("innerHTML");
  *       }
@@ -371,7 +372,7 @@ Y.extend(Widget, Y.Base, {
 	 * <code>Y.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
 	 * Uses <code>Y.config.classNameDelimiter</code> attribute to delimit the provided strings.
 	 * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
-	 * 
+	 *
 	 * @method getClassName
 	 * @param {String}+ one or more classname bits to be joined and prefixed
 	 */
@@ -495,9 +496,6 @@ Y.extend(Widget, Y.Base, {
             this.publish(RENDER, {queuable:false, defaultFn: this._defRenderFn});
 
             parentNode = (parentNode) ? Node.get(parentNode) : null;
-            if (parentNode && parentNode.size() > 1) {
-                parentNode = parentNode.item(0);
-            }
             if (parentNode && !parentNode.inDoc()) {
                 parentNode = null;
             }
@@ -644,9 +642,10 @@ Y.extend(Widget, Y.Base, {
                 if (L.isFunction(v)) {
                     val = v.call(this, node);
                 } else {
-                    var found = node.query(v);
-                    if (found) {
-                        val = found;
+                    if (L.isArray(v)) {
+                        val = node.queryAll(v[0]);
+                    } else {
+                        val = node.query(v);
                     }
                 }
 
@@ -788,14 +787,7 @@ Y.extend(Widget, Y.Base, {
      * @param template
      */
     _setBox : function(node, template) {
-        node = Node.get(node);
-        if (!node) {
-            node = Node.create(template);
-        } else {
-            if (node.size() > 1) {
-                node = node.item(0);
-            }
-        }
+        node = Node.get(node) || Node.create(template);
 
         var sid = Y.stamp(node);
         if (!node.get(ID)) {
@@ -850,11 +842,11 @@ Y.extend(Widget, Y.Base, {
      * @protected
      */
     _bindUI: function() {
-        this.after('visibleChange', this._onVisibleChange);
-        this.after('disabledChange', this._onDisabledChange);
-        this.after('heightChange', this._onHeightChange);
-        this.after('widthChange', this._onWidthChange);
-        this.after('hasFocusChange', this._onHasFocusChange);
+        this.after('visibleChange', this._afterVisibleChange);
+        this.after('disabledChange', this._afterDisabledChange);
+        this.after('heightChange', this._afterHeightChange);
+        this.after('widthChange', this._afterWidthChange);
+        this.after('hasFocusChange', this._afterHasFocusChange);
 
         this._bindDOMListeners();
     },
@@ -988,55 +980,55 @@ Y.extend(Widget, Y.Base, {
     /**
      * Visible attribute UI handler
      * 
-     * @method _onVisibleChange
+     * @method _afterVisibleChange
      * @protected
      * @param {Object} evt Event object literal passed by AttributeProvider
      */
-    _onVisibleChange: function(evt) {
+    _afterVisibleChange: function(evt) {
         this._uiSetVisible(evt.newVal);
     },
 
     /**
      * Disabled attribute UI handler
      * 
-     * @method _onDisabledChange
+     * @method _afterDisabledChange
      * @protected
      * @param {Object} evt Event object literal passed by AttributeProvider
      */
-    _onDisabledChange: function(evt) {
+    _afterDisabledChange: function(evt) {
         this._uiSetDisabled(evt.newVal);
     },
 
     /**
      * Height attribute UI handler
      * 
-     * @method _onHeightChange
+     * @method _afterHeightChange
      * @protected
      * @param {Object} evt Event object literal passed by AttributeProvider
      */
-    _onHeightChange: function(evt) {
+    _afterHeightChange: function(evt) {
         this._uiSetHeight(evt.newVal);
     },
 
     /**
      * Width attribute UI handler
      * 
-     * @method _onWidthChange
+     * @method _afterWidthChange
      * @protected
      * @param {Object} evt Event object literal passed by AttributeProvider
      */
-    _onWidthChange: function(evt) {
+    _afterWidthChange: function(evt) {
         this._uiSetWidth(evt.newVal);
     },
 
     /**
      * hasFocus attribute UI handler
      * 
-     * @method _onHasFocusChange
+     * @method _afterHasFocusChange
      * @protected
      * @param {Object} evt Event object literal passed by AttributeProvider
      */
-    _onHasFocusChange: function(evt) {
+    _afterHasFocusChange: function(evt) {
         this._uiSetHasFocus(evt.newVal, evt.src);
     },
 
