@@ -119,8 +119,9 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
-        // Allow var yui = YUI() instead of var yui = new YUI()
-        if (Y == window) {
+        // Allow instantiation without the new operator
+        // if (Y == window) {
+        if (!(Y instanceof YUI)) {
             return new YUI(o);
         } else {
             // set up the core environment
