@@ -8,9 +8,6 @@ YUI.add('widget-stdmod', function(Y) {
         UA = Y.UA,
         Widget = Y.Widget,
 
-        UI = Widget.UI_SRC,
-        UI_SRC = {src:UI},
-
         EMPTY = "",
         HD = "hd",
         BD = "bd",
@@ -26,6 +23,7 @@ YUI.add('widget-stdmod', function(Y) {
         CONTENT_SUFFIX = "Content",
         INNER_HTML = "innerHTML",
         FIRST_CHILD = "firstChild",
+        CHILD_NODES = "childNodes",
 
         CONTENT_BOX = "contentBox",
         BOUNDING_BOX = "boundingBox",
@@ -137,7 +135,13 @@ YUI.add('widget-stdmod', function(Y) {
          * @description The content to be added to the header section. This will replace any existing content
          * in the header. If you want to append, or insert new content, use the setHeader method.
          */
-        headerContent: {},
+        headerContent: {
+            get: function(val) {
+                var live = this._getStdModContent(STD_HEADER);
+                return (live === null) ? val : live;
+            }
+        },
+        
         /**
          * @attribute footerContent
          * @type {String | Node}
@@ -145,7 +149,13 @@ YUI.add('widget-stdmod', function(Y) {
          * @description The content to be added to the footer section. This will replace any existing content
          * in the footer. If you want to append, or insert new content, use the setFooter method.
          */
-        footerContent: {},
+        footerContent: {
+            get: function(val) {
+                var live = this._getStdModContent(STD_FOOTER);
+                return (live === null) ? val : live;
+            }
+        },
+        
         /**
          * @attribute bodyContent
          * @type {String | Node}
@@ -153,7 +163,13 @@ YUI.add('widget-stdmod', function(Y) {
          * @description The content to be added to the body section. This will replace any existing content
          * in the body. If you want to append, or insert new content, use the setBody method.
          */
-        bodyContent: {},
+        bodyContent: {
+            get: function(val) {
+                var live = this._getStdModContent(STD_BODY);
+                return (live === null) ? val : live;
+            }
+        },
+        
         /**
          * @attribute fillHeight
          * @type {String}
@@ -178,18 +194,15 @@ YUI.add('widget-stdmod', function(Y) {
      */
     StdMod.HTML_PARSER = {
         headerContent: function(contentBox) {
-            var node = this._findStdModSection(STD_HEADER);
-            return (node) ? node.get(INNER_HTML) : "";
+            return this._parseStdModHTML(STD_HEADER);
         },
 
         bodyContent: function(contentBox) {
-            var node = this._findStdModSection(STD_BODY);
-            return (node) ? node.get(INNER_HTML) : "";
+            return this._parseStdModHTML(STD_BODY);
         },
 
         footerContent : function(contentBox) {
-            var node = this._findStdModSection(STD_FOOTER);
-            return (node) ? node.get(INNER_HTML) : "";
+            return this._parseStdModHTML(STD_FOOTER);
         }
     };
 
@@ -255,9 +268,9 @@ YUI.add('widget-stdmod', function(Y) {
          * @protected
          */
         _syncUIStdMod : function() {
-            this._uiSetSection(STD_HEADER, this.get(STD_HEADER + CONTENT_SUFFIX));
-            this._uiSetSection(STD_BODY, this.get(STD_BODY + CONTENT_SUFFIX));
-            this._uiSetSection(STD_FOOTER, this.get(STD_FOOTER + CONTENT_SUFFIX));
+            this._uiSetStdMod(STD_HEADER, this.get(STD_HEADER + CONTENT_SUFFIX));
+            this._uiSetStdMod(STD_BODY, this.get(STD_BODY + CONTENT_SUFFIX));
+            this._uiSetStdMod(STD_FOOTER, this.get(STD_FOOTER + CONTENT_SUFFIX));
             this._uiSetFillHeight(this.get(FILL_HEIGHT));
         },
 
@@ -297,29 +310,25 @@ YUI.add('widget-stdmod', function(Y) {
         /**
          * Default attribute change listener for the header content attribute, responsible
          * for updating the UI, in response to attribute changes.
-         * 
+         *
          * @method _afterHeaderChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
         _afterHeaderChange : function(e) {
-            if (e.src != UI) {
-                this._uiSetSection(STD_HEADER, e.newVal);
-            }
+            this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
         },
 
         /**
          * Default attribute change listener for the body content attribute, responsible
          * for updating the UI, in response to attribute changes.
-         * 
+         *
          * @method _afterBodyChange
          * @protected
          * @param {Event.Facade} e The Event Facade
          */
         _afterBodyChange : function(e) {
-            if (e.src != UI) {
-                this._uiSetSection(STD_BODY, e.newVal);
-            }
+            this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
         },
 
         /**
@@ -331,9 +340,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @param {Event.Facade} e The Event Facade
          */
         _afterFooterChange : function(e) {
-            if (e.src != UI) {
-                this._uiSetSection(STD_FOOTER, e.newVal);
-            }
+            this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
         },
 
         /**
@@ -406,7 +413,7 @@ YUI.add('widget-stdmod', function(Y) {
          * to the specified section. The content is either added BEFORE, AFTER or REPLACES existing content
          * in the section, based on the value of the where argument.
          * 
-         * @method _uiSetSection
+         * @method _uiSetStdMod
          * @protected
          * 
          * @param {String} section The section to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER. 
@@ -414,8 +421,8 @@ YUI.add('widget-stdmod', function(Y) {
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the section.
          */
-        _uiSetSection : function(section, content, where) {
-            var node = this.getStdModNode(section) || this._renderSection(section);
+        _uiSetStdMod : function(section, content, where) {
+            var node = this.getStdModNode(section) || this._renderStdMod(section);
             if (content instanceof Node) {
                 this._addNodeRef(node, content, where);
             } else {
@@ -427,11 +434,11 @@ YUI.add('widget-stdmod', function(Y) {
         /**
          * Creates the DOM node for the given section, and inserts it into the correct location in the contentBox.
          *
-         * @method _renderSection
+         * @method _renderStdMod
          * @protected
          * @param {String} section The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          */
-        _renderSection : function(section) {
+        _renderStdMod : function(section) {
 
             var contentBox = this.get(CONTENT_BOX),
                 sectionNode = this._findStdModSection(section);
@@ -540,18 +547,24 @@ YUI.add('widget-stdmod', function(Y) {
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
          * If not provided, the content will replace existing content in the Node.
          */
-        _addNodeRef : function(node, child, where) {
-            var append = true;
+        _addNodeRef : function(node, children, where) {
+            var append = true, 
+                i, s;
+
             if (where == BEFORE) {
                 if (node.get(FIRST_CHILD)) {
-                    node.insertBefore(child, node.get(FIRST_CHILD));
+                    for (i = node.size() - 1; i >=0; --i) {
+                        node.insertBefore(children.item(i), node.get(FIRST_CHILD));
+                    }
                     append = false;
                 }
             } else if (where != AFTER) { // replace
                 node.set(INNER_HTML, EMPTY);
             }
             if (append) {
-                node.appendChild(child);
+                for (i = 0, s = children.size(); i < s; ++i) {
+                    node.appendChild(children.item(i));
+                }
             }
         },
 
@@ -591,28 +604,24 @@ YUI.add('widget-stdmod', function(Y) {
             return this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
         },
 
+        _parseStdModHTML : function(section) {
+            var node = this._findStdModSection(section);
+            return (node) ? node.get(INNER_HTML) : "";
+        },
+
         /**
-         * Updates the rendered UI, adding the provided content (either an HTML string, or node reference),
-         * to the specified section. The content is either added BEFORE, AFTER or REPLACES existing content
-         * in the section, based on the value of the where argument.
-         *
-         * Also, updates the header, footer, content attribute state respectively to keep it in sync with the new content.
-         *
-         * @method _setStdModSection
+         * @method _getStdModContent
          * @private
-         * @param {String} section The section whose content is update. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
-         * @param {String | Node} content The content to be added, either an HTML string or a Node reference.
-         * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace existing content in the Node.
+         * @param {String} section The standard module section whose content is to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
+         * @return {Node} The Node collection making up the content of the standard module section.
          */
-        _setStdModSection : function(section, content, where) {
-            this._uiSetSection(section, content, where);
-            this.set(section + CONTENT_SUFFIX, this.getStdModNode(section).get(INNER_HTML), UI_SRC);
+        _getStdModContent : function(section) {
+            return (this[section + NODE_SUFFIX]) ? this[section + NODE_SUFFIX].get(CHILD_NODES) : null;
         },
 
         /**
          * Updates the body section of the standard module with the content provided (either an HTML string, or node reference).
-         * 
+         *
          * This method can be used instead of the body attribute if you'd like to retain the current content of the body,
          * and insert content before or after it, by specifying the where argument.
          *
@@ -623,7 +632,7 @@ YUI.add('widget-stdmod', function(Y) {
          * If not provided, the content will replace existing content in the body.
          */
         setStdModContent : function(section, content, where) {
-            this._setStdModSection(section, content, where);
+            this.set(section + CONTENT_SUFFIX, content, {stdModPosition:where});
         },
 
         /**
