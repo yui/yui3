@@ -62,7 +62,7 @@ var ComputedStyle = {
 
         if (property === OPACITY) {
             value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-        } else if (!current || current.indexOf(PX) > -1) { // no need to convert
+        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
             value = current;
         } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
             value = Y.DOM.IE.COMPUTED[property](el, property);

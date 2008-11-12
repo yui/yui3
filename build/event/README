@@ -12,7 +12,8 @@ YUI Event Utility
     - Event adapter support added to Y.on
     - Added Y.on('focus', 'blur' event adaptors (support for propagation
       of these events.)
-    - 
+    - publish and subscribe support an object for the type, allowing for multiple
+      events/subscriptions.
 
 3.0.0pr1
     - Initial Release

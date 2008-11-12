@@ -1384,6 +1384,7 @@ YUI.add("event-target", function(Y) {
 
     var ET = Y.EventTarget;
 
+
     ET.prototype = {
 
         /**
@@ -1395,6 +1396,30 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         subscribe: function(type, fn, context) {
+
+            if (Y.Lang.isObject(type)) {
+
+                var f = fn, c = context, args = Y.Array(arguments, 0, true),
+                    ret = {};
+
+                Y.each(type, function(v, k) {
+
+                    if (v) {
+                        f = v.fn || f;
+                        c = v.context || c;
+                    }
+
+                    args[0] = k;
+                    args[1] = f;
+                    args[2] = c;
+
+                    ret[k] = this.subscribe.apply(this, args); 
+
+                }, this);
+
+                return ret;
+
+            }
 
             var ce = this._yuievt.events[type] || 
                 // this.publish(type, {
@@ -1515,6 +1540,15 @@ YUI.add("event-target", function(Y) {
          *
          */
         publish: function(type, opts) {
+
+            if (Y.Lang.isObject(type)) {
+                var ret = {};
+                Y.each(type, function(v, k) {
+                    ret[k] = this.publish(k, v || opts); 
+                }, this);
+
+                return ret;
+            }
 
             var events = this._yuievt.events, ce = events[type];
 
@@ -2112,9 +2146,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              */
             attach: function(type, fn, el, obj) {
 
-
                 // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
-
 
                 var args=Y.Array(arguments, 0, true), 
                     trimmedArgs=args.slice(1),
@@ -2151,7 +2183,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
 
                 } else if (Y.Lang.isString(el)) {
 
-                    var oEl = (compat) ? Y.DOM.byId(el) : Y.get(el);
+                    var oEl = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
                     // If the el argument is a string, we assume it is 
                     // actually the id of the element.  If the page is loaded
@@ -2166,10 +2198,9 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     //
 
                     /*
-
                     if (oEl) {
                         el = oEl;
-                        */
+                    */
 
                     if (oEl && (oEl instanceof Y.Node)) {
                         var size = oEl.size();
@@ -2295,8 +2326,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 // The el argument can be a string
                 if (typeof el == "string") {
 
-                    // el = Y.get(el);
-                    el = (compat) ? Y.DOM.byId(el) : Y.get(el);
+                    el = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
                 // The el argument can be an array of elements or element ids.
                 } else if ( this._isValidCollection(el)) {
@@ -2347,7 +2377,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                     new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
             },
 
-
             /**
              * Generates an unique ID for the element if it does not already 
              * have one.
@@ -2367,7 +2396,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 return id;
             },
 
-
             /**
              * We want to be able to use getElementsByTagName as a collection
              * to attach a group of events to.  Unfortunately, different 
@@ -2382,7 +2410,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              */
             _isValidCollection: function(o) {
                 try {
-
+                     
                     // if (o instanceof Y.Node) {
                         // o.tagName ="adsf";
                     // }
@@ -2392,8 +2420,6 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                              // o.length  && // o is indexed
                              (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
                              !o.tagName            && // o is not an HTML element
-                             // !(o instanceof Y.Node) &&
-                             // (!o.size || o.size() > 1) &&
                              !o.alert              && // o is not a window
                              (o.item || typeof o[0] !== "undefined") );
                 } catch(ex) {

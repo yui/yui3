@@ -60,7 +60,7 @@ Y.DOM = {
         if (text === UNDEFINED && INNER_TEXT in element) {
             text = element[INNER_TEXT];
         } 
-        return text || ''; 
+        return text || '';
     },
 
     /**
@@ -73,28 +73,29 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn); 
+        return Y.DOM._childBy(element, null, fn);
     },
 
     firstChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn); 
+        return Y.DOM._childBy(element, tag, fn);
     },
 
     /**
      * Finds the lastChild of the given HTMLElement.
      * @method lastChild
      * @param {HTMLElement} element The html element.
+     * @param {String} tag The tag to search for.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first found is returned.
      * @return {HTMLElement | null} The first matching child html element.
      */
     lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn, true); 
+        return Y.DOM._childBy(element, null, fn, true);
     },
 
     lastChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn, true); 
+        return Y.DOM._childBy(element, tag, fn, true);
     },
 
     /**
@@ -120,7 +121,7 @@ Y.DOM = {
                     }
                 }
 
-                return elements; 
+                return elements;
             };
         } else {
             return function(element, tag, fn) {
@@ -136,7 +137,7 @@ Y.DOM = {
                         };
                     }
 
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn); 
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
                 }
                 return elements;
             };
@@ -153,7 +154,7 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn); 
+        return Y.DOM.childrenByTag(element, null, fn);
     },
 
     /**
@@ -166,7 +167,7 @@ Y.DOM = {
      * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
      * @return {HTMLElement | null} The matching DOM node or null if none found. 
      */
-    previous: function(element, fn, all) {
+    previous: function(element, fn) {
         return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn);
     },
 
@@ -205,7 +206,7 @@ Y.DOM = {
      * @param {String} axis The axis to search (parentNode, nextSibling, previousSibling).
      * @param {Function} fn optional An optional boolean test to apply.
      * @param {Boolean} all optional Whether all node types should be returned, or just element nodes.
-     * The optional function is passed the current DOM node being tested as its only argument.
+     * The optional function is passed the current HTMLElement being tested as its only argument.
      * If no function is given, the first element is returned.
      * @return {HTMLElement | null} The matching element or null if none found.
      */
@@ -249,7 +250,7 @@ Y.DOM = {
      * @param {HTMLElement} root optional An optional root element to start from.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, the first match is returned.
+     * If no function is given, the first match is returned. 
      * @return {HTMLElement} The matching element.
      */
     firstByTag: function(tag, root, fn) {
@@ -278,13 +279,13 @@ Y.DOM = {
      */
     filterElementsBy: function(elements, fn, firstOnly) {
         var ret = (firstOnly) ? null : [];
-        for (var i = 0, el; el = elements[i++];) {
-            if ( el[TAG_NAME] && (!fn || fn(el)) ) {
+        for (var i = 0, len = elements[LENGTH]; i < len; ++i) {
+            if (elements[i][TAG_NAME] && (!fn || fn(elements[i]))) {
                 if (firstOnly) {
-                    ret = el;
+                    ret = elements[i];
                     break;
                 } else {
-                    ret[ret[LENGTH]] = el;
+                    ret[ret[LENGTH]] = elements[i];
                 }
             }
         }
@@ -302,7 +303,7 @@ Y.DOM = {
     contains: function(element, needle) {
         var ret = false;
 
-        if (!needle || !needle[NODE_TYPE] || !element || !element[NODE_TYPE]) {
+        if ( !needle || !element || !needle[NODE_TYPE] || !element[NODE_TYPE]) {
             ret = false;
         } else if (element[CONTAINS])  {
             if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
@@ -320,12 +321,17 @@ Y.DOM = {
     },
 
     /**
-     * Returns an HTMLElement for the given string of HTML.
-     * @method create
-     * @param {String} html The string of HTML to convert to a DOM element. 
-     * @param {Document} document An optional document to create the node with.
-     * @return {HTMLElement} The newly created element. 
+     * Determines whether or not the HTMLElement is part of the document.
+     * @method inDoc
+     * @param {HTMLElement} element The containing html element.
+     * @param {HTMLElement} doc optional The document to check.
+     * @return {Boolean} Whether or not the element is attached to the document. 
      */
+    inDoc: function(element, doc) {
+        doc = doc || Y.config.doc;
+        return Y.DOM.contains(doc.documentElement, element);
+    },
+
     create: function(html, doc) {
         doc = doc || Y.config.doc;
         var m = re_tag.exec(html);
@@ -600,4 +606,4 @@ Y.mix(Y.DOM, {
 
 
 
-}, '@VERSION@' );
+}, '@VERSION@' ,{skinnable:false, requires:['event']});

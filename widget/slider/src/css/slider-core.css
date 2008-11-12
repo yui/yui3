@@ -1,0 +1,15 @@
+.yui-slider, .yui-slider-rail {
+    /* xbrowser inline-block styles */
+    display: -moz-inline-stack; /* FF2 */
+    display: inline-block;
+    *display: inline; /* IE 7- (with zoom) */
+    zoom: 1;
+}
+
+.yui-slider-rail {
+    position: relative;
+}
+
+.yui-slider-thumb {
+    position: absolute;
+}

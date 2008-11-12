@@ -41,8 +41,8 @@ Y.mix(Y.DOM, {
      * @param {String} att The style property to set. 
      * @param {String|Number} val The value. 
      */
-    setStyle: function(node, att, val) {
-        var style = node[STYLE],
+    setStyle: function(node, att, val, style) {
+        style = node[STYLE],
             CUSTOM_STYLES = Y.DOM.CUSTOM_STYLES;
 
         if (style) {
@@ -289,7 +289,7 @@ var ComputedStyle = {
 
         if (property === OPACITY) {
             value = Y.DOM.CUSTOM_STYLES[OPACITY].get(el);        
-        } else if (!current || current.indexOf(PX) > -1) { // no need to convert
+        } else if (!current || (current.indexOf && current.indexOf(PX) > -1)) { // no need to convert
             value = current;
         } else if (Y.DOM.IE.COMPUTED[property]) { // use compute function
             value = Y.DOM.IE.COMPUTED[property](el, property);

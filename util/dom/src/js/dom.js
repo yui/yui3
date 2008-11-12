@@ -44,7 +44,7 @@ Y.DOM = {
      * @return {HTMLElement | null} The HTMLElement with the id, or null if none found. 
      */
     byId: function(id, doc) {
-        return Y.DOM._getDoc(doc).getElementById(id); // @tested
+        return Y.DOM._getDoc(doc).getElementById(id);
     },
 
     /**
@@ -58,7 +58,7 @@ Y.DOM = {
         if (text === UNDEFINED && INNER_TEXT in element) {
             text = element[INNER_TEXT];
         } 
-        return text || ''; // @tested
+        return text || '';
     },
 
     /**
@@ -71,11 +71,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     firstChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn); // @tested
+        return Y.DOM._childBy(element, null, fn);
     },
 
     firstChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn); // @tested
+        return Y.DOM._childBy(element, tag, fn);
     },
 
     /**
@@ -89,11 +89,11 @@ Y.DOM = {
      * @return {HTMLElement | null} The first matching child html element.
      */
     lastChild: function(element, fn) {
-        return Y.DOM._childBy(element, null, fn, true); // @tested
+        return Y.DOM._childBy(element, null, fn, true);
     },
 
     lastChildByTag: function(element, tag, fn) {
-        return Y.DOM._childBy(element, tag, fn, true); // @tested
+        return Y.DOM._childBy(element, tag, fn, true);
     },
 
     /**
@@ -119,7 +119,7 @@ Y.DOM = {
                     }
                 }
 
-                return elements; // @tested
+                return elements;
             };
         } else {
             return function(element, tag, fn) {
@@ -135,7 +135,7 @@ Y.DOM = {
                         };
                     }
 
-                    elements = Y.DOM.filterElementsBy(elements, wrapFn); // @tested
+                    elements = Y.DOM.filterElementsBy(elements, wrapFn);
                 }
                 return elements;
             };
@@ -152,17 +152,47 @@ Y.DOM = {
      * @return {Array} The collection of child elements.
      */
     children: function(element, fn) {
-        return Y.DOM.childrenByTag(element, null, fn); // @tested
+        return Y.DOM.childrenByTag(element, null, fn);
     },
 
+    /**
+     * Finds the previous sibling of the element.
+     * @method previous
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the first sibling is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
     previous: function(element, fn) {
         return Y.DOM.elementByAxis(element, PREVIOUS_SIBLING, fn);
     },
 
+    /**
+     * Finds the next sibling of the element.
+     * @method next
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the first sibling is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
     next: function(element, fn) {
         return Y.DOM.elementByAxis(element, NEXT_SIBLING, fn);
     },
 
+    /**
+     * Finds the ancestor of the element.
+     * @method ancestor
+     * @param {HTMLElement} element The html element.
+     * @param {Function} fn optional An optional boolean test to apply.
+     * The optional function is passed the current DOM node being tested as its only argument.
+     * If no function is given, the parentNode is returned.
+     * @param {Boolean} all optional Whether all node types should be scanned, or just element nodes.
+     * @return {HTMLElement | null} The matching DOM node or null if none found. 
+     */
     ancestor: function(element, fn) {
         return Y.DOM.elementByAxis(element, PARENT_NODE, fn);
     },
@@ -218,8 +248,8 @@ Y.DOM = {
      * @param {HTMLElement} root optional An optional root element to start from.
      * @param {Function} fn optional An optional boolean test to apply.
      * The optional function is passed the current HTMLElement being tested as its only argument.
-     * If no function is given, all elements with the given tag are returned.
-     * @return {Array} The collection of matching elements.
+     * If no function is given, the first match is returned. 
+     * @return {HTMLElement} The matching element.
      */
     firstByTag: function(tag, root, fn) {
         root = root || Y.config.doc;
@@ -271,7 +301,7 @@ Y.DOM = {
     contains: function(element, needle) {
         var ret = false;
 
-        if (!needle || !element) {
+        if ( !needle || !element || !needle[NODE_TYPE] || !element[NODE_TYPE]) {
             ret = false;
         } else if (element[CONTAINS])  {
             if (Y.UA.opera || needle[NODE_TYPE] === 1) { // IE & SAF contains fail if needle not an ELEMENT_NODE
@@ -286,6 +316,18 @@ Y.DOM = {
         }
 
         return ret;
+    },
+
+    /**
+     * Determines whether or not the HTMLElement is part of the document.
+     * @method inDoc
+     * @param {HTMLElement} element The containing html element.
+     * @param {HTMLElement} doc optional The document to check.
+     * @return {Boolean} Whether or not the element is attached to the document. 
+     */
+    inDoc: function(element, doc) {
+        doc = doc || Y.config.doc;
+        return Y.DOM.contains(doc.documentElement, element);
     },
 
     create: function(html, doc) {
@@ -310,7 +352,7 @@ Y.DOM = {
     _create: function(html, doc, tag) {
         tag = tag || 'div';
         var frag = templateCache[tag] || doc.createElement(tag);
-        frag.innerHTML = html;
+        frag.innerHTML = Y.Lang.trim(html);
         return frag;
     },
 
