@@ -267,7 +267,7 @@ YUI.add('dd-ddm-base', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['node', 'base']});
+}, '@VERSION@' ,{requires:['node', 'base'], skinnable:false});
 YUI.add('dd-ddm', function(Y) {
 
     /**
@@ -382,7 +382,7 @@ YUI.add('dd-ddm', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-ddm-drop', function(Y) {
 
     /**
@@ -778,7 +778,7 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm']});
+}, '@VERSION@' ,{requires:['dd-ddm'], skinnable:false});
 YUI.add('dd-drag', function(Y) {
 
     /**
@@ -800,6 +800,7 @@ YUI.add('dd-drag', function(Y) {
         OFFSET_WIDTH = 'offsetWidth',        
         MOUSE_UP = 'mouseup',
         MOUSE_DOWN = 'mousedown',
+        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -904,6 +905,7 @@ YUI.add('dd-drag', function(Y) {
 
         DDM._regDrag(this);
     };
+
     Drag.NAME = 'drag';
 
     Drag.ATTRS = {
@@ -914,9 +916,11 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                } else {
+                    n = n.item(0);
                 }
                 return n;
             }
@@ -1020,6 +1024,9 @@ YUI.add('dd-drag', function(Y) {
         * @type Boolean
         */
         dragging: {
+            value: false
+        },
+        parent: {
             value: false
         },
         /**
@@ -1322,6 +1329,14 @@ YUI.add('dd-drag', function(Y) {
         },
         /** 
         * @private
+        * @method _fixDragStart
+        * @description The function we use as the ondragstart handler when we start a drag in Internet Explorer. This keeps IE from blowing up on images as drag handles.
+        */
+        _fixDragStart: function(e) {
+            e.preventDefault();
+        },
+        /** 
+        * @private
         * @method _ieSelectFix
         * @description The function we use as the onselectstart handler when we start a drag in Internet Explorer
         */
@@ -1574,6 +1589,7 @@ YUI.add('dd-drag', function(Y) {
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.on(MOUSE_UP, this._handleMouseUp, this, true);
+            node.on(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @private
@@ -1585,6 +1601,7 @@ YUI.add('dd-drag', function(Y) {
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
             node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.detach(MOUSE_UP, this._handleMouseUp, this, true);
+            node.detach(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @method start
@@ -1657,7 +1674,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _moveNode: function(eXY, noFire) {
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
-
+            //This will probably kill your machine ;)
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
@@ -1758,7 +1775,7 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});
 YUI.add('dd-proxy', function(Y) {
 
     /**
@@ -1930,7 +1947,7 @@ YUI.add('dd-proxy', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm', 'dd-drag'], skinnable:false});
 YUI.add('dd-constrain', function(Y) {
 
     /**
@@ -2145,20 +2162,22 @@ YUI.add('dd-constrain', function(Y) {
                 r = this.getRegion(),
                 oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
-
-                if (oxy[1] > (r.bottom - oh)) {
-                    _xy[1] = (r.bottom - oh);
-                }
+            
                 if (r.top > oxy[1]) {
                     _xy[1] = r.top;
+
                 }
-                if (oxy[0] > (r.right - ow)) {
-                    _xy[0] = (r.right - ow);
+                if (oxy[1] > (r.bottom - oh)) {
+                    _xy[1] = (r.bottom - oh);
                 }
                 if (r.left > oxy[0]) {
                     _xy[0] = r.left;
                 }
-                return _xy;
+                if (oxy[0] > (r.right - ow)) {
+                    _xy[0] = (r.right - ow);
+                }
+
+            return _xy;
         },
         /**
         * @method inRegion
@@ -2308,7 +2327,7 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
 YUI.add('dd-plugin', function(Y) {
 
        /**
@@ -2349,7 +2368,7 @@ YUI.add('dd-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{optional:['dd-constrain', 'dd-proxy'], skinnable:false, requires:['dd-drag']});
+}, '@VERSION@' ,{requires:['dd-drag'], optional:['dd-constrain', 'dd-proxy'], skinnable:false});
 YUI.add('dd-drop', function(Y) {
 
     /**
@@ -2784,7 +2803,7 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-drop', 'dd-drag']});
+}, '@VERSION@' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
 YUI.add('dd-drop-plugin', function(Y) {
 
        /**
@@ -2825,8 +2844,8 @@ YUI.add('dd-drop-plugin', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drop']});
+}, '@VERSION@' ,{requires:['dd-drop'], skinnable:false});
 
 
-YUI.add('dd', function(Y){}, '@VERSION@' ,{use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin'], skinnable:false});
+YUI.add('dd', function(Y){}, '@VERSION@' ,{skinnable:false, use:['dd-ddm-base', 'dd-ddm', 'dd-ddm-drop', 'dd-drag', 'dd-proxy', 'dd-constrain', 'dd-plugin', 'dd-drop', 'dd-drop-plugin']});
 
