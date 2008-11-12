@@ -21,9 +21,9 @@ YUI.add('node', function(Y) {
     var OWNER_DOCUMENT = 'ownerDocument',
         TAG_NAME = 'tagName',
         NODE_NAME = 'nodeName',
-        NODE_TYPE = 'nodeType';
+        NODE_TYPE = 'nodeType',
 
-    var Selector = Y.Selector,
+        Selector = Y.Selector,
         _instances = {},
         _nodes = {},
         _nodelists = {},
@@ -73,10 +73,8 @@ YUI.add('node', function(Y) {
 
     };
 
-    var Node = function(nodes, doc) {
-        this.init(nodes, doc);
-        this.initPlugins();
-        this.refresh();
+    var Node = function() {
+        this.init.apply(this, arguments);
     };
 
     Node.plugins = {};
@@ -124,10 +122,14 @@ YUI.add('node', function(Y) {
                     if (node && _restrict && _restrict[node._yuid] && !node.contains(val)) {
                         val = null; // not allowed to go outside of root node
                     } else {
-                        val = Node.get(val);
+                        if (val[NODE_TYPE] || val.document) { // node or window
+                            val = Node.get(val);
+                        } else {
+                            val = Node.all(val);
+                        }
                     }
                 } else {
-                    depth = depth === undefined ? 4 : depth;
+                    depth = (depth === undefined) ? 4 : depth;
                     if (depth > 0) {
                         for (var i in val) {
                             if (val.hasOwnProperty && val.hasOwnProperty(i)) {
@@ -185,30 +187,32 @@ YUI.add('node', function(Y) {
     Node.methods = function(name, fn) {
         if (typeof name == 'string') {
             Node.prototype[name] = function() {
-                var first = true,
-                    args = _slice.call(arguments, 0),
+                var args = _slice.call(arguments, 0),
                     instance = this,
-                    ret;
+                    getAll =  (_instances[this._yuid]) ? false : true, // return array of vals for lists
+                    ret = (getAll) ? [] : null,
+                    val;
+
+                var getValue = function(node) {
+                    args[0] = node;
+                    val = Node.scrubVal(fn.apply(instance, args), instance);
+                    if (getAll) {
+                        ret[ret.length] = val;
+                    } else {
+                        ret = val;
+                    }
+                };
 
                 args.unshift('');
-                Node[instance._yuid](function(node) {
-                    args[0] = node;
-                    var val = fn.apply(instance, args);
-                    if (first) {
-                        ret = val;
-                        first = false;
-                    }
-                });
-
-                ret = Node.scrubVal(ret, this);
+                Node[instance._yuid](getValue);
                 return ret;
             };
-
         } else { // assume object
             Y.each(name, function(fn, name) {
                 Node.methods(name, fn);
             });
         }
+
     };
 
     Node.getDOMNode = function(node) {
@@ -241,14 +245,20 @@ YUI.add('node', function(Y) {
     };
 
     Node.prototype = {
-        init: function(nodes, doc) {
+        init: function(nodes, doc, isRoot, getAll) {
             var selector = typeof nodes === 'string' ? nodes : null,
-                uid = Y.stamp(this);
+                uid;
 
             doc = _getDoc(doc);
 
             this.getId = function() {
                 return uid;
+            };
+
+            this.refresh = function() {
+                if (selector) {
+                    nodes = Selector.query(selector, doc, !getAll);
+                }
             };
 
             var _all = function(fn, i) {
@@ -261,29 +271,40 @@ YUI.add('node', function(Y) {
                 return nodes;
             };
 
-            var _first = function(fn) {
-                if (fn) {
-                    fn(nodes[0]);
+            if (selector) { // run the query
+                if (selector === 'document') {
+                    nodes = [Y.config.doc];
+                } else {
+                    nodes = Selector.query(selector, doc, !getAll); // Selector arg is firstOnly
                 }
-                return nodes;
-            };
+            }
 
-            this.refresh = function() {
-                if (selector) {
-                    if (selector === 'document') {
-                        nodes = [Y.config.doc];
-                    } else {
-                        nodes = Selector.query(selector, doc);
-                    }
-                }
+            uid = selector || Y.guid();
+            this._yuid = uid;
 
+            if (nodes) { // zero length collection returns null
                 if (nodes[NODE_TYPE] || nodes.document) { // node or window
                     nodes = [nodes];
-                    Node[uid] = _first; 
-                } else {
-                    Node[uid] = _all;
                 }
-            };
+            } else {
+                nodes = [];
+            }
+
+            if (!getAll && nodes.length) { // stamp the dom node
+                try { // IE only allows ID on Element
+                    nodes[0]._yuid = uid;
+                } catch(e) { // not cacheable
+                    Y.log(nodes[0] + ' is not cacheable', 'warn', 'Node'); 
+                }
+            }
+
+            Node[uid] = _all; // for applying/returning dom nodes
+
+            if (!getAll) {
+                _instances[uid] = this;
+            }
+
+            this.initPlugins();
         },
 
         initPlugins: function() {
@@ -511,8 +532,8 @@ YUI.add('node', function(Y) {
          * @return {Node} A Node instance for the matching HTMLElement.
          */
         query: function(node, selector) {
-            var ret = Selector.query(selector, node);
-            if (!ret.length) {
+            var ret = Selector.query(selector, node, true);
+            if (!ret) {
                 ret = null;
             }
 
@@ -528,7 +549,6 @@ YUI.add('node', function(Y) {
          * @return {NodeList} A NodeList instance for the matching HTMLCollection/Array.
          */
         queryAll: function(node, selector) {
-            Y.log('node.queryAll is deprecated; use node.query', 'warn', 'Node'); 
             var ret = Selector.query(selector, node);
             if (!ret.length) {
                 ret = null;
@@ -654,19 +674,28 @@ YUI.add('node', function(Y) {
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
      * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes
      * aren't allowed to traverse outside their DOM tree.
-     * @return {Node} A wrapper instance for the supplied object.
+     * @return {Node} A Node instance bound to the supplied node(s).
      */
-    Node.get = function(node, doc, isRoot) {
-        var instance;
+    Node.get = function(node, doc, isRoot, getAll) {
+        var instance, uid;
+
         if (node) {
-            if (node instanceof Node) {
-                instance = node;
-            } else {
-                instance = new Node(node, doc);
+            if (typeof node === 'string') {
+                uid = node; 
+            } else if (node._yuid) {
+                uid = node._yuid;
             }
-            // TODO: move to Node
-            if (isRoot) {
-                _restrict[instance._yuid] = instance;
+            
+            if (!getAll) { // reuse single element node instances
+                instance = _instances[uid];
+            }
+
+            if (!instance) {
+                instance = new Node(node, doc, isRoot, getAll);
+            }
+
+            if (isRoot && instance) {
+                _restrict[instance.getId()] = true;
             }
         }
 
@@ -677,15 +706,14 @@ YUI.add('node', function(Y) {
     /**
      * Retrieves a NodeList instance for the given object/string. 
      * @method all
-     * @deprecated Use Y.get
      * @static
      * @param {HTMLCollection|Array|String} node The object to wrap.
      * @param {document|Node} doc optional The document containing the node. Defaults to current document.
+     * @param {boolean} isRoot optional Whether or not this node should be treated as a root node. Root nodes
      * @return {NodeList} A NodeList instance for the supplied nodes.
      */
-    Node.all = function() {
-        Y.log('Y.all / Node.all is deprecated; use Y.get', 'warn', 'Node'); 
-        return Node.get.apply(Node, arguments);
+    Node.all = function(node, doc, isRoot) {
+        return Node.get.call(Node, node, doc, isRoot, true);
     };
 
     Y.Array.each([
