@@ -119,8 +119,8 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
+
         // Allow instantiation without the new operator
-        // if (Y == window) {
         if (!(Y instanceof YUI)) {
             return new YUI(o);
         } else {
@@ -155,8 +155,7 @@ YUI.prototype = {
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
-
-        o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -570,7 +569,7 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        if (true) { // hasOwnProperty not available yet and not needed
+        if (true) {
             Y[i] = p[i];
         }
     }
