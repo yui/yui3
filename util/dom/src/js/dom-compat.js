@@ -28,7 +28,6 @@
     };
 
     var Dom = {
-
         get: function(el) {
             if (el) {
                 if (el.nodeType || el.item) { // Node, or NodeList
