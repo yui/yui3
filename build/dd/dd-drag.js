@@ -19,6 +19,7 @@ YUI.add('dd-drag', function(Y) {
         OFFSET_WIDTH = 'offsetWidth',        
         MOUSE_UP = 'mouseup',
         MOUSE_DOWN = 'mousedown',
+        DRAG_START = 'dragstart',
         /**
         * @event drag:mouseDown
         * @description Handles the mousedown DOM event, checks to see if you have a valid handle then starts the drag timers.
@@ -123,6 +124,7 @@ YUI.add('dd-drag', function(Y) {
 
         DDM._regDrag(this);
     };
+
     Drag.NAME = 'drag';
 
     Drag.ATTRS = {
@@ -133,9 +135,11 @@ YUI.add('dd-drag', function(Y) {
         */
         node: {
             set: function(node) {
-                var n = Y.Node.get(node);
+                var n = Y.get(node);
                 if (!n) {
                     Y.fail('DD.Drag: Invalid Node Given: ' + node);
+                } else {
+                    n = n.item(0);
                 }
                 return n;
             }
@@ -239,6 +243,9 @@ YUI.add('dd-drag', function(Y) {
         * @type Boolean
         */
         dragging: {
+            value: false
+        },
+        parent: {
             value: false
         },
         /**
@@ -541,6 +548,14 @@ YUI.add('dd-drag', function(Y) {
         },
         /** 
         * @private
+        * @method _fixDragStart
+        * @description The function we use as the ondragstart handler when we start a drag in Internet Explorer. This keeps IE from blowing up on images as drag handles.
+        */
+        _fixDragStart: function(e) {
+            e.preventDefault();
+        },
+        /** 
+        * @private
         * @method _ieSelectFix
         * @description The function we use as the onselectstart handler when we start a drag in Internet Explorer
         */
@@ -793,6 +808,7 @@ YUI.add('dd-drag', function(Y) {
             node.addClass(DDM.CSS_PREFIX + '-draggable');
             node.on(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.on(MOUSE_UP, this._handleMouseUp, this, true);
+            node.on(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @private
@@ -804,6 +820,7 @@ YUI.add('dd-drag', function(Y) {
             node.removeClass(DDM.CSS_PREFIX + '-draggable');
             node.detach(MOUSE_DOWN, this._handleMouseDownEvent, this, true);
             node.detach(MOUSE_UP, this._handleMouseUp, this, true);
+            node.detach(DRAG_START, this._fixDragStart, this, true);
         },
         /**
         * @method start
@@ -876,7 +893,7 @@ YUI.add('dd-drag', function(Y) {
         */
         _moveNode: function(eXY, noFire) {
             var xy = this._align(eXY), diffXY = [], diffXY2 = [];
-
+            //This will probably kill your machine ;)
             diffXY[0] = (xy[0] - this.lastXY[0]);
             diffXY[1] = (xy[1] - this.lastXY[1]);
 
@@ -977,4 +994,4 @@ YUI.add('dd-drag', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-ddm-base']});
+}, '@VERSION@' ,{requires:['dd-ddm-base'], skinnable:false});

@@ -212,20 +212,22 @@ YUI.add('dd-constrain', function(Y) {
                 r = this.getRegion(),
                 oh = this.get(DRAG_NODE).get(OFFSET_HEIGHT),
                 ow = this.get(DRAG_NODE).get(OFFSET_WIDTH);
-
-                if (oxy[1] > (r.bottom - oh)) {
-                    _xy[1] = (r.bottom - oh);
-                }
+            
                 if (r.top > oxy[1]) {
                     _xy[1] = r.top;
+
                 }
-                if (oxy[0] > (r.right - ow)) {
-                    _xy[0] = (r.right - ow);
+                if (oxy[1] > (r.bottom - oh)) {
+                    _xy[1] = (r.bottom - oh);
                 }
                 if (r.left > oxy[0]) {
                     _xy[0] = r.left;
                 }
-                return _xy;
+                if (oxy[0] > (r.right - ow)) {
+                    _xy[0] = (r.right - ow);
+                }
+
+            return _xy;
         },
         /**
         * @method inRegion
@@ -375,4 +377,4 @@ YUI.add('dd-constrain', function(Y) {
 
 
 
-}, '@VERSION@' ,{skinnable:false, requires:['dd-drag', 'dd-proxy']});
+}, '@VERSION@' ,{requires:['dd-drag', 'dd-proxy'], skinnable:false});
