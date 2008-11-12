@@ -120,6 +120,9 @@ Y.mix(Slider, {
 
         rail : {
             value : null,
+            validator : function (v) {
+                return this._validateNewRail(v);
+            },
             set : function (v) {
                 return this._setRailFn(v);
             }
@@ -127,6 +130,9 @@ Y.mix(Slider, {
 
         thumb : {
             value : null,
+            validator : function (v) {
+                return this._validateNewThumb(v);
+            },
             set : function (v) {
                 return this._setThumbFn(v);
             }
@@ -134,6 +140,9 @@ Y.mix(Slider, {
 
         thumbImage : {
             value : null,
+            validator : function (v) {
+                return this._validateNewThumbImage(v);
+            },
             set : function (v) {
                 return this._setThumbImageFn(v);
             }
@@ -210,11 +219,6 @@ Y.extend(Slider, Y.Widget, {
 
         rail.addClass(this.getClassName(RAIL));
         rail.addClass(this.getClassName(RAIL,this.get('axis')));
-
-        // TODO: revisit, move to CSS
-        if ('absolute|relative'.indexOf(rail.getStyle(POSITION)) === -1) {
-            rail.setStyle(POSITION,'relative');
-        }
     },
 
     _initThumb : function () {
@@ -242,9 +246,6 @@ Y.extend(Slider, Y.Widget, {
             rail.appendChild(thumb);
         }
 
-        // TODO: revisit, move to css
-        thumb.setStyle(POSITION,'absolute');
-
         if (this.get(THUMB_IMAGE)) {
             this._initThumbImage();
         }
@@ -267,6 +268,7 @@ Y.extend(Slider, Y.Widget, {
         this._bindThumbDD();
 
         this.after('valueChange', this._afterValueChange);
+        this.after('thumbImageChange', this._afterThumbImageChange);
     },
 
     _bindThumbDD : function () {
@@ -356,9 +358,9 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _defSyncUI : function (e) {
-        this._setRailSize();
-
         this._setThumbSize();
+
+        this._setRailSize();
 
         this._setRailOffsetXY();
 
@@ -401,8 +403,7 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _setThumbSize : function () {
-        var rail  = this.get(RAIL),
-            thumb = this.get(THUMB),
+        var thumb = this.get(THUMB),
             dim   = this._key.dim,
             img   = this.get(THUMB_IMAGE),
             size;
@@ -471,6 +472,18 @@ Y.extend(Slider, Y.Widget, {
 
         return isNumber(v) &&
                 (min < max ? (v >= min && v <= max) : (v >= max && v <= min));
+    },
+
+    _validateNewRail : function (v) {
+        return !this.get(RENDERED) || v;
+    },
+
+    _validateNewThumb : function (v) {
+        return !this.get(RENDERED) || v;
+    },
+
+    _validateNewThumbImage : function (v) {
+        return !this.get(RENDERED) || v;
     },
 
     _validateNewRailSize : function (v) {
@@ -556,6 +569,36 @@ Y.extend(Slider, Y.Widget, {
             this.fire(VALUE_SET,{changeEv: e});
         }
         e.ddEvent = e.omitEvents = null;
+    },
+
+    _afterThumbChange : function (e) {
+        var thumb;
+
+        if (this.get(RENDERED)) {
+            if (e.prevValue) {
+                e.prevValue.get('parentNode').removeChild(e.prevValue);
+            }
+
+            this._initThumb();
+            
+            thumb = this.get(THUMB);
+            this._dd.set('node',thumb);
+            this._dd.set('dragNode',thumb);
+
+            this.syncUI();
+        }
+    },
+
+    _afterThumbImageChange : function (e) {
+        if (this.get(RENDERED)) {
+            if (e.prevValue) {
+                e.prevValue.get('parentNode').removeChild(e.prevValue);
+            }
+
+            this._initThumbImage();
+            
+            this.syncUI();
+        }
     },
 
     _afterMinChange : function (e) {
