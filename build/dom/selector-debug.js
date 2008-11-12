@@ -302,10 +302,7 @@ var Selector = {
             for (i = 0, len = token[ATTRIBUTES][LENGTH]; i < len; ++i) {
                 attribute = node.getAttribute(token[ATTRIBUTES][i][0], 2);
                 if (attribute === undefined) {
-                    attribute = node[token[ATTRIBUTES][i][0]];
-                    if (attribute === undefined) {
-                        return false;
-                    }
+                    return false;
                 }
                 if ( ops[token[ATTRIBUTES][i][1]] &&
                         !ops[token[ATTRIBUTES][i][1]](attribute, token[ATTRIBUTES][i][2])) {
