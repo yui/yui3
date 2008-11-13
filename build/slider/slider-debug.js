@@ -20,15 +20,15 @@ var SLIDER = 'slider',
     SYNC        = 'sync',
     VALUE_SET   = 'valueSet',
     RENDERED    = 'rendered',
-    READY       = 'ready',
+    DISABLED    = 'disabled',
+    DISABLED_CHANGE = 'disabledChange',
 
     DOT    = '.',
     PX     = 'px',
     WIDTH  = 'width',
     HEIGHT = 'height',
-    OFFSET_WIDTH  = 'offsetWidth',
-    OFFSET_HEIGHT = 'offsetHeight',
-    POSITION      = 'position',
+
+    IMAGE_ERROR   = 'image-error',
 
     L = Y.Lang,
     isArray  = L.isArray,
@@ -58,8 +58,6 @@ Y.mix(Slider, {
             offsetEdge    : 'left',
             dim           : WIDTH,
             offAxisDim    : HEIGHT,
-            offsetDim     : OFFSET_WIDTH,
-            posMethod     : 'getX',
             eventPageAxis : 'pageX',
             ddStick       : 'stickX',
             xyIndex       : 0
@@ -68,8 +66,6 @@ Y.mix(Slider, {
             offsetEdge    : 'top',
             dim           : HEIGHT,
             offAxisDim    : WIDTH,
-            offsetDim     : OFFSET_HEIGHT,
-            posMethod     : 'getY',
             eventPageAxis : 'pageY',
             ddStick       : 'stickY',
             xyIndex       : 1
@@ -77,9 +73,9 @@ Y.mix(Slider, {
     },
 
     HTML_PARSER : {
-        rail       : CNM.getClassName(SLIDER,RAIL),
-        thumb      : CNM.getClassName(SLIDER,THUMB),
-        thumbImage : CNM.getClassName(SLIDER,THUMB_IMAGE)
+        rail       : DOT + CNM.getClassName(SLIDER,RAIL),
+        thumb      : DOT + CNM.getClassName(SLIDER,THUMB),
+        thumbImage : DOT + CNM.getClassName(SLIDER,'thumb-image')
     },
 
     ATTRS : {
@@ -158,12 +154,6 @@ Y.mix(Slider, {
         railEnabled : {
             value : true,
             validator : isBoolean
-        },
-
-        ready : {
-            value : false,
-            readOnly : true,
-            validator : isBoolean
         }
     }
 });
@@ -178,7 +168,9 @@ Y.extend(Slider, Y.Widget, {
 
     _thumbSize : null,
 
-    _loading : false,
+    _stall : false,
+
+    _disabled : false,
 
     initializer : function () {
         this._key = Slider.AXIS_KEYS[this.get('axis')];
@@ -193,8 +185,6 @@ Y.extend(Slider, Y.Widget, {
 
         this.publish(SYNC,       {defaultFn: this._defSyncUI});
         this.publish(VALUE_SET,  {defaultFn: this._defSetThumbPosition});
-
-        this.publish(READY);
     },
 
     renderUI : function () {
@@ -267,8 +257,9 @@ Y.extend(Slider, Y.Widget, {
 
         this._bindThumbDD();
 
-        this.after('valueChange', this._afterValueChange);
+        this.after('valueChange',      this._afterValueChange);
         this.after('thumbImageChange', this._afterThumbImageChange);
+        this.after(DISABLED_CHANGE,   this._afterDisabledChange);
     },
 
     _bindThumbDD : function () {
@@ -295,7 +286,7 @@ Y.extend(Slider, Y.Widget, {
     // Parrot most of dd's onMouseDown behavior and manually move the
     // thumb node to the click location.  DD will take over from there.
     _handleRailMouseDown : function (e) {
-        if (this.get('railEnabled')) {
+        if (this.get('railEnabled') && !this.get(DISABLED)) {
             var dd      = this._dd,
                 xyIndex = this._key.xyIndex,
                 xy;
@@ -325,10 +316,8 @@ Y.extend(Slider, Y.Widget, {
     },
 
     syncUI : function () {
-        var img = this.get(THUMB_IMAGE);
-
-        if (!img || img.get('complete')) {
-            this._ready();
+        if (this._isImageLoaded(this.get(THUMB_IMAGE))) {
+            this.fire(SYNC);
         } else {
             // Schedule the sync for when the image loads/errors
             this._scheduleSync();
@@ -336,31 +325,46 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _scheduleSync : function () {
-        var img = this.get(THUMB_IMAGE), handler;
+        var img, handler;
 
-        if (!this._loading) {
-            this._loading = true;
+        if (!this._stall) {
+            // disable the control until the image is loaded
+            this._disabled = this.get(DISABLED);
+            this.set(DISABLED,true);
+            this._stall = this.on(DISABLED_CHANGE,this._stallDisabledChange);
 
-            handler = Y.bind(this._ready,this);
-            img.on('load',handler);
+            img = this.get(THUMB_IMAGE);
+            handler = Y.bind(this._imageLoaded,this,img);
+            img.on('load', handler);
             img.on('error',handler);
         }
     },
 
-    _ready : function () {
-        this.fire(SYNC);
-        this._loading = false;
+    _stallDisabledChange : function (e) {
+        this._disabled = e.newVal;
+        e.preventDefault();
+    },
 
-        if (!this.get(READY)) {
-            this.fire(READY);
-            this._set(READY,true);
-        }
+    _imageLoaded : function (e,img) {
+        var method = this._isImageLoaded(img) ? 'removeClass' : 'addClass';
+
+        this._stall.detach();
+
+        this._stall = false;
+
+        // If the thumb image url results in 404, assign a class to provide
+        // default thumb dimensions/UI
+        this.get(THUMB)[method](this.getClassName(IMAGE_ERROR));
+
+        this.fire(SYNC);
+
+        this.set(DISABLED,this._disabled);
     },
 
     _defSyncUI : function (e) {
-        this._setThumbSize();
+        this._uiSetThumbSize();
 
-        this._setRailSize();
+        this._uiSetRailSize();
 
         this._setRailOffsetXY();
 
@@ -371,19 +375,47 @@ Y.extend(Slider, Y.Widget, {
         this.set(VALUE,this.get(VALUE),{ddEvent:null});
     },
 
-    _setRailSize : function () {
+    _uiSetThumbSize : function () {
+        var thumb = this.get(THUMB),
+            dim   = this._key.dim,
+            img   = this.get(THUMB_IMAGE),
+            size;
+
+        // offsetWidth fails in hidden containers
+        size = parseInt(thumb.getComputedStyle(dim),10);
+
+        if (this._isImageLoaded(img)) {
+            size = max(img.get(dim), size);
+        }
+
+        this._thumbSize = size;
+    },
+
+    _uiSetRailSize : function () {
         var rail  = this.get(RAIL),
             thumb = this.get(THUMB),
             img   = this.get(THUMB_IMAGE),
             dim   = this._key.dim,
-            size  = this.get(RAIL_SIZE);
+            size  = this.get(RAIL_SIZE),
+            setxy = false;
 
         if (parseInt(size,10)) {
             // Convert to pixels
             rail.setStyle(dim,size);
             size = parseInt(rail.getComputedStyle(dim),10);
         } else {
+            // Default from height or width (axis respective), or dims assigned
+            // via css to the rail or thumb, whichever is largest.
+            // Dear implementers, please use railSize, not height/width to
+            // set the rail dims
+            size = this.get(dim);
+            if (parseInt(size,10)) {
+                setxy = true;
+                rail.setStyle(dim,size);
+                size = parseInt(rail.getComputedStyle(dim),10);
+            }
             size = max(
+                    size|0,
                     parseInt(thumb.getComputedStyle(dim),10),
                     parseInt(rail.getComputedStyle(dim),10));
 
@@ -395,29 +427,22 @@ Y.extend(Slider, Y.Widget, {
         rail.setStyle(dim, size + PX);
 
         this._railSize = size;
+
+        // handle the (not recommended) fallback case of setting rail size via
+        // widget height/width params.  This is the only case that sets the
+        // off-axis rail dim in the code.
+        if (setxy) {
+            dim = this._key.offAxisDim;
+            size = this.get(dim);
+            if (size) {
+                rail.set(dim,size);
+            }
+        }
     },
 
     _setRailOffsetXY : function () {
         this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
                          floor(this._thumbSize / 2);
-    },
-
-    _setThumbSize : function () {
-        var thumb = this.get(THUMB),
-            dim   = this._key.dim,
-            img   = this.get(THUMB_IMAGE),
-            size;
-
-        // offsetWidth fails in hidden containers
-        size = parseInt(thumb.getComputedStyle(dim),10);
-
-        // TODO: Offer default dim in the case of x axis slider w/ no image or
-        // specified thumb dims in css?  getCS would return the full rail width.
-        if (this._isImageLoaded(img)) {
-            size = max(img.get(dim), size);
-        }
-
-        this._thumbSize = size;
     },
 
     _setDDGutter : function () {
@@ -448,9 +473,8 @@ Y.extend(Slider, Y.Widget, {
         return this.get(VALUE);
     },
 
-    // silent to omit firing slideStart and slideEnd
-    setValue : function (val,silent) {
-        this.set(VALUE,val,{omitEvents:silent});
+    setValue : function (val) {
+        this.set(VALUE,val);
     },
 
     _validateNewAxis : function (v) {
@@ -553,14 +577,20 @@ Y.extend(Slider, Y.Widget, {
     _defSetThumbPosition : function (e) {
         var min = this.get(MIN),
             max = this.get(MAX),
-            v;
+            v   = e.changeEv.newVal;
 
-        v = round(((e.changeEv.newVal - min) / (max - min)) *
-                this._railSize) - floor(this._thumbSize / 2);
+        v = round(((v - min) / (max - min)) * this._railSize) + this._offsetXY;
 
-        this.get(THUMB).setStyle(this._key.offsetEdge, v + PX);
+        this._uiPositionThumb(v);
     },
 
+    _uiPositionThumb : function (xy) {
+        var dd  = this._dd;
+
+        dd._setStartPosition(dd.get('dragNode').getXY());
+
+        dd._moveNode([xy,xy]);
+    },
 
 
 
@@ -568,7 +598,7 @@ Y.extend(Slider, Y.Widget, {
         if (!e.ddEvent) {
             this.fire(VALUE_SET,{changeEv: e});
         }
-        e.ddEvent = e.omitEvents = null;
+        e.ddEvent = null;
     },
 
     _afterThumbChange : function (e) {
@@ -611,6 +641,12 @@ Y.extend(Slider, Y.Widget, {
 
     _afterRailSizeChange : function (e) {
         this._refresh(e);
+    },
+
+    _afterDisabledChange : function (e) {
+        if (this._dd) {
+            this._dd.set('locked',e.newVal);
+        }
     },
 
     _refresh : function (e) {
