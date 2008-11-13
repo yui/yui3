@@ -1,6 +1,7 @@
 **** version 3.0.0 PR2 ***
 
 Added bubbles config option to help with extending later.
+Updated _checkRegion to perform Bottom, Top, Left, Right validation instead of Top, Bottom, Left, Right
 
 **** version 3.0.0 PR1 ***
 
