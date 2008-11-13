@@ -550,6 +550,16 @@ YUI.add("event-custom", function(Y) {
 
                 var ef = null;
                 if (this.emitFacade) {
+
+                    // this.fire({
+                    //   foo: 1
+                    //   bar: 2
+                    // }
+                    // this.fire({
+                    //   bar: 2
+                    // } // foo is still 1 unless we create a new facade
+                    this._facade = null;
+
                     ef = this._getFacade(args);
                     args[0] = ef;
                 }
