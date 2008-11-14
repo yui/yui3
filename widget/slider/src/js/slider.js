@@ -10,6 +10,7 @@ var SLIDER = 'slider',
     MAX    = 'max',
     THUMB_IMAGE = 'thumbImage',
     RAIL_SIZE   = 'railSize',
+    CONTENT_BOX = 'contentBox',
 
     SLIDE_START = 'slideStart',
     SLIDE_END   = 'slideEnd',
@@ -21,12 +22,11 @@ var SLIDER = 'slider',
     DISABLED    = 'disabled',
     DISABLED_CHANGE = 'disabledChange',
 
-    DOT    = '.',
-    PX     = 'px',
-    WIDTH  = 'width',
-    HEIGHT = 'height',
-
-    IMAGE_ERROR   = 'image-error',
+    DOT      = '.',
+    PX       = 'px',
+    WIDTH    = 'width',
+    HEIGHT   = 'height',
+    COMPLETE = 'complete',
 
     L = Y.Lang,
     isArray  = L.isArray,
@@ -34,7 +34,13 @@ var SLIDER = 'slider',
     isString = L.isString,
     isNumber = L.isNumber,
     
-    CNM      = Y.ClassNameManager,
+    getCN    = Y.ClassNameManager.getClassName,
+
+    IMAGE         = 'image',
+    C_RAIL        = getCN(SLIDER,RAIL),
+    C_THUMB       = getCN(SLIDER,THUMB),
+    C_THUMB_IMAGE = getCN(SLIDER,THUMB,IMAGE),
+    C_IMAGE_ERROR = getCN(SLIDER,IMAGE,'error'),
 
     M        = Math,
     max      = M.max,
@@ -71,9 +77,9 @@ Y.mix(Slider, {
     },
 
     HTML_PARSER : {
-        rail       : DOT + CNM.getClassName(SLIDER,RAIL),
-        thumb      : DOT + CNM.getClassName(SLIDER,THUMB),
-        thumbImage : DOT + CNM.getClassName(SLIDER,'thumb-image')
+        rail       : DOT + C_RAIL,
+        thumb      : DOT + C_THUMB,
+        thumbImage : DOT + C_THUMB_IMAGE
     },
 
     ATTRS : {
@@ -166,6 +172,8 @@ Y.extend(Slider, Y.Widget, {
 
     _thumbSize : null,
 
+    _thumbOffset : 0,
+
     _stall : false,
 
     _disabled : false,
@@ -191,21 +199,20 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _initRail : function () {
-        var cb   = this.get('contentBox'),
+        var cb   = this.get(CONTENT_BOX),
             rail = this.get(RAIL);
 
         // Create rail if necessary. Make sure it's in the contentBox
         if (!rail) {
             rail = cb.appendChild(
-                Y.Node.create('<div class="'+
-                    this.getClassName(RAIL)+'"></div>'));
+                Y.Node.create('<div class="'+C_RAIL+'"></div>'));
 
             this.set(RAIL,rail);
         } else if (!cb.contains(rail)) {
             cb.appendChild(rail);
         }
 
-        rail.addClass(this.getClassName(RAIL));
+        rail.addClass(C_RAIL);
         rail.addClass(this.getClassName(RAIL,this.get('axis')));
     },
 
@@ -223,12 +230,12 @@ Y.extend(Slider, Y.Widget, {
 
         if (!thumb) {
             thumb = Y.Node.create(
-                '<div class="'+this.getClassName(THUMB)+'"></div>');
+                '<div class="'+C_THUMB+'"></div>');
 
             this.set(THUMB,thumb);
         }
 
-        thumb.addClass(this.getClassName(THUMB));
+        thumb.addClass(C_THUMB);
 
         if (!rail.contains(thumb)) {
             rail.appendChild(thumb);
@@ -244,6 +251,8 @@ Y.extend(Slider, Y.Widget, {
             img   = this.get(THUMB_IMAGE);
 
         if (img) {
+            img.replaceClass(C_THUMB,C_THUMB_IMAGE);
+
             if (!thumb.contains(img)) {
                 thumb.appendChild(img);
             }
@@ -304,7 +313,7 @@ Y.extend(Slider, Y.Widget, {
 
             // Adjust registered starting position by half the thumb's x/y
             xy = dd.get('dragNode').getXY();
-            xy[xyIndex] += floor(this._thumbSize / 2);
+            xy[xyIndex] += this._thumbOffset;
 
             dd._setStartPosition(xy);
 
@@ -314,11 +323,13 @@ Y.extend(Slider, Y.Widget, {
     },
 
     syncUI : function () {
-        if (this._isImageLoaded(this.get(THUMB_IMAGE))) {
-            this.fire(SYNC);
-        } else {
+        var img = this.get(THUMB_IMAGE);
+
+        if (this._isImageLoading(img)) {
             // Schedule the sync for when the image loads/errors
             this._scheduleSync();
+        } else {
+            this._ready(img);
         }
     },
 
@@ -329,9 +340,9 @@ Y.extend(Slider, Y.Widget, {
             // disable the control until the image is loaded
             this._disabled = this.get(DISABLED);
             this.set(DISABLED,true);
-            this._stall = this.on(DISABLED_CHANGE,this._stallDisabledChange);
+            this._stall    = this.on(DISABLED_CHANGE,this._stallDisabledChange);
 
-            img = this.get(THUMB_IMAGE);
+            img     = this.get(THUMB_IMAGE);
             handler = Y.bind(this._imageLoaded,this,img);
             img.on('load', handler);
             img.on('error',handler);
@@ -344,23 +355,33 @@ Y.extend(Slider, Y.Widget, {
     },
 
     _imageLoaded : function (e,img) {
-        var method = this._isImageLoaded(img) ? 'removeClass' : 'addClass';
-
-        this._stall.detach();
+        if (this._stall) {
+            this._stall.detach();
+        }
 
         this._stall = false;
 
-        // If the thumb image url results in 404, assign a class to provide
-        // default thumb dimensions/UI
-        this.get(THUMB)[method](this.getClassName(IMAGE_ERROR));
-
-        this.fire(SYNC);
+        this._ready(img);
 
         this.set(DISABLED,this._disabled);
     },
 
+    _ready : function (img) {
+        // _isImageLoaded may return false because this is executed from the
+        // image's onerror handler as well.
+        var method = this._isImageLoaded(img) ? 'removeClass' : 'addClass';
+
+        // If the thumb image url results in 404, assign a class to provide
+        // default thumb dimensions/UI
+        this.get(CONTENT_BOX)[method](C_IMAGE_ERROR);
+
+        this.fire(SYNC);
+    },
+
     _defSyncUI : function (e) {
         this._uiSetThumbSize();
+
+        this._setThumbOffset();
 
         this._uiSetRailSize();
 
@@ -387,6 +408,10 @@ Y.extend(Slider, Y.Widget, {
         }
 
         this._thumbSize = size;
+    },
+
+    _setThumbOffset : function () {
+        this._thumbOffset = floor(this._thumbSize / 2);
     },
 
     _uiSetRailSize : function () {
@@ -440,15 +465,15 @@ Y.extend(Slider, Y.Widget, {
 
     _setRailOffsetXY : function () {
         this._offsetXY = this.get(RAIL).getXY()[this._key.xyIndex] -
-                         floor(this._thumbSize / 2);
+                         this._thumbOffset;
     },
 
     _setDDGutter : function () {
         var gutter = [0,0,0,0],
             i      = this._key.xyIndex,
-            dim    = this._thumbSize / 2,
-            start  = -1 * floor(dim),
-            end    = -1 * ceil(dim);
+            dim    = this._thumbOffset,
+            start  = -dim,
+            end    = -1 * (this._thumbSize - dim);
 
         if (i) { // y axis
             gutter[0] = start;
@@ -577,7 +602,7 @@ Y.extend(Slider, Y.Widget, {
             max = this.get(MAX),
             v   = e.changeEv.newVal;
 
-        v = round(((v - min) / (max - min)) * this._railSize) + this._offsetXY;
+        v = round(((v - min) / (max - min)) * this._railSize);
 
         this._uiPositionThumb(v);
     },
@@ -585,8 +610,11 @@ Y.extend(Slider, Y.Widget, {
     _uiPositionThumb : function (xy) {
         var dd  = this._dd;
 
+        xy += this._offsetXY;
+
         dd._setStartPosition(dd.get('dragNode').getXY());
 
+        // stickX/stickY config on DD instance will negate off-axis move
         dd._moveNode([xy,xy]);
     },
 
@@ -643,7 +671,7 @@ Y.extend(Slider, Y.Widget, {
 
     _afterDisabledChange : function (e) {
         if (this._dd) {
-            this._dd.set('locked',e.newVal);
+            this._dd.set('lock',e.newVal);
         }
     },
 
@@ -653,19 +681,25 @@ Y.extend(Slider, Y.Widget, {
         }
     },
 
+    // Used to determine if there will is a current or pending request for the
+    // image resource.
+    _isImageLoading : function (img) {
+        return !img || !img.get(COMPLETE);
+    },
+
+    // Used to determine if the image resource arrived successfully or there was
+    // an error.
     // img load error detectable by:
     // !img.complete in IE
     // img.complete && img.naturalWidth == 0 in FF, Saf
     // img.complete && img.width == 0 in Opera
     _isImageLoaded : function (img) {
-        var no = (!img || !img.get('complete')),w;
-
-        if (!no) {
-            w  = img.get('naturalWidth');
-            no = w === undefined ? !img.get(WIDTH) : !w;
+        if (img) {
+            var w = img.get('naturalWidth');
+            return img.get(COMPLETE) && (w === undefined ? img.get(WIDTH) : w);
         }
 
-        return !no;
+        return true;
     }
 
 });
