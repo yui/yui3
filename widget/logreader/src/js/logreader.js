@@ -1,3 +1,13 @@
+/**
+ * LogReader creates a visualization for Y.log statements.  Log messages
+ * include a category such as "info" or "warn", a source, and various timing
+ * info.  Messages are rendered to the Reader in asynchronous buffered batches
+ * so as to avoid interfering with the operation of your page.
+ *
+ * @class LogReader
+ * @extends Widget
+ */
+
 var CLASS_CONTAINER   = 'container',
     CLASS_HD          = 'hd',
     CLASS_CONSOLE     = 'console',
@@ -31,22 +41,49 @@ var CLASS_CONTAINER   = 'container',
     REMOVE_CLASS      = 'removeClass',
     GET_CLASS_NAME    = 'getClassName';
 
-/**
- * Creates a log output console
- */
 function LogReader() {
     this.constructor.superclass.constructor.apply(this,arguments);
 }
 
 Y.mix(LogReader, {
 
+    /**
+     * The identity of the widget.
+     *
+     * @property LogReader.NAME
+     * @type String
+     * @static
+     */
     NAME : 'logreader',
 
+    /**
+     * Static property alias for reference in setting the default message
+     * rendering template. See defaultTemplate and templates.verbose attributes.
+     *
+     * @property LogReader.VERBOSE
+     * @type String
+     * @static
+     */
     VERBOSE : 'verbose',
+
+    /**
+     * Static property alias for reference in setting the default message
+     * rendering template. See defaultTemplate and templates.basic attributes.
+     *
+     * @property LogReader.BASIC
+     * @type String
+     * @static
+     */
     BASIC   : 'basic',
 
     ATTRS : {
 
+        /**
+         * Strings used in the LogReader UI.  Default locale en-us.
+         *
+         * @attribute strings
+         * @type Object
+         */
         strings : {
             value : {
                 COLLAPSE    : "Collapse",
@@ -56,23 +93,86 @@ Y.mix(LogReader, {
             }
         },
 
+        /**
+         * Title appearing in the head of the LogReader console.
+         *
+         * @attribute title
+         * @type String
+         * @default "Log Console"
+         */
+         // TODO: move this to the strings collection
         title : {
             value : "Log Console"
         },
 
-        // display messages received
+        /**
+         * Boolean to pause the outputting of new messages to the console.
+         * When paused, messages will accumulate in the buffer.
+         *
+         * @attribute active
+         * @type boolean
+         * @default true
+         */
         active : {
             value : true
         },
 
+        /**
+         * If a category is not specified in the Y.log(..) statement, this
+         * category will be used.
+         *
+         * @attribute defaultCategory
+         * @type String
+         * @default "info"
+         */
         defaultCategory : {
             value : 'info'
         },
 
+        /**
+         * If a source is not specified in the Y.log(..) statement, this
+         * source will be used.
+         *
+         * @attribute defaultSource
+         * @type String
+         * @default "global"
+         */
         defaultSource   : {
             value : 'global'
         },
 
+        /**
+         * Map of known entry types to their filter status.  By default there
+         * are two groups of entryTypes: category and source.  Each contains
+         * a map of the known categories or sources, respectively.
+         *
+         * For example, myReader.get('entryTypes.category.warn') will return a
+         * boolean indicating whether entries with the category "warn" should
+         * be displayed in the console.
+         *
+         * The default structure is:
+         * <pre>entryTypes : {
+         *     category : {
+         *         info : true,
+         *         warn : true,
+         *         error: true,
+         *         time : true
+         *     },
+         *     source : {
+         *         global : true
+         *     }
+         * }</pre>
+         *
+         * Unknown categories or sources used in log statements will add to to
+         * this structure, defaulting their display flag to true. E.g.
+         * <code>Y.log("my message","stuff_i_care_about","my_app");</code>
+         * will cause entryTypes.category.stuff_i_care_about : true and
+         * entryTypes.source.my_app : true to be added to the map and
+         * appropriate filter controls added to the LogReader display.
+         *
+         * @attribute entryTypes
+         * @type Object
+         */
         entryTypes       : {
             value : {
                 category : {
@@ -87,13 +187,41 @@ Y.mix(LogReader, {
             }
         },
 
+        /**
+         * A map of HTML markup templates for the _entryFromTemplate
+         * entryWriter to use to render log messages into the LogReader console.
+         *
+         * <code>myReader.set('templates.verbose',htmlTemplate);</code>
+         * to alter how messages are rendered if myReader is configured to use
+         * verbose output.  Also available by default is 'templates.basic'.
+         *
+         * To add a new template,
+         * <pre>myReader.set('templates.my_template',htmlTemplate);
+         * myReader.set('defaultTemplate','my_template');</pre>
+         *
+         * @attribute templates
+         * @type Object
+         */
         templates : {
             value : {
+                // Populated during instance initialization
                 verbose : null,
                 basic   : null
             }
         },
 
+        /**
+         * The default template to use to render log messages.  Available
+         * templates are held in the templates attribute.  Set the value to
+         * the key of the templates config object representing the markup
+         * template you wish to use by default.
+         *
+         * Out of the box, values 'verbose' and 'basic' are supported.
+         *
+         * @attribute defaultTemplate
+         * @type String
+         * @default "verbose"
+         */
         defaultTemplate : {
             value : 'verbose'
         },
