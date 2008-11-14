@@ -436,13 +436,10 @@
          * @return {Node} node A new shim Node instance.
          */
         _getShimTemplate : function() {
-            /* Node bug? in IE6 cloning the node seems to return the same node instance
             if (!Stack._SHIM_TEMPLATE) {
                 Stack._SHIM_TEMPLATE = Node.create(Stack.SHIM_TEMPLATE);
             }
             return Stack._SHIM_TEMPLATE.cloneNode(true);
-            */
-            return Node.create(Stack.SHIM_TEMPLATE);
         }
     };
 
