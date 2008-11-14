@@ -1,6 +1,11 @@
 YUI.add('widget-position-ext', function(Y) {
 
 /**
+ * Provides extended/advanced XY positioning support for Widgets, through an extension.
+ *
+ * It builds on top of the widget-position module, to provide alignmentment and centering support.
+ * Future releases aim to add constrained and fixed positioning support.
+ *
  * @module widget-position-ext
  */
         var L = Y.Lang,
@@ -17,7 +22,8 @@ YUI.add('widget-position-ext', function(Y) {
             AlignChange = "alignChange";
 
         /**
-         * Widget extension, which can be used to add extended XY positioning support to the base Widget class.
+         * Widget extension, which can be used to add extended XY positioning support to the base Widget class,
+         * through the <a href="Base.html#method_build">Base.build</a> method.
          *
          * @class WidgetPositionExt
          * @param {Object} User configuration object
@@ -32,6 +38,7 @@ YUI.add('widget-position-ext', function(Y) {
          * configuration introduced by WidgetPositionExt.
          * 
          * @property WidgetPositionExt.ATTRS
+         * @type Object
          * @static
          */
         PositionExt.ATTRS = {
@@ -175,10 +182,10 @@ YUI.add('widget-position-ext', function(Y) {
             /**
              * Binds event listeners responsible for updating the UI state in response to 
              * Widget extended positioning related state changes.
-             *
-             * This method in invoked after bindUI is invoked for the Widget class
+             * <p>
+             * This method is invoked after bindUI is invoked for the Widget class
              * using YUI's aop infrastructure.
-             *
+             * </p>
              * @method _bindUIStack
              * @protected
              */
@@ -211,7 +218,7 @@ YUI.add('widget-position-ext', function(Y) {
              * 
              * @method _afterAlignChange
              * @protected
-             * @param {Event.Facade} e The Event Facade
+             * @param {Event.Facade} e The event facade for the attribute change
              */
             _afterAlignChange : function(e) {
                 if (e.newVal) {

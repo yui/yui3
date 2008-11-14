@@ -1,6 +1,8 @@
 YUI.add('widget-stdmod', function(Y) {
 
 /**
+ * Provides standard module support for Widgets through an extension.
+ * 
  * @module widget-stdmod
  */
     var L = Y.Lang,
@@ -39,20 +41,23 @@ YUI.add('widget-stdmod', function(Y) {
         HeightChange = "HeightChange",        
         ContentUpdate = "contentUpdate",
 
-        STD_TEMPLATE = "<div></div>",
-
         RENDERUI = "renderUI",
         BINDUI = "bindUI",
         SYNCUI = "syncUI";
 
     /**
-     * Widget extension, which can be used to add Standard Module support to the base Widget class.
-     *
+     * Widget extension, which can be used to add Standard Module support to the 
+     * base Widget class, through the <a href="Base.html#method_build">Base.build</a> 
+     * method.
+     * <p>
+     * The extension adds header, body and footer sections to the Widget's content box and 
+     * provides the corresponding methods and attributes to modify the contents of these sections.
+     * </p>
      * @class WidgetStdMod
-     * @param {Object} User configuration object
+     * @param {Object} The user configuration object
      */
     function StdMod(config) {
-        
+
         this._stdModNode = this.get(CONTENT_BOX);
 
         Y.after(this._renderUIStdMod, this, RENDERUI);
@@ -86,27 +91,34 @@ YUI.add('widget-stdmod', function(Y) {
     StdMod.FOOTER = FOOTER;
 
     /**
-     * Constant used to specify insertion position, when adding content to sections of the standard module.
-     * Inserts new content AFTER existing content.
-     * 
+     * Constant used to specify insertion position, when adding content to sections of the standard module in 
+     * methods which expect a "where" argument.
+     * <p>
+     * Inserts new content <em>before</em> the sections existing content.
+     * </p>
      * @property WidgetStdMod.AFTER
      * @static
      * @type String
      */
     StdMod.AFTER = "after";
+
     /**
-     * Constant used to specify insertion position, when adding content to sections of the standard module.
-     * Inserts new content BEFORE existing content.
-     *
+     * Constant used to specify insertion position, when adding content to sections of the standard module in
+     * methods which expect a "where" argument.
+     * <p>
+     * Inserts new content <em>before</em> the sections existing content.
+     * </p>
      * @property WidgetStdMod.BEFORE
      * @static
      * @type String
      */
     StdMod.BEFORE = "before";
     /**
-     * Constant used to specify insertion position, when adding content to sections of the standard module.
-     * Replaces existing content, with new content.
-     *
+     * Constant used to specify insertion position, when adding content to sections of the standard module in
+     * methods which expect a "where" argument.
+     * <p>
+     * <em>Replaces</em> the sections existing content, with new content.
+     * </p>
      * @property WidgetStdMod.REPLACE
      * @static
      * @type String
@@ -124,6 +136,7 @@ YUI.add('widget-stdmod', function(Y) {
      * configuration introduced by WidgetStdMod.
      * 
      * @property WidgetStdMod.ATTRS
+     * @type Object
      * @static
      */
     StdMod.ATTRS = {
@@ -133,7 +146,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the header section. This will replace any existing content
-         * in the header. If you want to append, or insert new content, use the setHeader method.
+         * in the header. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         headerContent: {
             get: function(val) {
@@ -147,7 +160,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the footer section. This will replace any existing content
-         * in the footer. If you want to append, or insert new content, use the setFooter method.
+         * in the footer. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         footerContent: {
             get: function(val) {
@@ -161,7 +174,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @type {String | Node}
          * @default undefined
          * @description The content to be added to the body section. This will replace any existing content
-         * in the body. If you want to append, or insert new content, use the setBody method.
+         * in the body. If you want to append, or insert new content, use the <a href="#method_setStdModContent">setStdModContent</a> method.
          */
         bodyContent: {
             get: function(val) {
@@ -175,7 +188,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @type {String}
          * @default WidgetStdMod.BODY
          * @description The section (WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER) which should be resized to fill the height of the standard module, when a 
-         * height is set on the Widget. If no height is set on the widget, then all sections are sized based on 
+         * height is set on the Widget. If a height is not set on the widget, then all sections are sized based on 
          * their content.
          */
         fillHeight: {
@@ -190,6 +203,7 @@ YUI.add('widget-stdmod', function(Y) {
      * The HTML parsing rules for the WidgetStdMod class.
      * 
      * @property WidgetStdMod.HTML_PARSER
+     * @static
      * @type Object
      */
     StdMod.HTML_PARSER = {
@@ -207,31 +221,41 @@ YUI.add('widget-stdmod', function(Y) {
     };
 
     /**
+     * Static hash of default class names used for the header,
+     * body and footer sections of the standard module, keyed by
+     * the section identifier (WidgetStdMod.STD_HEADER, WidgetStdMod.STD_BODY, WidgetStdMod.STD_FOOTER)
+     *
+     * @property WidgetStdMod.SECTION_CLASS_NAMES
+     * @static
+     * @type Object
+     */
+    StdMod.SECTION_CLASS_NAMES = {
+        header: Widget.getClassName(HD),
+        body: Widget.getClassName(BD),
+        footer: Widget.getClassName(FT)
+    };
+
+    /**
      * The template HTML strings for each of the standard module sections. Section entries are keyed by the section constants,
-     * WidgetStdMod.HEADER, WidgetStdMod.BODY, WidgetStdMod.FOOTER, and contain markup and className to be added for each section
+     * WidgetStdMod.HEADER, WidgetStdMod.BODY, WidgetStdMod.FOOTER, and contain the HTML to be added for each section.
      * e.g.
      * <pre>
      *    {
-     *       body: {
-     *          html: "<div></div>",
-     *          className: "yui-widget-bd"
-     *       },
-     *       header: {
-     *           html: ...
-     *           className: ...
-     *       },
-     *       footer: {
-     *           html: ...
-     *           className: ...
-     *       }
+     *       header : '<div class="yui-widget-hd"></div>,
+     *       body : '<div class="yui-widget-bd"></div>,
+     *       footer : '<div class="yui-widget-ft"></div>
      *    }
-     * 
+     * </pre>
      * @property TEMPLATES
      * @type Object
      * @static
      */
-    StdMod.TEMPLATES = {};
-    
+    StdMod.TEMPLATES = {
+        header : '<div class="' + StdMod.SECTION_CLASS_NAMES[STD_HEADER] + '"></div>',
+        body : '<div class="' + StdMod.SECTION_CLASS_NAMES[STD_BODY] + '"></div>',
+        footer : '<div class="' + StdMod.SECTION_CLASS_NAMES[STD_FOOTER] + '"></div>'
+    };
+
     /**
      * Stores nodes created from the WidgetStdMod.TEMPLATES strings,
      * which are cloned to create new header, footer, body sections for
@@ -243,27 +267,14 @@ YUI.add('widget-stdmod', function(Y) {
      */
     StdMod._TEMPLATES = {};
 
-    var tmpl = StdMod.TEMPLATES;
-    tmpl[STD_HEADER] = {
-        html : STD_TEMPLATE,
-        className : HD
-    };
-    tmpl[STD_BODY] = {
-        html : STD_TEMPLATE,
-        className : BD
-    };
-    tmpl[STD_FOOTER] = {
-        html : STD_TEMPLATE,
-        className : FT
-    };
-
     StdMod.prototype = {
 
         /**
          * Synchronizes the UI to match the Widgets standard module state.
-         * This method in invoked after syncUI is invoked for the Widget class
+         * <p>
+         * This method is invoked after syncUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _syncUIStdMod
          * @protected
          */
@@ -276,10 +287,10 @@ YUI.add('widget-stdmod', function(Y) {
 
         /**
          * Creates/Initializes the DOM for standard module support.
-         *
-         * This method in invoked after renderUI is invoked for the Widget class
+         * <p>
+         * This method is invoked after renderUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _renderUIStdMod
          * @protected
          */
@@ -290,10 +301,10 @@ YUI.add('widget-stdmod', function(Y) {
         /**
          * Binds event listeners responsible for updating the UI state in response to 
          * Widget standard module related state changes.
-         *
-         * This method in invoked after bindUI is invoked for the Widget class
+         * <p>
+         * This method is invoked after bindUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _bindUIStdMod
          * @protected
          */
@@ -308,36 +319,36 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Default attribute change listener for the header content attribute, responsible
+         * Default attribute change listener for the headerContent attribute, responsible
          * for updating the UI, in response to attribute changes.
          *
          * @method _afterHeaderChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterHeaderChange : function(e) {
             this._uiSetStdMod(STD_HEADER, e.newVal, e.stdModPosition);
         },
 
         /**
-         * Default attribute change listener for the body content attribute, responsible
+         * Default attribute change listener for the bodyContent attribute, responsible
          * for updating the UI, in response to attribute changes.
          *
          * @method _afterBodyChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterBodyChange : function(e) {
             this._uiSetStdMod(STD_BODY, e.newVal, e.stdModPosition);
         },
 
         /**
-         * Default attribute change listener for the footer content attribute, responsible
+         * Default attribute change listener for the footerContent attribute, responsible
          * for updating the UI, in response to attribute changes.
          *
          * @method _afterFooterChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterFooterChange : function(e) {
             this._uiSetStdMod(STD_FOOTER, e.newVal, e.stdModPosition);
@@ -349,7 +360,7 @@ YUI.add('widget-stdmod', function(Y) {
          * 
          * @method _afterFillHeightChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterFillHeightChange: function (e) {
             this._uiSetFillHeight(e.newVal);
@@ -357,11 +368,13 @@ YUI.add('widget-stdmod', function(Y) {
 
         /**
          * Default validator for the fillHeight attribute. Verifies that the 
-         * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER
+         * value set is a valid section specifier - one of WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER,
+         * or a falsey value if fillHeight is to be disabled.
          *
          * @method _validateFillHeight
          * @protected
          * @param {String} val The section which should be setup to fill height, or false/null to disable fillHeight
+         * @return true if valid, false if not
          */
         _validateFillHeight : function(val) {
             return !val || val == StdMod.BODY || val == StdMod.HEADER || val == StdMod.FOOTER;    
@@ -410,8 +423,8 @@ YUI.add('widget-stdmod', function(Y) {
 
         /**
          * Updates the rendered UI, adding the provided content (either an HTML string, or node reference),
-         * to the specified section. The content is either added BEFORE, AFTER or REPLACES existing content
-         * in the section, based on the value of the where argument.
+         * to the specified section. The content is either added before, after or replaces existing content
+         * in the section, based on the value of the <code>where</code> argument.
          * 
          * @method _uiSetStdMod
          * @protected
@@ -437,6 +450,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @method _renderStdMod
          * @protected
          * @param {String} section The section to create/render. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
+         * @return {Node} A reference to the added section node
          */
         _renderStdMod : function(section) {
 
@@ -486,35 +500,24 @@ YUI.add('widget-stdmod', function(Y) {
          * Gets a new Node reference for the given standard module section, by cloning
          * the stored template node.
          *
+         * @method _getStdModTemplate
+         * @protected
          * @param {String} section The section to create a new node for. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          * @return {Node} The new Node instance for the section
          */
         _getStdModTemplate : function(section) {
-            var template = StdMod._TEMPLATES[section],
-                cfg;
+            var template = StdMod._TEMPLATES[section];
 
             if (!template) {
-                cfg = StdMod.TEMPLATES[section];
-                StdMod._TEMPLATES[section] = template = Node.create(cfg.html);
-                template.addClass(this._getStdModClassName(section));
+                StdMod._TEMPLATES[section] = template = Node.create(StdMod.TEMPLATES[section]);
             }
             return template.cloneNode(true);
         },
 
         /**
-         * Gets the standard class name for the given section
-         *
-         * @param {String} section The section for which the classname is reqiured. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
-         * @return {String} The standard classname for the given section
-         */
-        _getStdModClassName : function(section) {
-            return Widget.getClassName(StdMod.TEMPLATES[section].className);
-        },
-
-        /**
          * Helper method to add the given HTML string to the node reference provided.
-         * The HTML is added either BEFORE, AFTER or REPLACES the existing node content 
-         * based on the value of the where argument.
+         * The HTML is added either before, after or replaces the existing node content 
+         * based on the value of the <code>where</code> argument.
          *
          * @method _addNodeHTML
          * @private
@@ -522,7 +525,7 @@ YUI.add('widget-stdmod', function(Y) {
          * @param {Node} node The section Node to be updated.
          * @param {String} html The new content HTML string to be added to the section Node.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace existing content in the Node.
+         * If not provided, the content will replace Nodes existing content.
          */
         _addNodeHTML : function(node, html, where) {
             if (where == AFTER) {
@@ -535,9 +538,9 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to add a child Node, to another node.
-         * The child node is added either BEFORE, AFTER or REPLACES the existing node content 
-         * based on the value of the where argument.
+         * Helper method to add nodes, to another node.
+         * The child node(s) are added either before, after or replaces the existing node content 
+         * based on the value of the <code>where</code> argument.
          * 
          * @method _addNodeRef
          * @private
@@ -569,8 +572,8 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to obtain the precise (which could be sub-pixel for certain browsers, such as FF3) 
-         * height of the node provided, including padding and border.
+         * Helper method to obtain the precise height of the node provided, including padding and border.
+         * The height could be a sub-pixel value for certain browsers, such as Firefox 3.
          *
          * @method _getPreciseHeight
          * @private
@@ -592,8 +595,8 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * Helper method to query the rendered contents of the widgets contentBox to find a 
-         * Node for the given section.
+         * Helper method to query the rendered contents of the contentBox to find the
+         * node for the given section if it exists.
          * 
          * @method _findStdModSection
          * @private
@@ -601,19 +604,30 @@ YUI.add('widget-stdmod', function(Y) {
          * @return {Node} The rendered node for the given section, or null if not found.
          */
         _findStdModSection: function(section) {
-            return this.get(CONTENT_BOX).query("> ." + this._getStdModClassName(section));
+            return this.get(CONTENT_BOX).query("> ." + StdMod.SECTION_CLASS_NAMES[section]);
         },
 
+        /**
+         * Utility method, used by WidgetStdMods HTML_PARSER implementation
+         * to extract data for each section from markup.
+         *
+         * @method _parseStdModHTML
+         * @private
+         * @param {String} section
+         * @return {String} Inner HTML string with the contents of the section
+         */
         _parseStdModHTML : function(section) {
             var node = this._findStdModSection(section);
             return (node) ? node.get(INNER_HTML) : "";
         },
 
         /**
+         * Retrieves the child nodes (content) of a standard module section
+         * 
          * @method _getStdModContent
          * @private
-         * @param {String} section The standard module section whose content is to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
-         * @return {Node} The Node collection making up the content of the standard module section.
+         * @param {String} section The standard module section whose child nodes are to be retrieved. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
+         * @return {Node} The child node collection of the standard module section.
          */
         _getStdModContent : function(section) {
             return (this[section + NODE_SUFFIX]) ? this[section + NODE_SUFFIX].get(CHILD_NODES) : null;
@@ -621,22 +635,23 @@ YUI.add('widget-stdmod', function(Y) {
 
         /**
          * Updates the body section of the standard module with the content provided (either an HTML string, or node reference).
-         *
-         * This method can be used instead of the body attribute if you'd like to retain the current content of the body,
-         * and insert content before or after it, by specifying the where argument.
-         *
+         * <p>
+         * This method can be used instead of the corresponding section content attribute if you'd like to retain the current content of the section,
+         * and insert content before or after it, by specifying the <code>where</code> argument.
+         * </p>
          * @method setStdModContent
          * @param {String} section The standard module section whose content is to be updated. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
          * @param {String | Node} content The content to be added, either an HTML string or a Node reference.
          * @param {String} where Optional. Either WidgetStdMod.AFTER, WidgetStdMod.BEFORE or WidgetStdMod.REPLACE.
-         * If not provided, the content will replace existing content in the body.
+         * If not provided, the content will replace existing content in the section.
          */
         setStdModContent : function(section, content, where) {
             this.set(section + CONTENT_SUFFIX, content, {stdModPosition:where});
         },
 
         /**
-         * Returns the node reference stored by the Widget for the given section. Note: The DOM is not queried for the node reference.
+         * Returns the node reference for the given section. Note: The DOM is not queried for the node reference. The reference
+         * stored by the widget instance is returned if set.
          * 
          * @method getStdModNode
          * @param {String} section The section whose node reference is required. Either WidgetStdMod.HEADER, WidgetStdMod.BODY or WidgetStdMod.FOOTER.
@@ -647,14 +662,13 @@ YUI.add('widget-stdmod', function(Y) {
         },
 
         /**
-         * <p>
          * Sets the height on the provided header, body or footer element to 
          * fill out the height of the Widget. It determines the height of the 
          * widgets bounding box, based on it's configured height value, and 
          * sets the height of the provided section to fill out any 
          * space remaining after the other standard module section heights 
          * have been accounted for.
-         * </p>
+         * 
          * <p><strong>NOTE:</strong> This method is not designed to work if an explicit 
          * height has not been set on the Widget, since for an "auto" height Widget, 
          * the heights of the header/body/footer will drive the height of the Widget.</p>
