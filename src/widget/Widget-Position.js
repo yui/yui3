@@ -1,4 +1,6 @@
 /**
+ * Provides basic XY positioning support for Widgets, though an extension
+ *
  * @module widget-position
  */
     var Lang = Y.Lang,
@@ -18,10 +20,11 @@
         XYChange = "xyChange";
 
     /**
-     * Widget extension, which can be used to add positioning support to the base Widget class.
-     * 
+     * Widget extension, which can be used to add positioning support to the base Widget class, 
+     * through the <a href="Base.html#method_build">Base.build</a> method.
+     *
      * @class WidgetPosition
-     * @param Object config User configuration
+     * @param {Object} config User configuration object
      */
     function Position(config) {
         this._posNode = this.get(BOUNDING_BOX);
@@ -37,6 +40,8 @@
      * configuration introduced by WidgetPosition.
      * 
      * @property WidgetPosition.ATTRS
+     * @static
+     * @type Object
      */
     Position.ATTRS = {
 
@@ -92,33 +97,34 @@
     /**
      * Default class used to mark the boundingBox of a positioned widget.
      *
-     * @property WidgetStack.POSITIONED_CLASS
+     * @property WidgetPosition.POSITIONED_CLASS_NAME
      * @type String
      * @default "yui-widget-positioned"
+     * @static
      */
-    Position.POSITIONED_CLASS = Widget.getClassName(POSITIONED);
+    Position.POSITIONED_CLASS_NAME = Widget.getClassName(POSITIONED);
 
     Position.prototype = {
 
         /**
          * Creates/Initializes the DOM to support xy page positioning.
-         *
+         * <p>
          * This method in invoked after renderUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _renderUIPosition
          * @protected
          */
         _renderUIPosition : function() {
-            this._posNode.addClass(Position.POSITIONED_CLASS);
+            this._posNode.addClass(Position.POSITIONED_CLASS_NAME);
         },
 
         /**
          * Synchronizes the UI to match the Widgets xy page position state.
-         * 
+         * <p>
          * This method in invoked after syncUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         * 
+         * </p>
          * @method _syncUIPosition
          * @protected
          */
@@ -129,10 +135,10 @@
         /**
          * Binds event listeners responsible for updating the UI state in response to 
          * Widget position related state changes.
-         *
+         * <p>
          * This method in invoked after bindUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _bindUIPosition
          * @protected
          */
@@ -148,8 +154,8 @@
          * @param {Number} x The new x position
          * @param {Number} y The new y position
          * <p>Or</p>
-         * @param {Array} x, y values passed as an array (x = index 0, y = index 1), to support
-         * simple pass through of Y.Node.getXY results
+         * @param {Array} x, y values passed as an array ([x, y]), to support
+         * simple pass through of Node.getXY results
          */
         move: function () {
             var args = arguments,
@@ -172,6 +178,7 @@
          *
          * @method _validateXY
          * @param {Array} val The XY page co-ordinate value which is being set.
+         * @return {boolean} true if valid, false if not.
          */
         _validateXY : function(val) {
             return (Lang.isArray(val) && Lang.isNumber(val[0]) && Lang.isNumber(val[1]));
@@ -227,7 +234,7 @@
          * 
          * @method _afterXYChange
          * @protected
-         * @param {Event.Facade} e The Event Facade object.
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterXYChange : function(e) {
             if (e.src != UI) {
