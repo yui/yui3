@@ -17,6 +17,7 @@ YUI Event Utility
     - subscriber failures throw an error by default rather than log.
     - subscriber failures are not routed through Y.fail in order to
       improve the debug experience.
+    - New facades created every fire()
 
 3.0.0pr1
     - Initial Release
