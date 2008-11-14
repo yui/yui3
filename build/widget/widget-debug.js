@@ -178,7 +178,6 @@ var WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
-    ENABLED = "enabled",
     DISABLED = "disabled",
     FOCUS = "focus",
     BLUR = "blur",
@@ -759,7 +758,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "false".
     */
     enable: function() {
-        return this.set(ENABLED, true);
+        return this.set(DISABLED, false);
     },
 
     /**
@@ -767,7 +766,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "true".
     */
     disable: function() {
-        return this.set(DISABLED, false);
+        return this.set(DISABLED, true);
     },
 
     /**
