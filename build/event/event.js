@@ -1033,6 +1033,16 @@ YUI.add("event-custom", function(Y) {
 
                 var ef = null;
                 if (this.emitFacade) {
+
+                    // this.fire({
+                    //   foo: 1
+                    //   bar: 2
+                    // }
+                    // this.fire({
+                    //   bar: 2
+                    // } // foo is still 1 unless we create a new facade
+                    this._facade = null;
+
                     ef = this._getFacade(args);
                     args[0] = ef;
                 }
@@ -1292,21 +1302,31 @@ YUI.add("event-custom", function(Y) {
          * @param ce {Event.Custom} The custom event that sent the notification
          */
         notify: function(defaultContext, args, ce) {
-            var c = this.obj || defaultContext, ret = true;
+            var c = this.obj || defaultContext, ret = true,
 
-            try {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.obj);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.obj);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
+                f = function() {
+                    switch (ce.signature) {
+                        case 0:
+                            ret = this.fn.call(c, ce.type, args, this.obj);
+                            break;
+                        case 1:
+                            ret = this.fn.call(c, args[0] || null, this.obj);
+                            break;
+                        default:
+                            ret = this.wrappedFn.apply(c, args || []);
+                    }
+                };
+
+            // Ease debugging by only catching errors if we will not re-throw
+            // them.
+            if (Y.config.throwFail) {
+                f.call(this);
+            } else {
+                try {
+                    f.call(this);
+                } catch(e) {
+                    Y.fail(this + ' failed: ' + e.message, e);
                 }
-            } catch(e) {
-                Y.fail(this + ' failed: ' + e.message, e);
             }
 
             return ret;

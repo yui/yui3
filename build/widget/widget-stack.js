@@ -1,6 +1,8 @@
 YUI.add('widget-stack', function(Y) {
 
 /**
+ * Provides stackable (z-index) support for Widgets through an extension.
+ *
  * @module widget-stack
  */
     var L = Y.Lang,
@@ -45,7 +47,9 @@ YUI.add('widget-stack', function(Y) {
         HIDE_SCROLLBARS = "hide-scrollbars";
 
     /**
-     * Widget extension,  which can be used to add Stackable support to the base Widget class.
+     * Widget extension, which can be used to add stackable (z-index) support to the 
+     * base Widget class along with a shimming solution, through the 
+     * <a href="Base.html#method_build">Base.build</a> method.
      *
      * @class WidgetStack
      * @param {Object} User configuration object
@@ -66,6 +70,7 @@ YUI.add('widget-stack', function(Y) {
      * configuration introduced by WidgetStack.
      * 
      * @property WidgetStack.ATTRS
+     * @type Object
      * @static
      */
     Stack.ATTRS = {
@@ -100,6 +105,7 @@ YUI.add('widget-stack', function(Y) {
      * The HTML parsing rules for the WidgetStack class.
      * 
      * @property WidgetStack.HTML_PARSER
+     * @static
      * @type Object
      */
     Stack.HTML_PARSER = {
@@ -110,33 +116,38 @@ YUI.add('widget-stack', function(Y) {
 
     /**
      * Default class used to mark the shim element
-     * @property WidgetStack.SHIM_CLASS
+     *
+     * @property WidgetStack.SHIM_CLASS_NAME
      * @type String
+     * @static
      * @default "yui-widget-shim"
      */
-    Stack.SHIM_CLASS = Widget.getClassName(SHIM);
+    Stack.SHIM_CLASS_NAME = Widget.getClassName(SHIM);
 
     /**
      * Default class used to mark the boundingBox of a stacked widget.
-     * @property WidgetStack.STACKED_CLASS
+     * 
+     * @property WidgetStack.STACKED_CLASS_NAME
      * @type String
+     * @static
      * @default "yui-widget-stacked"
      */
-    Stack.STACKED_CLASS = Widget.getClassName(STACKED);
+    Stack.STACKED_CLASS_NAME = Widget.getClassName(STACKED);
 
     /**
      * Default markup template used to generate the shim element.
+     * 
      * @property WidgetStack.SHIM_TEMPLATE
      * @type String
+     * @static
      */
-    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
+    Stack.SHIM_TEMPLATE = '<iframe class="' + Stack.SHIM_CLASS_NAME + '" frameborder="0" title="Widget Stacking Shim" src="javascript:false"></iframe>';
 
     Stack.prototype = {
 
         /**
-         * Synchronizes the UI to match the Widgets stack state.
-         * This method in invoked after syncUI is invoked for the Widget class
-         * using YUI's aop infrastructure.
+         * Synchronizes the UI to match the Widgets stack state. This method in 
+         * invoked after syncUI is invoked for the Widget class using YUI's aop infrastructure.
          *
          * @method _syncUIStack
          * @protected
@@ -149,10 +160,10 @@ YUI.add('widget-stack', function(Y) {
         /**
          * Binds event listeners responsible for updating the UI state in response to 
          * Widget stack related state changes.
-         *
-         * This method in invoked after bindUI is invoked for the Widget class
+         * <p>
+         * This method is invoked after bindUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _bindUIStack
          * @protected
          */
@@ -163,15 +174,15 @@ YUI.add('widget-stack', function(Y) {
 
         /**
          * Creates/Initializes the DOM to support stackability.
-         *
+         * <p>
          * This method in invoked after renderUI is invoked for the Widget class
          * using YUI's aop infrastructure.
-         *
+         * </p>
          * @method _renderUIStack
          * @protected
          */
         _renderUIStack: function() {
-            this._stackNode.addClass(Stack.STACKED_CLASS);
+            this._stackNode.addClass(Stack.STACKED_CLASS_NAME);
 
             // TODO:DEPENDENCY Env.os
             var isMac = navigator.userAgent.toLowerCase().indexOf("macintosh") != -1;
@@ -186,7 +197,7 @@ YUI.add('widget-stack', function(Y) {
          *
          * @method _setZIndex
          * @protected
-         * @param {Any} zIndex
+         * @param {String | Number} zIndex
          * @return {Number} Normalized zIndex
          */
         _setZIndex: function(zIndex) {
@@ -202,10 +213,10 @@ YUI.add('widget-stack', function(Y) {
         /**
          * Default attribute change listener for the shim attribute, responsible
          * for updating the UI, in response to attribute changes.
-         * 
+         *
          * @method _afterShimChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterShimChange : function(e) {
             this._uiSetShim(e.newVal);
@@ -217,7 +228,7 @@ YUI.add('widget-stack', function(Y) {
          * 
          * @method _afterZIndexChange
          * @protected
-         * @param {Event.Facade} e The Event Facade
+         * @param {Event.Facade} e The event facade for the attribute change
          */
         _afterZIndexChange : function(e) {
             this._uiSetZIndex(e.newVal);
@@ -225,6 +236,7 @@ YUI.add('widget-stack', function(Y) {
 
         /**
          * Updates the UI to reflect the zIndex value passed in.
+         *
          * @method _uiSetZIndex
          * @protected
          * @param {number} zIndex The zindex to be reflected in the UI
@@ -235,8 +247,8 @@ YUI.add('widget-stack', function(Y) {
 
         /**
          * Updates the UI to enable/disable the shim. If the widget is not currently visible,
-         * the shim is not created, until it is made visible, for performance reasons.
-         * 
+         * creation of the shim is deferred until it is made visible, for performance reasons.
+         *
          * @method _uiSetShim
          * @protected
          * @param {boolean} enable If true, creates/renders the shim, if false, removes it.
@@ -255,7 +267,7 @@ YUI.add('widget-stack', function(Y) {
         },
 
         /**
-         * Sets up change handlers for teh visible attribute, to defer shim creation/rendering 
+         * Sets up change handlers for the visible attribute, to defer shim creation/rendering 
          * until the Widget is made visible.
          * 
          * @method _renderShimDeferred
@@ -277,11 +289,11 @@ YUI.add('widget-stack', function(Y) {
 
         /**
          * Sets up event listeners to resize the shim when the size of the Widget changes.
-         *
-         * NOTE: This method is only used for IE6 currently, since it doesn't support a way to
+         * <p>
+         * NOTE: This method is only used for IE6 currently, since IE6 doesn't support a way to
          * resize the shim purely through CSS, when the Widget does not have an explicit width/height 
          * set.
-         *
+         * </p>
          * @method _addShimResizeHandlers
          * @private
          */
@@ -301,7 +313,7 @@ YUI.add('widget-stack', function(Y) {
         },
 
         /**
-         * Detachs any handles stored for the provided key
+         * Detaches any handles stored for the provided key
          *
          * @method _detachStackHandles
          * @param String handleKey The key defining the group of handles which should be detached
@@ -318,7 +330,7 @@ YUI.add('widget-stack', function(Y) {
         },
 
         /**
-         * Creates the shim element, adds it to the DOM, and 
+         * Creates the shim element and adds it to the DOM
          *
          * @method _renderShim
          * @private
@@ -339,9 +351,10 @@ YUI.add('widget-stack', function(Y) {
         },
 
         /**
-         * Creates the shim element, and adds it to the DOM
+         * Removes the shim from the DOM, and detaches any related event
+         * listeners.
          *
-         * @method _renderShim
+         * @method _destroyShim
          * @private
          */
         _destroyShim : function() {
@@ -418,10 +431,11 @@ YUI.add('widget-stack', function(Y) {
         },
 
         /**
-         * Creates a cloned shim node, from html string template, for use on a new instance.
+         * Creates a cloned shim node, using the SHIM_TEMPLATE html template, for use on a new instance.
          *
          * @method _getShimTemplate
          * @private
+         * @return {Node} node A new shim Node instance.
          */
         _getShimTemplate : function() {
             if (!Stack._SHIM_TEMPLATE) {

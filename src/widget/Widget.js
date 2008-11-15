@@ -1,5 +1,6 @@
 /**
- * Base Widget class with PluginHost
+ * Provides the base Widget class along with an augmentable PluginHost interface
+ *
  * @module widget
  */
 
@@ -8,7 +9,6 @@ var WIDGET = "widget",
     CONTENT = "content",
     VISIBLE = "visible",
     HIDDEN = "hidden",
-    ENABLED = "enabled",
     DISABLED = "disabled",
     FOCUS = "focus",
     BLUR = "blur",
@@ -52,9 +52,10 @@ var _instances = {};
  * </ul>
  *
  * @param config {Object} Object literal specifying widget configuration 
- * properties (may container both attribute and non attribute configuration).
- * 
+ * properties.
+ *
  * @class Widget
+ * @constructor
  * @extends Base
  */
 function Widget(config) {
@@ -68,11 +69,11 @@ function Widget(config) {
 
 /**
  * The build configuration for the Widget class.
- *
+ * <p>
  * Defines the static fields which need to be aggregated,
  * when this class is used as the main class passed to 
- * the <a href="#method_build">Base.build</a> method.
- *
+ * the <a href="Base.html#method_build">Base.build</a> method.
+ * </p>
  * @property _buildCfg
  * @type Object
  * @static
@@ -85,9 +86,10 @@ Widget._buildCfg = {
 
 /**
  * Static property provides a string to identify the class.
- * 
+ * <p>
  * Currently used to apply class identifiers to the bounding box 
  * and to classify events fired by the widget.
+ * </p>
  *
  * @property Widget.NAME
  * @type String
@@ -105,6 +107,8 @@ Widget.NAME = WIDGET;
  * @final
  */
 Widget.UI_SRC = "ui";
+
+var UI = Widget.UI_SRC;
 
 /**
  * Static property used to define the default attribute 
@@ -161,7 +165,7 @@ Widget.ATTRS = {
 
     /**
     * @attribute tabIndex
-    * @description The tabIndex that should be given to the bounding box
+    * @description The tabIndex, applied to the bounding box
     * @type Number
     */
     tabIndex: {
@@ -201,7 +205,7 @@ Widget.ATTRS = {
 
     /**
     * @attribute height
-    * @description String or number representing the height of the Widget. If a number is provided,
+    * @description String with units, or number, representing the height of the Widget. If a number is provided,
     * the default unit, defined by the Widgets DEF_UNIT, property is used.
     * @default ""
     * @type {String | Number}
@@ -212,7 +216,7 @@ Widget.ATTRS = {
 
     /**
     * @attribute width
-    * @description String or number representing the width of the Widget. If a number is provided,
+    * @description String with units, or number, representing the width of the Widget. If a number is provided,
     * the default unit, defined by the Widgets DEF_UNIT, property is used.
     * @default ""
     * @type {String | Number}
@@ -233,7 +237,6 @@ Widget.ATTRS = {
     },
 
     /**
-     * 
      * @attribute locale
      * @description
      * The default locale for the widget. NOTE: Using get/set on the "strings" attribute will
@@ -276,11 +279,11 @@ Widget._NAME_LOWERCASE = Widget.NAME.toLowerCase();
  * by the <code>Y.config.classNamePrefix</code> attribute used by <code>ClassNameManager</code> and 
  * <code>Widget.NAME.toLowerCase()</code> (e.g. "yui-widget-xxxxx-yyyyy", based on default values for 
  * the prefix and widget class name).
- * 
+ * <p>
  * The instance based version of this method can be used to generate standard prefixed classnames,
  * based on the instances NAME, as opposed to Widget.NAME. This method should be used when you
  * need to use a constant class name across different types instances.
- *
+ * </p>
  * @method getClassName
  * @param {String*} args* 0..n strings which should be concatenated, using the default separator defined by ClassNameManager, to create the class name
  */
@@ -292,13 +295,13 @@ Widget.getClassName = function() {
 
 /**
  * Returns the widget instance whose bounding box contains, or is, the given node. 
- *
+ * <p>
  * In the case of nested widgets, the nearest bounding box ancestor is used to
  * return the widget instance.
- *
+ * </p>
  * @method Widget.getByNode
  * @static
- * @param node {Node | String} The node for which a Widget instance is required. If a selector
+ * @param node {Node | String} The node for which to return a Widget instance. If a selector
  * string is passed in, which selects more than one node, the first node found is used.
  * @return {Widget} Widget instance, or null if not found.
  */
@@ -318,10 +321,6 @@ Widget.getByNode = function(node) {
 };
 
 /**
- * @property Widget.HTML_PARSER
- * @type Object
- * @static
- *
  * Object hash, defining how attribute values are to be parsed from
  * markup contained in the widget's content box. e.g.:
  * <pre>
@@ -333,21 +332,32 @@ Widget.getByNode = function(node) {
  *       }
  *   }
  * </pre>
+ * 
+ * @property Widget.HTML_PARSER
+ * @type Object
+ * @static
  */
 Widget.HTML_PARSER = {};
-
-var UI = Widget.UI_SRC;
 
 Y.extend(Widget, Y.Base, {
 
 	/**
 	 * Returns a class name prefixed with the the value of the 
-	 * <code>Y.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
-	 * Uses <code>Y.config.classNameDelimiter</code> attribute to delimit the provided strings.
-	 * E.g. this.getClassName('foo','bar'); // yui-mywidget-foo-bar
+	 * <code>YUI.config.classNamePrefix</code> attribute + the instances <code>NAME</code> property.
+	 * Uses <code>YUI.config.classNameDelimiter</code> attribute to delimit the provided strings.
+	 * e.g. 
+	 * <code>
+	 * <pre>
+	 *    // returns "yui-slider-foo-bar", for a slider instance
+	 *    var scn = slider.getClassName('foo','bar');
+	 *
+	 *    // returns "yui-overlay-foo-bar", for an overlay instance
+	 *    var ocn = slider.getClassName('foo','bar');
+	 * </pre>
+	 * </code>
 	 *
 	 * @method getClassName
-	 * @param {String}+ one or more classname bits to be joined and prefixed
+	 * @param {String}+ One or more classname bits to be joined and prefixed
 	 */
 	getClassName: function () {
 		var args = Y.Array(arguments, 0, true);
@@ -356,12 +366,10 @@ Y.extend(Widget, Y.Base, {
 	},
 
     /**
-     * Initializer lifecycle implementation for the Widget class.
+     * Initializer lifecycle implementation for the Widget class. Registers the 
+     * widget instance, and runs through the Widget's HTML_PARSER definition. 
      *
-     * Base.init will invoke all prototype.initializer methods, for the
-     * class hierarchy (starting from Base), after all attributes have 
-     * been configured.
-     *
+     * @method initializer
      * @param  config {Object} Configuration object literal for the widget
      */
     initializer: function(config) {
@@ -373,7 +381,7 @@ Y.extend(Widget, Y.Base, {
          * behavior and cannot be prevented, so the "on" or "after"
          * moments are effectively equivalent (with on listeners being invoked before 
          * after listeners).
-         *
+         * 
          * @event widget:contentUpdate
          * @preventable false
          * @param {Event.Facade} e The Event Facade
@@ -396,11 +404,11 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Descructor lifecycle implementation for the Widget class.
+     * Descructor lifecycle implementation for the Widget class. Purges events attached
+     * to the bounding box (and all child nodes) and removes the Widget from the 
+     * list of registered widgets.
      *
-     * Base.destroy will invoke all prototype.destructor methods, for the
-     * class hierarchy (starting from the lowest sub-class).
-     *
+     * @method destructor
      */
     destructor: function() {
         Y.log('destructor called', 'life', 'widget');
@@ -435,10 +443,12 @@ Y.extend(Widget, Y.Base, {
      * @final 
      * @param  parentNode {Object | String} Optional. The Node under which the 
      * Widget is to be rendered. This can be a Node instance or a CSS selector string. 
+     * <p>
      * If the selector string returns more than one Node, the first node will be used 
      * as the parentNode. NOTE: This argument is required if the boundingBox or contentBox
      * is not currently in the document. If it's not provided, the Widget will be rendered
      * to the body of the current document.
+     * </p>
      */
     render: function(parentNode) {
 
@@ -449,10 +459,8 @@ Y.extend(Widget, Y.Base, {
 
         if (!this.get(RENDERED)) {
              /**
-             * <p>
              * Lifcyle event for the render phase, fired prior to rendering the UI 
              * for the widget (prior to invoking the widgets renderer method).
-             * </p>
              * <p>
              * Subscribers to the "on" moment of this event, will be notified 
              * before the widget is rendered.
@@ -581,7 +589,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "false".
     */
     enable: function() {
-        return this.set(ENABLED, true);
+        return this.set(DISABLED, false);
     },
 
     /**
@@ -589,7 +597,7 @@ Y.extend(Widget, Y.Base, {
     * @description Set the Widget's "disabled" attribute to "true".
     */
     disable: function() {
-        return this.set(DISABLED, false);
+        return this.set(DISABLED, true);
     },
 
     /**
@@ -632,14 +640,15 @@ Y.extend(Widget, Y.Base, {
 
         return data;
     },
-    
+
     /**
-    * @private
-    * @method _moveStyles
-    * @description Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
-    * @param {Node} nodeFrom The node to gather the styles from
-    * @param {Node} nodeTo The node to apply the styles to
-    */
+     * Moves a pre-defined set of style rules (WRAP_STYLES) from one node to another.
+     *
+     * @method _moveStyles
+     * @private
+     * @param {Node} nodeFrom The node to gather the styles from
+     * @param {Node} nodeTo The node to apply the styles to
+     */
     _moveStyles: function(nodeFrom, nodeTo) {
 
         var styles = this.WRAP_STYLES,
@@ -693,9 +702,11 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * @private
+    * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
+    * already a child.
+    *
     * @method _renderBox
-    * @description Helper method to collect the boundingBox and contentBox, set styles and append to parentNode
+    * @private
     * @param {Node} parentNode The parentNode to render the widget to. If not provided, and the boundingBox or 
     * contentBox are not currently in the document, the widget will be rendered to the current documents body.
     */
@@ -732,9 +743,10 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * @private
-    * @method _setBoundingBox
     * Setter for the boundingBox attribute
+    *
+    * @method _setBoundingBox
+    * @private
     * @param Node/String
     * @return Node
     */
@@ -743,9 +755,10 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * @private
-    * @method _setContentBox
     * Setter for the contentBox attribute
+    *
+    * @method _setContentBox
+    * @private
     * @param {Node|String} node
     * @return Node
     */
@@ -754,10 +767,15 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * @private
+     * Helper method to set the bounding/content box, or create it from
+     * the provided template if not found.
+     *
      * @method _setBox
-     * @param node
-     * @param template
+     * @private
+     *
+     * @param {Node|String} node The node reference
+     * @param {String} template HTML string template for the node
+     * @return {Node} The node
      */
     _setBox : function(node, template) {
         node = Node.get(node) || Node.create(template);
@@ -770,20 +788,20 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Initializes the UI state for the bounding box. Applies marker
-     * classes to identify the widget.
-     * 
-     * @method __renderUI
+     * Initializes the UI state for the Widget's bounding/content boxes.
+     *
+     * @method _renderUI
      * @protected
+     * @param {Node} The parent node to rendering the widget into
      */
     _renderUI: function(parentNode) {
-
         this._renderBoxClassNames();
         this._renderBox(parentNode);
     },
 
      /**
       * Applies standard class names to the boundingBox and contentBox
+      * 
       * @method _renderBoxClassNames
       * @protected
       */
@@ -808,8 +826,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Sets up listeners to synchronize UI state to attribute
-     * state.
+     * Sets up DOM and CustomEvent listeners for the widget.
      *
      * @method _bindUI
      * @protected
@@ -825,6 +842,8 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
+     * Sets up DOM listeners, on elements rendered by the widget.
+     * 
      * @method _bindDOMListeners
      * @protected
      */
@@ -940,7 +959,7 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-    * Tabindex UI application
+    * Set the tabIndex on the widget's rendered UI
     *
     * @method _uiSetTabIndex
     * @protected
@@ -951,91 +970,96 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Visible attribute UI handler
-     * 
+     * Default visible attribute state change handler
+     *
      * @method _afterVisibleChange
      * @protected
-     * @param {Object} evt Event object literal passed by AttributeProvider
+     * @param {Event.Facade} evt The event facade for the attribute change
      */
     _afterVisibleChange: function(evt) {
         this._uiSetVisible(evt.newVal);
     },
 
     /**
-     * Disabled attribute UI handler
+     * Default disabled attribute state change handler
      * 
      * @method _afterDisabledChange
      * @protected
-     * @param {Object} evt Event object literal passed by AttributeProvider
+     * @param {Event.Facade} evt The event facade for the attribute change
      */
     _afterDisabledChange: function(evt) {
         this._uiSetDisabled(evt.newVal);
     },
 
     /**
-     * Height attribute UI handler
+     * Default height attribute state change handler
      * 
      * @method _afterHeightChange
      * @protected
-     * @param {Object} evt Event object literal passed by AttributeProvider
+     * @param {Event.Facade} evt The event facade for the attribute change
      */
     _afterHeightChange: function(evt) {
         this._uiSetHeight(evt.newVal);
     },
 
     /**
-     * Width attribute UI handler
+     * Default widget attribute state change handler
      * 
      * @method _afterWidthChange
      * @protected
-     * @param {Object} evt Event object literal passed by AttributeProvider
+     * @param {Event.Facade} evt The event facade for the attribute change
      */
     _afterWidthChange: function(evt) {
         this._uiSetWidth(evt.newVal);
     },
 
     /**
-     * hasFocus attribute UI handler
+     * Default hasFocus attribute state change handler
      * 
      * @method _afterHasFocusChange
      * @protected
-     * @param {Object} evt Event object literal passed by AttributeProvider
+     * @param {Event.Facade} evt The event facade for the attribute change
      */
     _afterHasFocusChange: function(evt) {
         this._uiSetHasFocus(evt.newVal, evt.src);
     },
 
     /**
-     * focus event UI handler used to sync the state of the Widget with the DOM
+     * DOM focus event handler, used to sync the state of the Widget with the DOM
      * 
      * @method _onFocus
      * @protected
+     * @param {Event.Facade} evt The event facade for the DOM focus event
      */
-    _onFocus: function () {
+    _onFocus: function (evt) {
         this.set(HAS_FOCUS, true, { src: UI });
     },
 
     /**
-     * blur event UI handler used to sync the state of the Widget with the DOM
-     * 
+     * DOM blur event handler, used to sync the state of the Widget with the DOM
+     *
      * @method _onBlur
      * @protected
+     * @param {Event.Facade} evt The event facade for the DOM blur event
      */			
-    _onBlur: function () {
+    _onBlur: function (evt) {
         this.set(HAS_FOCUS, false, { src: UI });
     },
 
     /**
      * Generic toString implementation for all widgets.
+     *
      * @method toString
+     * @return {String} The default string value for the widget [ displays the NAME of the instance, and the unique id ]
      */
     toString: function() {
         return this.constructor.NAME + "[" + this._yuid + "]";
     },
 
     /**
+     * Default unit to use for dimension values
+     * 
      * @property DEF_UNIT
-     * Default unit to use for style values
      */
     DEF_UNIT : "px",
 
@@ -1080,8 +1104,8 @@ Y.extend(Widget, Y.Base, {
      *
      * @method _setStrings
      * @protected
-     * @param {Object} strings
-     * @param {Object} locale
+     * @param {Object} strings The hash of string key/values to set
+     * @param {Object} locale The locale for the string values being set
      */
     _setStrings : function(strings, locale) {
         var strs = this._strings;
@@ -1096,8 +1120,8 @@ Y.extend(Widget, Y.Base, {
     },
 
     /**
-     * Returns strings for a paricular locale, without locale lookup applied.
-     * 
+     * Returns the strings key/value hash for a paricular locale, without locale lookup applied.
+     *
      * @method _getStrings
      * @protected
      * @param {Object} locale
@@ -1194,6 +1218,7 @@ Y.extend(Widget, Y.Base, {
      * widget class, or provided by the user during construction).
      *
      * @method getDefaultLocale
+     * @return {String} The default locale for the widget
      */
     getDefaultLocale : function() {
         return this._conf.get(LOCALE, INIT_VALUE);
@@ -1204,6 +1229,7 @@ Y.extend(Widget, Y.Base, {
      *
      * @property _strings
      * @private
+     * @type Object
      */
     _strings: null,
 

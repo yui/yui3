@@ -3,24 +3,11 @@
 <head>
     <title>Test Page</title>
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
+    <link type="text/css" rel="stylesheet" href="/3.x/build/slider/assets/skins/sam/slider.css">
     <style type="text/css">
         .yui-slider {
-            display: inline-block;
             border: 1px solid red;
-            margin-bottom: 10px;
-        }
-        .yui-slider .yui-slider-rail {
-            display: inline-block;
-        }
-
-        .yui-slider .yui-slider-rail-x {
-            background: url("../../widget/slider/src/css/rail-classic-x.png") repeat-x 0 0;
-            min-height: 10px;
-        }
-
-        .yui-slider .yui-slider-rail-y {
-            background: url("../../widget/slider/src/css/rail-classic-y.png") repeat-y 0 0;
-            min-width: 10px;
+            margin: 10px;
         }
 
         .markup { 
@@ -28,58 +15,69 @@
         }
     </style>
 </head>
-<body>
+<body class="yui-skin-sam">
 <div class="markup">
-    <div id="slider" class="yui-slider-theme-classic-x"></div>
+    <div id="slider">
+        <div class="yui-slider-rail">
+            <img class="yui-slider-thumb" src="/3.x/build/slider/assets/skins/sam/thumb-classic-t.png">
+        </div>
+    </div>
 
     <input type="button" id="size" value="Change size">
     <input type="button" id="val" value="Set Value">
+    <input type="button" id="disable" value="Disable">
     <div id="report">0</div>
 </div>
-<img id="t" src="../../widget/slider/src/css/thumb-classic-x.png">
 
 <script type="text/javascript" src="/3.x/build/yui/yui.js"></script>
 <script type="text/javascript" src="/3.x/build/widget/widget.js"></script>
 <script type="text/javascript" src="/3.x/build/slider/slider.js"></script>
 <script type="text/javascript">
 YUI({
-    base:'/3.x/build/'/*,
+    base:'/3.x/build/',
     filter: 'debug',
     logExclude:{
         base:true,
         event:true,
         attribute:true
     }
-    */
 }).use('widget','slider',function (Y) {
 
 var report = Y.get('#report');
+//Y.DD.DDM.useShim = true;
+//Y.DD.DDM._debugShim = true;
 
 var s = new Y.Slider({
+    contentBox : '#slider',
     //axis : 'y',
-    railSize: '318px',
+    width: '318px',
+    //railSize: '318px',
     min : 37,
     max : -218,
-    value : -25,
-    //thumbImage : '../../widget/slider/src/css/thumb-classic-x.png'
-    thumb: '#t'
+    value : -136,
+    //thumbImage : Y.config.base+'slider/assets/skins/sam/thumb-classic-x.png'
+    //thumb: '#t'
 });
+//s._uiPositionThumb = function () {}
 
 s.after('valueChange',function (e) {
     report.set('innerHTML',e.newVal);
 });
 
-s.render('#slider');
+s.render();//'#slider');
 
 report.set('innerHTML',s.getValue());
 
 Y.get('#size').on('click',function () {
     s.set('railSize','155px');
-    //s.set('railWidth','160px');
 });
 Y.get('#val').on('click',function () {
     s.set('value',s.getValue() === -92 ? 100 : -92);
-    //s.set('railWidth','160px');
+});
+Y.get('#disable').on('click',function () {
+    var disabled = !s.get('disabled');
+    s.set('disabled',disabled);
+    this.set('value', disabled ? "Enable" : "Disable");
 });
 
 });
