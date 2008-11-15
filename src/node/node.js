@@ -23,11 +23,10 @@
 
         Selector = Y.Selector,
         _instances = {},
-        _nodes = {},
-        _nodelists = {},
         _restrict = {},
         _slice = [].slice;
 
+    // used with previous/next/ancestor tests
     var _wrapFn = function(fn) {
         var ret = null;
         if (fn) {
@@ -61,21 +60,19 @@
         return doc;
     };
 
-    // returns HTMLElement
     var _getDOMNode = function(node) {
         if (node && !node[NODE_TYPE] && node._yuid) {
             node = Node[node._yuid]()[0];
         }
 
         return  node || null;
-
     };
 
     var Node = function() {
         this.init.apply(this, arguments);
     };
 
-    Node.plugins = {};
+    Node.PLUGINS = {};
 
     Node._deepGet = function (path, val) {
         var pl = path.length,
@@ -213,19 +210,8 @@
 
     };
 
-    Node.getDOMNode = function(node) {
-        var ret;
-
-        if (node[NODE_TYPE]) {
-            ret = node;
-        } else if (typeof node === 'string') {
-            ret = Selector.query(node, null, true);
-        } else {
-            ret = Node[node._yuid]()[0];
-        }
-        return ret || null;
-    };
-
+    Node.getDOMNode = _getDOMNode;
+    
     Node.wrapDOMMethod = function(name) {
         return function() {
             return Y.DOM[name].apply(Y.DOM, arguments);
@@ -244,19 +230,12 @@
 
     Node.prototype = {
         init: function(nodes, doc, isRoot, getAll) {
-            var selector = typeof nodes === 'string' ? nodes : null,
-                uid;
+            var uid;
 
             doc = _getDoc(doc);
 
             this.getId = function() {
                 return uid;
-            };
-
-            this.refresh = function() {
-                if (selector) {
-                    nodes = Selector.query(selector, doc, !getAll);
-                }
             };
 
             var _all = function(fn, i) {
@@ -269,16 +248,8 @@
                 return nodes;
             };
 
-            if (selector) { // run the query
-                if (selector === 'document') {
-                    nodes = [Y.config.doc];
-                } else {
-                    nodes = Selector.query(selector, doc, !getAll); // Selector arg is firstOnly
-                }
-            }
-
-            uid = selector || Y.guid();
-            this._yuid = uid;
+            // uid = selector || Y.guid(); // to cache queryAll results
+            uid = Y.guid();
 
             if (nodes) { // zero length collection returns null
                 if (nodes[NODE_TYPE] || nodes.document) { // node or window
@@ -290,12 +261,16 @@
 
             if (!getAll && nodes.length) { // stamp the dom node
                 try { // IE only allows ID on Element
+                    if (nodes[0].uniqueID) {
+                        uid = nodes[0].uniqueID;
+                    }
                     nodes[0]._yuid = uid;
                 } catch(e) { // not cacheable
                     Y.log(nodes[0] + ' is not cacheable', 'warn', 'Node'); 
                 }
             }
 
+            this._yuid = uid;
             Node[uid] = _all; // for applying/returning dom nodes
 
             if (!getAll) {
@@ -306,7 +281,7 @@
         },
 
         initPlugins: function() {
-            Y.each(Node.plugins, function(config, fn) {
+            Y.each(Node.PLUGINS, function(config, fn) {
                 this.plug(fn, config);
             });
         },
@@ -675,25 +650,34 @@
      * @return {Node} A Node instance bound to the supplied node(s).
      */
     Node.get = function(node, doc, isRoot, getAll) {
-        var instance, uid;
+        var instance;
 
         if (node) {
             if (typeof node === 'string') {
-                uid = node; 
-            } else if (node._yuid) {
-                uid = node._yuid;
-            }
-            
-            if (!getAll) { // reuse single element node instances
-                instance = _instances[uid];
+                if (node === 'document') { // TODO: allow 'doc'? 'window'?
+                    node = [Y.config.doc];
+                } else {
+                    node = Selector.query(node, doc, !getAll); // Selector arg is getFirst
+                }
             }
 
-            if (!instance) {
-                instance = new Node(node, doc, isRoot, getAll);
-            }
+            if (node) {
+                if (!getAll) { // reuse single element node instances
+                    if (node._yuid) {
+                        // verify IE's uniqueID in case the node was cloned
+                        if (!node.uniqueID || (node.uniqueID === node._yuid)) {
+                            instance = _instances[node._yuid];
+                        }
+                    }
+                }
 
-            if (isRoot && instance) {
-                _restrict[instance.getId()] = true;
+                if (!instance) {
+                    instance = new Node(node, doc, isRoot, getAll);
+                }
+
+                if (instance && isRoot && !getAll) {
+                    _restrict[instance._yuid] = true;
+                }
             }
         }
 
@@ -864,7 +848,6 @@
     }
 
     // used to call Node methods against NodeList nodes
-    var _tmpNode = Node.create('<div></div>');
     Y.Node = Node;
     Y.all = Y.Node.all;
     Y.get = Y.Node.get;
