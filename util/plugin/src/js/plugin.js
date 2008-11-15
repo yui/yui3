@@ -5,13 +5,14 @@
         /**
          * Plugin provides a base class for all Plugin classes.
          * 
-         * @class YUI.Widget
-         * @extends YUI.Base
+         * @class Plugin 
+         * @extends Base
          * @param {Object} config The configuration object for the
          * plugin.
          */
         function Plugin(config) {
-            //Plugin.superclass.constructor.apply(this, arguments);
+            Plugin.superclass.constructor.apply(this, arguments);
+            //this.initializer.apply(this, arguments);
         }
 
         // No attributes
@@ -20,22 +21,22 @@
         /**
          * Static property provides a string to identify the class.
          *
-         * @property YUI.Plugin.NAME
+         * @property Plugin.NAME
          * @type {String}
          * @static
          */
-        Plugin.NAME = "plugin";
+        Plugin.NAME = 'plugin';
 
 
         /**
          * Static property provides the namespace the plugin will be
          * registered under.
          *
-         * @property YUI.Plugin.NS
+         * @property Plugin.NS
          * @type {String}
          * @static
          */
-        Plugin.NS = "plugin";
+        Plugin.NS = 'plugin';
 
         /**
          * Registers a Plugin. The Plugin class passed in is expected
@@ -63,9 +64,7 @@
         // };
 
         var proto = {
-
-            _listeners: null,
-            _overrides: null,
+            _handles: null,
 
             /**
              * Initializer lifecycle implementation.
@@ -75,11 +74,13 @@
              */
             initializer : function(config) {
 
-                if (!config.host) {
-                    throw('plugin needs to have a host defined');
+                if (config.owner) {
+                    this._owner = config.owner;
+                } else {
+                    Y.log('no owner defined for plugin ' + this, 'error', 'Plugin');
                 }
 
-                this._listeners = [];
+                this._handles = [];
 
                 Y.log('Initializing: ' + this.constructor.NAME, 'info', 'Plugin');
             },
@@ -93,100 +94,59 @@
              * @method destructor
              */
             destructor: function() {
-                var i;
-
-                for (i = 0; i < this._listeners.length; i++) {
-                    var event = this._listeners[i];
-                    if (Y.lang.isObject(event)) {
-                        event.obj.unsubscribe(event.ev, event.fn);
-                    }
-                }
-
-                for (i = 0; i < this._overrides.length; i++) {
-                    var o = this._overrides[i];
-                    if (Y.lang.isObject(o)) {
-                        o.obj[o.method] = o.fn;
-                        this._overrides[i] = null;
-                    }
+                // remove all handles
+                for (i = 0; i < this._handles.length; i++) {
+                   this.detach(this._handles[i]);
                 }
             },
 
             /**
-             * Registers a listener on the provided object. The listener will
-             * be automatically removed when the plugin is unplugged from the host.
              * 
-             * @method listen
-             * @param {Object} obj
-             * @param {Object} ev
-             * @param {Object} fn
-             * @param {Object} s
-             * @param {Object} o
              */
-            // TODO: Change to use Event Handle, once implemented (and then use Y.bind)
-            listen: function(obj, ev, fn, s, o) {
-                this._listeners[this._listeners.length] = { obj: obj, ev: ev, fn: fn };
-                obj.on(ev, fn, s, o);
-            },
+            before: function(sFn, fn, context) {
+                var owner = this._owner,
+                    handle;
 
-            /**
-             * Unregisters a listener from the provided object.
-             * 
-             * @method nolisten
-             * @param {Object} obj
-             * @param {Object} ev
-             * @param {Object} fn
-             * @param {Object} s
-             * @param {Object} o
-             */
-            // TODO: Change to use Event Handle, once implemented (and then use Y.bind)
-            noListen: function(obj, ev, fn) {
-                obj.unsubscribe(ev, fn);
-                for (var i = 0; i < this._listeners.length; i++) {
-                    if ((this._listeners[i].ev == ev) && (this._listeners[i].fn == fn) && (this._listeners[i].obj == obj)) {
-                        this._listeners[i] = null;
-                        break;
-                    }
+                context = context || this;
+
+                if (sFn in owner) { // method
+                    handle = Y.Do.before(fn, this._owner, sFn, context);
+                } else if (owner.on) { // event
+                    handle = owner.on(sFn, fn, context);
                 }
+
+                this._handles.push(handle);
+                return handle;
             },
 
-            /**
-             * Registers a before change listener on the provided object. The listener will
-             * be automatically removed when the plugin is unplugged from the host.
-             * 
-             * @method listenBefore
-             * @param {Object} obj
-             * @param {Object} ev
-             * @param {Object} fn
-             * @param {Object} s
-             * @param {Object} o
-             */
-            // TODO: Change to use Event Handle, once implemented (and Y.bind)
-            doBefore: function(obj, ev, fn, s, o) {
-                ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
-                this.listen(obj, ev, fn, s, o);
+            after: function(sFn, fn, context) {
+                var owner = this._owner,
+                    handle;
+
+                context = context || this;
+
+                if (sFn in owner) { // method
+                    handle = Y.Do.after(fn, this._owner, sFn, context);
+                } else if (owner.after) { // event
+                    handle = owner.after(sFn, fn, context);
+                }
+
+                this._handles.push(handle);
+                return handle;
             },
 
-            /**
-             * Unregisters a before change listener on the provided object.
-             * 
-             * @method nolistenbefore
-             * @param {Object} obj
-             * @param {Object} ev
-             * @param {Object} fn
-             */
-            // TODO: Change to use Event Handle, once implemented (and Y.bind)
-            undoBefore: function(obj, ev, fn) {
-                ev = 'before' + ev.charAt(0).toUpperCase() + ev.substr(1) + 'Change';
-                this.nolisten(obj, ev, fn);
+            detach: function(handle) {
+                if (handle.detach) { // event
+                    handle.detach(handle);
+                } else { // method
+                    Y.Do.detach.apply(Y.Do, arguments);
+                }
             },
 
             toString: function() {
-                return this.constructor.NAME + "[" + this.constructor.NS + "]";
+                return this.constructor.NAME + '[' + this.constructor.NS + ']';
             }
         };
 
-        //Y.extend(Plugin, Y.Base, proto);
-        Plugin.proto = proto;
+        Y.extend(Plugin, Y.Base, proto);
         Y.Plugin = Plugin;
-    };
-
