@@ -21,6 +21,7 @@ var WIDGET = "widget",
     CONTENT_BOX = "contentBox",
     PARENT_NODE = "parentNode",
     FIRST_CHILD = "firstChild",
+    OWNER_DOCUMENT = "ownerDocument",
     BODY = "body",
     TAB_INDEX = "tabIndex",
     LOCALE = "locale",
@@ -445,9 +446,9 @@ Y.extend(Widget, Y.Base, {
      * Widget is to be rendered. This can be a Node instance or a CSS selector string. 
      * <p>
      * If the selector string returns more than one Node, the first node will be used 
-     * as the parentNode. NOTE: This argument is required if the boundingBox or contentBox
-     * is not currently in the document. If it's not provided, the Widget will be rendered
-     * to the body of the current document.
+     * as the parentNode. NOTE: This argument is required if both the boundingBox and contentBox
+     * are not currently in the document. If it's not provided, the Widget will be rendered
+     * to the body of the current document in this case.
      * </p>
      */
     render: function(parentNode) {
@@ -703,42 +704,46 @@ Y.extend(Widget, Y.Base, {
 
     /**
     * Helper method to collect the boundingBox and contentBox, set styles and append to the provided parentNode, if not
-    * already a child.
+    * already a child. The owner document of the boundingBox, or the owner document of the contentBox will be used 
+    * as the document into which the Widget is rendered if a parentNode is node is not provided. If both the boundingBox and
+    * the contentBox are not currently in the document, and no parentNode is provided, the widget will be rendered 
+    * to the current document's body.
     *
     * @method _renderBox
     * @private
-    * @param {Node} parentNode The parentNode to render the widget to. If not provided, and the boundingBox or 
-    * contentBox are not currently in the document, the widget will be rendered to the current documents body.
+    * @param {Node} parentNode The parentNode to render the widget to. If not provided, and both the boundingBox and
+    * the contentBox are not currently in the document, the widget will be rendered to the current document's body.
     */
     _renderBox: function(parentNode) {
 
         var contentBox = this.get(CONTENT_BOX),
             boundingBox = this.get(BOUNDING_BOX),
-            body = Node.get(BODY),
-            appendTo = parentNode || body;
+            doc = boundingBox.get(OWNER_DOCUMENT) || contentBox.get(OWNER_DOCUMENT),
+            body;
 
-        if (appendTo && !appendTo.contains(boundingBox)) {
-            if (appendTo === body && !parentNode && appendTo.get(FIRST_CHILD)) {
-                // Special case when handling body as default (no parentNode), always insert.
-                appendTo.insertBefore(boundingBox, appendTo.get(FIRST_CHILD));
-            } else {
-                appendTo.appendChild(boundingBox);
-            }
-        }
-
-        if (!boundingBox.contains(contentBox)) {
-
+        if (!boundingBox.compareTo(contentBox.get(PARENT_NODE))) {
             if (this.get('moveStyles')) {
                 this._moveStyles(contentBox, boundingBox);
             }
-
             // If contentBox box is already in the document, have boundingBox box take it's place
-            // TODO: Replace body test with PARENT_NODE test, when supported
-            if (body.contains(contentBox)) {
+            if (contentBox.inDoc(doc)) {
                 contentBox.get(PARENT_NODE).replaceChild(boundingBox, contentBox);
             }
-
             boundingBox.appendChild(contentBox);
+        }
+
+        if (!boundingBox.inDoc(doc) && !parentNode) {
+            body = Node.get(BODY);
+            if (body.get(FIRST_CHILD)) {
+                // Special case when handling body as default (no parentNode), always try to insert.
+                body.insertBefore(boundingBox, body.get(FIRST_CHILD));
+            } else {
+                body.appendChild(boundingBox);
+            }
+        } else {
+            if (parentNode && !parentNode.compareTo(boundingBox.get(PARENT_NODE))) {
+                parentNode.appendChild(boundingBox);
+            }
         }
     },
 
