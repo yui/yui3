@@ -5,7 +5,7 @@
     <link type="text/css" rel="stylesheet" href="/assets/dpSyntaxHighlighter.css">
     <link type="text/css" rel="stylesheet" href="../../build/logreader/assets/skins/sam/logreader.css">
     <style type="text/css">
-.yui-skin-sam .yui-logreader-container {
+.yui-skin-sam .yui-logreader {
     position: relative;
     top: auto;
     right: auto;
@@ -25,21 +25,11 @@
 </div>
 
 <script type="text/javascript" src="../../build/yui/yui.js"></script>
-<!--script type="text/javascript" src="../../build/oop/oop-debug.js"></script>
-<script type="text/javascript" src="../../build/event/event-debug.js"></script>
-<script type="text/javascript" src="../../build/attribute/attribute-debug.js"></script>
-<script type="text/javascript" src="../../build/base/base-debug.js"></script>
-<script type="text/javascript" src="../../build/dom/dom-debug.js"></script>
-<script type="text/javascript" src="../../build/node/node-debug.js"></script>
-<script type="text/javascript" src="../../build/widget/widget-debug.js"></script>
-<script type="text/javascript" src="../../build/substitute/substitute-debug.js"></script>
-<script type="text/javascript" src="../../build/stylesheet/stylesheet-debug.js"></script>
-<script type="text/javascript" src="../../build/logreader/logreader-debug.js"></script-->
 <script type="text/javascript">
 YUI({
     base: '../../build/',
-    debug: true,
     useConsole:false,
+    //logLevel: 'warn',
     filter: 'debug'
 }).use('logreader',function (Y) {
 
@@ -56,7 +46,7 @@ Y.on('click',function (e) { Y.log('WARN message '+(++x.warn),'warn'); },'#warn')
 Y.on('click',function (e) { Y.log('ERROR message '+(++x.error),'error'); },'#error');
 
 var r = new Y.log.Reader({
-    verbose : true,
+    //verbose : true,
     //consoleLimit : 10,
     newestOnTop : false
 });
