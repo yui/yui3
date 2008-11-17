@@ -14,6 +14,7 @@ YUI Loader
     - Added io submodules
     - queue requires event
     - Added plugin metadata logic
+    - Restored skin logic
 
 3.0.0pr1
     Initial Release
