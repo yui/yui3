@@ -523,6 +523,7 @@ Y.DOM = {
         });
     }
 })();
+
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -604,6 +605,7 @@ Y.mix(Y.DOM, {
         }
     }
 });
+
 
 /** 
  * Add style management functionality to DOM.
@@ -754,6 +756,7 @@ if (Y.UA.webkit) { // safari converts transparent to rgba()
     };
 
 }
+
 
 
 /**
@@ -1136,6 +1139,7 @@ Y.mix(Y.DOM, {
 });
 
 
+
 /**
  * Adds position and region management functionality to DOM.
  * @module dom
@@ -1293,6 +1297,7 @@ Y.mix(DOM, {
         return r;
     }
 });
+
 /**
  * Add style management functionality to DOM.
  * @module dom
@@ -1507,6 +1512,7 @@ if (!Y.config.win[GET_COMPUTED_STYLE]) {
 Y.namespace('DOM.IE');
 Y.DOM.IE.COMPUTED = IEComputed;
 Y.DOM.IE.ComputedStyle = ComputedStyle;
+
 
 /**
  * Provides helper methods for collecting and filtering DOM elements.
@@ -2063,13 +2069,14 @@ var Selector = {
 
 };
 
-if (Y.UA.ie < 8) { // rewrite class for IE (others use getAttribute('class')
+if (Y.UA.ie && Y.UA.ie < 8) { // rewrite class for IE (others use getAttribute('class')
     Selector.attrAliases['class'] = 'className';
     Selector.attrAliases['for'] = 'htmlFor';
 }
 
 Y.Selector = Selector;
 Y.Selector.patterns = patterns;
+
 
 /**
  * Add style management functionality to DOM.
@@ -2146,6 +2153,7 @@ Y.Color = {
         return val.toLowerCase();
     }
 };
+
 
 
 
