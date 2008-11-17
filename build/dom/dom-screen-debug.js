@@ -381,6 +381,7 @@ Y.mix(Y.DOM, {
 });
 
 
+
 /**
  * Adds position and region management functionality to DOM.
  * @module dom
@@ -538,6 +539,7 @@ Y.mix(DOM, {
         return r;
     }
 });
+
 
 
 }, '@VERSION@' ,{skinnable:false, requires:['dom-base', 'dom-style']});
