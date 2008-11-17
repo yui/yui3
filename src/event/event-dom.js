@@ -633,17 +633,27 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 var notAvail = [];
 
                 var executeItem = function (el, item) {
-                    var context;
-                    if (item.override) {
-                        if (item.override === true) {
-                            context = item.obj;
+                    var context, ov = item.override;
+
+                    if (item.compat) {
+
+                        if (item.override) {
+                            if (ov === true) {
+                                context = item.obj;
+                            } else {
+                                context = ov;
+                            }
                         } else {
-                            context = item.override;
+                            context = el;
                         }
+
+                        item.fn.call(context, item.obj);
+
                     } else {
-                        context = (item.compat) ? el : Y.get(el);
+                        context = item.obj || Y.get(el);
+                        item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                     }
-                    item.fn.call(context, item.obj);
+
                 };
 
                 var i, len, item, el;

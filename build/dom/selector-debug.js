@@ -555,7 +555,7 @@ var Selector = {
 
 };
 
-if (Y.UA.ie) { // rewrite class for IE (others use getAttribute('class')
+if (Y.UA.ie < 8) { // rewrite class for IE (others use getAttribute('class')
     Selector.attrAliases['class'] = 'className';
     Selector.attrAliases['for'] = 'htmlFor';
 }

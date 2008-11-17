@@ -75,6 +75,12 @@ YUI.add("event", function(Y) {
         available: {
 
             on: function(type, fn, id, o) {
+            // onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
+
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
+
+                /*
 
                 var a = Y.Array(arguments, 1, true), m = fn;
 
@@ -89,6 +95,7 @@ YUI.add("event", function(Y) {
 
 
                 return Y.Event.onAvailable.apply(Y.Event, a);
+                */
 
             },
 
@@ -107,7 +114,11 @@ YUI.add("event", function(Y) {
         contentready: {
 
             on: function(type, fn, id, o) {
+                
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
 
+                /*
                 var a = Y.Array(arguments, 1, true), m = fn;
 
                 a.splice(1, 1);
@@ -119,6 +130,7 @@ YUI.add("event", function(Y) {
                 }
 
                 return Y.Event.onContentReady.apply(Y.Event, a);
+                */
             },
 
             detach: function() {
@@ -2514,17 +2526,27 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 var notAvail = [];
 
                 var executeItem = function (el, item) {
-                    var context;
-                    if (item.override) {
-                        if (item.override === true) {
-                            context = item.obj;
+                    var context, ov = item.override;
+
+                    if (item.compat) {
+
+                        if (item.override) {
+                            if (ov === true) {
+                                context = item.obj;
+                            } else {
+                                context = ov;
+                            }
                         } else {
-                            context = item.override;
+                            context = el;
                         }
+
+                        item.fn.call(context, item.obj);
+
                     } else {
-                        context = (item.compat) ? el : Y.get(el);
+                        context = item.obj || Y.get(el);
+                        item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                     }
-                    item.fn.call(context, item.obj);
+
                 };
 
                 var i, len, item, el;
