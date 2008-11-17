@@ -35,6 +35,7 @@ include("../inc/header.inc");
                                     <li><a href="#start">Getting Started</a></li>
                                     <li><a href="#testcases">Using Test Cases</a></li>
                                     <li><a href="#assertions">Assertions</a></li>
+                                    <li><a href="#mockobjects">Mock Objects</a></li>
                                     <li><a href="#asynctests">Asynchronous Tests</a></li>
                                     <li><a href="#testsuites">Test Suites</a></li>
                                     <li><a href="#running-tests">Running Tests</a></li>
@@ -609,120 +610,117 @@ include("../inc/header.inc");
                 </script> 
                 </textarea> 
                 <p>When the failure of this method is reported, the message &quot;I decided this should fail.&quot; will be reported.</p>
-<!--
-<h2 id="useractions">Simulating User Actions</h2>
-<p>Simply testing function calls may not be adequate enough due to the level of interactivity provided by web applications. Since many operations require a
-  user to initiate them, the <code>YAHOO.util.UserAction</code> object provides methods to simulate basic user events involving the keyboard
-  and mouse.</p>
-<p>Simulated events are browser-created events that, most of the time, behave exactly as user-initated events. Events bubble as they normally would
-  and <code>event</code> objects are created with properties containing data about the event (sometimes these properties are browser-specific, so it's
-  recommended that you make use of the browser-equalizing methods of <code>YAHOO.util.Event</code> to retrieve the appropriate values for
-  properties such as <code>target</code>, <code>relatedTarget</code>, and <code>charCode</code>. All event handlers are called synchronously
-  at each event target throughout the event's lifetime.</p>  
-<h3>Mouse Events</h3>
-<p>There are seven mouse events that can be simulated using methods on <code>UserAction</code>:</p>
-<ul>
-  <li>click</li>
-  <li>dblclick</li>
-  <li>mousedown</li>
-  <li>mouseup</li>
-  <li>mouseover</li>
-  <li>mouseout</li>
-  <li>mousemove</li>
-</ul>
-<p>Each event is fired by a corresponding method on <code>UserAction</code> that accepts two arguments: the target of the event and
-  an optional object specifying additional information for the event. To simulate a click on the document's body element,
-  for example, the following code can be used:</p>
-<textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-    YAHOO.util.UserAction.click(document.body);
-</script> 
-</textarea>
-<p>This code simulates a click with all of the default properties on the <code>event</code> object. To specify additional information,
-  such as the Shift key being down, the second argument must be used and the exact DOM name for the event property specified (there is
-  browser-normalizing logic that translates these into browser-specific properties when necessary):
-<textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-    YAHOO.util.UserAction.click(document.body, { shiftKey: true });
-</script> 
-</textarea>  
-<p>In this updated example, a click event is fired on the document's body while simulating that the Shift key is down.</p>
-<p>The extra properties to specify vary depending on the event being simulated and are limited to this list:</p>
-<ul>
-  <li>detail - Indicates the number of times a button was clicked (DOM-compliant browsers only).</li>
-  <li>screenX/screenY - coordinates of the mouse event in relation to the entire screen (DOM-compliant browsers only).</li>
-  <li>clientX/clientY - coordinates of the mouse event in relation to the browser client area.</li>
-  <li>ctrlKey/altKey/shiftKey/metaKey - the state of the Ctrl, Alt, Shift, and Meta keys, respectively (true for down, false for up).</li>
-  <li>button - the button being used for the event, 0 for left (default), 1 for right, 2 for center.</li>
-  <li>relatedTarget - the element the mouse moved from (during a mouseover event) or to (during a mouseout event). You should
-    use <code>YAHOO.util.Event.getRelatedTarget()</code> to retrieve this value from the generated <code>event</code> object
-    as it will be translated into browser-specific property names as necessary.</li>
-</ul>
-<p>Examples of the different methods and their extra properties:</p>
-<textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-    var element = document.getElementById("myDiv");
-    
-    //simulate a click Alt key down
-    YAHOO.util.UserAction.click(element, { altKey: true});
-    
-    //simulate a double click with Ctrl key down
-    YAHOO.util.UserAction.dblclick(element, { ctrlKey: true });
-    
-    //simulate a mouse over
-    YAHOO.util.UserAction.mouseover(element, { relatedTarget: document.body });
-    
-    //simulate a mouse out
-    YAHOO.util.UserAction.mouseout(element, { relatedTarget: document.body });
-    
-    //simulate a mouse down at point (100,100) in the client area
-    YAHOO.util.UserAction.mousedown(element, { clientX: 100, clientY: 100 });
-    
-    //simulate a mouse up at point (100,100) in the client area
-    YAHOO.util.UserAction.mouseup(element, { clientX: 100, clientY: 100 });
-    
-    //simulate a mouse move at point (200, 200) in the client area
-    YAHOO.util.UserAction.mousemove(document.body, { clientX: 200, clientY: 200 });
-
-</script> 
-</textarea>
-<h3>Key Events</h3>
-<p>There are three key event simulations available using <code>UserAction</code>:</p>
-<ul>
-  <li>keyup</li>
-  <li>keydown</li>
-  <li>keypress</li>
-</ul>
-<p>As with the mouse events, each key event has a corresponding method of the same name and accepts two arguments, which are the
-  target of the event and an object specifying additional properties for the event. For key events, the second argument is required
-  as you must specify which key was interacted with. For <code>keyup()</code> and <code>keydown()</code>, the <code>keyCode</code> 
-  property must be specified; for <code>keypress()</code>, the <code>charCode</code> property must be included. In many cases,
-  <code>keyCode</code> and <code>charCode</code> may be the same value to represent the same key (97, for instance, represents the &quot;A&quot;
-  key as well as being the ASCII code for the letter &quot;a&quot;). For example:</p>
-<textarea name="code" class="JScript" cols="60" rows="1">
-<script type="text/javascript">
-    var element = document.getElementById("myDiv");
-    
-    //simulate a keydown on the A key
-    YAHOO.util.UserAction.keydown(element, { keyCode: 97 });
-
-    //simulate a keyup on the A key
-    YAHOO.util.UserAction.keydown(element, { keyCode: 97 });
-    
-    //simulate typing "a"
-    YAHOO.util.UserAction.keypress(element, { charCode: 97 });    
-
-</script> 
-</textarea>
-<p>Key events also support the <code>ctrlKey</code>, <code>altKey</code>, <code>shiftKey</code>, and <code>metaKey</code> event properties.</p>
-<p><strong>Note:</strong> Due to differences in browser implementations, key events may not be simulated in the same manner across 
-  all browsers. For instance, when simulating a keypress event on a textbox, only Firefox will update the textbox with the new character
-  of the key that was simulated to be pressed. For other browsers, the events are still registered and all event handlers are called,
-  however, the textbox display and <code>value</code> property are not updated. These differences should go away as browser support
-  for simulated events improves in the future.</p>
-<p><strong>Safari 2.x Developers:</strong> Due to a bug in the Safari 2.x codebase, simulating a keydown event may cause the browser to 
-  crash. This issue has been resolved in Safari 3.x.</p>  
-  -->
+                <h3 id="mockobject">Mock Objects</h3>
+                <p>Mock objects are used to eliminate test dependencies on other objects. In complex software systems, there's often multiple
+                object that have dependence on one another to do their job. Perhaps part of your code relies on the <code>XMLHttpRequest</code>
+                object to get more information; if you're running the test without a network connection, you can't really be sure if the test
+                is failing because of your error or because the network connection is down. In reality, you just want to be sure that the correct
+                data was passed to the <code>open()</code> and <code>send()</code> methods because you can assume that, after that point,
+                the <code>XMLHttpRequest</code> object works as expected. This is the perfect case for using a mock object.</p>
+                <p>To create a mock object, use the <code>Y.Mock()</code> method to create a new object and then use <code>Y.Mock.expect()</code>
+                to define expectations for that object. Expectations define which methods you're expecting to call, what the arguments should be,
+                and what the expected result is. When you believe all of the appropriate methods have been called, you call <code>Y.Mock.verify()</code>
+                on the mock object to check that everything happened as it should. For example:</p>
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                <script type="text/javascript">
+                
+                    //code being tested
+                    function logToServer(message, xhr){
+                        xhr.open("get", "/log.php?msg=" + encodeURIComponent(message), true);
+                        xhr.send(null);
+                    }
+                
+                    //test case for testing the above function
+                    var testCase = new Y.Test.Case({
+                    
+                        name: "logToServer Tests",
+                        
+                        testPassingDataToXhr : function () {
+                            var mockXhr = Y.Mock();
+                            
+                            //I expect the open() method to be called with the given arguments
+                            Y.Mock.expect(mockXhr, {
+                                method: "open",
+                                args: ["get", "/log.php?msg=hi", true]                            
+                            });
+                            
+                            //I expect the send() method to be called with the given arguments
+                            Y.Mock.expect(mockXhr, {
+                                method: "send",
+                                args: [null]                            
+                            });
+                            
+                            //now call the function
+                            logToServer("hi", mockXhr);
+                            
+                            //verify the expectations were met
+                            Y.Mock.verify(mockXhr);                            
+                        }
+                    });
+                </script> 
+                </textarea>      
+                <p>In this code, a mock <code>XMLHttpRequest</code> object is created to aid in testing. The mock object defines two
+                expectations: that the <code>open()</code> method will be called with a given set of arguments and that the <code>send()</code>
+                method will be called with a given set of arguments. This is done by using <code>Y.Mock.expect()</code> and passing in the
+                mock object as well as some information about the expectation. The <code>method</code> property indicates the method name
+                that will be called and the <code>args</code> property is an array of arguments that should be passed into the method. Each
+                argument is compared against the actual arguments using the identically equal (<code>===</code>) operator, and if any of the
+                arguments doesn't match, an assertion failure is thrown when the method is called (it &quot;fails fast&quot; to allow easier debugging).</p>
+                <p>The call to <code>Y.Mock.verify()</code> is the final step in making sure that all expectations have been met. It's at this stage
+                that the mock object checks to see that all methods have been called. If <code>open()</code> was called but <code>send()</code>
+                was not, then an assertion failure is thrown and the test fails. It's very important to call <code>Y.Mock.verify()</code> to test
+                all expectations; failing to do so can lead to false passes when the test should actually fail.</p>
+                <p>In order to use mock objects, your code must be able to swap in and out objects that it uses. For example, a hardcoded
+                reference to <code>XMLHttpRequest</code> in your code would prevent you from using a mock object in its place. It's sometimes
+                necessary to refactor code in such a way that referenced objects are passed in rather than hardcoded so that mock objects
+                can be used.</p>
+                <p>Note that you can use assertions and mock objects together; either will correctly indicate a test failure.</p>
+                <h4>Special Argument Values</h4>
+                <p>There may be times when you don't necessarily care about a specific argument's value. Since you must always specify the correct
+                number of arguments being passed in, you still need to indicate that an argument is expected. There are several special values
+                you can use as placeholders for real values. These values do a minimum amount of data validation:</p>
+                <ul>
+                    <li><code>Y.Mock.Value.Any</code> - any value is valid regardless of type.</li>
+                    <li><code>Y.Mock.Value.String</code> - any string value is valid.</li>
+                    <li><code>Y.Mock.Value.Number</code> - any number value is valid.</li>
+                    <li><code>Y.Mock.Value.Boolean</code> - any Boolean value is valid.</li>
+                    <li><code>Y.Mock.Value.Object</code> - any non-<code>null</code> object value is valid.</li>
+                    <li><code>Y.Mock.Value.Function</code> - any function value is valid.</li>
+                </ul>
+                <p>Each of these special values can be used in the <code>args</code> property of an expectation, such as:</p>
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                <script type="text/javascript">
+                
+                    Y.Mock.expect(mockXhr, {
+                        method: "open",
+                        args: [Y.Mock.Value.String, "/log.php?msg=hi", Y.Mock.Value.Boolean]                            
+                    });                
+                    
+                </script> 
+                </textarea>                 
+                <p>The expecation here will allow any string value as the first argument and any Boolean value as the last argument. 
+                These special values should be used with care as they can let invalid values through if they are too general. The
+                <code>Y.Mock.Value.Any</code> special value should be used only if you're absolutely sure that the argument doesn't
+                matter.</p>
+                <h4>Property Expectations</h4>
+                <p>Since it's not possible to create property getters and setters in all browsers, creating a true cross-browser property
+                expectation isn't feasible. YUI Test mock objects allow you to specify a property name and it's expected value when
+                <code>Y.Mock.verify()</code> is called. This isn't a true property expectation but rather an expectation that the property
+                will have a certain value at the end of the test. You can specify a property expectation like this:</p>                
+                <textarea name="code" class="JScript" cols="60" rows="1">
+                <script type="text/javascript">
+                    
+                    //expect that the status property will be set to 404
+                    Y.Mock.expect(mockXhr, {
+                        property: "status",
+                        value: 404                            
+                    });                
+                    
+                </script> 
+                </textarea>    
+                <p>This example indicates that the <code>status</code> property of the mock object should be set to 404 before
+                the test is completed. When <code>Y.Mock.verify()</code> is called on <code>mockXhr</code>, it will check
+                the property and throw an assertion failure if it has not been set appropriately.</p>
                 <h3 id="asynctests">Asynchronous Tests</h3>
                 <p>YUI Test allows you to pause a currently running test and resume either after a set amount of time or 
                   at another designated time. The <code>TestCase</code> object has a method called <code>wait()</code>. When <code>wait()</code>

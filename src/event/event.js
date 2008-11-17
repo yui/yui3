@@ -75,6 +75,12 @@ YUI.add("event", function(Y) {
         available: {
 
             on: function(type, fn, id, o) {
+            // onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
+
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
+
+                /*
 
                 var a = Y.Array(arguments, 1, true), m = fn;
 
@@ -91,6 +97,7 @@ YUI.add("event", function(Y) {
 
 
                 return Y.Event.onAvailable.apply(Y.Event, a);
+                */
 
             },
 
@@ -109,7 +116,11 @@ YUI.add("event", function(Y) {
         contentready: {
 
             on: function(type, fn, id, o) {
+                
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
 
+                /*
                 var a = Y.Array(arguments, 1, true), m = fn;
 
                 a.splice(1, 1);
@@ -121,6 +132,7 @@ YUI.add("event", function(Y) {
                 }
 
                 return Y.Event.onContentReady.apply(Y.Event, a);
+                */
             },
 
             detach: function() {
@@ -129,22 +141,6 @@ YUI.add("event", function(Y) {
         }
 
     };
-
-    /*
-     * Subscribes to the yui:load event, which fires when a Y.use operation
-     * is complete.
-     * @method ready
-     * @param f {Function} the function to execute
-     * @param c Optional execution context
-     * @param args* 0..n Additional arguments to append 
-     * to the signature provided when the event fires.
-     * @return {YUI} the YUI instance
-     */
-    // Y.ready = function(f, c) {
-    //     var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
-    //     Y.on("yui:load", m);
-    //     return this;
-    // };
 
     /**
      * Attach an event listener, either to a DOM object
@@ -165,19 +161,11 @@ YUI.add("event", function(Y) {
         var adapt = Y.Env.eventAdaptors[type];
 
         if (adapt) {
-
             Y.log('Using adaptor for ' + type, 'info', 'event');
-
             return adapt.on.apply(Y, arguments);
-
         } else {
-
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.subscribe.apply(Y, arguments);
-                }
+                return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
             }
@@ -208,11 +196,7 @@ YUI.add("event", function(Y) {
             if (adapt) {
                 adapt.detach.apply(Y, arguments);
             } else if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.unsubscribe.apply(Y, arguments);
-                }
+                return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
             }
@@ -234,14 +218,14 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        // method override
-        // callback, object, sMethod
         if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
+        } else {
+            return Y.on.apply(Y, arguments);
         }
-
-        return Y;
     };
+
+    var after = Y.after;
 
     /**
      * Executes the callback after a DOM event, custom event
@@ -262,11 +246,10 @@ YUI.add("event", function(Y) {
     Y.after = function(type, f, o) {
         if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
+        } else {
+            return after.apply(Y, arguments);
         }
-
-        return Y;
     };
-
 
 
 }, "3.0.0", {
