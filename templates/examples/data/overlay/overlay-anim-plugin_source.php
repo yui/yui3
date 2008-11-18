@@ -9,7 +9,7 @@
 <button type="button" id="unplug">Unplug</button>
 
 <script type="text/javascript">
-YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules ?>, function(Y) {
+YUI(<?php echo $yuiConfig ?>).use(<?php echo $requiredModules ?>, function(Y) {
 
     function AnimPlugin(config) {
         AnimPlugin.superclass.constructor.apply(this, arguments);
@@ -27,7 +27,7 @@ YUI(<?php echo getYUIConfig("filter:'raw'") ?>).use(<?php echo $requiredModules 
             valueFn : function() {
                 return new Y.Anim({
                     node: this._owner.get("boundingBox"),
-                    from: { opacity: 0 },
+                    from: { opacity: 0, visibility:"hidden" },
                     to: { opacity: 1 },
                     duration: this.get("duration")
                 });
