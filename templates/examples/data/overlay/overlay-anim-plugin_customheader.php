@@ -19,5 +19,5 @@
 </style>
 
 <!-- TODO: Temporary, until in loader -->
-<link type="text/css" rel="stylesheet" href="../../../build/widget/assets/skins/sam/widget-stack.css"></script>
-<script type="text/javascript" src="../../../build/plugin/plugin.js"></script>
+<link type="text/css" rel="stylesheet" href="<?php echo $buildDirectory ?>widget/assets/skins/sam/widget-stack.css"></script>
+<script type="text/javascript" src="<?php echo $buildDirectory ?>plugin/plugin.js"></script>
