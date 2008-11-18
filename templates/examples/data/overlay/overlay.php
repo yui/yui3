@@ -38,7 +38,7 @@ $examples["overlay-stack"] = array(
 );
 
 $examples["overlay-stdmod"] = array(
-    name => "Overlay Standard Module Support",
+    name => "Standard Module Support",
     modules => array("overlay"),
     description => "Shows how to modify content in the Overlay's header, body and footer sections.",
     sequence => array(3),
@@ -48,7 +48,7 @@ $examples["overlay-stdmod"] = array(
 );
 
 $examples["overlay-anim-plugin"] = array(
-    name => "Overlay Animation Plugin",
+    name => "Animation Plugin",
     modules => array("overlay"),
     description => "Shows how to create a simple plugin to animate the Overlay's movement and visibility.",
     sequence => array(4),
@@ -58,7 +58,7 @@ $examples["overlay-anim-plugin"] = array(
 );
 
 $examples["overlay-io-plugin"] = array(
-    name => "Overlay IO Plugin",
+    name => "IO Plugin",
     modules => array("overlay"),
     description => "Shows how to create a simple plugin to retrieve content for the Overlay using the io utility.",
     sequence => array(5),
