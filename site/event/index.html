@@ -35,6 +35,7 @@ include "../inc/header.inc";
       <li>Automatic scope correction, optional scope assignment</li>
       <li>An event facade that normalizes browser differences</li>
       <li>Automatic DOM event listener cleanup</li>
+      <li>Simulation of events in all A-grade browsers</li>
       <li>Pageload timing events (<code>onAvailable</code> and <code>onContentReady</code> at the element level and <code>event:ready</code> at the DOM level)
       <li>Custom events that are bubbleable, cancelable, and have intrinsic AOP qualities</li>
    </ul>
@@ -48,6 +49,7 @@ include "../inc/header.inc";
 									<li><a href="#start">Getting Started</a></li>
 									<li><a href="#using">DOM Events</a></li>
 									<li><a href="#removeevent">Removing Events</a></li>
+                                    <li><a href="#eventsimulation">Simulating Events</a></li>
 									<li><a href="#onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</a></li>
 									<li><a href="#ondomready">Using the <code>event:ready</code> Event (Formerly <code>onDOMReady</code>)</a></li>
 									<li><a href="#customevent">Using the CustomEvent Object</a></li>
@@ -216,6 +218,112 @@ YUI().use('node', function(Y) {
     // only click listeners, and don't recurse:
     Y.Event.purgeElement("#foo", false, "click");
 });</textarea>
+
+<h3 id="eventsimulation">Simulating Events</h2>
+<p>Simulated events are browser-created events that, most of the time, behave exactly as user-initated events. Events bubble as they normally would
+  and <code>event</code> objects are created with properties containing data about the event (sometimes these properties are browser-specific, so it's
+  recommended that you make use of the browser-equalizing methods of <code>Y.Event</code> to retrieve the appropriate values for
+  properties such as <code>target</code>, <code>relatedTarget</code>, and <code>charCode</code>. All event handlers are called synchronously
+  at each event target throughout the event's lifetime. Events are simulated using the <code>Y.Event.simulate()</code> method.</p>  
+<h4>Mouse Events</h4>
+<p>There are seven mouse events that can be simulated using methods on <code>Y.Event</code>:</p>
+<ul>
+  <li>click</li>
+  <li>dblclick</li>
+  <li>mousedown</li>
+  <li>mouseup</li>
+  <li>mouseover</li>
+  <li>mouseout</li>
+  <li>mousemove</li>
+</ul>
+<p>Each event is fired by calling <code>Y.Event.simulate()</code> and passing in three arguments: the element to fire the event on,
+the type of event to fire, and an optional object specifying additional information for the event. To simulate a click on the document's body element,
+  for example, the following code can be used:</p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+<script type="text/javascript">
+    Y.Event.simulate(document.body, "click");
+</script> 
+</textarea>
+<p>This code simulates a click with all of the default properties on the <code>event</code> object. To specify additional information,
+  such as the Shift key being down, the second argument must be used and the exact DOM name for the event property specified (there is
+  browser-normalizing logic that translates these into browser-specific properties when necessary):
+<textarea name="code" class="JScript" cols="60" rows="1">
+<script type="text/javascript">
+    Y.Event.simulate(document.body, "click", { shiftKey: true });
+</script> 
+</textarea>  
+<p>In this updated example, a click event is fired on the document's body while simulating that the Shift key is down.</p>
+<p>The extra properties to specify vary depending on the event being simulated and are limited to this list:</p>
+<ul>
+  <li>detail - Indicates the number of times a button was clicked (DOM-compliant browsers only).</li>
+  <li>screenX/screenY - coordinates of the mouse event in relation to the entire screen (DOM-compliant browsers only).</li>
+  <li>clientX/clientY - coordinates of the mouse event in relation to the browser client area.</li>
+  <li>ctrlKey/altKey/shiftKey/metaKey - the state of the Ctrl, Alt, Shift, and Meta keys, respectively (true for down, false for up).</li>
+  <li>button - the button being used for the event, 0 for left (default), 1 for right, 2 for center.</li>
+  <li>relatedTarget - the element the mouse moved from (during a mouseover event) or to (during a mouseout event). </li>
+</ul>
+<p>Examples of the different methods and their extra properties:</p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+<script type="text/javascript">
+    var element = document.getElementById("myDiv");
+    
+    //simulate a click Alt key down
+    Y.Event.simulate(element, "click", { altKey: true});
+    
+    //simulate a double click with Ctrl key down
+    Y.Event.simulate(element, "dblclick", { ctrlKey: true });
+    
+    //simulate a mouse over
+    Y.Event.simulate(element, "mouseover", { relatedTarget: document.body });
+    
+    //simulate a mouse out
+    Y.Event.simulate(element, "mouseout", { relatedTarget: document.body });
+    
+    //simulate a mouse down at point (100,100) in the client area
+    Y.Event.simulate(element, "mousedown", { clientX: 100, clientY: 100 });
+    
+    //simulate a mouse up at point (100,100) in the client area
+    Y.Event.simulate(element, "mouseup", { clientX: 100, clientY: 100 });
+    
+    //simulate a mouse move at point (200, 200) in the client area
+    Y.Event.simulate(document.body, "mousemove", { clientX: 200, clientY: 200 });
+
+</script> 
+</textarea>
+<h4>Key Events</h4>
+<p>There are three key event simulations available using <code>UserAction</code>:</p>
+<ul>
+  <li>keyup</li>
+  <li>keydown</li>
+  <li>keypress</li>
+</ul>
+<p>As with the mouse events, key events are simulated using <code>Y.Event.simulate()</code>. For <code>keyup()</code> and <code>keydown()</code>, the <code>keyCode</code> 
+  property must be specified; for <code>keypress()</code>, the <code>charCode</code> property must be included. In many cases,
+  <code>keyCode</code> and <code>charCode</code> may be the same value to represent the same key (97, for instance, represents the &quot;A&quot;
+  key as well as being the ASCII code for the letter &quot;a&quot;). For example:</p>
+<textarea name="code" class="JScript" cols="60" rows="1">
+<script type="text/javascript">
+    var element = document.getElementById("myDiv");
+    
+    //simulate a keydown on the A key
+    Y.Event.simulate(element, "keydown", { keyCode: 97 });
+
+    //simulate a keyup on the A key
+    Y.Event.simulate(element, "keyup", { keyCode: 97 });
+    
+    //simulate typing "a"
+    Y.Event.simulate(element, "keypress", { charCode: 97 });    
+
+</script> 
+</textarea>
+<p>Key events also support the <code>ctrlKey</code>, <code>altKey</code>, <code>shiftKey</code>, and <code>metaKey</code> event properties.</p>
+<p><strong>Note:</strong> Due to differences in browser implementations, key events may not be simulated in the same manner across 
+  all browsers. For instance, when simulating a keypress event on a textbox, only Firefox will update the textbox with the new character
+  of the key that was simulated to be pressed. For other browsers, the events are still registered and all event handlers are called,
+  however, the textbox display and <code>value</code> property are not updated. These differences should go away as browser support
+  for simulated events improves in the future.</p>
+<p><strong>Safari 2.x Developers:</strong> Due to a bug in the Safari 2.x codebase, simulating a keydown event may cause the browser to 
+  crash. This issue has been resolved in Safari 3.x.</p>  
 
 <h3 id="onavailable">Using the <code>onAvailable</code> and <code>onContentReady</code> Methods</h3>
 <p><code>onAvailable</code> lets you define a function that will execute as soon as an element

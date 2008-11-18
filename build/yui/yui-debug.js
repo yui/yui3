@@ -119,8 +119,9 @@ if (typeof YUI === 'undefined' || !YUI) {
     /*global YUI*/
     YUI = function(o) {
         var Y = this;
-        // Allow var yui = YUI() instead of var yui = new YUI()
-        if (Y == window) {
+
+        // Allow instantiation without the new operator
+        if (!(Y instanceof YUI)) {
             return new YUI(o);
         } else {
             // set up the core environment
@@ -154,8 +155,7 @@ YUI.prototype = {
         o.doc = w.document;
         o.debug = ('debug' in o) ? o.debug : true;
         o.useConsole = ('useConsole' in o) ? o.useConsole: true;
-
-        o.throwFail = ('throwFail' in o) ? o.debug : true;
+        o.throwFail = ('throwFail' in o) ? o.throwFail : true;
     
         // add a reference to o for anything that needs it
         // before _setup is called.
@@ -569,7 +569,7 @@ YUI.prototype = {
 
     // inheritance utilities are not available yet
     for (i in p) {
-        if (true) { // hasOwnProperty not available yet and not needed
+        if (true) {
             Y[i] = p[i];
         }
     }
@@ -2287,6 +2287,14 @@ var BASE = 'base',
 
     comboBase: 'http://yui.yahooapis.com/combo?',
 
+    skin: {
+        defaultSkin: 'sam',
+        base: 'assets/skins/',
+        path: 'skin.css',
+        after: ['reset', 'fonts', 'grids', 'base']
+        //rollup: 3
+    },
+
     modules: {
 
        dom: {
@@ -2488,7 +2496,8 @@ var BASE = 'base',
                     skinnable: true
                 },
                 'widget-stdmod': { }
-            }
+            },
+            skinnable: true
         },
 
         // Since YUI is required for everything else, it should not be specified as
@@ -2807,6 +2816,46 @@ Y.Env.meta = META;
 
         this.skipped = {};
 
+        /**
+         * Provides the information used to skin the skinnable components.
+         * The following skin definition would result in 'skin1' and 'skin2'
+         * being loaded for calendar (if calendar was requested), and
+         * 'sam' for all other skinnable components:
+         *
+         *   <code>
+         *   skin: {
+         *
+         *      // The default skin, which is automatically applied if not
+         *      // overriden by a component-specific skin definition.
+         *      // Change this in to apply a different skin globally
+         *      defaultSkin: 'sam', 
+         *
+         *      // This is combined with the loader base property to get
+         *      // the default root directory for a skin. ex:
+         *      // http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/
+         *      base: 'assets/skins/',
+         *
+         *      // The name of the rollup css file for the skin
+         *      path: 'skin.css',
+         *
+         *      // The number of skinnable components requested that are
+         *      // required before using the rollup file rather than the
+         *      // individual component css files
+         *      rollup: 3,
+         *
+         *      // Any component-specific overrides can be specified here,
+         *      // making it possible to load different skins for different
+         *      // components.  It is possible to load more than one skin
+         *      // for a given component as well.
+         *      overrides: {
+         *          calendar: ['skin1', 'skin2']
+         *      }
+         *   }
+         *   </code>
+         *   @property skin
+         */
+         this.skin = Y.merge(Y.Env.meta.skin);
+
         // Y.on('yui:load', this.loadNext, this);
 
         this._config(o);
@@ -2825,6 +2874,8 @@ Y.Env.meta = META;
                 'replaceStr': "-debug.js"
             }
         },
+
+        SKIN_PREFIX: "skin-",
 
         _config: function(o) {
 
@@ -2879,6 +2930,90 @@ Y.Env.meta = META;
                 this.filter = this.FILTERS[f];
             }
 
+        },
+
+        /**
+         * Returns the skin module name for the specified skin name.  If a
+         * module name is supplied, the returned skin module name is 
+         * specific to the module passed in.
+         * @method formatSkin
+         * @param skin {string} the name of the skin
+         * @param mod {string} optional: the name of a module to skin
+         * @return {string} the full skin module name
+         */
+        formatSkin: function(skin, mod) {
+            var s = this.SKIN_PREFIX + skin;
+            if (mod) {
+                s = s + "-" + mod;
+            }
+
+            return s;
+        },
+
+        /**
+         * Reverses <code>formatSkin</code>, providing the skin name and
+         * module name if the string matches the pattern for skins.
+         * @method parseSkin
+         * @param mod {string} the module name to parse
+         * @return {skin: string, module: string} the parsed skin name 
+         * and module name, or null if the supplied string does not match
+         * the skin pattern
+         */
+        parseSkin: function(mod) {
+            
+            if (mod.indexOf(this.SKIN_PREFIX) === 0) {
+                var a = mod.split("-");
+                return {skin: a[1], module: a[2]};
+            } 
+
+            return null;
+        },
+
+        /**
+         * Adds the skin def to the module info
+         * @method _addSkin
+         * @param skin {string} the name of the skin
+         * @param mod {string} the name of the module
+         * @return {string} the module name for the skin
+         * @private
+         */
+        _addSkin: function(skin, mod) {
+
+            // Add a module definition for the skin rollup css
+            var name = this.formatSkin(skin), info = this.moduleInfo,
+                sinf = this.skin, ext = info[mod] && info[mod].ext;
+
+            // Y.log('ext? ' + mod + ": " + ext);
+            if (!info[name]) {
+                // Y.log('adding skin ' + name);
+                this.addModule({
+                    'name': name,
+                    'type': 'css',
+                    'path': sinf.base + skin + '/' + sinf.path,
+                    //'supersedes': '*',
+                    'after': sinf.after,
+                    'rollup': sinf.rollup,
+                    'ext': ext
+                });
+            }
+
+            // Add a module definition for the module-specific skin css
+            if (mod) {
+                name = this.formatSkin(skin, mod);
+                if (!info[name]) {
+                    var mdef = info[mod], pkg = mdef.pkg || mod;
+                    // Y.log('adding skin ' + name);
+                    this.addModule({
+                        'name': name,
+                        'type': 'css',
+                        'after': sinf.after,
+                        'path': pkg + '/' + sinf.base + skin + '/' + mod + '.css',
+                        'ext': ext
+                    });
+                }
+            }
+
+            return name;
         },
 
         /** Add a new module to the component metadata.         
@@ -3126,6 +3261,26 @@ Y.Env.meta = META;
         _setup: function() {
 
             var info = this.moduleInfo, name, i, j;
+
+            // Create skin modules
+            for (name in info) {
+                if (info.hasOwnProperty(name)) {
+                    var m = info[name];
+                    if (m && m.skinnable) {
+                        // Y.log("skinning: " + name);
+                        var o=this.skin.overrides, smod;
+                        if (o && o[name]) {
+                            for (i=0; i<o[name].length; i=i+1) {
+                                smod = this._addSkin(o[name][i], name);
+                            }
+                        } else {
+                            smod = this._addSkin(this.skin.defaultSkin, name);
+                        }
+
+                        m.requires.push(smod);
+                    }
+                }
+            }
 
             var l = Y.merge(this.inserted); // shallow clone
 

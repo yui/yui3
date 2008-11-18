@@ -523,6 +523,7 @@ Y.DOM = {
         });
     }
 })();
+
 /** 
  * The DOM utility provides a cross-browser abtraction layer
  * normalizing DOM tasks, and adds extra helper functionality
@@ -604,6 +605,7 @@ Y.mix(Y.DOM, {
         }
     }
 });
+
 
 
 

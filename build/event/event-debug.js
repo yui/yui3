@@ -75,6 +75,12 @@ YUI.add("event", function(Y) {
         available: {
 
             on: function(type, fn, id, o) {
+            // onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
+
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
+
+                /*
 
                 var a = Y.Array(arguments, 1, true), m = fn;
 
@@ -91,6 +97,7 @@ YUI.add("event", function(Y) {
 
 
                 return Y.Event.onAvailable.apply(Y.Event, a);
+                */
 
             },
 
@@ -109,7 +116,11 @@ YUI.add("event", function(Y) {
         contentready: {
 
             on: function(type, fn, id, o) {
+                
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
 
+                /*
                 var a = Y.Array(arguments, 1, true), m = fn;
 
                 a.splice(1, 1);
@@ -121,6 +132,7 @@ YUI.add("event", function(Y) {
                 }
 
                 return Y.Event.onContentReady.apply(Y.Event, a);
+                */
             },
 
             detach: function() {
@@ -1057,6 +1069,16 @@ YUI.add("event-custom", function(Y) {
 
                 var ef = null;
                 if (this.emitFacade) {
+
+                    // this.fire({
+                    //   foo: 1
+                    //   bar: 2
+                    // }
+                    // this.fire({
+                    //   bar: 2
+                    // } // foo is still 1 unless we create a new facade
+                    this._facade = null;
+
                     ef = this._getFacade(args);
                     args[0] = ef;
                 }
@@ -1317,21 +1339,31 @@ YUI.add("event-custom", function(Y) {
          * @param ce {Event.Custom} The custom event that sent the notification
          */
         notify: function(defaultContext, args, ce) {
-            var c = this.obj || defaultContext, ret = true;
+            var c = this.obj || defaultContext, ret = true,
 
-            try {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.obj);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.obj);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
+                f = function() {
+                    switch (ce.signature) {
+                        case 0:
+                            ret = this.fn.call(c, ce.type, args, this.obj);
+                            break;
+                        case 1:
+                            ret = this.fn.call(c, args[0] || null, this.obj);
+                            break;
+                        default:
+                            ret = this.wrappedFn.apply(c, args || []);
+                    }
+                };
+
+            // Ease debugging by only catching errors if we will not re-throw
+            // them.
+            if (Y.config.throwFail) {
+                f.call(this);
+            } else {
+                try {
+                    f.call(this);
+                } catch(e) {
+                    Y.fail(this + ' failed: ' + e.message, e);
                 }
-            } catch(e) {
-                Y.fail(this + ' failed: ' + e.message, e);
             }
 
             return ret;
@@ -2542,17 +2574,27 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 var notAvail = [];
 
                 var executeItem = function (el, item) {
-                    var context;
-                    if (item.override) {
-                        if (item.override === true) {
-                            context = item.obj;
+                    var context, ov = item.override;
+
+                    if (item.compat) {
+
+                        if (item.override) {
+                            if (ov === true) {
+                                context = item.obj;
+                            } else {
+                                context = ov;
+                            }
                         } else {
-                            context = item.override;
+                            context = el;
                         }
+
+                        item.fn.call(context, item.obj);
+
                     } else {
-                        context = (item.compat) ? el : Y.get(el);
+                        context = item.obj || Y.get(el);
+                        item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                     }
-                    item.fn.call(context, item.obj);
+
                 };
 
                 var i, len, item, el;
