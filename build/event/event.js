@@ -365,18 +365,21 @@ YUI.add("aop", function(Y) {
             // register the callback
             o[sFn].register(sid, fn, when);
 
-            return sid;
+            return new Y.EventHandle(o[sFn], sid);
 
         },
 
         /**
          * Detach a before or after subscription
          * @method detach
-         * @param sid {string} the subscription handle
+         * @param handle {string} the subscription handle
          */
-        detach: function(sid) {
-            delete this.before[sid];
-            delete this.after[sid];
+        detach: function(handle) {
+
+            if (handle.detach) {
+                handle.detach();
+            }
+
         },
 
         _unload: function(e, me) {
@@ -418,6 +421,18 @@ YUI.add("aop", function(Y) {
             // this.before.push(fn);
             this.before[sid] = fn;
         }
+    };
+
+    /**
+     * Unregister a aop subscriber
+     * @method delete
+     * @param sid {string} the subscriber id
+     * @param fn {Function} the function to execute
+     * @param when {string} when to execute the function
+     */
+    Y.Do.Method.prototype._delete = function (sid) {
+        delete this.before[sid];
+        delete this.after[sid];
     };
 
     /**
@@ -573,6 +588,7 @@ YUI.add("event-custom", function(Y) {
          * @method detach
          */
         detach: function() {
+
             if (this.evt) {
                 this.evt._delete(this.sub);
             }
