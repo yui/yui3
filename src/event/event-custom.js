@@ -56,7 +56,9 @@ YUI.add("event-custom", function(Y) {
          * @method detach
          */
         detach: function() {
+
             if (this.evt) {
+                // Y.log('EventHandle.detach: ' + this.sub, 'info', 'Event');
                 this.evt._delete(this.sub);
             }
         }
