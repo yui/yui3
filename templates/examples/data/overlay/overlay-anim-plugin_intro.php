@@ -1,0 +1,1 @@
+This example show how you can use Widget's plugin infrastructure to customize the behavior of an existing widget. We create an Animation plugin for Overlay which changes the way Overlay instances are shown/hidden by fading them in/out.

@@ -2397,16 +2397,24 @@ var BASE = 'base',
         
         io:{
             submodules: {
+
                 'io-base': {
                     requires: ['node']
                 }, 
+
                 'io-xdr': {
                     requires: ['io-base']
                 }, 
+
                 'io-form': {
                     requires: ['io-base']
                 }, 
+
                 'io-upload-iframe': {
+                    requires: ['io-base']
+                },
+
+                'io-queue': {
                     requires: ['io-base']
                 }
             }

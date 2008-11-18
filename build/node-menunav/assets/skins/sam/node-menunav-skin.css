@@ -1,4 +1,4 @@
-/* Menus and submenus */
+/* Vertical menus and submenus */
 
 .yui-skin-sam .yui-menu-content, 
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-content {
@@ -8,6 +8,7 @@
     *line-height: 1.45; /* For IE */
     border: solid 1px #808080;
     background: #fff;
+    padding: 3px 0;
 
 }
 
@@ -18,52 +19,51 @@
 }
 
 
-/* Menubars */
+/* Horizontal menus */
 
 .yui-skin-sam .yui-menu-horizontal .yui-menu-content {
 
     line-height: 2;  /* ~24px */
     *line-height: 1.9; /* For IE */
     background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+    padding: 0;
 
 }
 
-/*	The follow two rules are for IE 7 */
-
-.yui-menu-horizontal .yui-menu .yui-menu-content {	/* First-tier submenus of a horizontal menu */
-
-	*zoom: 1;
-	_zoom: normal;
-
-}
-
-.yui-menu-horizontal .yui-menu .yui-menu .yui-menu-content {	/* Submenus of first-tier submenus of a horizontal menu */
-
-	*zoom: normal;
-
-}
 
 .yui-skin-sam .yui-menu ul,
 .yui-skin-sam .yui-menu ul ul {
 
-    padding: 3px 0;
+	margin-top: 3px;
+	padding-top: 3px;
+    border-top: solid 1px #ccc;
+
+}
+
+.yui-skin-sam .yui-menu ul.first-of-type {
+
+    border: 0;
+	margin: 0;
+	padding: 0;    
 
 }
 
 .yui-skin-sam .yui-menu-horizontal ul {
 
 	padding: 0;
+	margin: 0;
+	border: 0;
 
 }
+
 
 .yui-skin-sam .yui-menu li,
 .yui-skin-sam .yui-menu .yui-menu li {
 
     /*
-        For IE 7 Quirks and IE 6 Strict Mode and Quirks Mode:
-        Used to collapse superfluous white space between <li> elements
-        that is triggered by the "display" property of the <a> elements being
-        set to "block."
+        For and IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode only): Used to collapse 
+        superfluous white space between <li> elements that is triggered by the "display" property 
+        of the <a> elements being set to "block" by node-menunav-core.css file.
     */
 
     _border-bottom: solid 1px #fff;
@@ -75,8 +75,6 @@
 	_border-bottom: 0;
 
 }
-
-
 
 .yui-skin-sam .yui-menubuttonnav li {
 
@@ -98,33 +96,8 @@
 }
 
 
+/* Menuitems and menu labels */
 
-
-
-/* MenuItems and Menu Labels */
-
-.yui-skin-sam .yui-menu-label,
-.yui-skin-sam .yui-menuitem-content {
-
-	/*
-		Setting the "zoom" property to "1" triggers the "hasLayout" property in IE.  This is 
-		necessary to fix a bug IE where mousing mousing off a the text node of MenuItem instance's 
-		text label, or help text without the mouse actually exiting the boundaries of the MenuItem 
-		instance will result in the losing the background color applied when it is selected.
-	*/
-
-	_zoom: 1;
-
-}
-
-.yui-skin-sam .yui-menu .yui-menu .yui-menu-label,
-.yui-skin-sam .yui-menu .yui-menu .yui-menuitem-content {
-
-	/*	Remove "hasLayout" from the submenu of the file menu. */
-
-	_zoom: normal;
-
-}
 
 .yui-skin-sam .yui-menu-label,
 .yui-skin-sam .yui-menu .yui-menu .yui-menu-label,
@@ -156,7 +129,8 @@
     border-width: 1px 0;
     margin: -1px 0;
 
-    float: left; /* provides inline-block-style element for IE */
+    float: left; 	/*	Ensures that menu labels clear floated descendents. Also gets negative 
+    					margins working in IE 7 (Strict Mode). */
     width: auto;
 
 }
@@ -191,7 +165,6 @@
 
 	padding-right: 20px;
     display: block;
-    *display: inline-block;	/* fixes IE mouseover issue */
     background: url(horizontal-menu-submenu-indicator.png) right center no-repeat;
 
 }
@@ -216,7 +189,7 @@
 
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label .yui-menu-toggle {
 	
-	padding: 0 10px 0 0;	/* Remove padding applied by the rule above. */
+	padding: 0 10px 0 0;	/* Overide padding applied by the preceeding rule. */
 	border-left: solid 1px #ccc; 
 	width: 5px;
 	overflow: hidden;
@@ -226,7 +199,7 @@
 }
 
 
-/* Selected MenuItem */
+/* Selected menuitem */
 
 .yui-skin-sam .yui-menu-label-active,
 .yui-skin-sam .yui-menu-label-menuvisible,
@@ -243,12 +216,15 @@
 	background-image: none;
     background-color: #B3D4FF;
     
-    /* undo properties set further down */
+    /*
+    	Undo values set for "border-left-width" and "margin-left" when the root menu has a class of
+    	"yui-menubuttonnav" or "yui-splitbuttonnav" applied.
+    */
+
 	border-left-width: 0;
     margin-left: 0;
 
 }
-
 
 .yui-skin-sam .yui-menu-horizontal .yui-menu-label-active,
 .yui-skin-sam .yui-menu-horizontal .yui-menuitem-active .yui-menuitem-content,
@@ -262,7 +238,6 @@
 .yui-skin-sam .yui-menubuttonnav .yui-menu-label-active,
 .yui-skin-sam .yui-menubuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-menubuttonnav .yui-menu-label-menuvisible,
-
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label-active,
 .yui-skin-sam .yui-splitbuttonnav .yui-menuitem-active .yui-menuitem-content,
 .yui-skin-sam .yui-splitbuttonnav .yui-menu-label-menuvisible {
