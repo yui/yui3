@@ -1,11 +1,11 @@
-.yui-skin-sam .yui-logreader {
+.yui-skin-sam .yui-console {
     position:absolute;
     right:1em;
     top:1em;
     z-index:50;
 }
 
-.yui-skin-sam .yui-logreader-content {
+.yui-skin-sam .yui-console-content {
     border: 1px solid #777;
     color:#000;
     font: normal 77%/1.3 Arial, sans-serif;
@@ -14,18 +14,18 @@
     width:31em;
 }
 
-.yui-skin-sam .yui-logreader-hd,
-.yui-skin-sam .yui-logreader-controls {
+.yui-skin-sam .yui-console-hd,
+.yui-skin-sam .yui-console-controls {
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     height: 2em;
     padding: 0 1ex;
 }
-.yui-skin-sam .yui-logreader-hd h4 {
+.yui-skin-sam .yui-console-hd h4 {
     font-size: 100%;
     line-height: 2em;
     margin: 0;
 }
-.yui-skin-sam .yui-logreader-button {
+.yui-skin-sam .yui-console-button {
     background: #D8D8DA url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
     border: none;
     border-left: 1px solid #777;
@@ -34,7 +34,7 @@
     position: absolute;
     right: 0;
 }
-.yui-skin-sam .yui-logreader-console {
+.yui-skin-sam .yui-console-console {
     background: #fff;
     border-top: 1px solid #777;
     border-bottom: 1px solid #777;
@@ -42,46 +42,46 @@
     overflow: auto;
     width: 100%;
 }
-.yui-skin-sam .yui-logreader-hd .yui-logreader-controls {
+.yui-skin-sam .yui-console-hd .yui-console-controls {
     position: absolute;
     right: 0;
 }
 
 /* Log entries */
-.yui-skin-sam .yui-logreader-entry {
+.yui-skin-sam .yui-console-entry {
     border-bottom: 1px dotted #aaa;
     margin: 0;
     padding: 0 0 1ex;
 }
 
-.yui-skin-sam .yui-logreader-entry p {
+.yui-skin-sam .yui-console-entry p {
     margin: 0;
 }
-.yui-skin-sam .yui-logreader-entry .yui-logreader-entry-src {
+.yui-skin-sam .yui-console-entry .yui-console-entry-src {
     margin: 0 0 0 1ex;
 }
-.yui-skin-sam .yui-logreader-entry .yui-logreader-entry-content {
+.yui-skin-sam .yui-console-entry .yui-console-entry-content {
     margin: 1ex 0 1ex 1ex;
 }
 
-.yui-skin-sam .yui-logreader-entry-meta {
+.yui-skin-sam .yui-console-entry-meta {
     font-family: Arial, sans-serif;
 }
-.yui-skin-sam .yui-logreader-entry-cat {
+.yui-skin-sam .yui-console-entry-cat {
     text-transform: uppercase;
     padding: 1px 4px;
     background-color: #ccc;
 }
-.yui-skin-sam .yui-logreader-entry-src {
+.yui-skin-sam .yui-console-entry-src {
     font-style: italic;
 }
-.yui-skin-sam .yui-logreader-entry-info .yui-logreader-entry-cat {
+.yui-skin-sam .yui-console-entry-info .yui-console-entry-cat {
     background-color: #ac2;
 }
-.yui-skin-sam .yui-logreader-entry-warn .yui-logreader-entry-cat {
+.yui-skin-sam .yui-console-entry-warn .yui-console-entry-cat {
     background-color: #e81;
 }
-.yui-skin-sam .yui-logreader-entry-error .yui-logreader-entry-cat {
+.yui-skin-sam .yui-console-entry-error .yui-console-entry-cat {
     background-color: #b00;
     color: #fff;
 }
