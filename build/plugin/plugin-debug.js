@@ -1,69 +1,36 @@
 YUI.add('plugin', function(Y) {
 
 
-        // TODO: Move to Y.add/register
-        // var _registry = {};
-
         /**
          * Plugin provides a base class for all Plugin classes.
          * 
-         * @class YUI.Widget
-         * @extends YUI.Base
+         * @class Plugin 
+         * @extends Base
          * @param {Object} config The configuration object for the
          * plugin.
          */
         function Plugin(config) {
             Plugin.superclass.constructor.apply(this, arguments);
-            //this.initializer.apply(this, arguments);
         }
-
-        // No attributes
-        // Plugin.ATTRS = null
 
         /**
          * Static property provides a string to identify the class.
          *
-         * @property YUI.Plugin.NAME
+         * @property Plugin.NAME
          * @type {String}
          * @static
          */
         Plugin.NAME = 'plugin';
 
-
         /**
          * Static property provides the namespace the plugin will be
          * registered under.
          *
-         * @property YUI.Plugin.NS
+         * @property Plugin.NS
          * @type {String}
          * @static
          */
         Plugin.NS = 'plugin';
-
-        /**
-         * Registers a Plugin. The Plugin class passed in is expected
-         * to have a static NS property defined which is used to register
-         * the plugin and define it's namespace on the host object
-         * 
-         * If more than one plugin is registered with the same namespace
-         * on the page, the last one registered will win.
-         * 
-         * @param {Function} pluginclass
-         */
-        // TODO: Move to Y.add
-        // Plugin.add = function(pluginclass) {
-        //    if (pluginclass.NS) {
-        //        _registry[pluginclass.NS] = pluginclass;
-        //    }
-        // };
-
-        /**
-         * Retrieve the plugin class for a given plugin namespace.
-         * @param {Object} ns The plugin's namespace
-         */
-        // Plugin.get = function(ns) {
-        //    return _registry[ns];
-        // };
 
         var proto = {
             _handles: null,
@@ -97,8 +64,10 @@ YUI.add('plugin', function(Y) {
              */
             destructor: function() {
                 // remove all handles
-                for (i = 0; i < this._handles.length; i++) {
-                   this.detach(this._handles[i]);
+                if (this._handles) {
+                    for (var i = 0, l = this._handles.length; i < l; i++) {
+                       this.detach(this._handles[i]);
+                    }
                 }
             },
 
@@ -152,6 +121,7 @@ YUI.add('plugin', function(Y) {
 
         Y.extend(Plugin, Y.Base, proto);
         Y.Plugin = Plugin;
+
 
 
 }, '@VERSION@' ,{requires:['base']});
