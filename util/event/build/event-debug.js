@@ -10,6 +10,13 @@ YUI.add("event", function(Y) {
 
     Y.Env.eventAdaptors = {
 
+        /**
+         * Adds a DOM focus listener.  Uses the focusin event in IE,
+         * and the capture phase otherwise so that
+         * the event propagates properly.
+         * @for YUI
+         * @event focus
+         */
         focus: {
 
             on: function() {
@@ -31,6 +38,13 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Adds a DOM focus listener.  Uses the focusout event in IE,
+         * and the capture phase otherwise so that
+         * the event propagates properly.
+         * @for YUI
+         * @event blur
+         */
         blur: {
 
             on: function() {
@@ -52,21 +66,38 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Executes the callback as soon as the specified element 
+         * is detected in the DOM.
+         * @for YUI
+         * @event available
+         */
         available: {
 
             on: function(type, fn, id, o) {
+            // onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
-                var a = Y.Array(arguments, 0, true), m = fn;
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onAvailable.call(Y.Event, id, fn, o, a);
 
-                a.splice(2, 1);
+                /*
+
+                var a = Y.Array(arguments, 1, true), m = fn;
+
+                a.splice(1, 1);
                 a.unshift(id);
+
+                Y.log(a);
 
                 if (o) {
                     var a2 = a.slice(1);
+                    // Y.log(a2);
                     m = Y.bind.apply(Y, a2);
                 }
 
+
                 return Y.Event.onAvailable.apply(Y.Event, a);
+                */
 
             },
 
@@ -75,13 +106,24 @@ YUI.add("event", function(Y) {
             }
         },
 
+        /**
+         * Executes the callback as soon as the specified element 
+         * is detected in the DOM with a nextSibling property
+         * (indicating that the element's children are available)
+         * @for YUI
+         * @event contentready
+         */
         contentready: {
 
             on: function(type, fn, id, o) {
+                
+                var a = arguments.length > 4 ?  Y.Array(arguments, 4, true) : [];
+                return Y.Event.onContentReady.call(Y.Event, id, fn, o, a);
 
-                var a = Y.Array(arguments, 0, true), m = fn;
+                /*
+                var a = Y.Array(arguments, 1, true), m = fn;
 
-                a.splice(2, 1);
+                a.splice(1, 1);
                 a.unshift(id);
 
                 if (o) {
@@ -90,6 +132,7 @@ YUI.add("event", function(Y) {
                 }
 
                 return Y.Event.onContentReady.apply(Y.Event, a);
+                */
             },
 
             detach: function() {
@@ -98,22 +141,6 @@ YUI.add("event", function(Y) {
         }
 
     };
-
-    /*
-     * Subscribes to the yui:load event, which fires when a Y.use operation
-     * is complete.
-     * @method ready
-     * @param f {Function} the function to execute
-     * @param c Optional execution context
-     * @param args* 0..n Additional arguments to append 
-     * to the signature provided when the event fires.
-     * @return {YUI} the YUI instance
-     */
-    // Y.ready = function(f, c) {
-    //     var a = arguments, m = (a.length > 1) ? Y.bind.apply(Y, a) : f;
-    //     Y.on("yui:load", m);
-    //     return this;
-    // };
 
     /**
      * Attach an event listener, either to a DOM object
@@ -134,17 +161,11 @@ YUI.add("event", function(Y) {
         var adapt = Y.Env.eventAdaptors[type];
 
         if (adapt) {
-
+            Y.log('Using adaptor for ' + type, 'info', 'event');
             return adapt.on.apply(Y, arguments);
-
         } else {
-
             if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.subscribe.apply(Y, arguments);
-                }
+                return Y.subscribe.apply(Y, arguments);
             } else {
                 return Y.Event.attach.apply(Y.Event, arguments);
             }
@@ -175,11 +196,7 @@ YUI.add("event", function(Y) {
             if (adapt) {
                 adapt.detach.apply(Y, arguments);
             } else if (type.indexOf(':') > -1) {
-                var cat = type.split(':');
-                switch (cat[0]) {
-                    default:
-                        return Y.unsubscribe.apply(Y, arguments);
-                }
+                return Y.unsubscribe.apply(Y, arguments);
             } else {
                 return Y.Event.detach.apply(Y.Event, arguments);
             }
@@ -201,14 +218,14 @@ YUI.add("event", function(Y) {
      * @return unsubscribe handle
      */
     Y.before = function(type, f, o) { 
-        // method override
-        // callback, object, sMethod
         if (Y.Lang.isFunction(type)) {
             return Y.Do.before.apply(Y.Do, arguments);
+        } else {
+            return Y.on.apply(Y, arguments);
         }
-
-        return Y;
     };
+
+    var after = Y.after;
 
     /**
      * Executes the callback after a DOM event, custom event
@@ -229,11 +246,10 @@ YUI.add("event", function(Y) {
     Y.after = function(type, f, o) {
         if (Y.Lang.isFunction(type)) {
             return Y.Do.after.apply(Y.Do, arguments);
+        } else {
+            return after.apply(Y, arguments);
         }
-
-        return Y;
     };
-
 
 
 }, "3.0.0", {
@@ -424,9 +440,9 @@ YUI.add("aop", function(Y) {
             if (bf.hasOwnProperty(i)) {
                 ret = bf[i].apply(this.obj, args);
 
-                // Stop processing if an Error is returned
-                if (ret && ret.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error before " + this.methodName + 
+                // Stop processing if a Halt object is returned
+                if (ret && ret.constructor == Y.Do.Halt) {
+                    // this.logger.debug("Halt before " + this.methodName + 
                     //      ": " ret.msg);
                     return ret.retVal;
                 // Check for altered arguments
@@ -446,9 +462,9 @@ YUI.add("aop", function(Y) {
         for (i in af) {
             if (af.hasOwnProperty(i)) {
                 newRet = af[i].apply(this.obj, args);
-                // Stop processing if an Error is returned
-                if (newRet && newRet.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error after " + this.methodName + 
+                // Stop processing if a Halt object is returned
+                if (newRet && newRet.constructor == Y.Do.Halt) {
+                    // this.logger.debug("Halt after " + this.methodName + 
                     //      ": " ret.msg);
                     return newRet.retVal;
                 // Check for a new return value
@@ -465,15 +481,6 @@ YUI.add("aop", function(Y) {
 
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Return an Error object when you want to terminate the execution
-     * of all subsequent method calls
-     * @class Do.Error
-     */
-    Y.Do.Error = function(msg, retVal) {
-        this.msg = msg;
-        this.retVal = retVal;
-    };
 
     /**
      * Return an AlterArgs object when you want to change the arguments that
@@ -495,6 +502,25 @@ YUI.add("aop", function(Y) {
         this.msg = msg;
         this.newRetVal = newRetVal;
     };
+
+    /**
+     * Return a Halt object when you want to terminate the execution
+     * of all subsequent subscribers as well as the wrapped method
+     * if it has not exectued yet.
+     * @class Do.Halt
+     */
+    Y.Do.Halt = function(msg, retVal) {
+        this.msg = msg;
+        this.retVal = retVal;
+    };
+
+    /**
+     * Return an Error object when you want to terminate the execution
+     * of all subsequent method calls.
+     * @class Do.Error
+     * @deprecated
+     */
+    Y.Do.Error = Y.Do.Halt;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -1053,6 +1079,16 @@ YUI.add("event-custom", function(Y) {
 
                 var ef = null;
                 if (this.emitFacade) {
+
+                    // this.fire({
+                    //   foo: 1
+                    //   bar: 2
+                    // }
+                    // this.fire({
+                    //   bar: 2
+                    // } // foo is still 1 unless we create a new facade
+                    this._facade = null;
+
                     ef = this._getFacade(args);
                     args[0] = ef;
                 }
@@ -1313,21 +1349,31 @@ YUI.add("event-custom", function(Y) {
          * @param ce {Event.Custom} The custom event that sent the notification
          */
         notify: function(defaultContext, args, ce) {
-            var c = this.obj || defaultContext, ret = true;
+            var c = this.obj || defaultContext, ret = true,
 
-            try {
-                switch (ce.signature) {
-                    case 0:
-                        ret = this.fn.call(c, ce.type, args, this.obj);
-                        break;
-                    case 1:
-                        ret = this.fn.call(c, args[0] || null, this.obj);
-                        break;
-                    default:
-                        ret = this.wrappedFn.apply(c, args || []);
+                f = function() {
+                    switch (ce.signature) {
+                        case 0:
+                            ret = this.fn.call(c, ce.type, args, this.obj);
+                            break;
+                        case 1:
+                            ret = this.fn.call(c, args[0] || null, this.obj);
+                            break;
+                        default:
+                            ret = this.wrappedFn.apply(c, args || []);
+                    }
+                };
+
+            // Ease debugging by only catching errors if we will not re-throw
+            // them.
+            if (Y.config.throwFail) {
+                f.call(this);
+            } else {
+                try {
+                    f.call(this);
+                } catch(e) {
+                    Y.fail(this + ' failed: ' + e.message, e);
                 }
-            } catch(e) {
-                Y.fail(this + ' failed: ' + e.message, e);
             }
 
             return ret;
@@ -1405,6 +1451,7 @@ YUI.add("event-target", function(Y) {
 
     var ET = Y.EventTarget;
 
+
     ET.prototype = {
 
         /**
@@ -1416,6 +1463,30 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         subscribe: function(type, fn, context) {
+
+            if (Y.Lang.isObject(type)) {
+
+                var f = fn, c = context, args = Y.Array(arguments, 0, true),
+                    ret = {};
+
+                Y.each(type, function(v, k) {
+
+                    if (v) {
+                        f = v.fn || f;
+                        c = v.context || c;
+                    }
+
+                    args[0] = k;
+                    args[1] = f;
+                    args[2] = c;
+
+                    ret[k] = this.subscribe.apply(this, args); 
+
+                }, this);
+
+                return ret;
+
+            }
 
             var ce = this._yuievt.events[type] || 
                 // this.publish(type, {
@@ -1536,6 +1607,15 @@ YUI.add("event-target", function(Y) {
          *
          */
         publish: function(type, opts) {
+
+            if (Y.Lang.isObject(type)) {
+                var ret = {};
+                Y.each(type, function(v, k) {
+                    ret[k] = this.publish(k, v || opts); 
+                }, this);
+
+                return ret;
+            }
 
             var events = this._yuievt.events, ce = events[type];
 
@@ -1729,14 +1809,26 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || 
-                // this.publish(type, {
-                //     configured: false
-                // }),
-                this.publish(type),
-                a = Y.Array(arguments, 1, true);
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                var ce = this._yuievt.events[type] || 
+                    // this.publish(type, {
+                    //     configured: false
+                    // }),
+                    this.publish(type),
+                    a = Y.Array(arguments, 1, true);
 
-            return ce.after.apply(ce, a);
+                return ce.after.apply(ce, a);
+            }
+        },
+
+        before: function(type, fn) {
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                return this.subscribe.apply(this, arguments);
+            }
         }
 
     };
@@ -2062,14 +2154,14 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              *                   will execute in the context of that object
              * @param checkContent {boolean} check child node readiness (onContentReady)
              * @static
-             * @deprecated This will be replaced with a special Y.on custom event
+             * @deprecated Use Y.on("available")
              */
             // @TODO fix arguments
             onAvailable: function(id, fn, p_obj, p_override, checkContent, compat) {
 
                 var a = Y.Array(id);
 
-                Y.log('onAvailable registered for: ' + id);
+                // Y.log('onAvailable registered for: ' + id);
 
                 for (var i=0; i<a.length; i=i+1) {
                     _avail.push({ 
@@ -2108,7 +2200,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
              *                   exectute in the context of that object
              *
              * @static
-             * @deprecated This will be replaced with a special Y.on custom event
+             * @deprecated Use Y.on("contentready")
              */
             // @TODO fix arguments
             onContentReady: function(id, fn, p_obj, p_override, compat) {
@@ -2140,9 +2232,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 // Y.log('attach: ' + Y.Lang.dump(Y.Array(arguments, 0, true), 1));
                 // Y.log('attach:');
                 // Y.log(Y.Array(arguments, 0, true), 1);
-
                 // var a=Y.Array(arguments, 1, true), override=a[3], E=Y.Event, aa=Y.Array(arguments, 0, true);
-
 
                 var args=Y.Array(arguments, 0, true), 
                     trimmedArgs=args.slice(1),
@@ -2151,7 +2241,7 @@ E._interval = setInterval(Y.bind(E._tryPreloadAttach, E), E.POLL_INTERVAL);
                 if (type.indexOf(CAPTURE) > -1) {
                     type = type.substr(CAPTURE.length);
                     capture = true;
-                    Y.log('Using capture phase for: ' + type, 'info', 'Event');
+                    Y.log('Using capture phase for: ' + type, 'info', 'event');
                 }
 
                 if (trimmedArgs[trimmedArgs.length-1] === COMPAT_ARG) {
@@ -2194,23 +2284,41 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     // until after the page loads.
 
                     // Node collection
-                    if (oEl && oEl.size && oEl.size() > 0) {
-                        if (oEl.size() > 1) {
-                            args[0] = oEl;
+                    // if (oEl && oEl.size && oEl.size() > 0) {
+                    //
+                    // Y.log('node?: ' + (oEl instanceof Y.Node));
+
+                    /*
+                    if (oEl) {
+                        el = oEl;
+                    */
+
+                    if (oEl && (oEl instanceof Y.Node)) {
+                        var size = oEl.size();
+                        if (size > 1) {
+                            // Y.log('more than one: ' + size + ', ' + type);
+                            // args[0] = oEl;
+                            args[2] = oEl;
                             return E.attach.apply(E, args);
                         } else {
+                            // Y.log('just one: ' + size + ', ' + type);
                             el = oEl.item(0);
+                            // el = oEl;
                         }
 
                     // HTMLElement
-                    } else if (compat && oEl) {
-
+                    // } else if (compat && oEl) {
+                    } else if (oEl) {
+                        // Y.log('no size: ' + oEl + ', ' + type);
                         el = oEl;
 
                     // Not found = defer adding the event until the element is available
                     } else {
 
+                        // Y.log(el + ' not found');
+
                         return this.onAvailable(el, function() {
+                            // Y.log('lazy attach: ' + args);
                             E.attach.apply(E, args);
                         }, E, true, false, compat);
                     }
@@ -2218,7 +2326,7 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                 // Element should be an html element or an array if we get here.
                 if (!el) {
-                    Y.log("unable to attach event " + type);
+                    Y.log("unable to attach event " + type, "warn", "event");
                     return false;
                 }
 
@@ -2263,6 +2371,8 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
 
                     // var capture = (Y.lang.isObject(obj) && obj.capture);
                     // attach a listener that fires the custom event
+
+                    // Y.log("Attaching listener: " + [el, type, cewrapper.fn, capture]);
                     add(el, type, cewrapper.fn, capture);
                 }
 
@@ -2314,7 +2424,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 // The el argument can be a string
                 if (typeof el == "string") {
 
-                    // el = Y.get(el);
                     el = (compat) ? Y.DOM.byId(el) : Y.all(el);
 
                 // The el argument can be an array of elements or element ids.
@@ -2366,7 +2475,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                     new Y.Event.Facade(ev, el, _wrappers['event:' + Y.stamp(el) + e.type]);
             },
 
-
             /**
              * Generates an unique ID for the element if it does not already 
              * have one.
@@ -2386,7 +2494,6 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 return id;
             },
 
-
             /**
              * We want to be able to use getElementsByTagName as a collection
              * to attach a group of events to.  Unfortunately, different 
@@ -2401,9 +2508,16 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
              */
             _isValidCollection: function(o) {
                 try {
+                     
+                    // Y.log('node? ' + (o instanceof Y.Node) + ', ' + ((o.size) ? o.size() : ' no size'));
+                    // if (o instanceof Y.Node) {
+                        // o.tagName ="adsf";
+                    // }
+
                     return ( o                     && // o is something
                              typeof o !== "string" && // o is not a string
-                             (o.each || o.length)  && // o is indexed
+                             // o.length  && // o is indexed
+                             (o.length && ((!o.size) || (o.size() > 1)))  && // o is indexed
                              !o.tagName            && // o is not an HTML element
                              !o.alert              && // o is not a window
                              (o.item || typeof o[0] !== "undefined") );
@@ -2482,17 +2596,27 @@ Y.log(type + " attach call failed, invalid callback", "error", "event");
                 var notAvail = [];
 
                 var executeItem = function (el, item) {
-                    var context;
-                    if (item.override) {
-                        if (item.override === true) {
-                            context = item.obj;
+                    var context, ov = item.override;
+
+                    if (item.compat) {
+
+                        if (item.override) {
+                            if (ov === true) {
+                                context = item.obj;
+                            } else {
+                                context = ov;
+                            }
                         } else {
-                            context = item.override;
+                            context = el;
                         }
+
+                        item.fn.call(context, item.obj);
+
                     } else {
-                        context = (item.compat) ? el : Y.get(el);
+                        context = item.obj || Y.get(el);
+                        item.fn.apply(context, (Y.Lang.isArray(ov)) ? ov : []);
                     }
-                    item.fn.call(context, item.obj);
+
                 };
 
                 var i, len, item, el;

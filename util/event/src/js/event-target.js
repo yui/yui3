@@ -43,6 +43,7 @@ YUI.add("event-target", function(Y) {
 
     var ET = Y.EventTarget;
 
+
     ET.prototype = {
 
         /**
@@ -54,6 +55,30 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         subscribe: function(type, fn, context) {
+
+            if (Y.Lang.isObject(type)) {
+
+                var f = fn, c = context, args = Y.Array(arguments, 0, true),
+                    ret = {};
+
+                Y.each(type, function(v, k) {
+
+                    if (v) {
+                        f = v.fn || f;
+                        c = v.context || c;
+                    }
+
+                    args[0] = k;
+                    args[1] = f;
+                    args[2] = c;
+
+                    ret[k] = this.subscribe.apply(this, args); 
+
+                }, this);
+
+                return ret;
+
+            }
 
             var ce = this._yuievt.events[type] || 
                 // this.publish(type, {
@@ -174,6 +199,15 @@ YUI.add("event-target", function(Y) {
          *
          */
         publish: function(type, opts) {
+
+            if (Y.Lang.isObject(type)) {
+                var ret = {};
+                Y.each(type, function(v, k) {
+                    ret[k] = this.publish(k, v || opts); 
+                }, this);
+
+                return ret;
+            }
 
             var events = this._yuievt.events, ce = events[type];
 
@@ -367,14 +401,26 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || 
-                // this.publish(type, {
-                //     configured: false
-                // }),
-                this.publish(type),
-                a = Y.Array(arguments, 1, true);
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                var ce = this._yuievt.events[type] || 
+                    // this.publish(type, {
+                    //     configured: false
+                    // }),
+                    this.publish(type),
+                    a = Y.Array(arguments, 1, true);
 
-            return ce.after.apply(ce, a);
+                return ce.after.apply(ce, a);
+            }
+        },
+
+        before: function(type, fn) {
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                return this.subscribe.apply(this, arguments);
+            }
         }
 
     };
