@@ -440,9 +440,9 @@ YUI.add("aop", function(Y) {
             if (bf.hasOwnProperty(i)) {
                 ret = bf[i].apply(this.obj, args);
 
-                // Stop processing if an Error is returned
-                if (ret && ret.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error before " + this.methodName + 
+                // Stop processing if a Halt object is returned
+                if (ret && ret.constructor == Y.Do.Halt) {
+                    // this.logger.debug("Halt before " + this.methodName + 
                     //      ": " ret.msg);
                     return ret.retVal;
                 // Check for altered arguments
@@ -462,9 +462,9 @@ YUI.add("aop", function(Y) {
         for (i in af) {
             if (af.hasOwnProperty(i)) {
                 newRet = af[i].apply(this.obj, args);
-                // Stop processing if an Error is returned
-                if (newRet && newRet.constructor == Y.Do.Error) {
-                    // this.logger.debug("Error after " + this.methodName + 
+                // Stop processing if a Halt object is returned
+                if (newRet && newRet.constructor == Y.Do.Halt) {
+                    // this.logger.debug("Halt after " + this.methodName + 
                     //      ": " ret.msg);
                     return newRet.retVal;
                 // Check for a new return value
@@ -481,15 +481,6 @@ YUI.add("aop", function(Y) {
 
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Return an Error object when you want to terminate the execution
-     * of all subsequent method calls
-     * @class Do.Error
-     */
-    Y.Do.Error = function(msg, retVal) {
-        this.msg = msg;
-        this.retVal = retVal;
-    };
 
     /**
      * Return an AlterArgs object when you want to change the arguments that
@@ -511,6 +502,25 @@ YUI.add("aop", function(Y) {
         this.msg = msg;
         this.newRetVal = newRetVal;
     };
+
+    /**
+     * Return a Halt object when you want to terminate the execution
+     * of all subsequent subscribers as well as the wrapped method
+     * if it has not exectued yet.
+     * @class Do.Halt
+     */
+    Y.Do.Halt = function(msg, retVal) {
+        this.msg = msg;
+        this.retVal = retVal;
+    };
+
+    /**
+     * Return an Error object when you want to terminate the execution
+     * of all subsequent method calls.
+     * @class Do.Error
+     * @deprecated
+     */
+    Y.Do.Error = Y.Do.Halt;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -1799,14 +1809,26 @@ YUI.add("event-target", function(Y) {
          * @param args* 1..n params to supply to the callback
          */
         after: function(type, fn) {
-            var ce = this._yuievt.events[type] || 
-                // this.publish(type, {
-                //     configured: false
-                // }),
-                this.publish(type),
-                a = Y.Array(arguments, 1, true);
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                var ce = this._yuievt.events[type] || 
+                    // this.publish(type, {
+                    //     configured: false
+                    // }),
+                    this.publish(type),
+                    a = Y.Array(arguments, 1, true);
 
-            return ce.after.apply(ce, a);
+                return ce.after.apply(ce, a);
+            }
+        },
+
+        before: function(type, fn) {
+            if (Y.Lang.isFunction(type)) {
+                return Y.Do.after.apply(Y.Do, arguments);
+            } else {
+                return this.subscribe.apply(this, arguments);
+            }
         }
 
     };
